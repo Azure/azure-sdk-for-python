@@ -797,7 +797,7 @@ class ApplicationGatewaysOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`application_gateways` attribute.
     
     """
@@ -1027,7 +1027,7 @@ class ApplicationGatewaysOperations:
         :type application_gateway_name: str
         :param parameters: Parameters supplied to the create or update application gateway operation.
          Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ApplicationGateway or IO
+        :type parameters: ~azure.mgmt.network.models.ApplicationGateway or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1042,7 +1042,7 @@ class ApplicationGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either ApplicationGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ApplicationGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ApplicationGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1301,7 +1301,7 @@ class ApplicationGatewaysOperations:
         :type application_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ApplicationGateway
+        :rtype: ~azure.mgmt.network.models.ApplicationGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1358,7 +1358,7 @@ class ApplicationGatewaysOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ApplicationGateway or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ApplicationGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ApplicationGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1428,7 +1428,7 @@ class ApplicationGatewaysOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ApplicationGateway or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ApplicationGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ApplicationGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1568,7 +1568,7 @@ class ApplicationGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either ApplicationGatewayBackendHealth or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayBackendHealth]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ApplicationGatewayBackendHealth]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1626,7 +1626,7 @@ class ApplicationGatewaysOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationGatewayAvailableWafRuleSetsResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayAvailableWafRuleSetsResult
+        :rtype: ~azure.mgmt.network.models.ApplicationGatewayAvailableWafRuleSetsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1685,7 +1685,7 @@ class ApplicationGatewaysOperations:
         :type predefined_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationGatewaySslPredefinedPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ApplicationGatewaySslPredefinedPolicy
+        :rtype: ~azure.mgmt.network.models.ApplicationGatewaySslPredefinedPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1741,7 +1741,7 @@ class ApplicationGatewaysOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationGatewayAvailableSslOptions or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayAvailableSslOptions
+        :rtype: ~azure.mgmt.network.models.ApplicationGatewayAvailableSslOptions
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1800,7 +1800,7 @@ class ApplicationGatewaysOperations:
         :return: An iterator like instance of either ApplicationGatewaySslPredefinedPolicy or the
          result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ApplicationGatewaySslPredefinedPolicy]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ApplicationGatewaySslPredefinedPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1945,7 +1945,7 @@ class ApplicationGatewaysOperations:
         :type application_gateway_name: str
         :param parameters: Parameters supplied to update application gateway tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1960,7 +1960,7 @@ class ApplicationGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either ApplicationGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.ApplicationGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ApplicationGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2266,7 +2266,7 @@ class ApplicationGatewaysOperations:
         :type application_gateway_name: str
         :param probe_request: Request body for on-demand test probe operation. Is either a model type
          or a IO type. Required.
-        :type probe_request: ~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayOnDemandProbe or
+        :type probe_request: ~azure.mgmt.network.models.ApplicationGatewayOnDemandProbe or
          IO
         :param expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend health.
          Default value is None.
@@ -2285,7 +2285,7 @@ class ApplicationGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either
          ApplicationGatewayBackendHealthOnDemand or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayBackendHealthOnDemand]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ApplicationGatewayBackendHealthOnDemand]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2356,13 +2356,13 @@ class ApplicationGatewaysOperations:
         :type application_gateway_name: str
         :param parameters: Parameters supplied to update application gateway tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ApplicationGateway
+        :rtype: ~azure.mgmt.network.models.ApplicationGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2429,7 +2429,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_circuit_authorizations` attribute.
     
     """
@@ -2578,7 +2578,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :param authorization_parameters: Parameters supplied to the create or update express route
          circuit authorization operation. Is either a model type or a IO type. Required.
         :type authorization_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitAuthorization or IO
+         ~azure.mgmt.network.models.ExpressRouteCircuitAuthorization or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -2593,7 +2593,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCircuitAuthorization or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitAuthorization]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuitAuthorization]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2728,7 +2728,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :type authorization_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuitAuthorization or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitAuthorization
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCircuitAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2791,7 +2791,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         :return: An iterator like instance of either ExpressRouteCircuitAuthorization or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitAuthorization]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCircuitAuthorization]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -2862,7 +2862,7 @@ class ExpressRouteCircuitPeeringsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_circuit_peerings` attribute.
     
     """
@@ -3010,7 +3010,7 @@ class ExpressRouteCircuitPeeringsOperations:
         :type peering_name: str
         :param peering_parameters: Parameters supplied to the create or update express route circuit
          peering operation. Is either a model type or a IO type. Required.
-        :type peering_parameters: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitPeering or
+        :type peering_parameters: ~azure.mgmt.network.models.ExpressRouteCircuitPeering or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -3026,7 +3026,7 @@ class ExpressRouteCircuitPeeringsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCircuitPeering or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitPeering]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuitPeering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3161,7 +3161,7 @@ class ExpressRouteCircuitPeeringsOperations:
         :type peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuitPeering or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitPeering
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCircuitPeering
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -3224,7 +3224,7 @@ class ExpressRouteCircuitPeeringsOperations:
         :return: An iterator like instance of either ExpressRouteCircuitPeering or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitPeering]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCircuitPeering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3295,7 +3295,7 @@ class ExpressRouteCircuitsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_circuits` attribute.
     
     """
@@ -3437,7 +3437,7 @@ class ExpressRouteCircuitsOperations:
         :type circuit_name: str
         :param parameters: Parameters supplied to the create or update express route circuit operation.
          Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuit or IO
+        :type parameters: ~azure.mgmt.network.models.ExpressRouteCircuit or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -3452,7 +3452,7 @@ class ExpressRouteCircuitsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCircuit or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuit]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuit]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3577,7 +3577,7 @@ class ExpressRouteCircuitsOperations:
         :type circuit_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuit or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuit
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCircuit
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -3634,7 +3634,7 @@ class ExpressRouteCircuitsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteCircuit or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuit]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCircuit]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3704,7 +3704,7 @@ class ExpressRouteCircuitsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteCircuit or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuit]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCircuit]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3784,7 +3784,7 @@ class ExpressRouteCircuitsOperations:
         :return: An iterator like instance of either ExpressRouteCircuitArpTable or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitArpTable]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCircuitArpTable]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3877,7 +3877,7 @@ class ExpressRouteCircuitsOperations:
         :return: An iterator like instance of either ExpressRouteCircuitRoutesTable or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitRoutesTable]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCircuitRoutesTable]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3970,7 +3970,7 @@ class ExpressRouteCircuitsOperations:
         :return: An iterator like instance of either ExpressRouteCircuitStats or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2015_06_15.models.ExpressRouteCircuitStats]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCircuitStats]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -4230,7 +4230,7 @@ class ExpressRouteCircuitsOperations:
         :return: An instance of AsyncLROPoller that returns either
          ExpressRouteCircuitsArpTableListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitsArpTableListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuitsArpTableListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -4309,7 +4309,7 @@ class ExpressRouteCircuitsOperations:
         :return: An instance of AsyncLROPoller that returns either
          ExpressRouteCircuitsRoutesTableListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitsRoutesTableListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuitsRoutesTableListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -4388,7 +4388,7 @@ class ExpressRouteCircuitsOperations:
         :return: An instance of AsyncLROPoller that returns either
          ExpressRouteCircuitsRoutesTableSummaryListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitsRoutesTableSummaryListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuitsRoutesTableSummaryListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -4455,7 +4455,7 @@ class ExpressRouteCircuitsOperations:
         :type peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuitStats or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitStats
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCircuitStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4519,7 +4519,7 @@ class ExpressRouteCircuitsOperations:
         :type circuit_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuitStats or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitStats
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCircuitStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4642,7 +4642,7 @@ class ExpressRouteCircuitsOperations:
         :type circuit_name: str
         :param parameters: Parameters supplied to update express route circuit tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -4657,7 +4657,7 @@ class ExpressRouteCircuitsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCircuit or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.ExpressRouteCircuit]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuit]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4721,13 +4721,13 @@ class ExpressRouteCircuitsOperations:
         :type circuit_name: str
         :param parameters: Parameters supplied to update express route circuit tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuit or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuit
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCircuit
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4794,7 +4794,7 @@ class ExpressRouteServiceProvidersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_service_providers` attribute.
     
     """
@@ -4816,7 +4816,7 @@ class ExpressRouteServiceProvidersOperations:
         :return: An iterator like instance of either ExpressRouteServiceProvider or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteServiceProvider]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteServiceProvider]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -4885,7 +4885,7 @@ class LoadBalancersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`load_balancers` attribute.
     
     """
@@ -5027,7 +5027,7 @@ class LoadBalancersOperations:
         :type load_balancer_name: str
         :param parameters: Parameters supplied to the create or update load balancer operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.LoadBalancer or IO
+        :type parameters: ~azure.mgmt.network.models.LoadBalancer or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -5041,7 +5041,7 @@ class LoadBalancersOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LoadBalancer or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.LoadBalancer]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.LoadBalancer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5172,7 +5172,7 @@ class LoadBalancersOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LoadBalancer or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.LoadBalancer
+        :rtype: ~azure.mgmt.network.models.LoadBalancer
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5230,7 +5230,7 @@ class LoadBalancersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LoadBalancer or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.LoadBalancer]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.LoadBalancer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -5300,7 +5300,7 @@ class LoadBalancersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LoadBalancer or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.LoadBalancer]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.LoadBalancer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -5445,7 +5445,7 @@ class LoadBalancersOperations:
         :type load_balancer_name: str
         :param parameters: Parameters supplied to update load balancer tags. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -5459,7 +5459,7 @@ class LoadBalancersOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either LoadBalancer or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.LoadBalancer]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.LoadBalancer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5527,13 +5527,13 @@ class LoadBalancersOperations:
         :type load_balancer_name: str
         :param parameters: Parameters supplied to update load balancer tags. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LoadBalancer or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.LoadBalancer
+        :rtype: ~azure.mgmt.network.models.LoadBalancer
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5661,7 +5661,7 @@ class LoadBalancersOperations:
         :type location: str
         :param parameters: Parameters that define which VIPs should be swapped. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.LoadBalancerVipSwapRequest or IO
+        :type parameters: ~azure.mgmt.network.models.LoadBalancerVipSwapRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -5814,7 +5814,7 @@ class LoadBalancersOperations:
         :type backend_pool_name: str
         :param parameters: Query inbound NAT rule port mapping request. Is either a model type or a IO
          type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.QueryInboundNatRulePortMappingRequest
+        :type parameters: ~azure.mgmt.network.models.QueryInboundNatRulePortMappingRequest
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -5830,7 +5830,7 @@ class LoadBalancersOperations:
         :return: An instance of AsyncLROPoller that returns either
          BackendAddressInboundNatRulePortMappings or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.BackendAddressInboundNatRulePortMappings]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BackendAddressInboundNatRulePortMappings]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5889,7 +5889,7 @@ class LocalNetworkGatewaysOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`local_network_gateways` attribute.
     
     """
@@ -6031,7 +6031,7 @@ class LocalNetworkGatewaysOperations:
         :type local_network_gateway_name: str
         :param parameters: Parameters supplied to the create or update local network gateway operation.
          Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.LocalNetworkGateway or IO
+        :type parameters: ~azure.mgmt.network.models.LocalNetworkGateway or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -6046,7 +6046,7 @@ class LocalNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either LocalNetworkGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.LocalNetworkGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.LocalNetworkGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -6175,7 +6175,7 @@ class LocalNetworkGatewaysOperations:
         :type local_network_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocalNetworkGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.LocalNetworkGateway
+        :rtype: ~azure.mgmt.network.models.LocalNetworkGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6232,7 +6232,7 @@ class LocalNetworkGatewaysOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LocalNetworkGateway or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.LocalNetworkGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.LocalNetworkGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -6378,7 +6378,7 @@ class LocalNetworkGatewaysOperations:
         :type local_network_gateway_name: str
         :param parameters: Parameters supplied to update local network gateway tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -6393,7 +6393,7 @@ class LocalNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either LocalNetworkGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.LocalNetworkGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.LocalNetworkGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -6461,13 +6461,13 @@ class LocalNetworkGatewaysOperations:
         :type local_network_gateway_name: str
         :param parameters: Parameters supplied to update local network gateway tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LocalNetworkGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.LocalNetworkGateway
+        :rtype: ~azure.mgmt.network.models.LocalNetworkGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6534,7 +6534,7 @@ class NetworkInterfacesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_interfaces` attribute.
     
     """
@@ -6676,7 +6676,7 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :param parameters: Parameters supplied to the create or update network interface operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkInterface or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkInterface or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -6691,7 +6691,7 @@ class NetworkInterfacesOperations:
         :return: An instance of AsyncLROPoller that returns either NetworkInterface or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.NetworkInterface]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -6822,7 +6822,7 @@ class NetworkInterfacesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkInterface
+        :rtype: ~azure.mgmt.network.models.NetworkInterface
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6895,7 +6895,7 @@ class NetworkInterfacesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkInterface
+        :rtype: ~azure.mgmt.network.models.NetworkInterface
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6955,7 +6955,7 @@ class NetworkInterfacesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterface]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -7025,7 +7025,7 @@ class NetworkInterfacesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterface]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -7100,7 +7100,7 @@ class NetworkInterfacesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterface]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -7180,7 +7180,7 @@ class NetworkInterfacesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterface]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -7369,7 +7369,7 @@ class NetworkInterfacesOperations:
         :return: An instance of AsyncLROPoller that returns either EffectiveRouteListResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.EffectiveRouteListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.EffectiveRouteListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -7441,7 +7441,7 @@ class NetworkInterfacesOperations:
         :return: An instance of AsyncLROPoller that returns either
          EffectiveNetworkSecurityGroupListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.EffectiveNetworkSecurityGroupListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.EffectiveNetworkSecurityGroupListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -7572,7 +7572,7 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :param parameters: Parameters supplied to update network interface tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -7587,7 +7587,7 @@ class NetworkInterfacesOperations:
         :return: An instance of AsyncLROPoller that returns either NetworkInterface or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.NetworkInterface]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -7666,7 +7666,7 @@ class NetworkInterfacesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterfaceIPConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkInterfaceIPConfiguration
+        :rtype: ~azure.mgmt.network.models.NetworkInterfaceIPConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7747,7 +7747,7 @@ class NetworkInterfacesOperations:
         :return: An iterator like instance of either NetworkInterfaceIPConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterfaceIPConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterfaceIPConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -7833,13 +7833,13 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :param parameters: Parameters supplied to update network interface tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkInterface
+        :rtype: ~azure.mgmt.network.models.NetworkInterface
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7926,7 +7926,7 @@ class NetworkInterfacesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkInterface
+        :rtype: ~azure.mgmt.network.models.NetworkInterface
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7993,7 +7993,7 @@ class NetworkInterfacesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterface]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -8075,7 +8075,7 @@ class NetworkInterfacesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterface]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -8147,7 +8147,7 @@ class NetworkSecurityGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_security_groups` attribute.
     
     """
@@ -8289,7 +8289,7 @@ class NetworkSecurityGroupsOperations:
         :type network_security_group_name: str
         :param parameters: Parameters supplied to the create or update network security group
          operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkSecurityGroup or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkSecurityGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -8304,7 +8304,7 @@ class NetworkSecurityGroupsOperations:
         :return: An instance of AsyncLROPoller that returns either NetworkSecurityGroup or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.NetworkSecurityGroup]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkSecurityGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -8435,7 +8435,7 @@ class NetworkSecurityGroupsOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkSecurityGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkSecurityGroup
+        :rtype: ~azure.mgmt.network.models.NetworkSecurityGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8494,7 +8494,7 @@ class NetworkSecurityGroupsOperations:
         :return: An iterator like instance of either NetworkSecurityGroup or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkSecurityGroup]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkSecurityGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -8565,7 +8565,7 @@ class NetworkSecurityGroupsOperations:
         :return: An iterator like instance of either NetworkSecurityGroup or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkSecurityGroup]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkSecurityGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -8710,7 +8710,7 @@ class NetworkSecurityGroupsOperations:
         :type network_security_group_name: str
         :param parameters: Parameters supplied to update network security group tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -8725,7 +8725,7 @@ class NetworkSecurityGroupsOperations:
         :return: An instance of AsyncLROPoller that returns either NetworkSecurityGroup or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.NetworkSecurityGroup]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkSecurityGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -8793,13 +8793,13 @@ class NetworkSecurityGroupsOperations:
         :type network_security_group_name: str
         :param parameters: Parameters supplied to update network security group tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkSecurityGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkSecurityGroup
+        :rtype: ~azure.mgmt.network.models.NetworkSecurityGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8866,7 +8866,7 @@ class PublicIPAddressesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`public_ip_addresses` attribute.
     
     """
@@ -9012,7 +9012,7 @@ class PublicIPAddressesOperations:
         :type public_ip_address_name: str
         :param parameters: Parameters supplied to the create or update public IP address operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.PublicIPAddress or IO
+        :type parameters: ~azure.mgmt.network.models.PublicIPAddress or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -9027,7 +9027,7 @@ class PublicIPAddressesOperations:
         :return: An instance of AsyncLROPoller that returns either PublicIPAddress or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PublicIPAddress]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -9158,7 +9158,7 @@ class PublicIPAddressesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPAddress or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PublicIPAddress
+        :rtype: ~azure.mgmt.network.models.PublicIPAddress
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -9216,7 +9216,7 @@ class PublicIPAddressesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PublicIPAddress]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -9286,7 +9286,7 @@ class PublicIPAddressesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PublicIPAddress]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -9381,7 +9381,7 @@ class PublicIPAddressesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPAddress or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PublicIPAddress
+        :rtype: ~azure.mgmt.network.models.PublicIPAddress
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -9450,7 +9450,7 @@ class PublicIPAddressesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PublicIPAddress]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -9543,7 +9543,7 @@ class PublicIPAddressesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PublicIPAddress]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -9693,7 +9693,7 @@ class PublicIPAddressesOperations:
         :type public_ip_address_name: str
         :param parameters: Parameters supplied to update public IP address tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -9708,7 +9708,7 @@ class PublicIPAddressesOperations:
         :return: An instance of AsyncLROPoller that returns either PublicIPAddress or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.PublicIPAddress]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -9776,13 +9776,13 @@ class PublicIPAddressesOperations:
         :type public_ip_address_name: str
         :param parameters: Parameters supplied to update public IP address tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPAddress or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PublicIPAddress
+        :rtype: ~azure.mgmt.network.models.PublicIPAddress
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -9875,7 +9875,7 @@ class PublicIPAddressesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPAddress or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PublicIPAddress
+        :rtype: ~azure.mgmt.network.models.PublicIPAddress
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -9944,7 +9944,7 @@ class PublicIPAddressesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PublicIPAddress]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -10037,7 +10037,7 @@ class PublicIPAddressesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PublicIPAddress]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PublicIPAddress]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -10182,7 +10182,7 @@ class PublicIPAddressesOperations:
         :return: An instance of AsyncLROPoller that returns either PublicIpDdosProtectionStatusResult
          or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PublicIpDdosProtectionStatusResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIpDdosProtectionStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -10237,7 +10237,7 @@ class RouteTablesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`route_tables` attribute.
     
     """
@@ -10371,7 +10371,7 @@ class RouteTablesOperations:
         :type route_table_name: str
         :param parameters: Parameters supplied to the create or update route table operation. Is either
          a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.RouteTable or IO
+        :type parameters: ~azure.mgmt.network.models.RouteTable or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -10385,7 +10385,7 @@ class RouteTablesOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteTable or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.RouteTable]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -10516,7 +10516,7 @@ class RouteTablesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteTable or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.RouteTable
+        :rtype: ~azure.mgmt.network.models.RouteTable
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -10574,7 +10574,7 @@ class RouteTablesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RouteTable or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.RouteTable]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.RouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -10644,7 +10644,7 @@ class RouteTablesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RouteTable or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.RouteTable]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.RouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -10781,7 +10781,7 @@ class RouteTablesOperations:
         :type route_table_name: str
         :param parameters: Parameters supplied to update route table tags. Is either a model type or a
          IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -10795,7 +10795,7 @@ class RouteTablesOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteTable or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.RouteTable]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -10859,13 +10859,13 @@ class RouteTablesOperations:
         :type route_table_name: str
         :param parameters: Parameters supplied to update route table tags. Is either a model type or a
          IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteTable or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.RouteTable
+        :rtype: ~azure.mgmt.network.models.RouteTable
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -10932,7 +10932,7 @@ class RoutesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`routes` attribute.
     
     """
@@ -11080,7 +11080,7 @@ class RoutesOperations:
         :type route_name: str
         :param route_parameters: Parameters supplied to the create or update route operation. Is either
          a model type or a IO type. Required.
-        :type route_parameters: ~azure.mgmt.network.v2022_07_01.models.Route or IO
+        :type route_parameters: ~azure.mgmt.network.models.Route or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -11093,7 +11093,7 @@ class RoutesOperations:
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Route or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.Route]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.Route]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -11228,7 +11228,7 @@ class RoutesOperations:
         :type route_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Route or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.Route
+        :rtype: ~azure.mgmt.network.models.Route
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -11287,7 +11287,7 @@ class RoutesOperations:
         :type route_table_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Route or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.Route]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.Route]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -11358,7 +11358,7 @@ class SecurityRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`security_rules` attribute.
     
     """
@@ -11506,7 +11506,7 @@ class SecurityRulesOperations:
         :type security_rule_name: str
         :param security_rule_parameters: Parameters supplied to the create or update network security
          rule operation. Is either a model type or a IO type. Required.
-        :type security_rule_parameters: ~azure.mgmt.network.v2022_07_01.models.SecurityRule or IO
+        :type security_rule_parameters: ~azure.mgmt.network.models.SecurityRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -11520,7 +11520,7 @@ class SecurityRulesOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either SecurityRule or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.SecurityRule]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.SecurityRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -11655,7 +11655,7 @@ class SecurityRulesOperations:
         :type security_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SecurityRule
+        :rtype: ~azure.mgmt.network.models.SecurityRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -11717,7 +11717,7 @@ class SecurityRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecurityRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.SecurityRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.SecurityRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -11788,7 +11788,7 @@ class SubnetsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`subnets` attribute.
     
     """
@@ -11936,7 +11936,7 @@ class SubnetsOperations:
         :type subnet_name: str
         :param subnet_parameters: Parameters supplied to the create or update subnet operation. Is
          either a model type or a IO type. Required.
-        :type subnet_parameters: ~azure.mgmt.network.v2022_07_01.models.Subnet or IO
+        :type subnet_parameters: ~azure.mgmt.network.models.Subnet or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -11950,7 +11950,7 @@ class SubnetsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either Subnet or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.Subnet]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.Subnet]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -12092,7 +12092,7 @@ class SubnetsOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Subnet or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.Subnet
+        :rtype: ~azure.mgmt.network.models.Subnet
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -12154,7 +12154,7 @@ class SubnetsOperations:
         :type virtual_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Subnet or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.Subnet]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.Subnet]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -12303,7 +12303,7 @@ class SubnetsOperations:
         :param prepare_network_policies_request_parameters: Parameters supplied to prepare subnet by
          applying network intent policies. Is either a model type or a IO type. Required.
         :type prepare_network_policies_request_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.PrepareNetworkPoliciesRequest or IO
+         ~azure.mgmt.network.models.PrepareNetworkPoliciesRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -12453,7 +12453,7 @@ class SubnetsOperations:
         :param unprepare_network_policies_request_parameters: Parameters supplied to unprepare subnet
          to remove network intent policies. Is either a model type or a IO type. Required.
         :type unprepare_network_policies_request_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.UnprepareNetworkPoliciesRequest or IO
+         ~azure.mgmt.network.models.UnprepareNetworkPoliciesRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -12523,7 +12523,7 @@ class UsagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`usages` attribute.
     
     """
@@ -12545,7 +12545,7 @@ class UsagesOperations:
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Usage or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.Usage]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.Usage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -12615,7 +12615,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_network_gateway_connections` attribute.
     
     """
@@ -12892,7 +12892,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the create or update virtual network gateway
          connection operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayConnection or IO
+        :type parameters: ~azure.mgmt.network.models.VirtualNetworkGatewayConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -12907,7 +12907,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkGatewayConnection or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkGatewayConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -13045,7 +13045,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :param parameters: Parameters supplied to the begin reset virtual network gateway connection
          shared key operation through network resource provider. Is either a model type or a IO type.
          Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ConnectionResetSharedKey or IO
+        :type parameters: ~azure.mgmt.network.models.ConnectionResetSharedKey or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -13060,7 +13060,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either ConnectionResetSharedKey or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ConnectionResetSharedKey]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ConnectionResetSharedKey]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -13131,7 +13131,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :param parameters: Parameters supplied to the Begin Set Virtual Network Gateway connection
          Shared key operation throughNetwork resource provider. Is either a model type or a IO type.
          Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ConnectionSharedKey or IO
+        :type parameters: ~azure.mgmt.network.models.ConnectionSharedKey or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -13146,7 +13146,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either ConnectionSharedKey or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ConnectionSharedKey]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ConnectionSharedKey]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -13211,7 +13211,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkGatewayConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayConnection
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkGatewayConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -13273,7 +13273,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConnectionSharedKey or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ConnectionSharedKey
+        :rtype: ~azure.mgmt.network.models.ConnectionSharedKey
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -13332,7 +13332,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :return: An iterator like instance of either VirtualNetworkGatewayConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkGatewayConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -13481,7 +13481,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to update virtual network gateway connection tags. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -13496,7 +13496,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkGatewayConnection or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkGatewayConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -13705,7 +13705,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to start packet
          capture on gateway connection. Is either a model type or a IO type. Default value is None.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VpnPacketCaptureStartParameters or IO
+        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStartParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -13789,7 +13789,7 @@ class VirtualNetworkGatewayConnectionsOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to stop packet
          capture on gateway connection. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VpnPacketCaptureStopParameters or IO
+        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStopParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -14097,7 +14097,7 @@ class VirtualNetworkGatewaysOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_network_gateways` attribute.
     
     """
@@ -14360,7 +14360,7 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to create or update virtual network gateway operation.
          Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGateway or IO
+        :type parameters: ~azure.mgmt.network.models.VirtualNetworkGateway or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -14375,7 +14375,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkGateway or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -14509,7 +14509,7 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the generate virtual network gateway VPN client
          package operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VpnClientParameters or IO
+        :type parameters: ~azure.mgmt.network.models.VpnClientParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -14607,7 +14607,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkGateway or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -14668,7 +14668,7 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGateway
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -14726,7 +14726,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An iterator like instance of either VirtualNetworkGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -14968,7 +14968,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either GatewayRouteListResult or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.GatewayRouteListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.GatewayRouteListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -15043,7 +15043,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either BgpPeerStatusListResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.BgpPeerStatusListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BgpPeerStatusListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -15117,7 +15117,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either GatewayRouteListResult or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.GatewayRouteListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.GatewayRouteListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -15251,7 +15251,7 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to the generate virtual network gateway VPN client
          package operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VpnClientParameters or IO
+        :type parameters: ~azure.mgmt.network.models.VpnClientParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -15332,7 +15332,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An iterator like instance of either VirtualNetworkGatewayConnectionListEntity or the
          result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayConnectionListEntity]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkGatewayConnectionListEntity]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -15602,7 +15602,7 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param parameters: Parameters supplied to update virtual network gateway tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -15617,7 +15617,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkGateway or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -15752,7 +15752,7 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_connection_name: str
         :param parameters: Parameters supplied to the generate vpn device script operation. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VpnDeviceScriptParameters or IO
+        :type parameters: ~azure.mgmt.network.models.VpnDeviceScriptParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -15958,7 +15958,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either VpnClientIPsecParameters or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnClientIPsecParameters]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnClientIPsecParameters]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -16027,7 +16027,7 @@ class VirtualNetworkGatewaysOperations:
         :param vpnclient_ipsec_params: Parameters supplied to the Begin Set vpnclient ipsec parameters
          of Virtual Network Gateway P2S client operation through Network resource provider. Is either a
          model type or a IO type. Required.
-        :type vpnclient_ipsec_params: ~azure.mgmt.network.v2022_07_01.models.VpnClientIPsecParameters
+        :type vpnclient_ipsec_params: ~azure.mgmt.network.models.VpnClientIPsecParameters
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -16043,7 +16043,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either VpnClientIPsecParameters or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnClientIPsecParameters]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnClientIPsecParameters]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -16282,7 +16282,7 @@ class VirtualNetworkGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either
          VpnClientConnectionHealthDetailListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnClientConnectionHealthDetailListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnClientConnectionHealthDetailListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -16486,7 +16486,7 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to start packet
          capture on gateway. Is either a model type or a IO type. Default value is None.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VpnPacketCaptureStartParameters or IO
+        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStartParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -16569,7 +16569,7 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param parameters: Virtual network gateway packet capture parameters supplied to stop packet
          capture on gateway. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VpnPacketCaptureStopParameters or IO
+        :type parameters: ~azure.mgmt.network.models.VpnPacketCaptureStopParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -16712,7 +16712,7 @@ class VirtualNetworkGatewaysOperations:
         :type virtual_network_gateway_name: str
         :param request: The parameters are supplied to disconnect vpn connections. Is either a model
          type or a IO type. Required.
-        :type request: ~azure.mgmt.network.v2022_07_01.models.P2SVpnConnectionRequest or IO
+        :type request: ~azure.mgmt.network.models.P2SVpnConnectionRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -16781,7 +16781,7 @@ class VirtualNetworksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_networks` attribute.
     
     """
@@ -16923,7 +16923,7 @@ class VirtualNetworksOperations:
         :type virtual_network_name: str
         :param parameters: Parameters supplied to the create or update virtual network operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualNetwork or IO
+        :type parameters: ~azure.mgmt.network.models.VirtualNetwork or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -16938,7 +16938,7 @@ class VirtualNetworksOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetwork or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualNetwork]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetwork]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -17069,7 +17069,7 @@ class VirtualNetworksOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetwork or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualNetwork
+        :rtype: ~azure.mgmt.network.models.VirtualNetwork
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -17127,7 +17127,7 @@ class VirtualNetworksOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetwork or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetwork]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetwork]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -17197,7 +17197,7 @@ class VirtualNetworksOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetwork or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetwork]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetwork]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -17276,7 +17276,7 @@ class VirtualNetworksOperations:
         :type ip_address: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IPAddressAvailabilityResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.IPAddressAvailabilityResult
+        :rtype: ~azure.mgmt.network.models.IPAddressAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -17341,7 +17341,7 @@ class VirtualNetworksOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetworkUsage or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkUsage]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkUsage]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -17488,7 +17488,7 @@ class VirtualNetworksOperations:
         :type virtual_network_name: str
         :param parameters: Parameters supplied to update virtual network tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -17503,7 +17503,7 @@ class VirtualNetworksOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetwork or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.VirtualNetwork]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetwork]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -17571,13 +17571,13 @@ class VirtualNetworksOperations:
         :type virtual_network_name: str
         :param parameters: Parameters supplied to update virtual network tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetwork or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualNetwork
+        :rtype: ~azure.mgmt.network.models.VirtualNetwork
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -17652,7 +17652,7 @@ class VirtualNetworksOperations:
         :type virtual_network_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BastionHostListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2020_05_01.models.BastionHostListResult
+        :rtype: ~azure.mgmt.network.models.BastionHostListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -17790,7 +17790,7 @@ class VirtualNetworksOperations:
         :return: An instance of LROPoller that returns an iterator like instance of either
          VirtualNetworkDdosProtectionStatusResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PublicIpDdosProtectionStatusResult]]
+         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PublicIpDdosProtectionStatusResult]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -17904,7 +17904,7 @@ class NetworkWatchersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_watchers` attribute.
     
     """
@@ -18527,7 +18527,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that define a resource to query flow log and traffic analytics
          (optional) status. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.FlowLogStatusParameters or IO
+        :type parameters: ~azure.mgmt.network.models.FlowLogStatusParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -18542,7 +18542,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either FlowLogInformation or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.FlowLogInformation]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FlowLogInformation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -18609,7 +18609,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that define the source and destination endpoint. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NextHopParameters or IO
+        :type parameters: ~azure.mgmt.network.models.NextHopParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -18624,7 +18624,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either NextHopResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.NextHopResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NextHopResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -18691,7 +18691,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that define the resource to troubleshoot. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TroubleshootingParameters or IO
+        :type parameters: ~azure.mgmt.network.models.TroubleshootingParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -18706,7 +18706,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either TroubleshootingResult or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.TroubleshootingResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.TroubleshootingResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -18773,7 +18773,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that define the resource to query the troubleshooting result. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.QueryTroubleshootingParameters or IO
+        :type parameters: ~azure.mgmt.network.models.QueryTroubleshootingParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -18788,7 +18788,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either TroubleshootingResult or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.TroubleshootingResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.TroubleshootingResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -18855,7 +18855,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that define the VM to check security groups for. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.SecurityGroupViewParameters or IO
+        :type parameters: ~azure.mgmt.network.models.SecurityGroupViewParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -18870,7 +18870,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either SecurityGroupViewResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.SecurityGroupViewResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.SecurityGroupViewResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -18937,7 +18937,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that define the configuration of flow log. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.FlowLogInformation or IO
+        :type parameters: ~azure.mgmt.network.models.FlowLogInformation or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -18952,7 +18952,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either FlowLogInformation or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.FlowLogInformation]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FlowLogInformation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -19019,7 +19019,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that define the IP flow to be verified. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VerificationIPFlowParameters or IO
+        :type parameters: ~azure.mgmt.network.models.VerificationIPFlowParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -19034,7 +19034,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either VerificationIPFlowResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VerificationIPFlowResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VerificationIPFlowResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -19101,13 +19101,13 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that define the network watcher resource. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkWatcher or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkWatcher or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkWatcher or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkWatcher
+        :rtype: ~azure.mgmt.network.models.NetworkWatcher
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -19182,7 +19182,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkWatcher or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkWatcher
+        :rtype: ~azure.mgmt.network.models.NetworkWatcher
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -19247,13 +19247,13 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that define the representation of topology. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TopologyParameters or IO
+        :type parameters: ~azure.mgmt.network.models.TopologyParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Topology or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.Topology
+        :rtype: ~azure.mgmt.network.models.Topology
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -19323,7 +19323,7 @@ class NetworkWatchersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkWatcher or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkWatcher]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkWatcher]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -19394,7 +19394,7 @@ class NetworkWatchersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkWatcher or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkWatcher]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkWatcher]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -19546,7 +19546,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that determine how the connectivity check will be performed. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ConnectivityParameters or IO
+        :type parameters: ~azure.mgmt.network.models.ConnectivityParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -19561,7 +19561,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either ConnectivityInformation or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ConnectivityInformation]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ConnectivityInformation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -19771,7 +19771,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that determine Azure reachability report configuration. Is either
          a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.AzureReachabilityReportParameters or
+        :type parameters: ~azure.mgmt.network.models.AzureReachabilityReportParameters or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -19787,7 +19787,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either AzureReachabilityReport or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.AzureReachabilityReport]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AzureReachabilityReport]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -19858,7 +19858,7 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters that scope the list of available providers. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.AvailableProvidersListParameters or IO
+        :type parameters: ~azure.mgmt.network.models.AvailableProvidersListParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -19873,7 +19873,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either AvailableProvidersList or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.AvailableProvidersList]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AvailableProvidersList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -19943,13 +19943,13 @@ class NetworkWatchersOperations:
         :type network_watcher_name: str
         :param parameters: Parameters supplied to update network watcher tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkWatcher or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkWatcher
+        :rtype: ~azure.mgmt.network.models.NetworkWatcher
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -20103,7 +20103,7 @@ class NetworkWatchersOperations:
         :param parameters: Parameters to get network configuration diagnostic. Is either a model type
          or a IO type. Required.
         :type parameters:
-         ~azure.mgmt.network.v2022_07_01.models.NetworkConfigurationDiagnosticParameters or IO
+         ~azure.mgmt.network.models.NetworkConfigurationDiagnosticParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -20118,7 +20118,7 @@ class NetworkWatchersOperations:
         :return: An instance of AsyncLROPoller that returns either
          NetworkConfigurationDiagnosticResponse or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.NetworkConfigurationDiagnosticResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkConfigurationDiagnosticResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -20176,7 +20176,7 @@ class PacketCapturesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`packet_captures` attribute.
     
     """
@@ -20422,7 +20422,7 @@ class PacketCapturesOperations:
         :type packet_capture_name: str
         :param parameters: Parameters that define the create packet capture operation. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.PacketCapture or IO
+        :type parameters: ~azure.mgmt.network.models.PacketCapture or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -20437,7 +20437,7 @@ class PacketCapturesOperations:
         :return: An instance of AsyncLROPoller that returns either PacketCaptureResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PacketCaptureResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PacketCaptureResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -20581,7 +20581,7 @@ class PacketCapturesOperations:
         :return: An instance of AsyncLROPoller that returns either PacketCaptureQueryStatusResult or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PacketCaptureQueryStatusResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PacketCaptureQueryStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -20712,7 +20712,7 @@ class PacketCapturesOperations:
         :type packet_capture_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PacketCaptureResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PacketCaptureResult
+        :rtype: ~azure.mgmt.network.models.PacketCaptureResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -20775,7 +20775,7 @@ class PacketCapturesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PacketCaptureResult or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PacketCaptureResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PacketCaptureResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -20847,7 +20847,7 @@ class VirtualNetworkPeeringsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_network_peerings` attribute.
     
     """
@@ -21004,11 +21004,11 @@ class VirtualNetworkPeeringsOperations:
         :param virtual_network_peering_parameters: Parameters supplied to the create or update virtual
          network peering operation. Is either a model type or a IO type. Required.
         :type virtual_network_peering_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkPeering or IO
+         ~azure.mgmt.network.models.VirtualNetworkPeering or IO
         :param sync_remote_address_space: Parameter indicates the intention to sync the peering with
          the current address space on the remote vNet after it's updated. "true" Default value is None.
         :type sync_remote_address_space: str or
-         ~azure.mgmt.network.v2022_07_01.models.SyncRemoteAddressSpace
+         ~azure.mgmt.network.models.SyncRemoteAddressSpace
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -21023,7 +21023,7 @@ class VirtualNetworkPeeringsOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkPeering or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkPeering]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkPeering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -21159,7 +21159,7 @@ class VirtualNetworkPeeringsOperations:
         :type virtual_network_peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkPeering or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkPeering
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkPeering
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -21222,7 +21222,7 @@ class VirtualNetworkPeeringsOperations:
         :return: An iterator like instance of either VirtualNetworkPeering or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkPeering]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkPeering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -21293,7 +21293,7 @@ class BgpServiceCommunitiesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`bgp_service_communities` attribute.
     
     """
@@ -21314,7 +21314,7 @@ class BgpServiceCommunitiesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BgpServiceCommunity or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BgpServiceCommunity]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BgpServiceCommunity]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -21383,7 +21383,7 @@ class RouteFilterRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`route_filter_rules` attribute.
     
     """
@@ -21597,7 +21597,7 @@ class RouteFilterRulesOperations:
         :type rule_name: str
         :param route_filter_rule_parameters: Parameters supplied to the create or update route filter
          rule operation. Is either a model type or a IO type. Required.
-        :type route_filter_rule_parameters: ~azure.mgmt.network.v2022_07_01.models.RouteFilterRule or
+        :type route_filter_rule_parameters: ~azure.mgmt.network.models.RouteFilterRule or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -21613,7 +21613,7 @@ class RouteFilterRulesOperations:
         :return: An instance of AsyncLROPoller that returns either RouteFilterRule or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.RouteFilterRule]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteFilterRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -21756,7 +21756,7 @@ class RouteFilterRulesOperations:
         :type rule_name: str
         :param route_filter_rule_parameters: Parameters supplied to the update route filter rule
          operation. Is either a model type or a IO type. Required.
-        :type route_filter_rule_parameters: ~azure.mgmt.network.v2019_08_01.models.PatchRouteFilterRule
+        :type route_filter_rule_parameters: ~azure.mgmt.network.models.PatchRouteFilterRule
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -21772,7 +21772,7 @@ class RouteFilterRulesOperations:
         :return: An instance of AsyncLROPoller that returns either RouteFilterRule or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.RouteFilterRule]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteFilterRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -21836,7 +21836,7 @@ class RouteFilterRulesOperations:
         :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteFilterRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.RouteFilterRule
+        :rtype: ~azure.mgmt.network.models.RouteFilterRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -21898,7 +21898,7 @@ class RouteFilterRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RouteFilterRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.RouteFilterRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.RouteFilterRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -21969,7 +21969,7 @@ class RouteFiltersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`route_filters` attribute.
     
     """
@@ -22175,7 +22175,7 @@ class RouteFiltersOperations:
         :type route_filter_name: str
         :param route_filter_parameters: Parameters supplied to the create or update route filter
          operation. Is either a model type or a IO type. Required.
-        :type route_filter_parameters: ~azure.mgmt.network.v2022_07_01.models.RouteFilter or IO
+        :type route_filter_parameters: ~azure.mgmt.network.models.RouteFilter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -22189,7 +22189,7 @@ class RouteFiltersOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteFilter or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.RouteFilter]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteFilter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -22325,7 +22325,7 @@ class RouteFiltersOperations:
         :type route_filter_name: str
         :param route_filter_parameters: Parameters supplied to the update route filter operation. Is
          either a model type or a IO type. Required.
-        :type route_filter_parameters: ~azure.mgmt.network.v2019_08_01.models.PatchRouteFilter or IO
+        :type route_filter_parameters: ~azure.mgmt.network.models.PatchRouteFilter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -22339,7 +22339,7 @@ class RouteFiltersOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteFilter or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.RouteFilter]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteFilter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -22402,7 +22402,7 @@ class RouteFiltersOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteFilter or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.RouteFilter
+        :rtype: ~azure.mgmt.network.models.RouteFilter
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -22458,7 +22458,7 @@ class RouteFiltersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RouteFilter or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.RouteFilter]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.RouteFilter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -22529,7 +22529,7 @@ class RouteFiltersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RouteFilter or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.RouteFilter]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.RouteFilter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -22607,13 +22607,13 @@ class RouteFiltersOperations:
         :type route_filter_name: str
         :param parameters: Parameters supplied to update route filter tags. Is either a model type or a
          IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteFilter or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.RouteFilter
+        :rtype: ~azure.mgmt.network.models.RouteFilter
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -22680,7 +22680,7 @@ class AvailableEndpointServicesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`available_endpoint_services` attribute.
     
     """
@@ -22704,7 +22704,7 @@ class AvailableEndpointServicesOperations:
         :return: An iterator like instance of either EndpointServiceResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.EndpointServiceResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.EndpointServiceResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -22774,7 +22774,7 @@ class DefaultSecurityRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`default_security_rules` attribute.
     
     """
@@ -22802,7 +22802,7 @@ class DefaultSecurityRulesOperations:
         :type default_security_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SecurityRule
+        :rtype: ~azure.mgmt.network.models.SecurityRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -22864,7 +22864,7 @@ class DefaultSecurityRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecurityRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.SecurityRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.SecurityRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -22935,7 +22935,7 @@ class InboundNatRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`inbound_nat_rules` attribute.
     
     """
@@ -23083,7 +23083,7 @@ class InboundNatRulesOperations:
         :type inbound_nat_rule_name: str
         :param inbound_nat_rule_parameters: Parameters supplied to the create or update inbound NAT
          rule operation. Is either a model type or a IO type. Required.
-        :type inbound_nat_rule_parameters: ~azure.mgmt.network.v2022_07_01.models.InboundNatRule or IO
+        :type inbound_nat_rule_parameters: ~azure.mgmt.network.models.InboundNatRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -23098,7 +23098,7 @@ class InboundNatRulesOperations:
         :return: An instance of AsyncLROPoller that returns either InboundNatRule or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.InboundNatRule]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.InboundNatRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -23240,7 +23240,7 @@ class InboundNatRulesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: InboundNatRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.InboundNatRule
+        :rtype: ~azure.mgmt.network.models.InboundNatRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -23303,7 +23303,7 @@ class InboundNatRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either InboundNatRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.InboundNatRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.InboundNatRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -23374,7 +23374,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`load_balancer_backend_address_pools` attribute.
     
     """
@@ -23402,7 +23402,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         :type backend_address_pool_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackendAddressPool or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.BackendAddressPool
+        :rtype: ~azure.mgmt.network.models.BackendAddressPool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -23464,7 +23464,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BackendAddressPool or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BackendAddressPool]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BackendAddressPool]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -23665,7 +23665,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         :type backend_address_pool_name: str
         :param parameters: Parameters supplied to the create or update load balancer backend address
          pool operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.BackendAddressPool or IO
+        :type parameters: ~azure.mgmt.network.models.BackendAddressPool or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -23680,7 +23680,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         :return: An instance of AsyncLROPoller that returns either BackendAddressPool or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.BackendAddressPool]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BackendAddressPool]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -23811,7 +23811,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`load_balancer_frontend_ip_configurations` attribute.
     
     """
@@ -23839,7 +23839,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:
         :type frontend_ip_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FrontendIPConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.FrontendIPConfiguration
+        :rtype: ~azure.mgmt.network.models.FrontendIPConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -23902,7 +23902,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:
         :return: An iterator like instance of either FrontendIPConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.FrontendIPConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.FrontendIPConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -23973,7 +23973,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`load_balancer_load_balancing_rules` attribute.
     
     """
@@ -24001,7 +24001,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         :type load_balancing_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LoadBalancingRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.LoadBalancingRule
+        :rtype: ~azure.mgmt.network.models.LoadBalancingRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -24063,7 +24063,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LoadBalancingRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.LoadBalancingRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.LoadBalancingRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -24134,7 +24134,7 @@ class LoadBalancerNetworkInterfacesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`load_balancer_network_interfaces` attribute.
     
     """
@@ -24161,7 +24161,7 @@ class LoadBalancerNetworkInterfacesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterface]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterface]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -24232,7 +24232,7 @@ class LoadBalancerProbesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`load_balancer_probes` attribute.
     
     """
@@ -24260,7 +24260,7 @@ class LoadBalancerProbesOperations:
         :type probe_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Probe or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.Probe
+        :rtype: ~azure.mgmt.network.models.Probe
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -24319,7 +24319,7 @@ class LoadBalancerProbesOperations:
         :type load_balancer_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Probe or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.Probe]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.Probe]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -24390,7 +24390,7 @@ class NetworkInterfaceIPConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_interface_ip_configurations` attribute.
     
     """
@@ -24418,7 +24418,7 @@ class NetworkInterfaceIPConfigurationsOperations:
         :type ip_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterfaceIPConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkInterfaceIPConfiguration
+        :rtype: ~azure.mgmt.network.models.NetworkInterfaceIPConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -24481,7 +24481,7 @@ class NetworkInterfaceIPConfigurationsOperations:
         :return: An iterator like instance of either NetworkInterfaceIPConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterfaceIPConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterfaceIPConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -24552,7 +24552,7 @@ class NetworkInterfaceLoadBalancersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_interface_load_balancers` attribute.
     
     """
@@ -24579,7 +24579,7 @@ class NetworkInterfaceLoadBalancersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either LoadBalancer or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.LoadBalancer]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.LoadBalancer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -24650,7 +24650,7 @@ class ApplicationSecurityGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`application_security_groups` attribute.
     
     """
@@ -24792,7 +24792,7 @@ class ApplicationSecurityGroupsOperations:
         :type application_security_group_name: str
         :param parameters: Parameters supplied to the create or update ApplicationSecurityGroup
          operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ApplicationSecurityGroup or IO
+        :type parameters: ~azure.mgmt.network.models.ApplicationSecurityGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -24807,7 +24807,7 @@ class ApplicationSecurityGroupsOperations:
         :return: An instance of AsyncLROPoller that returns either ApplicationSecurityGroup or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ApplicationSecurityGroup]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ApplicationSecurityGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -24936,7 +24936,7 @@ class ApplicationSecurityGroupsOperations:
         :type application_security_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationSecurityGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ApplicationSecurityGroup
+        :rtype: ~azure.mgmt.network.models.ApplicationSecurityGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -24994,7 +24994,7 @@ class ApplicationSecurityGroupsOperations:
         :return: An iterator like instance of either ApplicationSecurityGroup or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ApplicationSecurityGroup]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ApplicationSecurityGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -25065,7 +25065,7 @@ class ApplicationSecurityGroupsOperations:
         :return: An iterator like instance of either ApplicationSecurityGroup or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ApplicationSecurityGroup]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ApplicationSecurityGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -25210,7 +25210,7 @@ class ApplicationSecurityGroupsOperations:
         :type application_security_group_name: str
         :param parameters: Parameters supplied to update application security group tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -25225,7 +25225,7 @@ class ApplicationSecurityGroupsOperations:
         :return: An instance of AsyncLROPoller that returns either ApplicationSecurityGroup or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.ApplicationSecurityGroup]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ApplicationSecurityGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -25293,13 +25293,13 @@ class ApplicationSecurityGroupsOperations:
         :type application_security_group_name: str
         :param parameters: Parameters supplied to update application security group tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationSecurityGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ApplicationSecurityGroup
+        :rtype: ~azure.mgmt.network.models.ApplicationSecurityGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -25366,7 +25366,7 @@ class ConnectionMonitorsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`connection_monitors` attribute.
     
     """
@@ -25671,7 +25671,7 @@ class ConnectionMonitorsOperations:
         :type connection_monitor_name: str
         :param parameters: Parameters that define the operation to create a connection monitor. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ConnectionMonitor or IO
+        :type parameters: ~azure.mgmt.network.models.ConnectionMonitor or IO
         :param migrate: Value indicating whether connection monitor V1 should be migrated to V2 format.
          Default value is None.
         :type migrate: str
@@ -25689,7 +25689,7 @@ class ConnectionMonitorsOperations:
         :return: An instance of AsyncLROPoller that returns either ConnectionMonitorResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ConnectionMonitorResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ConnectionMonitorResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -25836,7 +25836,7 @@ class ConnectionMonitorsOperations:
         :return: An instance of AsyncLROPoller that returns either ConnectionMonitorQueryResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ConnectionMonitorQueryResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ConnectionMonitorQueryResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -26038,7 +26038,7 @@ class ConnectionMonitorsOperations:
         :type connection_monitor_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConnectionMonitorResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ConnectionMonitorResult
+        :rtype: ~azure.mgmt.network.models.ConnectionMonitorResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -26103,7 +26103,7 @@ class ConnectionMonitorsOperations:
         :return: An iterator like instance of either ConnectionMonitorResult or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ConnectionMonitorResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ConnectionMonitorResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -26190,13 +26190,13 @@ class ConnectionMonitorsOperations:
         :type connection_monitor_name: str
         :param parameters: Parameters supplied to update connection monitor tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConnectionMonitorResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ConnectionMonitorResult
+        :rtype: ~azure.mgmt.network.models.ConnectionMonitorResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -26265,7 +26265,7 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`operations` attribute.
     
     """
@@ -26286,7 +26286,7 @@ class Operations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Operation or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.Operation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -26354,7 +26354,7 @@ class DdosProtectionPlansOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`ddos_protection_plans` attribute.
     
     """
@@ -26500,7 +26500,7 @@ class DdosProtectionPlansOperations:
         :type ddos_protection_plan_name: str
         :param parameters: Parameters supplied to the create or update operation. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.DdosProtectionPlan or IO
+        :type parameters: ~azure.mgmt.network.models.DdosProtectionPlan or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -26515,7 +26515,7 @@ class DdosProtectionPlansOperations:
         :return: An instance of AsyncLROPoller that returns either DdosProtectionPlan or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.DdosProtectionPlan]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.DdosProtectionPlan]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -26644,7 +26644,7 @@ class DdosProtectionPlansOperations:
         :type ddos_protection_plan_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DdosProtectionPlan or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.DdosProtectionPlan
+        :rtype: ~azure.mgmt.network.models.DdosProtectionPlan
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -26699,7 +26699,7 @@ class DdosProtectionPlansOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DdosProtectionPlan or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.DdosProtectionPlan]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.DdosProtectionPlan]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -26772,7 +26772,7 @@ class DdosProtectionPlansOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DdosProtectionPlan or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.DdosProtectionPlan]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.DdosProtectionPlan]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -26918,7 +26918,7 @@ class DdosProtectionPlansOperations:
         :type ddos_protection_plan_name: str
         :param parameters: Parameters supplied to the update DDoS protection plan resource tags. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -26933,7 +26933,7 @@ class DdosProtectionPlansOperations:
         :return: An instance of AsyncLROPoller that returns either DdosProtectionPlan or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.DdosProtectionPlan]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.DdosProtectionPlan]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -27001,13 +27001,13 @@ class DdosProtectionPlansOperations:
         :type ddos_protection_plan_name: str
         :param parameters: Parameters supplied to the update DDoS protection plan resource tags. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DdosProtectionPlan or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.DdosProtectionPlan
+        :rtype: ~azure.mgmt.network.models.DdosProtectionPlan
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -27074,7 +27074,7 @@ class ExpressRouteCircuitConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_circuit_connections` attribute.
     
     """
@@ -27229,7 +27229,7 @@ class ExpressRouteCircuitConnectionsOperations:
         :param express_route_circuit_connection_parameters: Parameters supplied to the create or update
          express route circuit connection operation. Is either a model type or a IO type. Required.
         :type express_route_circuit_connection_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitConnection or IO
+         ~azure.mgmt.network.models.ExpressRouteCircuitConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -27244,7 +27244,7 @@ class ExpressRouteCircuitConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCircuitConnection or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuitConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -27386,7 +27386,7 @@ class ExpressRouteCircuitConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCircuitConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitConnection
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCircuitConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -27456,7 +27456,7 @@ class ExpressRouteCircuitConnectionsOperations:
         :return: An iterator like instance of either ExpressRouteCircuitConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCircuitConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -27528,7 +27528,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_cross_connection_peerings` attribute.
     
     """
@@ -27677,7 +27677,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         :param peering_parameters: Parameters supplied to the create or update
          ExpressRouteCrossConnection peering operation. Is either a model type or a IO type. Required.
         :type peering_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnectionPeering or IO
+         ~azure.mgmt.network.models.ExpressRouteCrossConnectionPeering or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -27692,7 +27692,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCrossConnectionPeering
          or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnectionPeering]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCrossConnectionPeering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -27827,7 +27827,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         :type peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCrossConnectionPeering or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnectionPeering
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCrossConnectionPeering
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -27890,7 +27890,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         :return: An iterator like instance of either ExpressRouteCrossConnectionPeering or the result
          of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnectionPeering]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCrossConnectionPeering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -27961,7 +27961,7 @@ class ExpressRouteCrossConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_cross_connections` attribute.
     
     """
@@ -28279,7 +28279,7 @@ class ExpressRouteCrossConnectionsOperations:
         :type cross_connection_name: str
         :param parameters: Parameters supplied to the update express route crossConnection operation.
          Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnection or IO
+        :type parameters: ~azure.mgmt.network.models.ExpressRouteCrossConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -28294,7 +28294,7 @@ class ExpressRouteCrossConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCrossConnection or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCrossConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -28372,7 +28372,7 @@ class ExpressRouteCrossConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either
          ExpressRouteCircuitsArpTableListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitsArpTableListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuitsArpTableListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -28448,7 +28448,7 @@ class ExpressRouteCrossConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either
          ExpressRouteCircuitsRoutesTableListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCircuitsRoutesTableListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCircuitsRoutesTableListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -28524,7 +28524,7 @@ class ExpressRouteCrossConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either
          ExpressRouteCrossConnectionsRoutesTableSummaryListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -28595,7 +28595,7 @@ class ExpressRouteCrossConnectionsOperations:
         :type cross_connection_name: str
         :param cross_connection_parameters: Parameters supplied to update express route cross
          connection tags. Is either a model type or a IO type. Required.
-        :type cross_connection_parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type cross_connection_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -28610,7 +28610,7 @@ class ExpressRouteCrossConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteCrossConnection or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.ExpressRouteCrossConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteCrossConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -28673,7 +28673,7 @@ class ExpressRouteCrossConnectionsOperations:
         :type cross_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCrossConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnection
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCrossConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -28729,7 +28729,7 @@ class ExpressRouteCrossConnectionsOperations:
         :return: An iterator like instance of either ExpressRouteCrossConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCrossConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -28803,7 +28803,7 @@ class ExpressRouteCrossConnectionsOperations:
         :return: An iterator like instance of either ExpressRouteCrossConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteCrossConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -28885,13 +28885,13 @@ class ExpressRouteCrossConnectionsOperations:
         :type cross_connection_name: str
         :param cross_connection_parameters: Parameters supplied to update express route cross
          connection tags. Is either a model type or a IO type. Required.
-        :type cross_connection_parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type cross_connection_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteCrossConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteCrossConnection
+        :rtype: ~azure.mgmt.network.models.ExpressRouteCrossConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -28958,7 +28958,7 @@ class AzureFirewallsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`azure_firewalls` attribute.
     
     """
@@ -29100,7 +29100,7 @@ class AzureFirewallsOperations:
         :type azure_firewall_name: str
         :param parameters: Parameters supplied to the create or update Azure Firewall operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.AzureFirewall or IO
+        :type parameters: ~azure.mgmt.network.models.AzureFirewall or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -29115,7 +29115,7 @@ class AzureFirewallsOperations:
         :return: An instance of AsyncLROPoller that returns either AzureFirewall or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.AzureFirewall]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AzureFirewall]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -29242,7 +29242,7 @@ class AzureFirewallsOperations:
         :type azure_firewall_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureFirewall or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.AzureFirewall
+        :rtype: ~azure.mgmt.network.models.AzureFirewall
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -29299,7 +29299,7 @@ class AzureFirewallsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AzureFirewall or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AzureFirewall]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AzureFirewall]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -29369,7 +29369,7 @@ class AzureFirewallsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AzureFirewall or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AzureFirewall]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AzureFirewall]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -29450,13 +29450,13 @@ class AzureFirewallsOperations:
         :type azure_firewall_name: str
         :param parameters: Parameters supplied to update azure firewall tags. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_12_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureFirewall or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_12_01.models.AzureFirewall
+        :rtype: ~azure.mgmt.network.models.AzureFirewall
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -29601,7 +29601,7 @@ class AzureFirewallsOperations:
         :type azure_firewall_name: str
         :param parameters: Parameters supplied to update azure firewall tags. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -29616,7 +29616,7 @@ class AzureFirewallsOperations:
         :return: An instance of AsyncLROPoller that returns either AzureFirewall or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.AzureFirewall]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AzureFirewall]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -29742,7 +29742,7 @@ class AzureFirewallsOperations:
         :return: An instance of AsyncLROPoller that returns either IPPrefixesList or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.IPPrefixesList]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.IPPrefixesList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -29797,7 +29797,7 @@ class HubVirtualNetworkConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`hub_virtual_network_connections` attribute.
     
     """
@@ -29825,7 +29825,7 @@ class HubVirtualNetworkConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HubVirtualNetworkConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.HubVirtualNetworkConnection
+        :rtype: ~azure.mgmt.network.models.HubVirtualNetworkConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -29888,7 +29888,7 @@ class HubVirtualNetworkConnectionsOperations:
         :return: An iterator like instance of either HubVirtualNetworkConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.HubVirtualNetworkConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.HubVirtualNetworkConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -30091,7 +30091,7 @@ class HubVirtualNetworkConnectionsOperations:
         :param hub_virtual_network_connection_parameters: Parameters supplied to create or update a hub
          virtual network connection. Is either a model type or a IO type. Required.
         :type hub_virtual_network_connection_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.HubVirtualNetworkConnection or IO
+         ~azure.mgmt.network.models.HubVirtualNetworkConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -30106,7 +30106,7 @@ class HubVirtualNetworkConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either HubVirtualNetworkConnection or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.HubVirtualNetworkConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.HubVirtualNetworkConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -30237,7 +30237,7 @@ class VirtualHubsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_hubs` attribute.
     
     """
@@ -30447,7 +30447,7 @@ class VirtualHubsOperations:
         :type virtual_hub_name: str
         :param virtual_hub_parameters: Parameters supplied to create or update VirtualHub. Is either a
          model type or a IO type. Required.
-        :type virtual_hub_parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualHub or IO
+        :type virtual_hub_parameters: ~azure.mgmt.network.models.VirtualHub or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -30461,7 +30461,7 @@ class VirtualHubsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualHub or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualHub]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualHub]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -30597,7 +30597,7 @@ class VirtualHubsOperations:
         :type virtual_hub_name: str
         :param virtual_hub_parameters: Parameters supplied to update VirtualHub tags. Is either a model
          type or a IO type. Required.
-        :type virtual_hub_parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type virtual_hub_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -30611,7 +30611,7 @@ class VirtualHubsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualHub or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.VirtualHub]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualHub]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -30670,7 +30670,7 @@ class VirtualHubsOperations:
         :type virtual_hub_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualHub or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualHub
+        :rtype: ~azure.mgmt.network.models.VirtualHub
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -30725,7 +30725,7 @@ class VirtualHubsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualHub or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualHub]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualHub]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -30796,7 +30796,7 @@ class VirtualHubsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualHub or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualHub]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualHub]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -30878,13 +30878,13 @@ class VirtualHubsOperations:
         :type virtual_hub_name: str
         :param virtual_hub_parameters: Parameters supplied to update VirtualHub tags. Is either a model
          type or a IO type. Required.
-        :type virtual_hub_parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type virtual_hub_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualHub or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualHub
+        :rtype: ~azure.mgmt.network.models.VirtualHub
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -31027,7 +31027,7 @@ class VirtualHubsOperations:
         :param effective_routes_parameters: Parameters supplied to get the effective routes for a
          specific resource. Is either a model type or a IO type. Default value is None.
         :type effective_routes_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.EffectiveRoutesParameters or IO
+         ~azure.mgmt.network.models.EffectiveRoutesParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -31229,7 +31229,7 @@ class VirtualHubsOperations:
         :param get_inbound_routes_parameters: Parameters supplied to get the inbound routes for a
          connection resource. Is either a model type or a IO type. Required.
         :type get_inbound_routes_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.GetInboundRoutesParameters or IO
+         ~azure.mgmt.network.models.GetInboundRoutesParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -31311,7 +31311,7 @@ class VirtualHubsOperations:
         :param get_outbound_routes_parameters: Parameters supplied to get the outbound routes for a
          connection resource. Is either a model type or a IO type. Required.
         :type get_outbound_routes_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.GetOutboundRoutesParameters or IO
+         ~azure.mgmt.network.models.GetOutboundRoutesParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -31380,7 +31380,7 @@ class VirtualWANsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2018_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_wans` attribute.
     
     """
@@ -31593,7 +31593,7 @@ class VirtualWANsOperations:
         :type virtual_wan_name: str
         :param wan_parameters: Parameters supplied to create or update VirtualWAN. Is either a model
          type or a IO type. Required.
-        :type wan_parameters: ~azure.mgmt.network.v2018_07_01.models.VirtualWAN or IO
+        :type wan_parameters: ~azure.mgmt.network.models.VirtualWAN or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -31607,7 +31607,7 @@ class VirtualWANsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualWAN or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2018_07_01.models.VirtualWAN]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualWAN]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -31735,7 +31735,7 @@ class VirtualWANsOperations:
         :type virtual_wan_name: str
         :param wan_parameters: Parameters supplied to Update VirtualWAN tags. Is either a model type or
          a IO type. Required.
-        :type wan_parameters: ~azure.mgmt.network.v2018_07_01.models.TagsObject or IO
+        :type wan_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -31749,7 +31749,7 @@ class VirtualWANsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualWAN or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2018_07_01.models.VirtualWAN]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualWAN]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -31808,7 +31808,7 @@ class VirtualWANsOperations:
         :type virtual_wan_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualWAN or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2018_07_01.models.VirtualWAN
+        :rtype: ~azure.mgmt.network.models.VirtualWAN
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -31864,7 +31864,7 @@ class VirtualWANsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualWAN or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_07_01.models.VirtualWAN]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualWAN]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -31936,7 +31936,7 @@ class VirtualWANsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualWAN or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2018_07_01.models.VirtualWAN]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualWAN]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -32007,7 +32007,7 @@ class VpnConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vpn_connections` attribute.
     
     """
@@ -32156,7 +32156,7 @@ class VpnConnectionsOperations:
         :type connection_name: str
         :param vpn_connection_parameters: Parameters supplied to create or Update a VPN Connection. Is
          either a model type or a IO type. Required.
-        :type vpn_connection_parameters: ~azure.mgmt.network.v2022_07_01.models.VpnConnection or IO
+        :type vpn_connection_parameters: ~azure.mgmt.network.models.VpnConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -32171,7 +32171,7 @@ class VpnConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either VpnConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -32306,7 +32306,7 @@ class VpnConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnConnection
+        :rtype: ~azure.mgmt.network.models.VpnConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -32368,7 +32368,7 @@ class VpnConnectionsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VpnConnection or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -32597,7 +32597,7 @@ class VpnConnectionsOperations:
         :param parameters: Vpn Connection packet capture parameters supplied to start packet capture on
          gateway connection. Is either a model type or a IO type. Default value is None.
         :type parameters:
-         ~azure.mgmt.network.v2022_07_01.models.VpnConnectionPacketCaptureStartParameters or IO
+         ~azure.mgmt.network.models.VpnConnectionPacketCaptureStartParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -32685,7 +32685,7 @@ class VpnConnectionsOperations:
         :param parameters: Vpn Connection packet capture parameters supplied to stop packet capture on
          gateway connection. Is either a model type or a IO type. Default value is None.
         :type parameters:
-         ~azure.mgmt.network.v2022_07_01.models.VpnConnectionPacketCaptureStopParameters or IO
+         ~azure.mgmt.network.models.VpnConnectionPacketCaptureStopParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -32757,7 +32757,7 @@ class VpnGatewaysOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vpn_gateways` attribute.
     
     """
@@ -32965,7 +32965,7 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :param vpn_gateway_parameters: Parameters supplied to create or Update a virtual wan vpn
          gateway. Is either a model type or a IO type. Required.
-        :type vpn_gateway_parameters: ~azure.mgmt.network.v2022_07_01.models.VpnGateway or IO
+        :type vpn_gateway_parameters: ~azure.mgmt.network.models.VpnGateway or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -32979,7 +32979,7 @@ class VpnGatewaysOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnGateway or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnGateway]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -33113,7 +33113,7 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :param vpn_gateway_parameters: Parameters supplied to update a virtual wan vpn gateway tags. Is
          either a model type or a IO type. Required.
-        :type vpn_gateway_parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type vpn_gateway_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -33127,7 +33127,7 @@ class VpnGatewaysOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnGateway or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnGateway]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -33189,7 +33189,7 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnGateway
+        :rtype: ~azure.mgmt.network.models.VpnGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -33244,7 +33244,7 @@ class VpnGatewaysOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VpnGateway or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -33315,7 +33315,7 @@ class VpnGatewaysOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VpnGateway or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -33451,7 +33451,7 @@ class VpnGatewaysOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnGateway or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnGateway]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -33518,13 +33518,13 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :param vpn_gateway_parameters: Parameters supplied to update a virtual wan vpn gateway tags. Is
          either a model type or a IO type. Required.
-        :type vpn_gateway_parameters: ~azure.mgmt.network.v2020_05_01.models.TagsObject or IO
+        :type vpn_gateway_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2020_05_01.models.VpnGateway
+        :rtype: ~azure.mgmt.network.models.VpnGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -33741,7 +33741,7 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :param parameters: Vpn gateway packet capture parameters supplied to start packet capture on
          vpn gateway. Is either a model type or a IO type. Default value is None.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VpnGatewayPacketCaptureStartParameters
+        :type parameters: ~azure.mgmt.network.models.VpnGatewayPacketCaptureStartParameters
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -33825,7 +33825,7 @@ class VpnGatewaysOperations:
         :type gateway_name: str
         :param parameters: Vpn gateway packet capture parameters supplied to stop packet capture on vpn
          gateway. Is either a model type or a IO type. Default value is None.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VpnGatewayPacketCaptureStopParameters
+        :type parameters: ~azure.mgmt.network.models.VpnGatewayPacketCaptureStopParameters
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -33897,7 +33897,7 @@ class VpnSitesConfigurationOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vpn_sites_configuration` attribute.
     
     """
@@ -33988,7 +33988,7 @@ class VpnSitesConfigurationOperations:
         :type virtual_wan_name: str
         :param request: Parameters supplied to download vpn-sites configuration. Is either a model type
          or a IO type. Required.
-        :type request: ~azure.mgmt.network.v2022_07_01.models.GetVpnSitesConfigurationRequest or IO
+        :type request: ~azure.mgmt.network.models.GetVpnSitesConfigurationRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -34057,7 +34057,7 @@ class VpnSitesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vpn_sites` attribute.
     
     """
@@ -34267,7 +34267,7 @@ class VpnSitesOperations:
         :type vpn_site_name: str
         :param vpn_site_parameters: Parameters supplied to create or update VpnSite. Is either a model
          type or a IO type. Required.
-        :type vpn_site_parameters: ~azure.mgmt.network.v2022_07_01.models.VpnSite or IO
+        :type vpn_site_parameters: ~azure.mgmt.network.models.VpnSite or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -34281,7 +34281,7 @@ class VpnSitesOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnSite or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnSite]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnSite]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -34415,7 +34415,7 @@ class VpnSitesOperations:
         :type vpn_site_name: str
         :param vpn_site_parameters: Parameters supplied to update VpnSite tags. Is either a model type
          or a IO type. Required.
-        :type vpn_site_parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type vpn_site_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -34429,7 +34429,7 @@ class VpnSitesOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VpnSite or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.VpnSite]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnSite]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -34488,7 +34488,7 @@ class VpnSitesOperations:
         :type vpn_site_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnSite or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnSite
+        :rtype: ~azure.mgmt.network.models.VpnSite
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -34542,7 +34542,7 @@ class VpnSitesOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VpnSite or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnSite]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnSite]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -34612,7 +34612,7 @@ class VpnSitesOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VpnSite or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnSite]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnSite]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -34694,13 +34694,13 @@ class VpnSitesOperations:
         :type vpn_site_name: str
         :param vpn_site_parameters: Parameters supplied to update VpnSite tags. Is either a model type
          or a IO type. Required.
-        :type vpn_site_parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type vpn_site_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnSite or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnSite
+        :rtype: ~azure.mgmt.network.models.VpnSite
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -34767,7 +34767,7 @@ class PublicIPPrefixesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`public_ip_prefixes` attribute.
     
     """
@@ -34973,7 +34973,7 @@ class PublicIPPrefixesOperations:
         :type public_ip_prefix_name: str
         :param parameters: Parameters supplied to the create or update public IP prefix operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.PublicIPPrefix or IO
+        :type parameters: ~azure.mgmt.network.models.PublicIPPrefix or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -34988,7 +34988,7 @@ class PublicIPPrefixesOperations:
         :return: An instance of AsyncLROPoller that returns either PublicIPPrefix or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PublicIPPrefix]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPPrefix]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -35123,7 +35123,7 @@ class PublicIPPrefixesOperations:
         :type public_ip_prefix_name: str
         :param parameters: Parameters supplied to update public IP prefix tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -35138,7 +35138,7 @@ class PublicIPPrefixesOperations:
         :return: An instance of AsyncLROPoller that returns either PublicIPPrefix or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.PublicIPPrefix]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPPrefix]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -35201,7 +35201,7 @@ class PublicIPPrefixesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPPrefix or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PublicIPPrefix
+        :rtype: ~azure.mgmt.network.models.PublicIPPrefix
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -35259,7 +35259,7 @@ class PublicIPPrefixesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPPrefix or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PublicIPPrefix]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PublicIPPrefix]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -35329,7 +35329,7 @@ class PublicIPPrefixesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PublicIPPrefix or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PublicIPPrefix]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PublicIPPrefix]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -35410,13 +35410,13 @@ class PublicIPPrefixesOperations:
         :type public_ip_prefix_name: str
         :param parameters: Parameters supplied to update public IP prefix tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPPrefix or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PublicIPPrefix
+        :rtype: ~azure.mgmt.network.models.PublicIPPrefix
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -35483,7 +35483,7 @@ class ServiceEndpointPoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`service_endpoint_policies` attribute.
     
     """
@@ -35689,7 +35689,7 @@ class ServiceEndpointPoliciesOperations:
         :type service_endpoint_policy_name: str
         :param parameters: Parameters supplied to the create or update service endpoint policy
          operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicy or IO
+        :type parameters: ~azure.mgmt.network.models.ServiceEndpointPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -35704,7 +35704,7 @@ class ServiceEndpointPoliciesOperations:
         :return: An instance of AsyncLROPoller that returns either ServiceEndpointPolicy or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicy]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ServiceEndpointPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -35840,7 +35840,7 @@ class ServiceEndpointPoliciesOperations:
         :type service_endpoint_policy_name: str
         :param parameters: Parameters supplied to update service endpoint policy tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -35855,7 +35855,7 @@ class ServiceEndpointPoliciesOperations:
         :return: An instance of AsyncLROPoller that returns either ServiceEndpointPolicy or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.ServiceEndpointPolicy]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ServiceEndpointPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -35918,7 +35918,7 @@ class ServiceEndpointPoliciesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceEndpointPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicy
+        :rtype: ~azure.mgmt.network.models.ServiceEndpointPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -35975,7 +35975,7 @@ class ServiceEndpointPoliciesOperations:
         :return: An iterator like instance of either ServiceEndpointPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicy]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ServiceEndpointPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -36049,7 +36049,7 @@ class ServiceEndpointPoliciesOperations:
         :return: An iterator like instance of either ServiceEndpointPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicy]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ServiceEndpointPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -36131,13 +36131,13 @@ class ServiceEndpointPoliciesOperations:
         :type service_endpoint_policy_name: str
         :param parameters: Parameters supplied to update service endpoint policy tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceEndpointPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicy
+        :rtype: ~azure.mgmt.network.models.ServiceEndpointPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -36204,7 +36204,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`service_endpoint_policy_definitions` attribute.
     
     """
@@ -36359,7 +36359,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         :param service_endpoint_policy_definitions: Parameters supplied to the create or update service
          endpoint policy operation. Is either a model type or a IO type. Required.
         :type service_endpoint_policy_definitions:
-         ~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicyDefinition or IO
+         ~azure.mgmt.network.models.ServiceEndpointPolicyDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -36374,7 +36374,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         :return: An instance of AsyncLROPoller that returns either ServiceEndpointPolicyDefinition or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicyDefinition]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ServiceEndpointPolicyDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -36519,7 +36519,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         :type service_endpoint_policy_definition_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceEndpointPolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicyDefinition
+        :rtype: ~azure.mgmt.network.models.ServiceEndpointPolicyDefinition
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -36582,7 +36582,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         :return: An iterator like instance of either ServiceEndpointPolicyDefinition or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ServiceEndpointPolicyDefinition]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ServiceEndpointPolicyDefinition]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -36653,7 +36653,7 @@ class AvailableDelegationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`available_delegations` attribute.
     
     """
@@ -36676,7 +36676,7 @@ class AvailableDelegationsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AvailableDelegation or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AvailableDelegation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AvailableDelegation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -36746,7 +36746,7 @@ class AvailableResourceGroupDelegationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`available_resource_group_delegations` attribute.
     
     """
@@ -36773,7 +36773,7 @@ class AvailableResourceGroupDelegationsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AvailableDelegation or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AvailableDelegation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AvailableDelegation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -36844,7 +36844,7 @@ class AzureFirewallFqdnTagsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`azure_firewall_fqdn_tags` attribute.
     
     """
@@ -36866,7 +36866,7 @@ class AzureFirewallFqdnTagsOperations:
         :return: An iterator like instance of either AzureFirewallFqdnTag or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AzureFirewallFqdnTag]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AzureFirewallFqdnTag]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -36935,7 +36935,7 @@ class ExpressRouteConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_connections` attribute.
     
     """
@@ -37084,7 +37084,7 @@ class ExpressRouteConnectionsOperations:
         :param put_express_route_connection_parameters: Parameters required in an
          ExpressRouteConnection PUT operation. Is either a model type or a IO type. Required.
         :type put_express_route_connection_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.ExpressRouteConnection or IO
+         ~azure.mgmt.network.models.ExpressRouteConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -37099,7 +37099,7 @@ class ExpressRouteConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteConnection or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -37234,7 +37234,7 @@ class ExpressRouteConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteConnection
+        :rtype: ~azure.mgmt.network.models.ExpressRouteConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -37295,7 +37295,7 @@ class ExpressRouteConnectionsOperations:
         :type express_route_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteConnectionList or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteConnectionList
+        :rtype: ~azure.mgmt.network.models.ExpressRouteConnectionList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -37350,7 +37350,7 @@ class ExpressRouteGatewaysOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_gateways` attribute.
     
     """
@@ -37493,7 +37493,7 @@ class ExpressRouteGatewaysOperations:
         :param put_express_route_gateway_parameters: Parameters required in an ExpressRoute gateway PUT
          operation. Is either a model type or a IO type. Required.
         :type put_express_route_gateway_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.ExpressRouteGateway or IO
+         ~azure.mgmt.network.models.ExpressRouteGateway or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -37508,7 +37508,7 @@ class ExpressRouteGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -37638,7 +37638,7 @@ class ExpressRouteGatewaysOperations:
         :type express_route_gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteGateway
+        :rtype: ~azure.mgmt.network.models.ExpressRouteGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -37694,7 +37694,7 @@ class ExpressRouteGatewaysOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteGatewayList or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteGatewayList
+        :rtype: ~azure.mgmt.network.models.ExpressRouteGatewayList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -37747,7 +37747,7 @@ class ExpressRouteGatewaysOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteGatewayList or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteGatewayList
+        :rtype: ~azure.mgmt.network.models.ExpressRouteGatewayList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -37878,7 +37878,7 @@ class ExpressRouteGatewaysOperations:
         :type express_route_gateway_name: str
         :param express_route_gateway_parameters: Parameters supplied to update a virtual wan express
          route gateway tags. Is either a model type or a IO type. Required.
-        :type express_route_gateway_parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type express_route_gateway_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -37893,7 +37893,7 @@ class ExpressRouteGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRouteGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRouteGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRouteGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -37952,7 +37952,7 @@ class ExpressRouteLinksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_links` attribute.
     
     """
@@ -37980,7 +37980,7 @@ class ExpressRouteLinksOperations:
         :type link_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteLink or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteLink
+        :rtype: ~azure.mgmt.network.models.ExpressRouteLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -38042,7 +38042,7 @@ class ExpressRouteLinksOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRouteLink or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRouteLink]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRouteLink]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -38113,7 +38113,7 @@ class ExpressRoutePortsLocationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_ports_locations` attribute.
     
     """
@@ -38136,7 +38136,7 @@ class ExpressRoutePortsLocationsOperations:
         :type location_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRoutePortsLocation or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRoutePortsLocation
+        :rtype: ~azure.mgmt.network.models.ExpressRoutePortsLocation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -38193,7 +38193,7 @@ class ExpressRoutePortsLocationsOperations:
         :return: An iterator like instance of either ExpressRoutePortsLocation or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRoutePortsLocation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRoutePortsLocation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -38262,7 +38262,7 @@ class ExpressRoutePortsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_ports` attribute.
     
     """
@@ -38468,7 +38468,7 @@ class ExpressRoutePortsOperations:
         :type express_route_port_name: str
         :param parameters: Parameters supplied to the create ExpressRoutePort operation. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ExpressRoutePort or IO
+        :type parameters: ~azure.mgmt.network.models.ExpressRoutePort or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -38483,7 +38483,7 @@ class ExpressRoutePortsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRoutePort or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRoutePort]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRoutePort]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -38619,7 +38619,7 @@ class ExpressRoutePortsOperations:
         :type express_route_port_name: str
         :param parameters: Parameters supplied to update ExpressRoutePort resource tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -38634,7 +38634,7 @@ class ExpressRoutePortsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRoutePort or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.ExpressRoutePort]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRoutePort]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -38695,7 +38695,7 @@ class ExpressRoutePortsOperations:
         :type express_route_port_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRoutePort or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRoutePort
+        :rtype: ~azure.mgmt.network.models.ExpressRoutePort
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -38750,7 +38750,7 @@ class ExpressRoutePortsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRoutePort or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRoutePort]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRoutePort]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -38823,7 +38823,7 @@ class ExpressRoutePortsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ExpressRoutePort or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRoutePort]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRoutePort]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -38905,13 +38905,13 @@ class ExpressRoutePortsOperations:
         :type express_route_port_name: str
         :param parameters: Parameters supplied to update ExpressRoutePort resource tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRoutePort or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRoutePort
+        :rtype: ~azure.mgmt.network.models.ExpressRoutePort
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -38990,13 +38990,13 @@ class ExpressRoutePortsOperations:
         :type express_route_port_name: str
         :param request: Request parameters supplied to generate a letter of authorization. Is either a
          model type or a IO type. Required.
-        :type request: ~azure.mgmt.network.v2022_07_01.models.GenerateExpressRoutePortsLOARequest or IO
+        :type request: ~azure.mgmt.network.models.GenerateExpressRoutePortsLOARequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GenerateExpressRoutePortsLOAResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.GenerateExpressRoutePortsLOAResult
+        :rtype: ~azure.mgmt.network.models.GenerateExpressRoutePortsLOAResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -39063,7 +39063,7 @@ class InterfaceEndpointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2019_02_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`interface_endpoints` attribute.
     
     """
@@ -39205,7 +39205,7 @@ class InterfaceEndpointsOperations:
         :type interface_endpoint_name: str
         :param parameters: Parameters supplied to the create or update interface endpoint operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_02_01.models.InterfaceEndpoint or IO
+        :type parameters: ~azure.mgmt.network.models.InterfaceEndpoint or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -39220,7 +39220,7 @@ class InterfaceEndpointsOperations:
         :return: An instance of AsyncLROPoller that returns either InterfaceEndpoint or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_02_01.models.InterfaceEndpoint]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.InterfaceEndpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -39351,7 +39351,7 @@ class InterfaceEndpointsOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: InterfaceEndpoint or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_02_01.models.InterfaceEndpoint
+        :rtype: ~azure.mgmt.network.models.InterfaceEndpoint
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -39409,7 +39409,7 @@ class InterfaceEndpointsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either InterfaceEndpoint or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_02_01.models.InterfaceEndpoint]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.InterfaceEndpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -39479,7 +39479,7 @@ class InterfaceEndpointsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either InterfaceEndpoint or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_02_01.models.InterfaceEndpoint]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.InterfaceEndpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -39548,7 +39548,7 @@ class LoadBalancerOutboundRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`load_balancer_outbound_rules` attribute.
     
     """
@@ -39576,7 +39576,7 @@ class LoadBalancerOutboundRulesOperations:
         :type outbound_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OutboundRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.OutboundRule
+        :rtype: ~azure.mgmt.network.models.OutboundRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -39638,7 +39638,7 @@ class LoadBalancerOutboundRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OutboundRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.OutboundRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.OutboundRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -39709,7 +39709,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_interface_tap_configurations` attribute.
     
     """
@@ -39858,7 +39858,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         :param tap_configuration_parameters: Parameters supplied to the create or update tap
          configuration operation. Is either a model type or a IO type. Required.
         :type tap_configuration_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.NetworkInterfaceTapConfiguration or IO
+         ~azure.mgmt.network.models.NetworkInterfaceTapConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -39873,7 +39873,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         :return: An instance of AsyncLROPoller that returns either NetworkInterfaceTapConfiguration or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.NetworkInterfaceTapConfiguration]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkInterfaceTapConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -40008,7 +40008,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         :type tap_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterfaceTapConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkInterfaceTapConfiguration
+        :rtype: ~azure.mgmt.network.models.NetworkInterfaceTapConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -40071,7 +40071,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         :return: An iterator like instance of either NetworkInterfaceTapConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkInterfaceTapConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkInterfaceTapConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -40142,7 +40142,7 @@ class NetworkProfilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_profiles` attribute.
     
     """
@@ -40281,13 +40281,13 @@ class NetworkProfilesOperations:
         :type network_profile_name: str
         :param parameters: Parameters supplied to the create or update network profile operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkProfile or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkProfile or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkProfile or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkProfile
+        :rtype: ~azure.mgmt.network.models.NetworkProfile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -40365,7 +40365,7 @@ class NetworkProfilesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkProfile or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkProfile
+        :rtype: ~azure.mgmt.network.models.NetworkProfile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -40423,7 +40423,7 @@ class NetworkProfilesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkProfile or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkProfile]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkProfile]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -40493,7 +40493,7 @@ class NetworkProfilesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkProfile or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkProfile]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkProfile]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -40571,13 +40571,13 @@ class NetworkProfilesOperations:
         :type network_profile_name: str
         :param parameters: Parameters supplied to update network profile tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkProfile or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkProfile
+        :rtype: ~azure.mgmt.network.models.NetworkProfile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -40644,7 +40644,7 @@ class P2SVpnGatewaysOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`p2_svpn_gateways` attribute.
     
     """
@@ -40918,7 +40918,7 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :param p2_s_vpn_gateway_parameters: Parameters supplied to create or Update a virtual wan p2s
          vpn gateway. Is either a model type or a IO type. Required.
-        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.v2022_07_01.models.P2SVpnGateway or IO
+        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.models.P2SVpnGateway or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -40933,7 +40933,7 @@ class P2SVpnGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either P2SVpnGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.P2SVpnGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.P2SVpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -41064,7 +41064,7 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :param parameters: Parameters supplied to the generate P2SVpnGateway VPN client package
          operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.P2SVpnProfileParameters or IO
+        :type parameters: ~azure.mgmt.network.models.P2SVpnProfileParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -41079,7 +41079,7 @@ class P2SVpnGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either VpnProfileResponse or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnProfileResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnProfileResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -41149,7 +41149,7 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :param p2_s_vpn_gateway_parameters: Parameters supplied to update a virtual wan p2s vpn gateway
          tags. Is either a model type or a IO type. Required.
-        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -41164,7 +41164,7 @@ class P2SVpnGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either P2SVpnGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.P2SVpnGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.P2SVpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -41226,7 +41226,7 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: P2SVpnGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.P2SVpnGateway
+        :rtype: ~azure.mgmt.network.models.P2SVpnGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -41281,7 +41281,7 @@ class P2SVpnGatewaysOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either P2SVpnGateway or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.P2SVpnGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.P2SVpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -41352,7 +41352,7 @@ class P2SVpnGatewaysOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either P2SVpnGateway or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.P2SVpnGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.P2SVpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -41490,7 +41490,7 @@ class P2SVpnGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either P2SVpnGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.P2SVpnGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.P2SVpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -41624,7 +41624,7 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :param request: Request parameters supplied to get p2s vpn connections detailed health. Is
          either a model type or a IO type. Required.
-        :type request: ~azure.mgmt.network.v2022_07_01.models.P2SVpnConnectionHealthRequest or IO
+        :type request: ~azure.mgmt.network.models.P2SVpnConnectionHealthRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -41639,7 +41639,7 @@ class P2SVpnGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either P2SVpnConnectionHealth or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.P2SVpnConnectionHealth]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.P2SVpnConnectionHealth]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -41709,13 +41709,13 @@ class P2SVpnGatewaysOperations:
         :type gateway_name: str
         :param p2_s_vpn_gateway_parameters: Parameters supplied to update a virtual wan p2s vpn gateway
          tags. Is either a model type or a IO type. Required.
-        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.v2020_05_01.models.TagsObject or IO
+        :type p2_s_vpn_gateway_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: P2SVpnGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2020_05_01.models.P2SVpnGateway
+        :rtype: ~azure.mgmt.network.models.P2SVpnGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -41855,7 +41855,7 @@ class P2SVpnGatewaysOperations:
         :type p2_s_vpn_gateway_name: str
         :param request: The parameters are supplied to disconnect p2s vpn connections. Is either a
          model type or a IO type. Required.
-        :type request: ~azure.mgmt.network.v2022_07_01.models.P2SVpnConnectionRequest or IO
+        :type request: ~azure.mgmt.network.models.P2SVpnConnectionRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -41991,7 +41991,7 @@ class P2SVpnGatewaysOperations:
         :return: An instance of AsyncLROPoller that returns either P2SVpnGateway or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.P2SVpnGateway]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.P2SVpnGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -42046,7 +42046,7 @@ class P2SVpnServerConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2019_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`p2_svpn_server_configurations` attribute.
     
     """
@@ -42198,7 +42198,7 @@ class P2SVpnServerConfigurationsOperations:
         :param p2_s_vpn_server_configuration_parameters: Parameters supplied to create or Update a
          P2SVpnServerConfiguration. Is either a model type or a IO type. Required.
         :type p2_s_vpn_server_configuration_parameters:
-         ~azure.mgmt.network.v2019_07_01.models.P2SVpnServerConfiguration or IO
+         ~azure.mgmt.network.models.P2SVpnServerConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -42213,7 +42213,7 @@ class P2SVpnServerConfigurationsOperations:
         :return: An instance of AsyncLROPoller that returns either P2SVpnServerConfiguration or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_07_01.models.P2SVpnServerConfiguration]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.P2SVpnServerConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -42348,7 +42348,7 @@ class P2SVpnServerConfigurationsOperations:
         :type p2_s_vpn_server_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: P2SVpnServerConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_07_01.models.P2SVpnServerConfiguration
+        :rtype: ~azure.mgmt.network.models.P2SVpnServerConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -42412,7 +42412,7 @@ class P2SVpnServerConfigurationsOperations:
         :return: An iterator like instance of either P2SVpnServerConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2019_07_01.models.P2SVpnServerConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.P2SVpnServerConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -42484,7 +42484,7 @@ class VirtualNetworkTapsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_network_taps` attribute.
     
     """
@@ -42678,7 +42678,7 @@ class VirtualNetworkTapsOperations:
         :type tap_name: str
         :param parameters: Parameters supplied to the create or update virtual network tap operation.
          Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkTap or IO
+        :type parameters: ~azure.mgmt.network.models.VirtualNetworkTap or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -42693,7 +42693,7 @@ class VirtualNetworkTapsOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkTap or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkTap]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkTap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -42823,7 +42823,7 @@ class VirtualNetworkTapsOperations:
         :type tap_name: str
         :param tap_parameters: Parameters supplied to update VirtualNetworkTap tags. Is either a model
          type or a IO type. Required.
-        :type tap_parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type tap_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -42838,7 +42838,7 @@ class VirtualNetworkTapsOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkTap or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.VirtualNetworkTap]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkTap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -42897,7 +42897,7 @@ class VirtualNetworkTapsOperations:
         :type tap_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkTap or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkTap
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkTap
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -42952,7 +42952,7 @@ class VirtualNetworkTapsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetworkTap or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkTap]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkTap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -43025,7 +43025,7 @@ class VirtualNetworkTapsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualNetworkTap or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkTap]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkTap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -43103,13 +43103,13 @@ class VirtualNetworkTapsOperations:
         :type tap_name: str
         :param tap_parameters: Parameters supplied to update VirtualNetworkTap tags. Is either a model
          type or a IO type. Required.
-        :type tap_parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type tap_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkTap or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkTap
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkTap
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -43176,7 +43176,7 @@ class VirtualWansOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_wans` attribute.
     
     """
@@ -43386,7 +43386,7 @@ class VirtualWansOperations:
         :type virtual_wan_name: str
         :param wan_parameters: Parameters supplied to create or update VirtualWAN. Is either a model
          type or a IO type. Required.
-        :type wan_parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualWAN or IO
+        :type wan_parameters: ~azure.mgmt.network.models.VirtualWAN or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -43400,7 +43400,7 @@ class VirtualWansOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualWAN or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualWAN]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualWAN]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -43536,7 +43536,7 @@ class VirtualWansOperations:
         :type virtual_wan_name: str
         :param wan_parameters: Parameters supplied to Update VirtualWAN tags. Is either a model type or
          a IO type. Required.
-        :type wan_parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type wan_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -43550,7 +43550,7 @@ class VirtualWansOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either VirtualWAN or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.VirtualWAN]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualWAN]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -43609,7 +43609,7 @@ class VirtualWansOperations:
         :type virtual_wan_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualWAN or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualWAN
+        :rtype: ~azure.mgmt.network.models.VirtualWAN
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -43664,7 +43664,7 @@ class VirtualWansOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualWAN or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualWAN]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualWAN]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -43735,7 +43735,7 @@ class VirtualWansOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualWAN or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualWAN]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualWAN]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -43817,13 +43817,13 @@ class VirtualWansOperations:
         :type virtual_wan_name: str
         :param wan_parameters: Parameters supplied to Update VirtualWAN tags. Is either a model type or
          a IO type. Required.
-        :type wan_parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type wan_parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualWAN or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualWAN
+        :rtype: ~azure.mgmt.network.models.VirtualWAN
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -43890,7 +43890,7 @@ class DdosCustomPoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`ddos_custom_policies` attribute.
     
     """
@@ -44096,7 +44096,7 @@ class DdosCustomPoliciesOperations:
         :type ddos_custom_policy_name: str
         :param parameters: Parameters supplied to the create or update operation. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.DdosCustomPolicy or IO
+        :type parameters: ~azure.mgmt.network.models.DdosCustomPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -44111,7 +44111,7 @@ class DdosCustomPoliciesOperations:
         :return: An instance of AsyncLROPoller that returns either DdosCustomPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.DdosCustomPolicy]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.DdosCustomPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -44247,7 +44247,7 @@ class DdosCustomPoliciesOperations:
         :type ddos_custom_policy_name: str
         :param parameters: Parameters supplied to the update DDoS custom policy resource tags. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -44262,7 +44262,7 @@ class DdosCustomPoliciesOperations:
         :return: An instance of AsyncLROPoller that returns either DdosCustomPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.DdosCustomPolicy]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.DdosCustomPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -44323,7 +44323,7 @@ class DdosCustomPoliciesOperations:
         :type ddos_custom_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DdosCustomPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.DdosCustomPolicy
+        :rtype: ~azure.mgmt.network.models.DdosCustomPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -44390,13 +44390,13 @@ class DdosCustomPoliciesOperations:
         :type ddos_custom_policy_name: str
         :param parameters: Parameters supplied to update DDoS custom policy resource tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DdosCustomPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.DdosCustomPolicy
+        :rtype: ~azure.mgmt.network.models.DdosCustomPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -44463,7 +44463,7 @@ class PeerExpressRouteCircuitConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`peer_express_route_circuit_connections` attribute.
     
     """
@@ -44494,7 +44494,7 @@ class PeerExpressRouteCircuitConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PeerExpressRouteCircuitConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PeerExpressRouteCircuitConnection
+        :rtype: ~azure.mgmt.network.models.PeerExpressRouteCircuitConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -44561,7 +44561,7 @@ class PeerExpressRouteCircuitConnectionsOperations:
         :return: An iterator like instance of either PeerExpressRouteCircuitConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PeerExpressRouteCircuitConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PeerExpressRouteCircuitConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -44633,7 +44633,7 @@ class WebApplicationFirewallPoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`web_application_firewall_policies` attribute.
     
     """
@@ -44769,13 +44769,13 @@ class WebApplicationFirewallPoliciesOperations:
         :param policy_name: The name of the policy. Required.
         :type policy_name: str
         :param parameters: Policy to be created. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.WebApplicationFirewallPolicy or IO
+        :type parameters: ~azure.mgmt.network.models.WebApplicationFirewallPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WebApplicationFirewallPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.WebApplicationFirewallPolicy
+        :rtype: ~azure.mgmt.network.models.WebApplicationFirewallPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -44851,7 +44851,7 @@ class WebApplicationFirewallPoliciesOperations:
         :type policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WebApplicationFirewallPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.WebApplicationFirewallPolicy
+        :rtype: ~azure.mgmt.network.models.WebApplicationFirewallPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -44909,7 +44909,7 @@ class WebApplicationFirewallPoliciesOperations:
         :return: An iterator like instance of either WebApplicationFirewallPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.WebApplicationFirewallPolicy]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.WebApplicationFirewallPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -44980,7 +44980,7 @@ class WebApplicationFirewallPoliciesOperations:
         :return: An iterator like instance of either WebApplicationFirewallPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.WebApplicationFirewallPolicy]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.WebApplicationFirewallPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -45049,7 +45049,7 @@ class NatGatewaysOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nat_gateways` attribute.
     
     """
@@ -45184,7 +45184,7 @@ class NatGatewaysOperations:
         :type nat_gateway_name: str
         :param parameters: Parameters supplied to the create or update nat gateway operation. Is either
          a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NatGateway or IO
+        :type parameters: ~azure.mgmt.network.models.NatGateway or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -45198,7 +45198,7 @@ class NatGatewaysOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either NatGateway or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.NatGateway]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NatGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -45329,7 +45329,7 @@ class NatGatewaysOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NatGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NatGateway
+        :rtype: ~azure.mgmt.network.models.NatGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -45387,7 +45387,7 @@ class NatGatewaysOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NatGateway or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NatGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NatGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -45457,7 +45457,7 @@ class NatGatewaysOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NatGateway or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NatGateway]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NatGateway]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -45531,13 +45531,13 @@ class NatGatewaysOperations:
         :type nat_gateway_name: str
         :param parameters: Parameters supplied to update nat gateway tags. Is either a model type or a
          IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NatGateway or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NatGateway
+        :rtype: ~azure.mgmt.network.models.NatGateway
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -45604,7 +45604,7 @@ class ResourceNavigationLinksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`resource_navigation_links` attribute.
     
     """
@@ -45635,7 +45635,7 @@ class ResourceNavigationLinksOperations:
         :type subnet_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceNavigationLinksListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_02_01.models.ResourceNavigationLinksListResult
+        :rtype: ~azure.mgmt.network.models.ResourceNavigationLinksListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -45701,7 +45701,7 @@ class ResourceNavigationLinksOperations:
         :type subnet_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceNavigationLinksListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ResourceNavigationLinksListResult
+        :rtype: ~azure.mgmt.network.models.ResourceNavigationLinksListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -45757,7 +45757,7 @@ class ServiceAssociationLinksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`service_association_links` attribute.
     
     """
@@ -45788,7 +45788,7 @@ class ServiceAssociationLinksOperations:
         :type subnet_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceAssociationLinksListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_02_01.models.ServiceAssociationLinksListResult
+        :rtype: ~azure.mgmt.network.models.ServiceAssociationLinksListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -45854,7 +45854,7 @@ class ServiceAssociationLinksOperations:
         :type subnet_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceAssociationLinksListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ServiceAssociationLinksListResult
+        :rtype: ~azure.mgmt.network.models.ServiceAssociationLinksListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -45910,7 +45910,7 @@ class AvailablePrivateEndpointTypesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`available_private_endpoint_types` attribute.
     
     """
@@ -45935,7 +45935,7 @@ class AvailablePrivateEndpointTypesOperations:
         :return: An iterator like instance of either AvailablePrivateEndpointType or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AvailablePrivateEndpointType]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AvailablePrivateEndpointType]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -46013,7 +46013,7 @@ class AvailablePrivateEndpointTypesOperations:
         :return: An iterator like instance of either AvailablePrivateEndpointType or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AvailablePrivateEndpointType]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AvailablePrivateEndpointType]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -46084,7 +46084,7 @@ class BastionHostsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`bastion_hosts` attribute.
     
     """
@@ -46226,7 +46226,7 @@ class BastionHostsOperations:
         :type bastion_host_name: str
         :param parameters: Parameters supplied to the create or update Bastion Host operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.BastionHost or IO
+        :type parameters: ~azure.mgmt.network.models.BastionHost or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -46240,7 +46240,7 @@ class BastionHostsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BastionHost or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.BastionHost]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BastionHost]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -46367,7 +46367,7 @@ class BastionHostsOperations:
         :type bastion_host_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BastionHost or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.BastionHost
+        :rtype: ~azure.mgmt.network.models.BastionHost
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -46422,7 +46422,7 @@ class BastionHostsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BastionHost or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BastionHost]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BastionHost]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -46493,7 +46493,7 @@ class BastionHostsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BastionHost or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BastionHost]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BastionHost]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -46637,7 +46637,7 @@ class BastionHostsOperations:
         :type bastion_host_name: str
         :param parameters: Parameters supplied to update BastionHost tags. Is either a model type or a
          IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -46651,7 +46651,7 @@ class BastionHostsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either BastionHost or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.BastionHost]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BastionHost]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -46710,7 +46710,7 @@ class PrivateEndpointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`private_endpoints` attribute.
     
     """
@@ -46854,7 +46854,7 @@ class PrivateEndpointsOperations:
         :type private_endpoint_name: str
         :param parameters: Parameters supplied to the create or update private endpoint operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.PrivateEndpoint or IO
+        :type parameters: ~azure.mgmt.network.models.PrivateEndpoint or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -46869,7 +46869,7 @@ class PrivateEndpointsOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateEndpoint or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PrivateEndpoint]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PrivateEndpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -47000,7 +47000,7 @@ class PrivateEndpointsOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpoint or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PrivateEndpoint
+        :rtype: ~azure.mgmt.network.models.PrivateEndpoint
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -47059,7 +47059,7 @@ class PrivateEndpointsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateEndpoint or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PrivateEndpoint]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PrivateEndpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -47130,7 +47130,7 @@ class PrivateEndpointsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateEndpoint or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PrivateEndpoint]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PrivateEndpoint]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -47200,7 +47200,7 @@ class PrivateLinkServicesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`private_link_services` attribute.
     
     """
@@ -47512,7 +47512,7 @@ class PrivateLinkServicesOperations:
         :param parameters: The request body of CheckPrivateLinkService API call. Is either a model type
          or a IO type. Required.
         :type parameters:
-         ~azure.mgmt.network.v2022_07_01.models.CheckPrivateLinkServiceVisibilityRequest or IO
+         ~azure.mgmt.network.models.CheckPrivateLinkServiceVisibilityRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -47527,7 +47527,7 @@ class PrivateLinkServicesOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateLinkServiceVisibility or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PrivateLinkServiceVisibility]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PrivateLinkServiceVisibility]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -47595,7 +47595,7 @@ class PrivateLinkServicesOperations:
         :param parameters: The request body of CheckPrivateLinkService API call. Is either a model type
          or a IO type. Required.
         :type parameters:
-         ~azure.mgmt.network.v2022_07_01.models.CheckPrivateLinkServiceVisibilityRequest or IO
+         ~azure.mgmt.network.models.CheckPrivateLinkServiceVisibilityRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -47610,7 +47610,7 @@ class PrivateLinkServicesOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateLinkServiceVisibility or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PrivateLinkServiceVisibility]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PrivateLinkServiceVisibility]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -47677,7 +47677,7 @@ class PrivateLinkServicesOperations:
         :type service_name: str
         :param parameters: Parameters supplied to the create or update private link service operation.
          Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.PrivateLinkService or IO
+        :type parameters: ~azure.mgmt.network.models.PrivateLinkService or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -47692,7 +47692,7 @@ class PrivateLinkServicesOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateLinkService or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PrivateLinkService]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PrivateLinkService]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -47889,7 +47889,7 @@ class PrivateLinkServicesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkService or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PrivateLinkService
+        :rtype: ~azure.mgmt.network.models.PrivateLinkService
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -47948,7 +47948,7 @@ class PrivateLinkServicesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateLinkService or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PrivateLinkService]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PrivateLinkService]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -48025,7 +48025,7 @@ class PrivateLinkServicesOperations:
         :return: An iterator like instance of either AutoApprovedPrivateLinkService or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AutoApprovedPrivateLinkService]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AutoApprovedPrivateLinkService]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -48103,7 +48103,7 @@ class PrivateLinkServicesOperations:
         :return: An iterator like instance of either AutoApprovedPrivateLinkService or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AutoApprovedPrivateLinkService]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AutoApprovedPrivateLinkService]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -48176,7 +48176,7 @@ class PrivateLinkServicesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateLinkService or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PrivateLinkService]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PrivateLinkService]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -48258,13 +48258,13 @@ class PrivateLinkServicesOperations:
         :type pe_connection_name: str
         :param parameters: Parameters supplied to approve or reject the private end point connection.
          Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.PrivateEndpointConnection or IO
+        :type parameters: ~azure.mgmt.network.models.PrivateEndpointConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PrivateEndpointConnection
+        :rtype: ~azure.mgmt.network.models.PrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -48351,7 +48351,7 @@ class PrivateLinkServicesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PrivateEndpointConnection
+        :rtype: ~azure.mgmt.network.models.PrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -48419,7 +48419,7 @@ class PrivateLinkServicesOperations:
         :return: An iterator like instance of either PrivateEndpointConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PrivateEndpointConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -48491,7 +48491,7 @@ class ServiceTagsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`service_tags` attribute.
     
     """
@@ -48515,7 +48515,7 @@ class ServiceTagsOperations:
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceTagsListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ServiceTagsListResult
+        :rtype: ~azure.mgmt.network.models.ServiceTagsListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -48569,7 +48569,7 @@ class FirewallPoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`firewall_policies` attribute.
     
     """
@@ -48711,7 +48711,7 @@ class FirewallPoliciesOperations:
         :type firewall_policy_name: str
         :param parameters: Parameters supplied to the create or update Firewall Policy operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.FirewallPolicy or IO
+        :type parameters: ~azure.mgmt.network.models.FirewallPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -48726,7 +48726,7 @@ class FirewallPoliciesOperations:
         :return: An instance of AsyncLROPoller that returns either FirewallPolicy or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.FirewallPolicy]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FirewallPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -48857,7 +48857,7 @@ class FirewallPoliciesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.FirewallPolicy
+        :rtype: ~azure.mgmt.network.models.FirewallPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -48915,7 +48915,7 @@ class FirewallPoliciesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FirewallPolicy or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.FirewallPolicy]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.FirewallPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -48985,7 +48985,7 @@ class FirewallPoliciesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FirewallPolicy or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.FirewallPolicy]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.FirewallPolicy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -49070,13 +49070,13 @@ class FirewallPoliciesOperations:
         :type firewall_policy_name: str
         :param parameters: Parameters supplied to update Azure Firewall Policy tags. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallPolicy or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.FirewallPolicy
+        :rtype: ~azure.mgmt.network.models.FirewallPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -49143,7 +49143,7 @@ class FirewallPolicyRuleGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2020_04_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`firewall_policy_rule_groups` attribute.
     
     """
@@ -49291,7 +49291,7 @@ class FirewallPolicyRuleGroupsOperations:
         :type rule_group_name: str
         :param parameters: Parameters supplied to the create or update FirewallPolicyRuleGroup
          operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyRuleGroup or IO
+        :type parameters: ~azure.mgmt.network.models.FirewallPolicyRuleGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -49306,7 +49306,7 @@ class FirewallPolicyRuleGroupsOperations:
         :return: An instance of AsyncLROPoller that returns either FirewallPolicyRuleGroup or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2020_04_01.models.FirewallPolicyRuleGroup]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FirewallPolicyRuleGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -49441,7 +49441,7 @@ class FirewallPolicyRuleGroupsOperations:
         :type rule_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallPolicyRuleGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2020_04_01.models.FirewallPolicyRuleGroup
+        :rtype: ~azure.mgmt.network.models.FirewallPolicyRuleGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -49504,7 +49504,7 @@ class FirewallPolicyRuleGroupsOperations:
         :return: An iterator like instance of either FirewallPolicyRuleGroup or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2020_04_01.models.FirewallPolicyRuleGroup]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.FirewallPolicyRuleGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -49575,7 +49575,7 @@ class VpnLinkConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vpn_link_connections` attribute.
     
     """
@@ -49606,7 +49606,7 @@ class VpnLinkConnectionsOperations:
         :return: An iterator like instance of either VpnSiteLinkConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnSiteLinkConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnSiteLinkConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -49948,7 +49948,7 @@ class VpnSiteLinkConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vpn_site_link_connections` attribute.
     
     """
@@ -49983,7 +49983,7 @@ class VpnSiteLinkConnectionsOperations:
         :type link_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnSiteLinkConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnSiteLinkConnection
+        :rtype: ~azure.mgmt.network.models.VpnSiteLinkConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -50040,7 +50040,7 @@ class VpnSiteLinksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vpn_site_links` attribute.
     
     """
@@ -50068,7 +50068,7 @@ class VpnSiteLinksOperations:
         :type vpn_site_link_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnSiteLink or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnSiteLink
+        :rtype: ~azure.mgmt.network.models.VpnSiteLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -50130,7 +50130,7 @@ class VpnSiteLinksOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VpnSiteLink or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnSiteLink]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnSiteLink]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -50201,7 +50201,7 @@ class VirtualRouterPeeringsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_router_peerings` attribute.
     
     """
@@ -50351,7 +50351,7 @@ class VirtualRouterPeeringsOperations:
         :type peering_name: str
         :param parameters: Parameters supplied to the create or update Virtual Router Peering
          operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualRouterPeering or IO
+        :type parameters: ~azure.mgmt.network.models.VirtualRouterPeering or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -50366,7 +50366,7 @@ class VirtualRouterPeeringsOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualRouterPeering or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualRouterPeering]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualRouterPeering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -50501,7 +50501,7 @@ class VirtualRouterPeeringsOperations:
         :type peering_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualRouterPeering or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualRouterPeering
+        :rtype: ~azure.mgmt.network.models.VirtualRouterPeering
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -50565,7 +50565,7 @@ class VirtualRouterPeeringsOperations:
         :return: An iterator like instance of either VirtualRouterPeering or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualRouterPeering]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualRouterPeering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -50652,13 +50652,13 @@ class VirtualRouterPeeringsOperations:
         :type peering_name: str
         :param parameters: Parameters supplied to update Virtual Router Peering operation. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.VirtualRouterPeering or IO
+        :type parameters: ~azure.mgmt.network.models.VirtualRouterPeering or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualRouterPeering or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.VirtualRouterPeering
+        :rtype: ~azure.mgmt.network.models.VirtualRouterPeering
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -50727,7 +50727,7 @@ class VirtualRoutersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_routers` attribute.
     
     """
@@ -50871,7 +50871,7 @@ class VirtualRoutersOperations:
         :type virtual_router_name: str
         :param parameters: Parameters supplied to the create or update Virtual Router. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualRouter or IO
+        :type parameters: ~azure.mgmt.network.models.VirtualRouter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -50886,7 +50886,7 @@ class VirtualRoutersOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualRouter or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualRouter]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualRouter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -51017,7 +51017,7 @@ class VirtualRoutersOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualRouter or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualRouter
+        :rtype: ~azure.mgmt.network.models.VirtualRouter
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -51074,7 +51074,7 @@ class VirtualRoutersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualRouter or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualRouter]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualRouter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -51146,7 +51146,7 @@ class VirtualRoutersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualRouter or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualRouter]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualRouter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -51229,13 +51229,13 @@ class VirtualRoutersOperations:
         :type virtual_router_name: str
         :param parameters: Parameters supplied to Update Virtual Router Tags. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualRouter or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2019_08_01.models.VirtualRouter
+        :rtype: ~azure.mgmt.network.models.VirtualRouter
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -51303,7 +51303,7 @@ class AvailableServiceAliasesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`available_service_aliases` attribute.
     
     """
@@ -51327,7 +51327,7 @@ class AvailableServiceAliasesOperations:
         :return: An iterator like instance of either AvailableServiceAlias or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AvailableServiceAlias]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AvailableServiceAlias]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -51404,7 +51404,7 @@ class AvailableServiceAliasesOperations:
         :return: An iterator like instance of either AvailableServiceAlias or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AvailableServiceAlias]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AvailableServiceAlias]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -51475,7 +51475,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vpn_server_configurations_associated_with_virtual_wan` attribute.
     
     """
@@ -51561,7 +51561,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         :return: An instance of AsyncLROPoller that returns either VpnServerConfigurationsResponse or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnServerConfigurationsResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnServerConfigurationsResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -51616,7 +51616,7 @@ class VpnServerConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vpn_server_configurations` attribute.
     
     """
@@ -51829,7 +51829,7 @@ class VpnServerConfigurationsOperations:
         :param vpn_server_configuration_parameters: Parameters supplied to create or update
          VpnServerConfiguration. Is either a model type or a IO type. Required.
         :type vpn_server_configuration_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.VpnServerConfiguration or IO
+         ~azure.mgmt.network.models.VpnServerConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -51844,7 +51844,7 @@ class VpnServerConfigurationsOperations:
         :return: An instance of AsyncLROPoller that returns either VpnServerConfiguration or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnServerConfiguration]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnServerConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -51982,7 +51982,7 @@ class VpnServerConfigurationsOperations:
         :type vpn_server_configuration_name: str
         :param vpn_server_configuration_parameters: Parameters supplied to update
          VpnServerConfiguration tags. Is either a model type or a IO type. Required.
-        :type vpn_server_configuration_parameters: ~azure.mgmt.network.v2019_08_01.models.TagsObject or
+        :type vpn_server_configuration_parameters: ~azure.mgmt.network.models.TagsObject or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -51998,7 +51998,7 @@ class VpnServerConfigurationsOperations:
         :return: An instance of AsyncLROPoller that returns either VpnServerConfiguration or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2019_08_01.models.VpnServerConfiguration]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnServerConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -52063,7 +52063,7 @@ class VpnServerConfigurationsOperations:
         :type vpn_server_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnServerConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnServerConfiguration
+        :rtype: ~azure.mgmt.network.models.VpnServerConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -52119,7 +52119,7 @@ class VpnServerConfigurationsOperations:
         :return: An iterator like instance of either VpnServerConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnServerConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnServerConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -52193,7 +52193,7 @@ class VpnServerConfigurationsOperations:
         :return: An iterator like instance of either VpnServerConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnServerConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnServerConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -52276,14 +52276,14 @@ class VpnServerConfigurationsOperations:
         :type vpn_server_configuration_name: str
         :param vpn_server_configuration_parameters: Parameters supplied to update
          VpnServerConfiguration tags. Is either a model type or a IO type. Required.
-        :type vpn_server_configuration_parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or
+        :type vpn_server_configuration_parameters: ~azure.mgmt.network.models.TagsObject or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnServerConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnServerConfiguration
+        :rtype: ~azure.mgmt.network.models.VpnServerConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -52350,7 +52350,7 @@ class IpGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`ip_groups` attribute.
     
     """
@@ -52486,7 +52486,7 @@ class IpGroupsOperations:
         :type ip_groups_name: str
         :param parameters: Parameters supplied to the create or update IpGroups operation. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.IpGroup or IO
+        :type parameters: ~azure.mgmt.network.models.IpGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -52500,7 +52500,7 @@ class IpGroupsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either IpGroup or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.IpGroup]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.IpGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -52630,7 +52630,7 @@ class IpGroupsOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IpGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.IpGroup
+        :rtype: ~azure.mgmt.network.models.IpGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -52686,7 +52686,7 @@ class IpGroupsOperations:
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IpGroup or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.IpGroup]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.IpGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -52757,7 +52757,7 @@ class IpGroupsOperations:
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IpGroup or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.IpGroup]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.IpGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -52833,13 +52833,13 @@ class IpGroupsOperations:
         :type ip_groups_name: str
         :param parameters: Parameters supplied to the update ipGroups operation. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IpGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.IpGroup
+        :rtype: ~azure.mgmt.network.models.IpGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -52907,7 +52907,7 @@ class VirtualHubRouteTableV2SOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_hub_route_table_v2_s` attribute.
     
     """
@@ -53059,7 +53059,7 @@ class VirtualHubRouteTableV2SOperations:
         :param virtual_hub_route_table_v2_parameters: Parameters supplied to create or update
          VirtualHubRouteTableV2. Is either a model type or a IO type. Required.
         :type virtual_hub_route_table_v2_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.VirtualHubRouteTableV2 or IO
+         ~azure.mgmt.network.models.VirtualHubRouteTableV2 or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -53074,7 +53074,7 @@ class VirtualHubRouteTableV2SOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualHubRouteTableV2 or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualHubRouteTableV2]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualHubRouteTableV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -53209,7 +53209,7 @@ class VirtualHubRouteTableV2SOperations:
         :type route_table_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualHubRouteTableV2 or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualHubRouteTableV2
+        :rtype: ~azure.mgmt.network.models.VirtualHubRouteTableV2
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -53273,7 +53273,7 @@ class VirtualHubRouteTableV2SOperations:
         :return: An iterator like instance of either VirtualHubRouteTableV2 or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualHubRouteTableV2]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualHubRouteTableV2]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -53344,7 +53344,7 @@ class FlowLogsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`flow_logs` attribute.
     
     """
@@ -53494,7 +53494,7 @@ class FlowLogsOperations:
         :type flow_log_name: str
         :param parameters: Parameters that define the create or update flow log resource. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.FlowLog or IO
+        :type parameters: ~azure.mgmt.network.models.FlowLog or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -53508,7 +53508,7 @@ class FlowLogsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either FlowLog or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.FlowLog]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FlowLog]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -53643,7 +53643,7 @@ class FlowLogsOperations:
         :type flow_log_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FlowLog or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.FlowLog
+        :rtype: ~azure.mgmt.network.models.FlowLog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -53706,7 +53706,7 @@ class FlowLogsOperations:
         :type network_watcher_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FlowLog or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.FlowLog]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.FlowLog]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -53793,13 +53793,13 @@ class FlowLogsOperations:
         :type flow_log_name: str
         :param parameters: Parameters supplied to update flow log tags. Is either a model type or a IO
          type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FlowLog or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.FlowLog
+        :rtype: ~azure.mgmt.network.models.FlowLog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -53868,7 +53868,7 @@ class NetworkVirtualAppliancesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_virtual_appliances` attribute.
     
     """
@@ -54010,7 +54010,7 @@ class NetworkVirtualAppliancesOperations:
         :type network_virtual_appliance_name: str
         :param parameters: Parameters supplied to the create or update Network Virtual Appliance. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkVirtualAppliance or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkVirtualAppliance or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -54025,7 +54025,7 @@ class NetworkVirtualAppliancesOperations:
         :return: An instance of AsyncLROPoller that returns either NetworkVirtualAppliance or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.NetworkVirtualAppliance]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkVirtualAppliance]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -54156,7 +54156,7 @@ class NetworkVirtualAppliancesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkVirtualAppliance or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkVirtualAppliance
+        :rtype: ~azure.mgmt.network.models.NetworkVirtualAppliance
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -54213,7 +54213,7 @@ class NetworkVirtualAppliancesOperations:
         :return: An iterator like instance of either NetworkVirtualAppliance or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkVirtualAppliance]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkVirtualAppliance]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -54287,7 +54287,7 @@ class NetworkVirtualAppliancesOperations:
         :return: An iterator like instance of either NetworkVirtualAppliance or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkVirtualAppliance]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkVirtualAppliance]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -54367,13 +54367,13 @@ class NetworkVirtualAppliancesOperations:
         :type network_virtual_appliance_name: str
         :param parameters: Parameters supplied to Update Network Virtual Appliance Tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkVirtualAppliance or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkVirtualAppliance
+        :rtype: ~azure.mgmt.network.models.NetworkVirtualAppliance
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -54440,7 +54440,7 @@ class IpAllocationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`ip_allocations` attribute.
     
     """
@@ -54582,7 +54582,7 @@ class IpAllocationsOperations:
         :type ip_allocation_name: str
         :param parameters: Parameters supplied to the create or update virtual network operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.IpAllocation or IO
+        :type parameters: ~azure.mgmt.network.models.IpAllocation or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -54596,7 +54596,7 @@ class IpAllocationsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either IpAllocation or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.IpAllocation]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.IpAllocation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -54727,7 +54727,7 @@ class IpAllocationsOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IpAllocation or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.IpAllocation
+        :rtype: ~azure.mgmt.network.models.IpAllocation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -54783,7 +54783,7 @@ class IpAllocationsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IpAllocation or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.IpAllocation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.IpAllocation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -54854,7 +54854,7 @@ class IpAllocationsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either IpAllocation or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.IpAllocation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.IpAllocation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -54933,13 +54933,13 @@ class IpAllocationsOperations:
         :type ip_allocation_name: str
         :param parameters: Parameters supplied to update IpAllocation tags. Is either a model type or a
          IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IpAllocation or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.IpAllocation
+        :rtype: ~azure.mgmt.network.models.IpAllocation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -55006,7 +55006,7 @@ class PrivateDnsZoneGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`private_dns_zone_groups` attribute.
     
     """
@@ -55154,7 +55154,7 @@ class PrivateDnsZoneGroupsOperations:
         :type private_dns_zone_group_name: str
         :param parameters: Parameters supplied to the create or update private dns zone group
          operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.PrivateDnsZoneGroup or IO
+        :type parameters: ~azure.mgmt.network.models.PrivateDnsZoneGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -55169,7 +55169,7 @@ class PrivateDnsZoneGroupsOperations:
         :return: An instance of AsyncLROPoller that returns either PrivateDnsZoneGroup or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PrivateDnsZoneGroup]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PrivateDnsZoneGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -55304,7 +55304,7 @@ class PrivateDnsZoneGroupsOperations:
         :type private_dns_zone_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateDnsZoneGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.PrivateDnsZoneGroup
+        :rtype: ~azure.mgmt.network.models.PrivateDnsZoneGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -55366,7 +55366,7 @@ class PrivateDnsZoneGroupsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateDnsZoneGroup or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.PrivateDnsZoneGroup]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PrivateDnsZoneGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -55438,7 +55438,7 @@ class SecurityPartnerProvidersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`security_partner_providers` attribute.
     
     """
@@ -55580,7 +55580,7 @@ class SecurityPartnerProvidersOperations:
         :type security_partner_provider_name: str
         :param parameters: Parameters supplied to the create or update Security Partner Provider
          operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.SecurityPartnerProvider or IO
+        :type parameters: ~azure.mgmt.network.models.SecurityPartnerProvider or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -55595,7 +55595,7 @@ class SecurityPartnerProvidersOperations:
         :return: An instance of AsyncLROPoller that returns either SecurityPartnerProvider or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.SecurityPartnerProvider]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.SecurityPartnerProvider]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -55724,7 +55724,7 @@ class SecurityPartnerProvidersOperations:
         :type security_partner_provider_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityPartnerProvider or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SecurityPartnerProvider
+        :rtype: ~azure.mgmt.network.models.SecurityPartnerProvider
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -55780,7 +55780,7 @@ class SecurityPartnerProvidersOperations:
         :return: An iterator like instance of either SecurityPartnerProvider or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.SecurityPartnerProvider]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.SecurityPartnerProvider]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -55854,7 +55854,7 @@ class SecurityPartnerProvidersOperations:
         :return: An iterator like instance of either SecurityPartnerProvider or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.SecurityPartnerProvider]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.SecurityPartnerProvider]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -55933,13 +55933,13 @@ class SecurityPartnerProvidersOperations:
         :type security_partner_provider_name: str
         :param parameters: Parameters supplied to update Security Partner Provider tags. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityPartnerProvider or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SecurityPartnerProvider
+        :rtype: ~azure.mgmt.network.models.SecurityPartnerProvider
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -56006,7 +56006,7 @@ class HubRouteTablesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`hub_route_tables` attribute.
     
     """
@@ -56154,7 +56154,7 @@ class HubRouteTablesOperations:
         :type route_table_name: str
         :param route_table_parameters: Parameters supplied to create or update RouteTable. Is either a
          model type or a IO type. Required.
-        :type route_table_parameters: ~azure.mgmt.network.v2022_07_01.models.HubRouteTable or IO
+        :type route_table_parameters: ~azure.mgmt.network.models.HubRouteTable or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -56169,7 +56169,7 @@ class HubRouteTablesOperations:
         :return: An instance of AsyncLROPoller that returns either HubRouteTable or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.HubRouteTable]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.HubRouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -56304,7 +56304,7 @@ class HubRouteTablesOperations:
         :type route_table_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HubRouteTable or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.HubRouteTable
+        :rtype: ~azure.mgmt.network.models.HubRouteTable
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -56366,7 +56366,7 @@ class HubRouteTablesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either HubRouteTable or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.HubRouteTable]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.HubRouteTable]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -56437,7 +56437,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`application_gateway_private_endpoint_connections` attribute.
     
     """
@@ -56654,7 +56654,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         :param parameters: Parameters supplied to update application gateway private endpoint
          connection operation. Is either a model type or a IO type. Required.
         :type parameters:
-         ~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayPrivateEndpointConnection or IO
+         ~azure.mgmt.network.models.ApplicationGatewayPrivateEndpointConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -56669,7 +56669,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either
          ApplicationGatewayPrivateEndpointConnection or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayPrivateEndpointConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ApplicationGatewayPrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -56737,7 +56737,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationGatewayPrivateEndpointConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayPrivateEndpointConnection
+        :rtype: ~azure.mgmt.network.models.ApplicationGatewayPrivateEndpointConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -56800,7 +56800,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         :return: An iterator like instance of either ApplicationGatewayPrivateEndpointConnection or the
          result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayPrivateEndpointConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ApplicationGatewayPrivateEndpointConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -56871,7 +56871,7 @@ class ApplicationGatewayPrivateLinkResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`application_gateway_private_link_resources` attribute.
     
     """
@@ -56899,7 +56899,7 @@ class ApplicationGatewayPrivateLinkResourcesOperations:
         :return: An iterator like instance of either ApplicationGatewayPrivateLinkResource or the
          result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayPrivateLinkResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ApplicationGatewayPrivateLinkResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -56970,7 +56970,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`firewall_policy_rule_collection_groups` attribute.
     
     """
@@ -57118,7 +57118,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         :type rule_collection_group_name: str
         :param parameters: Parameters supplied to the create or update
          FirewallPolicyRuleCollectionGroup operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.FirewallPolicyRuleCollectionGroup or
+        :type parameters: ~azure.mgmt.network.models.FirewallPolicyRuleCollectionGroup or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -57134,7 +57134,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         :return: An instance of AsyncLROPoller that returns either FirewallPolicyRuleCollectionGroup or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.FirewallPolicyRuleCollectionGroup]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.FirewallPolicyRuleCollectionGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -57269,7 +57269,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         :type rule_collection_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallPolicyRuleCollectionGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.FirewallPolicyRuleCollectionGroup
+        :rtype: ~azure.mgmt.network.models.FirewallPolicyRuleCollectionGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -57332,7 +57332,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         :return: An iterator like instance of either FirewallPolicyRuleCollectionGroup or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.FirewallPolicyRuleCollectionGroup]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.FirewallPolicyRuleCollectionGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -57403,7 +57403,7 @@ class VirtualApplianceSitesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_appliance_sites` attribute.
     
     """
@@ -57551,7 +57551,7 @@ class VirtualApplianceSitesOperations:
         :type site_name: str
         :param parameters: Parameters supplied to the create or update Network Virtual Appliance Site
          operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualApplianceSite or IO
+        :type parameters: ~azure.mgmt.network.models.VirtualApplianceSite or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -57566,7 +57566,7 @@ class VirtualApplianceSitesOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualApplianceSite or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualApplianceSite]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualApplianceSite]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -57701,7 +57701,7 @@ class VirtualApplianceSitesOperations:
         :type site_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualApplianceSite or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualApplianceSite
+        :rtype: ~azure.mgmt.network.models.VirtualApplianceSite
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -57764,7 +57764,7 @@ class VirtualApplianceSitesOperations:
         :return: An iterator like instance of either VirtualApplianceSite or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualApplianceSite]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualApplianceSite]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -57835,7 +57835,7 @@ class VirtualApplianceSkusOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_appliance_skus` attribute.
     
     """
@@ -57857,7 +57857,7 @@ class VirtualApplianceSkusOperations:
         :type sku_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkVirtualApplianceSku or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkVirtualApplianceSku
+        :rtype: ~azure.mgmt.network.models.NetworkVirtualApplianceSku
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -57912,7 +57912,7 @@ class VirtualApplianceSkusOperations:
         :return: An iterator like instance of either NetworkVirtualApplianceSku or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkVirtualApplianceSku]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkVirtualApplianceSku]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -57981,7 +57981,7 @@ class VirtualHubBgpConnectionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_hub_bgp_connection` attribute.
     
     """
@@ -58129,7 +58129,7 @@ class VirtualHubBgpConnectionOperations:
         :param connection_name: The name of the connection. Required.
         :type connection_name: str
         :param parameters: Parameters of Bgp connection. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.BgpConnection or IO
+        :type parameters: ~azure.mgmt.network.models.BgpConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -58144,7 +58144,7 @@ class VirtualHubBgpConnectionOperations:
         :return: An instance of AsyncLROPoller that returns either BgpConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.BgpConnection]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.BgpConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -58279,7 +58279,7 @@ class VirtualHubBgpConnectionOperations:
         :type connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BgpConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.BgpConnection
+        :rtype: ~azure.mgmt.network.models.BgpConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -58335,7 +58335,7 @@ class VirtualHubBgpConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_hub_bgp_connections` attribute.
     
     """
@@ -58362,7 +58362,7 @@ class VirtualHubBgpConnectionsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BgpConnection or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BgpConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BgpConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -58554,7 +58554,7 @@ class VirtualHubBgpConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either PeerRouteList or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PeerRouteList]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PeerRouteList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -58629,7 +58629,7 @@ class VirtualHubBgpConnectionsOperations:
         :return: An instance of AsyncLROPoller that returns either PeerRouteList or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.PeerRouteList]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PeerRouteList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -58685,7 +58685,7 @@ class VirtualHubIpConfigurationOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_hub_ip_configuration` attribute.
     
     """
@@ -58834,7 +58834,7 @@ class VirtualHubIpConfigurationOperations:
         :type ip_config_name: str
         :param parameters: Hub Ip Configuration parameters. Is either a model type or a IO type.
          Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.HubIpConfiguration or IO
+        :type parameters: ~azure.mgmt.network.models.HubIpConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -58849,7 +58849,7 @@ class VirtualHubIpConfigurationOperations:
         :return: An instance of AsyncLROPoller that returns either HubIpConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.HubIpConfiguration]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.HubIpConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -58984,7 +58984,7 @@ class VirtualHubIpConfigurationOperations:
         :type ip_config_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: HubIpConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.HubIpConfiguration
+        :rtype: ~azure.mgmt.network.models.HubIpConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -59046,7 +59046,7 @@ class VirtualHubIpConfigurationOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either HubIpConfiguration or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.HubIpConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.HubIpConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -59117,7 +59117,7 @@ class CustomIPPrefixesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`custom_ip_prefixes` attribute.
     
     """
@@ -59259,7 +59259,7 @@ class CustomIPPrefixesOperations:
         :type custom_ip_prefix_name: str
         :param parameters: Parameters supplied to the create or update custom IP prefix operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.CustomIpPrefix or IO
+        :type parameters: ~azure.mgmt.network.models.CustomIpPrefix or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -59274,7 +59274,7 @@ class CustomIPPrefixesOperations:
         :return: An instance of AsyncLROPoller that returns either CustomIpPrefix or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.CustomIpPrefix]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.CustomIpPrefix]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -59404,7 +59404,7 @@ class CustomIPPrefixesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CustomIpPrefix or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.CustomIpPrefix
+        :rtype: ~azure.mgmt.network.models.CustomIpPrefix
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -59462,7 +59462,7 @@ class CustomIPPrefixesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CustomIpPrefix or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.CustomIpPrefix]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.CustomIpPrefix]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -59532,7 +59532,7 @@ class CustomIPPrefixesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CustomIpPrefix or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.CustomIpPrefix]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.CustomIpPrefix]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -59610,13 +59610,13 @@ class CustomIPPrefixesOperations:
         :type custom_ip_prefix_name: str
         :param parameters: Parameters supplied to update custom IP prefix tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CustomIpPrefix or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.CustomIpPrefix
+        :rtype: ~azure.mgmt.network.models.CustomIpPrefix
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -59683,7 +59683,7 @@ class DscpConfigurationOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`dscp_configuration` attribute.
     
     """
@@ -59825,7 +59825,7 @@ class DscpConfigurationOperations:
         :type dscp_configuration_name: str
         :param parameters: Parameters supplied to the create or update dscp configuration operation. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.DscpConfiguration or IO
+        :type parameters: ~azure.mgmt.network.models.DscpConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -59840,7 +59840,7 @@ class DscpConfigurationOperations:
         :return: An instance of AsyncLROPoller that returns either DscpConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.DscpConfiguration]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.DscpConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -59968,7 +59968,7 @@ class DscpConfigurationOperations:
         :type dscp_configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DscpConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.DscpConfiguration
+        :rtype: ~azure.mgmt.network.models.DscpConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -60025,7 +60025,7 @@ class DscpConfigurationOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DscpConfiguration or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.DscpConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.DscpConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -60095,7 +60095,7 @@ class DscpConfigurationOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DscpConfiguration or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.DscpConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.DscpConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -60164,7 +60164,7 @@ class InboundSecurityRuleOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`inbound_security_rule` attribute.
     
     """
@@ -60267,7 +60267,7 @@ class InboundSecurityRuleOperations:
         :type rule_collection_name: str
         :param parameters: Parameters supplied to the create or update Network Virtual Appliance
          Inbound Security Rules operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.InboundSecurityRule or IO
+        :type parameters: ~azure.mgmt.network.models.InboundSecurityRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -60282,7 +60282,7 @@ class InboundSecurityRuleOperations:
         :return: An instance of AsyncLROPoller that returns either InboundSecurityRule or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.InboundSecurityRule]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.InboundSecurityRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -60342,7 +60342,7 @@ class WebCategoriesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`web_categories` attribute.
     
     """
@@ -60367,7 +60367,7 @@ class WebCategoriesOperations:
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureWebCategory or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.AzureWebCategory
+        :rtype: ~azure.mgmt.network.models.AzureWebCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -60422,7 +60422,7 @@ class WebCategoriesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AzureWebCategory or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AzureWebCategory]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AzureWebCategory]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -60491,7 +60491,7 @@ class NatRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nat_rules` attribute.
     
     """
@@ -60640,7 +60640,7 @@ class NatRulesOperations:
         :type nat_rule_name: str
         :param nat_rule_parameters: Parameters supplied to create or Update a Nat Rule. Is either a
          model type or a IO type. Required.
-        :type nat_rule_parameters: ~azure.mgmt.network.v2022_07_01.models.VpnGatewayNatRule or IO
+        :type nat_rule_parameters: ~azure.mgmt.network.models.VpnGatewayNatRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -60655,7 +60655,7 @@ class NatRulesOperations:
         :return: An instance of AsyncLROPoller that returns either VpnGatewayNatRule or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnGatewayNatRule]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnGatewayNatRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -60790,7 +60790,7 @@ class NatRulesOperations:
         :type nat_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnGatewayNatRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnGatewayNatRule
+        :rtype: ~azure.mgmt.network.models.VpnGatewayNatRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -60852,7 +60852,7 @@ class NatRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VpnGatewayNatRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnGatewayNatRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnGatewayNatRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -60923,7 +60923,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`virtual_network_gateway_nat_rules` attribute.
     
     """
@@ -61072,7 +61072,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         :type nat_rule_name: str
         :param nat_rule_parameters: Parameters supplied to create or Update a Nat Rule. Is either a
          model type or a IO type. Required.
-        :type nat_rule_parameters: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayNatRule
+        :type nat_rule_parameters: ~azure.mgmt.network.models.VirtualNetworkGatewayNatRule
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -61088,7 +61088,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         :return: An instance of AsyncLROPoller that returns either VirtualNetworkGatewayNatRule or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayNatRule]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkGatewayNatRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -61223,7 +61223,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         :type nat_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetworkGatewayNatRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayNatRule
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkGatewayNatRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -61286,7 +61286,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         :return: An iterator like instance of either VirtualNetworkGatewayNatRule or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VirtualNetworkGatewayNatRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkGatewayNatRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -61357,7 +61357,7 @@ class ActiveConnectivityConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`active_connectivity_configurations` attribute.
     
     """
@@ -61387,7 +61387,7 @@ class ActiveConnectivityConfigurationsOperations:
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Is either a model type or a IO type.
          Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.ActiveConfigurationParameter
+        :type parameters: ~azure.mgmt.network.models.ActiveConfigurationParameter
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -61395,7 +61395,7 @@ class ActiveConnectivityConfigurationsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActiveConnectivityConfigurationsListResult or the result of cls(response)
         :rtype:
-         ~azure.mgmt.network.v2021_02_01_preview.models.ActiveConnectivityConfigurationsListResult
+         ~azure.mgmt.network.models.ActiveConnectivityConfigurationsListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -61464,7 +61464,7 @@ class ActiveSecurityAdminRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`active_security_admin_rules` attribute.
     
     """
@@ -61494,14 +61494,14 @@ class ActiveSecurityAdminRulesOperations:
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Is either a model type or a IO type.
          Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.ActiveConfigurationParameter
+        :type parameters: ~azure.mgmt.network.models.ActiveConfigurationParameter
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActiveSecurityAdminRulesListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.ActiveSecurityAdminRulesListResult
+        :rtype: ~azure.mgmt.network.models.ActiveSecurityAdminRulesListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -61570,7 +61570,7 @@ class ActiveSecurityUserRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`active_security_user_rules` attribute.
     
     """
@@ -61600,14 +61600,14 @@ class ActiveSecurityUserRulesOperations:
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Is either a model type or a IO type.
          Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.ActiveConfigurationParameter
+        :type parameters: ~azure.mgmt.network.models.ActiveConfigurationParameter
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActiveSecurityUserRulesListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.ActiveSecurityUserRulesListResult
+        :rtype: ~azure.mgmt.network.models.ActiveSecurityUserRulesListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -61676,7 +61676,7 @@ class AdminRuleCollectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`admin_rule_collections` attribute.
     
     """
@@ -61713,13 +61713,13 @@ class AdminRuleCollectionsOperations:
         :type rule_collection_name: str
         :param rule_collection: The Rule Collection to create or update. Is either a model type or a IO
          type. Required.
-        :type rule_collection: ~azure.mgmt.network.v2022_07_01.models.AdminRuleCollection or IO
+        :type rule_collection: ~azure.mgmt.network.models.AdminRuleCollection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdminRuleCollection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.AdminRuleCollection
+        :rtype: ~azure.mgmt.network.models.AdminRuleCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -61880,7 +61880,7 @@ class AdminRuleCollectionsOperations:
         :type rule_collection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AdminRuleCollection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.AdminRuleCollection
+        :rtype: ~azure.mgmt.network.models.AdminRuleCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -61959,7 +61959,7 @@ class AdminRuleCollectionsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AdminRuleCollection or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.AdminRuleCollection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.AdminRuleCollection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -62176,7 +62176,7 @@ class AdminRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`admin_rules` attribute.
     
     """
@@ -62216,13 +62216,13 @@ class AdminRulesOperations:
         :type rule_name: str
         :param admin_rule: The admin rule to create or update. Is either a model type or a IO type.
          Required.
-        :type admin_rule: ~azure.mgmt.network.v2022_07_01.models.BaseAdminRule or IO
+        :type admin_rule: ~azure.mgmt.network.models.BaseAdminRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BaseAdminRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.BaseAdminRule
+        :rtype: ~azure.mgmt.network.models.BaseAdminRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -62391,7 +62391,7 @@ class AdminRulesOperations:
         :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BaseAdminRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.BaseAdminRule
+        :rtype: ~azure.mgmt.network.models.BaseAdminRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -62475,7 +62475,7 @@ class AdminRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BaseAdminRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BaseAdminRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BaseAdminRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -62699,7 +62699,7 @@ class ConnectivityConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`connectivity_configurations` attribute.
     
     """
@@ -62734,13 +62734,13 @@ class ConnectivityConfigurationsOperations:
         :param connectivity_configuration: Parameters supplied to create/update a network manager
          connectivity configuration. Is either a model type or a IO type. Required.
         :type connectivity_configuration:
-         ~azure.mgmt.network.v2022_07_01.models.ConnectivityConfiguration or IO
+         ~azure.mgmt.network.models.ConnectivityConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConnectivityConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ConnectivityConfiguration
+        :rtype: ~azure.mgmt.network.models.ConnectivityConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -62887,7 +62887,7 @@ class ConnectivityConfigurationsOperations:
         :type configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ConnectivityConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ConnectivityConfiguration
+        :rtype: ~azure.mgmt.network.models.ConnectivityConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -62963,7 +62963,7 @@ class ConnectivityConfigurationsOperations:
         :return: An iterator like instance of either ConnectivityConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ConnectivityConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ConnectivityConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -63174,7 +63174,7 @@ class EffectiveConnectivityConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`effective_connectivity_configurations` attribute.
     
     """
@@ -63204,7 +63204,7 @@ class EffectiveConnectivityConfigurationsOperations:
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Is either a model type or a IO
          type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.QueryRequestOptions or IO
+        :type parameters: ~azure.mgmt.network.models.QueryRequestOptions or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -63212,7 +63212,7 @@ class EffectiveConnectivityConfigurationsOperations:
         :return: NetworkManagerEffectiveConnectivityConfigurationListResult or the result of
          cls(response)
         :rtype:
-         ~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerEffectiveConnectivityConfigurationListResult
+         ~azure.mgmt.network.models.NetworkManagerEffectiveConnectivityConfigurationListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -63283,7 +63283,7 @@ class EffectiveVirtualNetworksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`effective_virtual_networks` attribute.
     
     """
@@ -63316,13 +63316,13 @@ class EffectiveVirtualNetworksOperations:
         :type network_group_name: str
         :param parameters: Parameters supplied to list correct page. Is either a model type or a IO
          type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.QueryRequestOptions or IO
+        :type parameters: ~azure.mgmt.network.models.QueryRequestOptions or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EffectiveVirtualNetworksListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveVirtualNetworksListResult
+        :rtype: ~azure.mgmt.network.models.EffectiveVirtualNetworksListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -63404,7 +63404,7 @@ class EffectiveVirtualNetworksOperations:
         :param parameters: Effective Virtual Networks Parameter. Is either a model type or a IO type.
          Required.
         :type parameters:
-         ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveVirtualNetworksParameter or IO
+         ~azure.mgmt.network.models.EffectiveVirtualNetworksParameter or IO
         :param top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :type top: int
@@ -63418,7 +63418,7 @@ class EffectiveVirtualNetworksOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EffectiveVirtualNetworksListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveVirtualNetworksListResult
+        :rtype: ~azure.mgmt.network.models.EffectiveVirtualNetworksListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -63489,7 +63489,7 @@ class NetworkGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_groups` attribute.
     
     """
@@ -63523,7 +63523,7 @@ class NetworkGroupsOperations:
         :type network_group_name: str
         :param parameters: Parameters supplied to the specify which network group need to create. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkGroup or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkGroup or IO
         :param if_match: The ETag of the transformation. Omit this value to always overwrite the
          current resource. Specify the last-seen ETag value to prevent accidentally overwriting
          concurrent changes. Default value is None.
@@ -63533,7 +63533,7 @@ class NetworkGroupsOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkGroup
+        :rtype: ~azure.mgmt.network.models.NetworkGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -63682,7 +63682,7 @@ class NetworkGroupsOperations:
         :type network_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkGroup
+        :rtype: ~azure.mgmt.network.models.NetworkGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -63757,7 +63757,7 @@ class NetworkGroupsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkGroup or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkGroup]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -63966,7 +63966,7 @@ class NetworkManagerCommitsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_manager_commits` attribute.
     
     """
@@ -63999,13 +63999,13 @@ class NetworkManagerCommitsOperations:
         :type network_manager_name: str
         :param parameters: Parameters supplied to specify which Managed Network commit is. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerCommit or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkManagerCommit or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManagerCommit or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerCommit
+        :rtype: ~azure.mgmt.network.models.NetworkManagerCommit
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -64157,7 +64157,7 @@ class NetworkManagerCommitsOperations:
         :type network_manager_name: str
         :param parameters: Parameters supplied to specify which Managed Network commit is. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkManagerCommit or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkManagerCommit or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -64172,7 +64172,7 @@ class NetworkManagerCommitsOperations:
         :return: An instance of AsyncLROPoller that returns either NetworkManagerCommit or the result
          of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.NetworkManagerCommit]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.NetworkManagerCommit]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -64230,7 +64230,7 @@ class NetworkManagerDeploymentStatusOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_manager_deployment_status` attribute.
     
     """
@@ -64267,7 +64267,7 @@ class NetworkManagerDeploymentStatusOperations:
         :param parameters: Parameters supplied to specify which Managed Network deployment status is.
          Is either a model type or a IO type. Required.
         :type parameters:
-         ~azure.mgmt.network.v2022_07_01.models.NetworkManagerDeploymentStatusParameter or IO
+         ~azure.mgmt.network.models.NetworkManagerDeploymentStatusParameter or IO
         :param top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :type top: int
@@ -64276,7 +64276,7 @@ class NetworkManagerDeploymentStatusOperations:
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManagerDeploymentStatusListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkManagerDeploymentStatusListResult
+        :rtype: ~azure.mgmt.network.models.NetworkManagerDeploymentStatusListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -64344,7 +64344,7 @@ class NetworkManagerEffectiveSecurityAdminRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_manager_effective_security_admin_rules` attribute.
     
     """
@@ -64374,14 +64374,14 @@ class NetworkManagerEffectiveSecurityAdminRulesOperations:
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Is either a model type or a IO
          type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.QueryRequestOptions or IO
+        :type parameters: ~azure.mgmt.network.models.QueryRequestOptions or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManagerEffectiveSecurityAdminRulesListResult or the result of cls(response)
         :rtype:
-         ~azure.mgmt.network.v2021_02_01_preview.models.NetworkManagerEffectiveSecurityAdminRulesListResult
+         ~azure.mgmt.network.models.NetworkManagerEffectiveSecurityAdminRulesListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -64450,7 +64450,7 @@ class NetworkManagersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_managers` attribute.
     
     """
@@ -64480,13 +64480,13 @@ class NetworkManagersOperations:
         :type network_manager_name: str
         :param parameters: Parameters supplied to specify which network manager is. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkManager or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkManager or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManager or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkManager
+        :rtype: ~azure.mgmt.network.models.NetworkManager
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -64621,7 +64621,7 @@ class NetworkManagersOperations:
         :type network_manager_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManager or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkManager
+        :rtype: ~azure.mgmt.network.models.NetworkManager
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -64688,7 +64688,7 @@ class NetworkManagersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkManager or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkManager]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkManager]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -64770,7 +64770,7 @@ class NetworkManagersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkManager or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkManager]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkManager]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -64853,13 +64853,13 @@ class NetworkManagersOperations:
         :type network_manager_name: str
         :param parameters: Parameters supplied to update network manager tags. Is either a model type
          or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.TagsObject or IO
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManager or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NetworkManager
+        :rtype: ~azure.mgmt.network.models.NetworkManager
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -65062,13 +65062,13 @@ class NetworkManagersOperations:
         :type network_manager_name: str
         :param parameters: Parameters supplied to specify which network manager is. Is either a model
          type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.PatchObject or IO
+        :type parameters: ~azure.mgmt.network.models.PatchObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManager or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkManager
+        :rtype: ~azure.mgmt.network.models.NetworkManager
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -65135,7 +65135,7 @@ class NetworkSecurityPerimetersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`network_security_perimeters` attribute.
     
     """
@@ -65165,13 +65165,13 @@ class NetworkSecurityPerimetersOperations:
         :type network_security_perimeter_name: str
         :param parameters: Parameter supplied to create or update the network security perimeter. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NetworkSecurityPerimeter or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkSecurityPerimeter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkSecurityPerimeter or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NetworkSecurityPerimeter
+        :rtype: ~azure.mgmt.network.models.NetworkSecurityPerimeter
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -65307,7 +65307,7 @@ class NetworkSecurityPerimetersOperations:
         :type network_security_perimeter_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkSecurityPerimeter or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NetworkSecurityPerimeter
+        :rtype: ~azure.mgmt.network.models.NetworkSecurityPerimeter
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -65377,7 +65377,7 @@ class NetworkSecurityPerimetersOperations:
         :return: An iterator like instance of either NetworkSecurityPerimeter or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.NetworkSecurityPerimeter]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkSecurityPerimeter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -65473,7 +65473,7 @@ class NetworkSecurityPerimetersOperations:
         :return: An iterator like instance of either NetworkSecurityPerimeter or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.NetworkSecurityPerimeter]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkSecurityPerimeter]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -65557,7 +65557,7 @@ class NspAccessRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nsp_access_rules` attribute.
     
     """
@@ -65593,13 +65593,13 @@ class NspAccessRulesOperations:
         :type access_rule_name: str
         :param parameters: Parameters that hold the NspAccessRule resource to be created/updated. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NspAccessRule or IO
+        :type parameters: ~azure.mgmt.network.models.NspAccessRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NspAccessRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspAccessRule
+        :rtype: ~azure.mgmt.network.models.NspAccessRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -65757,7 +65757,7 @@ class NspAccessRulesOperations:
         :type access_rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NspAccessRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspAccessRule
+        :rtype: ~azure.mgmt.network.models.NspAccessRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -65838,7 +65838,7 @@ class NspAccessRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspAccessRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.NspAccessRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NspAccessRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -65925,7 +65925,7 @@ class NspAccessRulesReconcileOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nsp_access_rules_reconcile` attribute.
     
     """
@@ -66027,7 +66027,7 @@ class NspAssociationReconcileOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nsp_association_reconcile` attribute.
     
     """
@@ -66125,7 +66125,7 @@ class NspAssociationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nsp_associations` attribute.
     
     """
@@ -66277,13 +66277,13 @@ class NspAssociationsOperations:
         :type association_name: str
         :param parameters: Parameters that hold the NspAssociation resource to be created/updated. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NspAssociation or IO
+        :type parameters: ~azure.mgmt.network.models.NspAssociation or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NspAssociation or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspAssociation
+        :rtype: ~azure.mgmt.network.models.NspAssociation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -66364,7 +66364,7 @@ class NspAssociationsOperations:
         :type association_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NspAssociation or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspAssociation
+        :rtype: ~azure.mgmt.network.models.NspAssociation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -66441,7 +66441,7 @@ class NspAssociationsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspAssociation or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.NspAssociation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NspAssociation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -66527,7 +66527,7 @@ class NspLinkReconcileOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nsp_link_reconcile` attribute.
     
     """
@@ -66609,7 +66609,7 @@ class NspLinkReferenceReconcileOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nsp_link_reference_reconcile` attribute.
     
     """
@@ -66691,7 +66691,7 @@ class NspLinkReferencesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nsp_link_references` attribute.
     
     """
@@ -66840,7 +66840,7 @@ class NspLinkReferencesOperations:
         :type link_reference_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NspLinkReference or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference
+        :rtype: ~azure.mgmt.network.models.NspLinkReference
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -66917,7 +66917,7 @@ class NspLinkReferencesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspLinkReference or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NspLinkReference]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -67003,7 +67003,7 @@ class NspLinksOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nsp_links` attribute.
     
     """
@@ -67157,13 +67157,13 @@ class NspLinksOperations:
         :type link_name: str
         :param parameters: Parameters that hold the NspLink resource to be created/updated. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NspLink or IO
+        :type parameters: ~azure.mgmt.network.models.NspLink or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NspLink or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspLink
+        :rtype: ~azure.mgmt.network.models.NspLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -67244,7 +67244,7 @@ class NspLinksOperations:
         :type link_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NspLink or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspLink
+        :rtype: ~azure.mgmt.network.models.NspLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -67321,7 +67321,7 @@ class NspLinksOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspLink or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.NspLink]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NspLink]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -67407,7 +67407,7 @@ class NspProfilesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`nsp_profiles` attribute.
     
     """
@@ -67440,13 +67440,13 @@ class NspProfilesOperations:
         :type profile_name: str
         :param parameters: Parameters that hold the NspProfile resource to be created/updated. Is
          either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NspProfile or IO
+        :type parameters: ~azure.mgmt.network.models.NspProfile or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NspProfile or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspProfile
+        :rtype: ~azure.mgmt.network.models.NspProfile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -67588,7 +67588,7 @@ class NspProfilesOperations:
         :type profile_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NspProfile or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.NspProfile
+        :rtype: ~azure.mgmt.network.models.NspProfile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -67665,7 +67665,7 @@ class NspProfilesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspProfile or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.NspProfile]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NspProfile]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -67751,7 +67751,7 @@ class PerimeterAssociableResourceTypesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`perimeter_associable_resource_types` attribute.
     
     """
@@ -67776,7 +67776,7 @@ class PerimeterAssociableResourceTypesOperations:
         :return: An iterator like instance of either PerimeterAssociableResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.PerimeterAssociableResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.PerimeterAssociableResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -67859,7 +67859,7 @@ class SecurityAdminConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`security_admin_configurations` attribute.
     
     """
@@ -67893,13 +67893,13 @@ class SecurityAdminConfigurationsOperations:
         :param security_admin_configuration: The security admin configuration to create or update. Is
          either a model type or a IO type. Required.
         :type security_admin_configuration:
-         ~azure.mgmt.network.v2022_07_01.models.SecurityAdminConfiguration or IO
+         ~azure.mgmt.network.models.SecurityAdminConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityAdminConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SecurityAdminConfiguration
+        :rtype: ~azure.mgmt.network.models.SecurityAdminConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -68042,7 +68042,7 @@ class SecurityAdminConfigurationsOperations:
         :type configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityAdminConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SecurityAdminConfiguration
+        :rtype: ~azure.mgmt.network.models.SecurityAdminConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -68119,7 +68119,7 @@ class SecurityAdminConfigurationsOperations:
         :return: An iterator like instance of either SecurityAdminConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.SecurityAdminConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.SecurityAdminConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -68328,7 +68328,7 @@ class SecurityUserConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`security_user_configurations` attribute.
     
     """
@@ -68362,13 +68362,13 @@ class SecurityUserConfigurationsOperations:
         :param security_user_configuration: The security user configuration to create or update. Is
          either a model type or a IO type. Required.
         :type security_user_configuration:
-         ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfiguration or IO
+         ~azure.mgmt.network.models.SecurityConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfiguration
+        :rtype: ~azure.mgmt.network.models.SecurityConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -68510,7 +68510,7 @@ class SecurityUserConfigurationsOperations:
         :type configuration_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SecurityConfiguration or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfiguration
+        :rtype: ~azure.mgmt.network.models.SecurityConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -68589,7 +68589,7 @@ class SecurityUserConfigurationsOperations:
         :return: An iterator like instance of either SecurityConfiguration or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfiguration]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.SecurityConfiguration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -68675,7 +68675,7 @@ class UserRuleCollectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`user_rule_collections` attribute.
     
     """
@@ -68712,13 +68712,13 @@ class UserRuleCollectionsOperations:
         :type rule_collection_name: str
         :param user_rule_collection: The User Rule Collection to create or update. Is either a model
          type or a IO type. Required.
-        :type user_rule_collection: ~azure.mgmt.network.v2021_02_01_preview.models.RuleCollection or IO
+        :type user_rule_collection: ~azure.mgmt.network.models.RuleCollection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RuleCollection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.RuleCollection
+        :rtype: ~azure.mgmt.network.models.RuleCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -68878,7 +68878,7 @@ class UserRuleCollectionsOperations:
         :type rule_collection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RuleCollection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.RuleCollection
+        :rtype: ~azure.mgmt.network.models.RuleCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -68959,7 +68959,7 @@ class UserRuleCollectionsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RuleCollection or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.RuleCollection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.RuleCollection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -69046,7 +69046,7 @@ class UserRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2021_02_01_preview.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`user_rules` attribute.
     
     """
@@ -69086,13 +69086,13 @@ class UserRulesOperations:
         :type rule_name: str
         :param user_rule: The user rule to create or update. Is either a model type or a IO type.
          Required.
-        :type user_rule: ~azure.mgmt.network.v2021_02_01_preview.models.BaseUserRule or IO
+        :type user_rule: ~azure.mgmt.network.models.BaseUserRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BaseUserRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.BaseUserRule
+        :rtype: ~azure.mgmt.network.models.BaseUserRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -69260,7 +69260,7 @@ class UserRulesOperations:
         :type rule_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BaseUserRule or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2021_02_01_preview.models.BaseUserRule
+        :rtype: ~azure.mgmt.network.models.BaseUserRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -69346,7 +69346,7 @@ class UserRulesOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BaseUserRule or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2021_02_01_preview.models.BaseUserRule]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BaseUserRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -69434,7 +69434,7 @@ class ApplicationGatewayWafDynamicManifestsDefaultOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`application_gateway_waf_dynamic_manifests_default` attribute.
     
     """
@@ -69456,7 +69456,7 @@ class ApplicationGatewayWafDynamicManifestsDefaultOperations:
         :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ApplicationGatewayWafDynamicManifestResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayWafDynamicManifestResult
+        :rtype: ~azure.mgmt.network.models.ApplicationGatewayWafDynamicManifestResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -69510,7 +69510,7 @@ class ApplicationGatewayWafDynamicManifestsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`application_gateway_waf_dynamic_manifests` attribute.
     
     """
@@ -69534,7 +69534,7 @@ class ApplicationGatewayWafDynamicManifestsOperations:
         :return: An iterator like instance of either ApplicationGatewayWafDynamicManifestResult or the
          result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ApplicationGatewayWafDynamicManifestResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ApplicationGatewayWafDynamicManifestResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -69604,7 +69604,7 @@ class ConfigurationPolicyGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`configuration_policy_groups` attribute.
     
     """
@@ -69759,7 +69759,7 @@ class ConfigurationPolicyGroupsOperations:
         :param vpn_server_configuration_policy_group_parameters: Parameters supplied to create or
          update a VpnServerConfiguration PolicyGroup. Is either a model type or a IO type. Required.
         :type vpn_server_configuration_policy_group_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.VpnServerConfigurationPolicyGroup or IO
+         ~azure.mgmt.network.models.VpnServerConfigurationPolicyGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -69774,7 +69774,7 @@ class ConfigurationPolicyGroupsOperations:
         :return: An instance of AsyncLROPoller that returns either VpnServerConfigurationPolicyGroup or
          the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnServerConfigurationPolicyGroup]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnServerConfigurationPolicyGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -69918,7 +69918,7 @@ class ConfigurationPolicyGroupsOperations:
         :type configuration_policy_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VpnServerConfigurationPolicyGroup or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VpnServerConfigurationPolicyGroup
+        :rtype: ~azure.mgmt.network.models.VpnServerConfigurationPolicyGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -69981,7 +69981,7 @@ class ConfigurationPolicyGroupsOperations:
         :return: An iterator like instance of either VpnServerConfigurationPolicyGroup or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.VpnServerConfigurationPolicyGroup]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VpnServerConfigurationPolicyGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -70052,7 +70052,7 @@ class ExpressRoutePortAuthorizationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_port_authorizations` attribute.
     
     """
@@ -70201,7 +70201,7 @@ class ExpressRoutePortAuthorizationsOperations:
         :param authorization_parameters: Parameters supplied to the create or update express route port
          authorization operation. Is either a model type or a IO type. Required.
         :type authorization_parameters:
-         ~azure.mgmt.network.v2022_07_01.models.ExpressRoutePortAuthorization or IO
+         ~azure.mgmt.network.models.ExpressRoutePortAuthorization or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -70216,7 +70216,7 @@ class ExpressRoutePortAuthorizationsOperations:
         :return: An instance of AsyncLROPoller that returns either ExpressRoutePortAuthorization or the
          result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.ExpressRoutePortAuthorization]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ExpressRoutePortAuthorization]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -70351,7 +70351,7 @@ class ExpressRoutePortAuthorizationsOperations:
         :type authorization_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRoutePortAuthorization or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRoutePortAuthorization
+        :rtype: ~azure.mgmt.network.models.ExpressRoutePortAuthorization
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -70414,7 +70414,7 @@ class ExpressRoutePortAuthorizationsOperations:
         :return: An iterator like instance of either ExpressRoutePortAuthorization or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ExpressRoutePortAuthorization]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ExpressRoutePortAuthorization]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -70485,7 +70485,7 @@ class ExpressRouteProviderPortsLocationOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`express_route_provider_ports_location` attribute.
     
     """
@@ -70508,7 +70508,7 @@ class ExpressRouteProviderPortsLocationOperations:
         :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteProviderPortListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteProviderPortListResult
+        :rtype: ~azure.mgmt.network.models.ExpressRouteProviderPortListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -70562,7 +70562,7 @@ class FirewallPolicyIdpsSignaturesFilterValuesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`firewall_policy_idps_signatures_filter_values` attribute.
     
     """
@@ -70591,14 +70591,14 @@ class FirewallPolicyIdpsSignaturesFilterValuesOperations:
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
         :param parameters: Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.SignatureOverridesFilterValuesQuery or
+        :type parameters: ~azure.mgmt.network.models.SignatureOverridesFilterValuesQuery or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SignatureOverridesFilterValuesResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SignatureOverridesFilterValuesResponse
+        :rtype: ~azure.mgmt.network.models.SignatureOverridesFilterValuesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -70665,7 +70665,7 @@ class FirewallPolicyIdpsSignaturesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`firewall_policy_idps_signatures` attribute.
     
     """
@@ -70694,13 +70694,13 @@ class FirewallPolicyIdpsSignaturesOperations:
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
         :param parameters: Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.IDPSQueryObject or IO
+        :type parameters: ~azure.mgmt.network.models.IDPSQueryObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: QueryResults or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.QueryResults
+        :rtype: ~azure.mgmt.network.models.QueryResults
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -70767,7 +70767,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`firewall_policy_idps_signatures_overrides` attribute.
     
     """
@@ -70793,7 +70793,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         :type firewall_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SignaturesOverrides or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SignaturesOverrides
+        :rtype: ~azure.mgmt.network.models.SignaturesOverrides
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -70854,7 +70854,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         :type firewall_policy_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SignaturesOverridesList or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SignaturesOverridesList
+        :rtype: ~azure.mgmt.network.models.SignaturesOverridesList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -70918,13 +70918,13 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         :type firewall_policy_name: str
         :param parameters: Will contain all properties of the object to put. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.SignaturesOverrides or IO
+        :type parameters: ~azure.mgmt.network.models.SignaturesOverrides or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SignaturesOverrides or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SignaturesOverrides
+        :rtype: ~azure.mgmt.network.models.SignaturesOverrides
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -71000,13 +71000,13 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         :type firewall_policy_name: str
         :param parameters: Will contain all properties of the object to put. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.SignaturesOverrides or IO
+        :type parameters: ~azure.mgmt.network.models.SignaturesOverrides or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SignaturesOverrides or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SignaturesOverrides
+        :rtype: ~azure.mgmt.network.models.SignaturesOverrides
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -71073,7 +71073,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`management_group_network_manager_connections` attribute.
     
     """
@@ -71104,13 +71104,13 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         :type network_manager_connection_name: str
         :param parameters: Network manager connection to be created/updated. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkManagerConnection or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkManagerConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManagerConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkManagerConnection
+        :rtype: ~azure.mgmt.network.models.NetworkManagerConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -71242,7 +71242,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         :type network_manager_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManagerConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkManagerConnection
+        :rtype: ~azure.mgmt.network.models.NetworkManagerConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -71310,7 +71310,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         :return: An iterator like instance of either NetworkManagerConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkManagerConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkManagerConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -71381,7 +71381,7 @@ class RouteMapsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`route_maps` attribute.
     
     """
@@ -71529,7 +71529,7 @@ class RouteMapsOperations:
         :type route_map_name: str
         :param route_map_parameters: Parameters supplied to create or update a RouteMap. Is either a
          model type or a IO type. Required.
-        :type route_map_parameters: ~azure.mgmt.network.v2022_07_01.models.RouteMap or IO
+        :type route_map_parameters: ~azure.mgmt.network.models.RouteMap or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -71543,7 +71543,7 @@ class RouteMapsOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either RouteMap or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.RouteMap]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RouteMap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -71678,7 +71678,7 @@ class RouteMapsOperations:
         :type route_map_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteMap or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.RouteMap
+        :rtype: ~azure.mgmt.network.models.RouteMap
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -71739,7 +71739,7 @@ class RouteMapsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RouteMap or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.RouteMap]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.RouteMap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -71810,7 +71810,7 @@ class RoutingIntentOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`routing_intent` attribute.
     
     """
@@ -71959,7 +71959,7 @@ class RoutingIntentOperations:
         :type routing_intent_name: str
         :param routing_intent_parameters: Parameters supplied to create or update RoutingIntent. Is
          either a model type or a IO type. Required.
-        :type routing_intent_parameters: ~azure.mgmt.network.v2022_07_01.models.RoutingIntent or IO
+        :type routing_intent_parameters: ~azure.mgmt.network.models.RoutingIntent or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -71974,7 +71974,7 @@ class RoutingIntentOperations:
         :return: An instance of AsyncLROPoller that returns either RoutingIntent or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.RoutingIntent]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.RoutingIntent]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -72109,7 +72109,7 @@ class RoutingIntentOperations:
         :type routing_intent_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RoutingIntent or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.RoutingIntent
+        :rtype: ~azure.mgmt.network.models.RoutingIntent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -72171,7 +72171,7 @@ class RoutingIntentOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RoutingIntent or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.RoutingIntent]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.RoutingIntent]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -72242,7 +72242,7 @@ class ScopeConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`scope_connections` attribute.
     
     """
@@ -72275,13 +72275,13 @@ class ScopeConnectionsOperations:
         :type scope_connection_name: str
         :param parameters: Scope connection to be created/updated. Is either a model type or a IO type.
          Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ScopeConnection or IO
+        :type parameters: ~azure.mgmt.network.models.ScopeConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ScopeConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ScopeConnection
+        :rtype: ~azure.mgmt.network.models.ScopeConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -72419,7 +72419,7 @@ class ScopeConnectionsOperations:
         :type scope_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ScopeConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ScopeConnection
+        :rtype: ~azure.mgmt.network.models.ScopeConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -72494,7 +72494,7 @@ class ScopeConnectionsOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ScopeConnection or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ScopeConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ScopeConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -72567,7 +72567,7 @@ class ServiceTagInformationOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`service_tag_information` attribute.
     
     """
@@ -72600,7 +72600,7 @@ class ServiceTagInformationOperations:
         :return: An iterator like instance of either ServiceTagInformation or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.ServiceTagInformation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ServiceTagInformation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -72672,7 +72672,7 @@ class StaticMembersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`static_members` attribute.
     
     """
@@ -72708,13 +72708,13 @@ class StaticMembersOperations:
         :type static_member_name: str
         :param parameters: Parameters supplied to the specify the static member to create. Is either a
          model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.StaticMember or IO
+        :type parameters: ~azure.mgmt.network.models.StaticMember or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticMember or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.StaticMember
+        :rtype: ~azure.mgmt.network.models.StaticMember
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -72868,7 +72868,7 @@ class StaticMembersOperations:
         :type static_member_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: StaticMember or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.StaticMember
+        :rtype: ~azure.mgmt.network.models.StaticMember
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -72947,7 +72947,7 @@ class StaticMembersOperations:
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StaticMember or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.StaticMember]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.StaticMember]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -73021,7 +73021,7 @@ class SubscriptionNetworkManagerConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`subscription_network_manager_connections` attribute.
     
     """
@@ -73048,13 +73048,13 @@ class SubscriptionNetworkManagerConnectionsOperations:
         :type network_manager_connection_name: str
         :param parameters: Network manager connection to be created/updated. Is either a model type or
          a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.NetworkManagerConnection or IO
+        :type parameters: ~azure.mgmt.network.models.NetworkManagerConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManagerConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkManagerConnection
+        :rtype: ~azure.mgmt.network.models.NetworkManagerConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -73178,7 +73178,7 @@ class SubscriptionNetworkManagerConnectionsOperations:
         :type network_manager_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManagerConnection or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.NetworkManagerConnection
+        :rtype: ~azure.mgmt.network.models.NetworkManagerConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -73243,7 +73243,7 @@ class SubscriptionNetworkManagerConnectionsOperations:
         :return: An iterator like instance of either NetworkManagerConnection or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.NetworkManagerConnection]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NetworkManagerConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -73314,7 +73314,7 @@ class VipSwapOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.network.v2022_07_01.aio.NetworkManagementClient`'s
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
         :attr:`vip_swap` attribute.
     
     """
@@ -73398,7 +73398,7 @@ class VipSwapOperations:
         :type resource_name: str
         :param parameters: SwapResource object where slot type should be the target slot after vip swap
          for the specified cloud service. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.SwapResource or IO
+        :type parameters: ~azure.mgmt.network.models.SwapResource or IO
         :keyword singleton_resource: Specifies a synthetic resource that cannot be created or deleted.
          Value must be set to swap. Default value is "swap". Note that overriding this default value may
          result in unsupported behavior.
@@ -73479,7 +73479,7 @@ class VipSwapOperations:
         :paramtype singleton_resource: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SwapResource or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SwapResource
+        :rtype: ~azure.mgmt.network.models.SwapResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -73540,7 +73540,7 @@ class VipSwapOperations:
         :type resource_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SwapResourceListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.SwapResourceListResult
+        :rtype: ~azure.mgmt.network.models.SwapResourceListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -73605,7 +73605,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type domain_name_label: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DnsNameAvailabilityResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.DnsNameAvailabilityResult
+        :rtype: ~azure.mgmt.network.models.DnsNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -73669,7 +73669,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type virtual_wan_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualWanSecurityProviders or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.VirtualWanSecurityProviders
+        :rtype: ~azure.mgmt.network.models.VirtualWanSecurityProviders
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -73804,7 +73804,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type virtual_wan_name: str
         :param vpn_client_params: Parameters supplied to the generate VirtualWan VPN profile generation
          operation. Is either a model type or a IO type. Required.
-        :type vpn_client_params: ~azure.mgmt.network.v2022_07_01.models.VirtualWanVpnProfileParameters
+        :type vpn_client_params: ~azure.mgmt.network.models.VirtualWanVpnProfileParameters
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -73820,7 +73820,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :return: An instance of AsyncLROPoller that returns either VpnProfileResponse or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.v2022_07_01.models.VpnProfileResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VpnProfileResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -74066,7 +74066,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type bastion_host_name: str
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints. Is either a
          model type or a IO type. Required.
-        :type bsl_request: ~azure.mgmt.network.v2022_07_01.models.BastionShareableLinkListRequest or IO
+        :type bsl_request: ~azure.mgmt.network.models.BastionShareableLinkListRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -74152,7 +74152,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :return: An instance of LROPoller that returns an iterator like instance of either
          BastionActiveSessionListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BastionActiveSession]]
+         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BastionActiveSession]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -74274,7 +74274,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type bastion_host_name: str
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints. Is either a
          model type or a IO type. Required.
-        :type bsl_request: ~azure.mgmt.network.v2022_07_01.models.BastionShareableLinkListRequest or IO
+        :type bsl_request: ~azure.mgmt.network.models.BastionShareableLinkListRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -74289,7 +74289,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :return: An instance of LROPoller that returns an iterator like instance of either
          BastionShareableLinkListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BastionShareableLink]]
+         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BastionShareableLink]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -74424,14 +74424,14 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type bastion_host_name: str
         :param session_ids: The list of sessionids to disconnect. Is either a model type or a IO type.
          Required.
-        :type session_ids: ~azure.mgmt.network.v2022_07_01.models.SessionIds or IO
+        :type session_ids: ~azure.mgmt.network.models.SessionIds or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BastionSessionState or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BastionSessionState]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BastionSessionState]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -74525,7 +74525,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type bastion_host_name: str
         :param bsl_request: Post request for all the Bastion Shareable Link endpoints. Is either a
          model type or a IO type. Required.
-        :type bsl_request: ~azure.mgmt.network.v2022_07_01.models.BastionShareableLinkListRequest or IO
+        :type bsl_request: ~azure.mgmt.network.models.BastionShareableLinkListRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -74533,7 +74533,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :return: An iterator like instance of either BastionShareableLink or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.v2022_07_01.models.BastionShareableLink]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.BastionShareableLink]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -74619,7 +74619,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type providerport: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteProviderPort or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ExpressRouteProviderPort
+        :rtype: ~azure.mgmt.network.models.ExpressRouteProviderPort
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -74686,7 +74686,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Is either a model type or a IO type.
          Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ActiveConfigurationParameter or IO
+        :type parameters: ~azure.mgmt.network.models.ActiveConfigurationParameter or IO
         :param top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :type top: int
@@ -74695,7 +74695,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActiveConnectivityConfigurationsListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ActiveConnectivityConfigurationsListResult
+        :rtype: ~azure.mgmt.network.models.ActiveConnectivityConfigurationsListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -74776,7 +74776,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Is either a model type or a IO type.
          Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.ActiveConfigurationParameter or IO
+        :type parameters: ~azure.mgmt.network.models.ActiveConfigurationParameter or IO
         :param top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :type top: int
@@ -74785,7 +74785,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ActiveSecurityAdminRulesListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_07_01.models.ActiveSecurityAdminRulesListResult
+        :rtype: ~azure.mgmt.network.models.ActiveSecurityAdminRulesListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -74866,7 +74866,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Is either a model type or a IO
          type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.QueryRequestOptions or IO
+        :type parameters: ~azure.mgmt.network.models.QueryRequestOptions or IO
         :param top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :type top: int
@@ -74877,7 +74877,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :return: NetworkManagerEffectiveConnectivityConfigurationListResult or the result of
          cls(response)
         :rtype:
-         ~azure.mgmt.network.v2022_07_01.models.NetworkManagerEffectiveConnectivityConfigurationListResult
+         ~azure.mgmt.network.models.NetworkManagerEffectiveConnectivityConfigurationListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -74960,7 +74960,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Is either a model type or a IO
          type. Required.
-        :type parameters: ~azure.mgmt.network.v2022_07_01.models.QueryRequestOptions or IO
+        :type parameters: ~azure.mgmt.network.models.QueryRequestOptions or IO
         :param top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
         :type top: int
@@ -74970,7 +74970,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkManagerEffectiveSecurityAdminRulesListResult or the result of cls(response)
         :rtype:
-         ~azure.mgmt.network.v2022_07_01.models.NetworkManagerEffectiveSecurityAdminRulesListResult
+         ~azure.mgmt.network.models.NetworkManagerEffectiveSecurityAdminRulesListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
