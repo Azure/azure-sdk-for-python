@@ -264,10 +264,9 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
 
 
     @classmethod
-    def _models_dict(cls, api_version):
-        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
-
-
+    def _models_dict(cls, api_version):  # pylint: disable=unused-argument
+        from azure.mgmt.network import models
+        return {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
 
     @property
     @api_version_validation(
