@@ -349,11 +349,11 @@ def parse_local_path(origin_path, base_path=None):
 
 @contextmanager
 def build_temp_folder(
-        *,
-        source_base_dir: Union[str, os.PathLike],
-        relative_dirs_to_copy: List[str] = None,
-        relative_files_to_copy: List[str] = None,
-        extra_files_to_create: Dict[str, Optional[str]] = None,
+    *,
+    source_base_dir: Union[str, os.PathLike],
+    relative_dirs_to_copy: List[str] = None,
+    relative_files_to_copy: List[str] = None,
+    extra_files_to_create: Dict[str, Optional[str]] = None,
 ) -> str:
     """Build a temporary folder with files and subfolders copied from source_base_dir.
 

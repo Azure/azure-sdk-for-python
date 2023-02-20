@@ -29,14 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.graph_resources.get_graph(
+    response = client.sql_resources.get_sql_database(
         resource_group_name="rg1",
         account_name="ddb1",
-        graph_name="graphName",
+        database_name="databaseName",
     )
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2022-08-15-preview/examples/CosmosDBGraphResourceGet.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2022-11-15/examples/CosmosDBSqlDatabaseGet.json
 if __name__ == "__main__":
     main()

@@ -19,6 +19,7 @@ class JobType(object):
     PARALLEL = "parallel"
     IMPORT = "import"
     SPARK = "spark"
+    DATA_TRANSFER = "data_transfer"
 
 
 class JobLimitsType(object):

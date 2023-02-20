@@ -24,8 +24,6 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-import os
-
 
 def sample_recognize_linked_entities() -> None:
     print(
@@ -34,6 +32,7 @@ def sample_recognize_linked_entities() -> None:
         "all of the necessary information for research purposes."
     )
     # [START recognize_linked_entities]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 

@@ -67,6 +67,7 @@ LIMITED_RESULTSET_WARNING_FORMAT = "Displaying top {} results from the list comm
 MAX_LIST_CLI_RESULTS = 50
 LOCAL_COMPUTE_TARGET = "local"
 LOCAL_COMPUTE_PROPERTY = "IsLocal"
+SERVERLESS_COMPUTE = "serverless"
 CONDA_FILE = "conda_file"
 DOCKER_FILE_NAME = "Dockerfile"
 COMPUTE_UPDATE_ERROR = (
@@ -595,6 +596,7 @@ class IdentityType:
     AML_TOKEN = "aml_token"
     USER_IDENTITY = "user_identity"
     MANAGED_IDENTITY = "managed_identity"
+
 
 class Boolean:
     TRUE = "true"

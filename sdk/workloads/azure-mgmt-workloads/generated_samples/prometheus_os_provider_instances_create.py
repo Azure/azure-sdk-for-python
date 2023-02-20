@@ -38,6 +38,7 @@ def main():
                 "providerSettings": {
                     "prometheusUrl": "http://192.168.0.0:9090/metrics",
                     "providerType": "PrometheusOS",
+                    "sapSid": "SID",
                     "sslCertificateUri": "https://storageaccount.blob.core.windows.net/containername/filename",
                     "sslPreference": "ServerCertificate",
                 }
@@ -47,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2021-12-01-preview/examples/workloadmonitor/PrometheusOSProviderInstances_Create.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2022-11-01-preview/examples/workloadmonitor/PrometheusOSProviderInstances_Create.json
 if __name__ == "__main__":
     main()

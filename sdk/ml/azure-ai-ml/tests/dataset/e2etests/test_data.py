@@ -175,20 +175,15 @@ sepal_length,sepal_width,petal_length,petal_width,species
         assert data_version.id == generate_data_arm_id(client._operation_scope, name, version)
         assert data_version.path.endswith("/tmp_folder/")
 
-    @pytest.mark.skipif(condition=not is_live(),
-                        reason="Auth issue in Registry")
+    @pytest.mark.skipif(condition=not is_live(), reason="Auth issue in Registry")
     def test_create_data_asset_in_registry(
-            self, data_asset_registry_client: MLClient,
-            randstr: Callable[[], str]) -> None:
+        self, data_asset_registry_client: MLClient, randstr: Callable[[], str]
+    ) -> None:
         name = randstr("name")
         version = "1"
         data_asset = load_data(
             source="./tests/test_configs/dataset/data_file.yaml",
-            params_override=[{
-                "name": name
-            }, {
-                "version": version
-            }],
+            params_override=[{"name": name}, {"version": version}],
         )
         sleep_if_live(3)
         obj = data_asset_registry_client.data.create_or_update(data_asset)
@@ -210,16 +205,13 @@ sepal_length,sepal_width,petal_length,petal_width,species
         # use a set since ordering of elements returned from list isn't guaranteed
         assert {"1", "2"} == {data.version for data in data_list}
 
-    @pytest.mark.skipif(condition=not is_live(),
-                        reason="Auth issue in Registry")
-    def test_list_data_in_registry(
-            self, data_asset_registry_client: MLClient) -> None:
+    @pytest.mark.skipif(condition=not is_live(), reason="Auth issue in Registry")
+    def test_list_data_in_registry(self, data_asset_registry_client: MLClient) -> None:
         data_iterator = data_asset_registry_client.data.list()
         assert data_iterator
         assert isinstance(data_iterator, ItemPaged)
 
-    def test_data_get_latest_label(self, client: MLClient,
-                                   randstr: Callable[[], str]) -> None:
+    def test_data_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")
         versions = ["foo", "bar", "baz", "foobar"]
 
@@ -227,35 +219,28 @@ sepal_length,sepal_width,petal_length,petal_width,species
             client.data.create_or_update(
                 load_data(
                     source="./tests/test_configs/dataset/data_file.yaml",
-                    params_override=[{
-                        "name": name
-                    }, {
-                        "version": version
-                    }],
-                ))
+                    params_override=[{"name": name}, {"version": version}],
+                )
+            )
             sleep_if_live(3)
             assert client.data.get(name, label="latest").version == version
 
-    @pytest.mark.skipif(condition=not is_live(),
-                        reason="Auth issue in Registry")
+    @pytest.mark.skipif(condition=not is_live(), reason="Auth issue in Registry")
     def test_data_get_latest_label_in_registry(
-            self,  data_asset_registry_client: MLClient, randstr: Callable[[],
-                                                               str]) -> None:
+        self, data_asset_registry_client: MLClient, randstr: Callable[[], str]
+    ) -> None:
         name = randstr("name")
         versions = ["foo", "bar", "baz", "foobar"]
         for version in versions:
             data_asset_registry_client.data.create_or_update(
                 load_data(
                     source="./tests/test_configs/dataset/data_file.yaml",
-                    params_override=[{
-                        "name": name
-                    }, {
-                        "version": version
-                    }],
-                ))
+                    params_override=[{"name": name}, {"version": version}],
+                )
+            )
             sleep_if_live(3)
-            assert  data_asset_registry_client.data.get(name,
-                                            label="latest").version == version
+            assert data_asset_registry_client.data.get(name, label="latest").version == version
+
     @pytest.mark.e2etest
     def test_data_archive_restore_version(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")

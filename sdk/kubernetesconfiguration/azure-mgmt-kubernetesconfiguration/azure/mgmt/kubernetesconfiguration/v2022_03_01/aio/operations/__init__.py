@@ -13,11 +13,17 @@ from ._flux_config_operation_status_operations import FluxConfigOperationStatusO
 from ._source_control_configurations_operations import SourceControlConfigurationsOperations
 from ._operations import Operations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ExtensionsOperations',
-    'OperationStatusOperations',
-    'FluxConfigurationsOperations',
-    'FluxConfigOperationStatusOperations',
-    'SourceControlConfigurationsOperations',
-    'Operations',
+    "ExtensionsOperations",
+    "OperationStatusOperations",
+    "FluxConfigurationsOperations",
+    "FluxConfigOperationStatusOperations",
+    "SourceControlConfigurationsOperations",
+    "Operations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

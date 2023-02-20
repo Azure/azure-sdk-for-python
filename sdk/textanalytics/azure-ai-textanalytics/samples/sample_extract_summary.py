@@ -20,11 +20,9 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_extractive_summarization():
     # [START extract_summary]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -64,7 +62,7 @@ def sample_extractive_summarization():
             )
         elif result.is_error is True:
             print("...Is an error with code '{}' and message '{}'".format(
-                result.code, result.message
+                result.error.code, result.error.message
             ))
     # [END extract_summary]
 

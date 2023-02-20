@@ -434,8 +434,8 @@ class DatabaseRecommendedActionsOperations:
         :type advisor_name: str
         :param recommended_action_name: The name of Database Recommended Action. Required.
         :type recommended_action_name: str
-        :param parameters: The requested recommended action resource state. Is either a model type or a
-         IO type. Required.
+        :param parameters: The requested recommended action resource state. Is either a
+         RecommendedAction type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.RecommendedAction or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.appconfiguration.provider import (
-    AzureAppConfigurationProvider,
+    load_provider,
     SettingSelector
 )
 from devtools_testutils import (
@@ -17,7 +17,7 @@ from preparers import app_config_decorator
 class TestAppConfigurationProvider(AzureRecordedTestCase):
 
     def build_provider(self, connection_string, trimmed_key_prefixes=[], selects={SettingSelector("*", "\0")}):
-        return AzureAppConfigurationProvider.load(connection_string=connection_string, trimmed_key_prefixes=trimmed_key_prefixes, selects=selects)
+        return load_provider(connection_string=connection_string, trimmed_key_prefixes=trimmed_key_prefixes, selects=selects)
 
     # method: provider_creation
     @recorded_by_proxy
@@ -26,6 +26,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         client = self.build_provider(appconfiguration_connection_string)
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
+        assert client["FeatureManagementFeatureFlags"]["Alpha"] == '{\"enabled\": false, \"conditions\": {\"client_filters\": []}}'
 
     # method: provider_trimmed_key_prefixes
     @recorded_by_proxy
@@ -37,6 +38,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         assert client["my_json"]["key"] == "value"
         assert client["trimmed"] == "key"
         assert "test.trimmed" not in client
+        assert client["FeatureManagementFeatureFlags"]["Alpha"] == '{\"enabled\": false, \"conditions\": {\"client_filters\": []}}'
 
     # method: provider_selectors
     @recorded_by_proxy
@@ -46,3 +48,4 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         client = self.build_provider(appconfiguration_connection_string, selects=selects)
         assert client["message"] == "test"
         assert "test.trimmed" not in client
+        assert "FeatureManagementFeatureFlags" not in client
