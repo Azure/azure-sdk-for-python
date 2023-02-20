@@ -85,12 +85,24 @@ def PipelineJobsField():
             NestedField(PipelineSparkJobSchema),
         ],
         NodeType.DATA_TRANSFER: [
-            NestedField(DataTransferCopySchema, unknown=INCLUDE),
-            NestedField(DataTransferImportSchema, unknown=INCLUDE),
-            NestedField(DataTransferExportSchema, unknown=INCLUDE),
-            NestedField(PipelineDataTransferCopyJobSchema),
-            NestedField(PipelineDataTransferImportJobSchema),
-            NestedField(PipelineDataTransferExportJobSchema),
+            TypeSensitiveUnionField(
+                {
+                    DataTransferTaskType.COPY_DATA: [
+                        NestedField(DataTransferCopySchema, unknown=INCLUDE),
+                        NestedField(PipelineDataTransferCopyJobSchema),
+                    ],
+                    DataTransferTaskType.IMPORT_DATA: [
+                        NestedField(DataTransferImportSchema, unknown=INCLUDE),
+                        NestedField(PipelineDataTransferImportJobSchema),
+                    ],
+                    DataTransferTaskType.EXPORT_DATA: [
+                        NestedField(DataTransferExportSchema, unknown=INCLUDE),
+                        NestedField(PipelineDataTransferExportJobSchema),
+                    ],
+                },
+                type_field_name="task",
+                unknown=INCLUDE
+            )
         ],
     }
 
