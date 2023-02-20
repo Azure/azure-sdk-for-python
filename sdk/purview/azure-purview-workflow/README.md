@@ -65,8 +65,13 @@ try:
 except HttpResponseError as e:
     print('service responds error: {}'.format(e.response.json()))
 ```
+## Key concepts
+
+## Troubleshooting
 
 ## Contributing
+
+## Next steps
 
 This project welcomes contributions and suggestions. Most contributions require
 you to agree to a Contributor License Agreement (CLA) declaring that you have
