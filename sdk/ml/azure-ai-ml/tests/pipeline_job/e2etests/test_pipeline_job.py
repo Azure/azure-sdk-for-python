@@ -1693,6 +1693,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         [
             "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/command/pipeline.yml",
             "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/sweep/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/pipeline/pipeline.yml",
         ],
     )
     def test_serverless_compute_in_pipeline(

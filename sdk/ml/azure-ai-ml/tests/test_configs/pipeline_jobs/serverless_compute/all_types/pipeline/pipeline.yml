@@ -1,0 +1,9 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: Serverless in Pipeline - Pipeline
+settings:
+  default_compute: azureml:serverless
+jobs:
+  pipeline_node:
+    type: pipeline
+    component: ./pipeline_component.yml
