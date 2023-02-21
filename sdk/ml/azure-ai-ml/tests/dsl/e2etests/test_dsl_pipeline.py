@@ -58,6 +58,9 @@ common_omit_fields = [
     "services",
 ]
 
+def check_name_and_version(output, output_name, output_version):
+    assert output.name == output_name
+    assert output.version == output_version
 
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
@@ -2800,26 +2803,64 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.pipeine_a_output.name = "p1_output"
         pipeline.outputs.pipeine_a_output.version = "v1"
         pipeline.settings.default_compute = "cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline)
-        client.jobs.stream(pipeline_job.name)
+        pipeline_job = assert_job_cancel(pipeline, client)
 
-        def check_name_version_and_register_succeed(output, output_name, output_version):
-            assert output.name == output_name
-            assert output.version == output_version
-            assert client.data.get(name=output_name, version=output_version)
-
-        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, "p1_output", "v1")
-        check_name_version_and_register_succeed(
+        check_name_and_version(pipeline_job.outputs.pipeine_a_output, "p1_output", "v1")
+        check_name_and_version(
             pipeline_job.jobs["node_2"].outputs.component_out_path, "n2_output", "v1"
         )
-        check_name_version_and_register_succeed(
+        check_name_and_version(
             pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1"
+        )
+
+    @pytest.mark.skip("https://msdata.visualstudio.com/Vienna/_workitems/edit/2245690")
+    @pytest.mark.disable_mock_code_hash
+    def test_register_output_for_pipeline_component(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node_1 = component(component_in_path=component_input)   # test use Output to initialize subgraph.jobs.output
+            node_1.outputs.component_out_path = Output(name='sub_pipeline_1_output', version='v1')
+
+            node_2 = component(component_in_path=component_input)  # test we can pass NodeOutput in PipelineComponent
+            node_2.outputs.component_out_path.name = "sub_pipeline_2_output"
+            node_2.outputs.component_out_path.version = "v2"
+
+            return {
+                'sub_node_1': node_1.outputs.component_out_path,
+            }
+
+        @dsl.pipeline()
+        def register_both_output():
+            subgraph = sub_pipeline()
+
+        pipeline = register_both_output()
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        check_name_and_version(
+            pipeline_job.jobs['subgraph'].outputs['sub_node_1'], "sub_pipeline_1_output", "v1"
+        )
+
+        subgraph_id = pipeline_job.jobs['subgraph'].component
+        subgraph_id = subgraph_id.split(':')
+        subgraph = client.components.get(name=subgraph_id[0], version=subgraph_id[1])
+        check_name_and_version(
+            subgraph.jobs['node_2'].outputs['component_out_path'], "sub_pipeline_2_output", "v2"
         )
 
     @pytest.mark.disable_mock_code_hash
     def test_register_with_output_format(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path = Output(name='sub_pipeline_o_output', version='v1')
+            return {"sub_pipeine_a_output": node.outputs.component_out_path}
 
         @dsl.pipeline()
         def register_both_output():
@@ -2831,26 +2872,22 @@ class TestDSLPipeline(AzureRecordedTestCase):
             node_2.outputs.component_out_path = Output(name='n2_o_output', version='2')
 
             node_3 = component(component_in_path=component_input)   # isn't binding
-            node_3.outputs.component_out_path = Output(name='n3_o_output', version='3')
+            node_3.outputs.component_out_path = Output(name='n3_o_output', version='4')
 
-            # will add subgraph example here
+            sub_node = sub_pipeline()   # test set Output for PipelineComponent
+            sub_node.outputs.sub_pipeine_a_output = Output(name='subgraph_o_output', version='1')
             return {
                 'pipeine_a_output': node.outputs.component_out_path,
                 'pipeine_b_output': node_2.outputs.component_out_path,
             }
 
         pipeline = register_both_output()
-        pipeline.settings.default_compute = "testcompute3"
+        pipeline.settings.default_compute = "cpu-cluster"
         pipeline.outputs.pipeine_a_output.name = 'np_output'
         pipeline.outputs.pipeine_a_output.version = '1'
-        pipeline_job = client.jobs.create_or_update(pipeline)
-        client.jobs.stream(pipeline_job.name)
+        pipeline_job = assert_job_cancel(pipeline, client)
 
-        def check_name_version_and_register_succeed(output, output_name, output_version):
-            assert output.name == output_name
-            assert output.version == output_version
-            assert client.data.get(name=output_name, version=output_version)
-
-        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, 'np_output', '1')
-        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_b_output, 'n2_o_output', '2')
-        check_name_version_and_register_succeed(pipeline_job.jobs['node_3'].outputs['component_out_path'], 'n3_o_output', '3')
+        check_name_and_version(pipeline_job.outputs.pipeine_a_output, 'np_output', '1')
+        check_name_and_version(pipeline_job.outputs.pipeine_b_output, 'n2_o_output', '2')
+        check_name_and_version(pipeline_job.jobs['node_3'].outputs['component_out_path'], 'n3_o_output', '4')
+        check_name_and_version(pipeline_job.jobs['sub_node'].outputs['sub_pipeine_a_output'], 'subgraph_o_output', '1')

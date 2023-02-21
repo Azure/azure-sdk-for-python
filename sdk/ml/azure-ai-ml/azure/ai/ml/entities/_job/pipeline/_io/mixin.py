@@ -207,6 +207,7 @@ class NodeIOMixin:
                 rest_output_bindings[key].update({"version": binding["version"]})
 
         def _rename_name_and_version(output_dict):
+            # NodeOutput can only be registered with name and version, therefore we rename here
             if "asset_name" in output_dict.keys():
                 output_dict["name"] = output_dict.pop("asset_name")
             if "asset_version" in output_dict.keys():
