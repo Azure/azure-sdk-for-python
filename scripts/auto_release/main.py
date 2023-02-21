@@ -269,7 +269,7 @@ class CodegenTestPR:
             for line in md_content:
                 if "title:" in line:
                     title = line.replace("title:", "").strip(" \r\n")
-                break
+                    break
         else:
             log("{python_md} does not exist")
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
@@ -284,7 +284,7 @@ class CodegenTestPR:
                             has_title = True
                             break
                     if not has_title:
-                        content.append("title = \"{title}\"\n")
+                        content.append(f"title = \"{title}\"\n")
                 modify_file(str(toml), edit_toml)
             else:
                 log(f"{os.getcwd()}/{toml} does not exist")
