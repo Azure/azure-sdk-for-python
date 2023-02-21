@@ -34,9 +34,9 @@ from azure.keyvault.keys import KeyClient
 # 5. Delete a key (begin_delete_key)
 # ----------------------------------------------------------------------------------------------------------
 
-# [START create_a_key_client]
 # Instantiate a key client that will be used to call the service.
 # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
+# [START create_a_key_client]
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = KeyClient(vault_url=VAULT_URL, credential=credential)
