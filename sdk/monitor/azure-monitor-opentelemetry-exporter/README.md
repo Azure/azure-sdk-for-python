@@ -646,7 +646,7 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 <!-- LINKS -->
-[aad_for_ai_docs]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/azure-ad-authentication?tabs=python
+[aad_for_ai_docs]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/azure-ad-authentication
 [api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-opentelemetry-exporter-azuremonitor/1.0.0b2/index.html
 [exporter_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples
 [product_docs]: https://docs.microsoft.com/azure/azure-monitor/overview
