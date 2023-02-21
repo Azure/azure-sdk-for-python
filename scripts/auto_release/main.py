@@ -261,7 +261,7 @@ class CodegenTestPR:
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
-        python_md = Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1] / "readme.python.md"
+        python_md = Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1].replace("readme.md", "readme.python.md")
         title = ""
         if python_md.exists():
             with open(python_md, "r") as file_in:
