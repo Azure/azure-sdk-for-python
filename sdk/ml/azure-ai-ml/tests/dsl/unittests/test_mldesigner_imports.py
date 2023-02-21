@@ -1,12 +1,12 @@
 import pytest
 from azure.ai.ml import Input
-from azure.ai.ml.entities import(
+from azure.ai.ml.entities import (
     Component,
     CommandComponent,
     PipelineComponent,
     ValidationResult,
 )
-from azure.ai.ml.dsl._mldesigner import(
+from azure.ai.ml.dsl._mldesigner import (
     _AdditionalIncludes,
     InternalComponent,
 )
@@ -24,6 +24,7 @@ class TestMldesignerImports:
     The attributes are needed for a certain version of mldesigner package, modifying or deleting any of them will cause
     compatibility issues. If there are new dependencies for mldesigner package, add new assertions in this file.
     """
+
     def test_necessay_attributes(self):
         assert hasattr(Component, "_customized_validate")
         assert hasattr(Component, "_source_path")
@@ -53,7 +54,7 @@ class TestMldesignerImports:
         assert hasattr(input_obj, "_get_python_builtin_type_str")
         assert hasattr(input_obj, "_get_param_with_standard_annotation")
 
-        node_input_obj = NodeInput(name="sdk", meta=input_obj)
+        node_input_obj = NodeInput(port_name="sdk", meta=input_obj)
         assert hasattr(node_input_obj, "_meta")
         assert hasattr(node_input_obj, "_data")
 

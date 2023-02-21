@@ -63,18 +63,18 @@ class ManagedIdentityCredential:
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(**kwargs)
-        elif all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
-            _LOGGER.info("%s will use token exchange", self.__class__.__name__)
-            from .token_exchange import TokenExchangeCredential
+        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
+            _LOGGER.info("%s will use workload identity", self.__class__.__name__)
+            from .workload_identity import WorkloadIdentityCredential
 
             client_id = kwargs.pop("client_id", None) or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
             if not client_id:
                 raise ValueError('Configure the environment with a client ID or pass a value for "client_id" argument')
 
-            self._credential = TokenExchangeCredential(
+            self._credential = WorkloadIdentityCredential(
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 client_id=client_id,
-                token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                 **kwargs
             )
         else:

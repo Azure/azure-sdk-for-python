@@ -6,7 +6,7 @@
 
 from typing import Any, Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -33,7 +33,7 @@ class ComputeOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient102022Preview,
+        service_client: ServiceClient122022Preview,
         **kwargs: Dict,
     ):
         super(ComputeOperations, self).__init__(operation_scope, operation_config)
@@ -115,7 +115,7 @@ class ComputeOperations(_ScopeDependentOperations):
                 module_logger.warning(
                     "Warning: 'Location' is not supported for compute type %s and will not be used.",
                     compute.type,
-                    )
+                )
             compute.location = self._get_workspace_location()
 
         if not compute.location:

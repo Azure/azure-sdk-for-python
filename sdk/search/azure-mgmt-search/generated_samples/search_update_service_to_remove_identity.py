@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2020-03-13/examples/SearchUpdateServiceToRemoveIdentity.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2022-09-01/examples/SearchUpdateServiceToRemoveIdentity.json
 if __name__ == "__main__":
     main()

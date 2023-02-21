@@ -294,7 +294,7 @@ class IPv6FirewallRulesOperations:
         :param firewall_rule_name: The name of the firewall rule. Required.
         :type firewall_rule_name: str
         :param parameters: The required parameters for creating or updating an IPv6 firewall rule. Is
-         either a model type or a IO type. Required.
+         either a IPv6FirewallRule type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.IPv6FirewallRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

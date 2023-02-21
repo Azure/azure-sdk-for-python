@@ -22,12 +22,12 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class TemplateSpecArtifactKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of artifact."""
 
-    #: The artifact represents an embedded Azure Resource Manager template.
     TEMPLATE = "template"
+    """The artifact represents an embedded Azure Resource Manager template."""
 
 
 class TemplateSpecExpandKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TemplateSpecExpandKind."""
 
-    #: Includes version information with the Template Spec.
     VERSIONS = "versions"
+    """Includes version information with the Template Spec."""

@@ -6,34 +6,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._php_workloads_operations import PhpWorkloadsOperations
-from ._wordpress_instances_operations import WordpressInstancesOperations
 from ._workloads_client_operations import WorkloadsClientOperationsMixin
 from ._sap_virtual_instances_operations import SAPVirtualInstancesOperations
 from ._sap_central_instances_operations import SAPCentralInstancesOperations
 from ._sap_database_instances_operations import SAPDatabaseInstancesOperations
 from ._sap_application_server_instances_operations import SAPApplicationServerInstancesOperations
-from ._operations import Operations
 from ._monitors_operations import MonitorsOperations
 from ._provider_instances_operations import ProviderInstancesOperations
-from ._skus_operations import SkusOperations
+from ._sap_landscape_monitor_operations import SapLandscapeMonitorOperations
+from ._operations import Operations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "PhpWorkloadsOperations",
-    "WordpressInstancesOperations",
     "WorkloadsClientOperationsMixin",
     "SAPVirtualInstancesOperations",
     "SAPCentralInstancesOperations",
     "SAPDatabaseInstancesOperations",
     "SAPApplicationServerInstancesOperations",
-    "Operations",
     "MonitorsOperations",
     "ProviderInstancesOperations",
-    "SkusOperations",
+    "SapLandscapeMonitorOperations",
+    "Operations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
