@@ -9,6 +9,7 @@ import uamqp
 from .message import ServiceBusReceivedMessage
 from ..exceptions import _handle_amqp_mgmt_error
 from .constants import ServiceBusReceiveMode, MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
+from azure.servicebus.management import TrueRuleFilter, CorrelationRuleFilter, SqlRuleFilter, SqlRuleAction, RuleProperties
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -142,4 +143,41 @@ def schedule_op(  # pylint: disable=inconsistent-return-statements
 
     _handle_amqp_mgmt_error(
         _LOGGER, "Scheduling messages failed.", condition, description, status_code
+    )
+
+def list_rules_op(status_code, rules, description):
+    condition = rules.application_properties.get(
+        MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
+    )
+
+    if status_code == 200:
+        p = RuleProperties._to_internal_entity()
+        print("DO SOMETHING")
+    if status_code in [202, 204]:
+            return []
+        
+    _handle_amqp_mgmt_error(
+        _LOGGER,
+        "Retrieving rules failed.",
+        condition,
+        description,
+        status_code,
+    )
+
+def delete_rule_op(status_code, message,  description):
+    if status_code != 200:
+        _handle_amqp_mgmt_error(
+        _LOGGER,
+        "Deleting rule failed.",
+        description,
+        status_code,
+    )
+
+def create_rule_op(status_code, message, description):
+    if status_code != 200:
+        _handle_amqp_mgmt_error(
+        _LOGGER,
+        "Creating rule failed.",
+        description,
+        status_code,
     )

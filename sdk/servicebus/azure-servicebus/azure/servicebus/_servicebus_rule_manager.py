@@ -1,15 +1,18 @@
+import functools
 import threading
 import time
-from uamqp import AMQPClient, types, Message
-from uamqp.message import MessageProperties
+from uamqp import AMQPClient, Message
 from uamqp.constants import SenderSettleMode
 from uamqp.authentication.common import AMQPAuth
 from typing import TYPE_CHECKING, Any, Optional, Union
 from azure.core.paging import ItemPaged
-from azure.servicebus._common.constants import CONSUMER_IDENTIFIER, MGMT_REQUEST_ADD_RULE, MGMT_REQUEST_RULE_DESCRIPTION, MGMT_REQUEST_RULE_NAME, ServiceBusReceiveMode, ServiceBusToAMQPReceiveModeMap
+from azure.servicebus._common.constants import CONSUMER_IDENTIFIER, MGMT_REQUEST_ADD_RULE, MGMT_REQUEST_GET_RULES, MGMT_REQUEST_REMOVE_RULE, MGMT_REQUEST_RULE_DESCRIPTION, MGMT_REQUEST_RULE_NAME, MGMT_REQUEST_SKIP, MGMT_REQUEST_TOP, ServiceBusReceiveMode, ServiceBusToAMQPReceiveModeMap
+from azure.servicebus._common.receiver_mixins import ReceiverMixin
 from azure.servicebus.management import TrueRuleFilter, CorrelationRuleFilter, SqlRuleFilter, SqlRuleAction, RuleProperties
 from azure.servicebus._common.utils import create_authentication, get_receive_links, receive_trace_context_manager
+from ._servicebus_session import ServiceBusSession
 from ._base_handler import BaseHandler
+from ._common import mgmt_handlers
 
 if TYPE_CHECKING:
     from azure.core.credentials import (
@@ -18,7 +21,7 @@ if TYPE_CHECKING:
         AzureNamedKeyCredential,
     )
 
-class ServiceBusRuleManager(
+class ServiceBusRuleManager(ReceiverMixin,
     BaseHandler
 ):  # pylint: disable=too-many-instance-attributes
     """The ServiceBusRuleManager class defines a high level interface for
@@ -111,7 +114,11 @@ class ServiceBusRuleManager(
             subscription_name=subscription_name,
             **kwargs,
         )
-
+        self._session =  self._session = (
+            None
+            if self._session_id is None
+            else ServiceBusSession(self._session_id, self)
+        )
         self._receive_context = threading.Event()
 
     def __iter__(self):
@@ -245,14 +252,12 @@ class ServiceBusRuleManager(
             error_policy=self._error_policy,
             client_name=self._name,
             on_attach=self._on_attach,
-            auto_complete=False,
             encoding=self._config.encoding,
             receive_settle_mode=ServiceBusToAMQPReceiveModeMap[self._receive_mode],
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
-            prefetch=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive
             if self._prefetch_count != 1
@@ -333,20 +338,40 @@ class ServiceBusRuleManager(
         :param str rule_name: The to-be-deleted rule.
         :rtype: None
         """
-        pass
+        if not rule_name:
+            raise ValueError("rule name cannot be empty")
+        
+        message = {
+            MGMT_REQUEST_RULE_NAME: rule_name
+        }
+        handler = functools.partial(mgmt_handlers.delete_rule_op)
+        self._mgmt_request_response_with_retry(MGMT_REQUEST_REMOVE_RULE, message, handler)
 
-    def list_rules(**kwargs: Any) -> ItemPaged[RuleProperties]:
-         """List the rules of a topic subscription.
+    def list_rules(self, top: int = 10, skip: int = 0,  **kwargs: Any) -> ItemPaged[RuleProperties]:
+        """List the rules of a topic subscription.
 
-        :param str topic_name: The topic that owns the subscription.
-        :param str subscription_name: The subscription that
-         owns the rules.
+        :param int top: The number of rules to fetch, default is 10
+        :param int skip: The number of rules to skip, default is 0
         :returns: An iterable (auto-paging) response of RuleProperties.
         :rtype: ~azure.core.paging.ItemPaged[RuleProperties]
         """
-         pass
+        if top is None or top <= 0:
+            raise ValueError('top must be a number greater than 0')
+        
+        if skip is None or skip < 0:
+            raise ValueError('top must be a number greater than 0')
+        
+        message = {
+            MGMT_REQUEST_TOP: top, 
+            MGMT_REQUEST_SKIP:skip,
+            }
 
-    
+        handler = functools.partial(mgmt_handlers.list_rules_op)
+        
+        rules = self._mgmt_request_response_with_retry(MGMT_REQUEST_GET_RULES, message, handler)
+
+        return ItemPaged(rules)
+
 
     @property
     def client_identifier(self) -> str:
