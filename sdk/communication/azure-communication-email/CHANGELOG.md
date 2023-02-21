@@ -3,6 +3,7 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
+- Adding support for AAD token authentication
 - Added the ability to specify the API version by an optional `api_version` keyword parameter.
 
 ### Breaking Changes

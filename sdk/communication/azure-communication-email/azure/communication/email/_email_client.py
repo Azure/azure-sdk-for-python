@@ -132,8 +132,8 @@ class EmailClient(object):
                       Required.
                     "attachments": [
                         {
-                            "contentBytesBase64": "str",  # Base64 encoded contents of
-                              the attachment. Required.
+                            "contentInBase64": "str",  # Base64 encoded contents of the
+                              attachment. Required.
                             "contentType": "str",  # MIME type of the content being
                               attached. Required.
                             "name": "str"  # Name of the attachment. Required.

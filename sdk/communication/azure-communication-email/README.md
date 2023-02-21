@@ -73,12 +73,12 @@ message = {
     "recipients": {
         "to": [
             {
-                "email": "customer@domain.com",
+                "address": "customer@domain.com",
                 "displayName": "Customer Name"
             }
         ]
     },
-    "senderEmail": "sender@contoso.com"
+    "senderAddress": "sender@contoso.com"
 }
 
 poller = email_client.begin_send(message)
@@ -98,19 +98,19 @@ message = {
     },
     "recipients": {
         "to": [
-            {"email": "customer@domain.com", "displayName": "Customer Name"},
-            {"email": "customer2@domain.com", "displayName": "Customer Name 2"}
+            {"address": "customer@domain.com", "displayName": "Customer Name"},
+            {"address": "customer2@domain.com", "displayName": "Customer Name 2"}
         ],
         "cc": [
-            {"email": "ccCustomer@domain.com", "displayName": "CC Customer Name"},
-            {"email": "ccCustomer2@domain.com", "displayName": "CC Customer Name 2"}
+            {"address": "ccCustomer@domain.com", "displayName": "CC Customer Name"},
+            {"address": "ccCustomer2@domain.com", "displayName": "CC Customer Name 2"}
         ],
         "bcc": [
-            {"email": "bccCustomer@domain.com", "displayName": "BCC Customer Name"},
-            {"email": "bccCustomer2@domain.com", "displayName": "BCC Customer Name 2"}
+            {"address": "bccCustomer@domain.com", "displayName": "BCC Customer Name"},
+            {"address": "bccCustomer2@domain.com", "displayName": "BCC Customer Name 2"}
         ]
     },
-    "senderEmail": "sender@contoso.com"
+    "senderAddress": "sender@contoso.com"
 }
 
 poller = email_client.begin_send(message)
@@ -138,17 +138,17 @@ message = {
     "recipients": {
         "to": [
             {
-                "email": "customer@domain.com",
+                "address": "customer@domain.com",
                 "displayName": "Customer Name"
             }
         ]
     },
-    "senderEmail": "sender@contoso.com",
+    "senderAddress": "sender@contoso.com",
     "attachments": [
         {
             "name": "attachment.txt",
-            "attachmentType": "txt",
-            "contentBytesBase64": file_bytes_b64.decode()
+            "attachmentType": "text/plain",
+            "contentInBase64": file_bytes_b64.decode()
         }
     ]
 }

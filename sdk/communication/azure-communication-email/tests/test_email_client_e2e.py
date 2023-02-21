@@ -85,7 +85,7 @@ class TestEmailClient(AzureRecordedTestCase):
                 {
                     "name": "readme.txt",
                     "contentType": "text/plain",
-                    "contentBytesBase64": "ZW1haWwgdGVzdCBhdHRhY2htZW50" #cspell:disable-line
+                    "contentInBase64": "ZW1haWwgdGVzdCBhdHRhY2htZW50" #cspell:disable-line
                 }
             ]
         }
