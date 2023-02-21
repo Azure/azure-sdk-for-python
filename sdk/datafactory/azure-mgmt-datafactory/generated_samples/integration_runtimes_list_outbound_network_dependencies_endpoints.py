@@ -14,7 +14,7 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
     pip install azure-identity
     pip install azure-mgmt-datafactory
 # USAGE
-    python managed_virtual_networks_delete.py
+    python integration_runtimes_list_outbound_network_dependencies_endpoints.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,18 +26,17 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
 def main():
     client = DataFactoryManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="12345678-1234-1234-1234-12345678abc",
+        subscription_id="7ad7c73b-38b8-4df3-84ee-52ff91092f61",
     )
 
-    response = client.managed_private_endpoints.delete(
+    response = client.integration_runtimes.list_outbound_network_dependencies_endpoints(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
-        managed_virtual_network_name="exampleManagedVirtualNetworkName",
-        managed_private_endpoint_name="exampleManagedPrivateEndpointName",
+        integration_runtime_name="exampleIntegrationRuntime",
     )
     print(response)
 
 
-# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/ManagedPrivateEndpoints_Delete.json
+# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/IntegrationRuntimes_ListOutboundNetworkDependenciesEndpoints.json
 if __name__ == "__main__":
     main()

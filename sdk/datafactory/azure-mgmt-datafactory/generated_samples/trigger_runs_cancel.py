@@ -14,7 +14,7 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
     pip install azure-identity
     pip install azure-mgmt-datafactory
 # USAGE
-    python delete_a_private_endpoint_connection_for_a_datafactory..py
+    python trigger_runs_cancel.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +26,18 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
 def main():
     client = DataFactoryManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
+        subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.private_endpoint_connection.delete(
+    response = client.trigger_runs.cancel(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
-        private_endpoint_connection_name="connection",
+        trigger_name="exampleTrigger",
+        run_id="2f7fdb90-5df1-4b8e-ac2f-064cfa58202b",
     )
     print(response)
 
 
-# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/DeletePrivateEndpointConnection.json
+# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/TriggerRuns_Cancel.json
 if __name__ == "__main__":
     main()
