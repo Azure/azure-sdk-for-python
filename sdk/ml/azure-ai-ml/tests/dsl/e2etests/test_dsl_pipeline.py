@@ -2792,6 +2792,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             node_2.outputs.component_out_path.name = "n2_output"
             node_2.outputs.component_out_path.version = "v1"
 
+            # register NodeOutput without version, in this case the run result can be reused
+            node_3 = component(component_in_path=component_input)
+            node_3.outputs.component_out_path.name = 'n3_output'
+
             # register NodeOutput of subgraph
             sub_node = sub_pipeline()
             sub_node.outputs.sub_pipeine_a_output.name = "sub_pipeline"
@@ -2809,6 +2813,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         check_name_and_version(
             pipeline_job.jobs["node_2"].outputs.component_out_path, "n2_output", "v1"
         )
+        assert pipeline_job.jobs["node_3"].outputs.component_out_path.name == 'n3_output'
         check_name_and_version(
             pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1"
         )
