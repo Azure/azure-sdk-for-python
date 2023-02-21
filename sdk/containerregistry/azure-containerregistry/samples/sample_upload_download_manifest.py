@@ -15,6 +15,8 @@ DESCRIPTION:
 USAGE:
     python sample_upload_download_manifest.py
 
+    This sample assumes your registry has a repository "library/hello-world",
+    run load_registry() if you don't have.
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
@@ -26,7 +28,7 @@ from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
-from sample_utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class UploadDownloadManifest(object):
@@ -35,7 +37,7 @@ class UploadDownloadManifest(object):
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(self.authority, exclude_environment_credential=True)
+        self.credential = get_credential(self.authority)
         load_registry()
 
     def upload_download_manifest(self):

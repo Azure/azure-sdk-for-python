@@ -312,7 +312,7 @@ class ServerAzureADAdministratorsOperations:
          Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
         :param parameters: The requested Azure Active Directory administrator Resource state. Is either
-         a model type or a IO type. Required.
+         a ServerAzureADAdministrator type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ServerAzureADAdministrator or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
