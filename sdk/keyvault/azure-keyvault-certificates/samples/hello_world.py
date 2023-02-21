@@ -59,43 +59,44 @@ cert_policy = CertificatePolicy(
 )
 cert_name = "HelloWorldCertificate"
 
-# [START create_a_certificate]
 # begin_create_certificate returns a poller. Calling result() on the poller will return the certificate
 # as a KeyVaultCertificate if creation is successful, and the CertificateOperation if not. The wait()
 # call on the poller will wait until the long running operation is complete.
+# [START create_a_certificate]
 new_certificate = client.begin_create_certificate(
     certificate_name=cert_name, policy=cert_policy
 ).result()
-print(f"Certificate with name '{new_certificate.name}' created")
 # [END create_a_certificate]
+print(f"Certificate with name '{new_certificate.name}' created")
 
-# [START get_certificate]
+
 # Let's get the certificate using its name
 print("\n.. Get a certificate by name")
+# [START get_certificate]
 certificate = client.get_certificate(cert_name)
-print(f"Certificate with name '{certificate.name}' was found'.")
 # [END get_certificate]
+print(f"Certificate with name '{certificate.name}' was found'.")
 
-# [START update_certificate]
 # After one year, the account is still active, and we have decided to update the tags.
 print("\n.. Update a certificate by name")
+# [START update_certificate]
 tags = {"a": "b"}
 updated_certificate = client.update_certificate_properties(
     certificate_name=certificate.name, tags=tags
 )
+# [END update_certificate]
 print(
     f"Certificate with name '{certificate.name}' was updated on date '{updated_certificate.properties.updated_on}'"
 )
 print(
     f"Certificate with name '{certificate.name}' was updated with tags '{updated_certificate.properties.tags}'"
 )
-# [END update_certificate]
 
-# [START delete_certificate]
 # The account was closed, need to delete its credentials from the Key Vault.
 print("\n.. Delete certificate")
+# [START delete_certificate]
 deleted_certificate = client.begin_delete_certificate(certificate.name).result()
-print(f"Certificate with name '{deleted_certificate.name}' was deleted.")
 # [END delete_certificate]
+print(f"Certificate with name '{deleted_certificate.name}' was deleted.")
 
 print("\nrun_sample done")
