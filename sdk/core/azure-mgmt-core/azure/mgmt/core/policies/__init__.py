@@ -27,7 +27,7 @@
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._authentication import ARMChallengeAuthenticationPolicy, AuxiliaryAuthenticationPolicy
 from ._base import ARMAutoResourceProviderRegistrationPolicy
-from ._authentication_async import AsyncARMChallengeAuthenticationPolicy
+from ._authentication_async import AsyncARMChallengeAuthenticationPolicy, AsyncAuxiliaryAuthenticationPolicy
 from ._base_async import AsyncARMAutoResourceProviderRegistrationPolicy
 
 
