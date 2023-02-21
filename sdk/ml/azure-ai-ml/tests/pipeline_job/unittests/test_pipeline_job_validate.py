@@ -781,27 +781,25 @@ class TestDSLPipelineJobValidate:
         }
 
     def test_dsl_data_transfer_export_pipeline_with_invalid_inputs(self) -> None:
-        path_source_s3 = "s3://my_bucket/my_folder"
-        connection_target = "azureml:my_s3_connection"
+        connection_target_azuresql = "azureml:my_export_azuresqldb_connection"
+        table_name = "dbo.Persons"
+        my_cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="/data/testFile_ForSqlDB.parquet")
 
-        my_cosmos_folder = Input(type=AssetTypes.URI_FILE, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+        @dsl.pipeline(description="submit a pipeline with data transfer export database job")
+        def data_transfer_export_database_pipeline_from_builder(table_name, connection_target_azuresql, cosmos_folder):
+            from azure.ai.ml.data_transfer import Database, export_data
+            source_snowflake = Database(table_name=table_name, connection=connection_target_azuresql)
+            blob_azuresql = export_data(inputs={"source": cosmos_folder, "test": my_cosmos_folder}, sink=source_snowflake)
 
-        @dsl.pipeline(description="submit a pipeline with data transfer export file system job")
-        def data_transfer_export_file_system_pipeline_from_builder(path_source_s3, connection_target, cosmos_folder):
-            from azure.ai.ml.data_transfer import FileSystem, export_data
-
-            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
-            s3_blob = export_data(inputs={"source": cosmos_folder, "test": my_cosmos_folder}, sink=source_snowflake)
-
-        pipeline = data_transfer_export_file_system_pipeline_from_builder(
-            path_source_s3, connection_target, my_cosmos_folder
+        pipeline = data_transfer_export_database_pipeline_from_builder(
+            table_name, connection_target_azuresql, my_cosmos_folder
         )
 
         validate_result = pipeline._validate()
         assert validate_result.error_messages == {
-            "jobs.s3_blob.component.inputs": "inputs field only support one input called source in task type "
+            "jobs.blob_azuresql.component.inputs": "inputs field only support one input called source in task type "
             "export_data.",
-            "jobs.s3_blob.compute": "Compute not set",
-            "jobs.s3_blob.inputs.source": "Inputs field only support one input called source in export task",
-            "jobs.s3_blob.inputs.source.type": "Inputs field only support type uri_file for database and uri_folder for file_system",
+            "jobs.blob_azuresql.compute": "Compute not set",
+            "jobs.blob_azuresql.inputs.source": "Inputs field only support one input called source in export task",
+            "jobs.blob_azuresql.inputs.source.type": "Inputs field only support type uri_file for database and uri_folder for file_system",
         }
