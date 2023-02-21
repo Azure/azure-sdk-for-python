@@ -769,7 +769,7 @@ class MLClient:
 
     # T = valid inputs/outputs for create_or_update
     # Each entry here requires a registered _create_or_update function below
-    T = TypeVar("T", Job, Model, Environment, Component, Datastore, WorkspaceAssetReference)
+    T = TypeVar("T", Job, Model, Environment, Component, Datastore)
 
     def create_or_update(
         self,
