@@ -35,9 +35,7 @@ exporter = ConsoleSpanExporter()
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(
-    SimpleSpanProcessor(exporter)
-)
+trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
 
 # Example with Eventgrid SDKs
 import os
@@ -45,14 +43,9 @@ from azure.core.messaging import CloudEvent
 from azure.eventgrid import EventGridPublisherClient
 from azure.core.credentials import AzureKeyCredential
 
-hostname = os.environ['CLOUD_TOPIC_HOSTNAME']
-key = AzureKeyCredential(os.environ['CLOUD_ACCESS_KEY'])
-cloud_event = CloudEvent(
-    source = 'demo',
-    type = 'sdk.demo',
-    data = {'test': 'hello'},
-    extensions = {'test': 'maybe'}
-)
+hostname = os.environ["CLOUD_TOPIC_HOSTNAME"]
+key = AzureKeyCredential(os.environ["CLOUD_ACCESS_KEY"])
+cloud_event = CloudEvent(source="demo", type="sdk.demo", data={"test": "hello"}, extensions={"test": "maybe"})
 with tracer.start_as_current_span(name="MyApplication"):
     client = EventGridPublisherClient(hostname, key)
     client.send(cloud_event)

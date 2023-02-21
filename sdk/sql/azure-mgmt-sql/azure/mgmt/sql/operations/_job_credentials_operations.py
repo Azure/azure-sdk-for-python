@@ -454,8 +454,8 @@ class JobCredentialsOperations:
         :type job_agent_name: str
         :param credential_name: The name of the credential. Required.
         :type credential_name: str
-        :param parameters: The requested job credential state. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested job credential state. Is either a JobCredential type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.sql.models.JobCredential or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

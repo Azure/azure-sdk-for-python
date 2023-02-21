@@ -20,10 +20,7 @@ class Destination:
     """
 
     # pylint: disable=unused-argument,no-self-use
-    def __init__(
-        self, path: Optional[str] = None,
-        event_hub: Optional[EventHub] = None,
-        **kwargs):
+    def __init__(self, path: Optional[str] = None, event_hub: Optional[EventHub] = None, **kwargs):
         self.path = path
         self.event_hub = event_hub
 

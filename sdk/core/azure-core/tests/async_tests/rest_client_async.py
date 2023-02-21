@@ -8,10 +8,9 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.configuration import Configuration
 
+
 class TestRestClientConfiguration(Configuration):
-    def __init__(
-        self, **kwargs
-    ):
+    def __init__(self, **kwargs):
         # type: (...) -> None
         super(TestRestClientConfiguration, self).__init__(**kwargs)
 
@@ -29,16 +28,12 @@ class TestRestClientConfiguration(Configuration):
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
 
-class AsyncTestRestClient(object):
 
+class AsyncTestRestClient(object):
     def __init__(self, port, **kwargs):
         self._config = TestRestClientConfiguration(**kwargs)
 
-        self._client = AsyncPipelineClient(
-            base_url="http://localhost:{}".format(port),
-            config=self._config,
-            **kwargs
-        )
+        self._client = AsyncPipelineClient(base_url="http://localhost:{}".format(port), config=self._config, **kwargs)
 
     def send_request(self, request, **kwargs):
         """Runs the network request through the client's chained policies.

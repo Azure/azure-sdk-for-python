@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
+
 def test_example_raw_response_hook():
     def callback(response):
         response.http_response.status_code = 200
@@ -35,9 +36,7 @@ def test_example_raw_response_hook():
     from azure.core.pipeline.policies import CustomHookPolicy
 
     request = HttpRequest("GET", "https://bing.com")
-    policies = [
-        CustomHookPolicy(raw_response_hook=callback)
-    ]
+    policies = [CustomHookPolicy(raw_response_hook=callback)]
 
     with Pipeline(transport=RequestsTransport(), policies=policies) as pipeline:
         response = pipeline.run(request)

@@ -15,10 +15,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class DeploymentCollectionSchema(metaclass=PatchedSchemaMeta):
-    enabled = StringTransformedEnum(
-        required= True,
-        allowed_values=[Boolean.TRUE, Boolean.FALSE]
-    )
+    enabled = StringTransformedEnum(required=True, allowed_values=[Boolean.TRUE, Boolean.FALSE])
     data = NestedField(DataAssetSchema)
 
     # pylint: disable=unused-argument,no-self-use

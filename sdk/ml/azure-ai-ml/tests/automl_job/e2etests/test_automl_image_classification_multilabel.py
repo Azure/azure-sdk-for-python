@@ -27,10 +27,7 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
     "mock_asset_name",
     "mock_code_hash",
 )
-@pytest.mark.skipif(
-    condition=not is_live(),
-    reason="Datasets downloaded by test are too large to record reliably"
-)
+@pytest.mark.skipif(condition=not is_live(), reason="Datasets downloaded by test are too large to record reliably")
 class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
     def _create_jsonl_multilabel(self, client: MLClient, train_path: str, val_path: str):
         src_images = "./multilabelFridgeObjects/"
@@ -144,7 +141,11 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
         submitted_job_automode = client.jobs.create_or_update(image_classification_multilabel_job_automode)
 
         # Assert completion of regular sweep job
-        assert_final_job_status(submitted_job_sweep, client, ImageClassificationMultilabelJob, JobStatus.COMPLETED, deadline=3600)
+        assert_final_job_status(
+            submitted_job_sweep, client, ImageClassificationMultilabelJob, JobStatus.COMPLETED, deadline=3600
+        )
 
         # Assert completion of Automode job
-        assert_final_job_status(submitted_job_automode, client, ImageClassificationMultilabelJob, JobStatus.COMPLETED, deadline=3600)
+        assert_final_job_status(
+            submitted_job_automode, client, ImageClassificationMultilabelJob, JobStatus.COMPLETED, deadline=3600
+        )
