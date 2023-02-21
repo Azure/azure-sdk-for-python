@@ -215,37 +215,24 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._handler: ReceiveClientAsync
 
     async def _iter_contextual_wrapper(self, max_wait_time=None):
-        # pylint: disable=protected-access
-        original_timeout = None
         while True:
-            # This is not threadsafe, but gives us a way to handle if someone passes
-            # different max_wait_times to different iterators and uses them in concert.
-            if max_wait_time:
-                original_timeout = self._handler._timeout
-                self._handler._timeout = max_wait_time * 1
             try:
-                message = await self._inner_anext()
+                message = await self._inner_anext(wait_time=max_wait_time)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(self, links=links):
                     yield message
             except StopAsyncIteration:
                 break
-            finally:
-                if original_timeout:
-                    try:
-                        self._handler._timeout = original_timeout
-                    except AttributeError:  # Handler may be disposed already.
-                        pass
-
+    
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 
-    async def _inner_anext(self):
+    async def _inner_anext(self, wait_time=None):
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
             try:
-                return await self._do_retryable_operation(self._iter_next)
+                return await self._do_retryable_operation(self._iter_next, wait_time=wait_time)
             except StopAsyncIteration:
                 self._message_iter = None
                 raise
@@ -260,13 +247,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         finally:
             self._receive_context.clear()
 
-    async def _iter_next(self):
+    async def _iter_next(self, wait_time=None):
         try:
             self._receive_context.set()
             await self._open()
             # TODO: Add in Recieve Message Iterator
             if not self._message_iter:
-                self._message_iter = await self._handler.receive_messages_iter_async()
+                self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
             pyamqp_message = await self._message_iter.__anext__()
             message = self._build_message(pyamqp_message)
             if (

@@ -835,7 +835,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             **kwargs
         )
 
-    async def receive_messages_iter_async(self, on_message_received=None):
+    async def receive_messages_iter_async(self, timeout=None, on_message_received=None):
         """Receive messages by generator. Messages returned in the generator have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback.
@@ -845,9 +845,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :type on_message_received: callable[~pyamqp.message.Message]
         """
         self._message_received_callback = on_message_received
-        return self._message_generator_async()
+        return self._message_generator_async(timeout=timeout)
 
-    async def _message_generator_async(self):
+    async def _message_generator_async(self, timeout=None):
         """Iterate over processed messages in the receive queue.
 
         :rtype: generator[~pyamqp.message.Message]
@@ -856,6 +856,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         message = None
         self._last_activity_stamp = time.time()
         self._timeout_reached = False
+        self._timeout = timeout if timeout else self._timeout
         try:
             while receiving and not self._timeout_reached:
                 if not self._running_iter:

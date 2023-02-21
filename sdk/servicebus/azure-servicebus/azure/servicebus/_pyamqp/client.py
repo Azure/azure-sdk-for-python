@@ -790,6 +790,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
+
+        # Iterator 
         self._timeout = kwargs.pop("timeout", 0)
         self._timeout_reached = False
         self._last_activity_stamp = time.time()
@@ -833,7 +835,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         try:
             self._link.flow()
             self._connection.listen(wait=self._socket_timeout, **kwargs)
-            self._timeout_reached = False
+            # self._timeout_reached = False
 
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
@@ -929,7 +931,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         """
         return self._do_retryable_operation(self._receive_message_batch_impl, **kwargs)
 
-    def receive_messages_iter(self, on_message_received=None):
+    def receive_messages_iter(self, timeout=None, on_message_received=None):
         """Receive messages by generator. Messages returned in the generator have already been
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback.
@@ -939,9 +941,9 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :type on_message_received: callable[~pyamqp.message.Message]
         """
         self._message_received_callback = on_message_received
-        return self._message_generator()
+        return self._message_generator(timeout=timeout)
 
-    def _message_generator(self):
+    def _message_generator(self, timeout=None):
         """Iterate over processed messages in the receive queue.
 
         :rtype: generator[~pyamqp.message.Message]
@@ -950,6 +952,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         receiving = True
         message = None
         self._last_activity_stamp = time.time()
+        self._timeout = timeout if timeout else self._timeout
         try:
             while receiving and not self._timeout_reached:
                 if not self._running_iter:
