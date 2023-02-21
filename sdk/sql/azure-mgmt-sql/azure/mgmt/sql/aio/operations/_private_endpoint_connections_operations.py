@@ -300,7 +300,7 @@ class PrivateEndpointConnectionsOperations:
         :type server_name: str
         :param private_endpoint_connection_name: Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Is either a model type or a IO type. Required.
+        :param parameters: Is either a PrivateEndpointConnection type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.PrivateEndpointConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

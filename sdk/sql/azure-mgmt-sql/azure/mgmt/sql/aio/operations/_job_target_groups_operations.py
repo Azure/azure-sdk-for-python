@@ -306,8 +306,8 @@ class JobTargetGroupsOperations:
         :type job_agent_name: str
         :param target_group_name: The name of the target group. Required.
         :type target_group_name: str
-        :param parameters: The requested state of the target group. Is either a model type or a IO
-         type. Required.
+        :param parameters: The requested state of the target group. Is either a JobTargetGroup type or
+         a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.JobTargetGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

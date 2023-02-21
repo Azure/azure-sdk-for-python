@@ -48,7 +48,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -102,8 +102,8 @@ class Application(Resource):
         description: Optional[str] = None,
         source_resource_type: Optional[Union[str, "_models.ApplicationSourceResourceType"]] = None,
         condition_sets: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: display name of the application.
         :paramtype display_name: str
@@ -145,11 +145,11 @@ class ApplicationCondition(_serialization.Model):
     def __init__(
         self,
         *,
-        property: Optional[str] = None,
+        property: Optional[str] = None,  # pylint: disable=redefined-builtin
         value: Optional[str] = None,
         operator: Optional[Union[str, "_models.ApplicationConditionOperator"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword property: The application Condition's Property, e.g. ID, see examples.
         :paramtype property: str
@@ -188,7 +188,7 @@ class ApplicationsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -229,7 +229,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -260,7 +260,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None

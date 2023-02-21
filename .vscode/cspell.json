@@ -386,13 +386,21 @@
     "prnumber",
     "yarl",
     "SDDL",
-    "dacl"
+    "dacl",
+    "whls"
   ],
   "overrides": [
     {
       "filename": "sdk/remoterendering/**",
       "words": [
         "Phong"
+      ]
+    },
+    {
+      "filename": "sdk/core/azure-core/tests/test_serialization.py",
+      "words": [
+        "Rlcw",
+        "Jwcmlud"
       ]
     },
     {
@@ -1113,6 +1121,13 @@
         "nonly",
         "nthe",
         "reques"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
       ]
     },
     {

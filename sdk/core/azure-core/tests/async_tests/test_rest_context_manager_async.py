@@ -9,12 +9,14 @@ import pytest
 from azure.core.rest import HttpRequest
 from rest_client_async import AsyncTestRestClient
 
+
 @pytest.mark.asyncio
 async def test_normal_call(client):
     async def _raise_and_get_text(response):
         response.raise_for_status()
         assert response.text() == "Hello, world!"
         assert response.is_closed
+
     request = HttpRequest("GET", url="/basic/string")
     response = await client.send_request(request)
     await _raise_and_get_text(response)
@@ -27,6 +29,7 @@ async def test_normal_call(client):
     async with response as response:
         await _raise_and_get_text(response)
 
+
 @pytest.mark.asyncio
 async def test_stream_call(client):
     async def _raise_and_get_text(response):
@@ -37,6 +40,7 @@ async def test_stream_call(client):
         await response.read()
         assert response.text() == "Hello, world!"
         assert response.is_closed
+
     request = HttpRequest("GET", url="/streams/basic")
     response = await client.send_request(request, stream=True)
     await _raise_and_get_text(response)
@@ -49,6 +53,7 @@ async def test_stream_call(client):
     response = client.send_request(request, stream=True)
     async with response as response:
         await _raise_and_get_text(response)
+
 
 # TODO: commenting until https://github.com/Azure/azure-sdk-for-python/issues/18086 is fixed
 

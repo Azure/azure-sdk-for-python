@@ -53,7 +53,7 @@ from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
 module_logger = logging.getLogger(__name__)
 
-
+# pylint: disable=too-many-instance-attributes
 class OnlineDeployment(Deployment):
     """Online endpoint deployment entity
 
@@ -170,6 +170,7 @@ class OnlineDeployment(Deployment):
         :paramtype scoring_script: typing.Optional[typing.Union[str, os.PathLike]]
         """
         self._provisioning_state = kwargs.pop("provisioning_state", None)
+        self.data_collector = kwargs.pop("data_collector", None)
 
         super(OnlineDeployment, self).__init__(
             name=name,
@@ -313,6 +314,38 @@ class OnlineDeployment(Deployment):
                 self.readiness_probe = other.readiness_probe
             self.instance_count = other.instance_count or self.instance_count
             self.instance_type = other.instance_type or self.instance_type
+
+    def _filter_datastore_to_rest_object(self):
+        # temporarily storing the data collector in the properties since it is not part of the contract
+        # will be removed once the contract is fixed to reflect data collector attribute
+        if is_private_preview_enabled() and self.data_collector:
+            non_flat_data = {}
+            non_flat_data["data_collector"] = self.data_collector._to_dict()
+            flat_data = flatten(non_flat_data, ".")
+            for k, v in flat_data.items():
+                self.tags[k] = v
+
+    @classmethod
+    def _filter_datastore_from_rest_object(
+        cls, entity: "OnlineDeployment", deployment: RestOnlineDeploymentDetails
+    ) -> "OnlineDeployment":
+        # Data collector is private preview. If Private Preview environment variable is not enable
+        # data collector will be removed from tags. Data Collector values will be stored in tags
+        # until data collector is added to the contract.
+        if not is_private_preview_enabled():
+            del_key = []
+            for k in entity.tags:
+                if k.startswith("data_collector"):
+                    del_key.append(k)
+            if len(del_key) > 0:
+                for k in del_key:
+                    del entity.tags[k]
+        else:
+            unflat_data = unflatten(entity.tags, ".")
+            if unflat_data.get("data_collector", None):
+                entity.data_collector = unflat_data.get("data_collector")
+        entity._provisioning_state = deployment.provisioning_state
+        return entity
 
     @classmethod
     def _set_scale_settings(cls, data: dict):
@@ -517,7 +550,9 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             readiness_probe=self.readiness_probe._to_rest_object() if self.readiness_probe else None,
             container_resource_requirements=self.resources._to_rest_object() if self.resources else None,
             instance_type=self.instance_type if self.instance_type else None,
+            data_collector=self.data_collector,
         )
+        self._filter_datastore_to_rest_object()
         sku = RestSku(name="Default", capacity=self.instance_count)
 
         return RestOnlineDeploymentData(location=location, properties=properties, tags=self.tags, sku=sku)
@@ -584,8 +619,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             instance_type=deployment.instance_type,
         )
 
-        entity._provisioning_state = deployment.provisioning_state
-        return entity
+        return OnlineDeployment._filter_datastore_from_rest_object(entity=entity, deployment=deployment)
 
 
 class ManagedOnlineDeployment(OnlineDeployment):
@@ -705,7 +739,6 @@ class ManagedOnlineDeployment(OnlineDeployment):
         """
         kwargs["type"] = EndpointComputeType.MANAGED.value
         self.private_network_connection = kwargs.pop("private_network_connection", None)
-        self.data_collector = kwargs.pop("data_collector", None)
 
         super(ManagedOnlineDeployment, self).__init__(
             name=name,
@@ -754,16 +787,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             readiness_probe=self.readiness_probe._to_rest_object() if self.readiness_probe else None,
             data_collector=self.data_collector,
         )
-        # temporarily storing the data collector in the properties since it is no part of the contract
-        # will be removed once the contract is fixed to reflect data collector attribute
-        if is_private_preview_enabled():
-            if self.data_collector and self.data_collector.enabled:
-                non_flat_data = {}
-                non_flat_data["data_collector"] = self.data_collector._to_dict()
-                flat_data = flatten(non_flat_data, ".")
-                flat_data_keys = flat_data.keys()
-                for k in flat_data_keys:
-                    self.tags[k] = flat_data[k]
+        self._filter_datastore_to_rest_object()
         # TODO: SKU name is defaulted to value "Default" since service side requires it.
         #  Should be removed once service side defaults it.
         sku = RestSku(name="Default", capacity=self.instance_count)
@@ -828,23 +852,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             private_network_connection=deployment.private_network_connection,
             egress_public_network_access=deployment.egress_public_network_access,
         )
-        # Data collector is private preview. If Private Preview environment variable is not enable
-        # data collector will be removed from tags. Data Collector values will be stored in tags
-        # until data collector is added to the contract.
-        if not is_private_preview_enabled():
-            del_key = []
-            for k in entity.tags:
-                if k.startswith("data_collector"):
-                    del_key.append(k)
-            if len(del_key) > 0:
-                for k in del_key:
-                    del entity.tags[k]
-        else:
-            unflat_data = unflatten(entity.tags, ".")
-            if unflat_data.get("data_collector", None):
-                entity.data_collector = unflat_data.get("data_collector")
-        entity._provisioning_state = deployment.provisioning_state
-        return entity
+        return OnlineDeployment._filter_datastore_from_rest_object(entity=entity, deployment=deployment)
 
     def _merge_with(self, other: "ManagedOnlineDeployment") -> None:
         if other:

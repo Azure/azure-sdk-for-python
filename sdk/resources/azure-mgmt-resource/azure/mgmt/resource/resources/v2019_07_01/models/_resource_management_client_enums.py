@@ -13,24 +13,24 @@ from azure.core import CaseInsensitiveEnumMeta
 class ChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of change that will be made to the resource when the deployment is executed."""
 
-    #: The resource does not exist in the current state but is present in the desired state. The
-    #: resource will be created when the deployment is executed.
     CREATE = "Create"
-    #: The resource exists in the current state and is missing from the desired state. The resource
-    #: will be deleted when the deployment is executed.
+    """The resource does not exist in the current state but is present in the desired state. The
+    #: resource will be created when the deployment is executed."""
     DELETE = "Delete"
-    #: The resource exists in the current state and is missing from the desired state. The resource
-    #: will not be deployed or modified when the deployment is executed.
+    """The resource exists in the current state and is missing from the desired state. The resource
+    #: will be deleted when the deployment is executed."""
     IGNORE = "Ignore"
-    #: The resource exists in the current state and the desired state and will be redeployed when the
-    #: deployment is executed. The properties of the resource may or may not change.
+    """The resource exists in the current state and is missing from the desired state. The resource
+    #: will not be deployed or modified when the deployment is executed."""
     DEPLOY = "Deploy"
-    #: The resource exists in the current state and the desired state and will be redeployed when the
-    #: deployment is executed. The properties of the resource will not change.
+    """The resource exists in the current state and the desired state and will be redeployed when the
+    #: deployment is executed. The properties of the resource may or may not change."""
     NO_CHANGE = "NoChange"
-    #: The resource exists in the current state and the desired state and will be redeployed when the
-    #: deployment is executed. The properties of the resource will change.
+    """The resource exists in the current state and the desired state and will be redeployed when the
+    #: deployment is executed. The properties of the resource will not change."""
     MODIFY = "Modify"
+    """The resource exists in the current state and the desired state and will be redeployed when the
+    #: deployment is executed. The properties of the resource will change."""
 
 
 class DeploymentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -57,17 +57,17 @@ class OnErrorDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class PropertyChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of property change."""
 
-    #: The property does not exist in the current state but is present in the desired state. The
-    #: property will be created when the deployment is executed.
     CREATE = "Create"
-    #: The property exists in the current state and is missing from the desired state. It will be
-    #: deleted when the deployment is executed.
+    """The property does not exist in the current state but is present in the desired state. The
+    #: property will be created when the deployment is executed."""
     DELETE = "Delete"
-    #: The property exists in both current and desired state and is different. The value of the
-    #: property will change when the deployment is executed.
+    """The property exists in the current state and is missing from the desired state. It will be
+    #: deleted when the deployment is executed."""
     MODIFY = "Modify"
-    #: The property is an array and contains nested changes.
+    """The property exists in both current and desired state and is different. The value of the
+    #: property will change when the deployment is executed."""
     ARRAY = "Array"
+    """The property is an array and contains nested changes."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

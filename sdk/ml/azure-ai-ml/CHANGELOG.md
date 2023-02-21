@@ -1,10 +1,24 @@
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.5.0 (Unreleased)
+
+### Features Added
+
+- Added support for `tags` on Compute Resources.
+
+### Bugs Fixed
+
+### Other Changes
+
+- Added dependency on `azure-mgmt-resource`
+- Added dependency on `azure-mgmt-resourcegraph`
+
+## 1.4.0 (2023-02-07)
 
 ### Features Added
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
-- Added Custom Applications Support to Compute Instances.
+- Added Custom Applications Support to Compute Instances. 
+- Update data asset list, show and create operations to support data assets in registry.
 
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.

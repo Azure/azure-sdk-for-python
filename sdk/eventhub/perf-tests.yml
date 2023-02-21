@@ -1,0 +1,28 @@
+Service: eventhubs
+
+Project: sdk/eventhub/azure-eventhub
+
+PrimaryPackage: azure-eventhub
+
+PackageVersions:
+- azure-core: 1.26.1
+  azure-eventhub: 5.11.1
+- azure-core: source
+  azure-eventhub: source
+
+Tests:
+- Test: send-event-batch
+  Class: SendEventBatchTest
+  Arguments:
+  - --event-size 1024 --batch-size 100 --parallel 64
+  - --event-size 1024 --batch-size 100 --parallel 64 --uamqp-transport
+  - --event-size 1024 --batch-size 100 --parallel 64 --transport-type 1
+  - --event-size 1024 --batch-size 100 --parallel 64 --transport-type 1 --uamqp-transport
+
+- Test: process-events-batch
+  Class: ProcessEventsBatchTest
+  Arguments:
+  - --event-size 1024 --max-batch-size 100 --preload 1000000
+  - --event-size 1024 --max-batch-size 100 --preload 1000000 --uamqp-transport
+  - --event-size 1024 --max-batch-size 100 --preload 1000000 --transport-type 1
+  - --event-size 1024 --max-batch-size 100 --preload 1000000 --transport-type 1 --uamqp-transport

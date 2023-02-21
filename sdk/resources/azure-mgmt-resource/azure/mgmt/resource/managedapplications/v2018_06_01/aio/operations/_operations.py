@@ -493,7 +493,7 @@ class ApplicationsOperations:
         :param application_name: The name of the managed application. Required.
         :type application_name: str
         :param parameters: Parameters supplied to the create or update a managed application. Is either
-         a model type or a IO type. Required.
+         a Application type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.managedapplications.v2018_06_01.models.Application or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -638,7 +638,7 @@ class ApplicationsOperations:
         :param application_name: The name of the managed application. Required.
         :type application_name: str
         :param parameters: Parameters supplied to update an existing managed application. Is either a
-         model type or a IO type. Default value is None.
+         ApplicationPatchable type or a IO type. Default value is None.
         :type parameters:
          ~azure.mgmt.resource.managedapplications.v2018_06_01.models.ApplicationPatchable or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -1188,7 +1188,7 @@ class ApplicationsOperations:
          Required.
         :type application_id: str
         :param parameters: Parameters supplied to the create or update a managed application. Is either
-         a model type or a IO type. Required.
+         a Application type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.managedapplications.v2018_06_01.models.Application or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1323,7 +1323,7 @@ class ApplicationsOperations:
          Required.
         :type application_id: str
         :param parameters: Parameters supplied to update an existing managed application. Is either a
-         model type or a IO type. Default value is None.
+         Application type or a IO type. Default value is None.
         :type parameters: ~azure.mgmt.resource.managedapplications.v2018_06_01.models.Application or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1757,7 +1757,7 @@ class ApplicationDefinitionsOperations:
         :param application_definition_name: The name of the managed application definition. Required.
         :type application_definition_name: str
         :param parameters: Parameters supplied to the create or update an managed application
-         definition. Is either a model type or a IO type. Required.
+         definition. Is either a ApplicationDefinition type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.resource.managedapplications.v2018_06_01.models.ApplicationDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -2259,7 +2259,7 @@ class ApplicationDefinitionsOperations:
         :param application_definition_name: The name of the managed application definition. Required.
         :type application_definition_name: str
         :param parameters: Parameters supplied to the create or update a managed application
-         definition. Is either a model type or a IO type. Required.
+         definition. Is either a ApplicationDefinition type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.resource.managedapplications.v2018_06_01.models.ApplicationDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

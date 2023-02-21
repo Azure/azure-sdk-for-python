@@ -11,6 +11,7 @@ from azure.ai.ml._utils.utils import (
     is_data_binding_expression,
     map_single_brackets_and_warn,
     write_to_shared_file,
+    get_valid_dot_keys_with_wildcard,
 )
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -80,6 +81,7 @@ class TestUtils:
         def get_int_mode(file_path: str) -> str:
             int_mode = os.stat(file_path).st_mode & 0o777
             return oct(int_mode)
+
         with tempfile.TemporaryDirectory() as temp_dir:
             target_file_path = temp_dir + "/test.txt"
             with open(target_file_path, "w") as f:
@@ -90,3 +92,31 @@ class TestUtils:
             assert get_int_mode(target_file_path) == "0o666"
             with open(target_file_path, "r") as f:
                 assert f.read() == "test2"
+
+    def test_get_valid_dot_keys_with_wildcard(self):
+        root = {
+            "simple": 1,
+            "deep": {
+                "l1": {
+                    "l2": 1,
+                    "l2_2": 2,
+                },
+                "l1_2": {
+                    "l2": 3,
+                },
+            },
+        }
+        assert get_valid_dot_keys_with_wildcard(root, "simple") == ["simple"]
+        assert get_valid_dot_keys_with_wildcard(root, "deep.l1.l2") == ["deep.l1.l2"]
+        assert get_valid_dot_keys_with_wildcard(root, "deep.*.l2") == ["deep.l1.l2", "deep.l1_2.l2"]
+        assert get_valid_dot_keys_with_wildcard(root, "deep.*.*") == ["deep.l1.l2", "deep.l1.l2_2", "deep.l1_2.l2"]
+        assert get_valid_dot_keys_with_wildcard(root, "deep.*.l2_2") == ["deep.l1.l2_2"]
+        assert get_valid_dot_keys_with_wildcard(root, "deep.*.l2_3") == []
+        assert get_valid_dot_keys_with_wildcard(root, "deep.*.l2.*") == []
+        assert get_valid_dot_keys_with_wildcard(root, "deep.*.l2.*.l3") == []
+
+        assert get_valid_dot_keys_with_wildcard(
+            root,
+            "deep.*.*",
+            validate_func=lambda _root, _parts: _parts[1] == "l1_2",
+        ) == ["deep.l1_2.l2"]

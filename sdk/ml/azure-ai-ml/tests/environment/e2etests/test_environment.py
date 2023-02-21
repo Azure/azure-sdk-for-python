@@ -142,20 +142,6 @@ class TestEnvironment(AzureRecordedTestCase):
 
         assert "Docker image or Dockerfile should be provided not both" in str(error.value)
 
-    def test_create_autoincrement(self, client: MLClient, env_name: Callable[[str], str]) -> None:
-        env = load_environment(source="./tests/test_configs/environment/environment_no_version.yml")
-
-        env.name = env_name("name")
-        assert env.version is None
-        assert env._auto_increment_version
-
-        created_env = client.environments.create_or_update(env)
-        assert created_env.version == "1"
-        assert created_env._auto_increment_version is False
-
-        next_env_asset = client.environments.create_or_update(env)
-        assert next_env_asset._auto_increment_version is False
-
     def test_environment_list(self, client: MLClient) -> None:
         environment_list = client._environments.list()
         assert environment_list
