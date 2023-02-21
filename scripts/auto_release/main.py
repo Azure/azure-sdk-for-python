@@ -284,7 +284,7 @@ class CodegenTestPR:
                             has_title = True
                             break
                     if not has_title:
-                        content.append("title = \"{title}\"\n")
+                        content.append(f"title = \"{title}\"\n")
                 modify_file(str(toml), edit_toml)
             else:
                 log(f"{os.getcwd()}/{toml} does not exist")
