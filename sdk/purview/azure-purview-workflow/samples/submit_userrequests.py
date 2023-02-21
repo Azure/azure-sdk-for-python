@@ -41,13 +41,15 @@ LOG = logging.getLogger()
 # set the values of username and password of the AAD user as environment variables:
 # USERNAME, PASSWORD
 try:
-    endpoint = os.getenv("WORKFLOW_ENDPOINT")
-    client_id = os.getenv("AZURE_CLIENT_ID")
-    tenant_id = os.getenv("AZURE_TENANT_ID")
-    username = os.getenv("USERNAME")
-    password = os.getenv("PASSWORD")
+    endpoint = str(os.getenv("WORKFLOW_ENDPOINT"))
+    client_id = str(os.getenv("AZURE_CLIENT_ID"))
+    tenant_id = str(os.getenv("AZURE_TENANT_ID"))
+    username = str(os.getenv("USERNAME"))
+    password = str(os.getenv("PASSWORD"))
 except KeyError:
-    LOG.error("Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or 'USERNAME' or 'PASSWORD' - please set if before running the example")
+    LOG.error(
+        "Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or 'USERNAME' or "
+        "'PASSWORD' - please set if before running the example")
     exit()
 
 username = os.getenv("USERNAME")
@@ -57,28 +59,28 @@ tenant_id = os.getenv("AZURE_TENANT_ID")
 credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password,
                                         tenant_id=tenant_id)
 # Build a client through AAD
-client = PurviewWorkflowClient(endpoint= endpoint, credential=credential)
+client = PurviewWorkflowClient(endpoint=endpoint, credential=credential)
 
 try:
-    user_requests_payload ={
-      "operations": [
-        {
-          "type": "CreateTerm",
-          "payload": {
-            "glossaryTerm": {
-              "name": "term",
-              "anchor": {
-                "glossaryGuid": "5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
-              },
-              "status": "Approved",
-              "nickName": "term"
+    user_requests_payload = {
+        "operations": [
+            {
+                "type": "CreateTerm",
+                "payload": {
+                    "glossaryTerm": {
+                        "name": "term",
+                        "anchor": {
+                            "glossaryGuid": "5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
+                        },
+                        "status": "Approved",
+                        "nickName": "term"
+                    }
+                }
             }
-          }
-        }
-      ],
-      "comment": "Thanks!"
+        ],
+        "comment": "Thanks!"
     }
     result = client.submit_user_requests(user_requests_payload)
     print(result)
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+    print(f"Failed to send JSON message: {e}")

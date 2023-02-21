@@ -41,13 +41,14 @@ LOG = logging.getLogger()
 # set the values of username and password of the AAD user as environment variables:
 # USERNAME, PASSWORD
 try:
-    endpoint = os.getenv("WORKFLOW_ENDPOINT")
-    client_id = os.getenv("AZURE_CLIENT_ID")
-    tenant_id = os.getenv("AZURE_TENANT_ID")
-    username = os.getenv("USERNAME")
-    password = os.getenv("PASSWORD")
+    endpoint = str(os.getenv("WORKFLOW_ENDPOINT"))
+    client_id = str(os.getenv("AZURE_CLIENT_ID"))
+    tenant_id = str(os.getenv("AZURE_TENANT_ID"))
+    username = str(os.getenv("USERNAME"))
+    password = str(os.getenv("PASSWORD"))
 except KeyError:
-    LOG.error("Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or 'USERNAME' or 'PASSWORD' - please set if before running the example")
+    LOG.error("Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or "
+              "'USERNAME' or 'PASSWORD' - please set if before running the example")
     exit()
 credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password,
                                         tenant_id=tenant_id)
@@ -63,4 +64,4 @@ try:
     print('Successfully approve a workflow task.')
 
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+    print(f"Failed to send JSON message: {e}")
