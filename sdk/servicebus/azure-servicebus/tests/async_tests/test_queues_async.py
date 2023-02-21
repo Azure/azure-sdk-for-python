@@ -238,16 +238,15 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name)
                 sender = sb_client.get_queue_sender(servicebus_queue.name)
 
-                # def _hack_disable_receive_context_message_received(self, message):
-                #     # pylint: disable=protected-access
-                #     self._handler._was_message_received = True
-                #     self._handler._received_messages.put(message)
+                def _hack_disable_receive_context_message_received(self, message):
+                    # pylint: disable=protected-access
+                    self._handler._received_messages.put(message)
 
                 async with sender, receiver:
                     # send 5 msgs to queue first
                     await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-                    # receiver._handler.message_handler.on_message_received = types.MethodType(
-                    #     _hack_disable_receive_context_message_received, receiver)
+                    receiver._handler._link.on_transfer = types.MethodType(
+                        _hack_disable_receive_context_message_received, receiver)
                     received_msgs = []
                     while len(received_msgs) < 5:
                         # issue 10 link credits, client should consume 5 msgs from the service
@@ -272,15 +271,15 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                         # with pytest.raises(ServiceBusError):
                         await receiver.complete_message(msg)
 
-                    # # re-received message with delivery count increased
-                    # target_msgs_count = 5
-                    # received_msgs = []
-                    # while len(received_msgs) < target_msgs_count:
-                    #     received_msgs.extend((await receiver.receive_messages(max_message_count=5, max_wait_time=10)))
-                    # assert len(received_msgs) == 5
-                    # for msg in received_msgs:
-                    #     assert msg.delivery_count > 0
-                    #     await receiver.complete_message(msg)
+                    # re-received message with delivery count increased
+                    target_msgs_count = 5
+                    received_msgs = []
+                    while len(received_msgs) < target_msgs_count:
+                        received_msgs.extend((await receiver.receive_messages(max_message_count=5, max_wait_time=10)))
+                    assert len(received_msgs) == 5
+                    for msg in received_msgs:
+                        assert msg.delivery_count > 0
+                        await receiver.complete_message(msg)
 
             await sub_test_releasing_messages()
             await sub_test_releasing_messages_iterator()
@@ -1783,7 +1782,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert len(messages) == 0  # make sure messages are removed from the queue
                 assert receiver_handler == receiver._handler  # make sure no reconnection happened
 
-    @pytest.mark.skip(reason="TODO: _counter doesnt exist in pyamqp")
+    # @pytest.mark.skip(reason="TODO: _counter doesnt exist in pyamqp")
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1802,32 +1801,32 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = []
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
 
-                    time_1 = receiver._handler._counter.get_current_ms()
+                    time_1 = time.time()
                     async for message in receiver._get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
                         await receiver.complete_message(message)
 
-                        time_2 = receiver._handler._counter.get_current_ms()
+                        time_2 = time.time()
                         async for message in receiver._get_streaming_message_iter(max_wait_time=1):
                             messages.append(message)
-                        time_3 = receiver._handler._counter.get_current_ms()
+                        time_3 = time.time()
                         assert timedelta(seconds=.5) < timedelta(milliseconds=(time_3 - time_2)) <= timedelta(seconds=2)
-                    time_4 = receiver._handler._counter.get_current_ms()
+                    time_4 = time.time()
                     assert timedelta(seconds=8) < timedelta(milliseconds=(time_4 - time_3)) <= timedelta(seconds=11)
 
                     async for message in receiver._get_streaming_message_iter(max_wait_time=3):
                         messages.append(message)
-                    time_5 = receiver._handler._counter.get_current_ms()
+                    time_5 = time.time()
                     assert timedelta(seconds=1) < timedelta(milliseconds=(time_5 - time_4)) <= timedelta(seconds=4)
 
                     async for message in receiver:
                         messages.append(message)
-                    time_6 = receiver._handler._counter.get_current_ms()
+                    time_6 = time.time()
                     assert timedelta(seconds=3) < timedelta(milliseconds=(time_6 - time_5)) <= timedelta(seconds=6)
 
                     async for message in receiver._get_streaming_message_iter():
                         messages.append(message)
-                    time_7 = receiver._handler._counter.get_current_ms()
+                    time_7 = time.time()
                     assert timedelta(seconds=3) < timedelta(milliseconds=(time_7 - time_6)) <= timedelta(seconds=6)
                     assert len(messages) == 1
 

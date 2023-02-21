@@ -2109,7 +2109,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         messages.append(message)
                 assert len(messages) == 2
 
-    @pytest.mark.skip(reason="TODO: _counter doesn't exist in pyamqp")
+    # @pytest.mark.skip(reason="TODO: _counter doesn't exist in pyamqp")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2127,33 +2127,33 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = []
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
 
-                    time_1 = receiver._handler._counter.get_current_ms()
+                    time_1 = time.time()
                     time_3 = time_1 # In case inner loop isn't hit, fail sanely.
                     for message in receiver._get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
                         receiver.complete_message(message)
 
-                        time_2 = receiver._handler._counter.get_current_ms()
+                        time_2 = time.time()
                         for message in receiver._get_streaming_message_iter(max_wait_time=1):
                             messages.append(message)
-                        time_3 = receiver._handler._counter.get_current_ms()
+                        time_3 = time.time()
                         assert timedelta(seconds=.5) < timedelta(milliseconds=(time_3 - time_2)) <= timedelta(seconds=2)
-                    time_4 = receiver._handler._counter.get_current_ms()
+                    time_4 = time.time()
                     assert timedelta(seconds=8) < timedelta(milliseconds=(time_4 - time_3)) <= timedelta(seconds=11)
 
                     for message in receiver._get_streaming_message_iter(max_wait_time=3):
                         messages.append(message)
-                    time_5 = receiver._handler._counter.get_current_ms()
+                    time_5 = time.time()
                     assert timedelta(seconds=1) < timedelta(milliseconds=(time_5 - time_4)) <= timedelta(seconds=4)
 
                     for message in receiver:
                         messages.append(message)
-                    time_6 = receiver._handler._counter.get_current_ms()
+                    time_6 = time.time()
                     assert timedelta(seconds=3) < timedelta(milliseconds=(time_6 - time_5)) <= timedelta(seconds=6)
 
                     for message in receiver._get_streaming_message_iter():
                         messages.append(message)
-                    time_7 = receiver._handler._counter.get_current_ms()
+                    time_7 = time.time()
                     assert timedelta(seconds=3) < timedelta(milliseconds=(time_7 - time_6)) <= timedelta(seconds=6)
                     assert len(messages) == 1
 
