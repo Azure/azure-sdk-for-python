@@ -137,7 +137,7 @@ class AMQPClientAsync(AMQPClientSync):
     """
 
     def __init__(self, hostname, **kwargs):
-        self._mgmt_link_lock_async = asyncio.Lock()
+        self._lock_async = asyncio.Lock()
         super().__init__(hostname,**kwargs)
 
 
@@ -364,7 +364,7 @@ class AMQPClientAsync(AMQPClientSync):
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop('timeout', 0)
-        async with self._mgmt_link_lock_async:
+        async with self._lock_async:
             try:
                 mgmt_link = self._mgmt_links[node]
             except KeyError:
@@ -372,8 +372,8 @@ class AMQPClientAsync(AMQPClientSync):
                 self._mgmt_links[node] = mgmt_link
                 await mgmt_link.open()
 
-        while not await mgmt_link.ready():
-            await self._connection.listen(wait=False)
+                while not await mgmt_link.ready():
+                    await self._connection.listen(wait=False)
 
         operation_type = operation_type or b'empty'
         status, description, response = await mgmt_link.execute(

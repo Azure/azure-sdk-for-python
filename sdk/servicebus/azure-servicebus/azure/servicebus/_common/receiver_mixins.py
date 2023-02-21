@@ -129,6 +129,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _enhanced_message_received(self, frame, message):
         # pylint: disable=protected-access
+        # self._handler._was_message_received = True
         if self._receive_context.is_set():
             self._handler._received_messages.put((frame, message))
         else:
@@ -136,6 +137,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     async def _enhanced_message_received_async(self, frame, message):
         # pylint: disable=protected-access
+        # self._handler._was_message_received = True
         if self._receive_context.is_set():
             self._handler._received_messages.put((frame, message))
         else:
