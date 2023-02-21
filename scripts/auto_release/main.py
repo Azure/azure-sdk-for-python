@@ -261,7 +261,36 @@ class CodegenTestPR:
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
+        python_md = Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1].replace("readme.md", "readme.python.md")
+        title = ""
+        if python_md.exists():
+            with open(python_md, "r") as file_in:
+                md_content = file_in.readlines()
+            for line in md_content:
+                if "title:" in line:
+                    title = line.replace("title:", "").strip(" \r\n")
+                    break
+        else:
+            log("{python_md} does not exist")
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
+        # add `title` in sdk_packaging.toml
+        if title:
+            toml = Path(f"azure-mgmt-{self.package_name}") / "sdk_packaging.toml"
+            if toml.exists():
+                def edit_toml(content: List[str]):
+                    has_title = False
+                    for line in content:
+                        if "title" in line:
+                            has_title = True
+                            break
+                    if not has_title:
+                        content.append(f"title = \"{title}\"\n")
+                modify_file(str(toml), edit_toml)
+            else:
+                log(f"{os.getcwd()}/{toml} does not exist")
+        else:
+            log(f"do not find title in {python_md}")
+
         print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
         log('packaging_tools --build-conf successfully ')
 
