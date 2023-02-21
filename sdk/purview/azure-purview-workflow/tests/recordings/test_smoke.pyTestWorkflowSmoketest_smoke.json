@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Feb 2023 09:23:59 GMT",
+        "Date": "Tue, 21 Feb 2023 06:06:44 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14601.11 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14649.20 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -110,9 +110,9 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-0qQRR_GVJyhemjQwcoRQJw\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-wlMB-BtL5l-pR76D1sSI1w\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Feb 2023 09:23:59 GMT",
+        "Date": "Tue, 21 Feb 2023 06:06:44 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -173,12 +173,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "0aeeea76-156f-402d-9b6f-69a75985bff7",
+        "client-request-id": "1417628a-b3ce-4dd4-b1a6-6197057f6f7d",
         "Connection": "keep-alive",
-        "Content-Length": "289",
+        "Content-Length": "285",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.9.0 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -187,14 +187,14 @@
         "x-client-ver": "1.21.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=dZK8Q~QxosEpiwtn9TJIae9Afmdcia9Ae_VopbCX\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fpurview.azure.net%2F.default",
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fpurview.azure.net%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "0aeeea76-156f-402d-9b6f-69a75985bff7",
+        "client-request-id": "1417628a-b3ce-4dd4-b1a6-6197057f6f7d",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Feb 2023 09:23:59 GMT",
+        "Date": "Tue, 21 Feb 2023 06:06:44 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -202,7 +202,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14601.11 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14649.20 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -224,12 +224,12 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Content-Length": "3061",
+        "Content-Length": "2610",
         "Content-Type": "application/json",
-        "Date": "Mon, 20 Feb 2023 09:24:01 GMT",
+        "Date": "Tue, 21 Feb 2023 06:06:46 GMT",
         "Server": "MicrosoftPurview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "412d09cc-5179-48a9-8089-a6c14f4359af"
+        "x-ms-correlation-request-id": "86ae0023-f3c9-4598-af44-43e8652cbabb"
       },
       "ResponseBody": {
         "value": [
@@ -277,22 +277,6 @@
             "lastUpdateTime": "2023-02-13T02:33:50.827001441Z",
             "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
             "name": "CreateTerm10415520221205",
-            "isEnabled": false,
-            "description": ""
-          },
-          {
-            "id": "e3467b48-a9d8-11ed-afa1-0242ac120002",
-            "triggers": [
-              {
-                "type": "when_term_creation_is_requested",
-                "underGlossaryHierarchy": "/glossaries/5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
-              }
-            ],
-            "createdTime": "2023-02-11T07:20:17.195754387Z",
-            "createdBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
-            "lastUpdateTime": "2023-02-13T05:29:37.482887566Z",
-            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
-            "name": "Create glossary term workflow",
             "isEnabled": false,
             "description": ""
           },

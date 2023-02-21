@@ -52,10 +52,6 @@ except KeyError:
         "'PASSWORD' - please set if before running the example")
     exit()
 
-username = os.getenv("USERNAME")
-password = os.getenv("PASSWORD")
-client_id = os.getenv("AZURE_CLIENT_ID")
-tenant_id = os.getenv("AZURE_TENANT_ID")
 credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password,
                                         tenant_id=tenant_id)
 # Build a client through AAD

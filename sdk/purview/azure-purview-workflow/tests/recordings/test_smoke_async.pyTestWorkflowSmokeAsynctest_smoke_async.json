@@ -6,24 +6,24 @@
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "180",
+        "Content-Length": "176",
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.9.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=dZK8Q~QxosEpiwtn9TJIae9Afmdcia9Ae_VopbCX\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fpurview.azure.net%2F.default",
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fpurview.azure.net%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "93",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 20 Feb 2023 09:24:02 GMT",
+        "Date": "Tue, 21 Feb 2023 06:07:02 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14601.11 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14649.20 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -44,12 +44,12 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Content-Length": "3061",
+        "Content-Length": "2610",
         "Content-Type": "application/json",
-        "Date": "Mon, 20 Feb 2023 09:24:02 GMT",
+        "Date": "Tue, 21 Feb 2023 06:07:03 GMT",
         "Server": "MicrosoftPurview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-ms-correlation-request-id": "60d791d5-31ef-4dd0-85cf-ac5229e68704"
+        "x-ms-correlation-request-id": "742c96cd-4d77-406b-8ea8-1b55c0a813a0"
       },
       "ResponseBody": {
         "value": [
@@ -97,22 +97,6 @@
             "lastUpdateTime": "2023-02-13T02:33:50.827001441Z",
             "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
             "name": "CreateTerm10415520221205",
-            "isEnabled": false,
-            "description": ""
-          },
-          {
-            "id": "e3467b48-a9d8-11ed-afa1-0242ac120002",
-            "triggers": [
-              {
-                "type": "when_term_creation_is_requested",
-                "underGlossaryHierarchy": "/glossaries/5dae5e5b-5aa6-48f1-9e46-26fe7328de71"
-              }
-            ],
-            "createdTime": "2023-02-11T07:20:17.195754387Z",
-            "createdBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
-            "lastUpdateTime": "2023-02-13T05:29:37.482887566Z",
-            "updatedBy": "83ffc40f-f670-49b0-a17e-30c7f74f209a",
-            "name": "Create glossary term workflow",
             "isEnabled": false,
             "description": ""
           },
