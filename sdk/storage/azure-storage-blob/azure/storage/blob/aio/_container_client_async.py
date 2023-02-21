@@ -1408,9 +1408,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
+        version_id = None
+        if isinstance(blob, BlobProperties):
+            version_id = blob['version_id']
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
+            version_id=version_id)

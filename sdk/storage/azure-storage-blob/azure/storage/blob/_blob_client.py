@@ -131,6 +131,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
+    :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to operate on.
+
+            .. versionadded:: 12.X.X
+            This keyword argument was introduced in API version '20XX-XX-XX'.
 
     .. admonition:: Example:
 
@@ -179,6 +185,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
+        self.version_id = kwargs.pop('version_id', None)
 
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
@@ -1308,6 +1315,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # TODO: extract this out as _get_blob_properties_options
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        version_id = kwargs.pop('version_id', None) or self.version_id
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
@@ -1321,7 +1329,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 kwargs['cls'] = partial(deserialize_pipeline_response_into_cls, cls_method)
             blob_props = self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
-                version_id=kwargs.pop('version_id', None),
+                version_id=version_id,
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,

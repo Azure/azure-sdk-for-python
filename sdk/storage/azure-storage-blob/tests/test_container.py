@@ -2562,3 +2562,32 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert items_on_page1[1] == 'blob2'
         assert len(items_on_page2) == 1
         assert items_on_page2[0] == 'blob3'
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_blob_version_properties_versioning_enabled(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container: ContainerClient = self._create_container(bsc)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+        blob_data2 = 'abcabc'
+        blob_client = container.get_blob_client(blob_name)
+
+        # Act
+        blob_client.upload_blob(blob_data, overwrite=True)
+        v1_props = blob_client.get_blob_properties()
+        blob_client.upload_blob(blob_data2, overwrite=True)
+        v2_props = blob_client.get_blob_properties()
+
+        v1_blob_client = container.get_blob_client(v1_props)
+        props1 = v1_blob_client.get_blob_properties()
+        v2_blob_client = container.get_blob_client(v2_props)
+        props2 = v2_blob_client.get_blob_properties()
+
+        # Assert
+        assert props1['version_id'] == v1_props['version_id']
+        assert props2['version_id'] == v2_props['version_id']
