@@ -702,7 +702,7 @@ class ServiceOperations:
         )
 ```
 
-The polling method runs the polling loop while performing GET requests to the status monitor and checking if a terminal state is reached. 
+The polling method runs the polling loop and performs GET requests to the status monitor to check if a terminal state is reached. 
 In between polls it inserts delay based on the service sent `retry-after` header or the given `polling_interval`.
 
 To customize parts of the polling method, you can create a subclass which uses `LROBasePolling` and overrides necessary methods.
