@@ -30,5 +30,5 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     pipeline = data_transfer_export_file_system_pipeline_from_builder(
         path_source_s3, connection_target, my_cosmos_folder
     )
-    pipeline.settings.default_compute = "adf_compute"
+    pipeline.settings.default_compute = "serverless"
     return pipeline

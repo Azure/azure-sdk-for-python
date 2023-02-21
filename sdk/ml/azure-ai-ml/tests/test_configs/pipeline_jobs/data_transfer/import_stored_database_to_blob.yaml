@@ -3,7 +3,7 @@ type: pipeline
 
 description: 'pipeline with data transfer components'
 settings:
-  default_compute: azureml:adf_compute
+  default_compute: azureml:serverless
 
 jobs:
   snowflake_blob:

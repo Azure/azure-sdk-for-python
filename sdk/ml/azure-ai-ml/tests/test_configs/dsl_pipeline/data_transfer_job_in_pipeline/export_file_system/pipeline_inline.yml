@@ -3,7 +3,7 @@ type: pipeline
 
 description: 'submit a pipeline with data transfer export file system job'
 settings:
-  default_compute: azureml:adf_compute
+  default_compute: azureml:serverless
 inputs:
   path_source_s3: s3://my_bucket/my_folder
   connection_target: azureml:my_s3_connection

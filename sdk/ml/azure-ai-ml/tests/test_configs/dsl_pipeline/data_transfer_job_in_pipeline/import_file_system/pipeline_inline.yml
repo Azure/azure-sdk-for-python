@@ -3,7 +3,7 @@ type: pipeline
 
 description: 'submit a pipeline with data transfer import file system job'
 settings:
-  default_compute: azureml:adftest
+  default_compute: azureml:serverless
 inputs:
   path_source_s3: test1/*
   connection_target: azureml:my-s3-connection

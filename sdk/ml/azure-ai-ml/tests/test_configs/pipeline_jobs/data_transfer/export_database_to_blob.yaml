@@ -3,7 +3,7 @@ type: pipeline
 
 description: 'pipeline with data transfer components'
 settings:
-  default_compute: azureml:adftest
+  default_compute: azureml:serverless
 inputs:
   connection_target_azuresql: azureml:my_export_azuresqldb_connection
   table_name: dbo.Persons

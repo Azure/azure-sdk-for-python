@@ -3,7 +3,7 @@ type: pipeline
 
 description: 'submit a pipeline with data transfer job'
 settings:
-  default_compute: azureml:adftest
+  default_compute: azureml:serverless
 inputs:
   path_source_s3: test1/*
   query_source_sql: select top(10) Name from SalesLT.ProductCategory

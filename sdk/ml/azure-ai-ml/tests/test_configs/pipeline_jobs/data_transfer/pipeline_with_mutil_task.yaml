@@ -3,16 +3,14 @@ type: pipeline
 
 description: 'pipeline with data transfer components'
 settings:
-  default_compute: azureml:adf_compute
+  default_compute: azureml:serverless
 inputs:
-  path_source_s3: s3://my_bucket/my_folder
-  query_source_snowflake: SELECT * FROM my_table
-  connection_target_s3: azureml:my_s3_connection
+  path_source_s3: test1/*
+  query_source_sql: select top(10) Name from SalesLT.ProductCategory
 
 outputs:
   merged_blob:
     type: uri_folder
-    path: azureml://datastores/my_blob/paths/merged_blob
 
 jobs:
     snowflake_blob:
@@ -20,12 +18,11 @@ jobs:
       task: import_data
       source:
         type: database
-        query: ${{parent.inputs.query_source_snowflake}}
-        connection: azureml:my_snowflake_connection
+        query: ${{parent.inputs.query_source_sql}}
+        connection: azureml:my_azuresqldb_connection
       outputs:
         sink:
           type: mltable
-      compute: azureml:adf_compute1
 
     s3_blob:
       type: data_transfer
@@ -33,11 +30,10 @@ jobs:
       source:
         type: file_system
         path: ${{parent.inputs.path_source_s3}}
-        connection: azureml:my_s3_connection
+        connection: azureml:my-s3-connection
       outputs:
         sink:
           type: uri_folder
-          path: azureml://datastores/managed/paths/some_path
 
     merge_files:
       type: data_transfer
@@ -48,14 +44,15 @@ jobs:
         folder2: ${{parent.jobs.snowflake_blob.outputs.sink}}
       outputs:
         output_folder: ${{parent.outputs.merged_blob}}
-      # use default compute
 
-    blob_s3:
+    blob_azuresql:
       type: data_transfer
       task: export_data
       inputs:
-        source: ${{parent.jobs.merge_files.outputs.output_folder}}
+        source:
+          type: uri_file
+          path: ./export_database/data/testFile_ForSqlDB.parquet
       sink:
-        type: file_system
-        path: ${{parent.inputs.path_source_s3}}
-        connection: ${{parent.inputs.connection_target_s3}}
+        type: database
+        table_name: dbo.Persons
+        connection: azureml:my_export_azuresqldb_connection

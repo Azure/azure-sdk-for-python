@@ -2,8 +2,7 @@ from pathlib import Path
 
 from azure.ai.ml import Output, dsl
 from azure.ai.ml.data_transfer import import_data
-from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.constants._component import DataTransferTaskType
+from azure.ai.ml.constants._common import AssetTypes, SERVERLESS_COMPUTE
 from azure.ai.ml.entities import PipelineJob
 
 
@@ -26,5 +25,5 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
         s3_blob = import_data(source=source_snowflake, outputs=outputs)
 
     pipeline = data_transfer_import_file_system_pipeline_from_builder(path_source_s3, connection_target)
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline

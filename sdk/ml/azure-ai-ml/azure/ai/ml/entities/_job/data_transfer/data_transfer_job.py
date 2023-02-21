@@ -111,19 +111,29 @@ class DataTransferJob(Job, JobIOMixin):
         if isinstance(io_dict, (Database, FileSystem)):
             component_io = io_dict
         else:
-            data_type = io_dict.get("type", None)
-            if data_type == ExternalDataType.DATABASE:
-                component_io = Database(**io_dict)
-            elif data_type == ExternalDataType.FILE_SYSTEM:
-                component_io = FileSystem(**io_dict)
+            if isinstance(io_dict, dict):
+                data_type = io_dict.get("type", None)
+                if data_type == ExternalDataType.DATABASE:
+                    component_io = Database(**io_dict)
+                elif data_type == ExternalDataType.FILE_SYSTEM:
+                    component_io = FileSystem(**io_dict)
+                else:
+                    msg = "Type in source or sink only support {} and {}, currently got {}."
+                    raise ValidationException(
+                        message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
+                        no_personal_data_message=msg.format(
+                            ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
+                        ),
+                        target=ErrorTarget.DATA_TRANSFER_JOB,
+                        error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.INVALID_VALUE,
+                    )
             else:
-                msg = "Source or sink only support type {} and {}, currently got {}."
+                msg = "Source or sink only support dict, Database and FileSystem"
                 raise ValidationException(
-                    message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
-                    no_personal_data_message=msg.format(
-                        ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
-                    ),
-                    target=ErrorTarget.COMPONENT,
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.DATA_TRANSFER_JOB,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
@@ -319,7 +329,15 @@ class DataTransferExportJob(DataTransferJob):
         if self.sink.type == ExternalDataType.DATABASE:
             component_id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
-            component_id = DataTransferBuiltinComponentUri.EXPORT_FILE_SYSTEM
+            msg = (
+                f"Sink is a required field for export data task and we don't support exporting file system for now."
+            )
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.DATA_TRANSFER_JOB,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
 
         # Create anonymous command component with default version as 1
         component = DataTransferExportComponent(

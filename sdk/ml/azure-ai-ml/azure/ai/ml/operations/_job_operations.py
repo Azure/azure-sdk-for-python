@@ -62,6 +62,7 @@ from azure.ai.ml.constants._common import (
     TID_FMT,
     AssetTypes,
     AzureMLResourceType,
+    SERVERLESS_COMPUTE,
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -357,7 +358,8 @@ class JobOperations(_ScopeDependentOperations):
 
             if is_data_binding_expression(compute_name):
                 return compute_name
-
+            if compute_name == SERVERLESS_COMPUTE:
+                return compute_name
             try:
                 return self._compute_operations.get(compute_name).id
             except ResourceNotFoundError as e:

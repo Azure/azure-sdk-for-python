@@ -3,7 +3,7 @@ from pathlib import Path
 from azure.ai.ml import Input, Output, dsl, load_component
 from azure.ai.ml.data_transfer import import_data, export_data
 from azure.ai.ml.data_transfer import Database, FileSystem
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.constants._common import AssetTypes, SERVERLESS_COMPUTE
 from azure.ai.ml.entities import PipelineJob
 
 
@@ -23,7 +23,7 @@ def generate_dsl_pipeline() -> PipelineJob:
     merge_files_func = load_component(parent_dir + "/copy_data/merge_files.yaml")
 
     @dsl.pipeline(description="submit a pipeline with data transfer job")
-    def data_transfer_copy_pipeline_from_yaml(query_source_sql, path_source_s3):
+    def data_transfer_pipeline_from_yaml(query_source_sql, path_source_s3):
         source_snowflake = Database(query=query_source_sql, connection='azureml:my_azuresqldb_connection')
         snowflake_blob = import_data(
             source=source_snowflake,
@@ -37,10 +37,10 @@ def generate_dsl_pipeline() -> PipelineJob:
         blob_azuresql= export_data(inputs=inputs, sink=sink)
         return {"merged_blob": merge_files.outputs.output_folder}
 
-    pipeline = data_transfer_copy_pipeline_from_yaml(
+    pipeline = data_transfer_pipeline_from_yaml(
         query_source_sql=query_source_sql,
         path_source_s3=path_source_s3,
         )
 
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline
