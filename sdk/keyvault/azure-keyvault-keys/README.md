@@ -45,8 +45,6 @@ After configuring your environment for the [DefaultAzureCredential][default_cred
 
 <!-- SNIPPET:hello_world.create_a_key_client -->
 ```python
-# Instantiate a key client that will be used to call the service.
-# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = KeyClient(vault_url=VAULT_URL, credential=credential)
