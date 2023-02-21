@@ -605,7 +605,8 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 
  API operations that can take longer to complete are often represented as long-running operations (LRO). `azure-core` provides `LROPoller` (and `AsyncLROPoller`) protocols
  that give users access to the LRO and expose methods to interact with them such as waiting until the operation reaches a terminal state, checking its status, or
- providing a callback to do work on the final result when it is ready. If the LRO follows the guidelines, it's likely that the generated client library code should _just work_. 
+ providing a callback to do work on the final result when it is ready. If the LRO follows the [Azure REST API guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#long-running-operations--jobs), 
+ it's likely that the generated client library code should _just work_. 
  In cases where the LRO diverges from the guidelines, you may need to customize your code to achieve the desired scenario.
 
  There are 3 options to customize the logic for our LROs.
@@ -621,7 +622,7 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 ### LRO algorithm/strategies - OperationResourcePolling, LocationPolling, StatusCheckPolling
 
 `azure.core.polling` provides three built-in strategies for polling - `OperationResourcePolling`, `LocationPolling`, and `StatusCheckPolling`.
-The type of polling needed will be determined automatically, unless otherwise changed by the client developer. If the LRO is determined
+The type of polling needed will be determined automatically, unless otherwise changed by the client library developer. If the LRO is determined
 not to fit `OperationResourcePolling` or `LocationPolling`, `StatusCheckPolling` serves as a fallback strategy which will not perform polling, but
 instead return a successful response for a 2xx.
 
@@ -658,7 +659,7 @@ class CustomOperationResourcePolling(OperationResourcePolling):
 ```
 
 To plug into a client method which was generated as an LRO, you can pass the `polling` keyword argument. The `polling`
-keyword argument takes a `azure.core.polling.PollingMethod` and the specific strategy can be passed in to the keyword
+keyword argument takes a `azure.core.polling.PollingMethod` and allows for a custom strategy to be passed in to the keyword
 argument `lro_algorithms`:
 
 ```python
@@ -683,7 +684,7 @@ If you need to control the polling loop, then see the next section.
 
 ### Polling method - LROBasePolling/AsyncLROBasePolling
 
-Built-in methods for polling are included in azure-core as both sync / async variants - `LROBasePolling` and `AsyncLROBasePolling`.
+Built-in methods for polling are included in `azure-core` as both sync / async variants - `LROBasePolling` and `AsyncLROBasePolling`.
 You can also use `azure.core.polling.NoPolling` which will not initiate polling and simply return the 
 deserialized initial response when called with `poller.result()`.
 
@@ -701,9 +702,8 @@ class ServiceOperations:
         )
 ```
 
-The polling method provides all the logic for polling the status monitor. It runs the polling loop while performing GET requests
-to the status monitor and checking if a terminal state is reached. In between polls it inserts delay based on the service sent `retry-after`
-header or the given `polling_interval`.
+The polling method runs the polling loop while performing GET requests to the status monitor and checking if a terminal state is reached. 
+In between polls it inserts delay based on the service sent `retry-after` header or the given `polling_interval`.
 
 To customize parts of the polling method, you can create a subclass which uses `LROBasePolling` and overrides necessary methods.
 If significant customization is necessary, use `azure.core.polling.PollingMethod` and implement all the necessary methods.
