@@ -14,7 +14,7 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
     pip install azure-identity
     pip install azure-mgmt-datafactory
 # USAGE
-    python integration_runtimes_outbound_network_dependencies_endpoints.py
+    python credentials_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,17 +26,25 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
 def main():
     client = DataFactoryManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="7ad7c73b-38b8-4df3-84ee-52ff91092f61",
+        subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.integration_runtimes.list_outbound_network_dependencies_endpoints(
+    response = client.credential_operations.create_or_update(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
-        integration_runtime_name="exampleIntegrationRuntime",
+        credential_name="exampleCredential",
+        credential={
+            "properties": {
+                "type": "ManagedIdentity",
+                "typeProperties": {
+                    "resourceId": "/subscriptions/12345678-1234-1234-1234-12345678abc/resourcegroups/exampleResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/exampleUami"
+                },
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/IntegrationRuntimes_ListOutboundNetworkDependenciesEndpoints.json
+# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/Credentials_Create.json
 if __name__ == "__main__":
     main()
