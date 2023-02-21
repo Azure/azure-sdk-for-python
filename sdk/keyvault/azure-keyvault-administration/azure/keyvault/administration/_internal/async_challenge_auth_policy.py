@@ -91,5 +91,4 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         return True
 
     def _need_new_token(self) -> bool:
-        # pylint:disable=invalid-overridden-method
         return not self._token or self._token.expires_on - time.time() < 300
