@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionCategory
 from azure.ai.ml._schema.core.fields import ArmStr, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
@@ -31,6 +31,8 @@ class WorkspaceConnectionSchema(PathAwareSchema):
             ConnectionCategory.CONTAINER_REGISTRY,
             ConnectionCategory.PYTHON_FEED,
             ConnectionCategory.FEATURE_STORE,
+            ConnectionCategory.AZURE_DATA_LAKE_GEN2,
+            ConnectionCategory.REDIS,
         ],
         casing_transform=camel_to_snake,
         required=True,

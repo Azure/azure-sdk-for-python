@@ -310,7 +310,7 @@ class MLClient:
         self._workspace_connections = WorkspaceConnectionsOperations(
             self._operation_scope,
             self._operation_config,
-            self._rp_service_client_2022_01_01_preview,
+            self._service_client_12_2022_preview,
             self._operation_container,
             self._credential,
         )

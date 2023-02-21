@@ -9,7 +9,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     ConnectionAuthType,
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
@@ -18,7 +18,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
 )
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
 )
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
@@ -55,7 +55,7 @@ class WorkspaceConnection(Resource):
         ]
     :param type: The category of external resource for this connection.
     :type type: The type of workspace connection, possible values are:
-        ["git", "python_feed", "container_registry", "feature_store"]
+        ["git", "python_feed", "container_registry", "feature_store", "azure_data_lake_gen2", "redis"]
     """
 
     def __init__(
@@ -71,19 +71,17 @@ class WorkspaceConnection(Resource):
             ManagedIdentityConfiguration,
             ServicePrincipalConfiguration,
         ],
-        metadata: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         self.type = type
         self._target = target
         self._credentials = credentials
-        self._metadata = json.loads(json.dumps(metadata))
         super().__init__(**kwargs)
 
     @property
     def type(self) -> str:
         """Type of the workspace connection, supported are 'git', 'python_feed'
-        and 'container_registry'.
+        'feature_store', 'container_registry', "azure_data_lake_gen2" and "redis".
 
         :return: Type of the job.
         :rtype: str
@@ -127,15 +125,6 @@ class WorkspaceConnection(Resource):
         ]
         """
         return self._credentials
-
-    @property
-    def metadata(self) -> Dict[str, Any]:
-        """Metadata for workspace connection.
-
-        :return: Metadata for workspace connection.
-        :rtype: Dict[str, Any]
-        """
-        return self._metadata
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the workspace connection spec into a file in yaml format.
@@ -203,7 +192,6 @@ class WorkspaceConnection(Resource):
             creation_context=SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             type=camel_to_snake(properties.category),
             credentials=credentials,
-            metadata=properties.metadata,
         )
 
         return workspace_connection
@@ -231,7 +219,6 @@ class WorkspaceConnection(Resource):
         properties = workspace_connection_properties_class(
             target=self.target,
             credentials=self.credentials._to_workspace_connection_rest_object(),
-            metadata=self.metadata,
             # auth_type=auth_type,
             category=_snake_to_camel(self.type),
         )
