@@ -84,6 +84,8 @@ class TestSchedule(AzureRecordedTestCase):
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
         assert rest_schedule.name == schedule.name
+        # Asset the empty string added by sdk
+        assert rest_schedule.create_job.experiment_name == ""
         client.schedules.begin_disable(schedule.name)
         assert rest_schedule.create_job.id is not None
         # Set to None to align with yaml as service will fill this
