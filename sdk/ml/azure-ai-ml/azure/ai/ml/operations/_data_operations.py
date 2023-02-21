@@ -345,7 +345,7 @@ class DataOperations(_ScopeDependentOperations):
             description=display_name,
             display_name=display_name,
             experiment_name=experiment_name,
-            jobs={display_name: import_job}
+            jobs={experiment_name: import_job}
         )
         return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True)
 

@@ -17,7 +17,8 @@ from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransf
 )
 @pytest.mark.timeout(600)
 @pytest.mark.e2etest
-@pytest.mark.data_import_test
+@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
+@pytest.mark.data_experiences_test
 class TestDataImport(AzureRecordedTestCase):
     # Please set ML_TENANT_ID in your environment variables when recording this test.
     # It will to help sanitize RequestBody.Studio.endpoint for job creation request.

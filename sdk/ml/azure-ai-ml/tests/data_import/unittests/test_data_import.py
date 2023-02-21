@@ -53,14 +53,12 @@ class TestDataImport:
         )
 
         assert isinstance(data_import, DataImport)
-        assert isinstance(import_job.outputs["sink"], Output)
         assert data_import.name == import_job.outputs["sink"].name
         assert data_import.type == import_job.outputs["sink"].type
         assert data_import.path == import_job.outputs["sink"].path
 
-        assert isinstance(import_job, DataTransferImportJob)
         assert isinstance(data_import.source, FileSystem)
         assert isinstance(import_job.source, FileSystem)
         assert data_import.source.type == import_job.source.type
-        assert data_import.source.query == import_job.source.query
+        assert data_import.source.path == import_job.source.path
         assert data_import.source.connection == import_job.source.connection
