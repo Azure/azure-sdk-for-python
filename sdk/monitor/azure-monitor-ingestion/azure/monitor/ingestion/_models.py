@@ -6,14 +6,14 @@ import sys
 from typing import Any, List
 
 if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
+    from collections.abc import Mapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import Mapping  # type: ignore  # pylint: disable=ungrouped-imports
 
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class UploadLogsError:
+class LogsUploadError:
     """Error information for a failed upload to Azure Monitor.
 
     :param error: The error that occured during the upload.

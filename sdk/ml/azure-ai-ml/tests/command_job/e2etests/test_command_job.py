@@ -419,6 +419,18 @@ class TestCommandJob(AzureRecordedTestCase):
             )
         assert "Error while parsing yaml file" in e.value.message
 
+    @pytest.mark.e2etest
+    def test_command_job_register_output(self, randstr: Callable[[str], str], client: MLClient) -> None:
+        job: CommandJob = load_job(
+            source="./tests/test_configs/command_job/command_job_register_output.yml",
+            params_override=[{"name": randstr("job_name")}],
+        )
+        job = client.jobs.create_or_update(job=job)
+        assert job.outputs.test2.name == "test2_output"
+        assert job.outputs.test2.version == "2"
+        assert job.outputs.test3.name == "test3_output"
+        assert job.outputs.test3.version == "3"
+
 
 def check_tid_in_url(client: MLClient, job: Job) -> None:
     # test that TID is placed in the URL only in live mode

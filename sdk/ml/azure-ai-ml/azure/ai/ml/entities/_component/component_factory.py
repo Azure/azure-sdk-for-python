@@ -10,7 +10,7 @@ from marshmallow import Schema
 
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml.constants._common import SOURCE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.constants._component import NodeType, DataTransferTaskType
 from azure.ai.ml.entities._component.automl_component import AutoMLComponent
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
@@ -18,6 +18,11 @@ from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._component.spark_component import SparkComponent
+from azure.ai.ml.entities._component.datatransfer_component import (
+    DataTransferCopyComponent,
+    DataTransferImportComponent,
+    DataTransferExportComponent,
+)
 from azure.ai.ml.entities._util import get_type_from_spec
 
 
@@ -58,6 +63,23 @@ class _ComponentFactory:
             _type=NodeType.SPARK,
             create_instance_func=lambda: SparkComponent.__new__(SparkComponent),
             create_schema_func=SparkComponent._create_schema_for_validation,
+        )
+        self.register_type(
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.COPY_DATA]),
+            create_instance_func=lambda: DataTransferCopyComponent.__new__(DataTransferCopyComponent),
+            create_schema_func=DataTransferCopyComponent._create_schema_for_validation,
+        )
+
+        self.register_type(
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.IMPORT_DATA]),
+            create_instance_func=lambda: DataTransferImportComponent.__new__(DataTransferImportComponent),
+            create_schema_func=DataTransferImportComponent._create_schema_for_validation,
+        )
+
+        self.register_type(
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.EXPORT_DATA]),
+            create_instance_func=lambda: DataTransferExportComponent.__new__(DataTransferExportComponent),
+            create_schema_func=DataTransferExportComponent._create_schema_for_validation,
         )
 
     def get_create_funcs(self, yaml_spec: dict) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:

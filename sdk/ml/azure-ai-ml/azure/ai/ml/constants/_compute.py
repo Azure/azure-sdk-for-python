@@ -31,3 +31,16 @@ class ComputeDefaults:
     MAX_NODES = 4
     IDLE_TIME = 1800
     PRIORITY = "Dedicated"
+
+
+class CustomApplicationDefaults:
+    TARGET_PORT = "target_port"
+    PUBLISHED_PORT = "published_port"
+    PORT_MIN_VALUE = 1025
+    PORT_MAX_VALUE = 65535
+    DOCKER = "docker"
+    ENDPOINT_NAME = "connect"
+
+
+DUPLICATE_APPLICATION_ERROR = "Value of {} must be unique across all custom applications."
+INVALID_VALUE_ERROR = "Value of {} must be between {} and {}."

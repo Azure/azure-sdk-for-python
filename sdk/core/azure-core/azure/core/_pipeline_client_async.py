@@ -58,9 +58,7 @@ if TYPE_CHECKING:  # Protocol and non-Protocol can't mix in Python 3.7
 
 
 HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncHTTPResponseType = TypeVar(
-    "AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable"
-)
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -126,9 +124,7 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
         await self._response.close()
 
 
-class AsyncPipelineClient(
-    PipelineClientBase, AsyncContextManager["AsyncPipelineClient"]
-):
+class AsyncPipelineClient(PipelineClientBase, AsyncContextManager["AsyncPipelineClient"]):
     """Service client core methods.
 
     Builds an AsyncPipeline client.
@@ -233,8 +229,7 @@ class AsyncPipelineClient(
                         index_of_retry = index
                 if index_of_retry == -1:
                     raise ValueError(
-                        "Failed to add per_retry_policies; "
-                        "no RetryPolicy found in the supplied list of policies. "
+                        "Failed to add per_retry_policies; no RetryPolicy found in the supplied list of policies. "
                     )
                 policies_1 = policies[: index_of_retry + 1]
                 policies_2 = policies[index_of_retry + 1 :]
@@ -251,9 +246,7 @@ class AsyncPipelineClient(
 
     async def _make_pipeline_call(self, request, **kwargs):
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = await self._pipeline.run(
-            request, **kwargs  # pylint: disable=protected-access
-        )
+        pipeline_response = await self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         if return_pipeline_response:
             return pipeline_response
         return pipeline_response.http_response

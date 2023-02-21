@@ -210,7 +210,11 @@ class Data(Artifact):
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         regex = r"datastores\/(.+)"
-        groups = re.search(regex, asset_artifact.datastore_arm_id)
-        if groups:
-            datastore_name = groups.group(1)
-            self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)
+        # datastore_arm_id is null for registry scenario, so capture the full_storage_path
+        if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
+            self.path = asset_artifact.full_storage_path
+        else:
+            groups = re.search(regex, asset_artifact.datastore_arm_id)
+            if groups:
+                datastore_name = groups.group(1)
+                self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)

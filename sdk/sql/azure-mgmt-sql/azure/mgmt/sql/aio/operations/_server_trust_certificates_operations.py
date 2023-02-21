@@ -386,8 +386,8 @@ class ServerTrustCertificatesOperations:
         :type managed_instance_name: str
         :param certificate_name: Name of of the certificate to upload. Required.
         :type certificate_name: str
-        :param parameters: The server trust certificate info. Is either a model type or a IO type.
-         Required.
+        :param parameters: The server trust certificate info. Is either a ServerTrustCertificate type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ServerTrustCertificate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

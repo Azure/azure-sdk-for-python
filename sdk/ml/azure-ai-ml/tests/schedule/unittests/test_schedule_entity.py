@@ -24,12 +24,13 @@ class TestScheduleEntity:
             assert type(schedule.trigger) == CronTrigger
 
         schedule = verify_entity_load_and_dump(load_schedule, simple_schedule_validation, test_path)[0]
+        schedule.properties["test"] = "val"
         actual_dict = schedule._to_rest_object().as_dict()["properties"]
         # Skip job definition
         actual_dict["action"]["job_definition"] = {}
         expected_dict = {
             "description": "a weekly retrain schedule",
-            "properties": {},
+            "properties": {"test": "val"},
             "tags": {},
             "action": {"action_type": "CreateJob", "job_definition": {}},
             "display_name": "weekly retrain schedule",
@@ -135,9 +136,12 @@ class TestScheduleEntity:
         rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
         # assert overwrite values
         assert rest_schedule_job_dict["environment_variables"] == {"key": "val"}
-        assert rest_schedule_job_dict["resources"] == {'properties': {}, 'shm_size': '1g'}
-        assert rest_schedule_job_dict["distribution"] == {'distribution_type': 'PyTorch', 'process_count_per_instance': 1}
-        assert rest_schedule_job_dict["limits"] == {'job_limits_type': 'Command', 'timeout': 'PT50M'}
+        assert rest_schedule_job_dict["resources"] == {"properties": {}, "shm_size": "1g"}
+        assert rest_schedule_job_dict["distribution"] == {
+            "distribution_type": "PyTorch",
+            "process_count_per_instance": 1,
+        }
+        assert rest_schedule_job_dict["limits"] == {"job_limits_type": "Command", "timeout": "PT50M"}
 
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
@@ -156,7 +160,13 @@ class TestScheduleEntity:
         schedule = load_schedule(test_path)
         rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
         # assert overwrite values
-        assert rest_schedule_job_dict["conf"] == {'spark.driver.cores': '2', 'spark.driver.memory': '2g', 'spark.executor.cores': '2', 'spark.executor.memory': '2g', 'spark.executor.instances': '2'}
+        assert rest_schedule_job_dict["conf"] == {
+            "spark.driver.cores": "2",
+            "spark.driver.memory": "2g",
+            "spark.executor.cores": "2",
+            "spark.executor.memory": "2g",
+            "spark.executor.instances": "2",
+        }
         assert "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04" in rest_schedule_job_dict["environment_id"]
 
     def test_invalid_date_string(self):

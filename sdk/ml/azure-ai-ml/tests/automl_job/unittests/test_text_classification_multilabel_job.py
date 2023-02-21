@@ -17,7 +17,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SamplingAlgorithmType,
     TextClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
@@ -82,16 +82,17 @@ class TestAutoMLTextClassificationMultilabelJob:
         )
 
         if run_type == "sweep":
-            job.set_limits(max_concurrent_trials=2,
-                           max_trials=1,
-                           timeout_minutes=30,
-                           trial_timeout_minutes=10,
-                           max_nodes=4)
+            job.set_limits(
+                max_concurrent_trials=2, max_trials=1, timeout_minutes=30, trial_timeout_minutes=10, max_nodes=4
+            )
             early_termination_policy = BanditPolicy(evaluation_interval=10, slack_amount=0.02)
-            job.set_sweep(sampling_algorithm=SamplingAlgorithmType.GRID,
-                          early_termination=early_termination_policy)
-            job.extend_search_space([SearchSpace(model_name="bert-base-cased", learning_rate=Uniform(5e-6, 5e-5)),
-                                     SearchSpace(model_name="bert-large-cased", number_of_epochs=Choice([3, 4, 5]))])
+            job.set_sweep(sampling_algorithm=SamplingAlgorithmType.GRID, early_termination=early_termination_policy)
+            job.extend_search_space(
+                [
+                    SearchSpace(model_name="bert-base-cased", learning_rate=Uniform(5e-6, 5e-5)),
+                    SearchSpace(model_name="bert-large-cased", number_of_epochs=Choice([3, 4, 5])),
+                ]
+            )
         else:
             job.set_limits(timeout_minutes=30)
         job.set_training_parameters(training_batch_size=16)
@@ -107,7 +108,7 @@ class TestAutoMLTextClassificationMultilabelJob:
             assert job.sweep.sampling_algorithm == SamplingAlgorithmType.GRID
             assert job.sweep.early_termination == early_termination_policy
 
-            assert job.search_space[0].model_name == 'bert-base-cased'
+            assert job.search_space[0].model_name == "bert-base-cased"
             assert job.search_space[0].learning_rate == Uniform(5e-6, 5e-5)
 
             assert job.search_space[1].model_name == "bert-large-cased"
@@ -181,21 +182,27 @@ class TestAutoMLTextClassificationMultilabelJob:
             training_data=Input(type=AssetTypes.MLTABLE, path=training_data_uri),
             validation_data=Input(type=AssetTypes.MLTABLE, path=validation_data_uri),
         )
-        job.set_limits(max_concurrent_trials=max_concurrent_trials,
-                       max_trials=max_trials,
-                       max_nodes=max_nodes,
-                       timeout_minutes=timeout)
+        job.set_limits(
+            max_concurrent_trials=max_concurrent_trials,
+            max_trials=max_trials,
+            max_nodes=max_nodes,
+            timeout_minutes=timeout,
+        )
         job.set_featurization(dataset_language=dataset_language)
         job.set_training_parameters(weight_decay=0.01)
 
         rest_sweep = None
         rest_search_space = None
         if run_type == "sweep":
-            job.set_sweep(sampling_algorithm=SamplingAlgorithmType.GRID,
-                          early_termination=BanditPolicy(slack_factor=0.2, evaluation_interval=2))
+            job.set_sweep(
+                sampling_algorithm=SamplingAlgorithmType.GRID,
+                early_termination=BanditPolicy(slack_factor=0.2, evaluation_interval=2),
+            )
             job.extend_search_space([SearchSpace(model_name=Choice(["bert-base-cased", "distilbert-base-cased"]))])
-            rest_sweep = NlpSweepSettings(sampling_algorithm=SamplingAlgorithmType.GRID,
-                                          early_termination=RestBanditPolicy(slack_factor=0.2, evaluation_interval=2))
+            rest_sweep = NlpSweepSettings(
+                sampling_algorithm=SamplingAlgorithmType.GRID,
+                early_termination=RestBanditPolicy(slack_factor=0.2, evaluation_interval=2),
+            )
             rest_search_space = [NlpParameterSubspace(model_name="choice('bert-base-cased','distilbert-base-cased')")]
 
         expected = TextClassificationMultilabel(
@@ -208,7 +215,7 @@ class TestAutoMLTextClassificationMultilabelJob:
                 max_concurrent_trials=max_concurrent_trials,
                 max_trials=max_trials,
                 max_nodes=max_nodes,
-                timeout=to_iso_duration_format_mins(timeout)
+                timeout=to_iso_duration_format_mins(timeout),
             ),
             fixed_parameters=NlpFixedParameters(weight_decay=0.01),
             sweep_settings=rest_sweep,
@@ -265,23 +272,29 @@ class TestAutoMLTextClassificationMultilabelJob:
             tags={"foo_tag": "bar"},
             identity=identity,
         )
-        expected_job.set_limits(max_concurrent_trials=max_concurrent_trials,
-                                max_trials=max_trials,
-                                max_nodes=max_nodes,
-                                timeout_minutes=timeout)
+        expected_job.set_limits(
+            max_concurrent_trials=max_concurrent_trials,
+            max_trials=max_trials,
+            max_nodes=max_nodes,
+            timeout_minutes=timeout,
+        )
         expected_job.set_featurization(dataset_language=dataset_language)
         expected_job.set_training_parameters(weight_decay=0.01)
 
         rest_sweep = None
         rest_search_space = None
         if run_type == "sweep":
-            expected_job.set_sweep(sampling_algorithm=SamplingAlgorithmType.GRID,
-                                   early_termination=BanditPolicy(slack_factor=0.2, evaluation_interval=2))
-            expected_job.extend_search_space([SearchSpace(model_name=Choice(["bert-base-cased",
-                                                                             "distilbert-base-cased"]))])
-            rest_sweep = NlpSweepSettings(sampling_algorithm=SamplingAlgorithmType.GRID,
-                                          early_termination=RestBanditPolicy(slack_factor=0.2,
-                                                                             evaluation_interval=2))
+            expected_job.set_sweep(
+                sampling_algorithm=SamplingAlgorithmType.GRID,
+                early_termination=BanditPolicy(slack_factor=0.2, evaluation_interval=2),
+            )
+            expected_job.extend_search_space(
+                [SearchSpace(model_name=Choice(["bert-base-cased", "distilbert-base-cased"]))]
+            )
+            rest_sweep = NlpSweepSettings(
+                sampling_algorithm=SamplingAlgorithmType.GRID,
+                early_termination=RestBanditPolicy(slack_factor=0.2, evaluation_interval=2),
+            )
             rest_search_space = [NlpParameterSubspace(model_name="choice(bert-base-cased, distilbert-base-cased)")]
 
         task_details = TextClassificationMultilabel(
@@ -293,12 +306,12 @@ class TestAutoMLTextClassificationMultilabelJob:
                 max_concurrent_trials=max_concurrent_trials,
                 max_trials=max_trials,
                 max_nodes=max_nodes,
-                timeout=to_iso_duration_format_mins(timeout)
+                timeout=to_iso_duration_format_mins(timeout),
             ),
             featurization_settings=NlpVerticalFeaturizationSettings(dataset_language=dataset_language),
             fixed_parameters=NlpFixedParameters(weight_decay=0.01),
             sweep_settings=rest_sweep,
-            search_space=rest_search_space
+            search_space=rest_search_space,
         )
         job_data = JobBase(properties=RestAutoMLJob(task_details=task_details, identity=identity._to_job_rest_object()))
         # Test converting REST object to Job

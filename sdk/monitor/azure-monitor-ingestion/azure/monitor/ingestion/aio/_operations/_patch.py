@@ -13,12 +13,12 @@ from typing import Callable, cast, List, Any, Awaitable, Optional, Union, IO
 
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._helpers import _create_gzip_requests, GZIP_MAGIC_NUMBER
-from ..._models import UploadLogsError
+from ..._models import LogsUploadError
 
 if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
+    from collections.abc import Mapping, MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import Mapping, MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -26,13 +26,13 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class LogsIngestionClientOperationsMixin(GeneratedOps):
-    async def upload(  # type:ignore[override] # pylint: disable=arguments-renamed, arguments-differ
+    async def upload(  # type: ignore[override] # pylint: disable=arguments-renamed, arguments-differ
         self,
         rule_id: str,
         stream_name: str,
         logs: Union[List[JSON], IO],
         *,
-        on_error: Optional[Callable[[UploadLogsError], Awaitable[None]]] = None,
+        on_error: Optional[Callable[[LogsUploadError], Awaitable[None]]] = None,
         **kwargs: Any
     ) -> None:
         """Ingestion API used to directly ingest data using Data Collection Rules.
@@ -47,9 +47,9 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         :param logs: An array of objects matching the schema defined by the provided stream.
         :type logs: list[JSON] or IO
         :keyword on_error: The callback function that is called when a chunk of logs fails to upload.
-            This function should expect one argument that corresponds to an "UploadLogsError" object.
+            This function should expect one argument that corresponds to an "LogsUploadError" object.
             If no function is provided, then the first exception encountered will be raised.
-        :paramtype on_error: Optional[Callable[[~azure.monitor.ingestion.UploadLogsError], None]]
+        :paramtype on_error: Optional[Callable[[~azure.monitor.ingestion.LogsUploadError], None]]
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -70,15 +70,11 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         for gzip_data, log_chunk in _create_gzip_requests(cast(List[JSON], logs)):
             try:
                 await super().upload(
-                    rule_id,
-                    stream=stream_name,
-                    body=gzip_data,  # type: ignore
-                    content_encoding="gzip",
-                    **kwargs
+                    rule_id, stream=stream_name, body=gzip_data, content_encoding="gzip", **kwargs  # type: ignore
                 )
             except Exception as err:  # pylint: disable=broad-except
                 if on_error:
-                    await on_error(UploadLogsError(error=err, failed_logs=log_chunk))
+                    await on_error(LogsUploadError(error=err, failed_logs=cast(List[Mapping[str, Any]], log_chunk)))
                 else:
                     _LOGGER.error("Failed to upload chunk containing %d log entries", len(log_chunk))
                     raise err

@@ -384,13 +384,19 @@ class TestCommandComponentEntity:
             sampling_algorithm="random",
         )
         sweep_job1.early_termination = {
-            'type': "bandit", 'evaluation_interval': 100, 'delay_evaluation': 200, 'slack_factor': 40.0
-            }
+            "type": "bandit",
+            "evaluation_interval": 100,
+            "delay_evaluation": 200,
+            "slack_factor": 40.0,
+        }
         from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+
         assert isinstance(sweep_job1.early_termination, BanditPolicy)
-        assert [sweep_job1.early_termination.evaluation_interval,
-                sweep_job1.early_termination.delay_evaluation,
-                sweep_job1.early_termination.slack_factor] == [100, 200, 40.0]
+        assert [
+            sweep_job1.early_termination.evaluation_interval,
+            sweep_job1.early_termination.delay_evaluation,
+            sweep_job1.early_termination.slack_factor,
+        ] == [100, 200, 40.0]
 
     def test_invalid_component_inputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
@@ -506,9 +512,7 @@ class TestCommandComponentEntity:
         with build_temp_folder(
             source_base_dir="./tests/test_configs/components",
             relative_files_to_copy=["helloworld_component.yml"],
-            extra_files_to_create={
-                "__pycache__/a.pyc": None
-            }
+            extra_files_to_create={"__pycache__/a.pyc": None},
         ) as temp_dir:
             # resolve and test for ignore_file's is_file_excluded
             component.code = temp_dir
@@ -524,12 +528,12 @@ class TestCommandComponentEntity:
     def test_normalized_arm_id_in_component_dict(self):
         component_dict = {
             "code": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/codes/xxx",
-            "environment": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/environments/xxx"
+            "environment": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/environments/xxx",
         }
         normalized_arm_id_in_object(component_dict)
 
         expected_dict = {
-            'code': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/xxx',
-            'environment': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx'
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/xxx",
+            "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx",
         }
         assert component_dict == expected_dict

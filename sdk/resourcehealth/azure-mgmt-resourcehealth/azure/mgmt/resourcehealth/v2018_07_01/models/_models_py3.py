@@ -55,8 +55,8 @@ class AvailabilityStatus(_serialization.Model):
         type: Optional[str] = None,
         location: Optional[str] = None,
         properties: Optional["_models.AvailabilityStatusProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Azure Resource Manager Identity for the availabilityStatuses resource.
         :paramtype id: str
@@ -99,7 +99,9 @@ class AvailabilityStatusListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AvailabilityStatus"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.AvailabilityStatus"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of availabilityStatuses. Required.
         :paramtype value: list[~azure.mgmt.resourcehealth.v2018_07_01.models.AvailabilityStatus]
@@ -206,8 +208,8 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
         recently_resolved: Optional["_models.AvailabilityStatusPropertiesRecentlyResolved"] = None,
         recommended_actions: Optional[List["_models.RecommendedAction"]] = None,
         service_impacting_events: Optional[List["_models.ServiceImpactingEvent"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword availability_state: Availability status of the resource. When it is null, this
          availabilityStatus object represents an availability impacting event. Known values are:
@@ -281,7 +283,8 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
 
 
 class AvailabilityStatusPropertiesRecentlyResolved(_serialization.Model):
-    """An annotation describing a change in the availabilityState to Available from Unavailable with a reasonType of type Unplanned.
+    """An annotation describing a change in the availabilityState to Available from Unavailable with a
+    reasonType of type Unplanned.
 
     :ivar unavailable_occurred_time: Timestamp for when the availabilityState changed to
      Unavailable.
@@ -304,8 +307,8 @@ class AvailabilityStatusPropertiesRecentlyResolved(_serialization.Model):
         unavailable_occurred_time: Optional[datetime.datetime] = None,
         resolved_time: Optional[datetime.datetime] = None,
         unavailability_summary: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unavailable_occurred_time: Timestamp for when the availabilityState changed to
          Unavailable.
@@ -345,8 +348,8 @@ class EmergingIssueImpact(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         regions: Optional[List["_models.ImpactedRegion"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The impacted service id.
         :paramtype id: str
@@ -380,8 +383,8 @@ class EmergingIssueListResult(_serialization.Model):
         *,
         value: Optional[List["_models.EmergingIssuesGetResult"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of emerging issues.
         :paramtype value: list[~azure.mgmt.resourcehealth.v2018_07_01.models.EmergingIssuesGetResult]
@@ -420,7 +423,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -471,8 +474,8 @@ class EmergingIssuesGetResult(Resource):
         refresh_timestamp: Optional[datetime.datetime] = None,
         status_banners: Optional[List["_models.StatusBanner"]] = None,
         status_active_events: Optional[List["_models.StatusActiveEvent"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword refresh_timestamp: Timestamp for when last time refreshed for ongoing emerging issue.
         :paramtype refresh_timestamp: ~datetime.datetime
@@ -513,7 +516,7 @@ class ErrorResponse(_serialization.Model):
         "details": {"key": "details", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -654,8 +657,8 @@ class Event(Resource):  # pylint: disable=too-many-instance-attributes
         priority: Optional[int] = None,
         last_update_time: Optional[datetime.datetime] = None,
         hir_stage: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_type: Type of event. Known values are: "ServiceIssue", "PlannedMaintenance",
          "HealthAdvisory", "RCA", "EmergingIssues", and "SecurityAdvisory".
@@ -753,7 +756,7 @@ class EventPropertiesArticle(_serialization.Model):
         "article_content": {"key": "articleContent", "type": "str"},
     }
 
-    def __init__(self, *, article_content: Optional[str] = None, **kwargs):
+    def __init__(self, *, article_content: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword article_content: Article content of event.
         :paramtype article_content: str
@@ -786,8 +789,8 @@ class EventPropertiesRecommendedActions(_serialization.Model):
         message: Optional[str] = None,
         actions: Optional[List["_models.EventPropertiesRecommendedActionsItem"]] = None,
         locale_code: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword message: Recommended action title for the service health event.
         :paramtype message: str
@@ -817,7 +820,7 @@ class EventPropertiesRecommendedActionsItem(_serialization.Model):
         "action_text": {"key": "actionText", "type": "str"},
     }
 
-    def __init__(self, *, group_id: Optional[int] = None, action_text: Optional[str] = None, **kwargs):
+    def __init__(self, *, group_id: Optional[int] = None, action_text: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword group_id: Recommended action group Id for the service health event.
         :paramtype group_id: int
@@ -850,7 +853,7 @@ class Events(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Event"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Event"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of event. Required.
         :paramtype value: list[~azure.mgmt.resourcehealth.v2018_07_01.models.Event]
@@ -886,8 +889,8 @@ class Faq(_serialization.Model):
         question: Optional[str] = None,
         answer: Optional[str] = None,
         locale_code: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword question: FAQ question for the service health event.
         :paramtype question: str
@@ -922,8 +925,8 @@ class Impact(_serialization.Model):
         *,
         impacted_service: Optional[str] = None,
         impacted_regions: Optional[List["_models.ImpactedServiceRegion"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword impacted_service: Impacted service name.
         :paramtype impacted_service: str
@@ -951,8 +954,12 @@ class ImpactedRegion(_serialization.Model):
     }
 
     def __init__(
-        self, *, id: Optional[str] = None, name: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The impacted region id.
         :paramtype id: str
@@ -996,8 +1003,8 @@ class ImpactedServiceRegion(_serialization.Model):
         impacted_subscriptions: Optional[List[str]] = None,
         last_update_time: Optional[datetime.datetime] = None,
         updates: Optional[List["_models.Update"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword impacted_region: Impacted region name.
         :paramtype impacted_region: str
@@ -1054,8 +1061,8 @@ class Link(_serialization.Model):
         extension_name: Optional[str] = None,
         blade_name: Optional[str] = None,
         parameters: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of link. Known values are: "Button" and "Hyperlink".
         :paramtype type: str or ~azure.mgmt.resourcehealth.v2018_07_01.models.LinkTypeValues
@@ -1093,7 +1100,7 @@ class LinkDisplayText(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Display text of link.
         :paramtype value: str
@@ -1153,8 +1160,8 @@ class MetadataEntity(Resource):
         depends_on: Optional[List[str]] = None,
         applicable_scenarios: Optional[List[Union[str, "_models.Scenario"]]] = None,
         supported_values: Optional[List["_models.MetadataSupportedValueDetail"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name.
         :paramtype display_name: str
@@ -1189,8 +1196,8 @@ class MetadataEntityListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.MetadataEntity"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.MetadataEntity"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of metadata entities.
         :paramtype value: list[~azure.mgmt.resourcehealth.v2018_07_01.models.MetadataEntity]
@@ -1221,8 +1228,8 @@ class MetadataSupportedValueDetail(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The id.
         :paramtype id: str
@@ -1248,7 +1255,9 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -1287,8 +1296,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Provider name.
         :paramtype provider: str
@@ -1323,7 +1332,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: List["_models.Operation"], **kwargs):
+    def __init__(self, *, value: List["_models.Operation"], **kwargs: Any) -> None:
         """
         :keyword value: List of operations available in the resourcehealth resource provider. Required.
         :paramtype value: list[~azure.mgmt.resourcehealth.v2018_07_01.models.Operation]
@@ -1355,8 +1364,8 @@ class RecommendedAction(_serialization.Model):
         action: Optional[str] = None,
         action_url: Optional[str] = None,
         action_url_text: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action: Recommended action.
         :paramtype action: str
@@ -1404,8 +1413,8 @@ class ServiceImpactingEvent(_serialization.Model):
         correlation_id: Optional[str] = None,
         status: Optional["_models.ServiceImpactingEventStatus"] = None,
         incident_properties: Optional["_models.ServiceImpactingEventIncidentProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_start_time: Timestamp for when the event started.
         :paramtype event_start_time: ~datetime.datetime
@@ -1454,8 +1463,8 @@ class ServiceImpactingEventIncidentProperties(_serialization.Model):
         service: Optional[str] = None,
         region: Optional[str] = None,
         incident_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword title: Title of the incident.
         :paramtype title: str
@@ -1484,7 +1493,7 @@ class ServiceImpactingEventStatus(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Current status of the event.
         :paramtype value: str
@@ -1546,8 +1555,8 @@ class StatusActiveEvent(_serialization.Model):
         published: Optional[bool] = None,
         last_modified_time: Optional[datetime.datetime] = None,
         impacts: Optional[List["_models.EmergingIssueImpact"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword title: The active event title.
         :paramtype title: str
@@ -1612,8 +1621,8 @@ class StatusBanner(_serialization.Model):
         message: Optional[str] = None,
         cloud: Optional[str] = None,
         last_modified_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword title: The banner title.
         :paramtype title: str
@@ -1647,8 +1656,8 @@ class Update(_serialization.Model):
     }
 
     def __init__(
-        self, *, summary: Optional[str] = None, update_date_time: Optional[datetime.datetime] = None, **kwargs
-    ):
+        self, *, summary: Optional[str] = None, update_date_time: Optional[datetime.datetime] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword summary: Summary text for the given update for the service health event.
         :paramtype summary: str

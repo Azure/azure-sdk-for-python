@@ -148,13 +148,8 @@ class CodegenTestPR:
         head_sha = print_exec_output('git rev-parse HEAD')[0]
         return head_sha
 
-    def readme_local_folder(self) -> Path:
-        result = re.findall('specification/[a-zA-Z-]+/resource-manager', self.spec_readme)
-        if len(result) == 0:
-            service_name = self.spec_readme
-        else:
-            service_name = result[0].split('/')[1]
-        return Path(f'specification/{service_name}/resource-manager/readme.md')
+    def readme_local_folder(self) -> str:
+        return "specification" + self.spec_readme.split("specification")[-1]
 
     def get_sdk_folder_with_autorest_result(self):
         generate_result = self.get_autorest_result()
@@ -187,8 +182,10 @@ class CodegenTestPR:
             'headSha': self.get_latest_commit_in_swagger_repo(),
             'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
             'specFolder': self.spec_repo,
-            'relatedReadmeMdFiles': [str(self.readme_local_folder())]
+            'relatedReadmeMdFiles': [self.readme_local_folder()]
         }
+        log(str(input_data))
+
         # if Python tag exists
         if os.getenv('PYTHON_TAG'):
             input_data['python_tag'] = os.getenv('PYTHON_TAG')
@@ -264,7 +261,36 @@ class CodegenTestPR:
     # Use the template to update readme and setup by packaging_tools
     @return_origin_path
     def check_file_with_packaging_tool(self):
+        python_md = Path(self.spec_repo) / "specification" / self.spec_readme.split("specification/")[-1].replace("readme.md", "readme.python.md")
+        title = ""
+        if python_md.exists():
+            with open(python_md, "r") as file_in:
+                md_content = file_in.readlines()
+            for line in md_content:
+                if "title:" in line:
+                    title = line.replace("title:", "").strip(" \r\n")
+                    break
+        else:
+            log("{python_md} does not exist")
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
+        # add `title` in sdk_packaging.toml
+        if title:
+            toml = Path(f"azure-mgmt-{self.package_name}") / "sdk_packaging.toml"
+            if toml.exists():
+                def edit_toml(content: List[str]):
+                    has_title = False
+                    for line in content:
+                        if "title" in line:
+                            has_title = True
+                            break
+                    if not has_title:
+                        content.append(f"title = \"{title}\"\n")
+                modify_file(str(toml), edit_toml)
+            else:
+                log(f"{os.getcwd()}/{toml} does not exist")
+        else:
+            log(f"do not find title in {python_md}")
+
         print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
         log('packaging_tools --build-conf successfully ')
 
@@ -483,9 +509,17 @@ class CodegenTestPR:
             log(f'{test_mode} run done, do not find failure !!!')
             self.test_result = succeeded_result
 
+    @staticmethod
+    def clean_test_env():
+        for item in ("SSL_CERT_DIR", "REQUESTS_CA_BUNDLE"):
+            if os.getenv(item):
+                os.environ.pop(item)
+
     def run_test(self):
         self.prepare_test_env()
         self.run_test_proc()
+        self.clean_test_env()
+        
 
     def create_pr_proc(self):
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
