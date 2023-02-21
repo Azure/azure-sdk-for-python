@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Union, IO, Optional
+from typing import Any, Union, IO
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.polling import AsyncLROPoller
