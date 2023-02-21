@@ -1124,6 +1124,13 @@
       ]
     },
     {
+      "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/operations/*.py",
       "words": [
         "struct",
