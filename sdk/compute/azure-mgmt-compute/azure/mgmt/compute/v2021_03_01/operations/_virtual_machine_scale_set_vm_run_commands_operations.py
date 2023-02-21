@@ -446,7 +446,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         :param run_command_name: The name of the virtual machine run command. Required.
         :type run_command_name: str
         :param run_command: Parameters supplied to the Create Virtual Machine RunCommand operation. Is
-         either a model type or a IO type. Required.
+         either a VirtualMachineRunCommand type or a IO type. Required.
         :type run_command: ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineRunCommand or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.
@@ -693,7 +693,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:
         :param run_command_name: The name of the virtual machine run command. Required.
         :type run_command_name: str
         :param run_command: Parameters supplied to the Update Virtual Machine RunCommand operation. Is
-         either a model type or a IO type. Required.
+         either a VirtualMachineRunCommandUpdate type or a IO type. Required.
         :type run_command: ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineRunCommandUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.
