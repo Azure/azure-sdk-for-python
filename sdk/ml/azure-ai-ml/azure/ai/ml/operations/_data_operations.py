@@ -6,11 +6,12 @@
 
 import os
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Iterable
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml.entities import Job, PipelineJob
+from azure.ai.ml.data_transfer import import_data
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._artifacts._constants import (
@@ -50,7 +51,6 @@ from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._data_import.data_import import DataImport
-from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferImportJob
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -333,20 +333,37 @@ class DataOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Job
         """
 
-        import_job = DataTransferImportJob(
-            compute="serverless",
-            outputs={"sink": Output(type=data_import.type, path=data_import.path, name=data_import.name)},
-            source=data_import.source
-        )
         connection_name = data_import.source.connection.split(':')[-1]
-        display_name = "data_import_" + data_import.name + "_" + connection_name
+        experiment_name = "data_import_" + data_import.name
+        display_name = experiment_name + "_" + connection_name
+        import_job = import_data(
+            description=display_name,
+            display_name=display_name,
+            experiment_name=experiment_name,
+            compute="azureml:serverless",
+            source=data_import.source,
+            outputs={"sink": Output(type=data_import.type, path=data_import.path, name=data_import.name)},
+            is_deterministic=False,
+            component="azureml://registries/azureml-dev/components/import_data_database/versions/1"
+        )
         import_pipeline = PipelineJob(
             description=display_name,
             display_name=display_name,
-            experiment_name=display_name,
+            experiment_name=experiment_name,
             jobs={display_name: import_job}
         )
         return self._job_operation.create_or_update(import_pipeline)
+
+    def show_materialization_status(self, asset_name: str) -> Iterable[Job]:
+        """List materialization jobs of the asset.
+
+        :param asset_name: When provided, returns children of named job.
+        :type asset_name: str
+        :return: An iterator like instance of Job objects.
+        :rtype: ~azure.core.paging.ItemPaged[Job]
+        """
+
+        return self._job_operation.list(job_type="Pipeline", asset_name=asset_name)
 
     # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
