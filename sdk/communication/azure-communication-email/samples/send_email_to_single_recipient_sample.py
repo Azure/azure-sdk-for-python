@@ -46,12 +46,12 @@ class EmailSingleRecipientSample(object):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     }
                 ]
             },
-            "senderEmail": self.sender_address
+            "senderAddress": self.sender_address
         }
 
         try:

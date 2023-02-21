@@ -21,12 +21,12 @@ class TestEmailClient(AzureRecordedTestCase):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     }
                 ]
             },
-            "sender": self.sender_address
+            "senderAddress": self.sender_address
         }
 
         poller = email_client.begin_send(message)
@@ -46,16 +46,16 @@ class TestEmailClient(AzureRecordedTestCase):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     },
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name 2"
                     }
                 ]
             },
-            "sender": self.sender_address
+            "senderAddress": self.sender_address
         }
 
         poller = email_client.begin_send(message)
@@ -75,16 +75,16 @@ class TestEmailClient(AzureRecordedTestCase):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     }
                 ]
             },
-            "sender": self.sender_address,
+            "senderAddress": self.sender_address,
             "attachments": [
                 {
                     "name": "readme.txt",
-                    "type": "txt",
+                    "contentType": "text/plain",
                     "contentBytesBase64": "ZW1haWwgdGVzdCBhdHRhY2htZW50" #cspell:disable-line
                 }
             ]

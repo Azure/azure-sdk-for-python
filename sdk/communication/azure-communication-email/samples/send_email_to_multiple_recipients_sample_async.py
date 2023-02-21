@@ -48,19 +48,19 @@ class EmailMultipleRecipientSampleAsync(object):
             },
             "recipients": {
                 "to": [
-                    {"email": self.recipient_address, "displayName": "Customer Name"},
-                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.recipient_address, "displayName": "Customer Name"},
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ],
                 "cc": [
-                    {"email": self.recipient_address, "displayName": "Customer Name"},
-                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.recipient_address, "displayName": "Customer Name"},
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ],
                 "bcc": [
-                    {"email": self.recipient_address, "displayName": "Customer Name"},
-                    {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
+                    {"address": self.recipient_address, "displayName": "Customer Name"},
+                    {"address": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ]
             },
-            "senderEmail": self.sender_address
+            "senderAddress": self.sender_address
         }
 
         async with email_client:

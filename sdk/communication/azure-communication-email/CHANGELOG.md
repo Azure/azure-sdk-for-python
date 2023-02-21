@@ -9,8 +9,9 @@
 - Made the SDK Model-less. Objects are now constructed using a dictionary instead of a model.
 - Reworked the SDK to follow the LRO (long running operation) approach. The 'beginSend' method returns a poller that can be used to check for the status of sending the email and retrieve the result. The return object have been adjusted to fit this approach. 
 - The `getSendStatus` method has been removed.
-- The `sender` property has been changed to `senderEmail`.
-- The `attachmentType` property under `attachments` has been changed to 'type'. This now accepts the attachment mime type.
+- The `sender` property has been changed to `senderAddress`.
+- The `email` property under the recipient object has been changed to `address`.
+- The `attachmentType` property under `attachments` has been changed to 'contentType'. This now accepts the attachment mime type.
 - Custom headers in the email message are now key/value pairs.
 - The importance property was removed. Email importance can now be specified through either the `x-priority` or `x-msmail-priority` custom headers.
 

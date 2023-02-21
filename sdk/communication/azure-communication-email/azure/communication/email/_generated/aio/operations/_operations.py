@@ -24,7 +24,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import build_email_get_operation_status_request, build_email_send_request
+from ...operations._operations import build_email_get_send_result_request, build_email_send_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -53,7 +53,7 @@ class EmailOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get_operation_status(self, operation_id: str, **kwargs: Any) -> JSON:
+    async def get_send_result(self, operation_id: str, **kwargs: Any) -> JSON:
         """Gets the status of the email send operation.
 
         Gets the status of the email send operation.
@@ -70,16 +70,21 @@ class EmailOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "id": "str",  # The unique id of the operation. Required.
+                    "id": "str",  # The unique id of the operation. Use a UUID. Required.
                     "status": "str",  # Status of operation. Required. Known values are:
                       "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "error": {
-                        "code": "str",  # The error code. Required.
-                        "message": "str",  # The error message. Required.
+                        "additionalInfo": [
+                            {
+                                "info": {},  # Optional. The additional info.
+                                "type": "str"  # Optional. The additional info type.
+                            }
+                        ],
+                        "code": "str",  # Optional. The error code.
                         "details": [
                             ...
                         ],
-                        "innererror": ...,
+                        "message": "str",  # Optional. The error message.
                         "target": "str"  # Optional. The error target.
                     }
                 }
@@ -92,7 +97,7 @@ class EmailOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_email_get_operation_status_request(
+        request = build_email_get_send_result_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -240,32 +245,32 @@ class EmailOperations:
                     "recipients": {
                         "to": [
                             {
-                                "email": "str",  # Email address. Required.
+                                "address": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
                         "bcc": [
                             {
-                                "email": "str",  # Email address. Required.
+                                "address": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
                         "cc": [
                             {
-                                "email": "str",  # Email address. Required.
+                                "address": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ]
                     },
-                    "senderEmail": "str",  # Sender email address from a verified domain.
+                    "senderAddress": "str",  # Sender email address from a verified domain.
                       Required.
                     "attachments": [
                         {
                             "contentBytesBase64": "str",  # Base64 encoded contents of
                               the attachment. Required.
-                            "name": "str",  # Name of the attachment. Required.
-                            "type": "str"  # MIME type of the content being attached.
-                              Required.
+                            "contentType": "str",  # MIME type of the content being
+                              attached. Required.
+                            "name": "str"  # Name of the attachment. Required.
                         }
                     ],
                     "disableUserEngagementTracking": bool,  # Optional. Indicates whether user
@@ -276,7 +281,7 @@ class EmailOperations:
                     },
                     "replyTo": [
                         {
-                            "email": "str",  # Email address. Required.
+                            "address": "str",  # Email address. Required.
                             "displayName": "str"  # Optional. Email display name.
                         }
                     ]
@@ -284,16 +289,21 @@ class EmailOperations:
 
                 # response body for status code(s): 202
                 response == {
-                    "id": "str",  # The unique id of the operation. Required.
+                    "id": "str",  # The unique id of the operation. Use a UUID. Required.
                     "status": "str",  # Status of operation. Required. Known values are:
                       "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "error": {
-                        "code": "str",  # The error code. Required.
-                        "message": "str",  # The error message. Required.
+                        "additionalInfo": [
+                            {
+                                "info": {},  # Optional. The additional info.
+                                "type": "str"  # Optional. The additional info type.
+                            }
+                        ],
+                        "code": "str",  # Optional. The error code.
                         "details": [
                             ...
                         ],
-                        "innererror": ...,
+                        "message": "str",  # Optional. The error message.
                         "target": "str"  # Optional. The error target.
                     }
                 }
@@ -340,16 +350,21 @@ class EmailOperations:
 
                 # response body for status code(s): 202
                 response == {
-                    "id": "str",  # The unique id of the operation. Required.
+                    "id": "str",  # The unique id of the operation. Use a UUID. Required.
                     "status": "str",  # Status of operation. Required. Known values are:
                       "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "error": {
-                        "code": "str",  # The error code. Required.
-                        "message": "str",  # The error message. Required.
+                        "additionalInfo": [
+                            {
+                                "info": {},  # Optional. The additional info.
+                                "type": "str"  # Optional. The additional info type.
+                            }
+                        ],
+                        "code": "str",  # Optional. The error code.
                         "details": [
                             ...
                         ],
-                        "innererror": ...,
+                        "message": "str",  # Optional. The error message.
                         "target": "str"  # Optional. The error target.
                     }
                 }
@@ -396,16 +411,21 @@ class EmailOperations:
 
                 # response body for status code(s): 202
                 response == {
-                    "id": "str",  # The unique id of the operation. Required.
+                    "id": "str",  # The unique id of the operation. Use a UUID. Required.
                     "status": "str",  # Status of operation. Required. Known values are:
                       "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "error": {
-                        "code": "str",  # The error code. Required.
-                        "message": "str",  # The error message. Required.
+                        "additionalInfo": [
+                            {
+                                "info": {},  # Optional. The additional info.
+                                "type": "str"  # Optional. The additional info type.
+                            }
+                        ],
+                        "code": "str",  # Optional. The error code.
                         "details": [
                             ...
                         ],
-                        "innererror": ...,
+                        "message": "str",  # Optional. The error message.
                         "target": "str"  # Optional. The error target.
                     }
                 }

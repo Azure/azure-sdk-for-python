@@ -47,12 +47,12 @@ class EmailSingleRecipientSampleAsync(object):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     }
                 ]
             },
-            "senderEmail": self.sender_address
+            "senderAddress": self.sender_address
         }
 
         async with email_client:

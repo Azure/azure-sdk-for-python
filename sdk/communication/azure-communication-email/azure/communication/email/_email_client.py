@@ -97,7 +97,7 @@ class EmailClient(object):
         :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        Example:
+         Example:
             .. code-block:: python
 
                 # JSON input template you can fill out and use as your body input.
@@ -111,32 +111,32 @@ class EmailClient(object):
                     "recipients": {
                         "to": [
                             {
-                                "email": "str",  # Email address. Required.
+                                "address": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
                         "bcc": [
                             {
-                                "email": "str",  # Email address. Required.
+                                "address": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
                         "cc": [
                             {
-                                "email": "str",  # Email address. Required.
+                                "address": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ]
                     },
-                    "senderEmail": "str",  # Sender email address from a verified domain.
+                    "senderAddress": "str",  # Sender email address from a verified domain.
                       Required.
                     "attachments": [
                         {
                             "contentBytesBase64": "str",  # Base64 encoded contents of
                               the attachment. Required.
-                            "name": "str",  # Name of the attachment. Required.
-                            "type": "str"  # MIME type of the content being attached.
-                              Required.
+                            "contentType": "str",  # MIME type of the content being
+                              attached. Required.
+                            "name": "str"  # Name of the attachment. Required.
                         }
                     ],
                     "disableUserEngagementTracking": bool,  # Optional. Indicates whether user
@@ -147,7 +147,7 @@ class EmailClient(object):
                     },
                     "replyTo": [
                         {
-                            "email": "str",  # Email address. Required.
+                            "address": "str",  # Email address. Required.
                             "displayName": "str"  # Optional. Email display name.
                         }
                     ]
@@ -155,16 +155,21 @@ class EmailClient(object):
 
                 # response body for status code(s): 202
                 response == {
-                    "id": "str",  # The unique id of the operation. Required.
+                    "id": "str",  # The unique id of the operation. Use a UUID. Required.
                     "status": "str",  # Status of operation. Required. Known values are:
                       "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
                     "error": {
-                        "code": "str",  # The error code. Required.
-                        "message": "str",  # The error message. Required.
+                        "additionalInfo": [
+                            {
+                                "info": {},  # Optional. The additional info.
+                                "type": "str"  # Optional. The additional info type.
+                            }
+                        ],
+                        "code": "str",  # Optional. The error code.
                         "details": [
                             ...
                         ],
-                        "innererror": ...,
+                        "message": "str",  # Optional. The error message.
                         "target": "str"  # Optional. The error target.
                     }
                 }
