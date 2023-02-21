@@ -269,7 +269,7 @@ class CodegenTestPR:
             for line in md_content:
                 if "title:" in line:
                     title = line.replace("title:", "").strip(" \r\n")
-                break
+                    break
         else:
             log("{python_md} does not exist")
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
