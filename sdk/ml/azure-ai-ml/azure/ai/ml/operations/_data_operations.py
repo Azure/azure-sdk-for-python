@@ -324,11 +324,6 @@ class DataOperations(_ScopeDependentOperations):
 
         :param data_import: DataImport object.
         :type data_import: azure.ai.ml.entities.DataImport
-        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the being created Data artifact path is
-            already linked to another asset
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataImport cannot be successfully validated.
-            Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: data import job object.
         :rtype: ~azure.ai.ml.entities.Job
         """
@@ -340,7 +335,7 @@ class DataOperations(_ScopeDependentOperations):
             description=display_name,
             display_name=display_name,
             experiment_name=experiment_name,
-            compute="azureml:serverless",
+            compute="serverless",
             source=data_import.source,
             outputs={"sink": Output(type=data_import.type, path=data_import.path, name=data_import.name)},
             is_deterministic=False,
@@ -352,18 +347,25 @@ class DataOperations(_ScopeDependentOperations):
             experiment_name=experiment_name,
             jobs={display_name: import_job}
         )
-        return self._job_operation.create_or_update(import_pipeline)
+        return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True)
 
-    def show_materialization_status(self, asset_name: str) -> Iterable[Job]:
+    def show_materialization_status(
+        self,
+        name: str,
+        *,
+        list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
+    ) -> Iterable[Job]:
         """List materialization jobs of the asset.
 
-        :param asset_name: When provided, returns children of named job.
-        :type asset_name: str
+        :param name: name of asset being created by the materialization jobs.
+        :type name: str
+        :param list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
+        :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[Job]
         """
 
-        return self._job_operation.list(job_type="Pipeline", asset_name=asset_name)
+        return self._job_operation.list(job_type="Pipeline", asset_name=name, list_view_type=list_view_type)
 
     # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
