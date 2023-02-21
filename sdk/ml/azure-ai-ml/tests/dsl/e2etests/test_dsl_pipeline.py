@@ -2651,8 +2651,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_output.name == "b_output"
         assert pipeline_output.version == "2"
         node_output = pipeline_job.jobs["node"].outputs.component_out_path
-        assert node_output.name == "a_output"
-        assert node_output.version == "1"
+        assert node_output.name == None
+        assert node_output.version == None
 
     @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_dsl_pipeline_with_data_transfer_copy_2urifolder(self, client: MLClient) -> None:
