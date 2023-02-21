@@ -551,7 +551,7 @@ class ManagedServerDnsAliasesOperations:
         :type managed_instance_name: str
         :param dns_alias_name: Required.
         :type dns_alias_name: str
-        :param parameters: Is either a model type or a IO type. Required.
+        :param parameters: Is either a ManagedServerDnsAliasCreation type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasCreation or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -908,7 +908,7 @@ class ManagedServerDnsAliasesOperations:
         :type managed_instance_name: str
         :param dns_alias_name: Required.
         :type dns_alias_name: str
-        :param parameters: Is either a model type or a IO type. Required.
+        :param parameters: Is either a ManagedServerDnsAliasAcquisition type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedServerDnsAliasAcquisition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

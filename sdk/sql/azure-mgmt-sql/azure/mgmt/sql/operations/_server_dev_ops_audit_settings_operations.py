@@ -499,8 +499,8 @@ class ServerDevOpsAuditSettingsOperations:
         :type server_name: str
         :param dev_ops_auditing_settings_name: "Default" Required.
         :type dev_ops_auditing_settings_name: str or ~azure.mgmt.sql.models.DevOpsAuditingSettingsName
-        :param parameters: Properties of DevOps audit settings. Is either a model type or a IO type.
-         Required.
+        :param parameters: Properties of DevOps audit settings. Is either a
+         ServerDevOpsAuditingSettings type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ServerDevOpsAuditingSettings or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

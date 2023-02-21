@@ -410,7 +410,7 @@ class GalleriesOperations:
          Required.
         :type gallery_name: str
         :param gallery: Parameters supplied to the create or update Shared Image Gallery operation. Is
-         either a model type or a IO type. Required.
+         either a Gallery type or a IO type. Required.
         :type gallery: ~azure.mgmt.compute.v2022_01_03.models.Gallery or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -622,7 +622,7 @@ class GalleriesOperations:
          Required.
         :type gallery_name: str
         :param gallery: Parameters supplied to the update Shared Image Gallery operation. Is either a
-         model type or a IO type. Required.
+         GalleryUpdate type or a IO type. Required.
         :type gallery: ~azure.mgmt.compute.v2022_01_03.models.GalleryUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
