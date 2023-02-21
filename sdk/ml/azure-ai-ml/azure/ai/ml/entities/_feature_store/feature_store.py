@@ -8,17 +8,17 @@ from typing import IO, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntime
-from azure.ai.ml.entities._credentials import IdentityConfiguration
-
+from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration
+from azure.ai.ml.entities import WorkspaceConnection
 
 class FeatureStore(Workspace):
     def __init__(
         self,
         *,
         name: str,
-        spark_runtime_version: Optional[str] = None,
-        offline_store_connection_name: Optional[str] = None,
-        identity: Optional[IdentityConfiguration] = None,
+        compute_runtime: Optional[ComputeRuntime] = None,
+        offline_store_connection: Optional[WorkspaceConnection] = None,
+        identity: Optional[ManagedIdentityConfiguration] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -32,14 +32,12 @@ class FeatureStore(Workspace):
         customer_managed_key: Optional[CustomerManagedKey] = None,
         image_build_compute: Optional[str] = None,
         public_network_access: Optional[str] = None,
-        primary_user_assigned_identity: Optional[str] = None,
+        # primary_user_assigned_identity: Optional[str] = None,
         **kwargs,
     ):
         feature_store_settings = FeatureStoreSettings(
-            compute_runtime=ComputeRuntime(
-                spark_runtime_version=spark_runtime_version
-            ),
-            offline_store_connection_name=offline_store_connection_name
+            compute_runtime=compute_runtime,
+            offline_store_connection_name=offline_store_connection.name if offline_store_connection else None
         )
         super().__init__(
             name=name,
@@ -58,7 +56,7 @@ class FeatureStore(Workspace):
             image_build_compute=image_build_compute,
             public_network_access=public_network_access,
             identity=identity,
-            primary_user_assigned_identity=primary_user_assigned_identity,
+            # primary_user_assigned_identity=primary_user_assigned_identity,
             feature_store_settings=feature_store_settings,
             ** kwargs
         )
@@ -75,8 +73,8 @@ class FeatureStore(Workspace):
             name=workspace_object.name,
             description=workspace_object.description,
             tags= workspace_object.tags,
-            offline_store_connection_name=workspace_object.feature_store_settings.offline_store_connection_name,
-            spark_runtime_version=workspace_object.feature_store_settings.compute_runtime.spark_runtime_version,
+            # offline_store_connection=workspace_object.feature_store_settings.offline_store_connection_name,
+            compute_runtime=workspace_object.feature_store_settings.compute_runtime,
             display_name=workspace_object.display_name,
             location=workspace_object.location,
             resource_group=workspace_object.resource_group,
@@ -89,5 +87,5 @@ class FeatureStore(Workspace):
             image_build_compute=workspace_object.image_build_compute,
             public_network_access=workspace_object.public_network_access,
             identity=workspace_object.identity,
-            primary_user_assigned_identity=workspace_object.primary_user_assigned_identity
+            # primary_user_assigned_identity=workspace_object.primary_user_assigned_identity
         )

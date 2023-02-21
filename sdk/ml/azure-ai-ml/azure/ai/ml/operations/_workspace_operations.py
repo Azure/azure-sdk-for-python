@@ -45,6 +45,7 @@ from azure.ai.ml.entities import (
     Workspace,
     WorkspaceKeys,
     FeatureStore,
+    WorkspaceConnection
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -169,6 +170,8 @@ class WorkspaceOperations:
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         existing_workspace = None
+        feature_store_setup = kwargs.get("setup_feature_store", False)
+        offline_store_connection = kwargs.get("offline_store_connection", None)
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
@@ -199,7 +202,7 @@ class WorkspaceOperations:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace)
+        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, feature_store_setup, offline_store_connection)
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -217,8 +220,7 @@ class WorkspaceOperations:
         )
 
         def callback():
-            is_feature_store_poller = kwargs.get("get_feature_store_poller", False)
-            if is_feature_store_poller:
+            if feature_store_setup:
                 return self._all_operations.all_operations[AzureMLResourceType.FEATURE_STORE].get(
                     workspace.name, resource_group=resource_group)
             else:
@@ -341,8 +343,8 @@ class WorkspaceOperations:
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            is_feature_store_poller = kwargs.get("get_feature_store_poller", False)
-            if(is_feature_store_poller):
+            feature_store_setup = kwargs.get("setup_feature_store", False)
+            if(feature_store_setup):
                 return FeatureStore._from_rest_object(deserialized)
             else:
                 return Workspace._from_rest_object(deserialized)
@@ -430,7 +432,7 @@ class WorkspaceOperations:
         return poller
 
     # pylint: disable=too-many-statements,too-many-branches
-    def _populate_arm_paramaters(self, workspace: Workspace) -> Tuple[dict, dict, dict]:
+    def _populate_arm_paramaters(self, workspace: Workspace, setup_feature_store: bool = False, offline_store_connection: WorkspaceConnection = None) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
@@ -617,6 +619,9 @@ class WorkspaceOperations:
                      workspace.feature_store_settings.offline_store_connection_name 
                      if workspace.feature_store_settings.offline_store_connection_name else '')
             _set_val(param["online_store_connection_name"], '')
+
+        print("setup_feature_store!!", setup_feature_store)
+        _set_val(param["setup_feature_store"], "true" if setup_feature_store else "false")
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

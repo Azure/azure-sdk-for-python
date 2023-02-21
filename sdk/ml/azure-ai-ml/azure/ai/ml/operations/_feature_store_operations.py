@@ -98,22 +98,11 @@ class FeatureStoreOperations():
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
-        create_poller = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
+        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
-            get_feature_store_poller=True,
+            setup_feature_store=False,
             *kwargs
-        )
-
-        def callback(): 
-            print("Feature store operation callback!!")
-            pass
-
-        return LROPoller(
-            self._workspace_operation._client,
-            None,
-            lambda *x, **y: None,
-            CustomArmTemplateDeploymentPollingMethod(create_poller, callback)
         )
 
     # @monitor_with_activity(logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
@@ -144,7 +133,7 @@ class FeatureStoreOperations():
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_update(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
-            get_feature_store_poller=True,
+            setup_feature_store=True,
             **kwargs
         )
 

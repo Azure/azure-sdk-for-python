@@ -127,5 +127,8 @@
     },
     "online_store_connection_name" : {
         "value": ""
+    },
+    "setup_feature_store" : {
+        "value": "false"
     }
 }

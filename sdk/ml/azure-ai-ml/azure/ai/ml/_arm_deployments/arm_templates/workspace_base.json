@@ -413,6 +413,17 @@
             "metadata": {
                 "description": "Feature store online store config"
             }
+        },
+        "setup_feature_store": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "Whether to set up feature store workspace connections and do incremental update"
+            }
         }
     },
     "variables": {
@@ -612,8 +623,91 @@
                     "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
                     "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
                 }
-            }
+            },
+            "resources": [{
+                "condition": "[equals(parameters('setup_feature_store'), 'true')]",
+                "type": "connections",
+                "apiVersion": "2022-05-01",
+                "name": "[parameters('offline_store_connection_name')]",
+                "location": "[parameters('location')]",
+                "dependsOn": [
+                    "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
+                ],
+                "identity": {
+                    "type": "SystemAssigned"
+                },
+                "properties": {
+                    "category": "AzureDataLakeGen2",
+                    "target": "https://maykumaramlp0261124469.blob.core.windows.net/azureml-blobstore-e6a6c4e1-9d11-49fc-87d3-836371b8ee23",
+                    "authType": "ManagedIdentity",
+                    "credentials": {
+                        "clientid": "3c00e98d-2c79-439e-b8b4-beaae4361ec3",
+                        "resourceid": "8f1e83cf-546e-4be1-9c0c-701f9a5f7c6c"
+                    }
+                }
+            }]
         },
+        {
+            "condition": "[equals(parameters('setup_feature_store'), 'true')]",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2022-05-01",
+			"name": "[concat(parameters('workspaceName'), '-update-UAI')]",
+			"dependsOn": [
+				"[parameters('workspaceName')]"
+			],
+			"properties": {
+				"mode": "Incremental",
+				"parameters": {},
+				"template": {
+					"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+					"contentVersion": "1.0.0.1",
+					"resources": [{
+						"apiVersion": "2022-01-01-preview",
+						"name": "[parameters('workspaceName')]",
+						"location": "[parameters('location')]",
+						"kind": "featurestore",
+						"type": "Microsoft.MachineLearningServices/workspaces",
+						"identity": {
+							"type": "SystemAssigned,UserAssigned",
+							"userAssignedIdentities": {
+							    "/subscriptions/2d385bf4-0756-4a76-aa95-28bf9ed3b625/resourceGroups/maykumar-amlp/providers/Microsoft.ManagedIdentity/userAssignedIdentities/maykumar-test-UAI": {}
+							}
+						},
+						"properties": {
+                            "friendlyName": "[parameters('friendlyName')]",
+                            "description": "[parameters('description')]",
+                            "storageAccount": "[variables('storageAccount')]",
+                            "keyVault": "[variables('keyVault')]",
+                            "applicationInsights": "[variables('applicationInsights')]",
+                            "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
+                            "hbiWorkspace": "[parameters('confidential_data')]",
+                            "imageBuildCompute": "[parameters('imageBuildCompute')]",
+                            "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+                            "softDeleteEnabled": "[parameters('soft_delete_enabled')]",
+                            "allowRecoverSoftDeletedWorkspace": "[parameters('allow_recover_softdeleted_workspace')]",
+                            "encryption": {
+                                "status": "[parameters('encryption_status')]",
+                                "keyVaultProperties": {
+                                    "keyVaultArmId": "[parameters('cmk_keyvault')]",
+                                    "keyIdentifier": "[parameters('resource_cmk_uri')]"
+                                },
+                                "cosmosDbArmId": "[parameters('encryption_cosmosdb_resourceid')]",
+                                "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
+                                "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
+                            },
+                            "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
+                            "featurestore": {
+                                "computeruntime": {
+                                    "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
+                                },
+                                "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
+                                "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
+                            }
+						}
+					}]
+				}
+			}
+		},
         {
             "condition": "[and(variables('enablePE'), not(equals(parameters('privateEndpointType'), 'none')))]",
             "type": "Microsoft.Resources/deployments",
