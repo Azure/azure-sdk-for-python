@@ -611,11 +611,11 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 
  There are 3 options to customize the logic for our LROs.
 
- 1) LRO algorithm/strategies - `OperationResourcePolling`, `LocationPolling`, `StatusCheckPolling`
+ 1) [LRO algorithm/strategies - OperationResourcePolling, LocationPolling, StatusCheckPolling](#LRO-algorithmstrategies---OperationResourcePolling-LocationPolling-StatusCheckPolling)
     - You need to customize the polling strategy
- 2) Polling method - `LROBasePolling`/`AsyncLROBasePolling`
+ 2) [Polling method - LROBasePolling/AsyncLROBasePolling](#Polling-method---LROBasePollingAsyncLROBasePolling)
     - You need to customize the polling loop
- 3) Poller - `LROPoller`/`AsyncLROPoller`
+ 3) [Poller - LROPoller/AsyncLROPoller](#Poller---LROPollerAsyncLROPoller)
     - You need to customize the public interface of the poller
 
 
