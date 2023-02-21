@@ -44,8 +44,7 @@ class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):
         if outputs_count != 1:
             msg = "Only support single output in {}, but there're {} outputs."
             raise ValidationError(
-                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count),
-                field_name="outputs"
+                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count), field_name="outputs"
             )
 
 

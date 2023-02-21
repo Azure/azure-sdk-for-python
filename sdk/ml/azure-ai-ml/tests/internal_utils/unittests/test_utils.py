@@ -115,8 +115,11 @@ class TestUtils:
         assert get_valid_dot_keys_with_wildcard(root, "deep.*.l2.*") == []
         assert get_valid_dot_keys_with_wildcard(root, "deep.*.l2.*.l3") == []
 
-        assert get_valid_dot_keys_with_wildcard(
-            root,
-            "deep.*.*",
-            validate_func=lambda _root, _parts: _parts[1] == "l1_2",
-        ) == ["deep.l1_2.l2"]
+        assert (
+            get_valid_dot_keys_with_wildcard(
+                root,
+                "deep.*.*",
+                validate_func=lambda _root, _parts: _parts[1] == "l1_2",
+            )
+            == ["deep.l1_2.l2"]
+        )

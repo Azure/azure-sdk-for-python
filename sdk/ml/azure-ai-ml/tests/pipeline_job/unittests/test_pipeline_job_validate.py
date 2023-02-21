@@ -292,16 +292,16 @@ class TestPipelineJobValidate:
                 "Outputs field only support type mltable for database and uri_folder for file_system",
             ),
             (
-                    "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_invalid_output_type_binding.yaml",
-                    "Outputs field only support type mltable for database and uri_folder for file_system",
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_invalid_output_type_binding.yaml",
+                "Outputs field only support type mltable for database and uri_folder for file_system",
             ),
             (
-                    "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type.yaml",
-                    "Inputs field only support type uri_file for database and uri_folder for file_system",
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type.yaml",
+                "Inputs field only support type uri_file for database and uri_folder for file_system",
             ),
             (
-                    "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type_binding.yaml",
-                    "Inputs field only support type uri_file for database and uri_folder for file_system",
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type_binding.yaml",
+                "Inputs field only support type uri_file for database and uri_folder for file_system",
             ),
         ],
     )
@@ -749,11 +749,12 @@ class TestDSLPipelineJobValidate:
         outputs = {
             "test": Output(
                 type=AssetTypes.URI_FOLDER,
-                path="azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/"),
+                path="azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
+            ),
             "sink": Output(
                 type=AssetTypes.URI_FOLDER,
                 path="azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
-            )
+            ),
         }
 
         @dsl.pipeline(description="submit a pipeline with data transfer import database job")
@@ -766,16 +767,18 @@ class TestDSLPipelineJobValidate:
                 outputs=outputs,
             )
 
-        pipeline = data_transfer_import_database_pipeline_from_builder(query_source_snowflake,
-                                                                       connection_target_azuresql)
+        pipeline = data_transfer_import_database_pipeline_from_builder(
+            query_source_snowflake, connection_target_azuresql
+        )
         validate_result = pipeline._validate()
         assert validate_result.error_messages == {
-            'jobs.snowflake_blob.component.outputs': 'outputs field only support one output called sink in task type '
-                                                     'import_data.',
-            'jobs.snowflake_blob.compute': 'Compute not set',
-            'jobs.snowflake_blob.outputs.sink': 'Outputs field only support one output called sink in import task',
-            'jobs.snowflake_blob.outputs.sink.type': 'Outputs field only support type mltable for database and uri_'
-                                                     'folder for file_system'}
+            "jobs.snowflake_blob.component.outputs": "outputs field only support one output called sink in task type "
+            "import_data.",
+            "jobs.snowflake_blob.compute": "Compute not set",
+            "jobs.snowflake_blob.outputs.sink": "Outputs field only support one output called sink in import task",
+            "jobs.snowflake_blob.outputs.sink.type": "Outputs field only support type mltable for database and uri_"
+            "folder for file_system",
+        }
 
     def test_dsl_data_transfer_export_pipeline_with_invalid_inputs(self) -> None:
         path_source_s3 = "s3://my_bucket/my_folder"
@@ -796,10 +799,9 @@ class TestDSLPipelineJobValidate:
 
         validate_result = pipeline._validate()
         assert validate_result.error_messages == {
-            'jobs.s3_blob.component.inputs': 'inputs field only support one input called source in task type '
-                                             'export_data.',
-            'jobs.s3_blob.compute': 'Compute not set',
-            'jobs.s3_blob.inputs.source': 'Inputs field only support one input called source in export task',
-            'jobs.s3_blob.inputs.source.type':
-                'Inputs field only support type uri_file for database and uri_folder for file_system'
+            "jobs.s3_blob.component.inputs": "inputs field only support one input called source in task type "
+            "export_data.",
+            "jobs.s3_blob.compute": "Compute not set",
+            "jobs.s3_blob.inputs.source": "Inputs field only support one input called source in export task",
+            "jobs.s3_blob.inputs.source.type": "Inputs field only support type uri_file for database and uri_folder for file_system",
         }

@@ -545,15 +545,20 @@ class TestDSLPipelineSamples:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.export_file_system.pipeline import (
             generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
         )
+
         job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/export_file_system/pipeline_inline.yml")
 
         with pytest.raises(ValidationException) as e:
             data_transfer_job_in_pipeline()
-            assert "Sink is a required field for export data task and we don't support exporting file system for now." in e
+            assert (
+                "Sink is a required field for export data task and we don't support exporting file system for now." in e
+            )
 
         with pytest.raises(ValidationException) as e:
             load_job(source=job_yaml)
-            assert "Sink is a required field for export data task and we don't support exporting file system for now." in e
+            assert (
+                "Sink is a required field for export data task and we don't support exporting file system for now." in e
+            )
 
     def test_data_transfer_multi_job_in_pipeline(self) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.pipeline import (

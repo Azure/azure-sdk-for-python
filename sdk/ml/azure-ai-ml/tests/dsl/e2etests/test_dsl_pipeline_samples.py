@@ -424,6 +424,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_database.pipeline import (
             generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
         )
+
         pipeline = data_transfer_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 

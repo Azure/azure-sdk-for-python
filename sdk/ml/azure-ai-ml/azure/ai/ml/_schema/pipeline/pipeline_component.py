@@ -112,7 +112,7 @@ def PipelineJobsField():
                 ],
             },
             type_field_name="task",
-            unknown=INCLUDE
+            unknown=INCLUDE,
         )
     ]
 
