@@ -97,23 +97,23 @@ def PipelineJobsField():
     #  https://msdata.visualstudio.com/Vienna/_workitems/edit/2244262/
     pipeline_enable_job_type[NodeType.DATA_TRANSFER] = [
         TypeSensitiveUnionField(
-                {
-                    DataTransferTaskType.COPY_DATA: [
-                        NestedField(DataTransferCopySchema, unknown=INCLUDE),
-                        NestedField(PipelineDataTransferCopyJobSchema),
-                    ],
-                    DataTransferTaskType.IMPORT_DATA: [
-                        NestedField(DataTransferImportSchema, unknown=INCLUDE),
-                        NestedField(PipelineDataTransferImportJobSchema),
-                    ],
-                    DataTransferTaskType.EXPORT_DATA: [
-                        NestedField(DataTransferExportSchema, unknown=INCLUDE),
-                        NestedField(PipelineDataTransferExportJobSchema),
-                    ],
-                },
-                type_field_name="task",
-                unknown=INCLUDE
-            )
+            {
+                DataTransferTaskType.COPY_DATA: [
+                    NestedField(DataTransferCopySchema, unknown=INCLUDE),
+                    NestedField(PipelineDataTransferCopyJobSchema),
+                ],
+                DataTransferTaskType.IMPORT_DATA: [
+                    NestedField(DataTransferImportSchema, unknown=INCLUDE),
+                    NestedField(PipelineDataTransferImportJobSchema),
+                ],
+                DataTransferTaskType.EXPORT_DATA: [
+                    NestedField(DataTransferExportSchema, unknown=INCLUDE),
+                    NestedField(PipelineDataTransferExportJobSchema),
+                ],
+            },
+            type_field_name="task",
+            unknown=INCLUDE
+        )
     ]
 
     pipeline_job_field = fields.Dict(

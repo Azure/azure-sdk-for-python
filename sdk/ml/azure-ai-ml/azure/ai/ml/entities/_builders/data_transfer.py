@@ -365,15 +365,14 @@ class DataTransferImport(DataTransfer):
                 yaml_path="outputs.sink",
                 message="Outputs field only support one output called sink in import task",
             )
-        if "sink" in self.outputs and (self.source.type == ExternalDataType.DATABASE and self.outputs["sink"].type !=
-                                       AssetTypes.MLTABLE) or (self.source.type == ExternalDataType.FILE_SYSTEM and
-                                                               self.outputs["sink"].type!= AssetTypes.URI_FOLDER):
+        if "sink" in self.outputs and (
+                self.source.type == ExternalDataType.DATABASE and self.outputs["sink"].type != AssetTypes.MLTABLE
+        ) or (self.source.type == ExternalDataType.FILE_SYSTEM and self.outputs["sink"].type != AssetTypes.URI_FOLDER):
             result.append_error(
                 yaml_path="outputs.sink.type",
-                message="Outputs field only support type {} for {} and {} for {}".format(AssetTypes.MLTABLE,
-                                                                                         ExternalDataType.DATABASE,
-                                                                                         AssetTypes.URI_FOLDER,
-                                                                                         ExternalDataType.FILE_SYSTEM),
+                message="Outputs field only support type {} for {} and {} for {}".format(
+                    AssetTypes.MLTABLE, ExternalDataType.DATABASE, AssetTypes.URI_FOLDER, ExternalDataType.FILE_SYSTEM
+                ),
             )
         return result
 
@@ -512,15 +511,14 @@ class DataTransferExport(DataTransfer):
                 yaml_path="inputs.source",
                 message="Inputs field only support one input called source in export task",
             )
-        if "source" in self.inputs and (self.sink.type == ExternalDataType.DATABASE and self.inputs["source"].type !=
-                                        AssetTypes.URI_FILE) or (self.sink.type == ExternalDataType.FILE_SYSTEM and
-                                                                 self.inputs["source"].type != AssetTypes.URI_FOLDER):
+        if "source" in self.inputs and (
+                self.sink.type == ExternalDataType.DATABASE and self.inputs["source"].type != AssetTypes.URI_FILE
+        ) or (self.sink.type == ExternalDataType.FILE_SYSTEM and self.inputs["source"].type != AssetTypes.URI_FOLDER):
             result.append_error(
                 yaml_path="inputs.source.type",
-                message="Inputs field only support type {} for {} and {} for {}".format(AssetTypes.URI_FILE,
-                                                                                         ExternalDataType.DATABASE,
-                                                                                         AssetTypes.URI_FOLDER,
-                                                                                         ExternalDataType.FILE_SYSTEM),
+                message="Inputs field only support type {} for {} and {} for {}".format(
+                    AssetTypes.URI_FILE, ExternalDataType.DATABASE, AssetTypes.URI_FOLDER, ExternalDataType.FILE_SYSTEM
+                ),
             )
         return result
 

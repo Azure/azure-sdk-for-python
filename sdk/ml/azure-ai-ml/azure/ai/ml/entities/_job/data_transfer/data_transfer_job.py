@@ -329,9 +329,7 @@ class DataTransferExportJob(DataTransferJob):
         if self.sink.type == ExternalDataType.DATABASE:
             component_id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
-            msg = (
-                f"Sink is a required field for export data task and we don't support exporting file system for now."
-            )
+            msg = f"Sink is a required field for export data task and we don't support exporting file system for now."
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
