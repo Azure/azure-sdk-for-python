@@ -265,11 +265,13 @@ class CodegenTestPR:
         title = ""
         if python_md.exists():
             with open(python_md, "r") as file_in:
-                content = file_in.readlines()
-            for line in content:
+                md_content = file_in.readlines()
+            for line in md_content:
                 if "title:" in line:
                     title = line.replace("title:", "").strip(" \r\n")
                 break
+        else:
+            log("{python_md} does not exist")
         os.chdir(Path(f'sdk/{self.sdk_folder}'))
         # add `title` in sdk_packaging.toml
         if title:
@@ -287,7 +289,7 @@ class CodegenTestPR:
             else:
                 log(f"{os.getcwd()}/{toml} does not exist")
         else:
-            log(f"do not find title in {self.spec_readme}/readme.python.md")
+            log(f"do not find title in {python_md}")
 
         print_check(f'python -m packaging_tools --build-conf azure-mgmt-{self.package_name}')
         log('packaging_tools --build-conf successfully ')
