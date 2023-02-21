@@ -164,10 +164,10 @@ class AMQPClient(
         self._cbs_authenticator = None
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
+        self._mgmt_link_lock = threading.Lock()
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
         self._keep_alive_interval = int(kwargs.get("keep_alive_interval", 0))
         self._keep_alive_thread = None
-        self._lock = threading.Lock()
 
         # Connection settings
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
@@ -436,7 +436,7 @@ class AMQPClient(
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop("timeout", 0)
-        with self._lock:
+        with self._mgmt_link_lock:
             try:
                 mgmt_link = self._mgmt_links[node]
             except KeyError:
@@ -444,8 +444,9 @@ class AMQPClient(
                 self._mgmt_links[node] = mgmt_link
                 mgmt_link.open()
 
-                while not mgmt_link.ready():
-                    self._connection.listen(wait=False)
+        while not mgmt_link.ready():
+            self._connection.listen(wait=False)
+
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
             message, operation=operation, operation_type=operation_type, timeout=timeout
@@ -792,7 +793,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._link_credit = kwargs.pop("link_credit", 300)
         self._timeout = kwargs.pop("timeout", 0)
         self._timeout_reached = False
-        self._last_activity_stamp = time.time()
+        self._last_activity_timestamp = time.time()
         self._running_iter = False
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
@@ -834,7 +835,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             self._link.flow()
             self._connection.listen(wait=self._socket_timeout, **kwargs)
             self._timeout_reached = False
-
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
             self._shutdown = True
@@ -949,7 +949,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._timeout_reached = False
         receiving = True
         message = None
-        self._last_activity_stamp = time.time()
+        self._last_activity_timestamp = time.time()
         try:
             while receiving and not self._timeout_reached:
                 if not self._running_iter:
@@ -964,7 +964,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
                 while not self._received_messages.empty():
                     message = self._received_messages.get()
-                    self._last_activity_stamp = time.time()
+                    self._last_activity_timestamp = time.time()
                     self._received_messages.task_done()
                     yield message
 
