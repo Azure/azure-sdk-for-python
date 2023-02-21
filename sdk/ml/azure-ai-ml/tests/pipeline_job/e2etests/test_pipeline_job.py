@@ -11,7 +11,6 @@ from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
-from azure.ai.ml.constants._common import SERVERLESS_COMPUTE
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Component, Job, PipelineJob
 from azure.ai.ml.entities._builders import Command, Pipeline
@@ -1688,6 +1687,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             'type': 'data_transfer'
         }
 
+    @pytest.mark.skipif(condition=not is_live(), reason="component version changes across tests")
     @pytest.mark.parametrize(
         "yaml_path",
         [
@@ -1699,12 +1699,9 @@ class TestPipelineJob(AzureRecordedTestCase):
             "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/spark/pipeline.yml",
         ],
     )
-    def test_serverless_compute_in_pipeline(
-        self, client: MLClient, randstr: Callable[[str], str], yaml_path: str
-    ) -> None:
+    def test_serverless_compute_in_pipeline(self, client: MLClient, yaml_path: str) -> None:
         pipeline_job = load_job(yaml_path)
-        # assert_job_cancel(pipeline_job, client)
-        client.create_or_update(pipeline_job)
+        assert_job_cancel(pipeline_job, client)
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
