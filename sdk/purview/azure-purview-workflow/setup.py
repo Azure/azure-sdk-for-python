@@ -63,8 +63,8 @@ setup(
         "pytyped": ["py.typed"],
     },
     install_requires=[
-        "isodate>=0.6.0",
-        "azure-core<2.0.0,>=1.2.2",
+        "isodate<1.0.0,>=0.6.1",
+        "azure-core<2.0.0,>=1.24.0",
         "typing-extensions>=4.3.0; python_version<'3.8.0'",
     ],
     python_requires=">=3.7",
