@@ -53,8 +53,8 @@ def fl_scatter_gather(
     shared_silo_kwargs: Dict = {},
     aggregation_config: FederatedLearningSilo = None,
     aggregation_kwargs: Dict = {},
-    silo_to_aggregation_argument_map: Dict = {},
-    aggregation_to_silo_argument_map: Dict = {},
+    silo_to_aggregation_argument_map: Dict = None,
+    aggregation_to_silo_argument_map: Dict = None,
     max_iterations: int = 1,
     pass_iteration_to_copmonents: bool = False,
     pass_index_to_silo_copmonents: bool = False,
@@ -96,4 +96,3 @@ def fl_scatter_gather(
         pass_index_to_silo_copmonents=pass_index_to_silo_copmonents,
         **kwargs,
     )
-        
