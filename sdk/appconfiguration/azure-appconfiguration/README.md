@@ -168,7 +168,6 @@ There are two ways to store a Configuration Setting:
 
 <!-- SNIPPET:hello_world_advanced_sample.create_config_setting -->
 ```python
-print("Add new configuration setting")
 config_setting = ConfigurationSetting(
     key="MyKey",
     label="MyLabel",
@@ -177,9 +176,6 @@ config_setting = ConfigurationSetting(
     tags={"my tag": "my tag value"}
 )
 added_config_setting = client.add_configuration_setting(config_setting)
-print("New configuration setting:")
-print_configuration_setting(added_config_setting)
-print("")
 ```
 <!-- END SNIPPET -->
 
@@ -187,12 +183,9 @@ print("")
 
 <!-- SNIPPET:hello_world_advanced_sample.set_config_setting -->
 ```python
-print("Set configuration setting")
 added_config_setting.value = "new value"
 added_config_setting.content_type = "new content type"
 updated_config_setting = client.set_configuration_setting(config_setting)
-print_configuration_setting(updated_config_setting)
-print("")
 ```
 <!-- END SNIPPET -->
 
@@ -212,14 +205,12 @@ fetched_config_setting = client.get_configuration_setting(
 
 Delete an existing Configuration Setting.
 
-<!-- SNIPPET:hello_world_advanced_sample.set_config_setting -->
+<!-- SNIPPET:hello_world_advanced_sample.delete_config_setting -->
 ```python
-print("Set configuration setting")
-added_config_setting.value = "new value"
-added_config_setting.content_type = "new content type"
-updated_config_setting = client.set_configuration_setting(config_setting)
-print_configuration_setting(updated_config_setting)
-print("")
+client.delete_configuration_setting(
+    key="MyKey",
+    label="MyLabel",
+)
 ```
 <!-- END SNIPPET -->
 
@@ -229,7 +220,6 @@ List all configuration settings filtered with label_filter and/or key_filter.
 
 <!-- SNIPPET:hello_world_advanced_sample.list_config_setting -->
 ```python
-print("List configuration settings")
 config_settings = client.list_configuration_settings(label_filter="MyLabel")
 for item in config_settings:
     print_configuration_setting(item)
