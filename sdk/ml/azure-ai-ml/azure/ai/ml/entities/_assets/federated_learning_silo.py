@@ -4,6 +4,7 @@ from os import PathLike
 from pathlib import Path
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._assets import Data
+from azure.ai.ml import Input
 from typing import Any, Dict, List
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._util import load_from_dict
@@ -25,7 +26,7 @@ class FederatedLearningSilo(): # TODO should this inherit from the Resource clas
         # TODO Determine optionality - assume all fields are required for now.
         compute: str,
         datastore: str,
-        inputs: List[Data],
+        inputs: Dict[str, Input],
         **kwargs,
     ):
         """
@@ -41,8 +42,9 @@ class FederatedLearningSilo(): # TODO should this inherit from the Resource clas
         :type compute: str
         :param datastore: The resource id of a datastore.
         :type datastore: str
-        :param inputs: A list of Data entities that exist in the previously specified datastore.
-        :type inputs: list[Data]
+        :param inputs: A dictionary of input entities that exist in the previously specified datastore.
+            The keys of this dictionary are the keyword names that these inputs should be entered into.
+        :type inputs: dict[str, Input]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -72,6 +74,8 @@ class FederatedLearningSilo(): # TODO should this inherit from the Resource clas
 
         # pylint: disable=no-member
         schema = FederatedLearningSiloSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+
+
         return schema.dump(self)
 
     @classmethod
@@ -79,14 +83,11 @@ class FederatedLearningSilo(): # TODO should this inherit from the Resource clas
         cls,
         silo_dict: dict
     ) -> "FederatedLearningSilo":
-        data_input = silo_dict.get("inputs", [])
-        if type(data_input) is not list:
-            data_input = [data_input]
-        data_objs = [Data(**datum) for datum in data_input]
+        data_input = silo_dict.get("inputs", {})
         return FederatedLearningSilo(
             compute=silo_dict["compute"],
             datastore=silo_dict["datastore"],
-            inputs=data_objs
+            inputs=data_input
             )
 
     #simple load based off mltable metadata loading style

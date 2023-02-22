@@ -26,10 +26,10 @@ class TestFederatedLearningSilo:
             assert silo
             assert silo["compute"] == "some_compute"
             assert silo["datastore"] == "some_datastore"
-            assert silo["inputs"][0]["path"] == "path_1"
-            assert silo["inputs"][0]["type"] == AssetTypes.MLTABLE
-            assert silo["inputs"][1]["path"] == "path_2"
-            assert silo["inputs"][1]["type"] == AssetTypes.URI_FOLDER
+            assert silo["inputs"]["test_dataset"]["path"] == "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/data/fake-dataset/versions/2"
+            assert silo["inputs"]["test_dataset"]["type"] == AssetTypes.MLTABLE
+            assert silo["inputs"]["test_string_literal"] == "literal string"
+            assert silo["inputs"]["test_literal_valued_int"] == 42
 
     def test_load_silo_from_yaml_singleton_data(self) -> None:
         path = Path("./tests/test_configs/federated_learning/example_silo_one_input.yaml")
@@ -40,8 +40,8 @@ class TestFederatedLearningSilo:
             assert silo
             assert silo["compute"] == "some_compute"
             assert silo["datastore"] == "some_datastore"
-            assert silo["inputs"]["path"] == "path_1"
-            assert silo["inputs"]["type"] == AssetTypes.MLTABLE
+            assert silo["inputs"]["test_dataset"]["path"] == "some_path"
+            assert silo["inputs"]["test_dataset"]["type"] == AssetTypes.URI_FOLDER
 
 
     def test_load_silo_entity_from_yaml(self) -> None:
@@ -49,32 +49,30 @@ class TestFederatedLearningSilo:
         silo_entity = FederatedLearningSilo._load(path)
         assert silo_entity.datastore == "some_datastore"
         assert silo_entity.compute == "some_compute"
-        # TODO: Make path testing robust - inputs paths are messed around with upon being inputted 
-        # into a data object
-        #assert silo_entity.inputs[0].path == "path_1"
-        assert silo_entity.inputs[0].type == AssetTypes.MLTABLE
-        #assert silo_entity.inputs[1].path == "path_2"
-        assert silo_entity.inputs[1].type == AssetTypes.URI_FOLDER
+        assert silo_entity.inputs["test_dataset"]["path"] == "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/data/fake-dataset/versions/2"
+        assert silo_entity.inputs["test_dataset"]["type"] == AssetTypes.MLTABLE
+        assert silo_entity.inputs["test_string_literal"] == "literal string"
+        assert silo_entity.inputs["test_literal_valued_int"]["value"] == 42
 
         
         path = Path("./tests/test_configs/federated_learning/example_silo_one_input.yaml")
         silo_entity = FederatedLearningSilo._load(path)
         assert silo_entity.datastore == "some_datastore"
         assert silo_entity.compute == "some_compute"
-        assert silo_entity.inputs[0].type == AssetTypes.MLTABLE
+        assert silo_entity.inputs["test_dataset"]["path"] == "some_path"
 
     def test_load_silo_list(self) -> None:
         path = Path("./tests/test_configs/federated_learning/example_silo_list.yaml")
         silos = FederatedLearningSilo.load_list(yaml_path=path, list_arg="silos")
         assert silos[0].datastore == "some_datastore"
         assert silos[0].compute == "some_compute"
-        assert silos[0].inputs[0].type == AssetTypes.MLTABLE
-        assert silos[0].inputs[1].type == AssetTypes.URI_FOLDER
+        assert silos[0].inputs == {}
 
     
-        assert silos[1].datastore == "some_datastore"
-        assert silos[1].compute == "some_compute"
-        assert silos[1].inputs[0].type == AssetTypes.MLTABLE
+        assert silos[1].datastore == "some_datastore2"
+        assert silos[1].compute == "some_compute2"
+        assert silos[1].inputs["test_uri"]["type"] == AssetTypes.URI_FOLDER
+        assert silos[1].inputs["test_uri"]["path"] == "some_path"
         
         
 

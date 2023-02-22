@@ -1,5 +1,5 @@
 compute: "some_compute"
 datastore: "some_datastore"
 inputs: 
-  path: "path_1"
-  type: mltable
+  "test_dataset":
+    path: "some_path"

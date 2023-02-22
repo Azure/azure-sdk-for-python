@@ -8,12 +8,6 @@
 
 from mldesigner import command_component, Output
 
-@command_component
-def merge_comp(output: Output, **kwargs):
-    for k, v in kwargs.items():
-        print(k)
-        print(v)
-
 def save_mltable_yaml(path, mltable_paths):
     import os
     import yaml
