@@ -60,7 +60,6 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.ai.ml.operations._job_operations import JobOperations
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 
