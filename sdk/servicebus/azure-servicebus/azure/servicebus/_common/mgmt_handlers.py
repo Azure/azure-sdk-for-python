@@ -10,6 +10,8 @@ from .message import ServiceBusReceivedMessage
 from ..exceptions import _handle_amqp_mgmt_error
 from .constants import ServiceBusReceiveMode, MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
 from azure.servicebus.management import TrueRuleFilter, CorrelationRuleFilter, SqlRuleFilter, SqlRuleAction, RuleProperties
+from datetime import datetime
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -150,11 +152,17 @@ def list_rules_op(status_code, rules, description):
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
 
+    rule_descriptions = []
+
     if status_code == 200:
-        p = RuleProperties._to_internal_entity()
-        print("DO SOMETHING")
+        for entry in rules.value[b'rules']:
+            amqp_rule = entry[b'rule-description']
+            rule_description = build_rule_description(amqp_rule)
+            rule_descriptions.append(rule_description)
+
+        
     if status_code in [202, 204]:
-            return []
+            return rules
         
     _handle_amqp_mgmt_error(
         _LOGGER,
@@ -181,3 +189,27 @@ def create_rule_op(status_code, message, description):
         description,
         status_code,
     )
+
+def build_rule_description(description):
+    rule_filter = build_filter(description[0])
+    rule_action = build_rule_action(description[1])
+
+    rule_description = RuleProperties(name = description[2], filter = rule_filter, action = rule_action, created_at_utc = datetime.fromtimestamp(int(description[3]/1000)))
+
+    return rule_description
+
+def build_filter(filter):
+    if len(filter) == 2 and filter[1] == 20: # this is a sql filter
+        filter = SqlRuleFilter(sql_expression=filter[0])
+        return filter
+    pass
+
+def build_rule_action(action):
+    action = None
+
+    if action:
+        pass
+
+    return action
+
+        
