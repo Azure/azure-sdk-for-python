@@ -44,6 +44,7 @@ def analyze_layout():
         )
     )
 
+    # [START extract_layout]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
 
@@ -132,6 +133,7 @@ def analyze_layout():
                 )
 
     print("----------------------------------------")
+    # [END extract_layout]
 
 
 if __name__ == "__main__":

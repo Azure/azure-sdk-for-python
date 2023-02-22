@@ -17,11 +17,13 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 ## Getting started
 
 ### Prerequisites
+
 * Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and a
 [Cognitive Services or Form Recognizer resource][FR_or_CS_resource] to use this package.
 
 ### Install the package
+
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
@@ -50,6 +52,7 @@ This table shows the relationship between SDK versions and supported API version
 |2.0 | FormRecognizerClient and FormTrainingClient
 
 #### Create a Cognitive Services or Form Recognizer resource
+
 Form Recognizer supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
 
 You can create either resource using: 
@@ -79,11 +82,12 @@ az cognitiveservices account create \
 For more information about creating the resource or how to get the location and sku information see [here][cognitive_resource_cli].
 
 ### Authenticate the client
+
 In order to interact with the Form Recognizer service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
-
 #### Get the endpoint
+
 You can find the endpoint for your Form Recognizer resource using the
 [Azure Portal][azure_portal_get_endpoint]
 or [Azure CLI][azure_cli_endpoint_lookup]:
@@ -143,6 +147,7 @@ You will also need to [register a new AAD application and grant access][register
 Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
+<!-- SNIPPET:sample_authentication.create_da_client_with_aad -->
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -153,10 +158,12 @@ document_analysis_client = DocumentAnalysisClient(
     credential=credential
 )
 ```
+<!-- END SNIPPET -->
 
 ## Key concepts
 
 ### DocumentAnalysisClient
+
 `DocumentAnalysisClient` provides operations for analyzing input documents using prebuilt and custom models through the `begin_analyze_document` and `begin_analyze_document_from_url` APIs.
 Use the `model_id` parameter to select the type of model for analysis. See a full list of supported models [here][fr-models].
 
@@ -164,6 +171,7 @@ Sample code snippets are provided to illustrate using a DocumentAnalysisClient [
 More information about analyzing documents, including supported features, locales, and document types can be found in the [service documentation][fr-models].
 
 ### DocumentModelAdministrationClient
+
 `DocumentModelAdministrationClient` provides operations for:
 
 - Building custom models to analyze specific fields you specify by labeling your custom documents. A `DocumentModelDetails` is returned indicating the document type(s) the model can analyze, as well as the estimated confidence for each field. See the [service documentation][fr-build-model] for a more detailed explanation.
@@ -177,6 +185,7 @@ Please note that models can also be built using a graphical user interface such 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
 ### Long-running operations
+
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
@@ -185,7 +194,6 @@ Methods that analyze documents, build models, or copy/compose models are modeled
 The client exposes a `begin_<method-name>` method that returns an `LROPoller` or `AsyncLROPoller`. Callers should wait
 for the operation to complete by calling `result()` on the poller object returned from the `begin_<method-name>` method.
 Sample code snippets are provided to illustrate using long-running operations [below](#examples "Examples").
-
 
 ## Examples
 
@@ -198,10 +206,11 @@ The following section provides several code snippets covering some of the most c
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
 
-
 ### Extract Layout
+
 Extract text, selection marks, text styles, and table structures, along with their bounding region coordinates, from documents.
 
+<!-- SNIPPET:sample_analyze_layout.extract_layout -->
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
@@ -273,11 +282,14 @@ for table_idx, table in enumerate(result.tables):
             )
         )
 ```
+<!-- END SNIPPET -->
 
 ### Using the General Document Model
+
 Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
 Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
 
+<!-- SNIPPET:sample_analyze_general_documents.analyze_general_documents -->
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
@@ -367,14 +379,17 @@ for page in result.pages:
             )
         )
 ```
+<!-- END SNIPPET -->
 
 - Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
 
 ### Using Prebuilt Models
+
 Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Form Recognizer service.
 
 For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_document` method:
 
+<!-- SNIPPET:sample_analyze_receipts.analyze_receipts -->
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
@@ -402,15 +417,18 @@ for receipt in result.documents:
         else:
             print("{}: {} has confidence {}".format(name, field.value, field.confidence))
 ```
+<!-- END SNIPPET -->
 
 You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields. See other supported prebuilt models [here][fr-models].
 
 ### Build a Custom Model
+
 Build a custom model on your own document type. The resulting model can be used to analyze values from the types of documents it was trained on.
 Provide a container SAS URL to your Azure Storage Blob container where you're storing the training documents.
 
 More details on setting up a container and required file structure can be found in the [service documentation][fr-build-training-set].
 
+<!-- SNIPPET:sample_build_model.build_model -->
 ```python
 from azure.ai.formrecognizer import DocumentModelAdministrationClient
 from azure.core.credentials import AzureKeyCredential
@@ -436,12 +454,14 @@ for name, doc_type in model.doc_types.items():
     for field_name, confidence in doc_type.field_confidence.items():
         print("Field: '{}' has confidence score {}".format(field_name, confidence))
 ```
-
+<!-- END SNIPPET -->
 
 ### Analyze Documents Using a Custom Model
+
 Analyze document fields, tables, selection marks, and more. These models are trained with your own data, so they're tailored to your documents.
 For best results, you should only analyze documents of the same document type that the custom model was built with.
 
+<!-- SNIPPET:samsample_analyze_custom_documentsple_authentication.analyze_custom_documents -->
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
@@ -496,6 +516,7 @@ for i, table in enumerate(result.tables):
             )
         )
 ```
+<!-- END SNIPPET -->
 
 Alternatively, a document URL can also be used to analyze documents using the `begin_analyze_document_from_url` method.
 
@@ -506,6 +527,7 @@ result = poller.result()
 ```
 
 ### Manage Your Models
+
 Manage the custom models attached to your account.
 
 ```python
@@ -549,10 +571,12 @@ except ResourceNotFoundError:
 ## Troubleshooting
 
 ### General
+
 Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
 Error codes and messages raised by the Form Recognizer service can be found in the [service documentation][fr-errors].
 
 ### Logging
+
 This library uses the standard
 [logging][python_logging] library for logging.
 
@@ -580,6 +604,7 @@ See the [Sample README][sample_readme] for several code snippets illustrating co
 For more extensive documentation on Azure Cognitive Services Form Recognizer, see the [Form Recognizer documentation][python-fr-product-docs] on docs.microsoft.com.
 
 ## Contributing
+
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
