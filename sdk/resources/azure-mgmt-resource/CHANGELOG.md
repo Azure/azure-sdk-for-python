@@ -1,5 +1,12 @@
 # Release History
 
+## 22.1.0b1 (2023-02-16)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 22.0.0 (2022-12-15)
 
 ### Breaking Changes

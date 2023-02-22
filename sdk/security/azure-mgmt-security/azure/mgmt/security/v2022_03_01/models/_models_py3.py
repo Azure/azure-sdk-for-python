@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -49,7 +49,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -80,7 +80,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -112,7 +112,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -121,7 +121,9 @@ class Resource(_serialization.Model):
 
 
 class Pricing(Resource):
-    """Microsoft Defender for Cloud is provided in two pricing tiers: free and standard, with the standard tier available with a trial period. The standard tier offers advanced security capabilities, while the free tier offers basic security features.
+    """Microsoft Defender for Cloud is provided in two pricing tiers: free and standard, with the
+    standard tier available with a trial period. The standard tier offers advanced security
+    capabilities, while the free tier offers basic security features.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -176,8 +178,8 @@ class Pricing(Resource):
         *,
         pricing_tier: Optional[Union[str, "_models.PricingTier"]] = None,
         sub_plan: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword pricing_tier: The pricing tier value. Microsoft Defender for Cloud is provided in two
          pricing tiers: free and standard, with the standard tier available with a trial period. The
@@ -214,7 +216,7 @@ class PricingList(_serialization.Model):
         "value": {"key": "value", "type": "[Pricing]"},
     }
 
-    def __init__(self, *, value: List["_models.Pricing"], **kwargs):
+    def __init__(self, *, value: List["_models.Pricing"], **kwargs: Any) -> None:
         """
         :keyword value: List of pricing configurations. Required.
         :paramtype value: list[~azure.mgmt.security.v2022_03_01.models.Pricing]

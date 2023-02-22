@@ -26,6 +26,7 @@ from azure.ai.ml.constants._common import (
     REGISTRY_URI_FORMAT,
     CommonYamlFields,
     AzureMLResourceType,
+    SOURCE_PATH_CONTEXT_KEY,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType, IOConstants
 from azure.ai.ml.entities._assets import Code
@@ -328,6 +329,7 @@ class Component(
                 create_schema_func(
                     {
                         BASE_PATH_CONTEXT_KEY: base_path,
+                        SOURCE_PATH_CONTEXT_KEY: yaml_path,
                         PARAMS_OVERRIDE_KEY: params_override,
                     }
                 ).load(data, unknown=INCLUDE, **kwargs)
@@ -513,11 +515,15 @@ class Component(
         if args:
             # raise clear error message for unsupported positional args
             if self._func._has_parameters:
-                msg = f"Component function doesn't support positional arguments, got {args} for {self.name}. " \
-                      f"Please use keyword arguments like: {self._func._func_calling_example}."
+                msg = (
+                    f"Component function doesn't support positional arguments, got {args} for {self.name}. "
+                    f"Please use keyword arguments like: {self._func._func_calling_example}."
+                )
             else:
-                msg = "Component function doesn't has any parameters, " \
-                      f"please make sure component {self.name} has inputs. "
+                msg = (
+                    "Component function doesn't has any parameters, "
+                    f"please make sure component {self.name} has inputs. "
+                )
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.COMPONENT,

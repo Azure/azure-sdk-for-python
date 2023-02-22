@@ -21,6 +21,7 @@ from .operations import (
     DataMaskingPoliciesOperations,
     DataMaskingRulesOperations,
     ExtendedSqlPoolBlobAuditingPoliciesOperations,
+    GetOperations,
     IntegrationRuntimeAuthKeysOperations,
     IntegrationRuntimeConnectionInfosOperations,
     IntegrationRuntimeCredentialsOperations,
@@ -286,6 +287,8 @@ class SynapseManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar integration_runtime_status: IntegrationRuntimeStatusOperations operations
     :vartype integration_runtime_status:
      azure.mgmt.synapse.operations.IntegrationRuntimeStatusOperations
+    :ivar get: GetOperations operations
+    :vartype get: azure.mgmt.synapse.operations.GetOperations
     :ivar spark_configuration: SparkConfigurationOperations operations
     :vartype spark_configuration: azure.mgmt.synapse.operations.SparkConfigurationOperations
     :ivar spark_configurations: SparkConfigurationsOperations operations
@@ -521,6 +524,7 @@ class SynapseManagementClient:  # pylint: disable=client-accepts-api-version-key
         self.integration_runtime_status = IntegrationRuntimeStatusOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.get = GetOperations(self._client, self._config, self._serialize, self._deserialize)
         self.spark_configuration = SparkConfigurationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

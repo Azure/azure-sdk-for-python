@@ -280,6 +280,7 @@ from ._compute_management_client_enums import ExecutionState
 from ._compute_management_client_enums import ExpandTypesForGetCapacityReservationGroups
 from ._compute_management_client_enums import ExpandTypesForGetVMScaleSets
 from ._compute_management_client_enums import ExtendedLocationTypes
+from ._compute_management_client_enums import HyperVGeneration
 from ._compute_management_client_enums import HyperVGenerationType
 from ._compute_management_client_enums import HyperVGenerationTypes
 from ._compute_management_client_enums import IPVersion
@@ -613,6 +614,7 @@ __all__ = [
     "ExpandTypesForGetCapacityReservationGroups",
     "ExpandTypesForGetVMScaleSets",
     "ExtendedLocationTypes",
+    "HyperVGeneration",
     "HyperVGenerationType",
     "HyperVGenerationTypes",
     "IPVersion",

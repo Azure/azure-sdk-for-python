@@ -26,10 +26,10 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -105,7 +105,12 @@ from ._dataset_dataplane_operations import DatasetDataplaneOperations
 from ._job_ops_helper import get_git_properties, get_job_output_uris_from_dataplane, stream_logs_until_completion
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
-from ._operation_orchestrator import OperationOrchestrator, is_ARM_id_for_resource, is_registry_id_for_resource
+from ._operation_orchestrator import (
+    OperationOrchestrator,
+    is_ARM_id_for_resource,
+    is_registry_id_for_resource,
+    is_singularity_id_for_resource,
+)
 from ._run_operations import RunOperations
 
 try:
@@ -132,15 +137,15 @@ class JobOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_10_2022_preview: ServiceClient102022Preview,
+        service_client_12_2022_preview: ServiceClient122022Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
         super(JobOperations, self).__init__(operation_scope, operation_config)
         # ops_logger.update_info(kwargs)
-        self._operation_2022_10_preview = service_client_10_2022_preview.jobs
-        self._service_client = service_client_10_2022_preview
+        self._operation_2022_12_preview = service_client_12_2022_preview.jobs
+        self._service_client = service_client_12_2022_preview
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -243,7 +248,7 @@ class JobOperations(_ScopeDependentOperations):
             parent_job = self.get(parent_job_name)
             return self._runs_operations.get_run_children(parent_job.name)
 
-        return self._operation_2022_10_preview.list(
+        return self._operation_2022_12_preview.list(
             self._operation_scope.resource_group_name,
             self._workspace_name,
             cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
@@ -317,7 +322,7 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
-        return self._operation_2022_10_preview.begin_cancel(
+        return self._operation_2022_12_preview.begin_cancel(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -331,6 +336,9 @@ class JobOperations(_ScopeDependentOperations):
             return compute
 
         if compute is not None:
+            if is_singularity_id_for_resource(compute):
+                # Singularity compute, skip try to get operation
+                return compute
             if is_ARM_id_for_resource(compute, resource_type=AzureMLResourceType.COMPUTE):
                 # compute is not a sub-workspace resource
                 compute_name = compute.split("/")[-1]
@@ -513,7 +521,7 @@ class JobOperations(_ScopeDependentOperations):
             ):
                 self._set_headers_with_user_aml_token(kwargs)
 
-            result = self._operation_2022_10_preview.create_or_update(
+            result = self._operation_2022_12_preview.create_or_update(
                 id=rest_job_resource.name,  # type: ignore
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -547,7 +555,7 @@ class JobOperations(_ScopeDependentOperations):
                 if snapshot_id is not None:
                     job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-                result = self._operation_2022_10_preview.create_or_update(
+                result = self._operation_2022_12_preview.create_or_update(
                     id=rest_job_resource.name,  # type: ignore
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
@@ -567,7 +575,7 @@ class JobOperations(_ScopeDependentOperations):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
 
-        self._operation_2022_10_preview.create_or_update(
+        self._operation_2022_12_preview.create_or_update(
             id=job_object.name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -809,7 +817,7 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self._operation_2022_10_preview.get(
+        return self._operation_2022_12_preview.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -931,6 +939,9 @@ class JobOperations(_ScopeDependentOperations):
             if isinstance(item, _GroupAttrDict):
                 inputs.extend(item.flatten(group_parameter_name=key))
             else:
+                # skip resolving inferred optional input without path (in do-while + dynamic input case)
+                if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
+                    continue
                 inputs.append(item._data)
         for entry in inputs:
             self._resolve_job_input(entry, base_path)

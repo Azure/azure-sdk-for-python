@@ -19,15 +19,14 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-
-import os
 import asyncio
 
 
 async def sample_extractive_summarization_async():
+    # [START extract_summary_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
-    from azure.ai.textanalytics import ExtractSummaryAction
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
@@ -57,24 +56,18 @@ async def sample_extractive_summarization_async():
     ]
 
     async with text_analytics_client:
-        poller = await text_analytics_client.begin_analyze_actions(
-            document,
-            actions=[
-                ExtractSummaryAction(),
-            ],
-        )
-
-        document_results = await poller.result()
-        async for extract_summary_results in document_results:
-            for result in extract_summary_results:
-                if result.kind == "ExtractiveSummarization":
-                    print("Summary extracted: \n{}".format(
-                        " ".join([sentence.text for sentence in result.sentences]))
-                    )
-                elif result.is_error is True:
-                    print("...Is an error with code '{}' and message '{}'".format(
-                        result.code, result.message
-                    ))
+        poller = await text_analytics_client.begin_extract_summary(document)
+        extract_summary_results = await poller.result()
+        async for result in extract_summary_results:
+            if result.kind == "ExtractiveSummarization":
+                print("Summary extracted: \n{}".format(
+                    " ".join([sentence.text for sentence in result.sentences]))
+                )
+            elif result.is_error is True:
+                print("...Is an error with code '{}' and message '{}'".format(
+                    result.error.code, result.error.message
+                ))
+    # [END extract_summary_async]
 
 
 async def main():

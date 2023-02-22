@@ -221,6 +221,11 @@ def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
 
 
 @pytest.fixture
+def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+
+
+@pytest.fixture
 def mock_aml_services_run_history(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.runhistory")
 
@@ -338,6 +343,18 @@ def registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) 
         resource_group_name=e2e_ws_scope.resource_group_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="testFeed",
+    )
+
+
+@pytest.fixture
+def data_asset_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using default e2e testing workspace"""
+    return MLClient(
+        credential=auth,
+        subscription_id=e2e_ws_scope.subscription_id,
+        resource_group_name=e2e_ws_scope.resource_group_name,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="UnsecureTest-testFeed",
     )
 
 
@@ -834,6 +851,7 @@ def pytest_configure(config):
         ("data_experiences_test", "marks tests as data experience tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
         ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
+        ("virtual_cluster_test", "marks tests as virtual cluster tests"),
     ]:
         config.addinivalue_line("markers", f"{marker}: {description}")
 
@@ -853,7 +871,7 @@ def disable_internal_components():
     and enable_private_preview_features, as the execution order of fixtures is not guaranteed.
     """
     from azure.ai.ml._internal._schema.component import NodeType
-    from azure.ai.ml._internal._util import _set_registered
+    from azure.ai.ml._internal._setup import _set_registered
     from azure.ai.ml.entities._component.component_factory import component_factory
     from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 

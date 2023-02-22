@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,22 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._source_control_configuration_client_enums import *
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class BucketDefinition(msrest.serialization.Model):
+class BucketDefinition(_serialization.Model):
     """Parameters to reconcile to the GitRepository source kind type.
 
     :ivar url: The URL to sync for the flux configuration S3 bucket.
@@ -27,10 +35,10 @@ class BucketDefinition(msrest.serialization.Model):
     :vartype insecure: bool
     :ivar timeout_in_seconds: The maximum time to attempt to reconcile the cluster git repository
      source with the remote.
-    :vartype timeout_in_seconds: long
+    :vartype timeout_in_seconds: int
     :ivar sync_interval_in_seconds: The interval at which to re-reconcile the cluster git
      repository source with the remote.
-    :vartype sync_interval_in_seconds: long
+    :vartype sync_interval_in_seconds: int
     :ivar access_key: Plaintext access key used to securely access the S3 bucket.
     :vartype access_key: str
     :ivar local_auth_ref: Name of a local secret on the Kubernetes cluster to use as the
@@ -39,13 +47,13 @@ class BucketDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'bucket_name': {'key': 'bucketName', 'type': 'str'},
-        'insecure': {'key': 'insecure', 'type': 'bool'},
-        'timeout_in_seconds': {'key': 'timeoutInSeconds', 'type': 'long'},
-        'sync_interval_in_seconds': {'key': 'syncIntervalInSeconds', 'type': 'long'},
-        'access_key': {'key': 'accessKey', 'type': 'str'},
-        'local_auth_ref': {'key': 'localAuthRef', 'type': 'str'},
+        "url": {"key": "url", "type": "str"},
+        "bucket_name": {"key": "bucketName", "type": "str"},
+        "insecure": {"key": "insecure", "type": "bool"},
+        "timeout_in_seconds": {"key": "timeoutInSeconds", "type": "int"},
+        "sync_interval_in_seconds": {"key": "syncIntervalInSeconds", "type": "int"},
+        "access_key": {"key": "accessKey", "type": "str"},
+        "local_auth_ref": {"key": "localAuthRef", "type": "str"},
     }
 
     def __init__(
@@ -53,13 +61,13 @@ class BucketDefinition(msrest.serialization.Model):
         *,
         url: Optional[str] = None,
         bucket_name: Optional[str] = None,
-        insecure: Optional[bool] = True,
-        timeout_in_seconds: Optional[int] = 600,
-        sync_interval_in_seconds: Optional[int] = 600,
+        insecure: bool = True,
+        timeout_in_seconds: int = 600,
+        sync_interval_in_seconds: int = 600,
         access_key: Optional[str] = None,
         local_auth_ref: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword url: The URL to sync for the flux configuration S3 bucket.
         :paramtype url: str
@@ -70,17 +78,17 @@ class BucketDefinition(msrest.serialization.Model):
         :paramtype insecure: bool
         :keyword timeout_in_seconds: The maximum time to attempt to reconcile the cluster git
          repository source with the remote.
-        :paramtype timeout_in_seconds: long
+        :paramtype timeout_in_seconds: int
         :keyword sync_interval_in_seconds: The interval at which to re-reconcile the cluster git
          repository source with the remote.
-        :paramtype sync_interval_in_seconds: long
+        :paramtype sync_interval_in_seconds: int
         :keyword access_key: Plaintext access key used to securely access the S3 bucket.
         :paramtype access_key: str
         :keyword local_auth_ref: Name of a local secret on the Kubernetes cluster to use as the
          authentication secret rather than the managed or user-provided configuration secrets.
         :paramtype local_auth_ref: str
         """
-        super(BucketDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.bucket_name = bucket_name
         self.insecure = insecure
@@ -90,7 +98,7 @@ class BucketDefinition(msrest.serialization.Model):
         self.local_auth_ref = local_auth_ref
 
 
-class BucketPatchDefinition(msrest.serialization.Model):
+class BucketPatchDefinition(_serialization.Model):
     """Parameters to reconcile to the GitRepository source kind type.
 
     :ivar url: The URL to sync for the flux configuration S3 bucket.
@@ -102,10 +110,10 @@ class BucketPatchDefinition(msrest.serialization.Model):
     :vartype insecure: bool
     :ivar timeout_in_seconds: The maximum time to attempt to reconcile the cluster git repository
      source with the remote.
-    :vartype timeout_in_seconds: long
+    :vartype timeout_in_seconds: int
     :ivar sync_interval_in_seconds: The interval at which to re-reconcile the cluster git
      repository source with the remote.
-    :vartype sync_interval_in_seconds: long
+    :vartype sync_interval_in_seconds: int
     :ivar access_key: Plaintext access key used to securely access the S3 bucket.
     :vartype access_key: str
     :ivar local_auth_ref: Name of a local secret on the Kubernetes cluster to use as the
@@ -114,13 +122,13 @@ class BucketPatchDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'bucket_name': {'key': 'bucketName', 'type': 'str'},
-        'insecure': {'key': 'insecure', 'type': 'bool'},
-        'timeout_in_seconds': {'key': 'timeoutInSeconds', 'type': 'long'},
-        'sync_interval_in_seconds': {'key': 'syncIntervalInSeconds', 'type': 'long'},
-        'access_key': {'key': 'accessKey', 'type': 'str'},
-        'local_auth_ref': {'key': 'localAuthRef', 'type': 'str'},
+        "url": {"key": "url", "type": "str"},
+        "bucket_name": {"key": "bucketName", "type": "str"},
+        "insecure": {"key": "insecure", "type": "bool"},
+        "timeout_in_seconds": {"key": "timeoutInSeconds", "type": "int"},
+        "sync_interval_in_seconds": {"key": "syncIntervalInSeconds", "type": "int"},
+        "access_key": {"key": "accessKey", "type": "str"},
+        "local_auth_ref": {"key": "localAuthRef", "type": "str"},
     }
 
     def __init__(
@@ -133,8 +141,8 @@ class BucketPatchDefinition(msrest.serialization.Model):
         sync_interval_in_seconds: Optional[int] = None,
         access_key: Optional[str] = None,
         local_auth_ref: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword url: The URL to sync for the flux configuration S3 bucket.
         :paramtype url: str
@@ -145,17 +153,17 @@ class BucketPatchDefinition(msrest.serialization.Model):
         :paramtype insecure: bool
         :keyword timeout_in_seconds: The maximum time to attempt to reconcile the cluster git
          repository source with the remote.
-        :paramtype timeout_in_seconds: long
+        :paramtype timeout_in_seconds: int
         :keyword sync_interval_in_seconds: The interval at which to re-reconcile the cluster git
          repository source with the remote.
-        :paramtype sync_interval_in_seconds: long
+        :paramtype sync_interval_in_seconds: int
         :keyword access_key: Plaintext access key used to securely access the S3 bucket.
         :paramtype access_key: str
         :keyword local_auth_ref: Name of a local secret on the Kubernetes cluster to use as the
          authentication secret rather than the managed or user-provided configuration secrets.
         :paramtype local_auth_ref: str
         """
-        super(BucketPatchDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.bucket_name = bucket_name
         self.insecure = insecure
@@ -165,7 +173,7 @@ class BucketPatchDefinition(msrest.serialization.Model):
         self.local_auth_ref = local_auth_ref
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -181,31 +189,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -220,24 +225,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class ClusterScopeSettings(ProxyResource):
@@ -260,17 +261,17 @@ class ClusterScopeSettings(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'allow_multiple_instances': {'key': 'properties.allowMultipleInstances', 'type': 'bool'},
-        'default_release_namespace': {'key': 'properties.defaultReleaseNamespace', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "allow_multiple_instances": {"key": "properties.allowMultipleInstances", "type": "bool"},
+        "default_release_namespace": {"key": "properties.defaultReleaseNamespace", "type": "str"},
     }
 
     def __init__(
@@ -278,8 +279,8 @@ class ClusterScopeSettings(ProxyResource):
         *,
         allow_multiple_instances: Optional[bool] = None,
         default_release_namespace: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allow_multiple_instances: Describes if multiple instances of the extension are
          allowed.
@@ -287,39 +288,39 @@ class ClusterScopeSettings(ProxyResource):
         :keyword default_release_namespace: Default extension release namespace.
         :paramtype default_release_namespace: str
         """
-        super(ClusterScopeSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.allow_multiple_instances = allow_multiple_instances
         self.default_release_namespace = default_release_namespace
 
 
-class ComplianceStatus(msrest.serialization.Model):
+class ComplianceStatus(_serialization.Model):
     """Compliance Status details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar compliance_state: The compliance state of the configuration. Possible values include:
-     "Pending", "Compliant", "Noncompliant", "Installed", "Failed".
+    :ivar compliance_state: The compliance state of the configuration. Known values are: "Pending",
+     "Compliant", "Noncompliant", "Installed", and "Failed".
     :vartype compliance_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ComplianceStateType
     :ivar last_config_applied: Datetime the configuration was last applied.
     :vartype last_config_applied: ~datetime.datetime
     :ivar message: Message from when the configuration was applied.
     :vartype message: str
-    :ivar message_level: Level of the message. Possible values include: "Error", "Warning",
+    :ivar message_level: Level of the message. Known values are: "Error", "Warning", and
      "Information".
     :vartype message_level: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.MessageLevelType
     """
 
     _validation = {
-        'compliance_state': {'readonly': True},
+        "compliance_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'compliance_state': {'key': 'complianceState', 'type': 'str'},
-        'last_config_applied': {'key': 'lastConfigApplied', 'type': 'iso-8601'},
-        'message': {'key': 'message', 'type': 'str'},
-        'message_level': {'key': 'messageLevel', 'type': 'str'},
+        "compliance_state": {"key": "complianceState", "type": "str"},
+        "last_config_applied": {"key": "lastConfigApplied", "type": "iso-8601"},
+        "message": {"key": "message", "type": "str"},
+        "message_level": {"key": "messageLevel", "type": "str"},
     }
 
     def __init__(
@@ -327,52 +328,48 @@ class ComplianceStatus(msrest.serialization.Model):
         *,
         last_config_applied: Optional[datetime.datetime] = None,
         message: Optional[str] = None,
-        message_level: Optional[Union[str, "MessageLevelType"]] = None,
-        **kwargs
-    ):
+        message_level: Optional[Union[str, "_models.MessageLevelType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_config_applied: Datetime the configuration was last applied.
         :paramtype last_config_applied: ~datetime.datetime
         :keyword message: Message from when the configuration was applied.
         :paramtype message: str
-        :keyword message_level: Level of the message. Possible values include: "Error", "Warning",
+        :keyword message_level: Level of the message. Known values are: "Error", "Warning", and
          "Information".
         :paramtype message_level: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.MessageLevelType
         """
-        super(ComplianceStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.compliance_state = None
         self.last_config_applied = last_config_applied
         self.message = message
         self.message_level = message_level
 
 
-class DependsOnDefinition(msrest.serialization.Model):
-    """Specify which kustomizations must succeed reconciliation on the cluster prior to reconciling this kustomization.
+class DependsOnDefinition(_serialization.Model):
+    """Specify which kustomizations must succeed reconciliation on the cluster prior to reconciling
+    this kustomization.
 
     :ivar kustomization_name: Name of the kustomization to claim dependency on.
     :vartype kustomization_name: str
     """
 
     _attribute_map = {
-        'kustomization_name': {'key': 'kustomizationName', 'type': 'str'},
+        "kustomization_name": {"key": "kustomizationName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kustomization_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, kustomization_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kustomization_name: Name of the kustomization to claim dependency on.
         :paramtype kustomization_name: str
         """
-        super(DependsOnDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kustomization_name = kustomization_name
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -380,31 +377,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -424,28 +417,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -453,32 +442,28 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class Extension(ProxyResource):
+class Extension(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The Extension object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -517,8 +502,8 @@ class Extension(ProxyResource):
     :ivar configuration_protected_settings: Configuration settings that are sensitive, as
      name-value pairs for configuring this extension.
     :vartype configuration_protected_settings: dict[str, str]
-    :ivar provisioning_state: Status of installation of this extension. Possible values include:
-     "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting".
+    :ivar provisioning_state: Status of installation of this extension. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ProvisioningState
     :ivar statuses: Status from this extension.
@@ -536,52 +521,55 @@ class Extension(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'error_info': {'readonly': True},
-        'custom_location_settings': {'readonly': True},
-        'package_uri': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "error_info": {"readonly": True},
+        "custom_location_settings": {"readonly": True},
+        "package_uri": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'extension_type': {'key': 'properties.extensionType', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'release_train': {'key': 'properties.releaseTrain', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'scope': {'key': 'properties.scope', 'type': 'Scope'},
-        'configuration_settings': {'key': 'properties.configurationSettings', 'type': '{str}'},
-        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ExtensionStatus]'},
-        'error_info': {'key': 'properties.errorInfo', 'type': 'ErrorDetail'},
-        'custom_location_settings': {'key': 'properties.customLocationSettings', 'type': '{str}'},
-        'package_uri': {'key': 'properties.packageUri', 'type': 'str'},
-        'aks_assigned_identity': {'key': 'properties.aksAssignedIdentity', 'type': 'ExtensionPropertiesAksAssignedIdentity'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "extension_type": {"key": "properties.extensionType", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "release_train": {"key": "properties.releaseTrain", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "scope": {"key": "properties.scope", "type": "Scope"},
+        "configuration_settings": {"key": "properties.configurationSettings", "type": "{str}"},
+        "configuration_protected_settings": {"key": "properties.configurationProtectedSettings", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "statuses": {"key": "properties.statuses", "type": "[ExtensionStatus]"},
+        "error_info": {"key": "properties.errorInfo", "type": "ErrorDetail"},
+        "custom_location_settings": {"key": "properties.customLocationSettings", "type": "{str}"},
+        "package_uri": {"key": "properties.packageUri", "type": "str"},
+        "aks_assigned_identity": {
+            "key": "properties.aksAssignedIdentity",
+            "type": "ExtensionPropertiesAksAssignedIdentity",
+        },
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["Identity"] = None,
+        identity: Optional["_models.Identity"] = None,
         extension_type: Optional[str] = None,
-        auto_upgrade_minor_version: Optional[bool] = True,
-        release_train: Optional[str] = "Stable",
+        auto_upgrade_minor_version: bool = True,
+        release_train: str = "Stable",
         version: Optional[str] = None,
-        scope: Optional["Scope"] = None,
+        scope: Optional["_models.Scope"] = None,
         configuration_settings: Optional[Dict[str, str]] = None,
         configuration_protected_settings: Optional[Dict[str, str]] = None,
-        statuses: Optional[List["ExtensionStatus"]] = None,
-        aks_assigned_identity: Optional["ExtensionPropertiesAksAssignedIdentity"] = None,
-        **kwargs
-    ):
+        statuses: Optional[List["_models.ExtensionStatus"]] = None,
+        aks_assigned_identity: Optional["_models.ExtensionPropertiesAksAssignedIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Identity of the Extension resource.
         :paramtype identity: ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.Identity
@@ -613,7 +601,7 @@ class Extension(ProxyResource):
         :paramtype aks_assigned_identity:
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ExtensionPropertiesAksAssignedIdentity
         """
-        super(Extension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identity = identity
         self.system_data = None
         self.extension_type = extension_type
@@ -631,7 +619,7 @@ class Extension(ProxyResource):
         self.aks_assigned_identity = aks_assigned_identity
 
 
-class ExtensionPropertiesAksAssignedIdentity(msrest.serialization.Model):
+class ExtensionPropertiesAksAssignedIdentity(_serialization.Model):
     """Identity of the Extension resource in an AKS cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -640,41 +628,35 @@ class ExtensionPropertiesAksAssignedIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. The only acceptable values to pass in are None and
-     "SystemAssigned". The default value is None.
+    :ivar type: The identity type. Default value is "SystemAssigned".
     :vartype type: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs: Any) -> None:
         """
-        :keyword type: The identity type. The only acceptable values to pass in are None and
-         "SystemAssigned". The default value is None.
+        :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
         """
-        super(ExtensionPropertiesAksAssignedIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class ExtensionsList(msrest.serialization.Model):
-    """Result of the request to list Extensions.  It contains a list of Extension objects and a URL link to get the next set of results.
+class ExtensionsList(_serialization.Model):
+    """Result of the request to list Extensions.  It contains a list of Extension objects and a URL
+    link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -685,35 +667,30 @@ class ExtensionsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Extension]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Extension]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExtensionsList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ExtensionStatus(msrest.serialization.Model):
+class ExtensionStatus(_serialization.Model):
     """Status from the extension.
 
     :ivar code: Status code provided by the Extension.
     :vartype code: str
     :ivar display_status: Short description of status of the extension.
     :vartype display_status: str
-    :ivar level: Level of the status. Possible values include: "Error", "Warning", "Information".
-     Default value: "Information".
+    :ivar level: Level of the status. Known values are: "Error", "Warning", and "Information".
     :vartype level: str or ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.LevelType
     :ivar message: Detailed message of the status from the Extension.
     :vartype message: str
@@ -722,11 +699,11 @@ class ExtensionStatus(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "str"},
     }
 
     def __init__(
@@ -734,18 +711,17 @@ class ExtensionStatus(msrest.serialization.Model):
         *,
         code: Optional[str] = None,
         display_status: Optional[str] = None,
-        level: Optional[Union[str, "LevelType"]] = "Information",
+        level: Union[str, "_models.LevelType"] = "Information",
         message: Optional[str] = None,
         time: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Status code provided by the Extension.
         :paramtype code: str
         :keyword display_status: Short description of status of the extension.
         :paramtype display_status: str
-        :keyword level: Level of the status. Possible values include: "Error", "Warning",
-         "Information". Default value: "Information".
+        :keyword level: Level of the status. Known values are: "Error", "Warning", and "Information".
         :paramtype level: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.LevelType
         :keyword message: Detailed message of the status from the Extension.
@@ -753,7 +729,7 @@ class ExtensionStatus(msrest.serialization.Model):
         :keyword time: DateLiteral (per ISO8601) noting the time of installation status.
         :paramtype time: str
         """
-        super(ExtensionStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.display_status = display_status
         self.level = level
@@ -761,7 +737,7 @@ class ExtensionStatus(msrest.serialization.Model):
         self.time = time
 
 
-class ExtensionType(msrest.serialization.Model):
+class ExtensionType(_serialization.Model):
     """Represents an Extension Type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -770,7 +746,7 @@ class ExtensionType(msrest.serialization.Model):
     :vartype system_data: ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.SystemData
     :ivar release_trains: Extension release train: preview or stable.
     :vartype release_trains: list[str]
-    :ivar cluster_types: Cluster types. Possible values include: "connectedClusters",
+    :ivar cluster_types: Cluster types. Known values are: "connectedClusters" and
      "managedClusters".
     :vartype cluster_types: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ClusterTypes
@@ -780,33 +756,29 @@ class ExtensionType(msrest.serialization.Model):
     """
 
     _validation = {
-        'system_data': {'readonly': True},
-        'release_trains': {'readonly': True},
-        'cluster_types': {'readonly': True},
-        'supported_scopes': {'readonly': True},
+        "system_data": {"readonly": True},
+        "release_trains": {"readonly": True},
+        "cluster_types": {"readonly": True},
+        "supported_scopes": {"readonly": True},
     }
 
     _attribute_map = {
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'release_trains': {'key': 'properties.releaseTrains', 'type': '[str]'},
-        'cluster_types': {'key': 'properties.clusterTypes', 'type': 'str'},
-        'supported_scopes': {'key': 'properties.supportedScopes', 'type': 'SupportedScopes'},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "release_trains": {"key": "properties.releaseTrains", "type": "[str]"},
+        "cluster_types": {"key": "properties.clusterTypes", "type": "str"},
+        "supported_scopes": {"key": "properties.supportedScopes", "type": "SupportedScopes"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExtensionType, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.system_data = None
         self.release_trains = None
         self.cluster_types = None
         self.supported_scopes = None
 
 
-class ExtensionTypeList(msrest.serialization.Model):
+class ExtensionTypeList(_serialization.Model):
     """List Extension Types.
 
     :ivar value: The list of Extension Types.
@@ -817,17 +789,13 @@ class ExtensionTypeList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExtensionType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExtensionType]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ExtensionType"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.ExtensionType"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of Extension Types.
         :paramtype value:
@@ -835,12 +803,12 @@ class ExtensionTypeList(msrest.serialization.Model):
         :keyword next_link: The link to fetch the next page of Extension Types.
         :paramtype next_link: str
         """
-        super(ExtensionTypeList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ExtensionVersionList(msrest.serialization.Model):
+class ExtensionVersionList(_serialization.Model):
     """List versions for an Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -855,22 +823,22 @@ class ExtensionVersionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'system_data': {'readonly': True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'versions': {'key': 'versions', 'type': '[ExtensionVersionListVersionsItem]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "versions": {"key": "versions", "type": "[ExtensionVersionListVersionsItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
         self,
         *,
-        versions: Optional[List["ExtensionVersionListVersionsItem"]] = None,
+        versions: Optional[List["_models.ExtensionVersionListVersionsItem"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword versions: Versions available for this Extension Type.
         :paramtype versions:
@@ -878,13 +846,13 @@ class ExtensionVersionList(msrest.serialization.Model):
         :keyword next_link: The link to fetch the next page of Extension Types.
         :paramtype next_link: str
         """
-        super(ExtensionVersionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.versions = versions
         self.next_link = next_link
         self.system_data = None
 
 
-class ExtensionVersionListVersionsItem(msrest.serialization.Model):
+class ExtensionVersionListVersionsItem(_serialization.Model):
     """ExtensionVersionListVersionsItem.
 
     :ivar release_train: The release train for this Extension Type.
@@ -894,29 +862,25 @@ class ExtensionVersionListVersionsItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'release_train': {'key': 'releaseTrain', 'type': 'str'},
-        'versions': {'key': 'versions', 'type': '[str]'},
+        "release_train": {"key": "releaseTrain", "type": "str"},
+        "versions": {"key": "versions", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        release_train: Optional[str] = None,
-        versions: Optional[List[str]] = None,
-        **kwargs
-    ):
+        self, *, release_train: Optional[str] = None, versions: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword release_train: The release train for this Extension Type.
         :paramtype release_train: str
         :keyword versions: Versions available for this Extension Type and release train.
         :paramtype versions: list[str]
         """
-        super(ExtensionVersionListVersionsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.release_train = release_train
         self.versions = versions
 
 
-class FluxConfiguration(ProxyResource):
+class FluxConfiguration(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The Flux Configuration object returned in Get & Put response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -932,14 +896,14 @@ class FluxConfiguration(ProxyResource):
     :ivar system_data: Top level metadata
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/common-api-contracts.md#system-metadata-for-all-azure-resources.
     :vartype system_data: ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.SystemData
-    :ivar scope: Scope at which the operator will be installed. Possible values include: "cluster",
-     "namespace". Default value: "cluster".
+    :ivar scope: Scope at which the operator will be installed. Known values are: "cluster" and
+     "namespace".
     :vartype scope: str or ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ScopeType
     :ivar namespace: The namespace to which this configuration is installed to. Maximum of 253
      lower case alphanumeric characters, hyphen and period only.
     :vartype namespace: str
-    :ivar source_kind: Source Kind to pull the configuration data from. Possible values include:
-     "GitRepository", "Bucket".
+    :ivar source_kind: Source Kind to pull the configuration data from. Known values are:
+     "GitRepository" and "Bucket".
     :vartype source_kind: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.SourceKindType
     :ivar suspend: Whether this configuration should suspend its reconciliation of its
@@ -972,12 +936,12 @@ class FluxConfiguration(ProxyResource):
      cluster.
     :vartype last_source_updated_at: ~datetime.datetime
     :ivar compliance_state: Combined status of the Flux Kubernetes resources created by the
-     fluxConfiguration or created by the managed objects. Possible values include: "Compliant",
-     "Non-Compliant", "Pending", "Suspended", "Unknown". Default value: "Unknown".
+     fluxConfiguration or created by the managed objects. Known values are: "Compliant",
+     "Non-Compliant", "Pending", "Suspended", and "Unknown".
     :vartype compliance_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.FluxComplianceState
-    :ivar provisioning_state: Status of the creation of the fluxConfiguration. Possible values
-     include: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting".
+    :ivar provisioning_state: Status of the creation of the fluxConfiguration. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ProvisioningState
     :ivar error_message: Error message returned to the user in the case of provisioning failure.
@@ -985,64 +949,64 @@ class FluxConfiguration(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'statuses': {'readonly': True},
-        'repository_public_key': {'readonly': True},
-        'last_source_updated_commit_id': {'readonly': True},
-        'last_source_updated_at': {'readonly': True},
-        'compliance_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'error_message': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "statuses": {"readonly": True},
+        "repository_public_key": {"readonly": True},
+        "last_source_updated_commit_id": {"readonly": True},
+        "last_source_updated_at": {"readonly": True},
+        "compliance_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "error_message": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'scope': {'key': 'properties.scope', 'type': 'str'},
-        'namespace': {'key': 'properties.namespace', 'type': 'str'},
-        'source_kind': {'key': 'properties.sourceKind', 'type': 'str'},
-        'suspend': {'key': 'properties.suspend', 'type': 'bool'},
-        'git_repository': {'key': 'properties.gitRepository', 'type': 'GitRepositoryDefinition'},
-        'bucket': {'key': 'properties.bucket', 'type': 'BucketDefinition'},
-        'kustomizations': {'key': 'properties.kustomizations', 'type': '{KustomizationDefinition}'},
-        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
-        'statuses': {'key': 'properties.statuses', 'type': '[ObjectStatusDefinition]'},
-        'repository_public_key': {'key': 'properties.repositoryPublicKey', 'type': 'str'},
-        'last_source_updated_commit_id': {'key': 'properties.lastSourceUpdatedCommitId', 'type': 'str'},
-        'last_source_updated_at': {'key': 'properties.lastSourceUpdatedAt', 'type': 'iso-8601'},
-        'compliance_state': {'key': 'properties.complianceState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "scope": {"key": "properties.scope", "type": "str"},
+        "namespace": {"key": "properties.namespace", "type": "str"},
+        "source_kind": {"key": "properties.sourceKind", "type": "str"},
+        "suspend": {"key": "properties.suspend", "type": "bool"},
+        "git_repository": {"key": "properties.gitRepository", "type": "GitRepositoryDefinition"},
+        "bucket": {"key": "properties.bucket", "type": "BucketDefinition"},
+        "kustomizations": {"key": "properties.kustomizations", "type": "{KustomizationDefinition}"},
+        "configuration_protected_settings": {"key": "properties.configurationProtectedSettings", "type": "{str}"},
+        "statuses": {"key": "properties.statuses", "type": "[ObjectStatusDefinition]"},
+        "repository_public_key": {"key": "properties.repositoryPublicKey", "type": "str"},
+        "last_source_updated_commit_id": {"key": "properties.lastSourceUpdatedCommitId", "type": "str"},
+        "last_source_updated_at": {"key": "properties.lastSourceUpdatedAt", "type": "iso-8601"},
+        "compliance_state": {"key": "properties.complianceState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "error_message": {"key": "properties.errorMessage", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        scope: Optional[Union[str, "ScopeType"]] = "cluster",
-        namespace: Optional[str] = "default",
-        source_kind: Optional[Union[str, "SourceKindType"]] = None,
-        suspend: Optional[bool] = False,
-        git_repository: Optional["GitRepositoryDefinition"] = None,
-        bucket: Optional["BucketDefinition"] = None,
-        kustomizations: Optional[Dict[str, "KustomizationDefinition"]] = None,
+        scope: Union[str, "_models.ScopeType"] = "cluster",
+        namespace: str = "default",
+        source_kind: Optional[Union[str, "_models.SourceKindType"]] = None,
+        suspend: bool = False,
+        git_repository: Optional["_models.GitRepositoryDefinition"] = None,
+        bucket: Optional["_models.BucketDefinition"] = None,
+        kustomizations: Optional[Dict[str, "_models.KustomizationDefinition"]] = None,
         configuration_protected_settings: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword scope: Scope at which the operator will be installed. Possible values include:
-         "cluster", "namespace". Default value: "cluster".
+        :keyword scope: Scope at which the operator will be installed. Known values are: "cluster" and
+         "namespace".
         :paramtype scope: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ScopeType
         :keyword namespace: The namespace to which this configuration is installed to. Maximum of 253
          lower case alphanumeric characters, hyphen and period only.
         :paramtype namespace: str
-        :keyword source_kind: Source Kind to pull the configuration data from. Possible values include:
-         "GitRepository", "Bucket".
+        :keyword source_kind: Source Kind to pull the configuration data from. Known values are:
+         "GitRepository" and "Bucket".
         :paramtype source_kind: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.SourceKindType
         :keyword suspend: Whether this configuration should suspend its reconciliation of its
@@ -1062,7 +1026,7 @@ class FluxConfiguration(ProxyResource):
          for the configuration.
         :paramtype configuration_protected_settings: dict[str, str]
         """
-        super(FluxConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.scope = scope
         self.namespace = namespace
@@ -1081,11 +1045,11 @@ class FluxConfiguration(ProxyResource):
         self.error_message = None
 
 
-class FluxConfigurationPatch(msrest.serialization.Model):
+class FluxConfigurationPatch(_serialization.Model):
     """The Flux Configuration Patch Request object.
 
-    :ivar source_kind: Source Kind to pull the configuration data from. Possible values include:
-     "GitRepository", "Bucket".
+    :ivar source_kind: Source Kind to pull the configuration data from. Known values are:
+     "GitRepository" and "Bucket".
     :vartype source_kind: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.SourceKindType
     :ivar suspend: Whether this configuration should suspend its reconciliation of its
@@ -1107,28 +1071,28 @@ class FluxConfigurationPatch(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_kind': {'key': 'properties.sourceKind', 'type': 'str'},
-        'suspend': {'key': 'properties.suspend', 'type': 'bool'},
-        'git_repository': {'key': 'properties.gitRepository', 'type': 'GitRepositoryPatchDefinition'},
-        'bucket': {'key': 'properties.bucket', 'type': 'BucketDefinition'},
-        'kustomizations': {'key': 'properties.kustomizations', 'type': '{KustomizationPatchDefinition}'},
-        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
+        "source_kind": {"key": "properties.sourceKind", "type": "str"},
+        "suspend": {"key": "properties.suspend", "type": "bool"},
+        "git_repository": {"key": "properties.gitRepository", "type": "GitRepositoryPatchDefinition"},
+        "bucket": {"key": "properties.bucket", "type": "BucketDefinition"},
+        "kustomizations": {"key": "properties.kustomizations", "type": "{KustomizationPatchDefinition}"},
+        "configuration_protected_settings": {"key": "properties.configurationProtectedSettings", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        source_kind: Optional[Union[str, "SourceKindType"]] = None,
+        source_kind: Optional[Union[str, "_models.SourceKindType"]] = None,
         suspend: Optional[bool] = None,
-        git_repository: Optional["GitRepositoryPatchDefinition"] = None,
-        bucket: Optional["BucketDefinition"] = None,
-        kustomizations: Optional[Dict[str, "KustomizationPatchDefinition"]] = None,
+        git_repository: Optional["_models.GitRepositoryPatchDefinition"] = None,
+        bucket: Optional["_models.BucketDefinition"] = None,
+        kustomizations: Optional[Dict[str, "_models.KustomizationPatchDefinition"]] = None,
         configuration_protected_settings: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword source_kind: Source Kind to pull the configuration data from. Possible values include:
-         "GitRepository", "Bucket".
+        :keyword source_kind: Source Kind to pull the configuration data from. Known values are:
+         "GitRepository" and "Bucket".
         :paramtype source_kind: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.SourceKindType
         :keyword suspend: Whether this configuration should suspend its reconciliation of its
@@ -1148,7 +1112,7 @@ class FluxConfigurationPatch(msrest.serialization.Model):
          for the configuration.
         :paramtype configuration_protected_settings: dict[str, str]
         """
-        super(FluxConfigurationPatch, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_kind = source_kind
         self.suspend = suspend
         self.git_repository = git_repository
@@ -1157,8 +1121,9 @@ class FluxConfigurationPatch(msrest.serialization.Model):
         self.configuration_protected_settings = configuration_protected_settings
 
 
-class FluxConfigurationsList(msrest.serialization.Model):
-    """Result of the request to list Flux Configurations.  It contains a list of FluxConfiguration objects and a URL link to get the next set of results.
+class FluxConfigurationsList(_serialization.Model):
+    """Result of the request to list Flux Configurations.  It contains a list of FluxConfiguration
+    objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1170,37 +1135,33 @@ class FluxConfigurationsList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FluxConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[FluxConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(FluxConfigurationsList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class GitRepositoryDefinition(msrest.serialization.Model):
+class GitRepositoryDefinition(_serialization.Model):
     """Parameters to reconcile to the GitRepository source kind type.
 
     :ivar url: The URL to sync for the flux configuration git repository.
     :vartype url: str
     :ivar timeout_in_seconds: The maximum time to attempt to reconcile the cluster git repository
      source with the remote.
-    :vartype timeout_in_seconds: long
+    :vartype timeout_in_seconds: int
     :ivar sync_interval_in_seconds: The interval at which to re-reconcile the cluster git
      repository source with the remote.
-    :vartype sync_interval_in_seconds: long
+    :vartype sync_interval_in_seconds: int
     :ivar repository_ref: The source reference for the GitRepository object.
     :vartype repository_ref:
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.RepositoryRefDefinition
@@ -1218,38 +1179,38 @@ class GitRepositoryDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'timeout_in_seconds': {'key': 'timeoutInSeconds', 'type': 'long'},
-        'sync_interval_in_seconds': {'key': 'syncIntervalInSeconds', 'type': 'long'},
-        'repository_ref': {'key': 'repositoryRef', 'type': 'RepositoryRefDefinition'},
-        'ssh_known_hosts': {'key': 'sshKnownHosts', 'type': 'str'},
-        'https_user': {'key': 'httpsUser', 'type': 'str'},
-        'https_ca_cert': {'key': 'httpsCACert', 'type': 'str'},
-        'local_auth_ref': {'key': 'localAuthRef', 'type': 'str'},
+        "url": {"key": "url", "type": "str"},
+        "timeout_in_seconds": {"key": "timeoutInSeconds", "type": "int"},
+        "sync_interval_in_seconds": {"key": "syncIntervalInSeconds", "type": "int"},
+        "repository_ref": {"key": "repositoryRef", "type": "RepositoryRefDefinition"},
+        "ssh_known_hosts": {"key": "sshKnownHosts", "type": "str"},
+        "https_user": {"key": "httpsUser", "type": "str"},
+        "https_ca_cert": {"key": "httpsCACert", "type": "str"},
+        "local_auth_ref": {"key": "localAuthRef", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         url: Optional[str] = None,
-        timeout_in_seconds: Optional[int] = 600,
-        sync_interval_in_seconds: Optional[int] = 600,
-        repository_ref: Optional["RepositoryRefDefinition"] = None,
+        timeout_in_seconds: int = 600,
+        sync_interval_in_seconds: int = 600,
+        repository_ref: Optional["_models.RepositoryRefDefinition"] = None,
         ssh_known_hosts: Optional[str] = None,
         https_user: Optional[str] = None,
         https_ca_cert: Optional[str] = None,
         local_auth_ref: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword url: The URL to sync for the flux configuration git repository.
         :paramtype url: str
         :keyword timeout_in_seconds: The maximum time to attempt to reconcile the cluster git
          repository source with the remote.
-        :paramtype timeout_in_seconds: long
+        :paramtype timeout_in_seconds: int
         :keyword sync_interval_in_seconds: The interval at which to re-reconcile the cluster git
          repository source with the remote.
-        :paramtype sync_interval_in_seconds: long
+        :paramtype sync_interval_in_seconds: int
         :keyword repository_ref: The source reference for the GitRepository object.
         :paramtype repository_ref:
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.RepositoryRefDefinition
@@ -1266,7 +1227,7 @@ class GitRepositoryDefinition(msrest.serialization.Model):
          authentication secret rather than the managed or user-provided configuration secrets.
         :paramtype local_auth_ref: str
         """
-        super(GitRepositoryDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.timeout_in_seconds = timeout_in_seconds
         self.sync_interval_in_seconds = sync_interval_in_seconds
@@ -1277,17 +1238,17 @@ class GitRepositoryDefinition(msrest.serialization.Model):
         self.local_auth_ref = local_auth_ref
 
 
-class GitRepositoryPatchDefinition(msrest.serialization.Model):
+class GitRepositoryPatchDefinition(_serialization.Model):
     """Parameters to reconcile to the GitRepository source kind type.
 
     :ivar url: The URL to sync for the flux configuration git repository.
     :vartype url: str
     :ivar timeout_in_seconds: The maximum time to attempt to reconcile the cluster git repository
      source with the remote.
-    :vartype timeout_in_seconds: long
+    :vartype timeout_in_seconds: int
     :ivar sync_interval_in_seconds: The interval at which to re-reconcile the cluster git
      repository source with the remote.
-    :vartype sync_interval_in_seconds: long
+    :vartype sync_interval_in_seconds: int
     :ivar repository_ref: The source reference for the GitRepository object.
     :vartype repository_ref:
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.RepositoryRefDefinition
@@ -1305,14 +1266,14 @@ class GitRepositoryPatchDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'url': {'key': 'url', 'type': 'str'},
-        'timeout_in_seconds': {'key': 'timeoutInSeconds', 'type': 'long'},
-        'sync_interval_in_seconds': {'key': 'syncIntervalInSeconds', 'type': 'long'},
-        'repository_ref': {'key': 'repositoryRef', 'type': 'RepositoryRefDefinition'},
-        'ssh_known_hosts': {'key': 'sshKnownHosts', 'type': 'str'},
-        'https_user': {'key': 'httpsUser', 'type': 'str'},
-        'https_ca_cert': {'key': 'httpsCACert', 'type': 'str'},
-        'local_auth_ref': {'key': 'localAuthRef', 'type': 'str'},
+        "url": {"key": "url", "type": "str"},
+        "timeout_in_seconds": {"key": "timeoutInSeconds", "type": "int"},
+        "sync_interval_in_seconds": {"key": "syncIntervalInSeconds", "type": "int"},
+        "repository_ref": {"key": "repositoryRef", "type": "RepositoryRefDefinition"},
+        "ssh_known_hosts": {"key": "sshKnownHosts", "type": "str"},
+        "https_user": {"key": "httpsUser", "type": "str"},
+        "https_ca_cert": {"key": "httpsCACert", "type": "str"},
+        "local_auth_ref": {"key": "localAuthRef", "type": "str"},
     }
 
     def __init__(
@@ -1321,22 +1282,22 @@ class GitRepositoryPatchDefinition(msrest.serialization.Model):
         url: Optional[str] = None,
         timeout_in_seconds: Optional[int] = None,
         sync_interval_in_seconds: Optional[int] = None,
-        repository_ref: Optional["RepositoryRefDefinition"] = None,
+        repository_ref: Optional["_models.RepositoryRefDefinition"] = None,
         ssh_known_hosts: Optional[str] = None,
         https_user: Optional[str] = None,
         https_ca_cert: Optional[str] = None,
         local_auth_ref: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword url: The URL to sync for the flux configuration git repository.
         :paramtype url: str
         :keyword timeout_in_seconds: The maximum time to attempt to reconcile the cluster git
          repository source with the remote.
-        :paramtype timeout_in_seconds: long
+        :paramtype timeout_in_seconds: int
         :keyword sync_interval_in_seconds: The interval at which to re-reconcile the cluster git
          repository source with the remote.
-        :paramtype sync_interval_in_seconds: long
+        :paramtype sync_interval_in_seconds: int
         :keyword repository_ref: The source reference for the GitRepository object.
         :paramtype repository_ref:
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.RepositoryRefDefinition
@@ -1353,7 +1314,7 @@ class GitRepositoryPatchDefinition(msrest.serialization.Model):
          authentication secret rather than the managed or user-provided configuration secrets.
         :paramtype local_auth_ref: str
         """
-        super(GitRepositoryPatchDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.url = url
         self.timeout_in_seconds = timeout_in_seconds
         self.sync_interval_in_seconds = sync_interval_in_seconds
@@ -1364,7 +1325,7 @@ class GitRepositoryPatchDefinition(msrest.serialization.Model):
         self.local_auth_ref = local_auth_ref
 
 
-class HelmOperatorProperties(msrest.serialization.Model):
+class HelmOperatorProperties(_serialization.Model):
     """Properties for Helm operator.
 
     :ivar chart_version: Version of the operator Helm chart.
@@ -1374,79 +1335,75 @@ class HelmOperatorProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'chart_version': {'key': 'chartVersion', 'type': 'str'},
-        'chart_values': {'key': 'chartValues', 'type': 'str'},
+        "chart_version": {"key": "chartVersion", "type": "str"},
+        "chart_values": {"key": "chartValues", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        chart_version: Optional[str] = None,
-        chart_values: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, chart_version: Optional[str] = None, chart_values: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword chart_version: Version of the operator Helm chart.
         :paramtype chart_version: str
         :keyword chart_values: Values override for the operator Helm chart.
         :paramtype chart_values: str
         """
-        super(HelmOperatorProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.chart_version = chart_version
         self.chart_values = chart_values
 
 
-class HelmReleasePropertiesDefinition(msrest.serialization.Model):
+class HelmReleasePropertiesDefinition(_serialization.Model):
     """HelmReleasePropertiesDefinition.
 
     :ivar last_revision_applied: The revision number of the last released object change.
-    :vartype last_revision_applied: long
+    :vartype last_revision_applied: int
     :ivar helm_chart_ref: The reference to the HelmChart object used as the source to this
      HelmRelease.
     :vartype helm_chart_ref:
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ObjectReferenceDefinition
     :ivar failure_count: Total number of times that the HelmRelease failed to install or upgrade.
-    :vartype failure_count: long
+    :vartype failure_count: int
     :ivar install_failure_count: Number of times that the HelmRelease failed to install.
-    :vartype install_failure_count: long
+    :vartype install_failure_count: int
     :ivar upgrade_failure_count: Number of times that the HelmRelease failed to upgrade.
-    :vartype upgrade_failure_count: long
+    :vartype upgrade_failure_count: int
     """
 
     _attribute_map = {
-        'last_revision_applied': {'key': 'lastRevisionApplied', 'type': 'long'},
-        'helm_chart_ref': {'key': 'helmChartRef', 'type': 'ObjectReferenceDefinition'},
-        'failure_count': {'key': 'failureCount', 'type': 'long'},
-        'install_failure_count': {'key': 'installFailureCount', 'type': 'long'},
-        'upgrade_failure_count': {'key': 'upgradeFailureCount', 'type': 'long'},
+        "last_revision_applied": {"key": "lastRevisionApplied", "type": "int"},
+        "helm_chart_ref": {"key": "helmChartRef", "type": "ObjectReferenceDefinition"},
+        "failure_count": {"key": "failureCount", "type": "int"},
+        "install_failure_count": {"key": "installFailureCount", "type": "int"},
+        "upgrade_failure_count": {"key": "upgradeFailureCount", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         last_revision_applied: Optional[int] = None,
-        helm_chart_ref: Optional["ObjectReferenceDefinition"] = None,
+        helm_chart_ref: Optional["_models.ObjectReferenceDefinition"] = None,
         failure_count: Optional[int] = None,
         install_failure_count: Optional[int] = None,
         upgrade_failure_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_revision_applied: The revision number of the last released object change.
-        :paramtype last_revision_applied: long
+        :paramtype last_revision_applied: int
         :keyword helm_chart_ref: The reference to the HelmChart object used as the source to this
          HelmRelease.
         :paramtype helm_chart_ref:
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ObjectReferenceDefinition
         :keyword failure_count: Total number of times that the HelmRelease failed to install or
          upgrade.
-        :paramtype failure_count: long
+        :paramtype failure_count: int
         :keyword install_failure_count: Number of times that the HelmRelease failed to install.
-        :paramtype install_failure_count: long
+        :paramtype install_failure_count: int
         :keyword upgrade_failure_count: Number of times that the HelmRelease failed to upgrade.
-        :paramtype upgrade_failure_count: long
+        :paramtype upgrade_failure_count: int
         """
-        super(HelmReleasePropertiesDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.last_revision_applied = last_revision_applied
         self.helm_chart_ref = helm_chart_ref
         self.failure_count = failure_count
@@ -1454,7 +1411,7 @@ class HelmReleasePropertiesDefinition(msrest.serialization.Model):
         self.upgrade_failure_count = upgrade_failure_count
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1463,41 +1420,35 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. The only acceptable values to pass in are None and
-     "SystemAssigned". The default value is None.
+    :ivar type: The identity type. Default value is "SystemAssigned".
     :vartype type: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs: Any) -> None:
         """
-        :keyword type: The identity type. The only acceptable values to pass in are None and
-         "SystemAssigned". The default value is None.
+        :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
         """
-        super(Identity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class KustomizationDefinition(msrest.serialization.Model):
-    """The Kustomization defining how to reconcile the artifact pulled by the source type on the cluster.
+class KustomizationDefinition(_serialization.Model):
+    """The Kustomization defining how to reconcile the artifact pulled by the source type on the
+    cluster.
 
     :ivar path: The path in the source reference to reconcile on the cluster.
     :vartype path: str
@@ -1507,13 +1458,13 @@ class KustomizationDefinition(msrest.serialization.Model):
      list[~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.DependsOnDefinition]
     :ivar timeout_in_seconds: The maximum time to attempt to reconcile the Kustomization on the
      cluster.
-    :vartype timeout_in_seconds: long
+    :vartype timeout_in_seconds: int
     :ivar sync_interval_in_seconds: The interval at which to re-reconcile the Kustomization on the
      cluster.
-    :vartype sync_interval_in_seconds: long
+    :vartype sync_interval_in_seconds: int
     :ivar retry_interval_in_seconds: The interval at which to re-reconcile the Kustomization on the
      cluster in the event of failure on reconciliation.
-    :vartype retry_interval_in_seconds: long
+    :vartype retry_interval_in_seconds: int
     :ivar prune: Enable/disable garbage collections of Kubernetes objects created by this
      Kustomization.
     :vartype prune: bool
@@ -1523,27 +1474,27 @@ class KustomizationDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'depends_on': {'key': 'dependsOn', 'type': '[DependsOnDefinition]'},
-        'timeout_in_seconds': {'key': 'timeoutInSeconds', 'type': 'long'},
-        'sync_interval_in_seconds': {'key': 'syncIntervalInSeconds', 'type': 'long'},
-        'retry_interval_in_seconds': {'key': 'retryIntervalInSeconds', 'type': 'long'},
-        'prune': {'key': 'prune', 'type': 'bool'},
-        'force': {'key': 'force', 'type': 'bool'},
+        "path": {"key": "path", "type": "str"},
+        "depends_on": {"key": "dependsOn", "type": "[DependsOnDefinition]"},
+        "timeout_in_seconds": {"key": "timeoutInSeconds", "type": "int"},
+        "sync_interval_in_seconds": {"key": "syncIntervalInSeconds", "type": "int"},
+        "retry_interval_in_seconds": {"key": "retryIntervalInSeconds", "type": "int"},
+        "prune": {"key": "prune", "type": "bool"},
+        "force": {"key": "force", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        path: Optional[str] = "",
-        depends_on: Optional[List["DependsOnDefinition"]] = None,
-        timeout_in_seconds: Optional[int] = 600,
-        sync_interval_in_seconds: Optional[int] = 600,
+        path: str = "",
+        depends_on: Optional[List["_models.DependsOnDefinition"]] = None,
+        timeout_in_seconds: int = 600,
+        sync_interval_in_seconds: int = 600,
         retry_interval_in_seconds: Optional[int] = None,
-        prune: Optional[bool] = False,
-        force: Optional[bool] = False,
-        **kwargs
-    ):
+        prune: bool = False,
+        force: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: The path in the source reference to reconcile on the cluster.
         :paramtype path: str
@@ -1553,13 +1504,13 @@ class KustomizationDefinition(msrest.serialization.Model):
          list[~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.DependsOnDefinition]
         :keyword timeout_in_seconds: The maximum time to attempt to reconcile the Kustomization on the
          cluster.
-        :paramtype timeout_in_seconds: long
+        :paramtype timeout_in_seconds: int
         :keyword sync_interval_in_seconds: The interval at which to re-reconcile the Kustomization on
          the cluster.
-        :paramtype sync_interval_in_seconds: long
+        :paramtype sync_interval_in_seconds: int
         :keyword retry_interval_in_seconds: The interval at which to re-reconcile the Kustomization on
          the cluster in the event of failure on reconciliation.
-        :paramtype retry_interval_in_seconds: long
+        :paramtype retry_interval_in_seconds: int
         :keyword prune: Enable/disable garbage collections of Kubernetes objects created by this
          Kustomization.
         :paramtype prune: bool
@@ -1567,7 +1518,7 @@ class KustomizationDefinition(msrest.serialization.Model):
          fails due to an immutable field change.
         :paramtype force: bool
         """
-        super(KustomizationDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.path = path
         self.depends_on = depends_on
         self.timeout_in_seconds = timeout_in_seconds
@@ -1577,8 +1528,9 @@ class KustomizationDefinition(msrest.serialization.Model):
         self.force = force
 
 
-class KustomizationPatchDefinition(msrest.serialization.Model):
-    """The Kustomization defining how to reconcile the artifact pulled by the source type on the cluster.
+class KustomizationPatchDefinition(_serialization.Model):
+    """The Kustomization defining how to reconcile the artifact pulled by the source type on the
+    cluster.
 
     :ivar path: The path in the source reference to reconcile on the cluster.
     :vartype path: str
@@ -1588,13 +1540,13 @@ class KustomizationPatchDefinition(msrest.serialization.Model):
      list[~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.DependsOnDefinition]
     :ivar timeout_in_seconds: The maximum time to attempt to reconcile the Kustomization on the
      cluster.
-    :vartype timeout_in_seconds: long
+    :vartype timeout_in_seconds: int
     :ivar sync_interval_in_seconds: The interval at which to re-reconcile the Kustomization on the
      cluster.
-    :vartype sync_interval_in_seconds: long
+    :vartype sync_interval_in_seconds: int
     :ivar retry_interval_in_seconds: The interval at which to re-reconcile the Kustomization on the
      cluster in the event of failure on reconciliation.
-    :vartype retry_interval_in_seconds: long
+    :vartype retry_interval_in_seconds: int
     :ivar prune: Enable/disable garbage collections of Kubernetes objects created by this
      Kustomization.
     :vartype prune: bool
@@ -1604,27 +1556,27 @@ class KustomizationPatchDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'depends_on': {'key': 'dependsOn', 'type': '[DependsOnDefinition]'},
-        'timeout_in_seconds': {'key': 'timeoutInSeconds', 'type': 'long'},
-        'sync_interval_in_seconds': {'key': 'syncIntervalInSeconds', 'type': 'long'},
-        'retry_interval_in_seconds': {'key': 'retryIntervalInSeconds', 'type': 'long'},
-        'prune': {'key': 'prune', 'type': 'bool'},
-        'force': {'key': 'force', 'type': 'bool'},
+        "path": {"key": "path", "type": "str"},
+        "depends_on": {"key": "dependsOn", "type": "[DependsOnDefinition]"},
+        "timeout_in_seconds": {"key": "timeoutInSeconds", "type": "int"},
+        "sync_interval_in_seconds": {"key": "syncIntervalInSeconds", "type": "int"},
+        "retry_interval_in_seconds": {"key": "retryIntervalInSeconds", "type": "int"},
+        "prune": {"key": "prune", "type": "bool"},
+        "force": {"key": "force", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         path: Optional[str] = None,
-        depends_on: Optional[List["DependsOnDefinition"]] = None,
+        depends_on: Optional[List["_models.DependsOnDefinition"]] = None,
         timeout_in_seconds: Optional[int] = None,
         sync_interval_in_seconds: Optional[int] = None,
         retry_interval_in_seconds: Optional[int] = None,
         prune: Optional[bool] = None,
         force: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: The path in the source reference to reconcile on the cluster.
         :paramtype path: str
@@ -1634,13 +1586,13 @@ class KustomizationPatchDefinition(msrest.serialization.Model):
          list[~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.DependsOnDefinition]
         :keyword timeout_in_seconds: The maximum time to attempt to reconcile the Kustomization on the
          cluster.
-        :paramtype timeout_in_seconds: long
+        :paramtype timeout_in_seconds: int
         :keyword sync_interval_in_seconds: The interval at which to re-reconcile the Kustomization on
          the cluster.
-        :paramtype sync_interval_in_seconds: long
+        :paramtype sync_interval_in_seconds: int
         :keyword retry_interval_in_seconds: The interval at which to re-reconcile the Kustomization on
          the cluster in the event of failure on reconciliation.
-        :paramtype retry_interval_in_seconds: long
+        :paramtype retry_interval_in_seconds: int
         :keyword prune: Enable/disable garbage collections of Kubernetes objects created by this
          Kustomization.
         :paramtype prune: bool
@@ -1648,7 +1600,7 @@ class KustomizationPatchDefinition(msrest.serialization.Model):
          fails due to an immutable field change.
         :paramtype force: bool
         """
-        super(KustomizationPatchDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.path = path
         self.depends_on = depends_on
         self.timeout_in_seconds = timeout_in_seconds
@@ -1658,7 +1610,7 @@ class KustomizationPatchDefinition(msrest.serialization.Model):
         self.force = force
 
 
-class ObjectReferenceDefinition(msrest.serialization.Model):
+class ObjectReferenceDefinition(_serialization.Model):
     """Object reference to a Kubernetes object on a cluster.
 
     :ivar name: Name of the object.
@@ -1668,29 +1620,23 @@ class ObjectReferenceDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        namespace: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, namespace: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the object.
         :paramtype name: str
         :keyword namespace: Namespace of the object.
         :paramtype namespace: str
         """
-        super(ObjectReferenceDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.namespace = namespace
 
 
-class ObjectStatusConditionDefinition(msrest.serialization.Model):
+class ObjectStatusConditionDefinition(_serialization.Model):
     """Status condition of Kubernetes object.
 
     :ivar last_transition_time: Last time this status condition has changed.
@@ -1706,11 +1652,11 @@ class ObjectStatusConditionDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'last_transition_time': {'key': 'lastTransitionTime', 'type': 'iso-8601'},
-        'message': {'key': 'message', 'type': 'str'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "last_transition_time": {"key": "lastTransitionTime", "type": "iso-8601"},
+        "message": {"key": "message", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -1721,8 +1667,8 @@ class ObjectStatusConditionDefinition(msrest.serialization.Model):
         reason: Optional[str] = None,
         status: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_transition_time: Last time this status condition has changed.
         :paramtype last_transition_time: ~datetime.datetime
@@ -1735,7 +1681,7 @@ class ObjectStatusConditionDefinition(msrest.serialization.Model):
         :keyword type: Object status condition type for this object.
         :paramtype type: str
         """
-        super(ObjectStatusConditionDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.last_transition_time = last_transition_time
         self.message = message
         self.reason = reason
@@ -1743,7 +1689,7 @@ class ObjectStatusConditionDefinition(msrest.serialization.Model):
         self.type = type
 
 
-class ObjectStatusDefinition(msrest.serialization.Model):
+class ObjectStatusDefinition(_serialization.Model):
     """Statuses of objects deployed by the user-specified kustomizations from the git repository.
 
     :ivar name: Name of the applied object.
@@ -1753,8 +1699,8 @@ class ObjectStatusDefinition(msrest.serialization.Model):
     :ivar kind: Kind of the applied object.
     :vartype kind: str
     :ivar compliance_state: Compliance state of the applied object showing whether the applied
-     object has come into a ready state on the cluster. Possible values include: "Compliant",
-     "Non-Compliant", "Pending", "Suspended", "Unknown". Default value: "Unknown".
+     object has come into a ready state on the cluster. Known values are: "Compliant",
+     "Non-Compliant", "Pending", "Suspended", and "Unknown".
     :vartype compliance_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.FluxComplianceState
     :ivar applied_by: Object reference to the Kustomization that applied this object.
@@ -1770,13 +1716,13 @@ class ObjectStatusDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'compliance_state': {'key': 'complianceState', 'type': 'str'},
-        'applied_by': {'key': 'appliedBy', 'type': 'ObjectReferenceDefinition'},
-        'status_conditions': {'key': 'statusConditions', 'type': '[ObjectStatusConditionDefinition]'},
-        'helm_release_properties': {'key': 'helmReleaseProperties', 'type': 'HelmReleasePropertiesDefinition'},
+        "name": {"key": "name", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "compliance_state": {"key": "complianceState", "type": "str"},
+        "applied_by": {"key": "appliedBy", "type": "ObjectReferenceDefinition"},
+        "status_conditions": {"key": "statusConditions", "type": "[ObjectStatusConditionDefinition]"},
+        "helm_release_properties": {"key": "helmReleaseProperties", "type": "HelmReleasePropertiesDefinition"},
     }
 
     def __init__(
@@ -1785,12 +1731,12 @@ class ObjectStatusDefinition(msrest.serialization.Model):
         name: Optional[str] = None,
         namespace: Optional[str] = None,
         kind: Optional[str] = None,
-        compliance_state: Optional[Union[str, "FluxComplianceState"]] = "Unknown",
-        applied_by: Optional["ObjectReferenceDefinition"] = None,
-        status_conditions: Optional[List["ObjectStatusConditionDefinition"]] = None,
-        helm_release_properties: Optional["HelmReleasePropertiesDefinition"] = None,
-        **kwargs
-    ):
+        compliance_state: Union[str, "_models.FluxComplianceState"] = "Unknown",
+        applied_by: Optional["_models.ObjectReferenceDefinition"] = None,
+        status_conditions: Optional[List["_models.ObjectStatusConditionDefinition"]] = None,
+        helm_release_properties: Optional["_models.HelmReleasePropertiesDefinition"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the applied object.
         :paramtype name: str
@@ -1799,8 +1745,8 @@ class ObjectStatusDefinition(msrest.serialization.Model):
         :keyword kind: Kind of the applied object.
         :paramtype kind: str
         :keyword compliance_state: Compliance state of the applied object showing whether the applied
-         object has come into a ready state on the cluster. Possible values include: "Compliant",
-         "Non-Compliant", "Pending", "Suspended", "Unknown". Default value: "Unknown".
+         object has come into a ready state on the cluster. Known values are: "Compliant",
+         "Non-Compliant", "Pending", "Suspended", and "Unknown".
         :paramtype compliance_state: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.FluxComplianceState
         :keyword applied_by: Object reference to the Kustomization that applied this object.
@@ -1814,7 +1760,7 @@ class ObjectStatusDefinition(msrest.serialization.Model):
         :paramtype helm_release_properties:
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.HelmReleasePropertiesDefinition
         """
-        super(ObjectStatusDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.namespace = namespace
         self.kind = kind
@@ -1824,7 +1770,7 @@ class ObjectStatusDefinition(msrest.serialization.Model):
         self.helm_release_properties = helm_release_properties
 
 
-class OperationStatusList(msrest.serialization.Model):
+class OperationStatusList(_serialization.Model):
     """The async operations in progress, in the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1837,27 +1783,23 @@ class OperationStatusList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationStatusResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationStatusResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationStatusList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class OperationStatusResult(msrest.serialization.Model):
+class OperationStatusResult(_serialization.Model):
     """The current status of an async operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1868,7 +1810,7 @@ class OperationStatusResult(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Name of the async operation.
     :vartype name: str
-    :ivar status: Required. Operation status.
+    :ivar status: Operation status. Required.
     :vartype status: str
     :ivar properties: Additional information, if available.
     :vartype properties: dict[str, str]
@@ -1877,38 +1819,38 @@ class OperationStatusResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'required': True},
-        'error': {'readonly': True},
+        "status": {"required": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
         self,
         *,
         status: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified ID for the async operation.
         :paramtype id: str
         :keyword name: Name of the async operation.
         :paramtype name: str
-        :keyword status: Required. Operation status.
+        :keyword status: Operation status. Required.
         :paramtype status: str
         :keyword properties: Additional information, if available.
         :paramtype properties: dict[str, str]
         """
-        super(OperationStatusResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.status = status
@@ -1916,7 +1858,7 @@ class OperationStatusResult(msrest.serialization.Model):
         self.error = None
 
 
-class PatchExtension(msrest.serialization.Model):
+class PatchExtension(_serialization.Model):
     """The Extension Patch Request object.
 
     :ivar auto_upgrade_minor_version: Flag to note if this extension participates in auto upgrade
@@ -1937,23 +1879,23 @@ class PatchExtension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'auto_upgrade_minor_version': {'key': 'properties.autoUpgradeMinorVersion', 'type': 'bool'},
-        'release_train': {'key': 'properties.releaseTrain', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'configuration_settings': {'key': 'properties.configurationSettings', 'type': '{str}'},
-        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
+        "auto_upgrade_minor_version": {"key": "properties.autoUpgradeMinorVersion", "type": "bool"},
+        "release_train": {"key": "properties.releaseTrain", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "configuration_settings": {"key": "properties.configurationSettings", "type": "{str}"},
+        "configuration_protected_settings": {"key": "properties.configurationProtectedSettings", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        auto_upgrade_minor_version: Optional[bool] = True,
-        release_train: Optional[str] = "Stable",
+        auto_upgrade_minor_version: bool = True,
+        release_train: str = "Stable",
         version: Optional[str] = None,
         configuration_settings: Optional[Dict[str, str]] = None,
         configuration_protected_settings: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword auto_upgrade_minor_version: Flag to note if this extension participates in auto
          upgrade of minor version, or not.
@@ -1971,7 +1913,7 @@ class PatchExtension(msrest.serialization.Model):
          name-value pairs for configuring this extension.
         :paramtype configuration_protected_settings: dict[str, str]
         """
-        super(PatchExtension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.release_train = release_train
         self.version = version
@@ -1979,7 +1921,7 @@ class PatchExtension(msrest.serialization.Model):
         self.configuration_protected_settings = configuration_protected_settings
 
 
-class RepositoryRefDefinition(msrest.serialization.Model):
+class RepositoryRefDefinition(_serialization.Model):
     """The source reference for the GitRepository object.
 
     :ivar branch: The git repository branch name to checkout.
@@ -1995,10 +1937,10 @@ class RepositoryRefDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'branch': {'key': 'branch', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'semver': {'key': 'semver', 'type': 'str'},
-        'commit': {'key': 'commit', 'type': 'str'},
+        "branch": {"key": "branch", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
+        "semver": {"key": "semver", "type": "str"},
+        "commit": {"key": "commit", "type": "str"},
     }
 
     def __init__(
@@ -2008,8 +1950,8 @@ class RepositoryRefDefinition(msrest.serialization.Model):
         tag: Optional[str] = None,
         semver: Optional[str] = None,
         commit: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword branch: The git repository branch name to checkout.
         :paramtype branch: str
@@ -2022,14 +1964,14 @@ class RepositoryRefDefinition(msrest.serialization.Model):
          to be valid. This takes precedence over semver.
         :paramtype commit: str
         """
-        super(RepositoryRefDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.branch = branch
         self.tag = tag
         self.semver = semver
         self.commit = commit
 
 
-class ResourceProviderOperation(msrest.serialization.Model):
+class ResourceProviderOperation(_serialization.Model):
     """Supported operation of this resource provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2046,24 +1988,24 @@ class ResourceProviderOperation(msrest.serialization.Model):
     """
 
     _validation = {
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "ResourceProviderOperationDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["ResourceProviderOperationDisplay"] = None,
-        **kwargs
-    ):
+        display: Optional["_models.ResourceProviderOperationDisplay"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -2071,14 +2013,14 @@ class ResourceProviderOperation(msrest.serialization.Model):
         :paramtype display:
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ResourceProviderOperationDisplay
         """
-        super(ResourceProviderOperation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.is_data_action = None
         self.origin = None
 
 
-class ResourceProviderOperationDisplay(msrest.serialization.Model):
+class ResourceProviderOperationDisplay(_serialization.Model):
     """Display metadata associated with the operation.
 
     :ivar provider: Resource provider: Microsoft KubernetesConfiguration.
@@ -2092,10 +2034,10 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -2105,8 +2047,8 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Resource provider: Microsoft KubernetesConfiguration.
         :paramtype provider: str
@@ -2117,14 +2059,14 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         :keyword description: Description of this operation.
         :paramtype description: str
         """
-        super(ResourceProviderOperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class ResourceProviderOperationList(msrest.serialization.Model):
+class ResourceProviderOperationList(_serialization.Model):
     """Result of the request to list operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2137,31 +2079,26 @@ class ResourceProviderOperationList(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceProviderOperation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceProviderOperation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ResourceProviderOperation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ResourceProviderOperation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of operations supported by this resource provider.
         :paramtype value:
          list[~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ResourceProviderOperation]
         """
-        super(ResourceProviderOperationList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class Scope(msrest.serialization.Model):
+class Scope(_serialization.Model):
     """Scope of the extension. It can be either Cluster or Namespace; but not both.
 
     :ivar cluster: Specifies that the scope of the extension is Cluster.
@@ -2172,17 +2109,17 @@ class Scope(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'cluster': {'key': 'cluster', 'type': 'ScopeCluster'},
-        'namespace': {'key': 'namespace', 'type': 'ScopeNamespace'},
+        "cluster": {"key": "cluster", "type": "ScopeCluster"},
+        "namespace": {"key": "namespace", "type": "ScopeNamespace"},
     }
 
     def __init__(
         self,
         *,
-        cluster: Optional["ScopeCluster"] = None,
-        namespace: Optional["ScopeNamespace"] = None,
-        **kwargs
-    ):
+        cluster: Optional["_models.ScopeCluster"] = None,
+        namespace: Optional["_models.ScopeNamespace"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cluster: Specifies that the scope of the extension is Cluster.
         :paramtype cluster: ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ScopeCluster
@@ -2190,12 +2127,12 @@ class Scope(msrest.serialization.Model):
         :paramtype namespace:
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ScopeNamespace
         """
-        super(Scope, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.cluster = cluster
         self.namespace = namespace
 
 
-class ScopeCluster(msrest.serialization.Model):
+class ScopeCluster(_serialization.Model):
     """Specifies that the scope of the extension is Cluster.
 
     :ivar release_namespace: Namespace where the extension Release must be placed, for a Cluster
@@ -2204,25 +2141,20 @@ class ScopeCluster(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'release_namespace': {'key': 'releaseNamespace', 'type': 'str'},
+        "release_namespace": {"key": "releaseNamespace", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        release_namespace: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, release_namespace: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword release_namespace: Namespace where the extension Release must be placed, for a Cluster
          scoped extension.  If this namespace does not exist, it will be created.
         :paramtype release_namespace: str
         """
-        super(ScopeCluster, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.release_namespace = release_namespace
 
 
-class ScopeNamespace(msrest.serialization.Model):
+class ScopeNamespace(_serialization.Model):
     """Specifies that the scope of the extension is Namespace.
 
     :ivar target_namespace: Namespace where the extension will be created for an Namespace scoped
@@ -2231,25 +2163,20 @@ class ScopeNamespace(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'target_namespace': {'key': 'targetNamespace', 'type': 'str'},
+        "target_namespace": {"key": "targetNamespace", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_namespace: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, target_namespace: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword target_namespace: Namespace where the extension will be created for an Namespace
          scoped extension.  If this namespace does not exist, it will be created.
         :paramtype target_namespace: str
         """
-        super(ScopeNamespace, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target_namespace = target_namespace
 
 
-class SourceControlConfiguration(ProxyResource):
+class SourceControlConfiguration(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The SourceControl Configuration object returned in Get & Put response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2273,7 +2200,7 @@ class SourceControlConfiguration(ProxyResource):
     :ivar operator_instance_name: Instance name of the operator - identifying the specific
      configuration.
     :vartype operator_instance_name: str
-    :ivar operator_type: Type of the operator. Possible values include: "Flux".
+    :ivar operator_type: Type of the operator. "Flux"
     :vartype operator_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.OperatorType
     :ivar operator_params: Any Parameters for the Operator instance in string format.
@@ -2281,8 +2208,8 @@ class SourceControlConfiguration(ProxyResource):
     :ivar configuration_protected_settings: Name-value pairs of protected configuration settings
      for the configuration.
     :vartype configuration_protected_settings: dict[str, str]
-    :ivar operator_scope: Scope at which the operator will be installed. Possible values include:
-     "cluster", "namespace". Default value: "cluster".
+    :ivar operator_scope: Scope at which the operator will be installed. Known values are:
+     "cluster" and "namespace".
     :vartype operator_scope: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.OperatorScopeType
     :ivar repository_public_key: Public Key associated with this SourceControl configuration
@@ -2296,8 +2223,8 @@ class SourceControlConfiguration(ProxyResource):
     :ivar helm_operator_properties: Properties for Helm operator.
     :vartype helm_operator_properties:
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.HelmOperatorProperties
-    :ivar provisioning_state: The provisioning state of the resource provider. Possible values
-     include: "Accepted", "Deleting", "Running", "Succeeded", "Failed".
+    :ivar provisioning_state: The provisioning state of the resource provider. Known values are:
+     "Accepted", "Deleting", "Running", "Succeeded", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ProvisioningStateType
     :ivar compliance_status: Compliance Status of the Configuration.
@@ -2306,50 +2233,50 @@ class SourceControlConfiguration(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'repository_public_key': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'compliance_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "repository_public_key": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "compliance_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'repository_url': {'key': 'properties.repositoryUrl', 'type': 'str'},
-        'operator_namespace': {'key': 'properties.operatorNamespace', 'type': 'str'},
-        'operator_instance_name': {'key': 'properties.operatorInstanceName', 'type': 'str'},
-        'operator_type': {'key': 'properties.operatorType', 'type': 'str'},
-        'operator_params': {'key': 'properties.operatorParams', 'type': 'str'},
-        'configuration_protected_settings': {'key': 'properties.configurationProtectedSettings', 'type': '{str}'},
-        'operator_scope': {'key': 'properties.operatorScope', 'type': 'str'},
-        'repository_public_key': {'key': 'properties.repositoryPublicKey', 'type': 'str'},
-        'ssh_known_hosts_contents': {'key': 'properties.sshKnownHostsContents', 'type': 'str'},
-        'enable_helm_operator': {'key': 'properties.enableHelmOperator', 'type': 'bool'},
-        'helm_operator_properties': {'key': 'properties.helmOperatorProperties', 'type': 'HelmOperatorProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'compliance_status': {'key': 'properties.complianceStatus', 'type': 'ComplianceStatus'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "repository_url": {"key": "properties.repositoryUrl", "type": "str"},
+        "operator_namespace": {"key": "properties.operatorNamespace", "type": "str"},
+        "operator_instance_name": {"key": "properties.operatorInstanceName", "type": "str"},
+        "operator_type": {"key": "properties.operatorType", "type": "str"},
+        "operator_params": {"key": "properties.operatorParams", "type": "str"},
+        "configuration_protected_settings": {"key": "properties.configurationProtectedSettings", "type": "{str}"},
+        "operator_scope": {"key": "properties.operatorScope", "type": "str"},
+        "repository_public_key": {"key": "properties.repositoryPublicKey", "type": "str"},
+        "ssh_known_hosts_contents": {"key": "properties.sshKnownHostsContents", "type": "str"},
+        "enable_helm_operator": {"key": "properties.enableHelmOperator", "type": "bool"},
+        "helm_operator_properties": {"key": "properties.helmOperatorProperties", "type": "HelmOperatorProperties"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "compliance_status": {"key": "properties.complianceStatus", "type": "ComplianceStatus"},
     }
 
     def __init__(
         self,
         *,
         repository_url: Optional[str] = None,
-        operator_namespace: Optional[str] = "default",
+        operator_namespace: str = "default",
         operator_instance_name: Optional[str] = None,
-        operator_type: Optional[Union[str, "OperatorType"]] = None,
+        operator_type: Optional[Union[str, "_models.OperatorType"]] = None,
         operator_params: Optional[str] = None,
         configuration_protected_settings: Optional[Dict[str, str]] = None,
-        operator_scope: Optional[Union[str, "OperatorScopeType"]] = "cluster",
+        operator_scope: Union[str, "_models.OperatorScopeType"] = "cluster",
         ssh_known_hosts_contents: Optional[str] = None,
         enable_helm_operator: Optional[bool] = None,
-        helm_operator_properties: Optional["HelmOperatorProperties"] = None,
-        **kwargs
-    ):
+        helm_operator_properties: Optional["_models.HelmOperatorProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword repository_url: Url of the SourceControl Repository.
         :paramtype repository_url: str
@@ -2359,7 +2286,7 @@ class SourceControlConfiguration(ProxyResource):
         :keyword operator_instance_name: Instance name of the operator - identifying the specific
          configuration.
         :paramtype operator_instance_name: str
-        :keyword operator_type: Type of the operator. Possible values include: "Flux".
+        :keyword operator_type: Type of the operator. "Flux"
         :paramtype operator_type: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.OperatorType
         :keyword operator_params: Any Parameters for the Operator instance in string format.
@@ -2367,8 +2294,8 @@ class SourceControlConfiguration(ProxyResource):
         :keyword configuration_protected_settings: Name-value pairs of protected configuration settings
          for the configuration.
         :paramtype configuration_protected_settings: dict[str, str]
-        :keyword operator_scope: Scope at which the operator will be installed. Possible values
-         include: "cluster", "namespace". Default value: "cluster".
+        :keyword operator_scope: Scope at which the operator will be installed. Known values are:
+         "cluster" and "namespace".
         :paramtype operator_scope: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.OperatorScopeType
         :keyword ssh_known_hosts_contents: Base64-encoded known_hosts contents containing public SSH
@@ -2380,7 +2307,7 @@ class SourceControlConfiguration(ProxyResource):
         :paramtype helm_operator_properties:
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.HelmOperatorProperties
         """
-        super(SourceControlConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.repository_url = repository_url
         self.operator_namespace = operator_namespace
@@ -2397,8 +2324,9 @@ class SourceControlConfiguration(ProxyResource):
         self.compliance_status = None
 
 
-class SourceControlConfigurationList(msrest.serialization.Model):
-    """Result of the request to list Source Control Configurations.  It contains a list of SourceControlConfiguration objects and a URL link to get the next set of results.
+class SourceControlConfigurationList(_serialization.Model):
+    """Result of the request to list Source Control Configurations.  It contains a list of
+    SourceControlConfiguration objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2410,27 +2338,23 @@ class SourceControlConfigurationList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SourceControlConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SourceControlConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SourceControlConfigurationList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SupportedScopes(msrest.serialization.Model):
+class SupportedScopes(_serialization.Model):
     """Extension scopes.
 
     :ivar default_scope: Default extension scopes: cluster or namespace.
@@ -2441,17 +2365,17 @@ class SupportedScopes(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'default_scope': {'key': 'defaultScope', 'type': 'str'},
-        'cluster_scope_settings': {'key': 'clusterScopeSettings', 'type': 'ClusterScopeSettings'},
+        "default_scope": {"key": "defaultScope", "type": "str"},
+        "cluster_scope_settings": {"key": "clusterScopeSettings", "type": "ClusterScopeSettings"},
     }
 
     def __init__(
         self,
         *,
         default_scope: Optional[str] = None,
-        cluster_scope_settings: Optional["ClusterScopeSettings"] = None,
-        **kwargs
-    ):
+        cluster_scope_settings: Optional["_models.ClusterScopeSettings"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_scope: Default extension scopes: cluster or namespace.
         :paramtype default_scope: str
@@ -2459,26 +2383,26 @@ class SupportedScopes(msrest.serialization.Model):
         :paramtype cluster_scope_settings:
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.ClusterScopeSettings
         """
-        super(SupportedScopes, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.default_scope = default_scope
         self.cluster_scope_settings = cluster_scope_settings
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -2486,44 +2410,44 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.kubernetesconfiguration.v2022_01_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at

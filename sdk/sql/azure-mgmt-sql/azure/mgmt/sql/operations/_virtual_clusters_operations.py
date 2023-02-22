@@ -726,8 +726,8 @@ class VirtualClustersOperations:
         :type resource_group_name: str
         :param virtual_cluster_name: The name of the virtual cluster. Required.
         :type virtual_cluster_name: str
-        :param parameters: The requested virtual cluster resource state. Is either a model type or a IO
-         type. Required.
+        :param parameters: The requested virtual cluster resource state. Is either a
+         VirtualClusterUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.VirtualClusterUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

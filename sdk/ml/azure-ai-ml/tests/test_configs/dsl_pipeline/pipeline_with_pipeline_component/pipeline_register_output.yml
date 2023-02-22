@@ -1,0 +1,89 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+
+display_name: pipeline_with_pipeline_component
+experiment_name: pipeline_with_pipeline_component
+description: Select best model trained with different learning rate
+type: pipeline
+
+inputs:
+  pipeline_job_training_data:
+    type: uri_folder
+    path: ../local_data_input/data
+  pipeline_job_test_data:
+    type: uri_folder
+    path: ../local_data_input/data
+  pipeline_job_training_learning_rate1: 0.1
+  pipeline_job_training_learning_rate2: 0.01
+
+outputs:
+  pipeline_job_best_model:  # test PipelineJob.output
+    mode: upload
+    name: 'pipeline_output_a'
+    version: '1'
+  pipeline_job_best_result:
+    mode: upload
+
+settings:
+  default_datastore: azureml:workspaceblobstore
+  default_compute: azureml:cpu-cluster
+  continue_on_step_failure: false
+  force_rerun: true
+
+jobs:
+  train_and_evaludate_model1:
+    type: pipeline
+    component: ./components/train_pipeline_component.yml
+    inputs:
+      training_data: ${{parent.inputs.pipeline_job_training_data}}
+      test_data: ${{parent.inputs.pipeline_job_test_data}}
+      training_max_epocs: 20
+      training_learning_rate: ${{parent.inputs.pipeline_job_training_learning_rate1}}
+    outputs:
+      trained_model:
+        name: 'model1_output'   # test PipelineComponent: no binding
+        version: '1'
+
+  train_and_evaludate_model2:
+    type: pipeline
+    component: ./components/train_pipeline_component.yml
+    inputs:
+      training_data: ${{parent.inputs.pipeline_job_training_data}}
+      test_data: ${{parent.inputs.pipeline_job_test_data}}
+      training_max_epocs: 20
+      training_learning_rate: ${{parent.inputs.pipeline_job_training_learning_rate2}}
+
+  compare:
+    type: command
+    component: ./components/compare2.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      model1: ${{parent.jobs.train_and_evaludate_model1.outputs.trained_model}}
+      eval_result1: ${{parent.jobs.train_and_evaludate_model1.outputs.evaluation_report}}
+      model2: ${{parent.jobs.train_and_evaludate_model2.outputs.trained_model}}
+      eval_result2: ${{parent.jobs.train_and_evaludate_model2.outputs.evaluation_report}}
+    outputs:
+      best_model:
+        path: ${{parent.outputs.pipeline_job_best_model}} # test command: binding
+        name: 'best_model'
+        version: '1'
+      best_result:
+        path: ${{parent.outputs.pipeline_job_best_result}}
+        name: 'best_result'
+        version: '1'
+
+  compare_2:
+    type: command
+    component: ./components/compare2.yml
+    compute: azureml:cpu-cluster
+    inputs:
+      model1: ${{parent.jobs.train_and_evaludate_model1.outputs.trained_model}}
+      eval_result1: ${{parent.jobs.train_and_evaludate_model1.outputs.evaluation_report}}
+      model2: ${{parent.jobs.train_and_evaludate_model2.outputs.trained_model}}
+      eval_result2: ${{parent.jobs.train_and_evaludate_model2.outputs.evaluation_report}}
+    outputs:
+      best_model:
+        name: 'best_model_2'    # test command: no binding
+        version: '1'
+      best_result:
+        name: 'best_result_2'
+        version: '1'

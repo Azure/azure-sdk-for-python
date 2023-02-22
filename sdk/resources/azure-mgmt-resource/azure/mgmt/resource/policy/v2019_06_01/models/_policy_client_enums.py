@@ -13,10 +13,10 @@ from azure.core import CaseInsensitiveEnumMeta
 class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce."""
 
-    #: The policy effect is enforced during resource creation or update.
     DEFAULT = "Default"
-    #: The policy effect is not enforced during resource creation or update.
+    """The policy effect is enforced during resource creation or update."""
     DO_NOT_ENFORCE = "DoNotEnforce"
+    """The policy effect is not enforced during resource creation or update."""
 
 
 class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
