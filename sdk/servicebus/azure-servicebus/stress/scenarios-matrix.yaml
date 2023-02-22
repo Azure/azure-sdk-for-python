@@ -3,5 +3,5 @@ matrix:
   image: 
     - Dockerfile
   scenarios:
-    servicebusStress:
+    sbStress:
       testTarget: servicebus
