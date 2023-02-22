@@ -11,6 +11,8 @@ import time
 import signal
 import platform
 import shutil
+import tarfile
+import zipfile
 
 import pytest
 import subprocess
@@ -197,8 +199,9 @@ def prepare_local_tool(repo_root: str) -> str:
             if downloaded_version == target_proxy_version:
                 download_necessary = False
             else:
-                # cleanup the directory for re-download
-                shutil.rmtree(download_folder)
+                if os.path.exists(download_folder):
+                    # cleanup the directory for re-download
+                    shutil.rmtree(download_folder)
                 os.makedirs(download_folder)
 
             if download_necessary:
@@ -209,19 +212,27 @@ def prepare_local_tool(repo_root: str) -> str:
                 with open(download_file, 'wb') as out:
                     r = http.request('GET', download_url, preload_content=False)
                     shutil.copyfileobj(r, out)
+
+                if download_file.endswith(".zip"):
+                    with zipfile.ZipFile(download_file, "r") as zip_ref:
+                        zip_ref.extractall(download_folder)
+
+                if download_file.endswith(".tar.gz"):
+                    with tarfile.open(download_file) as tar_ref:
+                        tar_ref.extractall(download_folder)
+                
+                os.remove(download_file)
+
+                with open(os.path.join(download_folder, "downloaded_version.txt"), "w") as f:
+                    f.writelines([target_proxy_version])
+
+            return os.path.abspath(os.path.join(download_folder, target_info["executable"])).replace("\\", "/")
         else:
             _LOGGER.error(f"There are no available standalone proxy binaries for platform \"{machine}\".")
             raise Exception("Unable to download a compatible standalone proxy for the current platform. File an issue against Azure/azure-sdk-tools with this error.")
     else:
         _LOGGER.error(f"There are no available standalone proxy binaries for system \"{system}\".")
         raise Exception("Unable to download a compatible standalone proxy for the current system. File an issue against Azure/azure-sdk-tools with this error.")
-
-    
-
-    
-    breakpoint()
-
-
 
 def start_test_proxy(request) -> None:
     """Starts the test proxy and returns when the proxy server is ready to receive requests. In regular use
