@@ -33,15 +33,24 @@ def del_outdated_samples(readme: str):
     with open(python_readme, "r") as file_in:
         content = file_in.readlines()
     pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
+    is_multiapi = "multiapi: true" in ("".join(content))
     for line in content:
         if all(p in line for p in pattern):
             sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
+            # remove generated_samples
             sample_folder = Path(f"sdk/{sdk_folder}/generated_samples") 
             if sample_folder.exists():
                 shutil.rmtree(sample_folder)
                 _LOGGER.info(f"remove sample folder: {sample_folder}")
             else:
                 _LOGGER.info(f"sample folder does not exist: {sample_folder}")
+            # remove old generated SDK code
+            code_folder = Path("sdk") / sdk_folder
+            if is_multiapi and code_folder.exists():
+                shutil.rmtree(code_folder)
+                _LOGGER.info(f"remove code folder: {code_folder}")
+            else:
+                _LOGGER.info(f"code folder does not exist or it is not multiapi: {code_folder}")
             return
 
     _LOGGER.info(f"do not find {pattern} in {python_readme}")
