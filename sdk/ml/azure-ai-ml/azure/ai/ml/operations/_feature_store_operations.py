@@ -4,22 +4,18 @@
 
 # pylint: disable=protected-access
 
-import time
 from typing import Dict, Iterable, Optional
+
+from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import Scope
-from azure.ai.ml.entities import Workspace, FeatureStore
-from azure.core.credentials import TokenCredential
-from azure.core.polling import LROPoller, PollingMethod
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from ._workspace_operations import WorkspaceOperations
-from azure.ai.ml.constants._common import AzureMLResourceType, ArmConstants, LROConfigurations, Scope, WorkspaceResourceConstants
-from marshmallow import ValidationError
+from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.entities import FeatureStore, ManagedIdentityConfiguration
+from azure.ai.ml.constants._common import AzureMLResourceType, Scope
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -43,6 +39,7 @@ class FeatureStoreOperations():
         self._all_operations = operations_container
         self._workspace_operation = service_client.workspaces
         self._resource_group_name = operation_scope.resource_group_name
+        self._init_kwargs = kwargs
 
     # @monitor_with_activity(logger, "FeatureStore.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[FeatureStore]:
@@ -66,7 +63,6 @@ class FeatureStoreOperations():
                 FeatureStore._from_rest_object(filterObj) for filterObj in filter(lambda ws: ws.kind == "FeatureStore", objs)]
             )
 
-    # @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     def get(self, name: str, **kwargs: Dict) -> FeatureStore:
         """Get a feature store by name.
@@ -81,10 +77,8 @@ class FeatureStoreOperations():
         obj = self._workspace_operation.get(resource_group, name)
         if obj and obj.kind and obj.kind.lower() == "featurestore":
             return FeatureStore._from_rest_object(obj)
-        else:
-            return None
+        return None
 
-    # @monitor_with_activity(logger, "FeatureStore.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_create(
         self,
@@ -115,7 +109,6 @@ class FeatureStoreOperations():
             *kwargs
         )
 
-    # @monitor_with_activity(logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_update(
         self,
@@ -147,10 +140,8 @@ class FeatureStoreOperations():
                 setup_feature_store=True,
                 **kwargs
             )
-        else:
-            ValidationError("{0} is not a feature store".format(feature_store.name))
+        raise ValidationError("{0} is not a feature store".format(feature_store.name))
 
-    # @monitor_with_activity(logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
         """Delete a FeatureStore.
@@ -170,5 +161,4 @@ class FeatureStoreOperations():
                 delete_dependent_resources=delete_dependent_resources,
                 **kwargs
             )
-        else:
-            raise ValidationError("{0} is not a feature store".format(name))
+        raise ValidationError("{0} is not a feature store".format(name))
