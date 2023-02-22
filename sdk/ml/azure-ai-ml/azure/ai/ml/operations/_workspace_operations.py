@@ -202,7 +202,8 @@ class WorkspaceOperations:
         feature_store_setup = kwargs.get("setup_feature_store", False)
         offline_store_connection = kwargs.get("offline_store_connection", None)
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, feature_store_setup, offline_store_connection)
+        template, param, resources_being_deployed = self._populate_arm_paramaters(
+            workspace, feature_store_setup, offline_store_connection)
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -223,8 +224,7 @@ class WorkspaceOperations:
             if feature_store_setup:
                 return self._all_operations.all_operations[AzureMLResourceType.FEATURE_STORE].get(
                     workspace.name, resource_group=resource_group)
-            else:
-                return self.get(workspace.name, resource_group=resource_group)
+            return self.get(workspace.name, resource_group=resource_group)
 
         return LROPoller(
             self._operation._client,
@@ -344,10 +344,9 @@ class WorkspaceOperations:
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
             feature_store_setup = kwargs.get("setup_feature_store", False)
-            if(feature_store_setup):
+            if feature_store_setup:
                 return FeatureStore._from_rest_object(deserialized)
-            else:
-                return Workspace._from_rest_object(deserialized)
+            return Workspace._from_rest_object(deserialized)
 
         poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
@@ -432,7 +431,12 @@ class WorkspaceOperations:
         return poller
 
     # pylint: disable=too-many-statements,too-many-branches
-    def _populate_arm_paramaters(self, workspace: Workspace, setup_feature_store: bool = False, offline_store_connection: WorkspaceConnection = None) -> Tuple[dict, dict, dict]:
+    def _populate_arm_paramaters(
+            self,
+            workspace: Workspace,
+            setup_feature_store: bool = False,
+            offline_store_connection: WorkspaceConnection = None
+        ) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
@@ -616,7 +620,7 @@ class WorkspaceOperations:
                     workspace.feature_store_settings.compute_runtime.spark_runtime_version
                     if workspace.feature_store_settings.compute_runtime.spark_runtime_version else '')
             _set_val(param["offline_store_connection_name"],
-                     workspace.feature_store_settings.offline_store_connection_name 
+                     workspace.feature_store_settings.offline_store_connection_name
                      if workspace.feature_store_settings.offline_store_connection_name else '')
             _set_val(param["online_store_connection_name"], '')
 
@@ -624,8 +628,10 @@ class WorkspaceOperations:
 
         if setup_feature_store and offline_store_connection:
             _set_val(param["offline_store_connection_target"], offline_store_connection.target)
-            _set_val(param["offline_store_connection_credential_clientid"], offline_store_connection.credentials.client_id)
-            _set_val(param["offline_store_connection_credential_resourceid"], offline_store_connection.credentials.resource_id)
+            _set_val(param["offline_store_connection_credential_clientid"],
+                     offline_store_connection.credentials.client_id)
+            _set_val(param["offline_store_connection_credential_resourceid"],
+                     offline_store_connection.credentials.resource_id)
 
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
