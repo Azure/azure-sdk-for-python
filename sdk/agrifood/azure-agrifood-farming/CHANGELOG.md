@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2023-02-23)
 ### Features Added
 - Adding clients for Sensor Integration which includes crud operations on DeviceDataModels, Devices, SensorDataModels, Sensors, SensorMappings, SensorPartnerIntegration and get Sensor events.
 - Adding new APIs for STAC search and get feature
@@ -22,8 +22,6 @@
 - Renaming Farmer to Party
 - Renaming CropVariety to CropProduct
 - Updated dependency from azure-core<2.0.0,>=1.2.2 to azure-core<2.0.0,>=1.24.0
-
-### Bugs Fixed
 
 ### Other Changes
 
