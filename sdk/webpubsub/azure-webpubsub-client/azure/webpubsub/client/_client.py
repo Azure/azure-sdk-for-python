@@ -11,6 +11,7 @@ import logging
 import threading
 import urllib.parse
 import websocket  # type: ignore
+from azure.core.tracing.decorator import distributed_trace
 
 from ._models import (
     OnConnectedArgs,
@@ -70,23 +71,16 @@ class WebPubSubClientCredential:
 
 
 class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """WebPubSubClient."""
+    """WebPubSubClient
 
-    @overload
-    def __init__(
-        self, credential: WebPubSubClientCredential, **kwargs: Any
-    ) -> None:
-        """WebPubSubClient
-        :param credential: The credential to use when connecting. Required.
-        :type credential: ~azure.webpubsub.client.WebPubSubClientCredential
-        """
-
-    @overload
-    def __init__(self, credential: str, **kwargs: Any) -> None:
-        """WebPubSubClient
-        :param credential: The url to connect. Required.
-        :type credential: str
-        """
+    :param credential: The url to connect or credential to use when connecting. Required.
+    :type credential: str or WebPubSubClientCredential
+    :keyword bool auto_reconnect: Whether to auto reconnect after connection is dropped and not recoverable
+    :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
+    :keyword azure.webpubsub.client.WebPubSubProtocolType protocol_type: Subprotocol type
+    :keyword azure.webpubsub.client.RetryPolicy message_retry_policy: Retry policy when failing to send message
+    :keyword azure.webpubsub.client.RetryPolicy reconnect_retry_policy: Retry policy when failing to reconnect
+    """
 
     # pylint: disable=unused-argument
     def __init__(
@@ -94,15 +88,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         credential: Union[WebPubSubClientCredential, str],
         **kwargs: Any,
     ) -> None:
-        """WebPubSubClient
-        :param credential: The url to connect or credential to use when connecting. Required.
-        :type credential: str
-        :keyword bool auto_reconnect: Whether to auto reconnect after connection is dropped and not recoverable
-        :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
-        :keyword azure.webpubsub.client.WebPubSubProtocolType protocol_type: Subprotocol type
-        :keyword azure.webpubsub.client.RetryPolicy message_retry_policy: Retry policy when failing to send message
-        :keyword azure.webpubsub.client.RetryPolicy reconnect_retry_policy: Retry policy when failing to reconnect
-        """
         if isinstance(credential, WebPubSubClientCredential):
             self._credential = credential
         elif isinstance(credential, str):
@@ -196,6 +181,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._group_map[name] = WebPubSubGroup(name=name)
         return self._group_map[name]
 
+    @distributed_trace
     def join_group(self, group_name: str, **kwargs: Any) -> None:
         """Join the client to group.
 
@@ -218,6 +204,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             ack_id=ack_id,
         )
 
+    @distributed_trace
     def leave_group(self, group_name: str, **kwargs: Any) -> None:
         """Leave the client from group
         :param group_name: The group name. Required.
@@ -236,6 +223,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         self._retry(leave_group_attempt)
 
+    @distributed_trace
     def send_event(
         self,
         event_name: str,
@@ -251,7 +239,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :param data_type: The data type. Required.
         :type data_type: Any.
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
-        :keyword bool fire_and_forget: If true, the message won't contains ackId and no AckMessage will be returned from the service.
+        :keyword bool fire_and_forget: If true, the message won't contains ackId and no AckMessage 
+         will be returned from the service.
         """
 
         def send_event_attempt():
@@ -269,6 +258,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         self._retry(send_event_attempt)
 
+    @distributed_trace
     def send_to_group(
         self,
         group_name: str,
@@ -283,7 +273,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type content: Any.
         :param data_type: The data type. Required.
         :type data_type: Any.
-        :keyword bool fire_and_forget: If true, the message won't contains ackId and no AckMessage will be returned from the service.
+        :keyword bool fire_and_forget: If true, the message won't contains ackId and no AckMessage
+         will be returned from the service.
         :keyword int no_echo: Whether the message needs to echo to sender
         """
 
