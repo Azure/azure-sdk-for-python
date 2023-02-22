@@ -48,7 +48,7 @@ class CallAutomationClient(object):
             **kwargs)
 
         self._call_connection_client = self._client.call_connection
-        self._call_media_client = self._client.call_media
+        self._call_media = self._client.call_media
         self._call_recording_client = self._client.call_recording
 
     @classmethod
@@ -73,7 +73,7 @@ class CallAutomationClient(object):
         return CallConnection(
             call_connection_id,
             self._call_connection_client,
-            self._call_media_client,
+            self._call_media,
             **kwargs
             )
 

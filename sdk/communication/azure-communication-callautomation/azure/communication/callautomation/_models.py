@@ -466,11 +466,11 @@ class CallMediaRecognizeOptions(object):
         self.input_type = input_type
         self.target_participant = target_participant
         self.initial_silence_timeout = 5
-        self.play_prompt = kwargs['play_prompt']
-        self.interrupt_call_media_operation = kwargs['interrupt_call_media_operation']
-        self.stop_current_operations = kwargs['stop_current_operations']
-        self.operation_context = kwargs['operation_context']
-        self.interrupt_prompt = kwargs['interrupt_prompt']
+        self.play_prompt = kwargs.get('play_prompt')
+        self.interrupt_call_media_operation = kwargs.get('interrupt_call_media_operation')
+        self.stop_current_operations = kwargs.get('stop_current_operations')
+        self.operation_context = kwargs.get('operation_context')
+        self.interrupt_prompt = kwargs.get('interrupt_prompt')
 
 
 class CallMediaRecognizeDtmfOptions(CallMediaRecognizeOptions):
@@ -491,9 +491,9 @@ class CallMediaRecognizeDtmfOptions(CallMediaRecognizeOptions):
             **kwargs
     ):
         self.max_tones_to_collect = max_tones_to_collect
-        self.inter_tone_timeout = kwargs['inter_tone_timeout']
-        self.stop_dtmf_tones = kwargs['stop_dtmf_tones']
-        super().__init__(RecognizeInputType.DTMF, target_participant, kwargs)
+        self.inter_tone_timeout = kwargs.get('inter_tone_timeout')
+        self.stop_dtmf_tones = kwargs.get('stop_dtmf_tones')
+        super().__init__(RecognizeInputType.DTMF, target_participant, **kwargs)
 
 
 class CallMediaRecognizeChoiceOptions(CallMediaRecognizeOptions):
@@ -510,4 +510,25 @@ class CallMediaRecognizeChoiceOptions(CallMediaRecognizeOptions):
             **kwargs
     ):
         self.recognize_choices = recognize_choices
-        super().__init__(RecognizeInputType.CHOICES, target_participant, kwargs)
+        super().__init__(RecognizeInputType.CHOICES, target_participant, **kwargs)
+
+
+class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tone."""
+
+    ZERO = "zero"
+    ONE = "one"
+    TWO = "two"
+    THREE = "three"
+    FOUR = "four"
+    FIVE = "five"
+    SIX = "six"
+    SEVEN = "seven"
+    EIGHT = "eight"
+    NINE = "nine"
+    A = "a"
+    B = "b"
+    C = "c"
+    D = "d"
+    POUND = "pound"
+    ASTERISK = "asterisk"
