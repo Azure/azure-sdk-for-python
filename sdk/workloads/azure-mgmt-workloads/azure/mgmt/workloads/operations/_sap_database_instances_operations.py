@@ -603,8 +603,8 @@ class SAPDatabaseInstancesOperations:
         :param database_instance_name: Database resource name string modeled as parameter for auto
          generation to work correctly. Required.
         :type database_instance_name: str
-        :param body: Request body of Database resource of a SAP system. Is either a model type or a IO
-         type. Default value is None.
+        :param body: Request body of Database resource of a SAP system. Is either a SAPDatabaseInstance
+         type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.SAPDatabaseInstance or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -855,8 +855,8 @@ class SAPDatabaseInstancesOperations:
         :param database_instance_name: Database resource name string modeled as parameter for auto
          generation to work correctly. Required.
         :type database_instance_name: str
-        :param body: Database resource update request body. Is either a model type or a IO type.
-         Default value is None.
+        :param body: Database resource update request body. Is either a
+         UpdateSAPDatabaseInstanceRequest type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.UpdateSAPDatabaseInstanceRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1469,8 +1469,8 @@ class SAPDatabaseInstancesOperations:
         :param database_instance_name: Database resource name string modeled as parameter for auto
          generation to work correctly. Required.
         :type database_instance_name: str
-        :param body: Stop request for the database instance of the SAP system. Is either a model type
-         or a IO type. Default value is None.
+        :param body: Stop request for the database instance of the SAP system. Is either a StopRequest
+         type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.StopRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

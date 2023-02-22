@@ -553,7 +553,7 @@ class ProviderInstancesOperations:
         :param provider_instance_name: Name of the provider instance. Required.
         :type provider_instance_name: str
         :param provider_instance_parameter: Request body representing a provider instance. Is either a
-         model type or a IO type. Required.
+         ProviderInstance type or a IO type. Required.
         :type provider_instance_parameter: ~azure.mgmt.workloads.models.ProviderInstance or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

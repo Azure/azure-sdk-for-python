@@ -603,8 +603,8 @@ class SAPApplicationServerInstancesOperations:
         :param application_instance_name: The name of SAP Application Server instance resource.
          Required.
         :type application_instance_name: str
-        :param body: The SAP Application Server Instance resource request body. Is either a model type
-         or a IO type. Default value is None.
+        :param body: The SAP Application Server Instance resource request body. Is either a
+         SAPApplicationServerInstance type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.SAPApplicationServerInstance or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -858,8 +858,8 @@ class SAPApplicationServerInstancesOperations:
         :param application_instance_name: The name of SAP Application Server instance resource.
          Required.
         :type application_instance_name: str
-        :param body: The SAP Application Server Instance resource request body. Is either a model type
-         or a IO type. Default value is None.
+        :param body: The SAP Application Server Instance resource request body. Is either a
+         UpdateSAPApplicationInstanceRequest type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.UpdateSAPApplicationInstanceRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1474,8 +1474,8 @@ class SAPApplicationServerInstancesOperations:
         :param application_instance_name: The name of SAP Application Server instance resource.
          Required.
         :type application_instance_name: str
-        :param body: SAP Application server instance stop request body. Is either a model type or a IO
-         type. Default value is None.
+        :param body: SAP Application server instance stop request body. Is either a StopRequest type or
+         a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.StopRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

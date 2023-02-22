@@ -468,8 +468,8 @@ class MonitorsOperations:
         :type resource_group_name: str
         :param monitor_name: Name of the SAP monitor resource. Required.
         :type monitor_name: str
-        :param monitor_parameter: Request body representing a SAP monitor. Is either a model type or a
-         IO type. Required.
+        :param monitor_parameter: Request body representing a SAP monitor. Is either a Monitor type or
+         a IO type. Required.
         :type monitor_parameter: ~azure.mgmt.workloads.models.Monitor or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -747,8 +747,8 @@ class MonitorsOperations:
         :type resource_group_name: str
         :param monitor_name: Name of the SAP monitor resource. Required.
         :type monitor_name: str
-        :param body: The Update SAP workload monitor request body. Is either a model type or a IO type.
-         Required.
+        :param body: The Update SAP workload monitor request body. Is either a UpdateMonitorRequest
+         type or a IO type. Required.
         :type body: ~azure.mgmt.workloads.models.UpdateMonitorRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -212,7 +212,7 @@ class SapLandscapeMonitorOperations:
         :param monitor_name: Name of the SAP monitor resource. Required.
         :type monitor_name: str
         :param sap_landscape_monitor_parameter: Request body representing a configuration for Sap
-         Landscape Monitor Dashboard. Is either a model type or a IO type. Required.
+         Landscape Monitor Dashboard. Is either a SapLandscapeMonitor type or a IO type. Required.
         :type sap_landscape_monitor_parameter: ~azure.mgmt.workloads.models.SapLandscapeMonitor or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -436,7 +436,7 @@ class SapLandscapeMonitorOperations:
         :param monitor_name: Name of the SAP monitor resource. Required.
         :type monitor_name: str
         :param sap_landscape_monitor_parameter: Request body representing a configuration for Sap
-         Landscape Monitor Dashboard. Is either a model type or a IO type. Required.
+         Landscape Monitor Dashboard. Is either a SapLandscapeMonitor type or a IO type. Required.
         :type sap_landscape_monitor_parameter: ~azure.mgmt.workloads.models.SapLandscapeMonitor or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -507,8 +507,8 @@ class SAPVirtualInstancesOperations:
         :param sap_virtual_instance_name: The name of the Virtual Instances for SAP solutions resource.
          Required.
         :type sap_virtual_instance_name: str
-        :param body: Virtual Instance for SAP solutions resource request body. Is either a model type
-         or a IO type. Default value is None.
+        :param body: Virtual Instance for SAP solutions resource request body. Is either a
+         SAPVirtualInstance type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.SAPVirtualInstance or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -722,7 +722,7 @@ class SAPVirtualInstancesOperations:
          Required.
         :type sap_virtual_instance_name: str
         :param body: Request body to update a Virtual Instance for SAP solutions resource. Is either a
-         model type or a IO type. Default value is None.
+         UpdateSAPVirtualInstanceRequest type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.UpdateSAPVirtualInstanceRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1399,7 +1399,7 @@ class SAPVirtualInstancesOperations:
          Required.
         :type sap_virtual_instance_name: str
         :param body: The Virtual Instance for SAP solutions resource stop request body. Is either a
-         model type or a IO type. Default value is None.
+         StopRequest type or a IO type. Default value is None.
         :type body: ~azure.mgmt.workloads.models.StopRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
