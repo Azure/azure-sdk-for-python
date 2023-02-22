@@ -257,13 +257,10 @@ class ServiceBusRuleManager(ReceiverMixin,
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else None,
-            timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive
             if self._prefetch_count != 1
             else 5,
-            shutdown_after_timeout=False,
-            link_properties={CONSUMER_IDENTIFIER: self._name},
         )
         if self._prefetch_count == 1:
             self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
