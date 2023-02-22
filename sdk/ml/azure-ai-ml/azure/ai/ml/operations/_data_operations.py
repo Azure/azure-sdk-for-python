@@ -13,6 +13,7 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.data_transfer import import_data
 from azure.ai.ml.entities._inputs_outputs import Output
+from azure.ai.ml.entities._inputs_outputs.external_data import Database
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
@@ -330,6 +331,7 @@ class DataOperations(_ScopeDependentOperations):
         connection_name = data_import.source.connection.split(':')[-1]
         experiment_name = "data_import_" + data_import.name
         display_name = experiment_name + "_" + connection_name
+        component_name = "import_data_database" if isinstance(data_import.source, Database) else "import_data_file_system"
         import_job = import_data(
             description=display_name,
             display_name=display_name,
@@ -338,7 +340,7 @@ class DataOperations(_ScopeDependentOperations):
             source=data_import.source,
             outputs={"sink": Output(type=data_import.type, path=data_import.path, name=data_import.name)},
             is_deterministic=False,
-            component="azureml://registries/azureml-dev/components/import_data_database/versions/1"
+            component="azureml://registries/azureml-dev/components/" + component_name + "/versions/1"
         )
         import_pipeline = PipelineJob(
             description=display_name,

@@ -9,6 +9,7 @@ from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransf
 
 
 @pytest.mark.unittest
+@pytest.mark.data_import_test
 class TestDataImport:
     def test_data_import_database(self):
         data_import1 = load_data_import(
