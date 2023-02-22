@@ -7,7 +7,7 @@
 import time
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -101,7 +101,8 @@ class FeatureStoreOperations():
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
-            setup_feature_store=False,
+            setup_feature_store=True,
+            offline_store_connection=feature_store.offline_store_connection,
             *kwargs
         )
 

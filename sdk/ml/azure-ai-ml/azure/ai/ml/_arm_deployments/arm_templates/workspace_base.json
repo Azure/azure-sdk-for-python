@@ -414,6 +414,27 @@
                 "description": "Feature store online store config"
             }
         },
+        "offline_store_connection_target": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store connection target"
+            }
+        },
+        "offline_store_connection_credential_clientid": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store connection client id credential"
+            }
+        },
+        "offline_store_connection_credential_resourceid": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store connection resourceId credential"
+            }
+        },
         "setup_feature_store": {
             "type": "string",
             "defaultValue": "false",
@@ -638,11 +659,11 @@
                 },
                 "properties": {
                     "category": "AzureDataLakeGen2",
-                    "target": "https://maykumaramlp0261124469.blob.core.windows.net/azureml-blobstore-e6a6c4e1-9d11-49fc-87d3-836371b8ee23",
+                    "target": "[parameters('offline_store_connection_target')]",
                     "authType": "ManagedIdentity",
                     "credentials": {
-                        "clientid": "3c00e98d-2c79-439e-b8b4-beaae4361ec3",
-                        "resourceid": "8f1e83cf-546e-4be1-9c0c-701f9a5f7c6c"
+                        "clientid": "[parameters('offline_store_connection_credential_clientid')]",
+                        "resourceid": "[parameters('offline_store_connection_credential_resourceid')]"
                     }
                 }
             }]

@@ -170,8 +170,6 @@ class WorkspaceOperations:
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         existing_workspace = None
-        feature_store_setup = kwargs.get("setup_feature_store", False)
-        offline_store_connection = kwargs.get("offline_store_connection", None)
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
@@ -201,6 +199,8 @@ class WorkspaceOperations:
         if workspace.tags.get("createdByToolkit") is None:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
+        feature_store_setup = kwargs.get("setup_feature_store", False)
+        offline_store_connection = kwargs.get("offline_store_connection", None)
         workspace.resource_group = resource_group
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, feature_store_setup, offline_store_connection)
 
@@ -620,8 +620,13 @@ class WorkspaceOperations:
                      if workspace.feature_store_settings.offline_store_connection_name else '')
             _set_val(param["online_store_connection_name"], '')
 
-        print("setup_feature_store!!", setup_feature_store)
         _set_val(param["setup_feature_store"], "true" if setup_feature_store else "false")
+
+        if setup_feature_store and offline_store_connection:
+            _set_val(param["offline_store_connection_target"], offline_store_connection.target)
+            _set_val(param["offline_store_connection_credential_clientid"], offline_store_connection.credentials.client_id)
+            _set_val(param["offline_store_connection_credential_resourceid"], offline_store_connection.credentials.resource_id)
+
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

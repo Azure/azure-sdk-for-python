@@ -60,6 +60,7 @@ class FeatureStore(Workspace):
             feature_store_settings=feature_store_settings,
             ** kwargs
         )
+        self.offline_store_connection = offline_store_connection
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> "FeatureStore":

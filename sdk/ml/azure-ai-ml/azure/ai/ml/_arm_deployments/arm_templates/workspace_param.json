@@ -119,16 +119,25 @@
     "primaryUserAssignedIdentity": {
         "value": ""
     },
+    "setup_feature_store" : {
+        "value": "false"
+    },
     "spark_runtime_version" : {
         "value": ""
     },
     "offline_store_connection_name" : {
         "value": ""
     },
-    "online_store_connection_name" : {
+    "offline_store_connection_target" : {
         "value": ""
     },
-    "setup_feature_store" : {
-        "value": "false"
+    "offline_store_connection_credential_clientid" : {
+        "value": ""
+    },
+    "offline_store_connection_credential_resourceid" : {
+        "value": ""
+    },
+    "online_store_connection_name" : {
+        "value": ""
     }
 }
