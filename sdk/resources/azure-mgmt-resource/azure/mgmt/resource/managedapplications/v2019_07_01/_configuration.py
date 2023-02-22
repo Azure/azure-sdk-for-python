@@ -35,14 +35,14 @@ class ApplicationClientConfiguration(Configuration):  # pylint: disable=too-many
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2018-06-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2019-07-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(ApplicationClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2018-06-01"] = kwargs.pop("api_version", "2018-06-01")
+        api_version: Literal["2019-07-01"] = kwargs.pop("api_version", "2019-07-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

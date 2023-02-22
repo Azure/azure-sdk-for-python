@@ -6,5 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._application_client_async import ApplicationClient
-__all__ = ['ApplicationClient']
+VERSION = "22.1.0"
