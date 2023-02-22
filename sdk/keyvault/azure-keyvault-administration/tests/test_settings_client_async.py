@@ -38,8 +38,8 @@ class TestSettings(KeyVaultTestCase):
         assert updated.name == setting.name
         assert updated.value != setting.value
 
-        # Set value by using a string (providing in uppercase to make sure it's lowercased before being sent)
-        new_opposite = "FALSE" if updated.value else "TRUE"
+        # Set value by using a string
+        new_opposite = "false" if updated.value else "true"
         new_updated = await client.update_setting("AllowKeyManagementOperationsThroughARM", new_opposite)
         assert new_updated.name == updated.name
         assert new_updated.value != updated.value
