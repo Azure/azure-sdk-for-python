@@ -44,8 +44,8 @@ async def main():
     print_configuration_setting(updated_config_setting)
     print("")
 
-    # [START list_config_setting]
     print("List configuration settings")
+    # [START list_config_setting]
     config_settings = client.list_configuration_settings(label_filter="MyLabel")
     async for item in config_settings:
         print_configuration_setting(item)

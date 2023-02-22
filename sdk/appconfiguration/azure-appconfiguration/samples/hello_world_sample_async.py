@@ -15,12 +15,13 @@ USAGE: python hello_world_async_sample.py
 
 import asyncio
 from azure.appconfiguration import ConfigurationSetting
-from azure.appconfiguration.aio import AzureAppConfigurationClient
-from util import print_configuration_setting, get_connection_string
+from util import print_configuration_setting
 
 async def main():
     # [START create_app_config_client]
-    CONNECTION_STRING = get_connection_string()
+    import os
+    from azure.appconfiguration.aio import AzureAppConfigurationClient
+    CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
 
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
@@ -38,15 +39,15 @@ async def main():
     print_configuration_setting(returned_config_setting)
     print("")
 
-    # [START get_config_setting]
     print("Get configuration setting")
+    # [START get_config_setting]
     fetched_config_setting = await client.get_configuration_setting(
         key="MyKey"
     )
+    # [END get_config_setting]
     print("Fetched configuration setting:")
     print_configuration_setting(fetched_config_setting)
     print("")
-    # [END get_config_setting]
 
     print("Delete configuration setting")
     await client.delete_configuration_setting(

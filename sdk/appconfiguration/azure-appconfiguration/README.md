@@ -233,7 +233,9 @@ To use the async client library, import the AzureAppConfigurationClient from pac
 
 <!-- SNIPPET:hello_world_sample_async.create_app_config_client -->
 ```python
-CONNECTION_STRING = get_connection_string()
+import os
+from azure.appconfiguration.aio import AzureAppConfigurationClient
+CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
 
 # Create app config client
 client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
@@ -245,13 +247,9 @@ For instance, to retrieve a Configuration Setting asynchronously, async_client c
 
 <!-- SNIPPET:hello_world_sample_async.get_config_setting -->
 ```python
-print("Get configuration setting")
 fetched_config_setting = await client.get_configuration_setting(
     key="MyKey"
 )
-print("Fetched configuration setting:")
-print_configuration_setting(fetched_config_setting)
-print("")
 ```
 <!-- END SNIPPET -->
 
@@ -259,7 +257,6 @@ To use list_configuration_settings, call it synchronously and iterate over the r
 
 <!-- SNIPPET:hello_world_advanced_sample_async.list_config_setting -->
 ```python
-print("List configuration settings")
 config_settings = client.list_configuration_settings(label_filter="MyLabel")
 async for item in config_settings:
     print_configuration_setting(item)
