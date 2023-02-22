@@ -218,7 +218,8 @@ class DataOperations(_ScopeDependentOperations):
             log_and_raise_error(ex)
 
     # @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, data: Data) -> Data:
+    def create_or_update(self, data: Union[Data,
+                                           WorkspaceAssetReference]) -> Data:
         """Returns created or updated data asset.
 
         If not already in storage, asset will be uploaded to the workspace's blob storage.
