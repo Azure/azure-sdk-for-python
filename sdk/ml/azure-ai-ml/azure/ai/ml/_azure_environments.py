@@ -15,7 +15,6 @@ from azure.core.rest import HttpRequest
 from azure.mgmt.core import ARMPipelineClient
 
 
-
 module_logger = logging.getLogger(__name__)
 
 
@@ -63,10 +62,11 @@ _environments = {
 
 _requests_pipeline = None
 
+
 def _get_cloud(cloud: str):
     if cloud in _environments:
         return _environments[cloud]
-    arm_url = os.environ.get(ArmConstants.METADATA_URL_ENV_NAME,ArmConstants.DEFAULT_URL)
+    arm_url = os.environ.get(ArmConstants.METADATA_URL_ENV_NAME, ArmConstants.DEFAULT_URL)
     arm_clouds = _get_clouds_by_metadata_url(arm_url)
     try:
         new_cloud = arm_clouds[cloud]
@@ -74,6 +74,7 @@ def _get_cloud(cloud: str):
         return new_cloud
     except KeyError:
         raise Exception('Unknown cloud environment "{0}".'.format(cloud))
+
 
 def _get_default_cloud_name():
     """Return AzureCloud as the default cloud."""
@@ -209,52 +210,55 @@ def _resource_to_scopes(resource):
     scope = resource + "/.default"
     return [scope]
 
+
 def _get_registry_discovery_url(cloud, cloud_suffix=""):
     """Get or generate the registry discovery url
 
-        :param cloud: configuration of the cloud to get the registry_discovery_url from
-        :param cloud_suffix: the suffix to use for the cloud, in the case that the registry_discovery_url
-            must be generated
-        :return: string of discovery url
+    :param cloud: configuration of the cloud to get the registry_discovery_url from
+    :param cloud_suffix: the suffix to use for the cloud, in the case that the registry_discovery_url
+        must be generated
+    :return: string of discovery url
     """
     cloud_name = cloud["name"]
     if cloud_name in _environments:
         return _environments[cloud_name].registry_url
 
     registry_discovery_region = os.environ.get(
-        ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
-        ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
+        ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME, ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
     )
     registry_discovery_region_default = "https://{}{}.api.azureml.{}/".format(
-        cloud_name.lower(),
-        registry_discovery_region,
-        cloud_suffix
+        cloud_name.lower(), registry_discovery_region, cloud_suffix
     )
     return os.environ.get(ArmConstants.REGISTRY_ENV_URL, registry_discovery_region_default)
+
 
 def _get_clouds_by_metadata_url(metadata_url):
     """Get all the clouds by the specified metadata url
 
-        :return: list of the clouds
+    :return: list of the clouds
     """
     try:
-        module_logger.debug('Start : Loading cloud metadata from the url specified by %s', metadata_url)
+        module_logger.debug("Start : Loading cloud metadata from the url specified by %s", metadata_url)
         client = ARMPipelineClient(base_url=metadata_url, policies=[])
         HttpRequest("GET", metadata_url)
         with client.send_request(HttpRequest("GET", metadata_url)) as meta_response:
             arm_cloud_dict = meta_response.json()
             cli_cloud_dict = _convert_arm_to_cli(arm_cloud_dict)
-            module_logger.debug('Finish : Loading cloud metadata from the url specified by %s', metadata_url)
+            module_logger.debug("Finish : Loading cloud metadata from the url specified by %s", metadata_url)
             return cli_cloud_dict
     except Exception as ex:  # pylint: disable=broad-except
-        module_logger.warning("Error: Azure ML was unable to load cloud metadata from the url specified by %s. %s. "
-                        "This may be due to a misconfiguration of networking controls. Azure Machine Learning Python "
-                        "SDK requires outbound access to Azure Resource Manager. Please contact your networking team "
-                        "to configure outbound access to Azure Resource Manager on both Network Security Group and "
-                        "Firewall. For more details on required configurations, see "
-                        "https://docs.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall.",
-                        metadata_url, ex)
+        module_logger.warning(
+            "Error: Azure ML was unable to load cloud metadata from the url specified by %s. %s. "
+            "This may be due to a misconfiguration of networking controls. Azure Machine Learning Python "
+            "SDK requires outbound access to Azure Resource Manager. Please contact your networking team "
+            "to configure outbound access to Azure Resource Manager on both Network Security Group and "
+            "Firewall. For more details on required configurations, see "
+            "https://docs.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall.",
+            metadata_url,
+            ex,
+        )
         return {}
+
 
 def _convert_arm_to_cli(arm_cloud_metadata):
     cli_cloud_metadata_dict = {}
@@ -265,7 +269,7 @@ def _convert_arm_to_cli(arm_cloud_metadata):
         try:
             cloud_name = cloud["name"]
             portal_endpoint = cloud["portal"]
-            cloud_suffix = ".".join(portal_endpoint.split('.')[2:]).replace("/", "")
+            cloud_suffix = ".".join(portal_endpoint.split(".")[2:]).replace("/", "")
             registry_discovery_url = _get_registry_discovery_url(cloud, cloud_suffix)
             cli_cloud_metadata_dict[cloud_name] = {
                 EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud["portal"],
@@ -273,7 +277,7 @@ def _convert_arm_to_cli(arm_cloud_metadata):
                 EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud["authentication"]["loginEndpoint"],
                 EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.{}".format(cloud_suffix),
                 EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"],
-                EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: registry_discovery_url
+                EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: registry_discovery_url,
             }
         except KeyError as ex:
             module_logger.warning("Property on cloud not found in arm cloud metadata: %s", ex)

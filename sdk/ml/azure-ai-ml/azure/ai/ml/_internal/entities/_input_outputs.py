@@ -4,6 +4,10 @@
 from typing import Dict, Optional, Union
 
 from azure.ai.ml import Input, Output
+from azure.ai.ml._internal._schema.input_output import SUPPORTED_INTERNAL_PARAM_TYPES
+from azure.ai.ml._utils.utils import get_all_enum_values_iter
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants._common import InputTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 
 _INPUT_TYPE_ENUM = "enum"
@@ -123,3 +127,22 @@ class InternalOutput(Output):
             _output.__class__ = InternalOutput
             return _output
         return InternalOutput(**_output)
+
+    def map_pipeline_output_type(self):
+        """Map output type to pipeline output type."""
+
+        def _map_primitive_type(_type):
+            """Convert double and float to number type."""
+            _type = _type.lower()
+            if _type in ["double", "float"]:
+                return InputTypes.NUMBER
+            return _type
+
+        if self.type in list(get_all_enum_values_iter(AssetTypes)):
+            return self.type
+        if self.type in SUPPORTED_INTERNAL_PARAM_TYPES:
+            return _map_primitive_type(self.type)
+        if self.type in ["AnyFile"]:
+            return AssetTypes.URI_FILE
+        # Handle AnyDirectory and the other types.
+        return AssetTypes.URI_FOLDER

@@ -35,7 +35,6 @@ def main():
         extension_name="CustomScriptExtension",
         extension_parameters={
             "properties": {
-                "enableAutomaticUpgrade": True,
                 "publisher": "Microsoft.Compute",
                 "settings": {"commandToExecute": 'powershell.exe -c "Get-Process | Where-Object { $_.CPU -lt 100 }"'},
                 "type": "CustomScriptExtension",
@@ -46,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2022-08-11-preview/examples/UpdateExtension.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2022-03-10/examples/UpdateExtension.json
 if __name__ == "__main__":
     main()

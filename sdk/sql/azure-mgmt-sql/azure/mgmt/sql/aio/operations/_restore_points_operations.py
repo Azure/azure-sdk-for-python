@@ -320,7 +320,7 @@ class RestorePointsOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The definition for creating the restore point of this database. Is either a
-         model type or a IO type. Required.
+         CreateDatabaseRestorePointDefinition type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.CreateDatabaseRestorePointDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

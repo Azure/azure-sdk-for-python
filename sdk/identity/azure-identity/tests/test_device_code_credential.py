@@ -203,7 +203,7 @@ def test_device_code_credential():
 
     callback = Mock()
     credential = DeviceCodeCredential(
-        client_id=client_id, prompt_callback=callback, transport=transport, instance_discovery=False,
+        client_id=client_id, prompt_callback=callback, transport=transport, disable_instance_discovery=True,
     )
 
     now = datetime.datetime.utcnow()
@@ -259,7 +259,7 @@ def test_tenant_id():
 
     callback = Mock()
     credential = DeviceCodeCredential(
-        client_id=client_id, prompt_callback=callback, transport=transport, instance_discovery=False, additionally_allowed_tenants=['*']
+        client_id=client_id, prompt_callback=callback, transport=transport, disable_instance_discovery=True, additionally_allowed_tenants=['*']
     )
 
     now = datetime.datetime.utcnow()
@@ -274,7 +274,7 @@ def test_timeout():
         msal_app.initiate_device_flow.return_value = flow
         msal_app.acquire_token_by_device_flow.return_value = {"error": "authorization_pending"}
 
-        credential = DeviceCodeCredential(client_id="_", timeout=1, instance_discovery=False)
+        credential = DeviceCodeCredential(client_id="_", timeout=1, disable_instance_discovery=True)
         with pytest.raises(ClientAuthenticationError) as ex:
             credential.get_token("scope")
         assert "timed out" in ex.value.message.lower()

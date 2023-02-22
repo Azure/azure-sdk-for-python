@@ -228,8 +228,8 @@ class CloudServicesUpdateDomainOperations:
          domains are identified with a zero-based index: the first update domain has an ID of 0, the
          second has an ID of 1, and so on. Required.
         :type update_domain: int
-        :param parameters: The update domain object. Is either a model type or a IO type. Default value
-         is None.
+        :param parameters: The update domain object. Is either a UpdateDomain type or a IO type.
+         Default value is None.
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.UpdateDomain or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

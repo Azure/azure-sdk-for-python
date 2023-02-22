@@ -248,7 +248,7 @@ class GalleryApplicationsOperations:
          allowed in the middle. The maximum length is 80 characters. Required.
         :type gallery_application_name: str
         :param gallery_application: Parameters supplied to the create or update gallery Application
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a GalleryApplication type or a IO type. Required.
         :type gallery_application: ~azure.mgmt.compute.v2021_07_01.models.GalleryApplication or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -491,7 +491,7 @@ class GalleryApplicationsOperations:
          middle. The maximum length is 80 characters. Required.
         :type gallery_application_name: str
         :param gallery_application: Parameters supplied to the update gallery Application operation. Is
-         either a model type or a IO type. Required.
+         either a GalleryApplicationUpdate type or a IO type. Required.
         :type gallery_application: ~azure.mgmt.compute.v2021_07_01.models.GalleryApplicationUpdate or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

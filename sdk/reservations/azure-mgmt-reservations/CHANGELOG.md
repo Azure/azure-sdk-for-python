@@ -1,5 +1,33 @@
 # Release History
 
+## 2.2.0 (2023-02-15)
+
+### Features Added
+
+  - Model CalculateExchangeRequestProperties has a new parameter savings_plans_to_purchase
+  - Model CalculateExchangeResponseProperties has a new parameter savings_plans_to_purchase
+  - Model ExchangeResponseProperties has a new parameter savings_plans_to_purchase
+  - Model Patch has a new parameter applied_scope_properties
+  - Model Patch has a new parameter review_date_time
+  - Model PurchaseRequest has a new parameter applied_scope_properties
+  - Model PurchaseRequest has a new parameter review_date_time
+  - Model ReservationOrderResponse has a new parameter expiry_date_time
+  - Model ReservationOrderResponse has a new parameter review_date_time
+  - Model ReservationSummary has a new parameter no_benefit_count
+  - Model ReservationSummary has a new parameter warning_count
+  - Model ReservationsProperties has a new parameter applied_scope_properties
+  - Model ReservationsProperties has a new parameter expiry_date_time
+  - Model ReservationsProperties has a new parameter purchase_date_time
+  - Model ReservationsProperties has a new parameter review_date_time
+  - Model ReservationsProperties has a new parameter swap_properties
+  - Operation AzureReservationAPIOperationsMixin.get_catalog has a new optional parameter filter
+  - Operation AzureReservationAPIOperationsMixin.get_catalog has a new optional parameter skip
+  - Operation AzureReservationAPIOperationsMixin.get_catalog has a new optional parameter take
+
+### Breaking Changes
+
+  - Renamed operation ReturnOperations.post to ReturnOperations.begin_post
+
 ## 2.2.0b1 (2022-12-27)
 
 ### Features Added

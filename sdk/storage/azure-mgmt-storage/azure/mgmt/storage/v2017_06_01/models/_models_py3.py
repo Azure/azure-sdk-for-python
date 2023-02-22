@@ -9,7 +9,7 @@
 
 import datetime
 import sys
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -84,8 +84,8 @@ class AccountSasParameters(_serialization.Model):
         protocols: Optional[Union[str, "_models.HttpProtocol"]] = None,
         shared_access_start_time: Optional[datetime.datetime] = None,
         key_to_sign: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword services: The signed services accessible with the account SAS. Possible values
          include: Blob (b), Queue (q), Table (t), File (f). Required. Known values are: "b", "q", "t",
@@ -154,7 +154,7 @@ class CheckNameAvailabilityResult(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_available = None
@@ -184,7 +184,7 @@ class CustomDomain(_serialization.Model):
         "use_sub_domain_name": {"key": "useSubDomainName", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs):
+    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the custom domain name assigned to the storage account. Name is the
          CNAME source. Required.
@@ -212,7 +212,7 @@ class Dimension(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Display name of dimension.
         :paramtype name: str
@@ -255,8 +255,8 @@ class Encryption(_serialization.Model):
         key_source: Union[str, "_models.KeySource"] = "Microsoft.Storage",
         services: Optional["_models.EncryptionServices"] = None,
         key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword services: List of services which support encryption.
         :paramtype services: ~azure.mgmt.storage.v2017_06_01.models.EncryptionServices
@@ -296,7 +296,7 @@ class EncryptionService(_serialization.Model):
         "last_enabled_time": {"key": "lastEnabledTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: A boolean indicating whether or not the service encrypts the data as it is
          stored.
@@ -339,8 +339,8 @@ class EncryptionServices(_serialization.Model):
         *,
         blob: Optional["_models.EncryptionService"] = None,
         file: Optional["_models.EncryptionService"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob: The encryption function of the blob storage service.
         :paramtype blob: ~azure.mgmt.storage.v2017_06_01.models.EncryptionService
@@ -383,7 +383,7 @@ class Endpoints(_serialization.Model):
         "file": {"key": "file", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.blob = None
@@ -421,7 +421,7 @@ class Identity(_serialization.Model):
 
     type = "SystemAssigned"
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -449,7 +449,7 @@ class IPRule(_serialization.Model):
         "action": {"key": "action", "type": "str"},
     }
 
-    def __init__(self, *, ip_address_or_range: str, action: Optional[Literal["Allow"]] = None, **kwargs):
+    def __init__(self, *, ip_address_or_range: str, action: Optional[Literal["Allow"]] = None, **kwargs: Any) -> None:
         """
         :keyword ip_address_or_range: Specifies the IP or IP range in CIDR format. Only IPV4 address is
          allowed. Required.
@@ -485,8 +485,8 @@ class KeyVaultProperties(_serialization.Model):
         key_name: Optional[str] = None,
         key_version: Optional[str] = None,
         key_vault_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: The name of KeyVault key.
         :paramtype key_name: str
@@ -518,7 +518,7 @@ class ListAccountSasResponse(_serialization.Model):
         "account_sas_token": {"key": "accountSasToken", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.account_sas_token = None
@@ -541,7 +541,7 @@ class ListServiceSasResponse(_serialization.Model):
         "service_sas_token": {"key": "serviceSasToken", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.service_sas_token = None
@@ -594,8 +594,8 @@ class MetricSpecification(_serialization.Model):
         fill_gap_with_zero: Optional[bool] = None,
         category: Optional[str] = None,
         resource_id_dimension_name_override: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of metric specification.
         :paramtype name: str
@@ -665,8 +665,8 @@ class NetworkRuleSet(_serialization.Model):
         bypass: Union[str, "_models.Bypass"] = "AzureServices",
         virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
         ip_rules: Optional[List["_models.IPRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices.
          Possible values are any combination of Logging|Metrics|AzureServices (For example, "Logging,
@@ -716,8 +716,8 @@ class Operation(_serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         service_specification: Optional["_models.ServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -758,8 +758,8 @@ class OperationDisplay(_serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft Storage.
         :paramtype provider: str
@@ -775,7 +775,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Storage operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Storage operations. It contains a list of operations and a URL
+    link to get the next set of results.
 
     :ivar value: List of Storage operations supported by the Storage resource provider.
     :vartype value: list[~azure.mgmt.storage.v2017_06_01.models.Operation]
@@ -785,7 +786,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Storage operations supported by the Storage resource provider.
         :paramtype value: list[~azure.mgmt.storage.v2017_06_01.models.Operation]
@@ -826,7 +827,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -870,7 +871,7 @@ class Restriction(_serialization.Model):
         "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
-    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs):
+    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs: Any) -> None:
         """
         :keyword reason_code: The reason for the restriction. As of now this can be "QuotaId" or
          "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
@@ -982,8 +983,8 @@ class ServiceSasParameters(_serialization.Model):  # pylint: disable=too-many-in
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword canonicalized_resource: The canonical path to the signed resource. Required.
         :paramtype canonicalized_resource: str
@@ -1063,7 +1064,9 @@ class ServiceSpecification(_serialization.Model):
         "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
-    def __init__(self, *, metric_specifications: Optional[List["_models.MetricSpecification"]] = None, **kwargs):
+    def __init__(
+        self, *, metric_specifications: Optional[List["_models.MetricSpecification"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword metric_specifications: Metric specifications of operation.
         :paramtype metric_specifications:
@@ -1127,8 +1130,8 @@ class Sku(_serialization.Model):
         *,
         name: Union[str, "_models.SkuName"],
         restrictions: Optional[List["_models.Restriction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gets or sets the sku name. Required for account creation; optional for update.
          Note that in older versions, sku name was called accountType. Required. Known values are:
@@ -1149,7 +1152,8 @@ class Sku(_serialization.Model):
 
 
 class SKUCapability(_serialization.Model):
-    """The capability information in the specified sku, including file encryption, network acls, change notification, etc.
+    """The capability information in the specified sku, including file encryption, network acls,
+    change notification, etc.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1170,7 +1174,7 @@ class SKUCapability(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -1296,8 +1300,8 @@ class StorageAccount(Resource):  # pylint: disable=too-many-instance-attributes
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.Identity"] = None,
         enable_https_traffic_only: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1356,7 +1360,7 @@ class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
 
     type = "Microsoft.Storage/storageAccounts"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: The storage account name. Required.
         :paramtype name: str
@@ -1435,8 +1439,8 @@ class StorageAccountCreateParameters(_serialization.Model):
         network_rule_set: Optional["_models.NetworkRuleSet"] = None,
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
         enable_https_traffic_only: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Required. Gets or sets the sku name. Required.
         :paramtype sku: ~azure.mgmt.storage.v2017_06_01.models.Sku
@@ -1510,7 +1514,7 @@ class StorageAccountKey(_serialization.Model):
         "permissions": {"key": "permissions", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.key_name = None
@@ -1536,7 +1540,7 @@ class StorageAccountListKeysResult(_serialization.Model):
         "keys": {"key": "keys", "type": "[StorageAccountKey]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.keys = None
@@ -1559,7 +1563,7 @@ class StorageAccountListResult(_serialization.Model):
         "value": {"key": "value", "type": "[StorageAccount]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1583,7 +1587,7 @@ class StorageAccountRegenerateKeyParameters(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: str, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
         :keyword key_name: The name of storage keys that want to be regenerated, possible values are
          key1, key2. Required.
@@ -1644,8 +1648,8 @@ class StorageAccountUpdateParameters(_serialization.Model):
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
         enable_https_traffic_only: bool = False,
         network_rule_set: Optional["_models.NetworkRuleSet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to
          Standard_ZRS or Premium_LRS, nor can accounts of those sku names be updated to any other value.
@@ -1701,7 +1705,7 @@ class StorageSkuListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Sku]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1737,7 +1741,7 @@ class Usage(_serialization.Model):
         "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.unit = None
@@ -1757,7 +1761,7 @@ class UsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Gets or sets the list of Storage Resource Usages.
         :paramtype value: list[~azure.mgmt.storage.v2017_06_01.models.Usage]
@@ -1787,7 +1791,7 @@ class UsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1826,8 +1830,8 @@ class VirtualNetworkRule(_serialization.Model):
         virtual_network_resource_id: str,
         action: Optional[Literal["Allow"]] = None,
         state: Optional[Union[str, "_models.State"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
          /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.

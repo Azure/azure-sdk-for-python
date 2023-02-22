@@ -16,7 +16,7 @@ class PricingTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     advanced security capabilities, while the free tier offers basic security features.
     """
 
-    #: Get free Microsoft Defender for Cloud experience with basic security features
     FREE = "Free"
-    #: Get the standard Microsoft Defender for Cloud experience with advanced security features
+    """Get free Microsoft Defender for Cloud experience with basic security features"""
     STANDARD = "Standard"
+    """Get the standard Microsoft Defender for Cloud experience with advanced security features"""

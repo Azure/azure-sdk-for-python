@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -50,7 +50,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -157,8 +157,8 @@ class ContainerService(Resource):  # pylint: disable=too-many-instance-attribute
         windows_profile: Optional["_models.ContainerServiceWindowsProfile"] = None,
         linux_profile: Optional["_models.ContainerServiceLinuxProfile"] = None,
         diagnostics_profile: Optional["_models.ContainerServiceDiagnosticsProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -312,8 +312,8 @@ class ContainerServiceAgentPoolProfile(_serialization.Model):
         storage_profile: Optional[Union[str, "_models.ContainerServiceStorageProfileTypes"]] = None,
         vnet_subnet_id: Optional[str] = None,
         os_type: Union[str, "_models.OSType"] = "Linux",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Unique name of the agent pool profile in the context of the subscription and
          resource group. Required.
@@ -411,7 +411,7 @@ class ContainerServiceCustomProfile(_serialization.Model):
         "orchestrator": {"key": "orchestrator", "type": "str"},
     }
 
-    def __init__(self, *, orchestrator: str, **kwargs):
+    def __init__(self, *, orchestrator: str, **kwargs: Any) -> None:
         """
         :keyword orchestrator: The name of the custom orchestrator to use. Required.
         :paramtype orchestrator: str
@@ -438,7 +438,7 @@ class ContainerServiceDiagnosticsProfile(_serialization.Model):
         "vm_diagnostics": {"key": "vmDiagnostics", "type": "ContainerServiceVMDiagnostics"},
     }
 
-    def __init__(self, *, vm_diagnostics: "_models.ContainerServiceVMDiagnostics", **kwargs):
+    def __init__(self, *, vm_diagnostics: "_models.ContainerServiceVMDiagnostics", **kwargs: Any) -> None:
         """
         :keyword vm_diagnostics: Profile for diagnostics on the container service VMs. Required.
         :paramtype vm_diagnostics:
@@ -469,7 +469,7 @@ class ContainerServiceLinuxProfile(_serialization.Model):
         "ssh": {"key": "ssh", "type": "ContainerServiceSshConfiguration"},
     }
 
-    def __init__(self, *, admin_username: str, ssh: "_models.ContainerServiceSshConfiguration", **kwargs):
+    def __init__(self, *, admin_username: str, ssh: "_models.ContainerServiceSshConfiguration", **kwargs: Any) -> None:
         """
         :keyword admin_username: The administrator username to use for Linux VMs. Required.
         :paramtype admin_username: str
@@ -502,7 +502,7 @@ class ContainerServiceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ContainerService"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ContainerService"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of container services.
         :paramtype value: list[~azure.mgmt.containerservice.v2017_07_01.models.ContainerService]
@@ -610,8 +610,8 @@ class ContainerServiceMasterProfile(_serialization.Model):
         vnet_subnet_id: Optional[str] = None,
         first_consecutive_static_ip: str = "10.240.255.5",
         storage_profile: Optional[Union[str, "_models.ContainerServiceStorageProfileTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count: Number of masters (VMs) in the container service cluster. Allowed values are 1,
          3, and 5. The default value is 1. Known values are: 1, 3, and 5.
@@ -713,8 +713,8 @@ class ContainerServiceOrchestratorProfile(_serialization.Model):
         *,
         orchestrator_type: Union[str, "_models.ContainerServiceOrchestratorTypes"],
         orchestrator_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword orchestrator_type: The orchestrator to use to manage container service cluster
          resources. Valid values are Kubernetes, Swarm, DCOS, DockerCE and Custom. Required. Known
@@ -731,7 +731,8 @@ class ContainerServiceOrchestratorProfile(_serialization.Model):
 
 
 class ContainerServicePrincipalProfile(_serialization.Model):
-    """Information about a service principal identity for the cluster to use for manipulating Azure APIs. Either secret or keyVaultSecretRef must be specified.
+    """Information about a service principal identity for the cluster to use for manipulating Azure
+    APIs. Either secret or keyVaultSecretRef must be specified.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -760,8 +761,8 @@ class ContainerServicePrincipalProfile(_serialization.Model):
         client_id: str,
         secret: Optional[str] = None,
         key_vault_secret_ref: Optional["_models.KeyVaultSecretRef"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword client_id: The ID for the service principal. Required.
         :paramtype client_id: str
@@ -796,7 +797,7 @@ class ContainerServiceSshConfiguration(_serialization.Model):
         "public_keys": {"key": "publicKeys", "type": "[ContainerServiceSshPublicKey]"},
     }
 
-    def __init__(self, *, public_keys: List["_models.ContainerServiceSshPublicKey"], **kwargs):
+    def __init__(self, *, public_keys: List["_models.ContainerServiceSshPublicKey"], **kwargs: Any) -> None:
         """
         :keyword public_keys: The list of SSH public keys used to authenticate with Linux-based VMs.
          Only expect one key specified. Required.
@@ -825,7 +826,7 @@ class ContainerServiceSshPublicKey(_serialization.Model):
         "key_data": {"key": "keyData", "type": "str"},
     }
 
-    def __init__(self, *, key_data: str, **kwargs):
+    def __init__(self, *, key_data: str, **kwargs: Any) -> None:
         """
         :keyword key_data: Certificate public key used to authenticate with VMs through SSH. The
          certificate must be in PEM format with or without headers. Required.
@@ -858,7 +859,7 @@ class ContainerServiceVMDiagnostics(_serialization.Model):
         "storage_uri": {"key": "storageUri", "type": "str"},
     }
 
-    def __init__(self, *, enabled: bool, **kwargs):
+    def __init__(self, *, enabled: bool, **kwargs: Any) -> None:
         """
         :keyword enabled: Whether the VM diagnostic agent is provisioned on the VM. Required.
         :paramtype enabled: bool
@@ -892,7 +893,7 @@ class ContainerServiceWindowsProfile(_serialization.Model):
         "admin_password": {"key": "adminPassword", "type": "str"},
     }
 
-    def __init__(self, *, admin_username: str, admin_password: str, **kwargs):
+    def __init__(self, *, admin_username: str, admin_password: str, **kwargs: Any) -> None:
         """
         :keyword admin_username: The administrator username to use for Windows VMs. Required.
         :paramtype admin_username: str
@@ -928,7 +929,7 @@ class KeyVaultSecretRef(_serialization.Model):
         "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(self, *, vault_id: str, secret_name: str, version: Optional[str] = None, **kwargs):
+    def __init__(self, *, vault_id: str, secret_name: str, version: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword vault_id: Key vault identifier. Required.
         :paramtype vault_id: str
@@ -972,8 +973,8 @@ class OrchestratorProfile(_serialization.Model):
         orchestrator_version: str,
         orchestrator_type: Optional[str] = None,
         is_preview: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword orchestrator_type: Orchestrator type.
         :paramtype orchestrator_type: str
@@ -1026,8 +1027,8 @@ class OrchestratorVersionProfile(_serialization.Model):
         default: Optional[bool] = None,
         is_preview: Optional[bool] = None,
         upgrades: Optional[List["_models.OrchestratorProfile"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword orchestrator_type: Orchestrator type. Required.
         :paramtype orchestrator_type: str
@@ -1080,7 +1081,7 @@ class OrchestratorVersionProfileListResult(_serialization.Model):
         "orchestrators": {"key": "properties.orchestrators", "type": "[OrchestratorVersionProfile]"},
     }
 
-    def __init__(self, *, orchestrators: List["_models.OrchestratorVersionProfile"], **kwargs):
+    def __init__(self, *, orchestrators: List["_models.OrchestratorVersionProfile"], **kwargs: Any) -> None:
         """
         :keyword orchestrators: List of orchestrator version profiles. Required.
         :paramtype orchestrators:

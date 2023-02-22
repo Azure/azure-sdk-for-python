@@ -432,7 +432,7 @@ class OutboundFirewallRulesOperations:
         :type server_name: str
         :param outbound_rule_fqdn: Required.
         :type outbound_rule_fqdn: str
-        :param parameters: Is either a model type or a IO type. Required.
+        :param parameters: Is either a OutboundFirewallRule type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.OutboundFirewallRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

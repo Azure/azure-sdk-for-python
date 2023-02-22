@@ -518,7 +518,7 @@ class ServerKeysOperations:
          https://YourVaultName.vault.azure.net/keys/YourKeyName/YourKeyVersion, then the server key name
          should be formatted as: YourVaultName_YourKeyName_YourKeyVersion. Required.
         :type key_name: str
-        :param parameters: The requested server key resource state. Is either a model type or a IO
+        :param parameters: The requested server key resource state. Is either a ServerKey type or a IO
          type. Required.
         :type parameters: ~azure.mgmt.sql.models.ServerKey or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

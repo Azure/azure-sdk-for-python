@@ -22,6 +22,7 @@ class NodeType(object):
     PIPELINE = "pipeline"
     IMPORT = "import"
     SPARK = "spark"
+    DATA_TRANSFER = "data_transfer"
     # Note: container is not a real component type,
     # only used to mark component from container data.
     _CONTAINER = "_container"
@@ -31,6 +32,33 @@ class ControlFlowType(object):
     DO_WHILE = "do_while"
     IF_ELSE = "if_else"
     PARALLEL_FOR = "parallel_for"
+
+
+CONTROL_FLOW_TYPES = [getattr(ControlFlowType, k) for k in dir(ControlFlowType) if k.isupper()]
+
+
+class DataTransferTaskType(object):
+    COPY_DATA = "copy_data"
+    IMPORT_DATA = "import_data"
+    EXPORT_DATA = "export_data"
+
+
+class DataCopyMode(object):
+    MERGE_WITH_OVERWRITE = "merge_with_overwrite"
+    FAIL_IF_CONFLICT = "fail_if_conflict"
+
+
+class ExternalDataType(object):
+    FILE_SYSTEM = "file_system"
+    DATABASE = "database"
+
+
+class DataTransferBuiltinComponentUri(object):
+    # todo: need update
+    IMPORT_DATABASE = "azureml://registries/import_database"
+    IMPORT_FILE_SYSTEM = "azureml://registries/import_file_system"
+    EXPORT_DATABASE = "azureml://registries/export_database"
+    EXPORT_FILE_SYSTEM = "azureml://registries/export_file_system"
 
 
 class ComponentSource:
@@ -44,6 +72,7 @@ class ComponentSource:
     REMOTE_REGISTRY = "REMOTE.REGISTRY"
     YAML_JOB = "YAML.JOB"
     YAML_COMPONENT = "YAML.COMPONENT"
+    BUILTIN = "BUILTIN"
 
 
 class ParallelTaskType:

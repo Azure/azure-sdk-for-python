@@ -10,15 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentConfigurationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of configuration mode to use. Modes are pre-defined configurations of security controls,
-    extension allowlists and guest configuration, maintained by Microsoft.
-    """
-
-    FULL = "full"
-    MONITOR = "monitor"
-
-
 class AssessmentModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the assessment mode."""
 
@@ -55,12 +46,12 @@ class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     endpoints. Defaults to disabled (access to Azure Arc services only via private link).
     """
 
-    #: Allows Azure Arc agents to communicate with Azure Arc services over both public (internet) and
-    #: private endpoints.
     ENABLED = "Enabled"
-    #: Does not allow Azure Arc agents to communicate with Azure Arc services over public (internet)
-    #: endpoints. The agents must use the private link.
+    """Allows Azure Arc agents to communicate with Azure Arc services over both public (internet) and
+    #: private endpoints."""
     DISABLED = "Disabled"
+    """Does not allow Azure Arc agents to communicate with Azure Arc services over public (internet)
+    #: endpoints. The agents must use the private link."""
 
 
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

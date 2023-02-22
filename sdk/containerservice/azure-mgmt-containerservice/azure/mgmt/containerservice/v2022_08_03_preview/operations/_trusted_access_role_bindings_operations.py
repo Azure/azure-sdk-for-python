@@ -505,8 +505,8 @@ class TrustedAccessRoleBindingsOperations:
         :type resource_name: str
         :param trusted_access_role_binding_name: The name of trusted access role binding. Required.
         :type trusted_access_role_binding_name: str
-        :param trusted_access_role_binding: A trusted access role binding. Is either a model type or a
-         IO type. Required.
+        :param trusted_access_role_binding: A trusted access role binding. Is either a
+         TrustedAccessRoleBinding type or a IO type. Required.
         :type trusted_access_role_binding:
          ~azure.mgmt.containerservice.v2022_08_03_preview.models.TrustedAccessRoleBinding or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

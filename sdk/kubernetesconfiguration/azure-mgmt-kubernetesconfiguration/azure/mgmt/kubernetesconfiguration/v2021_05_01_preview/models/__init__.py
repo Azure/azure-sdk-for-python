@@ -35,61 +35,63 @@ from ._models_py3 import SourceControlConfigurationList
 from ._models_py3 import SupportedScopes
 from ._models_py3 import SystemData
 
-
-from ._source_control_configuration_client_enums import (
-    ClusterTypes,
-    ComplianceStateType,
-    CreatedByType,
-    Enum0,
-    Enum1,
-    Enum5,
-    LevelType,
-    MessageLevelType,
-    OperatorScopeType,
-    OperatorType,
-    ProvisioningState,
-    ProvisioningStateType,
-)
+from ._source_control_configuration_client_enums import ClusterTypes
+from ._source_control_configuration_client_enums import ComplianceStateType
+from ._source_control_configuration_client_enums import CreatedByType
+from ._source_control_configuration_client_enums import Enum0
+from ._source_control_configuration_client_enums import Enum1
+from ._source_control_configuration_client_enums import Enum5
+from ._source_control_configuration_client_enums import LevelType
+from ._source_control_configuration_client_enums import MessageLevelType
+from ._source_control_configuration_client_enums import OperatorScopeType
+from ._source_control_configuration_client_enums import OperatorType
+from ._source_control_configuration_client_enums import ProvisioningState
+from ._source_control_configuration_client_enums import ProvisioningStateType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ClusterScopeSettings',
-    'ComplianceStatus',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'Extension',
-    'ExtensionStatus',
-    'ExtensionType',
-    'ExtensionTypeList',
-    'ExtensionVersionList',
-    'ExtensionVersionListVersionsItem',
-    'ExtensionsList',
-    'HelmOperatorProperties',
-    'Identity',
-    'OperationStatusList',
-    'OperationStatusResult',
-    'ProxyResource',
-    'Resource',
-    'ResourceProviderOperation',
-    'ResourceProviderOperationDisplay',
-    'ResourceProviderOperationList',
-    'Scope',
-    'ScopeCluster',
-    'ScopeNamespace',
-    'SourceControlConfiguration',
-    'SourceControlConfigurationList',
-    'SupportedScopes',
-    'SystemData',
-    'ClusterTypes',
-    'ComplianceStateType',
-    'CreatedByType',
-    'Enum0',
-    'Enum1',
-    'Enum5',
-    'LevelType',
-    'MessageLevelType',
-    'OperatorScopeType',
-    'OperatorType',
-    'ProvisioningState',
-    'ProvisioningStateType',
+    "ClusterScopeSettings",
+    "ComplianceStatus",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "Extension",
+    "ExtensionStatus",
+    "ExtensionType",
+    "ExtensionTypeList",
+    "ExtensionVersionList",
+    "ExtensionVersionListVersionsItem",
+    "ExtensionsList",
+    "HelmOperatorProperties",
+    "Identity",
+    "OperationStatusList",
+    "OperationStatusResult",
+    "ProxyResource",
+    "Resource",
+    "ResourceProviderOperation",
+    "ResourceProviderOperationDisplay",
+    "ResourceProviderOperationList",
+    "Scope",
+    "ScopeCluster",
+    "ScopeNamespace",
+    "SourceControlConfiguration",
+    "SourceControlConfigurationList",
+    "SupportedScopes",
+    "SystemData",
+    "ClusterTypes",
+    "ComplianceStateType",
+    "CreatedByType",
+    "Enum0",
+    "Enum1",
+    "Enum5",
+    "LevelType",
+    "MessageLevelType",
+    "OperatorScopeType",
+    "OperatorType",
+    "ProvisioningState",
+    "ProvisioningStateType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
