@@ -34,10 +34,11 @@ def del_outdated_samples(readme: str):
         content = file_in.readlines()
     pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
     is_multiapi = "multiapi: true" in ("".join(content))
+    special_service = ["azure-mgmt-resource/"]
     for line in content:
         if all(p in line for p in pattern):
-            sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
             # remove generated_samples
+            sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
             sample_folder = Path(f"sdk/{sdk_folder}/generated_samples") 
             if sample_folder.exists():
                 shutil.rmtree(sample_folder)
@@ -45,9 +46,15 @@ def del_outdated_samples(readme: str):
             else:
                 _LOGGER.info(f"sample folder does not exist: {sample_folder}")
             # remove old generated SDK code
-            code_folder = Path("sdk") / sdk_folder
+            sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+/[a-z]+/[a-z]+/[a-z]+", line)[0]
+            code_folder = Path(f"sdk/{sdk_folder}") 
             if is_multiapi and code_folder.exists():
-                shutil.rmtree(code_folder)
+                if any(item in str(sdk_folder) for item in special_service):
+                    for folder in code_folder.iterdir():
+                        if folder.is_dir():
+                            shutil.rmtree(folder)
+                else:
+                    shutil.rmtree(code_folder)
                 _LOGGER.info(f"remove code folder: {code_folder}")
             else:
                 _LOGGER.info(f"code folder does not exist or it is not multiapi: {code_folder}")
