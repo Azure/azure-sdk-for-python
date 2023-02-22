@@ -19,7 +19,6 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._component import (
     ExternalDataType,
     DataTransferBuiltinComponentUri,
-    ComponentSource,
     DataTransferTaskType,
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -105,9 +104,8 @@ class DataTransferJob(Job, JobIOMixin):
 
     @classmethod
     def _build_source_sink(cls, io_dict: Union[Dict, Database, FileSystem]):
-        if not io_dict:
+        if io_dict is None:
             return io_dict
-        io_dict = io_dict or {}
         if isinstance(io_dict, (Database, FileSystem)):
             component_io = io_dict
         else:

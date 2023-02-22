@@ -206,7 +206,6 @@ def import_data(
     compute: Optional[str] = None,
     source: Optional[Union[Dict, Database, FileSystem]] = None,
     outputs: Optional[Dict] = None,
-    is_deterministic: bool = True,
     task: Optional[str] = DataTransferTaskType.IMPORT_DATA,
     **kwargs,
 ) -> DataTransferImport:
@@ -229,12 +228,6 @@ def import_data(
     :param outputs: Mapping of outputs data bindings used in the job, default will be an output port with key "sink"
     and type "mltable".
     :type outputs: dict
-    :param is_deterministic: Specify whether the command will return same output given same input.
-        If a command (component) is deterministic, when use it as a node/step in a pipeline,
-        it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
-        In this case, this step will not use any compute resource.
-        Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
-    :type is_deterministic: bool
     :param task: task type in data transfer component, possible value is "copy_data".
     :type task: str
     """
@@ -242,7 +235,7 @@ def import_data(
     outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
     # # job inputs can not be None
     # job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
-    component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
+    _, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
     component = kwargs.pop("component", None)
     if component is None:
         if source and source.type == ExternalDataType.DATABASE:
@@ -291,7 +284,6 @@ def export_data(
     compute: Optional[str] = None,
     sink: Optional[Union[Dict, Database, FileSystem]] = None,
     inputs: Optional[Dict] = None,
-    is_deterministic: bool = True,
     task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
     **kwargs,
 ) -> DataTransferExport:
@@ -313,17 +305,11 @@ def export_data(
     :type sink: Union[Dict, Database, FileSystem]
     :param inputs: Mapping of inputs data bindings used in the job.
     :type inputs: dict
-    :param is_deterministic: Specify whether the command will return same output given same input.
-        If a command (component) is deterministic, when use it as a node/step in a pipeline,
-        it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
-        In this case, this step will not use any compute resource.
-        Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
-    :type is_deterministic: bool
     :param task: task type in data transfer component, possible value is "copy_data".
     :type task: str
     """
     sink = _build_source_sink(sink)
-    component_inputs, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
+    _, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
     # job inputs can not be None
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
     component = kwargs.pop("component", None)

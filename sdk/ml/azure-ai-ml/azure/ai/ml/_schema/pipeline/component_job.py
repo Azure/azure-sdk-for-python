@@ -414,15 +414,13 @@ class DataTransferCopySchema(BaseNodeSchema):
 
 class DataTransferImportSchema(BaseNodeSchema):
     # pylint: disable=unused-argument
-    component = TypeSensitiveUnionField(
-        {
-            NodeType.DATA_TRANSFER: [
-                # for registry type assets
-                RegistryStr(),
-                # existing component
-                ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            ],
-        },
+    component = UnionField(
+        [
+            # for registry type assets
+            RegistryStr(),
+            # existing component
+            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        ],
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
@@ -467,15 +465,13 @@ class DataTransferImportSchema(BaseNodeSchema):
 
 class DataTransferExportSchema(BaseNodeSchema):
     # pylint: disable=unused-argument
-    component = TypeSensitiveUnionField(
-        {
-            NodeType.DATA_TRANSFER: [
-                # for registry type assets
-                RegistryStr(),
-                # existing component
-                ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            ],
-        },
+    component = UnionField(
+        [
+            # for registry type assets
+            RegistryStr(),
+            # existing component
+            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        ],
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA])

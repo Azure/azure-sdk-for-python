@@ -1580,9 +1580,12 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    def test_pipeline_job_with_data_transfer_import_filesystem_reference_component(self, client: MLClient, randstr: Callable[[str], str]):
-        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/" \
-                    "import_file_system_to_blob_reference_component.yaml"
+    def test_pipeline_job_with_data_transfer_import_filesystem_reference_component(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/" "import_file_system_to_blob_reference_component.yaml"
+        )
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
@@ -1681,8 +1684,9 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    def test_pipeline_job_with_data_transfer_export_sql_database_reference_component(self, client: MLClient,
-                                                                                     randstr: Callable[[str], str]):
+    def test_pipeline_job_with_data_transfer_export_sql_database_reference_component(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob_reference_component.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)

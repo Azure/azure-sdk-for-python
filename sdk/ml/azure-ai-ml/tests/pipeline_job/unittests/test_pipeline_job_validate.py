@@ -782,8 +782,6 @@ class TestDSLPipelineJobValidate:
         )
         validate_result = pipeline._validate()
         assert validate_result.error_messages == {
-            "jobs.snowflake_blob.component.outputs": "outputs field only support one output called sink in task type "
-            "import_data.",
             "jobs.snowflake_blob.compute": "Compute not set",
             "jobs.snowflake_blob.outputs.sink": "Outputs field only support one output called sink in import task",
             "jobs.snowflake_blob.outputs.sink.type": "Outputs field only support type mltable for database and uri_"
@@ -798,8 +796,11 @@ class TestDSLPipelineJobValidate:
         @dsl.pipeline(description="submit a pipeline with data transfer export database job")
         def data_transfer_export_database_pipeline_from_builder(table_name, connection_target_azuresql, cosmos_folder):
             from azure.ai.ml.data_transfer import Database, export_data
+
             source_snowflake = Database(table_name=table_name, connection=connection_target_azuresql)
-            blob_azuresql = export_data(inputs={"source": cosmos_folder, "test": my_cosmos_folder}, sink=source_snowflake)
+            blob_azuresql = export_data(
+                inputs={"source": cosmos_folder, "test": my_cosmos_folder}, sink=source_snowflake
+            )
 
         pipeline = data_transfer_export_database_pipeline_from_builder(
             table_name, connection_target_azuresql, my_cosmos_folder
@@ -807,9 +808,6 @@ class TestDSLPipelineJobValidate:
 
         validate_result = pipeline._validate()
         assert validate_result.error_messages == {
-            "jobs.blob_azuresql.component.inputs": "inputs field only support one input called source in task type "
-            "export_data.",
             "jobs.blob_azuresql.compute": "Compute not set",
             "jobs.blob_azuresql.inputs.source": "Inputs field only support one input called source in export task",
-            "jobs.blob_azuresql.inputs.source.type": "Inputs field only support type uri_file for database and uri_folder for file_system",
         }

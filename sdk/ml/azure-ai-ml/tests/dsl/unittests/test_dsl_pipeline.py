@@ -2466,6 +2466,7 @@ class TestDSLPipeline:
         source = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
 
         with pytest.raises(ValidationException) as e:
+
             @dsl.pipeline
             def data_transfer_copy_pipeline_from_yaml():
                 s3_blob(source=source)
@@ -2474,7 +2475,7 @@ class TestDSLPipeline:
             assert "DataTransfer component is not callable for import task." in str(e.value)
 
     def test_dsl_pipeline_with_data_transfer_export_component(self) -> None:
-        blob_azuresql= load_component("./tests/test_configs/components/data_transfer/export_blob_to_database.yaml")
+        blob_azuresql = load_component("./tests/test_configs/components/data_transfer/export_blob_to_database.yaml")
 
         my_cosmos_folder = Input(type=AssetTypes.URI_FILE, path="/data/testFile_ForSqlDB.parquet")
         connection_target_azuresql = "azureml:my_export_azuresqldb_connection"
@@ -2482,6 +2483,7 @@ class TestDSLPipeline:
         sink = {"type": "database", "connection": connection_target_azuresql, "table_name": table_name}
 
         with pytest.raises(ValidationException) as e:
+
             @dsl.pipeline
             def data_transfer_copy_pipeline_from_yaml():
                 blob_azuresql_node = blob_azuresql(source=my_cosmos_folder)

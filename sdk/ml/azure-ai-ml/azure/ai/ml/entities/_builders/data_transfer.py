@@ -47,7 +47,7 @@ module_logger = logging.getLogger(__name__)
 
 
 def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
-    if not io_dict:
+    if io_dict is None:
         return io_dict
     if isinstance(io_dict, (Database, FileSystem)):
         component_io = io_dict
@@ -355,7 +355,7 @@ class DataTransferImport(DataTransfer):
 
     def _customized_validate(self):
         result = super()._customized_validate()
-        if not self.source:
+        if self.source is None:
             result.append_error(
                 yaml_path="source",
                 message="Source is a required field for import data task in DataTransfer job",
@@ -367,12 +367,16 @@ class DataTransferImport(DataTransfer):
             )
         if "sink" in self.outputs and isinstance(self.outputs["sink"]._data, Output):
             sink_output = self.outputs["sink"]._data
-            if (self.source.type == ExternalDataType.DATABASE and sink_output.type != AssetTypes.MLTABLE) or \
-                    (self.source.type == ExternalDataType.FILE_SYSTEM and sink_output.type != AssetTypes.URI_FOLDER):
+            if (self.source.type == ExternalDataType.DATABASE and sink_output.type != AssetTypes.MLTABLE) or (
+                self.source.type == ExternalDataType.FILE_SYSTEM and sink_output.type != AssetTypes.URI_FOLDER
+            ):
                 result.append_error(
                     yaml_path="outputs.sink.type",
                     message="Outputs field only support type {} for {} and {} for {}".format(
-                        AssetTypes.MLTABLE, ExternalDataType.DATABASE, AssetTypes.URI_FOLDER, ExternalDataType.FILE_SYSTEM
+                        AssetTypes.MLTABLE,
+                        ExternalDataType.DATABASE,
+                        AssetTypes.URI_FOLDER,
+                        ExternalDataType.FILE_SYSTEM,
                     ),
                 )
         return result
@@ -502,7 +506,7 @@ class DataTransferExport(DataTransfer):
 
     def _customized_validate(self):
         result = super()._customized_validate()
-        if not self.sink:
+        if self.sink is None:
             result.append_error(
                 yaml_path="sink",
                 message="Sink is a required field for export data task in DataTransfer job",
@@ -514,12 +518,16 @@ class DataTransferExport(DataTransfer):
             )
         if "source" in self.inputs and isinstance(self.inputs["source"]._data, Input):
             source_input = self.inputs["source"]._data
-            if (self.sink.type == ExternalDataType.DATABASE and source_input.type != AssetTypes.URI_FILE) or \
-                    (self.sink.type == ExternalDataType.FILE_SYSTEM and source_input.type != AssetTypes.URI_FOLDER):
+            if (self.sink.type == ExternalDataType.DATABASE and source_input.type != AssetTypes.URI_FILE) or (
+                self.sink.type == ExternalDataType.FILE_SYSTEM and source_input.type != AssetTypes.URI_FOLDER
+            ):
                 result.append_error(
                     yaml_path="inputs.source.type",
                     message="Inputs field only support type {} for {} and {} for {}".format(
-                        AssetTypes.URI_FILE, ExternalDataType.DATABASE, AssetTypes.URI_FOLDER, ExternalDataType.FILE_SYSTEM
+                        AssetTypes.URI_FILE,
+                        ExternalDataType.DATABASE,
+                        AssetTypes.URI_FOLDER,
+                        ExternalDataType.FILE_SYSTEM,
                     ),
                 )
 
