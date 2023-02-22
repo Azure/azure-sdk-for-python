@@ -7,8 +7,6 @@ from typing import Optional, Dict, Union, Callable, Tuple
 
 from azure.ai.ml.entities._component.datatransfer_component import (
     DataTransferCopyComponent,
-    DataTransferImportComponent,
-    DataTransferExportComponent,
 )
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import (
