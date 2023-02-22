@@ -35,11 +35,16 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse, HTTPRequestTy
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from .http_constants import HttpHeaders
 
-
+def _format_error(payload: str) -> str:
+    payload = payload.replace("true", "True")
+    payload = payload.replace("false", "False")
+    output = json.loads(payload)
+    return output['message'].replace("\r", " ")
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def __init__(self, logger: Optional[logging.Logger] = None, **kwargs): # pylint: disable=unused-argument
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
+        super().__init__(logger, **kwargs)
         self.logger = logger or logging.getLogger(
             "azure.cosmos._cosmos_http_logging_policy"
         )
@@ -48,18 +53,6 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
         ]
         self.allowed_header_names = set(cosmos_allow_list)
-
-    def _format_error(self, payload: str) -> str:
-        payload = payload.replace("true", "True")
-        payload = payload.replace("false", "False")
-        output = json.loads(payload)
-        return output['message'].replace("\r", " ")
-
-    def _redact_cosmos_header(self, key, value):
-        lower_case_allowed_header_names = [
-            header.lower() for header in self.allowed_header_names
-        ]
-        return value if key.lower() in lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def on_request(self, request): # pylint: disable=too-many-return-statements, too-many-statements
         # type: (PipelineRequest) -> None
@@ -92,7 +85,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     logger.info("Request method: %r", http_request.method)
                     logger.info("Request headers:")
                     for header, value in http_request.headers.items():
-                        value = self._redact_cosmos_header(header, value)
+                        value = self._redact_header(header, value)
                         logger.info("    %r: %r", header, value)
                     if isinstance(http_request.body, types.GeneratorType):
                         logger.info("File upload")
@@ -112,7 +105,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 log_string += "\nRequest method: '{}'".format(http_request.method)
                 log_string += "\nRequest headers:"
                 for header, value in http_request.headers.items():
-                    value = self._redact_cosmos_header(header, value)
+                    value = self._redact_header(header, value)
                     log_string += "\n    '{}': '{}'".format(header, value)
                 if isinstance(http_request.body, types.GeneratorType):
                     log_string += "\nFile upload"
@@ -158,27 +151,27 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     logger.info("Response status reason: %r", http_response.reason)
                     logger.info("Response headers:")
                     for res_header, value in http_response.headers.items():
-                        value = self._redact_cosmos_header(res_header, value)
+                        value = self._redact_header(res_header, value)
                         logger.info("    %r: %r", res_header, value)
                     try:
                         logger.info("Elapsed Time: %r", time.time() - request.context.get("elapsed"))
                     except AttributeError:
                         logger.info("Elapsed Time: %r", None)
                     if http_response.status_code >= 400:
-                        logger.into("Response status error message: %r", self._format_error(http_response.text()))
+                        logger.into("Response status error message: %r", _format_error(http_response.text()))
                     return
                 log_string = "Cosmos diagnostics:"
                 log_string += "\nResponse status reason: {}".format(http_response.reason)
                 logger.info("Response headers:")
                 for res_header, value in http_response.headers.items():
-                    value = self._redact_cosmos_header(res_header, value)
+                    value = self._redact_header(res_header, value)
                     logger.info("    %r: %r", res_header, value)
                 try:
                     log_string += "\nElapsed Time: {}".format(time.time() - request.context.get("elapsed"))
                 except AttributeError:
                     log_string += "\nElapsed Time: {}".format(time.time() - request.context.get("elapsed"))
                 if http_response.status_code >= 400:
-                    log_string += "\nResponse status error message: {}".format(self._format_error(http_response.text()))
+                    log_string += "\nResponse status error message: {}".format(_format_error(http_response.text()))
                 logger.info(log_string)
         except Exception as err:  # pylint: disable=broad-except
             logger.warning("Failed to log response: %s", repr(err))

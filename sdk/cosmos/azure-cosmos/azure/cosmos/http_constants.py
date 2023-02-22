@@ -212,15 +212,15 @@ class HttpHeaders(object):
     GatewayVersion = "x-ms-gatewayversion"
     ServiceVersion = "x-ms-serviceversion"
     SchemaVersion = "x-ms-schemaversion"
-    QuorumAckedLsn = "x-ms-quorum-acked-lsn"
+    QuorumAckedLsn = "x-ms-quorum-acked-lsn" # cspell:disable-line
     CurrentWriteQuorum = "x-ms-current-write-quorum"
     CurrentReplicaSetSize = "x-ms-current-replica-set-size"
     XpRole = "x-ms-xp-role"
     GlobalCommittedLsn = "x-ms-global-committed-lsn"
     NumberOfReadRegions = "x-ms-number-of-read-regions"
     TransportRequestId = "x-ms-transport-request-id"
-    CosmosLsn = "x-ms-cosmos-llsn"
-    CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"
+    CosmosLsn = "x-ms-cosmos-llsn" # cspell:disable-line
+    CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn" # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"
 
 class HttpHeaderPreferenceTokens(object):
