@@ -20,4 +20,3 @@ jobs:
       connection: azureml:my-s3-connection
     outputs:
       sink: ${{parent.outputs.haha}}
-
