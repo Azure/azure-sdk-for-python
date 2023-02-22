@@ -196,7 +196,7 @@ class KeyVaultSetting(Generic[SettingValueType]):
         self.type = type
 
         # If `value` was given as a string but the type is boolean, convert it to a bool
-        if hasattr(self.value, "lower") and self.type == SettingType.BOOLEAN:
+        if isinstance(self.value, str) and self.type == SettingType.BOOLEAN:
             self.value = cast(SettingValueType, self.value.lower() == "true")
 
     @classmethod
