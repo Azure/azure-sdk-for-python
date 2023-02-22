@@ -296,6 +296,7 @@ def assert_control_flow_in_pipeline_component(client, component_path, pipeline_p
 
 
 class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_if_else(self, client: MLClient, randstr: Callable[[], str]):
         assert_control_flow_in_pipeline_component(
             client=client,
