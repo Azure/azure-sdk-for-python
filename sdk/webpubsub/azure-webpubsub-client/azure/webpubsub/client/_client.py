@@ -80,6 +80,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :keyword azure.webpubsub.client.WebPubSubProtocolType protocol_type: Subprotocol type
     :keyword azure.webpubsub.client.RetryPolicy message_retry_policy: Retry policy when failing to send message
     :keyword azure.webpubsub.client.RetryPolicy reconnect_retry_policy: Retry policy when failing to reconnect
+    :return: None
+    :rtype: None
     """
 
     # pylint: disable=unused-argument
@@ -559,6 +561,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._url = self._credential.get_client_access_url()
         self._connect(self._url)
 
+    @distributed_trace
     def start(self) -> None:
         """start the client and connect to service"""
 
@@ -574,6 +577,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._is_stopping = False
             raise e
 
+    @distributed_trace
     def stop(self) -> None:
         """stop the client"""
 
@@ -654,6 +658,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type listener: callable.
         """
 
+    @distributed_trace
     def on(self, event: CallBackType, listener: Callable) -> None:
         if event in self._handler:
             self._handler[event].append(listener)
@@ -720,6 +725,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type listener: callable.
         """
 
+    @distributed_trace
     def off(self, event: CallBackType, listener: Callable) -> None:
         if event in self._handler:
             if listener in self._handler[event]:
