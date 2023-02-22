@@ -149,14 +149,16 @@ Once completed, set the values of the client ID, tenant ID, and client secret of
 
 <!-- SNIPPET:sample_authentication.create_da_client_with_aad -->
 ```python
-from azure.identity import DefaultAzureCredential
+"""DefaultAzureCredential will use the values from these environment
+variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+"""
 from azure.ai.formrecognizer import DocumentAnalysisClient
+from azure.identity import DefaultAzureCredential
 
+endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
 credential = DefaultAzureCredential()
-document_analysis_client = DocumentAnalysisClient(
-    endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/",
-    credential=credential
-)
+
+document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 ```
 <!-- END SNIPPET -->
 
@@ -212,19 +214,27 @@ Extract text, selection marks, text styles, and table structures, along with the
 
 <!-- SNIPPET:sample_analyze_layout.extract_layout -->
 ```python
-from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer import DocumentAnalysisClient
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
+endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-document_analysis_client = DocumentAnalysisClient(endpoint, credential)
-
-with open("<path to your document>", "rb") as fd:
-    document = fd.read()
-
-poller = document_analysis_client.begin_analyze_document("prebuilt-layout", document)
+document_analysis_client = DocumentAnalysisClient(
+    endpoint=endpoint, credential=AzureKeyCredential(key)
+)
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_analysis_client.begin_analyze_document(
+        "prebuilt-layout", document=f
+    )
 result = poller.result()
+
+for idx, style in enumerate(result.styles):
+    print(
+        "Document contains {} content".format(
+            "handwritten" if style.is_handwritten else "no handwritten"
+        )
+    )
 
 for page in result.pages:
     print("----Analyzing layout from page #{}----".format(page.page_number))
@@ -235,26 +245,28 @@ for page in result.pages:
     )
 
     for line_idx, line in enumerate(page.lines):
+        words = line.get_words()
         print(
-            "...Line # {} has content '{}' within bounding polygon '{}'".format(
+            "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
                 line_idx,
+                len(words),
                 line.content,
-                line.polygon,
+                format_polygon(line.polygon),
             )
         )
 
-    for word in page.words:
-        print(
-            "...Word '{}' has a confidence of {}".format(
-                word.content, word.confidence
+        for word in words:
+            print(
+                "......Word '{}' has a confidence of {}".format(
+                    word.content, word.confidence
+                )
             )
-        )
 
     for selection_mark in page.selection_marks:
         print(
             "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                selection_mark.polygon,
+                format_polygon(selection_mark.polygon),
                 selection_mark.confidence,
             )
         )
@@ -270,7 +282,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                region.polygon
+                format_polygon(region.polygon),
             )
         )
     for cell in table.cells:
@@ -281,6 +293,15 @@ for table_idx, table in enumerate(result.tables):
                 cell.content,
             )
         )
+        for region in cell.bounding_regions:
+            print(
+                "...content on page {} is within bounding polygon '{}'".format(
+                    region.page_number,
+                    format_polygon(region.polygon),
+                )
+            )
+
+print("----------------------------------------")
 ```
 <!-- END SNIPPET -->
 
@@ -291,19 +312,25 @@ Select the General Document Model by passing `model_id="prebuilt-document"` into
 
 <!-- SNIPPET:sample_analyze_general_documents.analyze_general_documents -->
 ```python
-from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer import DocumentAnalysisClient
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
+endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-document_analysis_client = DocumentAnalysisClient(endpoint, credential)
-
-with open("<path to your document>", "rb") as fd:
-    document = fd.read()
-
-poller = document_analysis_client.begin_analyze_document("prebuilt-document", document)
+document_analysis_client = DocumentAnalysisClient(
+    endpoint=endpoint, credential=AzureKeyCredential(key)
+)
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_analysis_client.begin_analyze_document(
+        "prebuilt-document", document=f
+    )
 result = poller.result()
+
+for style in result.styles:
+    if style.is_handwritten:
+        print("Document contains handwritten content: ")
+        print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
 print("----Key-value pairs found in document----")
 for kv_pair in result.key_value_pairs:
@@ -311,38 +338,16 @@ for kv_pair in result.key_value_pairs:
         print(
                 "Key '{}' found within '{}' bounding regions".format(
                     kv_pair.key.content,
-                    kv_pair.key.bounding_regions,
+                    format_bounding_region(kv_pair.key.bounding_regions),
                 )
             )
     if kv_pair.value:
         print(
                 "Value '{}' found within '{}' bounding regions\n".format(
                     kv_pair.value.content,
-                    kv_pair.value.bounding_regions,
+                    format_bounding_region(kv_pair.value.bounding_regions),
                 )
             )
-
-print("----Tables found in document----")
-for table_idx, table in enumerate(result.tables):
-    print(
-        "Table # {} has {} rows and {} columns".format(
-            table_idx, table.row_count, table.column_count
-        )
-    )
-    for region in table.bounding_regions:
-        print(
-            "Table # {} location on page: {} is {}".format(
-                table_idx,
-                region.page_number,
-                region.polygon,
-            )
-        )
-
-print("----Styles found in document----")
-for style in result.styles:
-    if style.is_handwritten:
-        print("Document contains handwritten content: ")
-        print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
 for page in result.pages:
     print("----Analyzing document from page #{}----".format(page.page_number))
@@ -359,7 +364,7 @@ for page in result.pages:
                 line_idx,
                 len(words),
                 line.content,
-                line.polygon,
+                format_polygon(line.polygon),
             )
         )
 
@@ -374,10 +379,41 @@ for page in result.pages:
         print(
             "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                selection_mark.polygon,
+                format_polygon(selection_mark.polygon),
                 selection_mark.confidence,
             )
         )
+
+for table_idx, table in enumerate(result.tables):
+    print(
+        "Table # {} has {} rows and {} columns".format(
+            table_idx, table.row_count, table.column_count
+        )
+    )
+    for region in table.bounding_regions:
+        print(
+            "Table # {} location on page: {} is {}".format(
+                table_idx,
+                region.page_number,
+                format_polygon(region.polygon),
+            )
+        )
+    for cell in table.cells:
+        print(
+            "...Cell[{}][{}] has content '{}'".format(
+                cell.row_index,
+                cell.column_index,
+                cell.content,
+            )
+        )
+        for region in cell.bounding_regions:
+            print(
+                "...content on page {} is within bounding polygon '{}'\n".format(
+                    region.page_number,
+                    format_polygon(region.polygon),
+                )
+            )
+print("----------------------------------------")
 ```
 <!-- END SNIPPET -->
 
@@ -391,31 +427,87 @@ For example, to analyze fields from a sales receipt, use the prebuilt receipt mo
 
 <!-- SNIPPET:sample_analyze_receipts.analyze_receipts -->
 ```python
-from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer import DocumentAnalysisClient
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
+endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-document_analysis_client = DocumentAnalysisClient(endpoint, credential)
+document_analysis_client = DocumentAnalysisClient(
+    endpoint=endpoint, credential=AzureKeyCredential(key)
+)
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_analysis_client.begin_analyze_document(
+        "prebuilt-receipt", document=f, locale="en-US"
+    )
+receipts = poller.result()
 
-with open("<path to your receipt>", "rb") as fd:
-    receipt = fd.read()
-
-poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", receipt)
-result = poller.result()
-
-for receipt in result.documents:
-    for name, field in receipt.fields.items():
-        if name == "Items":
-            print("Receipt Items:")
-            for idx, item in enumerate(field.value):
-                print("...Item #{}".format(idx+1))
-                for item_field_name, item_field in item.value.items():
-                    print("......{}: {} has confidence {}".format(
-                        item_field_name, item_field.value, item_field.confidence))
-        else:
-            print("{}: {} has confidence {}".format(name, field.value, field.confidence))
+for idx, receipt in enumerate(receipts.documents):
+    print("--------Analysis of receipt #{}--------".format(idx + 1))
+    print("Receipt type: {}".format(receipt.doc_type or "N/A"))
+    merchant_name = receipt.fields.get("MerchantName")
+    if merchant_name:
+        print(
+            "Merchant Name: {} has confidence: {}".format(
+                merchant_name.value, merchant_name.confidence
+            )
+        )
+    transaction_date = receipt.fields.get("TransactionDate")
+    if transaction_date:
+        print(
+            "Transaction Date: {} has confidence: {}".format(
+                transaction_date.value, transaction_date.confidence
+            )
+        )
+    if receipt.fields.get("Items"):
+        print("Receipt items:")
+        for idx, item in enumerate(receipt.fields.get("Items").value):
+            print("...Item #{}".format(idx + 1))
+            item_description = item.value.get("Description")
+            if item_description:
+                print(
+                    "......Item Description: {} has confidence: {}".format(
+                        item_description.value, item_description.confidence
+                    )
+                )
+            item_quantity = item.value.get("Quantity")
+            if item_quantity:
+                print(
+                    "......Item Quantity: {} has confidence: {}".format(
+                        item_quantity.value, item_quantity.confidence
+                    )
+                )
+            item_price = item.value.get("Price")
+            if item_price:
+                print(
+                    "......Individual Item Price: {} has confidence: {}".format(
+                        item_price.value, item_price.confidence
+                    )
+                )
+            item_total_price = item.value.get("TotalPrice")
+            if item_total_price:
+                print(
+                    "......Total Item Price: {} has confidence: {}".format(
+                        item_total_price.value, item_total_price.confidence
+                    )
+                )
+    subtotal = receipt.fields.get("Subtotal")
+    if subtotal:
+        print(
+            "Subtotal: {} has confidence: {}".format(
+                subtotal.value, subtotal.confidence
+            )
+        )
+    tax = receipt.fields.get("TotalTax")
+    if tax:
+        print("Total tax: {} has confidence: {}".format(tax.value, tax.confidence))
+    tip = receipt.fields.get("Tip")
+    if tip:
+        print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
+    total = receipt.fields.get("Total")
+    if total:
+        print("Total: {} has confidence: {}".format(total.value, total.confidence))
+    print("--------------------------------------")
 ```
 <!-- END SNIPPET -->
 
@@ -430,18 +522,16 @@ More details on setting up a container and required file structure can be found 
 
 <!-- SNIPPET:sample_build_model.build_model -->
 ```python
-from azure.ai.formrecognizer import DocumentModelAdministrationClient
+from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 from azure.core.credentials import AzureKeyCredential
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
+endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
-
-container_sas_url = "<container-sas-url>"  # training documents uploaded to blob storage
+document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
 poller = document_model_admin_client.begin_build_document_model(
-    # For more information about build_mode, see: https://aka.ms/azsdk/formrecognizer/buildmode
-    build_mode="template", blob_container_url=container_sas_url, model_id="my-first-model"
+    ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="my model description"
 )
 model = poller.result()
 
@@ -450,9 +540,11 @@ print("Description: {}".format(model.description))
 print("Model created on: {}\n".format(model.created_on))
 print("Doc types the model can recognize:")
 for name, doc_type in model.doc_types.items():
-    print("\nDoc Type: '{}' which has the following fields:".format(name))
-    for field_name, confidence in doc_type.field_confidence.items():
-        print("Field: '{}' has confidence score {}".format(field_name, confidence))
+    print("\nDoc Type: '{}' built with '{}' mode which has the following fields:".format(name, doc_type.build_mode))
+    for field_name, field in doc_type.field_schema.items():
+        print("Field: '{}' has type '{}' and confidence score {}".format(
+            field_name, field["type"], doc_type.field_confidence[field_name]
+        ))
 ```
 <!-- END SNIPPET -->
 
@@ -463,40 +555,45 @@ For best results, you should only analyze documents of the same document type th
 
 <!-- SNIPPET:sample_analyze_custom_documents.analyze_custom_documents -->
 ```python
-from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer import DocumentAnalysisClient
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
+endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+model_id = os.getenv("CUSTOM_BUILT_MODEL_ID", custom_model_id)
 
-document_analysis_client = DocumentAnalysisClient(endpoint, credential)
-model_id = "<your custom model id>"
+document_analysis_client = DocumentAnalysisClient(
+    endpoint=endpoint, credential=AzureKeyCredential(key)
+)
 
-with open("<path to your document>", "rb") as fd:
-    document = fd.read()
-
-poller = document_analysis_client.begin_analyze_document(model_id=model_id, document=document)
+# Make sure your document's type is included in the list of document types the custom model can analyze
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_analysis_client.begin_analyze_document(
+        model_id=model_id, document=f
+    )
 result = poller.result()
 
-for analyzed_document in result.documents:
+for idx, document in enumerate(result.documents):
+    print("--------Analyzing document #{}--------".format(idx + 1))
+    print("Document has type {}".format(document.doc_type))
+    print("Document has confidence {}".format(document.confidence))
     print("Document was analyzed by model with ID {}".format(result.model_id))
-    print("Document has confidence {}".format(analyzed_document.confidence))
-    for name, field in analyzed_document.fields.items():
-        print("Field '{}' has value '{}' with confidence of {}".format(name, field.value, field.confidence))
-    
-# iterate over lines, words, and selection marks on each page of the document
+    for name, field in document.fields.items():
+        field_value = field.value if field.value else field.content
+        print("......found field of type '{}' with value '{}' and with confidence {}".format(field.value_type, field_value, field.confidence))
+
+
+# iterate over tables, lines, and selection marks on each page
 for page in result.pages:
     print("\nLines found on page {}".format(page.page_number))
     for line in page.lines:
         print("...Line '{}'".format(line.content))
-    print("\nWords found on page {}".format(page.page_number))
     for word in page.words:
         print(
             "...Word '{}' has a confidence of {}".format(
                 word.content, word.confidence
             )
         )
-    print("\nSelection marks found on page {}".format(page.page_number))
     for selection_mark in page.selection_marks:
         print(
             "...Selection mark is '{}' and has a confidence of {}".format(
@@ -504,7 +601,6 @@ for page in result.pages:
             )
         )
 
-# iterate over tables in document
 for i, table in enumerate(result.tables):
     print("\nTable {} can be found on page:".format(i + 1))
     for region in table.bounding_regions:
@@ -515,6 +611,7 @@ for i, table in enumerate(result.tables):
                 cell.row_index, cell.column_index, cell.content
             )
         )
+print("-----------------------------------")
 ```
 <!-- END SNIPPET -->
 
