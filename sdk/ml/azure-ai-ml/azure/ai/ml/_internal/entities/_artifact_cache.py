@@ -49,16 +49,19 @@ class ArtifactCache:
     def __init__(self, cache_directory=None):
         self._cache_directory = cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY
         Path(self._cache_directory).mkdir(exist_ok=True, parents=True)
-        # check az extension azure-devops installed
+        # check az extension azure-devops installed. Install it if not installed.
         process = subprocess.Popen(
-            "az artifacts --help",
+            "az artifacts --help --yes",
             shell=True,  # nosec B602
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
         process.communicate()
         if process.returncode != 0:
-            subprocess.check_call("az extension add --name azure-devops", shell=True)
+            raise RuntimeError(
+                "Auto-installation failed. Please install azure-devops "
+                "extension by 'az extension add --name azure-devops'."
+            )
         self._artifacts_tool_path = None
         self._download_locks = defaultdict(Lock)
 
