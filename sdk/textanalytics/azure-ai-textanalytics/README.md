@@ -480,32 +480,38 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 
 [detect_language][detect_language] determines the language of its input text, including the confidence score of the predicted language.
 
+<!-- SNIPPET:sample_detect_language.detect_language -->
 ```python
+import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 
-credential = AzureKeyCredential("<api_key>")
-endpoint="https://<resource-name>.cognitiveservices.azure.com/"
+endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+key = os.environ["AZURE_LANGUAGE_KEY"]
 
-text_analytics_client = TextAnalyticsClient(endpoint, credential)
-
+text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 documents = [
     """
-    This whole document is written in English. In order for the whole document to be written
-    in English, every sentence also has to be written in English, which it is.
+    The concierge Paulette was extremely helpful. Sadly when we arrived the elevator was broken, but with Paulette's help we barely noticed this inconvenience.
+    She arranged for our baggage to be brought up to our room with no extra charge and gave us a free meal to refurbish all of the calories we lost from
+    walking up the stairs :). Can't say enough good things about my experience!
     """,
-    "Il documento scritto in italiano.",
-    "Dies ist in deutsche Sprache verfasst."
+    """
+    最近由于工作压力太大，我们决定去富酒店度假。那儿的温泉实在太舒服了，我跟我丈夫都完全恢复了工作前的青春精神！加油！
+    """
 ]
 
-response = text_analytics_client.detect_language(documents)
-result = [doc for doc in response if not doc.is_error]
+result = text_analytics_client.detect_language(documents)
+reviewed_docs = [doc for doc in result if not doc.is_error]
 
-for doc in result:
-    print(f"Language detected: {doc.primary_language.name}")
-    print(f"ISO6391 name: {doc.primary_language.iso6391_name}")
-    print(f"Confidence score: {doc.primary_language.confidence_score}\n")
+print("Let's see what language each review is in!")
+
+for idx, doc in enumerate(reviewed_docs):
+    print("Review #{} is in '{}', which has ISO639-1 name '{}'\n".format(
+        idx, doc.primary_language.name, doc.primary_language.iso6391_name
+    ))
 ```
+<!-- END SNIPPET -->
 
 The returned response is a heterogeneous list of result and error objects: list[[DetectLanguageResult][detect_language_result], [DocumentError][document_error]]
 
