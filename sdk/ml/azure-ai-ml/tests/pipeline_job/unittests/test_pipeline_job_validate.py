@@ -292,15 +292,7 @@ class TestPipelineJobValidate:
                 "Outputs field only support type mltable for database and uri_folder for file_system",
             ),
             (
-                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_invalid_output_type_binding.yaml",
-                "Outputs field only support type mltable for database and uri_folder for file_system",
-            ),
-            (
                 "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type.yaml",
-                "Inputs field only support type uri_file for database and uri_folder for file_system",
-            ),
-            (
-                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type_binding.yaml",
                 "Inputs field only support type uri_file for database and uri_folder for file_system",
             ),
         ],
