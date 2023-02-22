@@ -1,59 +1,41 @@
-
 # coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import random
+import asyncio
 import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+
+from devtools_testutils import AzureRecordedTestCase
+from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from azure.agrifood.farming.aio import FarmBeatsClient
-from azure.agrifood.farming.models import Boundary, Polygon
-from azure.core.exceptions import HttpResponseError
 
-class FarmBeatsTestAsync(AzureTestCase):
-
-    def create_client(self, agrifood_endpoint):
-        credential = self.get_credential(FarmBeatsClient, is_async=True)
-        return self.create_client_from_credential(
+class FarmBeatsAsyncTestCase(AzureRecordedTestCase):
+    def create_client(self, agrifood_endpoint) -> FarmBeatsClient:
+        self.credential = self.get_credential(FarmBeatsClient, is_async= True)
+        self.client = self.create_client_from_credential(
             FarmBeatsClient,
             endpoint=agrifood_endpoint,
-            credential=credential,
+            credential=self.credential,
         )
+        return self.client
+    
+    async def close_client(self):
+        await self.credential.close()
+        await self.client.close()
+    
+    @staticmethod
+    def await_prepared_test(test_fn):
+        """Synchronous wrapper for async test methods. Used to avoid making changes
+        upstream to AbstractPreparer (which doesn't await the functions it wraps)
+        """
 
-    def generate_random_name(self, name):
+        @functools.wraps(test_fn)
+        def run(test_class_instance, *args, **kwargs):
+            trim_kwargs_from_test_function(test_fn, kwargs)
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            asyncio.run(test_fn(test_class_instance, **kwargs))
 
-        if self.is_live:
-            created_name = "{}-{}".format(name, random.randint(0, 100000))
-            self.scrubber.register_name_pair(created_name, name)
-            return created_name
-        return name
-
-    async def create_boundary_if_not_exist(self, client, farmer_id, boundary_id):
-        try:
-            return await client.boundaries.get(farmer_id=farmer_id, boundary_id=boundary_id)
-        except HttpResponseError:
-            return await client.boundaries.create_or_update(
-                farmer_id=farmer_id,
-                boundary_id=boundary_id,
-                boundary=Boundary(
-                    description="Created by SDK",
-                    geometry=Polygon(
-                        coordinates=[
-                            [
-                                [73.70457172393799, 20.545385304358106],
-                                [73.70457172393799, 20.545385304358106],
-                                [73.70448589324951, 20.542411534243367],
-                                [73.70877742767334, 20.541688176010233],
-                                [73.71023654937744, 20.545083911372505],
-                                [73.70663166046143, 20.546992723579137],
-                                [73.70457172393799, 20.545385304358106],
-                            ]
-                        ]
-                    )
-                )
-            )
-
-    async def delete_boundary(self, client, farmer_id, boundary_id):
-        await client.boundaries.delete(farmer_id=farmer_id, boundary_id=boundary_id)
+        return run

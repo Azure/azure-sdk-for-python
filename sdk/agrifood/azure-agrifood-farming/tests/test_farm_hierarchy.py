@@ -5,84 +5,86 @@
 # ------------------------------------
 import pytest
 from datetime import datetime
-from azure.agrifood.farming.models import Farmer
+from dateutil.parser import parse
 from azure.core.exceptions import ResourceNotFoundError
-from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTest
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTestCase
 
 
-class FarmHierarchyTestCase(FarmBeatsTest):
-
+class TestFarmHierarchy(FarmBeatsTestCase):    
     @FarmBeatsPowerShellPreparer()
-    def test_farmer_operations(self, agrifood_endpoint):
-
+    @recorded_by_proxy
+    def test_party_operations(self, **kwargs):
+        set_custom_default_matcher(ignored_headers="Accept-Encoding")
+        agrifood_endpoint = kwargs.pop("agrifood_endpoint")
+        
         # Setup data
-        farmer_id = self.generate_random_name("test-farmer-farmer-ops")
-        farmer_name = "Test Farmer"
-        farmer_description = "Farmer created during testing."
-        farmer_status = "Sample Status"
-        farmer_properties= {
-            "foo": "bar",
-            "numeric one": 1,
-            1: "numeric key"
+        party_id = "test-party-39574"
+        party_request = {
+            "name": "Test Party",
+            "description": "Party created during testing.",
+            "status": "Sample Status",
+            "properties": {
+                "foo": "bar",
+                "numeric one": 1,
+                1: "numeric key"
+            }
         }
 
         # Setup client
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
         # Create
-        farmer = client.farmers.create_or_update(
-            farmer_id=farmer_id,
-            farmer=Farmer(
-                name=farmer_name,
-                description=farmer_description,
-                status=farmer_status,
-                properties=farmer_properties
-            )
+        party_response = client.parties.create_or_update(
+            party_id=party_id,
+            party=party_request
         )
 
         # Assert on immediate response
-        assert farmer.id == farmer_id
-        assert farmer.name == farmer_name
-        assert farmer.description == farmer_description
-        assert farmer.status == farmer_status
+        assert party_response["id"] == party_id
+        assert party_response["name"] == party_response["name"]
+        assert party_response["description"] == party_response["description"]
+        assert party_response["status"] == party_response["status"]
 
-        assert len(farmer.properties) == 3
-        assert farmer.properties["foo"] == "bar"
-        assert farmer.properties["numeric one"] == 1
-        assert farmer.properties["1"] == "numeric key"
+        assert len(party_response["properties"]) == 3
+        assert party_response["properties"]["foo"] == "bar"
+        assert party_response["properties"]["numeric one"] == 1
+        assert party_response["properties"]["1"] == "numeric key"
 
-        assert farmer.e_tag
-        assert type(farmer.created_date_time) is datetime
-        assert type(farmer.modified_date_time) is datetime
+        assert party_response["eTag"]
+        assert type(parse(party_response["createdDateTime"])) is datetime
+        assert type(parse(party_response["modifiedDateTime"])) is datetime
 
         # Retrieve created object
-        retrieved_farmer = client.farmers.get(farmer_id=farmer_id)
+        retrieved_party = client.parties.get(
+            party_id=party_id)
 
         # Assert on retrieved object
-        assert farmer == retrieved_farmer
+        assert retrieved_party["id"] == party_id
 
         # Setup data for update
-        farmer.name += " Updated"
+        party_request["name"] += " Updated"
 
         # Update
-        updated_farmer = client.farmers.create_or_update(
-            farmer_id=farmer_id,
-            farmer=farmer
+        updated_party = client.parties.create_or_update(
+            party_id=party_id,
+            party=party_request
         )
 
         # Assert on immediate response
-        assert farmer.name == updated_farmer.name
-        assert farmer.created_date_time == updated_farmer.created_date_time
+        # Assert on immediate response
+        assert updated_party["name"] == party_request["name"]
+        assert updated_party["createdDateTime"] == party_response["createdDateTime"]
 
         # Retrieve updated object
-        updated_retrieved_farmer = client.farmers.get(farmer_id=farmer_id)
+        retrieved_party = client.parties.get(party_id=party_id)
 
         # Assert updated object
-        assert updated_retrieved_farmer == updated_farmer
+        assert retrieved_party == updated_party
 
         # Delete
-        client.farmers.delete(farmer_id=farmer_id)
+        client.parties.delete(party_id=party_id)
 
         # Assert object doesn't exist anymore
         with pytest.raises(ResourceNotFoundError):
-            client.farmers.get(farmer_id=farmer_id)
+            client.parties.get(party_id=party_id)
