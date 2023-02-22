@@ -11,7 +11,7 @@ compute: azureml:cpu-cluster
 jobs:
   hello_world_component_inline:
     command: echo Hello World & sleep 1h
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     services:
       "my_ssh":
         job_service_type: "ssh"

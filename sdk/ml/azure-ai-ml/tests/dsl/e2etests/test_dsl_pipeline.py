@@ -356,7 +356,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # update component display name to work around same component register multiple time issue
         hello_world_component_func.display_name = "test_command_function_node"
 
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         distribution = {"type": "Pytorch", "process_count_per_instance": 2}
         resources = {"instance_count": 2}
         environment_variables = {"environ": "val"}
@@ -491,7 +491,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         command_func = command(
             name=f"test_optional_input_component_" + randstr("component_name"),
             display_name="command_with_optional_inputs",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command=(
                 'echo "hello world" '
                 "& echo $[[${{inputs.float}}]] "
@@ -1594,7 +1594,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
     def test_parallel_run_function(self, client: MLClient):
         # command job with dict distribution
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         inputs = {
             "job_data_path": Input(
                 type=AssetTypes.MLTABLE,
@@ -1707,7 +1707,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
     def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         inputs = {
             "job_data_path": Input(
                 type=AssetTypes.MLTABLE,

@@ -76,7 +76,7 @@ class TestCommandComponentEntity:
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World",
             code=code,
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         component_dict = component._to_rest_object().as_dict()
         omits = ["properties.component_spec.$schema", "properties.component_spec._source"]
@@ -110,7 +110,7 @@ class TestCommandComponentEntity:
             # TODO: reorganize code to minimize the code context
             code=".",
             command="""echo Hello World""",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         component_dict = component._to_rest_object().as_dict()
         inputs = component_dict["properties"]["component_spec"]["inputs"]
@@ -142,7 +142,7 @@ class TestCommandComponentEntity:
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
             "& echo ${{outputs.component_out_path}}",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             distribution=TensorFlowDistribution(
                 parameter_server_count=1,
                 worker_count=2,
@@ -182,7 +182,7 @@ class TestCommandComponentEntity:
             tags={"tag": "tagvalue", "owner": "sdkteam"},
             outputs={"component_out_path": {"type": "path"}},
             command="echo Hello World",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./helloworld_components_with_env",
         )
 
@@ -285,7 +285,7 @@ class TestCommandComponentEntity:
                 "extracted_data": {"type": "path"}
             },
             # we're using a curated environment
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:9",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         basic_component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
         sweep_component = load_component(source="./tests/test_configs/components/helloworld_component_for_sweep.yml")
@@ -425,7 +425,7 @@ class TestCommandComponentEntity:
             "command": "echo Hello World",
             "description": "This is the basic command component",
             "display_name": "CommandComponentBasic",
-            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             "is_deterministic": True,
             "name": "sample_command_component_basic",
             "outputs": {
@@ -475,7 +475,7 @@ class TestCommandComponentEntity:
                 },
             },
             command="echo Hello World",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./helloworld_components_with_env",
         )
         actual_component_dict2 = pydash.omit(

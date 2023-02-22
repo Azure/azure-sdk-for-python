@@ -34,7 +34,7 @@ class TestSweepJob:
             inputs={"input1": Input(path="trial.csv")},
             outputs={"default": Output(path="./foo")},
             compute="trial",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             limits=CommandJobLimits(timeout=120),
         )
         sweep = SweepJob(
@@ -65,7 +65,7 @@ class TestSweepJob:
             inputs={"input1": Input(path="trial.csv")},
             outputs={"default": Output(path="./foo")},
             compute="trial",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             limits=CommandJobLimits(timeout=120),
         )
         sweep = SweepJob(
@@ -100,7 +100,7 @@ class TestSweepJob:
             inputs={"input1": {"file": "trial.csv", "mode": "ro_mount"}},
             outputs={"default": {"mode": "rw_mount"}},
             compute="trial",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             limits=CommandJobLimits(timeout=120),
         )
 
@@ -134,7 +134,7 @@ class TestSweepJob:
             inputs={"input1": Input(path="trial.csv")},
             outputs={"default": Output(path="./foo")},
             compute="trial",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             limits=CommandJobLimits(timeout=120),
         )
 
@@ -162,7 +162,7 @@ class TestSweepJob:
             inputs={"input1": Input(path="trial.csv")},
             outputs={"default": Output(path="./foo")},
             compute="trial",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             limits=CommandJobLimits(timeout=120),
         )
 
@@ -200,7 +200,7 @@ class TestSweepJob:
 
         node = command(
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs=inputs,
             command="echo ${{inputs.uri}} ${{inputs.lr}} ${{inputs.lr2}}",
             display_name="builder-sweep-job-display",
@@ -241,7 +241,7 @@ class TestSweepJob:
         sweep_node.name = "builder-sweep-job"
 
         trial = CommandJob(
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="echo ${{inputs.uri}} ${{search_space.lr}} ${{search_space.lr2}}",
             distribution=MpiDistribution(),
             environment_variables={"EVN1": "VAR1"},
@@ -296,7 +296,7 @@ class TestSweepJob:
             inputs={"input1": Input(path="trial.csv")},
             outputs={"default": Output(path="./foo")},
             compute="trial",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             limits=CommandJobLimits(timeout=120),
         )
 

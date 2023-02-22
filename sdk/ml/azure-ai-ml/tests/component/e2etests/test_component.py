@@ -548,7 +548,7 @@ class TestComponent(AzureRecordedTestCase):
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
             "& echo ${{outputs.component_out_path}}",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             distribution=MpiDistribution(
                 process_count_per_instance=1,
                 # No affect because Mpi object does not allow extra fields
@@ -770,7 +770,7 @@ class TestComponent(AzureRecordedTestCase):
             tags={"tag": "tagvalue", "owner": "sdkteam"},
             outputs={"component_out_path": {"type": "path"}},
             command="echo Hello World",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./tests/test_configs/components/helloworld_components_with_env",
         )
         component_resource = client.components.create_or_update(component)
