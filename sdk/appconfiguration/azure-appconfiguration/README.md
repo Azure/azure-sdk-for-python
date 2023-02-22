@@ -60,7 +60,9 @@ Once you have the value of the connection string, you can create the AzureAppCon
 
 <!-- SNIPPET:hello_world_sample.create_app_config_client -->
 ```python
-CONNECTION_STRING = get_connection_string()
+import os
+from azure.appconfiguration import AzureAppConfigurationClient
+CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
 
 # Create app config client
 client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
@@ -200,13 +202,9 @@ Get a previously stored Configuration Setting.
 
 <!-- SNIPPET:hello_world_sample.get_config_setting -->
 ```python
-print("Get configuration setting")
 fetched_config_setting = client.get_configuration_setting(
     key="MyKey"
 )
-print("Fetched configuration setting:")
-print_configuration_setting(fetched_config_setting)
-print("")
 ```
 <!-- END SNIPPET -->
 

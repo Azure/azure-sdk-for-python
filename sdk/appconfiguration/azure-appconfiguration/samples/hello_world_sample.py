@@ -13,12 +13,14 @@ DESCRIPTION:
 USAGE: python hello_world_sample.py
 """
 
-from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
-from util import print_configuration_setting, get_connection_string
+from azure.appconfiguration import ConfigurationSetting
+from util import print_configuration_setting
 
 def main():
     # [START create_app_config_client]
-    CONNECTION_STRING = get_connection_string()
+    import os
+    from azure.appconfiguration import AzureAppConfigurationClient
+    CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
 
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
@@ -36,15 +38,15 @@ def main():
     print_configuration_setting(returned_config_setting)
     print("")
 
-    # [START get_config_setting]
     print("Get configuration setting")
+    # [START get_config_setting]
     fetched_config_setting = client.get_configuration_setting(
         key="MyKey"
     )
+    # [END get_config_setting]
     print("Fetched configuration setting:")
     print_configuration_setting(fetched_config_setting)
     print("")
-    # [END get_config_setting]
 
     print("Delete configuration setting")
     client.delete_configuration_setting(
