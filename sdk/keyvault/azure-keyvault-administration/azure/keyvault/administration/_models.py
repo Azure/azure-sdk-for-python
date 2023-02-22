@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, Generic, Optional, TypeVar, Union
+from typing import cast, Dict, Generic, Optional, TypeVar, Union
 
 from azure.core.rest import HttpResponse
 
@@ -197,8 +197,8 @@ class KeyVaultSetting(Generic[SettingValueType]):
 
         # If `value` was given as a string but the type is boolean, convert it to a bool
         if hasattr(self.value, "lower") and self.type == SettingType.BOOLEAN:
-            self.value = self.value.lower() == "true"
+            self.value = cast(SettingValueType, self.value.lower() == "true")
 
     @classmethod
     def _from_generated(cls, setting: Setting) -> "KeyVaultSetting":
-        return cls(name=setting.name, value=setting.value, type=SettingType(setting.type))
+        return cls(name=setting.name, value=cast(SettingValueType, setting.value), type=SettingType(setting.type))
