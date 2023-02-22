@@ -4,7 +4,6 @@
 
 # pylint: disable=protected-access
 
-import json
 from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
