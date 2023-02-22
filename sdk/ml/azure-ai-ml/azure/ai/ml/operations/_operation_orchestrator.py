@@ -9,7 +9,12 @@ import re
 from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_env_build_context,
+    _check_and_upload_path,
+    _get_snapshot_path_info,
+    _check_and_upload_snapshot,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
     AMLLabelledArmId,
@@ -259,10 +264,18 @@ class OperationOrchestrator(object):
             if register_asset:
                 code_asset = self._code_assets.create_or_update(code_asset)
                 return code_asset.id
-            uploaded_code_asset, _ = _check_and_upload_path(
+            path, ignore_file, _ = _get_snapshot_path_info(code_asset)
+            workspace_info = self._datastore_operation._service_client.workspaces.get(
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._operation_scope.workspace_name,
+            )
+            uploaded_code_asset = _check_and_upload_snapshot(
                 artifact=code_asset,
+                path=path,
+                ignore_file=ignore_file,
                 asset_operations=self._code_assets,
-                artifact_type=ErrorTarget.CODE,
+                workspace=workspace_info,
+                requests_pipeline=self._code_assets._requests_pipeline,
                 show_progress=self._operation_config.show_progress,
             )
             uploaded_code_asset._id = get_arm_id_with_version(
