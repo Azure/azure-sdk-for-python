@@ -39,6 +39,6 @@ class FeatureStoreSettings(RestTranslatableMixin):
         if not obj:
             return None
         return FeatureStoreSettings(
-            compute_runtime=ComputeRuntime._from_rest_object(rest_obj.compute_runtime),
+            compute_runtime=ComputeRuntime._from_rest_object(obj.compute_runtime),
             offline_store_connection_name=obj.offline_store_connection_name
         )

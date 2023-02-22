@@ -691,7 +691,7 @@
 						"identity": {
 							"type": "SystemAssigned,UserAssigned",
 							"userAssignedIdentities": {
-							    "/subscriptions/2d385bf4-0756-4a76-aa95-28bf9ed3b625/resourceGroups/maykumar-amlp/providers/Microsoft.ManagedIdentity/userAssignedIdentities/maykumar-test-UAI": {}
+							    "[parameters('offline_store_connection_credential_resourceid')]": {}
 							}
 						},
 						"properties": {
