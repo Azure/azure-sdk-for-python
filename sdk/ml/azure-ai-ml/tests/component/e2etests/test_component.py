@@ -6,7 +6,7 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
@@ -164,6 +164,8 @@ class TestComponent(AzureRecordedTestCase):
         )
 
     def test_parallel_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        set_bodiless_matcher()
+
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/ParallelComponent.json",
             "description": "parallel component for batch score",
@@ -239,6 +241,8 @@ class TestComponent(AzureRecordedTestCase):
         )
 
     def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        set_bodiless_matcher()
+
         expected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json",
             "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
@@ -610,6 +614,8 @@ class TestComponent(AzureRecordedTestCase):
         assert tensorflow_component_resource.distribution.__dict__ == tensorflow_distribution(has_strs=True)
 
     def test_command_component_create_autoincrement(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        set_bodiless_matcher()
+
         component_name = randstr("component_name")
         params_override = [{"name": component_name}]
         path = "./tests/test_configs/components/component_no_version.yml"

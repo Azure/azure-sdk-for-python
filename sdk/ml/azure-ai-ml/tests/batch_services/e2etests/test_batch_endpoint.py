@@ -1,7 +1,7 @@
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -74,6 +74,8 @@ class TestBatchEndpoint(AzureRecordedTestCase):
     def test_batch_invoke(
         self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
     ) -> None:
+        set_bodiless_matcher()
+
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)
@@ -153,6 +155,8 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         rand_batch_deployment_name: Callable[[], str],
         randstr: Callable[[str], str],
     ) -> None:
+        set_bodiless_matcher()
+
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)

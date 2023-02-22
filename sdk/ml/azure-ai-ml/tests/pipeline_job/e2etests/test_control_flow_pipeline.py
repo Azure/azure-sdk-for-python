@@ -3,7 +3,7 @@ from typing import Callable
 import pytest
 
 from azure.ai.ml.exceptions import ValidationException
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, load_job
@@ -45,6 +45,8 @@ class TestConditionalNodeInPipeline(AzureRecordedTestCase):
 
 class TestIfElse(TestConditionalNodeInPipeline):
     def test_happy_path_if_else(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        set_bodiless_matcher()
+
         params_override = [{"name": randstr("name")}]
         my_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/if_else/simple_pipeline.yml",
@@ -76,6 +78,8 @@ class TestIfElse(TestConditionalNodeInPipeline):
         }
 
     def test_if_else_one_branch(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        set_bodiless_matcher()
+
         params_override = [{"name": randstr("name")}]
         my_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/if_else/one_branch.yml",
@@ -101,6 +105,8 @@ class TestIfElse(TestConditionalNodeInPipeline):
         }
 
     def test_if_else_literal_condition(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        set_bodiless_matcher()
+
         params_override = [{"name": randstr("name")}]
         my_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/if_else/literal_condition.yml",
@@ -133,6 +139,8 @@ class TestIfElse(TestConditionalNodeInPipeline):
 class TestDoWhile(TestConditionalNodeInPipeline):
     @pytest.mark.disable_mock_code_hash
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        set_bodiless_matcher()
+
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline.yml",
@@ -148,6 +156,8 @@ class TestDoWhile(TestConditionalNodeInPipeline):
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
 
     def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        set_bodiless_matcher()
+
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline_with_primitive_inputs.yml",
@@ -298,6 +308,8 @@ def assert_control_flow_in_pipeline_component(client, component_path, pipeline_p
 class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_if_else(self, client: MLClient, randstr: Callable[[], str]):
+        set_bodiless_matcher()
+
         assert_control_flow_in_pipeline_component(
             client=client,
             component_path="./if_else/simple_pipeline.yml",

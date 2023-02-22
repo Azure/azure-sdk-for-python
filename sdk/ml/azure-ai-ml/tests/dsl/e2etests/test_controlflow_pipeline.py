@@ -1,6 +1,6 @@
 import pytest
 from azure.ai.ml.dsl._group_decorator import group
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
 from azure.ai.ml import Input, MLClient, load_component, Output
@@ -44,6 +44,8 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
 class TestIfElse(TestControlFlowPipeline):
     @pytest.mark.usefixtures("mock_anon_component_version")
     def test_dsl_condition_pipeline(self, client: MLClient):
+        set_bodiless_matcher()
+
         # update jobs field to include private preview nodes
 
         hello_world_component_no_paths = load_component(
@@ -99,6 +101,8 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
     def test_dsl_condition_pipeline_with_primitive_input(self, client: MLClient):
+        set_bodiless_matcher()
+
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
         )
@@ -140,6 +144,8 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
     def test_dsl_condition_pipeline_with_one_branch(self, client: MLClient):
+        set_bodiless_matcher()
+
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
         )

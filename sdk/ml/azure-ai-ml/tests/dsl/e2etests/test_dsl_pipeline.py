@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
@@ -1577,6 +1577,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
         batch_inference = load_component(source=str(components_dir / "score.yml"))
@@ -1725,6 +1727,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
     def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
+        set_bodiless_matcher()
+
         environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
         inputs = {
             "job_data_path": Input(
@@ -1837,6 +1841,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
     def test_multi_parallel_components_with_file_input_pipeline_output(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
+        set_bodiless_matcher()
+
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
