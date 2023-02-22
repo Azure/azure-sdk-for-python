@@ -169,7 +169,7 @@ class AMQPClient(
         self._keep_alive_interval = int(kwargs.get("keep_alive_interval", 0))
         self._keep_alive_thread = None
 
-        self._link_credit = kwargs.pop("link_credit", 300)
+        self._link_credit = kwargs.get("link_credit", 300)
         
         # Connection settings
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
