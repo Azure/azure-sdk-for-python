@@ -12,7 +12,13 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import (
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.entities import CustomerManagedKey, IdentityConfiguration, ManagedIdentityConfiguration, Workspace
+from azure.ai.ml.entities import (
+    CustomerManagedKey,
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+    Workspace,
+    WorkspaceConnection
+)
 from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.polling import LROPoller
 
@@ -74,6 +80,16 @@ class TestWorkspaceOperation:
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
+
+    def test_begin_create_featurestore_kind(
+        self,
+        mock_workspace_operation: WorkspaceOperations,
+        mocker: MockFixture,
+    ):
+        mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=None)
+        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
+        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
+        mock_workspace_operation.begin_create(workspace=Workspace(name="name", kind="FeatureStore"))
 
     def test_begin_create_with_resource_group(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture):
         ws = Workspace(
@@ -246,6 +262,29 @@ class TestWorkspaceOperation:
         ws.tags = {"k": "v"}
         ws.param = {"tagValues": {"value": {}}}
         mock_workspace_operation._populate_arm_paramaters(workspace=ws)
+
+    def test_populate_arm_paramaters_feature_store(
+            self, 
+            mock_workspace_operation: WorkspaceOperations,
+            mocker: MockFixture) -> None:
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations.get_resource_group_location", return_value="random_name"
+        )
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations.get_default_log_analytics_arm_id",
+            return_value=("random_id", True),
+        )
+        setup_feature_store = True
+        offline_store_connection = WorkspaceConnection(
+            name="offline_connecttion",
+            target="target", 
+            type="azure_data_lake_gen2",
+            credentials=ManagedIdentityConfiguration(client_id="clientid", resource_id="resourceid"))
+        mock_workspace_operation._populate_arm_paramaters(
+            workspace=Workspace(name="name"),
+            setup_feature_store=setup_feature_store,
+            offline_store_connection=offline_store_connection
+            )
 
     def test_check_workspace_name(self, mock_workspace_operation: WorkspaceOperations):
         mock_workspace_operation._default_workspace_name = None
