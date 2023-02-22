@@ -1125,7 +1125,7 @@ class ManagedClustersOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Create or Update a Managed Cluster operation. Is
-         either a model type or a IO type. Required.
+         either a ManagedCluster type or a IO type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2018_08_01_preview.models.ManagedCluster or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1347,7 +1347,7 @@ class ManagedClustersOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Update Managed Cluster Tags operation. Is either
-         a model type or a IO type. Required.
+         a TagsObject type or a IO type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2018_08_01_preview.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1687,7 +1687,7 @@ class ManagedClustersOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Reset Service Principal Profile operation for a
-         Managed Cluster. Is either a model type or a IO type. Required.
+         Managed Cluster. Is either a ManagedClusterServicePrincipalProfile type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.containerservice.v2018_08_01_preview.models.ManagedClusterServicePrincipalProfile
          or IO
@@ -1910,7 +1910,7 @@ class ManagedClustersOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Reset AAD Profile operation for a Managed
-         Cluster. Is either a model type or a IO type. Required.
+         Cluster. Is either a ManagedClusterAADProfile type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.containerservice.v2018_08_01_preview.models.ManagedClusterAADProfile or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

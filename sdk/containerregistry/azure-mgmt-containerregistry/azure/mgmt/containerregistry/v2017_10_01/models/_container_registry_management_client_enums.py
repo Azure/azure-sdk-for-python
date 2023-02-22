@@ -7,24 +7,23 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class Action(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The action of virtual network rule.
-    """
+class Action(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action of virtual network rule."""
 
     ALLOW = "Allow"
 
-class DefaultAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The default action of allow or deny when no other rules match.
-    """
+
+class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The default action of allow or deny when no other rules match."""
 
     ALLOW = "Allow"
     DENY = "Deny"
 
-class ImportMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ImportMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """When Force, any existing target tags will be overwritten. When NoForce, any existing target
     tags will fail the operation before any copying begins.
     """
@@ -32,23 +31,23 @@ class ImportMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NO_FORCE = "NoForce"
     FORCE = "Force"
 
-class PasswordName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The password name.
-    """
+
+class PasswordName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The password name."""
 
     PASSWORD = "password"
     PASSWORD2 = "password2"
 
-class PolicyStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The value that indicates whether the policy is enabled or not.
-    """
+
+class PolicyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The value that indicates whether the policy is enabled or not."""
 
     ENABLED = "enabled"
     DISABLED = "disabled"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the container registry at the time the operation was called.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the container registry at the time the operation was called."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -57,38 +56,40 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class RegistryUsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The unit of measurement.
-    """
+
+class RegistryUsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The unit of measurement."""
 
     COUNT = "Count"
     BYTES = "Bytes"
 
-class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU name of the container registry. Required for registry creation.
-    """
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU name of the container registry. Required for registry creation."""
 
     CLASSIC = "Classic"
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU tier based on the SKU name.
-    """
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU tier based on the SKU name."""
 
     CLASSIC = "Classic"
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class TrustPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of trust policy.
-    """
+
+class TrustPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of trust policy."""
 
     NOTARY = "Notary"
 
-class WebhookAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class WebhookAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WebhookAction."""
 
     PUSH = "push"
     DELETE = "delete"
@@ -96,9 +97,9 @@ class WebhookAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CHART_PUSH = "chart_push"
     CHART_DELETE = "chart_delete"
 
-class WebhookStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the webhook at the time the operation was called.
-    """
+
+class WebhookStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the webhook at the time the operation was called."""
 
     ENABLED = "enabled"
     DISABLED = "disabled"

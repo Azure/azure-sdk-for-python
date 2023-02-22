@@ -277,8 +277,8 @@ class DatabaseAutomaticTuningOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested automatic tuning resource state. Is either a model type or a
-         IO type. Required.
+        :param parameters: The requested automatic tuning resource state. Is either a
+         DatabaseAutomaticTuning type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseAutomaticTuning or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

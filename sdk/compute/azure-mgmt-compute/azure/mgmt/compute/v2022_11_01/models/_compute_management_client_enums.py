@@ -195,6 +195,13 @@ class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EDGE_ZONE = "EdgeZone"
 
 
+class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The hypervisor generation of the Virtual Machine [V1, V2]."""
+
+    V1 = "V1"
+    V2 = "V2"
+
+
 class HyperVGenerationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the HyperVGeneration Type associated with a resource."""
 
@@ -307,10 +314,10 @@ class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The OS State. For managed images, use Generalized."""
 
-    #: Generalized image. Needs to be provisioned during deployment time.
     GENERALIZED = "Generalized"
-    #: Specialized image. Contains already provisioned OS Disk.
+    """Generalized image. Needs to be provisioned during deployment time."""
     SPECIALIZED = "Specialized"
+    """Specialized image. Contains already provisioned OS Disk."""
 
 
 class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
