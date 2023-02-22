@@ -4,7 +4,7 @@
 
 # pylint: disable=too-many-instance-attributes
 
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntime
