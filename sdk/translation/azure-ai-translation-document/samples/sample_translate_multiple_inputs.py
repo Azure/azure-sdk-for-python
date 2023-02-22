@@ -33,6 +33,7 @@ USAGE:
 
 
 def sample_multiple_translation():
+    # [START multiple_translation]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
@@ -77,6 +78,7 @@ def sample_multiple_translation():
         ]
     )
     result = poller.result()
+    # [END multiple_translation]
 
     print(f"Status: {poller.status()}")
     print(f"Created on: {poller.details.created_on}")
