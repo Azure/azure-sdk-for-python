@@ -1696,7 +1696,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_job.jobs["compare"].outputs.best_model.name == "best_model"
         assert pipeline_job.jobs["compare"].outputs.best_model.version == random_version
 
-    @pytest.mark.skipif(condition=not is_live(), reason="component version changes across tests")
+    @pytest.mark.skipif(condition=not is_live(), reason="Task 2177353: component version changes across tests.")
     @pytest.mark.parametrize(
         "yaml_path",
         [
