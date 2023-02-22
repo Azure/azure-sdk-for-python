@@ -1,35 +1,35 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 display_name: Serverless in Pipeline - Spark
+settings:
+  default_compute: azureml:serverless
 inputs:
-  iris_data:
+  input1:
     type: uri_file
-    path: ./dataset/iris.csv
+    path: ./dataset/shakespeare.txt
     mode: direct
+  sample_rate: 0.01
 outputs:
-  output:
-    type: uri_folder
+  output1:
+    type: uri_file
     mode: direct
 jobs:
-  add_greeting_column:
+  sample_word:
     type: spark
-    component: ./add_greeting_column_component.yml
+    component: file:./src/sample_word.yml
     inputs:
-      file_input: ${{parent.inputs.iris_data}}
-
+      input1: ${{parent.inputs.input1}}
+      sample_rate: ${{parent.inputs.sample_rate}}
+    outputs:
+      output1: ${{parent.outputs.output1}}
     resources:
       instance_type: standard_e4s_v3
       runtime_version: 3.1.0
-
-  count_by_row:
+  count_word:
     type: spark
-    component: ./count_by_row_component.yml
+    component: file:./src/wordcount.yml
     inputs:
-      file_input: ${{parent.inputs.iris_data}}
-
-    outputs:
-      output: ${{parent.outputs.output}}
-
+      input1: ${{parent.jobs.sample_word.outputs.output1}}
     resources:
       instance_type: standard_e4s_v3
       runtime_version: 3.1.0
