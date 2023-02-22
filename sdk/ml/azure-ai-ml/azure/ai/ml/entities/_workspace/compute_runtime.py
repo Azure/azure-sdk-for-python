@@ -13,7 +13,6 @@ class ComputeRuntime(RestTranslatableMixin):
         self,
         *,
         spark_runtime_version: Optional[str] = None,
-        **kwargs
     ):
         """
         :keyword spark_runtime_version:
@@ -25,12 +24,11 @@ class ComputeRuntime(RestTranslatableMixin):
         return RestComputeRuntimeDto(
             spark_runtime_version=self.spark_runtime_version
         )
-        pass
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestComputeRuntimeDto) -> "ComputeRuntime":
-        if not rest_obj:
+    def _from_rest_object(cls, obj: RestComputeRuntimeDto) -> "ComputeRuntime":
+        if not obj:
             return None
         return ComputeRuntime(
-            spark_runtime_version=rest_obj.spark_runtime_version
+            spark_runtime_version=obj.spark_runtime_version
         )

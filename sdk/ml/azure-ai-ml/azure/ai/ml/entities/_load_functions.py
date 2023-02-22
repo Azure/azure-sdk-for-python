@@ -692,4 +692,3 @@ def load_feature_store(
     :rtype: FeatureStore
     """
     return load_common(FeatureStore, source, relative_origin, **kwargs)
-

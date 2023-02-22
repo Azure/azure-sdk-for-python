@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access
+
 from typing import Optional, Any
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
@@ -14,8 +16,7 @@ class FeatureStoreSettings(RestTranslatableMixin):
         self,
         *,
         compute_runtime: ComputeRuntime,
-        offline_store_connection_name: Optional[str] = None,
-        **kwargs
+        offline_store_connection_name: Optional[str] = None
     ):
         """
         :keyword compute_runtime:
@@ -32,13 +33,12 @@ class FeatureStoreSettings(RestTranslatableMixin):
             offline_store_connection_name=self.offline_store_connection_name,
             online_store_connection_name=None
         )
-        pass
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestFeatureStoreSettings) -> "FeatureStoreSettings":
-        if not rest_obj:
+    def _from_rest_object(cls, obj: RestFeatureStoreSettings) -> "FeatureStoreSettings":
+        if not obj:
             return None
         return FeatureStoreSettings(
             compute_runtime=ComputeRuntime._from_rest_object(rest_obj.compute_runtime),
-            offline_store_connection_name=rest_obj.offline_store_connection_name
+            offline_store_connection_name=obj.offline_store_connection_name
         )
