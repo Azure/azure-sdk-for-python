@@ -7,9 +7,10 @@
 import os
 import logging
 import shlex
-import sys
 import time
 import signal
+import platform
+import shutil
 
 import pytest
 import subprocess
@@ -23,14 +24,53 @@ from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
 
 _LOGGER = logging.getLogger()
 
-CONTAINER_NAME = "ambitious_azsdk_test_proxy"
-LINUX_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
-WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
 CONTAINER_STARTUP_TIMEOUT = 60
 PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 
 PROXY_CHECK_URL = PROXY_URL + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
+
+AVAILABLE_TEST_PROXY_BINARIES = {
+    "Windows": {
+        "AMD64":
+            {
+                "system": "Windows",
+                "machine": "AMD64",
+                "file_name": "test-proxy-standalone-win-x64.zip",
+                "executable": "Azure.Sdk.Tools.TestProxy.exe",
+            },
+    },
+    "Linux": {
+        "X86_64": {
+            "system": "Linux",
+            "machine": "X86_64",
+            "file_name": "test-proxy-standalone-linux-x64.tar.gz",
+            "executable": "Azure.Sdk.Tools.TestProxy",
+        },
+        "ARM64": {
+            "system": "Linux",
+            "machine": "ARM64",
+            "file_name": "test-proxy-standalone-linux-arm64.tar.gz",
+            "executable": "Azure.Sdk.Tools.TestProxy",
+        }
+    },
+    "Darwin": {
+        "X86_64": {
+            "system": "Darwin",
+            "machine": "X86_64",
+            "file_name": "test-proxy-standalone-osx-x64.zip",
+            "executable": "Azure.Sdk.Tools.TestProxy",
+        },
+        "ARM64": {
+            "system": "Darwin",
+            "machine": "ARM64",
+            "file_name": "test-proxy-standalone-osx-arm64.zip",
+            "executable": "Azure.Sdk.Tools.TestProxy",
+        }
+    }
+}
+
+PROXY_DOWNLOAD_URL = "https://github.com/Azure/azure-sdk-tools/releases/download/Azure.Sdk.Tools.TestProxy_{}/{}"
 
 discovered_roots = []
 
@@ -47,16 +87,28 @@ else:
     http_client = PoolManager(retries=Retry(total=1, raise_on_status=False))
 
 
-def get_image_tag(repo_root: str) -> str:
-    """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
+def get_target_version(repo_root: str) -> str:
+    """Gets the target test-proxy version from the target_version.txt file in /eng/common/testproxy"""
     version_file_location = os.path.relpath("eng/common/testproxy/target_version.txt")
     version_file_location_from_root = os.path.abspath(os.path.join(repo_root, version_file_location))
 
     with open(version_file_location_from_root, "r") as f:
-        image_tag = f.read().strip()
+        target_version = f.read().strip()
 
-    return image_tag
+    return target_version
 
+
+def get_downloaded_version(repo_root: str) -> str:
+    """Gets version from downloaded_version.txt within the local download folder"""
+
+    downloaded_version_file = os.path.abspath(os.path.join(repo_root, ".proxy", "downloaded_version.txt"))
+    
+    if os.path.exists(downloaded_version_file):
+        with open(downloaded_version_file, "r") as f:
+            version = f.read().strip()
+            return version
+    else:
+        return None
 
 def ascend_to_root(start_dir_or_file: str) -> str:
     """
@@ -81,18 +133,6 @@ def ascend_to_root(start_dir_or_file: str) -> str:
             current_dir = os.path.dirname(current_dir)
 
     raise Exception(f'Requested target "{start_dir_or_file}" does not exist within a git repo.')
-
-
-def delete_container() -> None:
-    """Delete container if it remained"""
-    proc = subprocess.Popen(
-        shlex.split(f"docker rm -f {CONTAINER_NAME}"),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        stdin=subprocess.DEVNULL,
-    )
-    output, stderr = proc.communicate(timeout=10)
-    return None
 
 
 def check_availability() -> None:
@@ -129,33 +169,58 @@ def check_proxy_availability() -> None:
         status_code = check_availability()
         now = time.time()
 
+def compare_local_tool(repo_root: str, expected_version: str):
+    pass
 
-def create_container(repo_root: str) -> None:
-    """Creates the test proxy Docker container"""
-    # Most of the time, running this script on a Windows machine will work just fine, as Docker defaults to Linux
-    # containers. However, in CI, Windows images default to _Windows_ containers. We cannot swap them. We can tell
-    # if we're in a CI build by checking for the environment variable TF_BUILD.
-    delete_container()
 
-    if sys.platform.startswith("win") and os.environ.get("TF_BUILD"):
-        image_prefix = WINDOWS_IMAGE_SOURCE_PREFIX
-        path_prefix = "C:"
-        linux_container_args = ""
+def prepare_local_tool(repo_root: str) -> str:
+    """
+    Returns the path to a downloaded executable
+    """
+
+    target_proxy_version = get_target_version(repo_root)
+
+    download_folder = os.path.join(repo_root, ".proxy")
+
+    system = platform.system() # Darwin, Linux, Windows
+    machine = platform.machine().upper() # arm64, x86_64, AMD64
+
+    if system in AVAILABLE_TEST_PROXY_BINARIES:
+        available_for_system = AVAILABLE_TEST_PROXY_BINARIES[system]
+
+        if machine in available_for_system:
+            target_info = available_for_system[machine]
+
+            download_necessary = True
+            downloaded_version = get_downloaded_version(repo_root)
+
+            if downloaded_version == target_proxy_version:
+                download_necessary = False
+            else:
+                # cleanup the directory for re-download
+                shutil.rmtree(download_folder)
+                os.makedirs(download_folder)
+
+            if download_necessary:
+                download_url = PROXY_DOWNLOAD_URL.format(target_proxy_version, target_info["file_name"])
+                download_file = os.path.join(download_folder, target_info["file_name"])
+                
+                http = urllib3.PoolManager()
+                with open(download_file, 'wb') as out:
+                    r = http.request('GET', download_url, preload_content=False)
+                    shutil.copyfileobj(r, out)
+        else:
+            _LOGGER.error(f"There are no available standalone proxy binaries for platform \"{machine}\".")
+            raise Exception("Unable to download a compatible standalone proxy for the current platform. File an issue against Azure/azure-sdk-tools with this error.")
     else:
-        image_prefix = LINUX_IMAGE_SOURCE_PREFIX
-        path_prefix = ""
-        linux_container_args = "--add-host=host.docker.internal:host-gateway"
+        _LOGGER.error(f"There are no available standalone proxy binaries for system \"{system}\".")
+        raise Exception("Unable to download a compatible standalone proxy for the current system. File an issue against Azure/azure-sdk-tools with this error.")
 
-    image_tag = get_image_tag(repo_root)
-    subprocess.Popen(
-        shlex.split(
-            f"docker run --rm --name {CONTAINER_NAME} -v '{repo_root}:{path_prefix}/srv/testproxy' "
-            f"{linux_container_args} -p 5001:5001 -p 5000:5000 {image_prefix}:{image_tag}"
-        ),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        stdin=subprocess.DEVNULL,
-    )
+    
+
+    
+    breakpoint()
+
 
 
 def start_test_proxy(request) -> None:
@@ -167,30 +232,42 @@ def start_test_proxy(request) -> None:
     check_system_proxy_availability()
 
     if not PROXY_MANUALLY_STARTED:
-        if os.getenv("TF_BUILD"):
-            _LOGGER.info("Starting the test proxy tool...")
-            if check_availability() == 200:
-                _LOGGER.debug("Tool is responding, exiting...")
-            else:
-                envname = os.getenv("TOX_ENV_NAME", "default")
-                root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
-                log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
-
-                _LOGGER.info("{} is calculated repo root".format(root))
-
-                os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, "l", envname)
-                if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
-                    os.makedirs(os.environ["PROXY_ASSETS_FOLDER"])
-
-                proc = subprocess.Popen(
-                    shlex.split('test-proxy start --storage-location="{}" -- --urls "{}"'.format(root, PROXY_URL)),
-                    stdout=log,
-                    stderr=log,
-                )
-                os.environ[TOOL_ENV_VAR] = str(proc.pid)
+        if check_availability() == 200:
+            _LOGGER.debug("Tool is responding, exiting...")
         else:
-            _LOGGER.info("Starting the test proxy container...")
-            create_container(repo_root)
+            envname = os.getenv("TOX_ENV_NAME", "default")
+            root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
+            log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
+
+            if os.getenv("TF_BUILD"):
+                _LOGGER.info("Starting the test proxy tool from dotnet tool cache...")
+                tool_name = "test-proxy"
+            else:
+                _LOGGER.info("Downloading and starting standalone proxy executable...")
+                tool_name = prepare_local_tool(root)
+
+            _LOGGER.info("{} is calculated repo root".format(root))
+
+            os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, "l", envname)
+            if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
+                os.makedirs(os.environ["PROXY_ASSETS_FOLDER"])
+
+            # always start the proxy with these two defaults set
+            passenv = {
+                "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(root, "eng", "common", "testproxy", "dotnet-devcert.pfx"),
+                "ASPNETCORE_Kestrel__Certificates__Default__Password": "password"
+            }
+            # if they are already set, override with what is in os.environ
+            passenv.update(os.environ)
+
+            proc = subprocess.Popen(
+                shlex.split(f'{tool_name} start --storage-location="{root}" -- --urls "{PROXY_URL}"'),
+                stdout=log,
+                stderr=log,
+                env=passenv
+            )
+            os.environ[TOOL_ENV_VAR] = str(proc.pid)
+
 
     # Wait for the proxy server to become available
     check_proxy_availability()
@@ -205,23 +282,12 @@ def stop_test_proxy() -> None:
     """Stops any running instance of the test proxy"""
 
     if not PROXY_MANUALLY_STARTED:
-        if os.getenv("TF_BUILD"):
-            _LOGGER.info("Stopping the test proxy tool...")
+        _LOGGER.info("Stopping the test proxy tool...")
 
-            try:
-                os.kill(int(os.getenv(TOOL_ENV_VAR)), signal.SIGTERM)
-            except:
-                _LOGGER.debug("Unable to kill running test-proxy process.")
-
-        else:
-            _LOGGER.info("Stopping the test proxy container...")
-            subprocess.Popen(
-                shlex.split(f"docker stop {CONTAINER_NAME}"),
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                stdin=subprocess.DEVNULL,
-            )
-
+        try:
+            os.kill(int(os.getenv(TOOL_ENV_VAR)), signal.SIGTERM)
+        except:
+            _LOGGER.debug("Unable to kill running test-proxy process.")
 
 @pytest.fixture(scope="session")
 def test_proxy(request) -> None:
