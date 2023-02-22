@@ -285,7 +285,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
         return UnknownIdentifier(identifier=raw_id)
 
     prefix = f'{segments[0]}:{segments[1]}:'
-    suffix = raw_id[len(prefix):]
+    suffix = segments[2]
     if prefix == TEAMS_USER_ANONYMOUS:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
