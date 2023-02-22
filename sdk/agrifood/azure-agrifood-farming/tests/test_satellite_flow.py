@@ -4,27 +4,24 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from azure.agrifood.farming.models import Farmer, SatelliteDataIngestionJob, SatelliteData
-from azure.core.exceptions import ResourceNotFoundError
-from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTest
-from random import randint
+from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTestCase
 from isodate.tzinfo import Utc
+from devtools_testutils import recorded_by_proxy
+from urllib.parse import urlparse, parse_qs
 
 
-class FarmBeatsSmokeTestCase(FarmBeatsTest):
+class TestFarmBeatsSatelliteJob(FarmBeatsTestCase):
 
     @FarmBeatsPowerShellPreparer()
-    def test_satellite_flow(self, agrifood_endpoint):
+    @recorded_by_proxy
+    def test_satellite_flow(self, **kwargs):
+        agrifood_endpoint = kwargs.pop("agrifood_endpoint")
 
         # Setup data
-        common_id_prefix = "satellite-flow-"
-        farmer_id_prefix = common_id_prefix + "test-farmer"
-        boundary_id_prefix = common_id_prefix + "test-boundary"
-        job_id_prefix = common_id_prefix + "job"
-
-        job_id = self.generate_random_name(job_id_prefix)
-        farmer_id = self.generate_random_name(farmer_id_prefix)
-        boundary_id = self.generate_random_name(boundary_id_prefix)
+        party_id = "test-party-39735"
+        common_id_prefix = "satellite-flow-asdf"
+        boundary_id = common_id_prefix + "test-boundary"
+        job_id = common_id_prefix + "job-47453"
 
         start_date_time = datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime(2020, 1, 31, tzinfo=Utc())
@@ -32,52 +29,84 @@ class FarmBeatsSmokeTestCase(FarmBeatsTest):
         # Setup client
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
-        # Create farmer
-        farmer = client.farmers.create_or_update(farmer_id=farmer_id, farmer=Farmer())
+        # Create party
+        party = client.parties.create_or_update(
+            party_id=party_id,
+            party={}
+        )
 
         # Create boundary if not exists
-        self.create_boundary_if_not_exist(client, farmer_id, boundary_id)
+        boundary = client.boundaries.create_or_update(
+            party_id=party_id,
+            boundary_id=boundary_id,
+            boundary={
+                "geometry":
+                {
+                    "type": "Polygon",
+                    "coordinates":
+                        [
+                            [
+                                [73.70457172393799, 20.545385304358106],
+                                [73.70457172393799, 20.545385304358106],
+                                [73.70448589324951, 20.542411534243367],
+                                [73.70877742767334, 20.541688176010233],
+                                [73.71023654937744, 20.545083911372505],
+                                [73.70663166046143, 20.546992723579137],
+                                [73.70457172393799, 20.545385304358106],
+                            ]
+                        ]
+                },
+                "status": "<string>",
+                "name": "<string>",
+                "description": "<string>"
+            }
+        )
 
         # Create satellite job
         satellite_job_poller = client.scenes.begin_create_satellite_data_ingestion_job(
             job_id=job_id,
-            job=SatelliteDataIngestionJob(
-                farmer_id=farmer_id,
-                boundary_id=boundary_id,
-                start_date_time=start_date_time,
-                end_date_time=end_date_time,
-                data=SatelliteData(
-                    image_names=[
-                        "LAI"
-                    ]
-                )
-            ),
+            job={
+                "boundaryId": boundary_id,
+                "endDateTime": end_date_time,
+                "partyId": party_id,
+                "startDateTime": start_date_time,
+                "provider": "Microsoft",
+                "source": "Sentinel_2_L2A",
+                "data": {
+                    "imageNames": [
+                        "NDVI"
+                    ],
+                    "imageFormats": [
+                        "TIF"
+                    ],
+                    "imageResolution": [10]
+                },
+                "name": "<string>",
+                "description": "<string>"
+            }
         )
+        satellite_job_poller.result()
 
         # Get terminal job state and assert
-        satellite_job = satellite_job_poller.result()
+        assert satellite_job_poller.status() == "Succeeded"
 
-        assert satellite_job.farmer_id == farmer_id
-        assert satellite_job.id == job_id
-        assert satellite_job.boundary_id == boundary_id
-        assert satellite_job.start_date_time == start_date_time
-        assert satellite_job.end_date_time == end_date_time
-        assert satellite_job.status == "Succeeded"
-
-        # Get corresponding scenes
+        # Get scenes which are available in FarmBeats for our party and boundary of intrest.
         scenes = client.scenes.list(
-            farmer_id=farmer_id,
+            party_id=party_id,
             boundary_id=boundary_id,
             start_date_time=start_date_time,
             end_date_time=end_date_time,
+            provider="Microsoft",
+            source="Sentinel_2_L2A"
         )
 
         scenes_list = list(scenes)
 
         # Assert scenes got created
-        assert len(scenes_list) > 0
-        for scene in scenes_list:
-            assert scene.farmer_id == farmer_id
-            assert scene.boundary_id == boundary_id
+        assert len(scenes_list) == 12
 
-        # TODO: What's a good way to assert the downloaded files?
+        # Download scene file
+        file_path = parse_qs(urlparse(scenes_list[0]["imageFiles"][0]["fileLink"]).query)['filePath'][0]
+        file_iter = client.scenes.download(file_path=file_path)
+        file = list(file_iter)
+        assert len(file) == 3
