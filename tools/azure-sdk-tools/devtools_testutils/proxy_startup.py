@@ -171,9 +171,6 @@ def check_proxy_availability() -> None:
         status_code = check_availability()
         now = time.time()
 
-def compare_local_tool(repo_root: str, expected_version: str):
-    pass
-
 
 def prepare_local_tool(repo_root: str) -> str:
     """
