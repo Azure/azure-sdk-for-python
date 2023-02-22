@@ -276,7 +276,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
 
     segments = raw_id.split(':', maxsplit=2)
     if len(segments) < 3:
-        if len(segments) == 2 and segments[0] == BOT:
+        if len(segments) == 2 and segments[0] == '28':
             return MicrosoftBotIdentifier(
                 bot_id=segments[1],
                 is_global=True,
@@ -325,7 +325,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
             is_global=False,
             cloud=CommunicationCloudEnvironment.PUBLIC
         )
-    elif prefix == {BOT_DOD_CLOUD_GLOBAL}:
+    elif prefix == BOT_DOD_CLOUD_GLOBAL:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=True,
