@@ -8,7 +8,6 @@ from typing import List
 import functools
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from azure.webpubsub.client import WebPubSubClient
-from azure.webpubsub.client import WebPubSubClientOptions
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 
 
@@ -19,7 +18,7 @@ class WebpubsubClientTest(AzureRecordedTestCase):
         service_client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
         url = service_client.get_client_access_token(roles=roles)["url"]
 
-        return WebPubSubClient(credential=url, options=WebPubSubClientOptions(auto_reconnect=auto_reconnect))
+        return WebPubSubClient(credential=url)
 
 
 WebpubsubClientPowerShellPreparer = functools.partial(

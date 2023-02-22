@@ -6,13 +6,13 @@
 # -------------------------------------------------------------------------
 import pytest
 import json
-from azure.webpubsub.client import WebPubSubJsonReliableProtocol
 from azure.webpubsub.client._models import (
     JoinGroupMessage,
     LeaveGroupMessage,
     SendToGroupMessage,
     SendEventMessage,
     SequenceAckMessage,
+    WebPubSubJsonReliableProtocol,
 )
 from testcase import WebpubsubClientPowerShellPreparer
 
