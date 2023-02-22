@@ -24,7 +24,7 @@ from .generate_utils import (
 _LOGGER = logging.getLogger(__name__)
 
 
-def del_outdated_samples(readme: str):
+def del_outdated_folder(readme: str):
     python_readme = Path(readme).parent / "readme.python.md"
     if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
@@ -95,7 +95,7 @@ def main(generate_input, generate_output):
         is_cadl = False
         if "resource-manager" in input_readme:
             relative_path_readme = str(Path(spec_folder, input_readme))
-            del_outdated_samples(relative_path_readme)
+            del_outdated_folder(relative_path_readme)
             config = generate(
                 CONFIG_FILE,
                 sdk_folder,
