@@ -83,9 +83,7 @@ def run(input_data, mini_batch_context):
     X = data_trans[features].values
     y = data_trans[target_col].values
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.05, random_state=12, shuffle=False
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05, random_state=12, shuffle=False)
 
     reg = GradientBoostingRegressor(random_state=12)
     reg.fit(X_train, y_train)

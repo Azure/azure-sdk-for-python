@@ -44,9 +44,7 @@ def main(args):
     preprocessed_train_data = get_preprocessed_data(train_data)
 
     # write preprocessed train txt file
-    preprocessed_train_data_path = os.path.join(
-        args.preprocessed_train_data, "train.txt"
-    )
+    preprocessed_train_data_path = os.path.join(args.preprocessed_train_data, "train.txt")
     with open(preprocessed_train_data_path, "w") as f:
         f.write(preprocessed_train_data)
 
@@ -56,9 +54,7 @@ def main(args):
     preprocessed_validation_data = get_preprocessed_data(validation_data)
 
     # write preprocessed validation txt file
-    preprocessed_validation_data_path = os.path.join(
-        args.preprocessed_validation_data, "valid.txt"
-    )
+    preprocessed_validation_data_path = os.path.join(args.preprocessed_validation_data, "valid.txt")
     with open(preprocessed_validation_data_path, "w") as f:
         f.write(preprocessed_validation_data)
 
@@ -67,9 +63,7 @@ def main(args):
 
     # read and write MLModel yaml file for train data
     train_data_mltable_path = os.path.join(args.train_data, "MLTable")
-    preprocessed_train_data_mltable_path = os.path.join(
-        args.preprocessed_train_data, "MLTable"
-    )
+    preprocessed_train_data_mltable_path = os.path.join(args.preprocessed_train_data, "MLTable")
     with open(train_data_mltable_path, "r") as file:
         yaml_file = yaml.safe_load(file)
     with open(preprocessed_train_data_mltable_path, "w") as file:
@@ -77,9 +71,7 @@ def main(args):
 
     # read and write MLModel yaml file for validation data
     validation_data_mltable_path = os.path.join(args.validation_data, "MLTable")
-    preprocessed_validation_data_mltable_path = os.path.join(
-        args.preprocessed_validation_data, "MLTable"
-    )
+    preprocessed_validation_data_mltable_path = os.path.join(args.preprocessed_validation_data, "MLTable")
     with open(validation_data_mltable_path, "r") as file:
         yaml_file = yaml.safe_load(file)
     with open(preprocessed_validation_data_mltable_path, "w") as file:

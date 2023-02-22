@@ -36,9 +36,7 @@ def dump_df_to_mltable(
     if has_partition:
         for group_name, group_df in input_df.groupby(partition_cols):
             if hasattr(group_name, "__iter__"):
-                relative_path = os.path.join(
-                    target_path, *[normalize_path_value(str(e)) for e in group_name]
-                )
+                relative_path = os.path.join(target_path, *[normalize_path_value(str(e)) for e in group_name])
             else:
                 relative_path = os.path.join(target_path, str(group_name))
 
@@ -46,9 +44,7 @@ def dump_df_to_mltable(
                 os.makedirs(relative_path)
 
             output_path = os.path.join(relative_path, partitioned_file_name)
-            group_df.drop(columns=partition_cols, errors="ignore").to_csv(
-                output_path, index=False
-            )
+            group_df.drop(columns=partition_cols, errors="ignore").to_csv(output_path, index=False)
     else:
         if not os.path.exists(target_path):
             os.makedirs(target_path)
@@ -85,9 +81,7 @@ def dump_df_to_mltable(
         mltable_dic["paths"].append({"pattern": "./**/*.csv"})
         mltable_dic["transformations"].append(
             {
-                "extract_columns_from_partition_format": {
-                    "partition_format": partition_format_str
-                },
+                "extract_columns_from_partition_format": {"partition_format": partition_format_str},
             }
         )
         mltable_dic["transformations"].append({"drop_columns": partition_key_droplist})
