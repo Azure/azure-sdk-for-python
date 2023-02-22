@@ -461,7 +461,7 @@ for name, doc_type in model.doc_types.items():
 Analyze document fields, tables, selection marks, and more. These models are trained with your own data, so they're tailored to your documents.
 For best results, you should only analyze documents of the same document type that the custom model was built with.
 
-<!-- SNIPPET:samsample_analyze_custom_documentsple_authentication.analyze_custom_documents -->
+<!-- SNIPPET:sample_analyze_custom_documents.analyze_custom_documents -->
 ```python
 from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.core.credentials import AzureKeyCredential
