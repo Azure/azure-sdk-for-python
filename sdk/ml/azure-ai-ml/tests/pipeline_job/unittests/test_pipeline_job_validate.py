@@ -10,8 +10,7 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import Input, Output, MLClient, dsl, load_component, load_job
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, SERVERLESS_COMPUTE
-from azure.ai.ml.constants._component import DataTransferTaskType, DataCopyMode
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
 from azure.ai.ml.exceptions import ValidationException, UserErrorException
@@ -292,15 +291,7 @@ class TestPipelineJobValidate:
                 "Outputs field only support type mltable for database and uri_folder for file_system",
             ),
             (
-                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_invalid_output_type_binding.yaml",
-                "Outputs field only support type mltable for database and uri_folder for file_system",
-            ),
-            (
                 "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type.yaml",
-                "Inputs field only support type uri_file for database and uri_folder for file_system",
-            ),
-            (
-                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type_binding.yaml",
                 "Inputs field only support type uri_file for database and uri_folder for file_system",
             ),
         ],
@@ -309,6 +300,25 @@ class TestPipelineJobValidate:
         pipeline = load_job(source=pipeline_output_path)
         validate_result = pipeline._validate()
         assert error_message in str(validate_result.error_messages)
+
+    @pytest.mark.parametrize(
+        "pipeline_output_path, error_message",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_with_reference_component_file."
+                "yaml",
+                "In order to specify an existing None, please provide the correct registry path prefixed with 'azureml",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_with_reference_componen_file.yaml",
+                "In order to specify an existing None, please provide the correct registry path prefixed with 'azureml",
+            ),
+        ],
+    )
+    def test_load_data_transfer_job_with_reference_component_file(self, pipeline_output_path, error_message):
+        with pytest.raises(ValidationError) as ex:
+            load_job(pipeline_output_path)
+            assert error_message in ex.__str__()
 
 
 @pytest.mark.unittest

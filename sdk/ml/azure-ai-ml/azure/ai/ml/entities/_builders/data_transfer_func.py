@@ -246,36 +246,51 @@ def import_data(
     component = kwargs.pop("component", None)
     if component is None:
         if source and source.type == ExternalDataType.DATABASE:
-            component_id = DataTransferBuiltinComponentUri.IMPORT_DATABASE
+            component = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
-            component_id = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
-        component = DataTransferImportComponent(
+            component = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
+        # component = DataTransferImportComponent(
+        #     name=name,
+        #     tags=tags,
+        #     display_name=display_name,
+        #     description=description,
+        #     source=source,
+        #     outputs=component_outputs,
+        #     task=task,
+        #     _source=ComponentSource.BUILDER,
+        #     is_deterministic=is_deterministic,
+        #     id=component_id,
+        #     **kwargs,
+        # )
+        # component._source = ComponentSource.BUILTIN
+        data_transfer_import_obj = DataTransferImport(
+            component=component,
             name=name,
+            description=description,
             tags=tags,
             display_name=display_name,
-            description=description,
+            experiment_name=experiment_name,
+            compute=compute,
             source=source,
-            outputs=component_outputs,
+            outputs=job_outputs,
             task=task,
-            _source=ComponentSource.BUILDER,
-            is_deterministic=is_deterministic,
-            id=component_id,
             **kwargs,
         )
-        component._source = ComponentSource.BUILTIN
-    data_transfer_import_obj = DataTransferImport(
-        component=component,
-        name=name,
-        description=description,
-        tags=tags,
-        display_name=display_name,
-        experiment_name=experiment_name,
-        compute=compute,
-        source=source,
-        outputs=job_outputs,
-        task=task,
-        **kwargs,
-    )
+        data_transfer_import_obj._source = ComponentSource.BUILTIN
+    else:
+        data_transfer_import_obj = DataTransferImport(
+            component=component,
+            name=name,
+            description=description,
+            tags=tags,
+            display_name=display_name,
+            experiment_name=experiment_name,
+            compute=compute,
+            source=source,
+            outputs=job_outputs,
+            task=task,
+            **kwargs,
+        )
     return data_transfer_import_obj
 
 
@@ -329,7 +344,7 @@ def export_data(
 
     if component is None:
         if sink and sink.type == ExternalDataType.DATABASE:
-            component_id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
+            component = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
             msg = "Sink is a required field for export data task and we don't support exporting file system for now."
             raise ValidationException(
@@ -338,31 +353,46 @@ def export_data(
                 target=ErrorTarget.JOB,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-        component = DataTransferExportComponent(
+        # component = DataTransferExportComponent(
+        #     name=name,
+        #     tags=tags,
+        #     display_name=display_name,
+        #     description=description,
+        #     sink=sink,
+        #     inputs=component_inputs,
+        #     task=task,
+        #     _source=ComponentSource.BUILDER,
+        #     is_deterministic=is_deterministic,
+        #     id=component_id,
+        #     **kwargs,
+        # )
+        # component._source = ComponentSource.BUILTIN
+        data_transfer_export_obj = DataTransferExport(
+            component=component,
             name=name,
+            description=description,
             tags=tags,
             display_name=display_name,
-            description=description,
+            experiment_name=experiment_name,
+            compute=compute,
             sink=sink,
-            inputs=component_inputs,
+            inputs=job_inputs,
             task=task,
-            _source=ComponentSource.BUILDER,
-            is_deterministic=is_deterministic,
-            id=component_id,
             **kwargs,
         )
-        component._source = ComponentSource.BUILTIN
-    data_transfer_export_obj = DataTransferExport(
-        component=component,
-        name=name,
-        description=description,
-        tags=tags,
-        display_name=display_name,
-        experiment_name=experiment_name,
-        compute=compute,
-        sink=sink,
-        inputs=job_inputs,
-        task=task,
-        **kwargs,
-    )
+        data_transfer_export_obj._source = ComponentSource.BUILTIN
+    else:
+        data_transfer_export_obj = DataTransferExport(
+            component=component,
+            name=name,
+            description=description,
+            tags=tags,
+            display_name=display_name,
+            experiment_name=experiment_name,
+            compute=compute,
+            sink=sink,
+            inputs=job_inputs,
+            task=task,
+            **kwargs,
+        )
     return data_transfer_export_obj

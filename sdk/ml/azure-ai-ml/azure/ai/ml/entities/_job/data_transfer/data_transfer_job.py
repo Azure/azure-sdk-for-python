@@ -249,22 +249,22 @@ class DataTransferImportJob(DataTransferJob):
         context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 
         if self.source.type == ExternalDataType.DATABASE:
-            component_id = DataTransferBuiltinComponentUri.IMPORT_DATABASE
+            component = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
-            component_id = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
+            component = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
 
         # Create anonymous command component with default version as 1
-        component = DataTransferImportComponent(
-            tags=self.tags,
-            is_anonymous=True,
-            base_path=context[BASE_PATH_CONTEXT_KEY],
-            description=self.description,
-            source=self.source,
-            outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
-            task=self.task,
-            id=component_id,
-        )
-        component._source = ComponentSource.BUILTIN
+        # component = DataTransferImportComponent(
+        #     tags=self.tags,
+        #     is_anonymous=True,
+        #     base_path=context[BASE_PATH_CONTEXT_KEY],
+        #     description=self.description,
+        #     source=self.source,
+        #     outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
+        #     task=self.task,
+        #     id=component_id,
+        # )
+        # component._source = ComponentSource.BUILTIN
         return component
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs):
@@ -327,7 +327,7 @@ class DataTransferExportJob(DataTransferJob):
         context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 
         if self.sink.type == ExternalDataType.DATABASE:
-            component_id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
+            component = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
             msg = "Sink is a required field for export data task and we don't support exporting file system for now."
             raise ValidationException(
@@ -338,17 +338,17 @@ class DataTransferExportJob(DataTransferJob):
             )
 
         # Create anonymous command component with default version as 1
-        component = DataTransferExportComponent(
-            tags=self.tags,
-            is_anonymous=True,
-            base_path=context[BASE_PATH_CONTEXT_KEY],
-            description=self.description,
-            sink=self.sink,
-            inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
-            task=self.task,
-            id=component_id,
-        )
-        component._source = ComponentSource.BUILTIN
+        # component = DataTransferExportComponent(
+        #     tags=self.tags,
+        #     is_anonymous=True,
+        #     base_path=context[BASE_PATH_CONTEXT_KEY],
+        #     description=self.description,
+        #     sink=self.sink,
+        #     inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
+        #     task=self.task,
+        #     id=component_id,
+        # )
+        # component._source = ComponentSource.BUILTIN
         return component
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs):

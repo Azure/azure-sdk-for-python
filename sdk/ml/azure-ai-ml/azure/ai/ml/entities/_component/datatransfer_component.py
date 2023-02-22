@@ -239,6 +239,17 @@ class DataTransferImportComponent(DataTransferComponent):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
 
+    def __call__(self, *args, **kwargs):
+        """Call ComponentVersion as a function and get a Component object."""
+
+        msg = "DataTransfer component is not callable for import task."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMPONENT,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
 
 class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
     """DataTransfer export component version, used to define a data transfer component.
@@ -273,3 +284,14 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)
+
+    def __call__(self, *args, **kwargs):
+        """Call ComponentVersion as a function and get a Component object."""
+
+        msg = "DataTransfer component is not callable for export task."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMPONENT,
+            error_category=ErrorCategory.USER_ERROR,
+        )

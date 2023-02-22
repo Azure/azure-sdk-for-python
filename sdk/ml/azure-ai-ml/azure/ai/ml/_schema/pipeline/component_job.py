@@ -421,18 +421,18 @@ class DataTransferImportSchema(BaseNodeSchema):
     component = TypeSensitiveUnionField(
         {
             NodeType.DATA_TRANSFER: [
-                # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousDataTransferImportComponentSchema, unknown=INCLUDE),
-                # component file reference
-                DataTransferImportComponentFileRefField(),
+                # for registry type assets
+                RegistryStr(),
+                # existing component
+                ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             ],
         },
-        plain_union_fields=[
-            # for registry type assets
-            RegistryStr(),
-            # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-        ],
+        # plain_union_fields=[
+        #     # for registry type assets
+        #     RegistryStr(),
+        #     # existing component
+        #     ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        # ],
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
@@ -480,18 +480,18 @@ class DataTransferExportSchema(BaseNodeSchema):
     component = TypeSensitiveUnionField(
         {
             NodeType.DATA_TRANSFER: [
-                # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousDataTransferExportComponentSchema, unknown=INCLUDE),
-                # component file reference
-                DataTransferExportComponentFileRefField(),
+                # for registry type assets
+                RegistryStr(),
+                # existing component
+                ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             ],
         },
-        plain_union_fields=[
-            # for registry type assets
-            RegistryStr(),
-            # existing component
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-        ],
+        # plain_union_fields=[
+        #     # for registry type assets
+        #     RegistryStr(),
+        #     # existing component
+        #     ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        # ],
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA])

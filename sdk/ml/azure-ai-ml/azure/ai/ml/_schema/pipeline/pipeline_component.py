@@ -172,11 +172,11 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 context=context,
                 pipeline_job_dict=data,
             )
-            if not (
-                job_instance.type == NodeType.DATA_TRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA
-            ):
+            if job_instance.type == NodeType.DATA_TRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA:
+                job_instance._source = ComponentSource.BUILTIN
+            else:
                 job_instance.component._source = ComponentSource.YAML_JOB
-            job_instance._source = job_instance.component._source
+                job_instance._source = job_instance.component._source
             jobs[key] = job_instance
         # update job instance name to key
         job_instance.name = key
