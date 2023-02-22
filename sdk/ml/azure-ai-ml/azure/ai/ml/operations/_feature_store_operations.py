@@ -19,6 +19,7 @@ from azure.core.polling import LROPoller, PollingMethod
 from azure.core.tracing.decorator import distributed_trace
 from ._workspace_operations import WorkspaceOperations
 from azure.ai.ml.constants._common import AzureMLResourceType, ArmConstants, LROConfigurations, Scope, WorkspaceResourceConstants
+from marshmallow import ValidationError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -63,7 +64,7 @@ class FeatureStoreOperations():
             self._resource_group_name,
             cls=lambda objs: [
                 FeatureStore._from_rest_object(filterObj) for filterObj in filter(lambda ws: ws.kind == "FeatureStore", objs)]
-        )
+            )
 
     # @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     @distributed_trace
@@ -78,7 +79,10 @@ class FeatureStoreOperations():
 
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._workspace_operation.get(resource_group, name)
-        return FeatureStore._from_rest_object(obj)
+        if obj and obj.kind and obj.kind.lower() == "featurestore":
+            return FeatureStore._from_rest_object(obj)
+        else:
+            return None
 
     # @monitor_with_activity(logger, "FeatureStore.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
@@ -98,6 +102,11 @@ class FeatureStoreOperations():
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
+        if(feature_store.offline_store_connection and 
+           feature_store.offline_store_connection.credentials and
+           not isinstance(feature_store.offline_store_connection.credentials, ManagedIdentityConfiguration)):
+            raise ValidationError("ManagedIdentityConfiguration is required for feature store")
+
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
@@ -131,16 +140,19 @@ class FeatureStoreOperations():
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_update(
-            workspace=feature_store,
-            update_dependent_resources=update_dependent_resources,
-            setup_feature_store=True,
-            **kwargs
-        )
+        if self.get(name=feature_store.name):
+            return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_update(
+                workspace=feature_store,
+                update_dependent_resources=update_dependent_resources,
+                setup_feature_store=True,
+                **kwargs
+            )
+        else:
+            ValidationError("{0} is not a feature store".format(feature_store.name))
 
     # @monitor_with_activity(logger, "FeatureStore.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_delete(self, feature_store: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
+    def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
         """Delete a FeatureStore.
 
         :param name: Name of the FeatureStore
@@ -152,48 +164,11 @@ class FeatureStoreOperations():
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_delete(
-            workspace=feature_store,
-            delete_dependent_resources=delete_dependent_resources,
-            **kwargs
-        )
-
-
-class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
-    def __init__(self, poller, func) -> None:
-        self.poller = poller
-        self.func = func
-        super().__init__()
-
-    def resource(self):
-        error = None
-        try:
-            while not self.poller.done():
-                time.sleep(LROConfigurations.SLEEP_TIME)
-
-            if self.poller._exception is not None:
-                error = self.poller._exception
-
-        except Exception as e:  # pylint: disable=broad-except
-            error = e
-        finally:
-            # one last check to make sure all print statements make it
-            if not isinstance(error, KeyboardInterrupt):
-                # total_duration = self.poller.result().properties.duration
-                total_duration = 100
-
-        if error is not None:
-            raise error
-        return self.func()
-
-    def initialize(self, *args, **kwargs):
-        pass
-
-    def finished(self):
-        pass
-
-    def run(self):
-        pass
-
-    def status(self):
-        pass
+        if self.get(name=name):
+            return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_delete(
+                name=name,
+                delete_dependent_resources=delete_dependent_resources,
+                **kwargs
+            )
+        else:
+            raise ValidationError("{0} is not a feature store".format(name))

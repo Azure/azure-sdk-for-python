@@ -74,7 +74,7 @@ class FeatureStore(Workspace):
             name=workspace_object.name,
             description=workspace_object.description,
             tags= workspace_object.tags,
-            # offline_store_connection=workspace_object.feature_store_settings.offline_store_connection_name,
+            # offline_store_connection=workspace_object.feature_store_settings.offline_store_connection_name
             compute_runtime=workspace_object.feature_store_settings.compute_runtime,
             display_name=workspace_object.display_name,
             location=workspace_object.location,
