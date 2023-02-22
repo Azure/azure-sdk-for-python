@@ -230,8 +230,8 @@ class ManagedDatabaseTransparentDataEncryptionOperations:
         :type database_name: str
         :param tde_name: The name of the transparent data encryption configuration. "current" Required.
         :type tde_name: str or ~azure.mgmt.sql.models.TransparentDataEncryptionName
-        :param parameters: The database transparent data encryption. Is either a model type or a IO
-         type. Required.
+        :param parameters: The database transparent data encryption. Is either a
+         ManagedTransparentDataEncryption type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedTransparentDataEncryption or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

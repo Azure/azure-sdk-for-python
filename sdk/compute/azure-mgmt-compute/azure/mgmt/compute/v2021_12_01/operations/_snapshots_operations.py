@@ -446,7 +446,7 @@ class SnapshotsOperations:
          The max name length is 80 characters. Required.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Put disk operation. Is either a
-         model type or a IO type. Required.
+         Snapshot type or a IO type. Required.
         :type snapshot: ~azure.mgmt.compute.v2021_12_01.models.Snapshot or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -664,7 +664,7 @@ class SnapshotsOperations:
          The max name length is 80 characters. Required.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation. Is
-         either a model type or a IO type. Required.
+         either a SnapshotUpdate type or a IO type. Required.
         :type snapshot: ~azure.mgmt.compute.v2021_12_01.models.SnapshotUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1224,7 +1224,7 @@ class SnapshotsOperations:
          The max name length is 80 characters. Required.
         :type snapshot_name: str
         :param grant_access_data: Access data object supplied in the body of the get snapshot access
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a GrantAccessData type or a IO type. Required.
         :type grant_access_data: ~azure.mgmt.compute.v2021_12_01.models.GrantAccessData or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
