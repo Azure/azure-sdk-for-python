@@ -15,7 +15,12 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import ApplicationClientConfiguration
-from .operations import ApplicationClientOperationsMixin, ApplicationDefinitionsOperations, ApplicationsOperations
+from .operations import (
+    ApplicationClientOperationsMixin,
+    ApplicationDefinitionsOperations,
+    ApplicationsOperations,
+    JitRequestsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -27,17 +32,20 @@ class ApplicationClient(ApplicationClientOperationsMixin):  # pylint: disable=cl
 
     :ivar applications: ApplicationsOperations operations
     :vartype applications:
-     azure.mgmt.resource.managedapplications.v2018_06_01.aio.operations.ApplicationsOperations
+     azure.mgmt.resource.managedapplications.v2019_07_01.aio.operations.ApplicationsOperations
     :ivar application_definitions: ApplicationDefinitionsOperations operations
     :vartype application_definitions:
-     azure.mgmt.resource.managedapplications.v2018_06_01.aio.operations.ApplicationDefinitionsOperations
+     azure.mgmt.resource.managedapplications.v2019_07_01.aio.operations.ApplicationDefinitionsOperations
+    :ivar jit_requests: JitRequestsOperations operations
+    :vartype jit_requests:
+     azure.mgmt.resource.managedapplications.v2019_07_01.aio.operations.JitRequestsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2018-06-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2019-07-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -62,6 +70,7 @@ class ApplicationClient(ApplicationClientOperationsMixin):  # pylint: disable=cl
         self.application_definitions = ApplicationDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.jit_requests = JitRequestsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
