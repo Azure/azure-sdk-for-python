@@ -1,0 +1,7 @@
+displayNames:
+matrix:
+  image: 
+    - Dockerfile
+  scenarios:
+    servicebusStress:
+      testTarget: servicebus
