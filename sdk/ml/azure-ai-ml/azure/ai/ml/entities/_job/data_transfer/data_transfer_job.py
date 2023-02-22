@@ -243,28 +243,12 @@ class DataTransferImportJob(DataTransferJob):
         :param kwargs: Extra arguments.
         :return: Translated data transfer import component.
         """
-        from azure.ai.ml.entities._component.datatransfer_component import DataTransferImportComponent
-
-        pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
-        context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 
         if self.source.type == ExternalDataType.DATABASE:
             component = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
             component = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
 
-        # Create anonymous command component with default version as 1
-        # component = DataTransferImportComponent(
-        #     tags=self.tags,
-        #     is_anonymous=True,
-        #     base_path=context[BASE_PATH_CONTEXT_KEY],
-        #     description=self.description,
-        #     source=self.source,
-        #     outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
-        #     task=self.task,
-        #     id=component_id,
-        # )
-        # component._source = ComponentSource.BUILTIN
         return component
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs):
@@ -321,11 +305,6 @@ class DataTransferExportJob(DataTransferJob):
         :param kwargs: Extra arguments.
         :return: Translated data transfer export component.
         """
-        from azure.ai.ml.entities._component.datatransfer_component import DataTransferExportComponent
-
-        pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
-        context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
-
         if self.sink.type == ExternalDataType.DATABASE:
             component = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
@@ -336,19 +315,6 @@ class DataTransferExportJob(DataTransferJob):
                 target=ErrorTarget.DATA_TRANSFER_JOB,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-
-        # Create anonymous command component with default version as 1
-        # component = DataTransferExportComponent(
-        #     tags=self.tags,
-        #     is_anonymous=True,
-        #     base_path=context[BASE_PATH_CONTEXT_KEY],
-        #     description=self.description,
-        #     sink=self.sink,
-        #     inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
-        #     task=self.task,
-        #     id=component_id,
-        # )
-        # component._source = ComponentSource.BUILTIN
         return component
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs):

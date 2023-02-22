@@ -249,20 +249,6 @@ def import_data(
             component = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
             component = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
-        # component = DataTransferImportComponent(
-        #     name=name,
-        #     tags=tags,
-        #     display_name=display_name,
-        #     description=description,
-        #     source=source,
-        #     outputs=component_outputs,
-        #     task=task,
-        #     _source=ComponentSource.BUILDER,
-        #     is_deterministic=is_deterministic,
-        #     id=component_id,
-        #     **kwargs,
-        # )
-        # component._source = ComponentSource.BUILTIN
         data_transfer_import_obj = DataTransferImport(
             component=component,
             name=name,
@@ -353,20 +339,6 @@ def export_data(
                 target=ErrorTarget.JOB,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-        # component = DataTransferExportComponent(
-        #     name=name,
-        #     tags=tags,
-        #     display_name=display_name,
-        #     description=description,
-        #     sink=sink,
-        #     inputs=component_inputs,
-        #     task=task,
-        #     _source=ComponentSource.BUILDER,
-        #     is_deterministic=is_deterministic,
-        #     id=component_id,
-        #     **kwargs,
-        # )
-        # component._source = ComponentSource.BUILTIN
         data_transfer_export_obj = DataTransferExport(
             component=component,
             name=name,

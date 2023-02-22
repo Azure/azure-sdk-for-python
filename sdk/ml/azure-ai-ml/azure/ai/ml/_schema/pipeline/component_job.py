@@ -15,15 +15,11 @@ from azure.ai.ml._schema.component import (
     AnonymousParallelComponentSchema,
     AnonymousSparkComponentSchema,
     AnonymousDataTransferCopyComponentSchema,
-    AnonymousDataTransferImportComponentSchema,
-    AnonymousDataTransferExportComponentSchema,
     ComponentFileRefField,
     ImportComponentFileRefField,
     ParallelComponentFileRefField,
     SparkComponentFileRefField,
     DataTransferCopyComponentFileRefField,
-    DataTransferImportComponentFileRefField,
-    DataTransferExportComponentFileRefField,
 )
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -427,12 +423,6 @@ class DataTransferImportSchema(BaseNodeSchema):
                 ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             ],
         },
-        # plain_union_fields=[
-        #     # for registry type assets
-        #     RegistryStr(),
-        #     # existing component
-        #     ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-        # ],
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
@@ -486,12 +476,6 @@ class DataTransferExportSchema(BaseNodeSchema):
                 ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             ],
         },
-        # plain_union_fields=[
-        #     # for registry type assets
-        #     RegistryStr(),
-        #     # existing component
-        #     ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-        # ],
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA])
