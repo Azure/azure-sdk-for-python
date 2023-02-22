@@ -6,6 +6,7 @@
 Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing
 model, runs and run output/logging etc.
 """
+# pylint: disable=naming-mismatch
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
@@ -15,7 +16,7 @@ from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
-from ._assets.workspace_asset_reference import WorkspaceAssetReference
+from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
 from ._component.component import Component
@@ -260,7 +261,7 @@ __all__ = [
     "SynapseSparkCompute",
     "AutoScaleSettings",
     "AutoPauseSettings",
-    "WorkspaceAssetReference",
+    "WorkspaceModelReference",
     # builders
     "Command",
     "Parallel",

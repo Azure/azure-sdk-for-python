@@ -298,7 +298,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
         :param parameters: Parameters supplied to the Capture Virtual Machine operation. Is either a
-         model type or a IO type. Required.
+         VirtualMachineCaptureParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineCaptureParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -517,7 +517,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
         :param parameters: Parameters supplied to the Create Virtual Machine operation. Is either a
-         model type or a IO type. Required.
+         VirtualMachine type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2016_03_30.models.VirtualMachine or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -1042,7 +1042,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set to create or update. Required.
         :type vm_scale_set_name: str
-        :param parameters: The scale set object. Is either a model type or a IO type. Required.
+        :param parameters: The scale set object. Is either a VirtualMachineScaleSet type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSet or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1261,7 +1262,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set to create or update. Required.
         :type vm_scale_set_name: str
-        :param parameters: The scale set object. Is either a model type or a IO type. Required.
+        :param parameters: The scale set object. Is either a VirtualMachineScaleSetUpdate type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1672,7 +1674,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
         :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is
-         either a model type or a IO type. Default value is None.
+         either a VirtualMachineScaleSetVMInstanceIDs type or a IO type. Default value is None.
         :type vm_instance_i_ds:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMInstanceIDs or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -1895,7 +1897,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
         :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is
-         either a model type or a IO type. Required.
+         either a VirtualMachineScaleSetVMInstanceRequiredIDs type or a IO type. Required.
         :type vm_instance_i_ds:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMInstanceRequiredIDs or IO
         :param force_deletion: Optional parameter to force delete virtual machines from the VM scale
@@ -2551,7 +2553,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
          flag is false if not specified. Default value is False.
         :type skip_shutdown: bool
         :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is
-         either a model type or a IO type. Default value is None.
+         either a VirtualMachineScaleSetVMInstanceIDs type or a IO type. Default value is None.
         :type vm_instance_i_ds:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMInstanceIDs or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -2767,7 +2769,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
         :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is
-         either a model type or a IO type. Default value is None.
+         either a VirtualMachineScaleSetVMInstanceIDs type or a IO type. Default value is None.
         :type vm_instance_i_ds:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMInstanceIDs or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -2982,7 +2984,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
         :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is
-         either a model type or a IO type. Default value is None.
+         either a VirtualMachineScaleSetVMInstanceIDs type or a IO type. Default value is None.
         :type vm_instance_i_ds:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMInstanceIDs or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -3200,7 +3202,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
         :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is
-         either a model type or a IO type. Default value is None.
+         either a VirtualMachineScaleSetVMInstanceIDs type or a IO type. Default value is None.
         :type vm_instance_i_ds:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMInstanceIDs or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -3424,7 +3426,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
         :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is
-         either a model type or a IO type. Default value is None.
+         either a VirtualMachineScaleSetVMInstanceIDs type or a IO type. Default value is None.
         :type vm_instance_i_ds:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMInstanceIDs or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -3636,7 +3638,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
         :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is
-         either a model type or a IO type. Required.
+         either a VirtualMachineScaleSetVMInstanceRequiredIDs type or a IO type. Required.
         :type vm_instance_i_ds:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMInstanceRequiredIDs or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -3854,8 +3856,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param vm_scale_set_reimage_input: Parameters for Reimaging VM ScaleSet. Is either a model type
-         or a IO type. Default value is None.
+        :param vm_scale_set_reimage_input: Parameters for Reimaging VM ScaleSet. Is either a
+         VirtualMachineScaleSetReimageParameters type or a IO type. Default value is None.
         :type vm_scale_set_reimage_input:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetReimageParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -4073,7 +4075,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
         :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is
-         either a model type or a IO type. Default value is None.
+         either a VirtualMachineScaleSetVMInstanceIDs type or a IO type. Default value is None.
         :type vm_instance_i_ds:
          ~azure.mgmt.compute.v2021_03_01.models.VirtualMachineScaleSetVMInstanceIDs or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -4276,8 +4278,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the virtual machine scale set to create or update.
          Required.
         :type vm_scale_set_name: str
-        :param parameters: The input object for ConvertToSinglePlacementGroup API. Is either a model
-         type or a IO type. Required.
+        :param parameters: The input object for ConvertToSinglePlacementGroup API. Is either a
+         VMScaleSetConvertToSinglePlacementGroupInput type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.compute.v2021_03_01.models.VMScaleSetConvertToSinglePlacementGroupInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -4490,8 +4492,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :param vm_scale_set_name: The name of the virtual machine scale set to create or update.
          Required.
         :type vm_scale_set_name: str
-        :param parameters: The input object for SetOrchestrationServiceState API. Is either a model
-         type or a IO type. Required.
+        :param parameters: The input object for SetOrchestrationServiceState API. Is either a
+         OrchestrationServiceStateInput type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2021_03_01.models.OrchestrationServiceStateInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

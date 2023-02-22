@@ -376,7 +376,7 @@ class FirewallRulesOperations:
         :param firewall_rule_name: The name of the firewall rule. Required.
         :type firewall_rule_name: str
         :param parameters: The required parameters for creating or updating a firewall rule. Is either
-         a model type or a IO type. Required.
+         a FirewallRule type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.FirewallRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -664,7 +664,7 @@ class FirewallRulesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: Is either a model type or a IO type. Required.
+        :param parameters: Is either a FirewallRuleList type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.FirewallRuleList or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
