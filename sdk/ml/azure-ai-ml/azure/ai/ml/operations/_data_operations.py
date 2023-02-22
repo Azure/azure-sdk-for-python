@@ -331,7 +331,9 @@ class DataOperations(_ScopeDependentOperations):
         connection_name = data_import.source.connection.split(':')[-1]
         experiment_name = "data_import_" + data_import.name
         display_name = experiment_name + "_" + connection_name
-        component_name = "import_data_database" if isinstance(data_import.source, Database) else "import_data_file_system"
+        component_name = "import_data_database" \
+            if isinstance(data_import.source, Database) \
+            else "import_data_file_system"
         import_job = import_data(
             description=display_name,
             display_name=display_name,
