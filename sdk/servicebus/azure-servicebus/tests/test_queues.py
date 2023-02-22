@@ -320,16 +320,15 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name)
                 sender = sb_client.get_queue_sender(servicebus_queue.name)
 
-                # def _hack_disable_receive_context_message_received(self, message):
-                #     # pylint: disable=protected-access
-                #     # self._handler._was_message_received = True
-                #     self._handler._received_messages.put(message)
+                def _hack_disable_receive_context_message_received(self, frame, message):
+                    # pylint: disable=protected-access
+                    self._handler._received_messages.put((frame, message))
 
                 with sender, receiver:
                     # send 5 msgs to queue first
                     sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-                    # receiver._handler.on_message_received = types.MethodType(
-                    #     _hack_disable_receive_context_message_received, receiver)
+                    receiver._link.on_transfer = types.MethodType(
+                        _hack_disable_receive_context_message_received, receiver)
                     received_msgs = []
                     while len(received_msgs) < 5:
                         # issue 10 link credits, client should consume 5 msgs from the service
@@ -352,18 +351,18 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     for msg in received_msgs:
                         # queue ordering I think
                         assert msg.delivery_count == 0
-                        # with pytest.raises(ServiceBusError):
-                        receiver.complete_message(msg)
+                        with pytest.raises(ServiceBusError):
+                            receiver.complete_message(msg)
 
                     # re-received message with delivery count increased
-                    # target_msgs_count = 5
-                    # received_msgs = []
-                    # while len(received_msgs) < target_msgs_count:
-                    #     received_msgs.extend(receiver.receive_messages(max_message_count=5, max_wait_time=5))
-                    # assert len(received_msgs) == 5
-                    # for msg in received_msgs:
-                    #     assert msg.delivery_count > 0
-                    #     receiver.complete_message(msg)
+                    target_msgs_count = 5
+                    received_msgs = []
+                    while len(received_msgs) < target_msgs_count:
+                        received_msgs.extend(receiver.receive_messages(max_message_count=5, max_wait_time=5))
+                    assert len(received_msgs) == 5
+                    for msg in received_msgs:
+                        assert msg.delivery_count > 0
+                        receiver.complete_message(msg)
 
             sub_test_releasing_messages()
             sub_test_releasing_messages_iterator()

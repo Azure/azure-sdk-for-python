@@ -168,6 +168,8 @@ class AMQPClient(
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
         self._keep_alive_interval = int(kwargs.get("keep_alive_interval", 0))
         self._keep_alive_thread = None
+
+        self._link_credit = kwargs.pop("link_credit", 300)
         
         # Connection settings
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
@@ -220,15 +222,16 @@ class AMQPClient(
         """Close and destroy Client on exiting a context manager."""
         self.close()
 
-    def _keep_alive(self):
+    def _keep_alive(self, **kwargs):
         start_time = time.time()
         try:
             while self._connection and not self._shutdown:
+                # print("Keep Alive Thread")
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
                     _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
-                    self._connection.listen(wait=self._socket_timeout)
+                    self._connection.listen(wait=self._socket_timeout, batch=self._link_credit)
                     start_time = current_time
                 time.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
@@ -348,6 +351,7 @@ class AMQPClient(
         All pending, unsent messages will remain uncleared to allow
         them to be inspected and queued to a new client.
         """
+        print("Close")
         self._shutdown = True
         if not self._session:
             return  # already closed.

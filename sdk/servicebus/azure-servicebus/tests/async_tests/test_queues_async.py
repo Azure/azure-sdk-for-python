@@ -238,9 +238,9 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name)
                 sender = sb_client.get_queue_sender(servicebus_queue.name)
 
-                def _hack_disable_receive_context_message_received(self, message):
+                async def _hack_disable_receive_context_message_received(self, frame, message):
                     # pylint: disable=protected-access
-                    self._handler._received_messages.put(message)
+                    self._handler._received_messages.put((frame, message))
 
                 async with sender, receiver:
                     # send 5 msgs to queue first
@@ -268,8 +268,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                     assert len(received_msgs) == 5
                     for msg in received_msgs:
                         assert msg.delivery_count == 0
-                        # with pytest.raises(ServiceBusError):
-                        await receiver.complete_message(msg)
+                        with pytest.raises(ServiceBusError):
+                            await receiver.complete_message(msg)
 
                     # re-received message with delivery count increased
                     target_msgs_count = 5
