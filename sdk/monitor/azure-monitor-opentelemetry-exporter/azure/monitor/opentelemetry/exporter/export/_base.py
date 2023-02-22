@@ -9,7 +9,13 @@ from typing import List, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RedirectPolicy, RequestIdPolicy, BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy,
+    ContentDecodePolicy,
+    HttpLoggingPolicy,
+    RedirectPolicy,
+    RequestIdPolicy,
+)
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
@@ -103,7 +109,7 @@ class BaseExporter:
         ]
         if self._credential:
             _add_credential_policy(policies, self._credential)
-        
+
         self.client = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
         self.storage = None
