@@ -52,6 +52,22 @@ CommunicationUserProperties = TypedDict(
     id=str
 )
 
+PHONE_NUMBER = "4:"
+BOT = "28:"
+BOT_PUBLIC_CLOUD = "28:orgid:"
+BOT_DOD_CLOUD = "28:dod:"
+BOT_DOD_CLOUD_GLOBAL = "28:dod-global:"
+BOT_GCCH_CLOUD = "28:gcch:"
+BOT_GCCH_CLOUD_GLOBAL = "28:gcch-global:"
+TEAMS_USER_ANONYMOUS = "8:teamsvisitor:"
+TEAMS_USER_PUBLIC_CLOUD = "8:orgid:"
+TEAMS_USER_DOD_CLOUD = "8:dod:"
+TEAMS_USER_GCCH_CLOUD = "8:gcch:"
+ACS_USER = "8:acs:"
+ACS_USER_DOD_CLOUD = "8:dod-acs:"
+ACS_USER_GCCH_CLOUD = "8:gcch-acs:"
+SPOOL_USER = "8:spool:"
+
 
 class CommunicationUserIdentifier(object):
     """Represents a user in Azure Communication Service.
@@ -108,7 +124,7 @@ def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
     value = identifier.properties['value']
     # We just assume correct E.164 format here because
     # validation should only happen server-side, not client-side.
-    return f'4:{value}'
+    return f'{PHONE_NUMBER}{value}'
 
 
 class UnknownIdentifier(object):
@@ -178,15 +194,15 @@ class MicrosoftTeamsUserIdentifier(object):
 def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
     user_id = identifier.properties['user_id']
     if identifier.properties['is_anonymous']:
-        return '8:teamsvisitor:{}'.format(user_id)
+        return f'{TEAMS_USER_ANONYMOUS}{user_id}'
     cloud = identifier.properties['cloud']
     if cloud == CommunicationCloudEnvironment.DOD:
-        return '8:dod:{}'.format(user_id)
+        return f'{TEAMS_USER_DOD_CLOUD}{user_id}'
     elif cloud == CommunicationCloudEnvironment.GCCH:
-        return '8:gcch:{}'.format(user_id)
+        return f'{TEAMS_USER_GCCH_CLOUD}{user_id}'
     elif cloud == CommunicationCloudEnvironment.PUBLIC:
-        return '8:orgid:{}'.format(user_id)
-    return '8:orgid:{}'.format(user_id)
+        return f'{TEAMS_USER_PUBLIC_CLOUD}{user_id}'
+    return f'{TEAMS_USER_PUBLIC_CLOUD}{user_id}'
 
 
 MicrosoftBotProperties = TypedDict(
@@ -233,16 +249,16 @@ def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:
     cloud = identifier.properties['cloud']
     if identifier.properties['is_global']:
         if cloud == CommunicationCloudEnvironment.DOD:
-            return '28:dod-global:{}'.format(bot_id)
+            return f'{BOT_DOD_CLOUD_GLOBAL}{bot_id}'
         elif cloud == CommunicationCloudEnvironment.GCCH:
-            return '28:gcch-global:{}'.format(bot_id)
-        return '28:{}'.format(bot_id)
+            return f'{BOT_GCCH_CLOUD_GLOBAL}{bot_id}'
+        return f'{BOT}{bot_id}'
 
     if cloud == CommunicationCloudEnvironment.DOD:
-        return '28:dod:{}'.format(bot_id)
+        return f'{BOT_DOD_CLOUD}{bot_id}'
     elif cloud == CommunicationCloudEnvironment.GCCH:
-        return '28:gcch:{}'.format(bot_id)
-    return '28:orgid:{}'.format(bot_id)
+        return f'{BOT_GCCH_CLOUD}{bot_id}'
+    return f'{BOT_PUBLIC_CLOUD}{bot_id}'
 
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
@@ -253,14 +269,14 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
 
     :param str raw_id: A raw ID to construct the CommunicationIdentifier from.
     """
-    if raw_id.startswith('4:'):
+    if raw_id.startswith(PHONE_NUMBER):
         return PhoneNumberIdentifier(
-            value=raw_id[len('4:'):]
+            value=raw_id[len(PHONE_NUMBER):]
         )
 
     segments = raw_id.split(':', maxsplit=2)
     if len(segments) < 3:
-        if len(segments) == 2 and segments[0] == '28':
+        if len(segments) == 2 and segments[0] == BOT:
             return MicrosoftBotIdentifier(
                 bot_id=segments[1],
                 is_global=True,
@@ -268,60 +284,60 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
             )
         return UnknownIdentifier(identifier=raw_id)
 
-    prefix = '{}:{}:'.format(segments[0], segments[1])
+    prefix = f'{segments[0]}:{segments[1]}:'
     suffix = raw_id[len(prefix):]
-    if prefix == '8:teamsvisitor:':
+    if prefix == TEAMS_USER_ANONYMOUS:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=True
         )
-    elif prefix == '8:orgid:':
+    elif prefix == TEAMS_USER_PUBLIC_CLOUD:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.PUBLIC
         )
-    elif prefix == '8:dod:':
+    elif prefix == TEAMS_USER_DOD_CLOUD:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.DOD
         )
-    elif prefix == '8:gcch:':
+    elif prefix == TEAMS_USER_GCCH_CLOUD:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.GCCH
         )
-    elif prefix in ['8:acs:', '8:spool:', '8:dod-acs:', '8:gcch-acs:']:
+    elif prefix in [ACS_USER, ACS_USER_DOD_CLOUD, ACS_USER_GCCH_CLOUD, SPOOL_USER]:
         return CommunicationUserIdentifier(
             id=raw_id
         )
-    elif prefix == '28:gcch-global:':
+    elif prefix == BOT_GCCH_CLOUD_GLOBAL:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=True,
             cloud=CommunicationCloudEnvironment.GCCH
         )
-    elif prefix == '28:orgid:':
+    elif prefix == BOT_PUBLIC_CLOUD:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=False,
             cloud=CommunicationCloudEnvironment.PUBLIC
         )
-    elif prefix == '28:dod-global:':
+    elif prefix == {BOT_DOD_CLOUD_GLOBAL}:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=True,
             cloud=CommunicationCloudEnvironment.DOD
         )
-    elif prefix == '28:gcch:':
+    elif prefix == BOT_GCCH_CLOUD:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=False,
             cloud=CommunicationCloudEnvironment.GCCH
         )
-    elif prefix == '28:dod:':
+    elif prefix == BOT_DOD_CLOUD:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=False,
