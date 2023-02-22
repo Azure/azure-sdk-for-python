@@ -1263,7 +1263,7 @@ class SyncGroupsOperations:
         :type database_name: str
         :param sync_group_name: The name of the sync group. Required.
         :type sync_group_name: str
-        :param parameters: The requested sync group resource state. Is either a model type or a IO
+        :param parameters: The requested sync group resource state. Is either a SyncGroup type or a IO
          type. Required.
         :type parameters: ~azure.mgmt.sql.models.SyncGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -1634,7 +1634,7 @@ class SyncGroupsOperations:
         :type database_name: str
         :param sync_group_name: The name of the sync group. Required.
         :type sync_group_name: str
-        :param parameters: The requested sync group resource state. Is either a model type or a IO
+        :param parameters: The requested sync group resource state. Is either a SyncGroup type or a IO
          type. Required.
         :type parameters: ~azure.mgmt.sql.models.SyncGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

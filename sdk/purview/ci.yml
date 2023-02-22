@@ -38,3 +38,5 @@ extends:
       safeName: azurepurviewcatalog
     - name: azure-purview-administration
       safeName: azurepurviewadministration
+    - name: azure-purview-workflow
+      safeName: azurepurviewworkflow

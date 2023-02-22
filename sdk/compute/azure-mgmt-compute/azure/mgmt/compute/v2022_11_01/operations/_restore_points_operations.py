@@ -345,8 +345,8 @@ class RestorePointsOperations:
         :type restore_point_collection_name: str
         :param restore_point_name: The name of the restore point. Required.
         :type restore_point_name: str
-        :param parameters: Parameters supplied to the Create restore point operation. Is either a model
-         type or a IO type. Required.
+        :param parameters: Parameters supplied to the Create restore point operation. Is either a
+         RestorePoint type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2022_11_01.models.RestorePoint or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

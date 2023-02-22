@@ -307,3 +307,9 @@ path: ./model.pkl"""
             )
             mock_model_operation_reg.create_or_update(model_to_promote)
             mock_model_operation_reg._service_client.resource_management_asset_reference.begin_import_method.assert_called_once()
+
+    def test_model_entity_class_exist(self):
+        try:
+            from azure.ai.ml.entities import WorkspaceModelReference
+        except ImportError:
+            assert False, "WorkspaceModelReference class not found"
