@@ -22,7 +22,7 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
         party_id = "test-party-29476"
         common_id_prefix = "satellite-flow-asdf"
         boundary_id = common_id_prefix + "test-boundary"
-        job_id = common_id_prefix + "job-35736"
+        job_id = common_id_prefix + "job-47465"
 
         start_date_time = datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime(2020, 1, 31, tzinfo=Utc())

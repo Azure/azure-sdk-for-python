@@ -37,8 +37,7 @@ class TestFarmHierarchy(FarmBeatsTestCase):
         # Create
         party_response = client.parties.create_or_update(
             party_id=party_id,
-            party=party_request,
-            headers={"Accept-Encoding": "gzip, deflate, br"}
+            party=party_request
         )
 
         # Assert on immediate response
@@ -58,8 +57,7 @@ class TestFarmHierarchy(FarmBeatsTestCase):
 
         # Retrieve created object
         retrieved_party = client.parties.get(
-            party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate, br"})
+            party_id=party_id)
 
         # Assert on retrieved object
         assert retrieved_party["id"] == party_id
@@ -70,8 +68,7 @@ class TestFarmHierarchy(FarmBeatsTestCase):
         # Update
         updated_party = client.parties.create_or_update(
             party_id=party_id,
-            party=party_request,
-            headers={"Accept-Encoding": "gzip, deflate, br"}
+            party=party_request
         )
 
         # Assert on immediate response
@@ -80,17 +77,14 @@ class TestFarmHierarchy(FarmBeatsTestCase):
         assert updated_party["createdDateTime"] == party_response["createdDateTime"]
 
         # Retrieve updated object
-        retrieved_party = client.parties.get(party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate, br"})
+        retrieved_party = client.parties.get(party_id=party_id)
 
         # Assert updated object
         assert retrieved_party == updated_party
 
         # Delete
-        client.parties.delete(party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate, br"})
+        client.parties.delete(party_id=party_id)
 
         # Assert object doesn't exist anymore
         with pytest.raises(ResourceNotFoundError):
-            client.parties.get(party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate, br"})
+            client.parties.get(party_id=party_id)
