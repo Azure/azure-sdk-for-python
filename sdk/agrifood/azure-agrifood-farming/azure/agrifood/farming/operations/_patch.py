@@ -20,7 +20,6 @@ import datetime
 import sys
 from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
-from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
