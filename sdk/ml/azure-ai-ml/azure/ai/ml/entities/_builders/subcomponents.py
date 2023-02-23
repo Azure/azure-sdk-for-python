@@ -8,6 +8,7 @@
 
 from mldesigner import command_component, Output
 
+
 def save_mltable_yaml(path, mltable_paths):
     import os
     import yaml
@@ -20,20 +21,16 @@ def save_mltable_yaml(path, mltable_paths):
         os.makedirs(path, exist_ok=True)
 
     save_path = os.path.join(path, 'MLTable')
+    mltable_file_content = "\n".join(["paths:"] + [f"- folder : {path}" for path in mltable_paths])
 
     # mltable_yaml_dict = yaml.dump({"paths": mltable_paths}, default_)
     # mltable_yaml_dict[_PATHS_KEY] = self.paths
     with open(save_path, 'w') as f:
-        yaml.dump({"paths": mltable_paths}, f)
+        f.write(mltable_file_content)
 
 
-@command_component(environment="azureml:test_fl_command_component@latest")
+@command_component()
 def aggregate_output(aggregated_output: Output(type="mltable"), **kwargs):
     print("Aggregated Output {}".format(aggregated_output))
-    path_list = []
-    for k, v in kwargs.items():
-        print("Input name is {}".format(k))
-        print("Input value is {}".format(v))
-        path_list.append({"folder": v})
-
+    path_list = [k for k,v in kwargs.items()]
     save_mltable_yaml(aggregated_output, path_list)
