@@ -402,14 +402,14 @@
         },
         "offline_store_connection_name": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "OfflineStoreConnectionName",
             "metadata": {
                 "description": "Feature store offline store config"
             }
         },
         "online_store_connection_name": {
             "type": "string",
-            "defaultValue": "",
+            "defaultValue": "OnlineStoreConnectionName",
             "metadata": {
                 "description": "Feature store online store config"
             }
