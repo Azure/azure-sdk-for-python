@@ -699,7 +699,7 @@ def retry(
             tries = max_attempts + 1
             counter = 1
             while tries > 1:
-                delay = delay_multiplier * 2**counter + random.uniform(0, 1)
+                delay = delay_multiplier * 2 ** counter + random.uniform(0, 1)
                 try:
                     return f(*args, **kwargs)
                 except exceptions as e:
