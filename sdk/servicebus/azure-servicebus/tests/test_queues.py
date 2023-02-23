@@ -315,19 +315,20 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         receiver.complete_message(msg)
                     assert outter_recv_cnt == 4
 
+
+            def _hack_disable_receive_context_message_received(self, frame, message):
+                # pylint: disable=protected-access
+                self._handler._received_messages.put((frame, message))
+
             def sub_test_non_releasing_messages():
                 # test not releasing messages when prefetch is not 1
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name)
                 sender = sb_client.get_queue_sender(servicebus_queue.name)
 
-                def _hack_disable_receive_context_message_received(self, frame, message):
-                    # pylint: disable=protected-access
-                    self._handler._received_messages.put((frame, message))
-
                 with sender, receiver:
                     # send 5 msgs to queue first
                     sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-                    receiver._link.on_transfer = types.MethodType(
+                    receiver._handler._link.on_transfer = types.MethodType(
                         _hack_disable_receive_context_message_received, receiver)
                     received_msgs = []
                     while len(received_msgs) < 5:
@@ -340,7 +341,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
                     # send 5 more messages, those messages would arrive at the client while the program is sleeping
                     sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-                    time.sleep(15)  # sleep > message expiration time
+                    time.sleep(40)  # sleep > message expiration time
 
                     # issue 5 link credits, client should consume 5 msgs from the internal buffer which is already lock expired
                     target_msgs_count = 5
