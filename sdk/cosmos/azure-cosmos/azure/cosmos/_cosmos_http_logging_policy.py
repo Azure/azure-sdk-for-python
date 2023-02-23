@@ -37,8 +37,13 @@ def _format_error(payload: str) -> str:
     return output['message'].replace("\r", " ")
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
-    def __init__(self, logger: Optional[logging.Logger] = None, **kwargs): # pylint: disable=unused-argument
-        self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
+    def __init__(
+            self,
+            logger: Optional[logging.Logger] = None,
+            *,
+            enable_diagnostics_logging: Optional[bool] = False,
+            **kwargs): # pylint: disable=unused-argument
+        self._enable_diagnostics_logging = enable_diagnostics_logging
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
             cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
@@ -49,8 +54,6 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def on_request(self, request): # pylint: disable=too-many-return-statements, too-many-statements
         # type: (PipelineRequest) -> None
-        options = request.context.options
-        self._enable_diagnostics_logging = options.pop("enable_diagnostics_logging", self._enable_diagnostics_logging)
         super().on_request(request)
         if self._enable_diagnostics_logging:
             request.context["start_time"] = time.time()
