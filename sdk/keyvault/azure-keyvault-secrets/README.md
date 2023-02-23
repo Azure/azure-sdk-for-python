@@ -43,8 +43,6 @@ After configuring your environment for the [DefaultAzureCredential][default_cred
 
 <!-- SNIPPET:hello_world.create_secret_client -->
 ```python
-# Instantiate a secret client that will be used to call the service.
-# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=VAULT_URL, credential=credential)
@@ -187,7 +185,7 @@ Async clients and credentials should be closed when they're no longer needed. Th
 objects are async context managers and define async `close` methods. For
 example:
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.secrets.aio import SecretClient
 
@@ -300,7 +298,7 @@ secret_client = SecretClient(
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 secret_client.get_secret("my-secret", logging_enable=True)
 ```
 
