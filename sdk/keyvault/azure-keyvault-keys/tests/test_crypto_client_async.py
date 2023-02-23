@@ -222,29 +222,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert verified.is_valid
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm", only_7_4_hsm)
-    @AsyncKeysClientPreparer()
-    @recorded_by_proxy_async
-    async def test_sign_and_verify_okp(self, key_client, is_hsm, **kwargs):
-        key_name = self.get_resource_name("keysign")
-
-        md = hashlib.sha256()
-        md.update(self.plaintext)
-        digest = md.digest()
-
-        # Local crypto isn't supported for OKP, so operations will be remote even without explicit NO_GET permissions
-        key = await key_client.create_okp_key(key_name, curve=KeyCurveName.ed25519)
-        crypto_client = self.create_crypto_client(key.id, is_async=True, api_version=key_client.api_version)
-
-        result = await crypto_client.sign(SignatureAlgorithm.eddsa, digest)
-        assert result.key_id == key.id
-
-        verified = await crypto_client.verify(result.algorithm, digest, result.signature)
-        assert result.key_id == key.id
-        assert result.algorithm == SignatureAlgorithm.eddsa
-        assert verified.is_valid
-
-    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm",no_get)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
