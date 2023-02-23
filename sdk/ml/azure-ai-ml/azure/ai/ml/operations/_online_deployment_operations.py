@@ -358,5 +358,5 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             )
             result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
             deployment.data_collector.collections[collection].data = DataAsset(
-                data_id=f"{result.name}:{result.version}", path=short_form_path, name=result.name, version=result.version
+                path=short_form_path, name=result.name, version=result.version
             )
