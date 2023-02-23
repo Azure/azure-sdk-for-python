@@ -231,7 +231,7 @@ class AMQPClient(
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
                     _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
-                    self._link.flow()
+
                     self._connection.listen(wait=self._socket_timeout)
                     start_time = current_time
                 time.sleep(1)
@@ -787,6 +787,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def __init__(self, hostname, source, **kwargs):
         self.source = source
         self._streaming_receive = kwargs.pop("streaming_receive", False)
+        print("Create Queue")
         self._received_messages = queue.Queue()
         self._message_received_callback = kwargs.pop("message_received_callback", None)
 
@@ -837,7 +838,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :rtype: bool
         """
         try:
-            self._link.flow()
+            # print("IN CLIENT RUN")
+            # self._link.flow()
             self._connection.listen(wait=self._socket_timeout, **kwargs)
             # self._timeout_reached = False
 
@@ -859,11 +861,13 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         if self._message_received_callback:
             self._message_received_callback(message)
         if not self._streaming_receive:
+            print("putting stuff into queue")
             self._received_messages.put((frame, message))
 
     def _receive_message_batch_impl(
         self, max_batch_size=None, on_message_received=None, timeout=0
     ):
+        print("ah")
         self._message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout = time.time() + timeout if timeout else 0
@@ -910,6 +914,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         return batch
 
     def close(self):
+        print("close?")
         self._received_messages = queue.Queue()
         super(ReceiveClient, self).close()
 
@@ -957,6 +962,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         message = None
         self._last_activity_stamp = time.time()
         self._timeout = timeout if timeout else self._timeout
+        print(self._timeout)
         try:
             while receiving and not self._timeout_reached:
                 if not self._running_iter:

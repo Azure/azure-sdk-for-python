@@ -153,7 +153,6 @@ class AMQPClientAsync(AMQPClientSync):
                         self.__class__.__name__,
                         extra=self._network_trace_params
                     )
-                    await asyncio.shield(self._link.flow())
                     await asyncio.shield(self._connection.listen(wait=self._socket_timeout))
                     start_time = current_time
                 await asyncio.sleep(1)
@@ -730,7 +729,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            await self._link.flow()
+            # await self._link.flow()
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
             self._timeout_reached = False
         except ValueError:
