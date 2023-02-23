@@ -36,17 +36,12 @@ Interaction with the service using the client library begins with a [client](#te
 To create a client object, you will need the Cognitive Services or Language service `endpoint` to
 your resource and a `credential` that allows you access:
 
-<!-- SNIPPET:sample_authentication.create_ta_client_with_key -->
 ```python
-import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
-
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+credential = AzureKeyCredential("<api_key>")
+text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
 ```
-<!-- END SNIPPET -->
 
 Note that for some Cognitive Services resources the endpoint might look different from the above code snippet.
 For example, `https://<region>.api.cognitive.microsoft.com/`.
