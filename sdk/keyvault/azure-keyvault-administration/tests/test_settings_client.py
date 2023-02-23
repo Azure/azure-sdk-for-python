@@ -29,6 +29,7 @@ class TestSettings(KeyVaultTestCase):
         setting = client.get_setting("AllowKeyManagementOperationsThroughARM")
         assert setting.name and setting.type and setting.value
 
+        # Note: the value provided to `update_setting` *is* case-sensitive, so passing str(True) fails
         opposite_value = "false" if setting.value.lower() == "true" else "true"
         updated = client.update_setting("AllowKeyManagementOperationsThroughARM", opposite_value)
         assert updated.name == setting.name

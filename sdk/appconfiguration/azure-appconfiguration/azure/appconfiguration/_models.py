@@ -3,10 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Union, List, Dict, Optional
-
+from typing import Any, Dict, List, Optional, Union
 from ._generated._serialization import Model
-from ._generated.models import CompositionType, KeyValue, KeyValueFilter, Snapshot
+from ._generated.models import KeyValue
 
 
 PolymorphicConfigurationSetting = Union[
@@ -154,7 +153,14 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
     )
     kind = "FeatureFlag"
 
-    def __init__(self, feature_id: str, **kwargs) -> None:  # pylint: disable=dangerous-default-value, super-init-not-called
+    def __init__( # pylint: disable=super-init-not-called
+        self,
+        feature_id: str,
+        *,
+        enabled: Optional[bool] = None,
+        filters: Optional[List[Dict[str, Any]]] = None,
+        **kwargs
+    ) -> None:
         if "key" in kwargs.keys() or "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
         self.feature_id = feature_id
@@ -167,8 +173,8 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
         self.etag = kwargs.get("etag", None)
         self.description = kwargs.get("description", None)
         self.display_name = kwargs.get("display_name", None)
-        self.filters = kwargs.get("filters", [])
-        self.enabled = kwargs.get("enabled", None)
+        self.filters = [] if filters is None else filters
+        self.enabled = enabled
         self._value = json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
 
     @property

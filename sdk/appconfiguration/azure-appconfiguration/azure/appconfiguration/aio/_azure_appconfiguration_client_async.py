@@ -15,6 +15,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
@@ -55,12 +56,7 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(
-        self,
-        base_url: str,
-        credential: Union[AppConfigConnectionStringCredential, AsyncTokenCredential],
-        **kwargs
-    ) -> None:
+    def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -121,7 +117,7 @@ class AzureAppConfigurationClient:
         """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
-            credential=AppConfigConnectionStringCredential(connection_string),
+            credential=AppConfigConnectionStringCredential(connection_string), # type: ignore
             base_url=base_url,
             **kwargs
         )
@@ -200,7 +196,7 @@ class AzureAppConfigurationClient:
         key: str,
         label: Optional[str] = None,
         etag: Optional[str] = "*",
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs
     ) -> Union[None, ConfigurationSetting]:
 
@@ -499,7 +495,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     async def set_read_only(
-        self, configuration_setting: ConfigurationSetting, read_only: Optional[bool] = True, **kwargs
+        self, configuration_setting: ConfigurationSetting, read_only: bool = True, **kwargs
     ) -> ConfigurationSetting:
 
         """Set a configuration setting read only
@@ -620,7 +616,7 @@ class AzureAppConfigurationClient:
         self,
         name: str,
         *,
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
         **kwargs
     ) -> Snapshot:
@@ -662,7 +658,7 @@ class AzureAppConfigurationClient:
         self,
         name: str,
         *,
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
         **kwargs
     ) -> Snapshot:
@@ -705,7 +701,7 @@ class AzureAppConfigurationClient:
         name: str,
         *,
         etag: Optional[str] = "*",
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         fields: Optional[List[str]] = None,
         **kwargs
     ) -> Snapshot:

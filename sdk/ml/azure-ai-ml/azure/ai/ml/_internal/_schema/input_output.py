@@ -17,6 +17,8 @@ SUPPORTED_INTERNAL_PARAM_TYPES = [
     "String",
     "float",
     "Float",
+    "double",
+    "Double",
 ]
 
 

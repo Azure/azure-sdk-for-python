@@ -57,9 +57,7 @@ class AzureAppConfigurationClient:
     """
 
     # pylint:disable=protected-access
-    def __init__(
-        self, base_url: str, credential: Union[AppConfigConnectionStringCredential, TokenCredential], **kwargs
-    ) -> None:
+    def __init__(self, base_url: str, credential: TokenCredential, **kwargs) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -111,7 +109,7 @@ class AzureAppConfigurationClient:
         """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
-            credential=AppConfigConnectionStringCredential(connection_string),
+            credential=AppConfigConnectionStringCredential(connection_string), # type: ignore
             base_url=base_url,
             **kwargs
         )
@@ -222,7 +220,7 @@ class AzureAppConfigurationClient:
         key: str,
         label: Optional[str] = None,
         etag: Optional[str] = "*",
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs
     ) -> Union[None, ConfigurationSetting]:
         """Get the matched ConfigurationSetting from Azure App Configuration service
@@ -278,9 +276,7 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")
 
     @distributed_trace
-    def add_configuration_setting(
-        self, configuration_setting: ConfigurationSetting, **kwargs
-    ) -> ConfigurationSetting:
+    def add_configuration_setting(self, configuration_setting: ConfigurationSetting, **kwargs) -> ConfigurationSetting:
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
@@ -325,7 +321,7 @@ class AzureAppConfigurationClient:
     def set_configuration_setting(
         self,
         configuration_setting: ConfigurationSetting,
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs
     ) -> ConfigurationSetting:
         """Add or update a ConfigurationSetting.
@@ -504,7 +500,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def set_read_only(
-        self, configuration_setting: ConfigurationSetting, read_only: Optional[bool] = True, **kwargs
+        self, configuration_setting: ConfigurationSetting, read_only: bool = True, **kwargs
     ) -> ConfigurationSetting:
         """Set a configuration setting read only
 
@@ -623,7 +619,7 @@ class AzureAppConfigurationClient:
         self,
         name: str,
         *,
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
         **kwargs
     ) -> Snapshot:
@@ -665,7 +661,7 @@ class AzureAppConfigurationClient:
         self,
         name: str,
         *,
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
         **kwargs
     ) -> Snapshot:
@@ -708,7 +704,7 @@ class AzureAppConfigurationClient:
         name: str,
         *,
         etag: Optional[str] = "*",
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         fields: Optional[List[str]] = None,
         **kwargs
     ) -> Snapshot:

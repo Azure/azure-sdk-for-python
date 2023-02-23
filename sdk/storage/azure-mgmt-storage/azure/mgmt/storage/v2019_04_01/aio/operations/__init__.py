@@ -17,7 +17,7 @@ from ._file_services_operations import FileServicesOperations
 from ._file_shares_operations import FileSharesOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

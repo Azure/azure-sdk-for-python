@@ -439,8 +439,7 @@ def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(N
                 # ensure we're counting the size of the linked file
                 # os.readlink returns a file path relative to dirpath, and must be
                 # re-joined to get a workable result
-                path_size = os.path.getsize(os.path.join(dirpath,
-                    os.readlink(convert_windows_path_to_unix(full_path))))
+                path_size = os.path.getsize(os.path.join(dirpath, os.readlink(convert_windows_path_to_unix(full_path))))
             size_list[full_path] = path_size
             total_size += path_size
     return total_size, size_list
@@ -709,6 +708,7 @@ def _get_next_version_from_container(
         version = "1"
     return version
 
+
 def _get_latest_version_from_container(
     asset_name: str,
     container_operation: Any,
@@ -740,20 +740,21 @@ def _get_latest_version_from_container(
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         no_personal_data_message = (
             "Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else "Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
             target=ErrorTarget.ASSET,
             error_category=ErrorCategory.USER_ERROR,
-            error_type=ValidationErrorType.RESOURCE_NOT_FOUND
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
     return version
+
 
 def _get_latest(
     asset_name: str,
@@ -801,12 +802,12 @@ def _get_latest(
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         no_personal_data_message = (
             "Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else "Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
