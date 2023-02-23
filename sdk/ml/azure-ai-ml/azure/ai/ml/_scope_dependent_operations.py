@@ -7,7 +7,8 @@
 import logging
 import functools
 import traceback
-from typing import Callable, Dict, Optional, TypeVar, cast
+import pathlib
+from typing import Callable, Dict, Optional, TypeVar, cast, ParamSpec
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.constants._common import (
@@ -79,22 +80,31 @@ class OperationScope(object):
         self._registry_name = value
 
 
-def workspace_registry_name_validation(func: Callable[..., any]) -> Callable[..., any]:
+P = ParamSpec("P")
+TScopeDependentOperations = TypeVar("TScopeDependentOperations", bound="_ScopeDependentOperations")
+
+
+def workspace_registry_name_validation(func: Callable[P, T]) -> Callable[P, T]:
     @functools.wraps(func)
-    def new_function(self: any, *args: any, **kwargs: any) -> any:
+    def new_function(self: TScopeDependentOperations, *args: P.args, **kwargs: P.kwargs) -> T:
         if not self._operation_scope.workspace_name and not self._operation_scope.registry_name:
-            stack = traceback.extract_stack()
-            summary_bottom = stack[1]
-            summary_top = stack[-2]
-            bottom_filename = summary_bottom.filename.rsplit("\\", 1)[-1][:-3]
-            top_filename = summary_top.filename.rsplit("\\", 1)[-1][:-3]
-            if bottom_filename in WORKSPACE_EXCLUSIVE_OPERATIONS or top_filename in WORKSPACE_EXCLUSIVE_OPERATIONS:
-                raise Exception(WORKSPACE_NOT_INCLUDED_ERROR_MESSAGE)
-            if (
-                bottom_filename in WORKSPACE_OR_REGISTRY_REQUIRED_OPERATIONS
-                or top_filename in WORKSPACE_OR_REGISTRY_REQUIRED_OPERATIONS
-            ):
-                raise Exception(WORKSPACE_REG_NOT_INCLUDED_ERROR_MESSAGE)
+            stack = traceback.extract_stack(limit=3)
+            summary = stack[1]
+            filename = pathlib.Path(summary.filename).stem
+            if filename in WORKSPACE_EXCLUSIVE_OPERATIONS:
+                raise ValidationException(
+                    message=WORKSPACE_NOT_INCLUDED_ERROR_MESSAGE,
+                    no_personal_data_message=WORKSPACE_NOT_INCLUDED_ERROR_MESSAGE,
+                    error_category=ErrorCategory.USER_ERROR,
+                    target=ErrorTarget.GENERAL,
+                )
+            if filename in WORKSPACE_OR_REGISTRY_REQUIRED_OPERATIONS:
+                raise ValidationException(
+                    message=WORKSPACE_REG_NOT_INCLUDED_ERROR_MESSAGE,
+                    no_personal_data_message=WORKSPACE_REG_NOT_INCLUDED_ERROR_MESSAGE,
+                    error_category=ErrorCategory.USER_ERROR,
+                    target=ErrorTarget.GENERAL,
+                )
         return func(self, *args, **kwargs)
 
     return new_function
