@@ -156,7 +156,7 @@ def format_errors_and_resolutions_sections(error_types: Dict[str, bool], cli: bo
         )
         resolutions += (
             f"\n{count}) If the type is invalid, change it to the correct type. "
-            f"If value is invalid, choose a value from the expected range."
+            "If value is invalid, choose a value from the expected range."
         )
         count += 1
     if error_types[ValidationErrorType.UNKNOWN_FIELD]:
@@ -167,13 +167,13 @@ def format_errors_and_resolutions_sections(error_types: Dict[str, bool], cli: bo
         errors += f"\n{count}) The yaml file provided is missing one or more required parameters."
         resolutions += (
             f"\n{count}) Add the missing parameters with values of the correct type. "
-            f"To know what type of value to assign to any required parameter, "
+            "To know what type of value to assign to any required parameter, "
         )
         count += 1
     if error_types[ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND]:
         errors += (
             f"\n{count}) One or more files or folders specified in the yaml file you provided either "
-            f"does not exist, or the path is incorrect.\n"
+            "does not exist, or the path is incorrect.\n"
         )
         resolutions += (
             f"\n{count}) Double-check the file / folder name, extension, and path provided." f" Fix it and resubmit."
@@ -193,7 +193,7 @@ def format_errors_and_resolutions_sections(error_types: Dict[str, bool], cli: bo
         errors += f"\n{count}) One or more resources was not found in the yaml file you provided.\n"
         resolutions += (
             f"\n{count}) Double-check that the name of the resource has been specified correctly "
-            f"and that you have access to it."
+            "and that you have access to it."
         )
         count += 1
 
