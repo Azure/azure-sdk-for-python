@@ -8,20 +8,19 @@ from azure.ai.ml import Output
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import FLScatterGatherSchema
-from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._common import FL_SILO_MERGE_OUTPUT
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, validate_attribute_type
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.constants import JobType
 
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._assets._artifacts.model import Model
 from .subcomponents import aggregate_output
 from azure.ai.ml.entities._validation import MutableValidationResult
+from azure.ai.ml._utils._experimental import experimental
 
 # TODO: Add merge component for string, int
 MERGE_COMPONENT_MAPPING = {
@@ -136,6 +135,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             compute=None,
             experiment_name=None,
         )
+
+        self.outputs = self.subgraph[-1]["aggregation"].outputs
 
     # TODO potential set default fail_on_missing value to false
     @classmethod
