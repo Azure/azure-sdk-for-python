@@ -15,7 +15,7 @@ from ._generated.models import (
     SipTrunkRoute,
     SipTrunkInternal
 )
-from ._generated._sip_routing_service import SIPRoutingService
+from ._generated._client import SIPRoutingService
 from .._shared.utils import (
     parse_connection_str,
     get_authentication_policy
@@ -102,7 +102,7 @@ class SipRoutingClient(object):
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
 
-        config = self._rest_service.get_sip_configuration(
+        config = self._rest_service.sip_routing.get(
             **kwargs)
 
         if trunk_fqdn in config.trunks:
@@ -147,7 +147,7 @@ class SipRoutingClient(object):
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
 
-        self._rest_service.patch_sip_configuration(
+        self._rest_service.sip_routing.patch(
             body=SipConfiguration(trunks={trunk_fqdn:None}),
             **kwargs)
 
@@ -175,7 +175,7 @@ class SipRoutingClient(object):
         :rtype: Iterable[~azure.communication.siprouting.models.SipTrunkRoute]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        config = self._rest_service.get_sip_configuration(
+        config = self._rest_service.sip_routing.get(
             **kwargs
         )
         return config.routes
@@ -207,7 +207,7 @@ class SipRoutingClient(object):
                 config.trunks[x.fqdn] = None
 
         if len(config.trunks) > 0:
-            self._rest_service.patch_sip_configuration(
+            self._rest_service.sip_routing.patch(
                 body=config, **kwargs
             )
 
@@ -228,12 +228,12 @@ class SipRoutingClient(object):
         if routes is None:
             raise ValueError("Parameter 'routes' must not be None.")
 
-        self._rest_service.patch_sip_configuration(
+        self._rest_service.sip_routing.patch(
             body=SipConfiguration(routes=routes), **kwargs
         )
 
     def _list_trunks_(self, **kwargs):
-        config = self._rest_service.get_sip_configuration(
+        config = self._rest_service.sip_routing.get(
             **kwargs)
         return [SipTrunk(fqdn=k,sip_signaling_port=v.sip_signaling_port) for k,v in config.trunks.items()]
 
@@ -244,7 +244,7 @@ class SipRoutingClient(object):
         trunks_internal = {x.fqdn: SipTrunkInternal(sip_signaling_port=x.sip_signaling_port) for x in trunks}
         modified_config = SipConfiguration(trunks=trunks_internal)
 
-        new_config = self._rest_service.patch_sip_configuration(
+        new_config = self._rest_service.sip_routing.patch(
             body=modified_config, **kwargs
         )
         return [SipTrunk(fqdn=k,sip_signaling_port=v.sip_signaling_port) for k,v in new_config.trunks.items()]
