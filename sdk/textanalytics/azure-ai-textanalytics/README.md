@@ -47,6 +47,18 @@ Install the Azure Text Analytics client library for Python with [pip][pip]:
 pip install azure-ai-textanalytics --pre
 ```
 
+<!-- SNIPPET:sample_authentication.create_ta_client_with_key -->
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.textanalytics import TextAnalyticsClient
+endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+key = os.environ["AZURE_LANGUAGE_KEY"]
+
+text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+```
+<!-- END SNIPPET -->
+
 > Note that `5.2.X` and newer targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
 In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-10-01-preview`.
 
