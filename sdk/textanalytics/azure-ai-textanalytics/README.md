@@ -56,7 +56,7 @@ For example, `https://<region>.api.cognitive.microsoft.com/`.
 Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics
+pip install azure-ai-textanalytics --pre
 ```
 
 > Note that `5.2.X` and newer targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
