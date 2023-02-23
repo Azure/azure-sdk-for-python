@@ -24,7 +24,6 @@ class ResourceSettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, settings: ContainerResourceSettings) -> "ResourceSettings":
-
         return (
             ResourceSettings(
                 cpu=settings.cpu,

@@ -71,7 +71,6 @@ class WorkspaceKeys:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: ListWorkspaceKeysResult) -> "WorkspaceKeys":
-
         if not rest_obj:
             return None
 

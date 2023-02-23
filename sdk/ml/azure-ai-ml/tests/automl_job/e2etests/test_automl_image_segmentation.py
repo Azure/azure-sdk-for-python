@@ -28,7 +28,6 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 )
 class TestAutoMLImageSegmentation(AzureRecordedTestCase):
     def _create_jsonl_segmentation(self, client, train_path, val_path):
-
         fridge_data = Data(
             path="./odFridgeObjectsMask",
             type=AssetTypes.URI_FOLDER,

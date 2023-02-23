@@ -183,7 +183,11 @@ class _LocalDeploymentHelper(object):
             download_path=deployment_directory_path,
         )
         # We always require the model, however it may be anonymous for local (model_name=None)
-        (model_name, model_version, model_directory_path,) = get_model_artifacts(
+        (
+            model_name,
+            model_version,
+            model_directory_path,
+        ) = get_model_artifacts(
             endpoint_name=endpoint_name,
             deployment=deployment,
             model_operations=self._model_operations,

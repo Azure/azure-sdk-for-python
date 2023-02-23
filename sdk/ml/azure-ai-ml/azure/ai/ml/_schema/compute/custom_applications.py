@@ -44,7 +44,6 @@ class VolumeSettingsSchema(metaclass=PatchedSchemaMeta):
 
 
 class CustomApplicationsSchema(metaclass=PatchedSchemaMeta):
-
     name = fields.Str(required=True)
     type = StringTransformedEnum(allowed_values=[CustomApplicationDefaults.DOCKER])
     image = ExperimentalField(NestedField(ImageSettingsSchema))

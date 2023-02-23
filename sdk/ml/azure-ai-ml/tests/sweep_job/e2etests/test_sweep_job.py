@@ -131,7 +131,6 @@ class TestSweepJob(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_sweep_job_builder(self, randstr: Callable[[str], str], client: MLClient) -> None:
-
         inputs = {
             "uri": Input(
                 type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"

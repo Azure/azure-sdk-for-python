@@ -190,7 +190,6 @@ class TestSweepJob:
         assert sweep.sampling_algorithm.rule == expected_rule
 
     def test_sweep_job_builder_serialization(self) -> None:
-
         inputs = {
             "uri": Input(
                 type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"

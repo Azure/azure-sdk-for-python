@@ -247,7 +247,6 @@ def flatten_preserve_lists(
                 entry = copy.deepcopy(list_prebuilt_flattened_dict[str(global_max_record_start)])
 
                 for index, item in enumerate(object_):
-
                     if debug:
                         print("  list key:", key, " index: " + str(index), "vals: ", item)
 
@@ -396,7 +395,6 @@ def unflatten_list(flat_dict, separator="_"):
                 and keys[-1] == keys_len - 1
                 and check_if_numbers_are_consecutive(keys)
             ):
-
                 # The dictionary looks like a list so we're going to replace it
                 parent_object[parent_object_key] = []
                 for key_index, key in enumerate(keys):

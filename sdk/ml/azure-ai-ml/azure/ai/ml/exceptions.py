@@ -45,14 +45,12 @@ class ValidationErrorType(Enum):
 
 
 class ErrorCategory:
-
     USER_ERROR = "UserError"
     SYSTEM_ERROR = "SystemError"
     UNKNOWN = "Unknown"
 
 
 class ErrorTarget:
-
     BATCH_ENDPOINT = "BatchEndpoint"
     BATCH_DEPLOYMENT = "BatchDeployment"
     LOCAL_ENDPOINT = "LocalEndpoint"

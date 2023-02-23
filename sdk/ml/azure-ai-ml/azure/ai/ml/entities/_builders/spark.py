@@ -396,7 +396,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return self.resources is not None
 
     def _to_job(self) -> SparkJob:
-
         return SparkJob(
             experiment_name=self.experiment_name,
             name=self.name,

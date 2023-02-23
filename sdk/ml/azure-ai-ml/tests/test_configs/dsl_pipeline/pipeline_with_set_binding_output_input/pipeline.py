@@ -189,7 +189,6 @@ def nested_dsl_pipeline_with_setting_binding_node_and_pipeline_level() -> Pipeli
         training_learning_rate: float,
         learning_rate_schedule: str,
     ) -> Output(mode=InputOutputModes.RW_MOUNT):
-
         train_job = train_func(
             training_data=training_input,
             max_epochs=training_max_epocs,

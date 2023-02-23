@@ -100,5 +100,4 @@ class VmSize(RestTranslatableMixin):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "VmSize":
-
         pass

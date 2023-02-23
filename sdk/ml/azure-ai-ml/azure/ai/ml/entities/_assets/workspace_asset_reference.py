@@ -74,7 +74,6 @@ class WorkspaceAssetReference(Asset):
 
     @classmethod
     def _from_rest_object(cls, resource_object: ResourceManagementAssetReferenceData) -> "WorkspaceAssetReference":
-
         resource_management = WorkspaceAssetReference(
             name=resource_object.properties.destination_name,
             version=resource_object.properties.destination_version,

@@ -128,7 +128,6 @@ class DataTransferCopyComponent(DataTransferComponent):
         outputs: Optional[Dict] = None,
         **kwargs,
     ):
-
         super().__init__(
             task=task,
             inputs=inputs,
@@ -219,7 +218,6 @@ class DataTransferImportComponent(DataTransferComponent):
         outputs: Optional[Dict] = None,
         **kwargs,
     ):
-
         outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
         super().__init__(
             task=task,
@@ -255,7 +253,6 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
         sink: Optional[Dict] = None,
         **kwargs,
     ):
-
         super().__init__(
             task=task,
             inputs=inputs,

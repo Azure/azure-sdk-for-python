@@ -53,6 +53,7 @@ from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
 module_logger = logging.getLogger(__name__)
 
+
 # pylint: disable=too-many-instance-attributes
 class OnlineDeployment(Deployment):
     """Online endpoint deployment entity
@@ -241,7 +242,6 @@ class OnlineDeployment(Deployment):
 
     @classmethod
     def _from_rest_object(cls, deployment: RestOnlineDeploymentData) -> RestOnlineDeploymentDetails:
-
         if deployment.properties.endpoint_compute_type == EndpointComputeType.KUBERNETES:
             return KubernetesOnlineDeployment._from_rest_object(deployment)
         if deployment.properties.endpoint_compute_type == EndpointComputeType.MANAGED:
@@ -558,7 +558,6 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         return RestOnlineDeploymentData(location=location, properties=properties, tags=self.tags, sku=sku)
 
     def _to_arm_resource_param(self, **kwargs):
-
         rest_object = self._to_rest_object(**kwargs)
         properties = rest_object.properties
         sku = rest_object.sku
@@ -586,7 +585,6 @@ class KubernetesOnlineDeployment(OnlineDeployment):
 
     @classmethod
     def _from_rest_object(cls, resource: RestOnlineDeploymentData) -> "KubernetesOnlineDeployment":
-
         deployment = resource.properties
 
         code_config = (
@@ -802,7 +800,6 @@ class ManagedOnlineDeployment(OnlineDeployment):
         return RestOnlineDeploymentData(location=location, properties=properties, tags=self.tags, sku=sku)
 
     def _to_arm_resource_param(self, **kwargs):
-
         rest_object = self._to_rest_object(**kwargs)
         properties = rest_object.properties
         sku = rest_object.sku
@@ -819,7 +816,6 @@ class ManagedOnlineDeployment(OnlineDeployment):
 
     @classmethod
     def _from_rest_object(cls, resource: RestOnlineDeploymentData) -> "ManagedOnlineDeployment":
-
         deployment = resource.properties
 
         code_config = (

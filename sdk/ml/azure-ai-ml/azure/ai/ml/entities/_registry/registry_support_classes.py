@@ -191,7 +191,6 @@ class RegistryRegionDetails:
             and hasattr(storage, "storage_account_type")
             and storage.storage_account_type is not None
         ):
-
             # We DO NOT want to set the arm_resource_id. The backend provides very
             # unhelpful errors if you provide an empty/null/invalid resource ID,
             # and ignores the value otherwise. It's better to avoid setting it in

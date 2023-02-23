@@ -708,7 +708,6 @@ def _get_week_format() -> str:
 
 @pytest.fixture
 def auth() -> Union[AzureCliCredential, ClientSecretCredential, FakeTokenCredential]:
-
     if is_live():
         tenant_id = os.environ.get("ML_TENANT_ID")
         sp_id = os.environ.get("ML_CLIENT_ID")

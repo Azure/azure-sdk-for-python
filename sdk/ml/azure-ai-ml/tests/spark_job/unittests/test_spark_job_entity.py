@@ -469,7 +469,6 @@ class TestSparkJobEntity:
         assert spark_job_result.entry is None
 
     def test_spark_job_builder_serialization(self) -> None:
-
         node = spark(
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",

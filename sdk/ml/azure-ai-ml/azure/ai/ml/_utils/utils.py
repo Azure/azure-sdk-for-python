@@ -505,7 +505,6 @@ def validate_ml_flow_folder(path: str, model_type: string) -> None:
 
 # modified from: https://stackoverflow.com/a/33245493/8093897
 def is_valid_uuid(test_uuid: str) -> bool:
-
     try:
         uuid_obj = UUID(test_uuid, version=4)
     except ValueError:
@@ -583,7 +582,6 @@ def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
 # Allows to use a modified client with a provided url
 @contextmanager
 def modified_operation_client(operation_to_modify, url_to_use):
-
     original_api_base_url = None
     try:
         # Modify the operation

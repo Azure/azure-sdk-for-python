@@ -130,7 +130,6 @@ class TestCommandJob(AzureRecordedTestCase):
     @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     @pytest.mark.e2etest
     def test_command_job_builder(self, data_with_2_versions: str, client: MLClient) -> None:
-
         inputs = {
             "uri": Input(
                 type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"

@@ -377,7 +377,6 @@ class EnvironmentOperations(_ScopeDependentOperations):
     def _prepare_to_copy(
         self, environment: Environment, name: Optional[str] = None, version: Optional[str] = None
     ) -> WorkspaceAssetReference:
-
         """Returns WorkspaceAssetReference
         to copy a registered environment to registry given the asset id
 

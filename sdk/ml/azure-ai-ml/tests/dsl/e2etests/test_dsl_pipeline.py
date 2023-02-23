@@ -2294,7 +2294,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
 
     def test_registered_pipeline_with_group(self, client: MLClient):
-
         hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
         hello_world_component_func = load_component(hello_world_component_yaml)
         from azure.ai.ml.dsl._group_decorator import group

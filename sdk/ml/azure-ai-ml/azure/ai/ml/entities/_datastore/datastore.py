@@ -143,7 +143,6 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
     @classmethod
     def _from_rest_object(cls, datastore_resource: DatastoreData) -> "Datastore":
-
         from azure.ai.ml.entities import (
             AzureBlobDatastore,
             AzureDataLakeGen1Datastore,

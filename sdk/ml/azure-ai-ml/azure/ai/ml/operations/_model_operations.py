@@ -455,7 +455,6 @@ class ModelOperations(_ScopeDependentOperations):
     def _prepare_to_copy(
         self, model: Model, name: Optional[str] = None, version: Optional[str] = None
     ) -> WorkspaceAssetReference:
-
         """Returns WorkspaceAssetReference
         to copy a registered model to registry given the asset id
 

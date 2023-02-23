@@ -21,7 +21,6 @@ from azure.ai.ml.sweep import BanditPolicy, MedianStoppingPolicy, TruncationSele
 
 @pytest.mark.unittest
 class TestImageSweepSettings:
-
     _EARLY_TERMINATION_POLICY_OPTIONS = [
         None,
         EarlyTerminationPolicyType.BANDIT,
