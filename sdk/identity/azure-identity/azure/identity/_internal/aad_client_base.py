@@ -39,10 +39,10 @@ class AadClientBase(abc.ABC):
             self,
             tenant_id: str,
             client_id: str,
-            authority: str = None,
-            cache: TokenCache = None,
+            authority: Optional[str] = None,
+            cache: Optional[TokenCache] = None,
             *,
-            additionally_allowed_tenants: List[str] = None,
+            additionally_allowed_tenants: Optional[List[str]] = None,
             **kwargs: Any
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
@@ -297,8 +297,7 @@ class AadClientBase(abc.ABC):
         request = self._post(data, **kwargs)
         return request
 
-    def _get_token_url(self, **kwargs):
-        # type: (**Any) -> str
+    def _get_token_url(self, **kwargs: Any) -> str:
         tenant = resolve_tenant(
             self._tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
