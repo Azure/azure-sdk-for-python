@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Customize generated code here.
 
-Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
-"""
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import ( SansIOHTTPPolicy, BearerTokenCredentialPolicy, AzureKeyCredentialPolicy )
 from azure.core.credentials import ( TokenCredential, AzureKeyCredential )
