@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
 
 from azure.ai.ml import MLClient, load_job
@@ -47,6 +47,7 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
     "mock_code_hash",
     "mock_component_hash",
     "recorded_test",
+    "mock_snapshot_hash",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -54,6 +55,8 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
 class TestDSLPipelineSamples(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_e2e_local_components(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.e2e_local_components.pipeline import (
             generate_dsl_pipeline as e2e_local_components,
         )
@@ -101,6 +104,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_basic_component(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.basic_component.pipeline import generate_dsl_pipeline as basic_component
 
         pipeline = basic_component()
@@ -108,6 +113,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_component_with_input_output(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.component_with_input_output.pipeline import (
             generate_dsl_pipeline as component_with_input_output,
         )
@@ -117,6 +124,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_basic_pipeline(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.basic_pipeline.pipeline import generate_dsl_pipeline as basic_pipeline
 
         pipeline = basic_pipeline()
@@ -124,6 +133,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_pipeline_with_data(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.pipline_with_data.pipeline import generate_dsl_pipeline as pipline_with_data
 
         pipeline = pipline_with_data()
@@ -131,6 +142,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_local_data_input(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.local_data_input.pipeline import generate_dsl_pipeline as local_data_input
 
         pipeline = local_data_input()
@@ -138,6 +151,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_datastore_datapath_uri_folder(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.datastore_datapath_uri_folder.pipeline import (
             generate_dsl_pipeline as datastore_datapath_uri_folder,
         )
@@ -147,6 +162,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_datastore_datapath_uri_file(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.datastore_datapath_uri_file.pipeline import (
             generate_dsl_pipeline as datastore_datapath_uri_file,
         )
@@ -156,6 +173,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_dataset_input(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.dataset_input.pipeline import generate_dsl_pipeline as dataset_input
 
         pipeline = dataset_input(client)
@@ -163,6 +182,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_web_url_input(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.web_url_input.pipeline import generate_dsl_pipeline as web_url_input
 
         pipeline = web_url_input()
@@ -179,6 +200,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_env_registered(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.env_registered.pipeline import generate_dsl_pipeline as env_registered
 
         pipeline = env_registered()
@@ -186,6 +209,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_env_conda_file(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.env_conda_file.pipeline import generate_dsl_pipeline as env_conda_file
 
         pipeline = env_conda_file()
@@ -214,6 +239,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_nyc_taxi_data_regression(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.nyc_taxi_data_regression.pipeline import (
             generate_dsl_pipeline as nyc_taxi_data_regression,
         )
@@ -223,6 +250,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_tf_mnist(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.tf_mnist.pipeline import generate_dsl_pipeline as tf_mnist
 
         pipeline = tf_mnist()
@@ -230,6 +259,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_e2e_inline_components(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.e2e_inline_components.pipeline import (
             generate_dsl_pipeline as e2e_inline_components,
         )
@@ -237,7 +268,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = e2e_inline_components()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.usefixtures("mock_asset_name")
+    @pytest.mark.usefixtures("mock_asset_name", "mock_anon_component_version")
     @pytest.mark.e2etest
     def test_command_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.command_job_in_pipeline.pipeline import (
@@ -252,6 +283,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         self,
         client: MLClient,
     ) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.parallel_component_with_file_input.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
         )
@@ -261,6 +294,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_parallel_components_with_tabular_input_pipeline_output(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.parallel_component_with_tabular_input.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
         )
@@ -270,6 +305,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_parallel_components(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.parallel_component.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
         )
@@ -306,6 +343,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_spark_job_in_pipeline(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
             generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
         )
@@ -315,6 +354,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_spark_job_with_builder_in_pipeline(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
             generate_dsl_pipeline_from_builder as spark_job_in_pipeline,
         )
@@ -324,6 +365,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_spark_job_with_multiple_node_in_pipeline(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         from test_configs.dsl_pipeline.spark_job_in_pipeline.kmeans_sample.pipeline import (
             generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
         )
