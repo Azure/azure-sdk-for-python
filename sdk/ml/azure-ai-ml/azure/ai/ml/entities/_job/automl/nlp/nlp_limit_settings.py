@@ -4,7 +4,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpVerticalLimitSettings as RestNlpLimitSettings
+from azure.ai.ml._restclient.v2022_12_01_preview.models import NlpVerticalLimitSettings as RestNlpLimitSettings
 from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
