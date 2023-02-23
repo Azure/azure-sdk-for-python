@@ -42,6 +42,7 @@ def model_operations(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml.operations._model_operations.ModelOperations")
 
 
+@pytest.fixture
 def code_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,

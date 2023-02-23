@@ -128,7 +128,7 @@ def storage_account_guid_sanitizer(test_proxy):
     )
     add_general_regex_sanitizer(
         value="000000000000000000000000000000000000",
-        regex='.blob.core.windows.net\\/([^/\\s"]{47})',
+        regex='.blob.core.windows.net\\/([^/\\s"]{47,54})',
         group_for_replace="1",
     )
     add_general_regex_sanitizer(
