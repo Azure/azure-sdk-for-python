@@ -119,10 +119,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
-    :keyword bool enable_diagnostics_logging: Enable diagnostics logging at client level, logging all requests.
+    :keyword bool enable_diagnostics_logging: Enable the cosmos http diagnostics logging policy.
         Must be used along with a logger to work.
-    :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-        request diagnostics.
+    :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
+        level (to log all requests) or at a single request level.
 
     .. admonition:: Example:
 
@@ -230,10 +230,6 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.aio.DatabaseProxy
@@ -285,10 +281,6 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
@@ -334,10 +326,6 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
@@ -368,10 +356,6 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An AsyncItemPaged of database properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, str]]
         """
@@ -410,10 +394,6 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """

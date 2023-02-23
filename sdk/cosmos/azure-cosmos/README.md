@@ -633,7 +633,8 @@ even when it isn't enabled for the client:
 database = client.create_database(DATABASE_NAME, logging_enable=True)
 ```
 Alternatively, you can log using the CosmosHttpLoggingPolicy, which extends from the azure core HttpLoggingPolicy, by passing in your logger to the `logger` argument.
-By default, it will use the behaviour from HttpLoggingPolicy. The `enable_diagnostics_logging` argument will add additional diagnostic information to the logger.
+By default, it will use the behaviour from HttpLoggingPolicy. Passing in the `enable_diagnostics_logging` argument will enable the
+CosmosHttpLoggingPolicy, and will have additional information in the response relevant to debugging Cosmos issues.
 ```python
 import logging
 from azure.cosmos import CosmosClient
@@ -649,10 +650,12 @@ logger.addHandler(handler)
 # This client will log diagnostic information from the HTTP session by using the CosmosHttpLoggingPolicy
 client = CosmosClient(URL, credential=KEY, logger=logger, enable_diagnostics_logging=True)
 ```
-Similarly, CosmosHttpLoggingPolicy can enable detailed logging for a single operation,
-even when it isn't enabled for the client:
+Similarly, logging can be enabled for a single operation by passing in a logger to the singular request.
+However, if you desire to use the CosmosHttpLoggingPolicy to obtain additional information, the `enable_diagnostics_logging` argument needs to be passed in at the client constructor.
 ```py
-database = client.create_database(DATABASE_NAME, logger=logger, enable_diagnostics_logging=True)
+# This example enables the CosmosHttpLoggingPolicy and uses it with the `logger` passed in to the `create_database` request.
+client = CosmosClient(URL, credential=KEY, enable_diagnostics_logging=True)
+database = client.create_database(DATABASE_NAME, logger=logger)
 ```
 
 ## Next steps

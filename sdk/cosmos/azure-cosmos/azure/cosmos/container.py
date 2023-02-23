@@ -137,10 +137,6 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
@@ -193,10 +189,6 @@ class ContainerProxy(object):
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -252,10 +244,6 @@ class ContainerProxy(object):
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -304,10 +292,6 @@ class ContainerProxy(object):
         :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -373,10 +357,6 @@ class ContainerProxy(object):
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -456,10 +436,6 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: A dict representing the item after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
             given id does not exist.
@@ -511,10 +487,6 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: A dict representing the upserted item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :rtype: dict[str, Any]
@@ -570,10 +542,6 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: A dict representing the new item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :rtype: dict[str, Any]
@@ -627,10 +595,6 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
@@ -661,10 +625,6 @@ class ContainerProxy(object):
         """Get the ThroughputProperties object for this container.
         If no ThroughputProperties already exist for the container, an exception is raised.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
@@ -683,10 +643,6 @@ class ContainerProxy(object):
 
         If no ThroughputProperties already exist for the container, an exception is raised.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
@@ -719,10 +675,6 @@ class ContainerProxy(object):
 
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
@@ -757,10 +709,6 @@ class ContainerProxy(object):
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -797,10 +745,6 @@ class ContainerProxy(object):
         :param partition_key: Specifies the partition key value for the item.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -831,10 +775,6 @@ class ContainerProxy(object):
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :param partition_key: Partition key for the conflict to retrieve.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: A dict representing the retrieved conflict.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -861,10 +801,6 @@ class ContainerProxy(object):
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
         :param partition_key: Partition key for the conflict to delete.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None

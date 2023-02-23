@@ -326,10 +326,6 @@ class DatabaseProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
@@ -385,10 +381,6 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[dict[str, Any]]
 
@@ -438,10 +430,6 @@ class DatabaseProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -502,10 +490,6 @@ class DatabaseProxy(object):
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.ContainerProxy
 
@@ -562,10 +546,6 @@ class DatabaseProxy(object):
 
         :param max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -590,10 +570,6 @@ class DatabaseProxy(object):
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[str, Any]
         """
@@ -642,10 +618,6 @@ class DatabaseProxy(object):
         :param body: A dict-like object with an `id` key and value representing the user to be created.
             The user ID must be unique within the database, and consist of no more than 255 characters.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: A `UserProxy` instance representing the new user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
         :rtype: ~azure.cosmos.UserProxy
@@ -683,10 +655,6 @@ class DatabaseProxy(object):
 
         :param body: A dict-like object representing the user to update or insert.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: A `UserProxy` instance representing the upserted user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
         :rtype: ~azure.cosmos.UserProxy
@@ -719,10 +687,6 @@ class DatabaseProxy(object):
             instance of the user to be replaced.
         :param body: A dict-like object representing the user to replace.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: A `UserProxy` instance representing the user after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If the replace failed or the user with given ID does not exist.
@@ -753,10 +717,6 @@ class DatabaseProxy(object):
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be deleted.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
         :rtype: None
@@ -776,10 +736,6 @@ class DatabaseProxy(object):
         """Get the ThroughputProperties object for this database.
         If no ThroughputProperties already exist for the database, an exception is raised.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: ThroughputProperties for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
@@ -797,10 +753,6 @@ class DatabaseProxy(object):
         """Get the ThroughputProperties object for this database.
         If no ThroughputProperties already exist for the database, an exception is raised.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: ThroughputProperties for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
             the throughput properties could not be retrieved.
@@ -831,10 +783,6 @@ class DatabaseProxy(object):
 
         :param throughput: The throughput to be set (an integer).
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: ThroughputProperties for the database, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If no throughput properties exists for the database or if the throughput properties could not be updated.

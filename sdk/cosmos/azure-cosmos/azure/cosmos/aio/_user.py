@@ -77,10 +77,6 @@ class UserProxy(object):
 
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :returns: A dictionary of the retrieved user properties.
         :rtype: Dict[str, Any]
@@ -103,10 +99,6 @@ class UserProxy(object):
         :keyword int max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An AsyncItemPaged of permissions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -137,10 +129,6 @@ class UserProxy(object):
         :keyword int max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :returns: An AsyncItemPaged of permissions (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -176,10 +164,6 @@ class UserProxy(object):
         :type permission: Union[str, Dict[str, Any], ~azure.cosmos.Permission]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be retrieved.
         :returns: The retrieved permission object.
         :rtype: ~azure.cosmos.Permission
@@ -212,10 +196,6 @@ class UserProxy(object):
         :type body: Dict[str, Any]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be created.
         :returns: A permission object representing the new permission.
         :rtype: ~azure.cosmos.Permission
@@ -249,10 +229,6 @@ class UserProxy(object):
         :type body: Dict[str, Any]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission could not be upserted.
         :returns: A dict representing the upserted permission.
         :rtype: ~azure.cosmos.Permission
@@ -293,10 +269,6 @@ class UserProxy(object):
         :type body: Dict[str, Any]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the permission
             with given id does not exist.
         :returns: A permission object representing the permission after the replace went through.
@@ -331,10 +303,6 @@ class UserProxy(object):
         :type permission: Union[str, Dict[str, Any], ~azure.cosmos.Permission]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], None], None]
-        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
-            a logger to work.
-        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
-            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.
         :rtype: None

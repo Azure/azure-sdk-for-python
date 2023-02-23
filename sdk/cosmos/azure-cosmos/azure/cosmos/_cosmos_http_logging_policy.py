@@ -40,21 +40,17 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
     def __init__(self, logger: Optional[logging.Logger] = None, **kwargs): # pylint: disable=unused-argument
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         super().__init__(logger, **kwargs)
-        self.logger = logger or logging.getLogger(
-            "azure.cosmos._cosmos_http_logging_policy"
-        )
-        cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
-        cosmos_allow_list = [
-            v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
-        ]
-        self.allowed_header_names = set(cosmos_allow_list)
+        if self._enable_diagnostics_logging:
+            cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
+            cosmos_allow_list = [
+                v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
+            ]
+            self.allowed_header_names = set(cosmos_allow_list)
 
     def on_request(self, request): # pylint: disable=too-many-return-statements, too-many-statements
         # type: (PipelineRequest) -> None
         options = request.context.options
-        self._enable_diagnostics_logging = request.context.setdefault(
-            "enable_diagnostics_logging",
-            options.pop("enable_diagnostics_logging", self._enable_diagnostics_logging))
+        self._enable_diagnostics_logging = options.pop("enable_diagnostics_logging", self._enable_diagnostics_logging)
         super().on_request(request)
         if self._enable_diagnostics_logging:
             request.context["start_time"] = time.time()
@@ -71,4 +67,4 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             logger = request.context.setdefault("logger", options.pop("logger", self.logger))
             logger.info("Elapsed time in seconds: {}".format(time.time() - request.context.get("start_time")))
             if http_response.status_code >= 400:
-                logger.info("Response status error message: %r", _format_error(http_response.text()))
+                logger.info("Response error message: %r", _format_error(http_response.text()))
