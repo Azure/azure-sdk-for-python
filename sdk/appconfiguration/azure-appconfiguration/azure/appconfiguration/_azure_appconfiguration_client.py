@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Optional, Any, Union, Mapping, List
+from typing import Any, Dict, List, Mapping, Optional, Union
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
@@ -151,7 +151,12 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_configuration_settings(
-        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
+        self,
+        key_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        *,
+        snapshot_name: Optional[str] = None,
+        **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
@@ -162,6 +167,8 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
+        :keyword str snapshot_name: A filter used get key-values for a snapshot. Not valid when used with 'key'
+         and 'label' filters. Default value is None.
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
         :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
@@ -196,6 +203,7 @@ class AzureAppConfigurationClient:
                 label=label_filter,
                 key=key_filter,
                 select=select,
+                snapshot=snapshot_name,
                 cls=lambda objs: [
                     ConfigurationSetting._from_generated(x) for x in objs
                 ],
@@ -567,9 +575,11 @@ class AzureAppConfigurationClient:
     def create_snapshot(
         self,
         name: str,
-        filters: List[KeyValueFilter],
+        filters: List[Dict[str, str]],
         *,
         composition_type: Optional[str] = None,
+        retention_period: Optional[int] = None,
+        tags: Optional[Dict[str, str]] = None,
         **kwargs
     ) -> Snapshot:
         """Create a snapshot.
@@ -577,20 +587,31 @@ class AzureAppConfigurationClient:
         :param name: The name of the snapshot to create
         :type name: str
         :param filters: A list of filters used to filter the key-values included in the snapshot
-        :type filters: list[~azure.appconfiguration.models.KeyValueFilter]
+        :type filters: list[dict[str, str]]
         :keyword str composition_type: The composition type describes how the key-values within the
          snapshot are composed. The 'all' composition type includes all key-values. The 'group_by_key'
          composition type ensures there are no two key-values containing the same key. Known values are:
          "all" and "group_by_key"
+        :keyword int retention_period: The amount of time, in seconds, that a snapshot will remain in the
+         archived state before expiring. This property is only writable during the creation of a
+         snapshot. If not specified, will set to 2592000(30 days). If specified, should in range 0 to 7776000(90 days).
+         When set to 0, the snapshot will be deleted when archiving it.
+        :keyword dict[str, str] tags: The tags of the snapshot.
         :return: The Snapshot returned from the service
         :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
         """
+        kv_filters = []
+        for filter in filters:
+            kv_filters.append(KeyValueFilter(key=filter["key"], value=filter["value"]))
+        snapshot = Snapshot(
+            filters=kv_filters, composition_type=composition_type, retention_period=retention_period, tags=tags
+        )
         error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
         try:
             return self._impl.create_snapshot(
                 name=name,
-                entity=Snapshot(filters=filters, composition_type=composition_type),
+                entity=snapshot,
                 error_map=error_map,
                 **kwargs
             )
@@ -601,14 +622,16 @@ class AzureAppConfigurationClient:
     def archive_snapshot(
         self,
         name: str,
+        *,
         match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        etag: Optional[str] = None,
         **kwargs
     ) -> Snapshot:
-        """Archive a snapshot. It will update the status of a snapshot from "ready" to "archived"
+        """Archive a snapshot. It will update the status of a snapshot from "ready" to "archived".
 
         :param name: The name of the configuration setting snapshot to archive
         :type name: str
-        :param match_condition: The match condition to use upon the etag
+        :keyword match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag
         :return: The Snapshot returned from the service
@@ -616,10 +639,6 @@ class AzureAppConfigurationClient:
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
         :class:`ResourceModifiedError` :class`Exception`
         """
-        snapshot = self.get_snapshot(name=name)
-        if snapshot.status != SnapshotStatus.READY:
-            raise Exception(f"Can not archive a snapshot when its status is {snapshot.status}")
-
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
@@ -633,8 +652,8 @@ class AzureAppConfigurationClient:
             return self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
-                if_match=prep_if_match(snapshot.etag, match_condition),
-                if_none_match=prep_if_none_match(snapshot.etag, match_condition),
+                if_match=prep_if_match(etag, match_condition),
+                if_none_match=prep_if_none_match(etag, match_condition),
                 error_map=error_map,
                 **kwargs
             )
@@ -645,24 +664,23 @@ class AzureAppConfigurationClient:
     def recover_snapshot(
         self,
         name: str,
+        *,
         match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        etag: Optional[str] = None,
         **kwargs
     ) -> Snapshot:
-        """Recover a snapshot. It will update the status of a snapshot from "archived" to "ready"
+        """Recover a snapshot. It will update the status of a snapshot from "archived" to "ready".
 
         :param name: The name of the configuration setting snapshot to recover
         :type name: str
-        :param match_condition: The match condition to use upon the etag
+        :keyword match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
+        :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag
         :return: The Snapshot returned from the service
         :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
         :class:`ResourceModifiedError` :class`Exception`
         """
-        snapshot = self.get_snapshot(name=name)
-        if snapshot.status != SnapshotStatus.ARCHIVED:
-            raise Exception(f"Can not archive a snapshot when its status is {snapshot.status}")
-
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
@@ -676,8 +694,8 @@ class AzureAppConfigurationClient:
             return self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
-                if_match=prep_if_match(snapshot.etag, match_condition),
-                if_none_match=prep_if_none_match(snapshot.etag, match_condition),
+                if_match=prep_if_match(etag, match_condition),
+                if_none_match=prep_if_none_match(etag, match_condition),
                 error_map=error_map,
                 **kwargs
             )
@@ -688,17 +706,18 @@ class AzureAppConfigurationClient:
     def get_snapshot(
         self,
         name: str,
+        *,
         etag: Optional[str] = "*",
         match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        fields: Optional[List[str]] = None,
         **kwargs
     ) -> Snapshot:
-        """Get a snapshot
+        """Get a snapshot.
 
         :param name: The name of the configuration setting snapshot to retrieve
         :type name: str
-        :param etag: Check if the Snapshot is changed. Set None to skip checking etag
-        :type etag: str
-        :param match_condition: The match condition to use upon the etag
+        :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag
+        :keyword match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields
         :return: The Snapshot returned from the service
@@ -706,7 +725,6 @@ class AzureAppConfigurationClient:
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
         :class:`ResourceModifiedError`
         """
-        select = kwargs.pop("fields", None)
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
@@ -721,7 +739,7 @@ class AzureAppConfigurationClient:
                 name=name,
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
-                select=select,
+                select=fields,
                 error_map=error_map,
                 **kwargs
             )
@@ -730,28 +748,23 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_snapshots(
-        self, *, name: Optional[str] = None, status: Optional[str] = None, **kwargs
+        self, *, name: Optional[str] = None, fields: Optional[List[str]] = None, status: Optional[str] = None, **kwargs
     ) -> ItemPaged[Snapshot]:
         """List the snapshots stored in the configuration service, optionally filtered by
         snapshot name and status
 
         :keyword str name: Filter results based on snapshot name
-        :keyword str status: Filter results based on snapshot keys
-        :keyword str after: Instruct the server to return elements that appear after the element referred to by the
-         specified token
         :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields
+        :keyword str status: Filter results based on snapshot keys
         :return: An iterator of :class:`~azure.appconfiguration.models.Snapshot`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[Snapshot]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
         """
-        after=kwargs.pop("after", None)
-        select=kwargs.pop("fields", None)
         error_map = {401: ClientAuthenticationError}
         try:
             return self._impl.get_snapshots(
                 name=name,
-                after=after,
-                select=select,
+                select=fields,
                 status=status,
                 error_map=error_map,
                 **kwargs
