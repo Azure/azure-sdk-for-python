@@ -27,10 +27,14 @@ if TYPE_CHECKING:
 class AdministratorContact(object):
     """Details of the organization administrator of the certificate issuer.
 
-    :param str first_name: First name of the issuer.
-    :param str last_name: Last name of the issuer.
-    :param str email: email of the issuer.
-    :param str phone: phone number of the issuer.
+    :param first_name: First name of the issuer.
+    :type first_name: str or None
+    :param last_name: Last name of the issuer.
+    :type last_name: str or None
+    :param email: email of the issuer.
+    :type email: str or None
+    :param phone: phone number of the issuer.
+    :type phone: str or None
     """
 
     def __init__(
@@ -175,42 +179,42 @@ class CertificateProperties(object):
         return self._vault_id.name
 
     @property
-    def enabled(self) -> bool:
+    def enabled(self) -> "Optional[bool]":
         """Whether the certificate is enabled or not.
 
-        :rtype: bool
+        :rtype: bool or None
         """
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def not_before(self) -> "datetime":
+    def not_before(self) -> "Optional[datetime]":
         """The datetime before which the certificate is not valid.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.not_before if self._attributes else None
 
     @property
-    def expires_on(self) -> "datetime":
+    def expires_on(self) -> "Optional[datetime]":
         """The datetime when the certificate expires.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.expires if self._attributes else None
 
     @property
-    def created_on(self) -> "datetime":
+    def created_on(self) -> "Optional[datetime]":
         """The datetime when the certificate is created.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated_on(self) -> "datetime":
+    def updated_on(self) -> "Optional[datetime]":
         """The datetime when the certificate was last updated.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.updated if self._attributes else None
 
@@ -218,7 +222,7 @@ class CertificateProperties(object):
     def recoverable_days(self) -> "Optional[int]":
         """The number of days the certificate is retained before being deleted from a soft-delete enabled Key Vault.
 
-        :rtype: int
+        :rtype: int or None
         """
         # recoverable_days was added in 7.1-preview
         if self._attributes and hasattr(self._attributes, "recoverable_days"):
@@ -226,10 +230,10 @@ class CertificateProperties(object):
         return None
 
     @property
-    def recovery_level(self) -> models.DeletionRecoveryLevel:
+    def recovery_level(self) -> "Optional[models.DeletionRecoveryLevel]":
         """The deletion recovery level currently in effect for the certificate.
 
-        :rtype: models.DeletionRecoveryLevel
+        :rtype: models.DeletionRecoveryLevel or None
         """
         return self._attributes.recovery_level if self._attributes else None
 
@@ -250,10 +254,10 @@ class CertificateProperties(object):
         return self._x509_thumbprint
 
     @property
-    def tags(self) -> "Dict[str, str]":
+    def tags(self) -> "Optional[Dict[str, str]]":
         """Application specific metadata in the form of key-value pairs.
 
-        :rtype: str
+        :rtype: dict[str, str] or None
         """
         return self._tags
 
@@ -270,10 +274,11 @@ class KeyVaultCertificate(object):
     """Consists of a certificate and its attributes
 
     :param policy: The management policy for the certificate.
-    :type policy: ~azure.keyvault.certificates.CertificatePolicy
+    :type policy: ~azure.keyvault.certificates.CertificatePolicy or None
     :param properties: The certificate's properties.
-    :type properties: ~azure.keyvault.certificates.CertificateProperties
-    :param bytearray cer: CER contents of the X509 certificate.
+    :type properties: ~azure.keyvault.certificates.CertificateProperties or None
+    :param cer: CER contents of the X509 certificate.
+    :type cer: bytes or None
     """
 
     def __init__(
@@ -285,12 +290,11 @@ class KeyVaultCertificate(object):
     ) -> None:
         self._properties = properties
         self._key_id = kwargs.get("key_id", None)
-        self._secret_id = kwargs.get("secret_id")
+        self._secret_id = kwargs.get("secret_id", None)
         self._policy = policy
         self._cer = cer
 
-    def __repr__(self):
-        # type () -> str
+    def __repr__(self) -> str:
         return f"<KeyVaultCertificate [{self.id}]>"[:1024]
 
     @classmethod
@@ -336,13 +340,19 @@ class KeyVaultCertificate(object):
         return self._properties
 
     @property
-    def key_id(self) -> str:
-        """:rtype: str"""
+    def key_id(self) -> "Optional[str]":
+        """The ID of the key associated with the certificate.
+
+        :rtype: str or None
+        """
         return self._key_id
 
     @property
     def secret_id(self) -> "Optional[str]":
-        """:rtype: Any or None"""
+        """The ID of the secret associated with the certificate.
+
+        :rtype: str or None
+        """
         return self._secret_id
 
     @property
@@ -402,22 +412,30 @@ class CertificateOperation(object):
     # pylint:disable=too-many-instance-attributes
     """A certificate operation is returned in case of long running requests.
 
-    :param str cert_operation_id: The certificate id.
+    :param cert_operation_id: The certificate id.
+    :type cert_operation_id: str or None
     :param issuer_name: Name of the operation's issuer object or reserved names.
-    :type issuer_name: str or ~azure.keyvault.certificates.WellKnownIssuerNames
-    :param str certificate_type: Type of certificate requested from the issuer provider.
-    :param bool certificate_transparency: Indicates if the certificate this operation is
-        running for is published to certificate transparency logs.
-    :param bytearray csr: The certificate signing request (CSR) that is being used in the certificate
-        operation.
-    :param bool cancellation_requested: Indicates if cancellation was requested on the certificate
-        operation.
-    :param str status: Status of the certificate operation.
-    :param str status_details: The status details of the certificate operation
+    :type issuer_name: str or ~azure.keyvault.certificates.WellKnownIssuerNames or None
+    :param certificate_type: Type of certificate requested from the issuer provider.
+    :type certificate_type: str or None
+    :param certificate_transparency: Indicates if the certificate this operation is running for is published to
+        certificate transparency logs. Defaults to False.
+    :type certificate_transparency: bool or None
+    :param csr: The certificate signing request (CSR) that is being used in the certificate operation.
+    :type csr: bytes or None
+    :param cancellation_requested: Indicates if cancellation was requested on the certificate operation. Defaults
+        to False.
+    :type cancellation_requested: bool or None
+    :param status: Status of the certificate operation.
+    :type status: str or None
+    :param status_details: The status details of the certificate operation
+    :type status_details: str or None
     :param error: Error encountered, if any, during the certificate operation.
-    :type error: ~azure.keyvault.certificates.CertificateOperationError
-    :param str target: Location which contains the result of the certificate operation.
-    :param str request_id: Identifier for the certificate operation.
+    :type error: ~azure.keyvault.certificates.CertificateOperationError or None
+    :param target: Location which contains the result of the certificate operation.
+    :type target: str or None
+    :param request_id: Identifier for the certificate operation.
+    :type request_id: str or None
     """
 
     def __init__(
@@ -571,44 +589,50 @@ class CertificateOperation(object):
 class CertificatePolicy(object):
     """Management policy for a certificate.
 
-    :param Optional[str] issuer_name: Optional. Name of the referenced issuer object or reserved names; for example,
+    :param issuer_name: Optional. Name of the referenced issuer object or reserved names; for example,
         :attr:`~azure.keyvault.certificates.WellKnownIssuerNames.self` or
         :attr:`~azure.keyvault.certificates.WellKnownIssuerNames.unknown`
+    :type issuer_name: str or None
 
-    :keyword str subject: The subject name of the certificate. Should be a valid X509
-        distinguished name. Either subject or one of the subject alternative name parameters are required for
-        creating a certificate. This will be ignored when importing a certificate; the subject will be parsed from
-        the imported certificate.
-    :keyword Iterable[str] san_emails: Subject alternative emails of the X509 object. Either
-        subject or one of the subject alternative name parameters are required for creating a certificate.
-    :keyword Iterable[str] san_dns_names: Subject alternative DNS names of the X509 object. Either
-        subject or one of the subject alternative name parameters are required for creating a certificate.
-    :keyword Iterable[str] san_user_principal_names: Subject alternative user principal names of the X509 object.
-        Either subject or one of the subject alternative name parameters are required for creating a certificate.
-    :keyword bool exportable: Indicates if the private key can be exported. For valid values,
-        see KeyType.
+    :keyword subject: The subject name of the certificate. Should be a valid X509 distinguished name. Either subject or
+        one of the subject alternative name parameters are required for creating a certificate. This will be ignored
+        when importing a certificate; the subject will be parsed from the imported certificate.
+    :paramtype subject: str or None
+    :keyword san_emails: Subject alternative emails of the X509 object. Either subject or one of the subject alternative
+        name parameters are required for creating a certificate.
+    :paramtype san_emails: list[str] or None
+    :keyword san_dns_names: Subject alternative DNS names of the X509 object. Either subject or one of the subject
+        alternative name parameters are required for creating a certificate.
+    :paramtype san_dns_names: list[str] or None
+    :keyword san_user_principal_names: Subject alternative user principal names of the X509 object. Either subject or
+        one of the subject alternative name parameters are required for creating a certificate.
+    :paramtype san_user_principal_names: list[str] or None
+    :keyword exportable: Indicates if the private key can be exported. For valid values, see KeyType.
+    :paramtype exportable: bool or None
     :keyword key_type: The type of key pair to be used for the certificate.
-    :paramtype key_type: str or ~azure.keyvault.certificates.KeyType
-    :keyword int key_size: The key size in bits. For example: 2048, 3072, or 4096
-        for RSA.
-    :keyword bool reuse_key: Indicates if the same key pair will be used on certificate
-        renewal.
+    :paramtype key_type: str or ~azure.keyvault.certificates.KeyType or None
+    :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
+    :paramtype key_size: int or None
+    :keyword reuse_key: Indicates if the same key pair will be used on certificate renewal.
+    :paramtype reuse_key: bool or None
     :keyword key_curve_name: Elliptic curve name. For valid values, see KeyCurveName.
-    :paramtype key_curve_name: str or ~azure.keyvault.certificates.KeyCurveName
+    :paramtype key_curve_name: str or ~azure.keyvault.certificates.KeyCurveName or None
     :keyword enhanced_key_usage: The extended ways the key of the certificate can be used.
-    :paramtype enhanced_key_usage: list[str]
+    :paramtype enhanced_key_usage: list[str] or None
     :keyword key_usage: List of key usages.
-    :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
+    :paramtype key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType] or None
     :keyword content_type: The media type (MIME type) of the secret backing the certificate.  If not specified,
         :attr:`CertificateContentType.pkcs12` is assumed.
-    :paramtype content_type: str or ~azure.keyvault.certificates.CertificateContentType
-    :keyword int validity_in_months: The duration that the certificate is valid in months.
-    :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime
-        of a certificate
-    :paramtype lifetime_actions: Iterable[~azure.keyvault.certificates.LifetimeAction]
-    :keyword str certificate_type: Type of certificate to be requested from the issuer provider.
-    :keyword bool certificate_transparency: Indicates if the certificates generated under this policy
-        should be published to certificate transparency logs.
+    :paramtype content_type: str or ~azure.keyvault.certificates.CertificateContentType or None
+    :keyword validity_in_months: The duration that the certificate is valid in months.
+    :paramtype validity_in_months: int or None
+    :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a certificate.
+    :paramtype lifetime_actions: list[~azure.keyvault.certificates.LifetimeAction] or None
+    :keyword certificate_type: Type of certificate to be requested from the issuer provider.
+    :paramtype certificate_type: str or None
+    :keyword certificate_transparency: Indicates if the certificates generated under this policy should be
+        published to certificate transparency logs.
+    :paramtype certificate_transparency: bool or None
     """
 
     # pylint:disable=too-many-instance-attributes
@@ -814,115 +838,115 @@ class CertificatePolicy(object):
         )
 
     @property
-    def exportable(self) -> bool:
+    def exportable(self) -> "Optional[bool]":
         """Whether the private key can be exported.
 
-        :rtype: bool
+        :rtype: bool or None
         """
         return self._exportable
 
     @property
-    def key_type(self) -> KeyType:
+    def key_type(self) -> "Optional[KeyType]":
         """The type of key pair to be used for the certificate.
 
-        :rtype: ~azure.keyvault.certificates.KeyType
+        :rtype: ~azure.keyvault.certificates.KeyType or None
         """
         return self._key_type
 
     @property
-    def key_size(self) -> int:
+    def key_size(self) -> "Optional[int]":
         """The key size in bits.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._key_size
 
     @property
-    def reuse_key(self) -> bool:
+    def reuse_key(self) -> "Optional[bool]":
         """Whether the same key pair will be used on certificate renewal.
 
-        :rtype: bool
+        :rtype: bool or None
         """
         return self._reuse_key
 
     @property
-    def key_curve_name(self) -> KeyCurveName:
+    def key_curve_name(self) -> "Optional[KeyCurveName]":
         """Elliptic curve name.
 
-        :rtype: ~azure.keyvault.certificates.KeyCurveName
+        :rtype: ~azure.keyvault.certificates.KeyCurveName or None
         """
         return self._key_curve_name
 
     @property
-    def enhanced_key_usage(self) -> "List[str]":
+    def enhanced_key_usage(self) -> "Optional[List[str]]":
         """The enhanced key usage.
 
-        :rtype: list[str]
+        :rtype: list[str] or None
         """
         return self._enhanced_key_usage
 
     @property
-    def key_usage(self) -> "List[KeyUsageType]":
+    def key_usage(self) -> "Optional[List[KeyUsageType]]":
         """List of key usages.
 
-        :rtype: list[~azure.keyvault.certificates.KeyUsageType]
+        :rtype: list[~azure.keyvault.certificates.KeyUsageType] or None
         """
         return self._key_usage
 
     @property
-    def content_type(self) -> CertificateContentType:
+    def content_type(self) -> "Optional[CertificateContentType]":
         """The media type (MIME type).
 
-        :rtype: ~azure.keyvault.certificates.CertificateContentType
+        :rtype: ~azure.keyvault.certificates.CertificateContentType or None
         """
         return self._content_type
 
     @property
-    def subject(self) -> str:
+    def subject(self) -> "Optional[str]":
         """The subject name of the certificate.
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._subject
 
     @property
-    def san_emails(self) -> "Optional[Any]":
+    def san_emails(self) -> "Optional[List[str]]":
         """The subject alternative email addresses.
 
-        :rtype: Any or None
+        :rtype: list[str] or None
         """
         return self._san_emails
 
     @property
-    def san_dns_names(self) -> "Optional[Any]":
+    def san_dns_names(self) -> "Optional[List[str]]":
         """The subject alternative domain names.
 
-        :rtype: Any or None
+        :rtype: list[str] or None
         """
         return self._san_dns_names
 
     @property
-    def san_user_principal_names(self) -> "Optional[Any]":
+    def san_user_principal_names(self) -> "Optional[List[str]]":
         """The subject alternative user principal names.
 
-        :rtype: Any or None
+        :rtype: list[str] or None
         """
         return self._san_user_principal_names
 
     @property
-    def validity_in_months(self) -> int:
+    def validity_in_months(self) -> "Optional[int]":
         """The duration that the certificate is valid for in months.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._validity_in_months
 
     @property
-    def lifetime_actions(self) -> "List[LifetimeAction]":
+    def lifetime_actions(self) -> "Optional[List[LifetimeAction]]":
         """Actions and their triggers that will be performed by Key Vault over
         the lifetime of the certificate.
 
-        :rtype: list[~azure.keyvault.certificates.LifetimeAction]
+        :rtype: list[~azure.keyvault.certificates.LifetimeAction] or None
         """
         return self._lifetime_actions
 
@@ -931,48 +955,48 @@ class CertificatePolicy(object):
         """Name of the referenced issuer object or reserved names for the issuer
         of the certificate.
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._issuer_name
 
     @property
-    def certificate_type(self) -> str:
+    def certificate_type(self) -> "Optional[str]":
         """Type of certificate requested from the issuer provider.
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._certificate_type
 
     @property
-    def certificate_transparency(self) -> bool:
+    def certificate_transparency(self) -> "Optional[bool]":
         """Whether the certificates generated under this policy should be published
         to certificate transparency logs.
 
-        :rtype: bool
+        :rtype: bool or None
         """
         return self._certificate_transparency
 
     @property
-    def enabled(self) -> bool:
+    def enabled(self) -> "Optional[bool]":
         """Whether the certificate is enabled or not.
 
-        :rtype: bool
+        :rtype: bool or None
         """
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def created_on(self) -> "datetime":
+    def created_on(self) -> "Optional[datetime]":
         """The datetime when the certificate is created.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated_on(self) -> "datetime":
+    def updated_on(self) -> "Optional[datetime]":
         """The datetime when the certificate was last updated.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._attributes.updated if self._attributes else None
 
@@ -980,9 +1004,12 @@ class CertificatePolicy(object):
 class CertificateContact(object):
     """The contact information for the vault certificates.
 
-    :param str email: Email address of a contact for the certificate.
-    :param str name: Name of a contact for the certificate.
-    :param str phone: phone number of a contact for the certificate.
+    :param email: Email address of a contact for the certificate.
+    :type email: str or None
+    :param name: Name of a contact for the certificate.
+    :type name: str or None
+    :param phone: phone number of a contact for the certificate.
+    :type phone: str or None
     """
 
     def __init__(
@@ -1022,7 +1049,8 @@ class CertificateContact(object):
 class IssuerProperties(object):
     """The properties of an issuer containing the issuer metadata.
 
-    :param str provider: The issuer provider.
+    :param provider: The issuer provider.
+    :type provider: str or None
     """
 
     def __init__(self, provider: "Optional[str]" = None, **kwargs) -> None:
@@ -1041,8 +1069,8 @@ class IssuerProperties(object):
         return cls(issuer_id=issuer_item.id, provider=issuer_item.provider)
 
     @property
-    def id(self) -> str:
-        """:rtype: str"""
+    def id(self) -> "Optional[str]":
+        """:rtype: str or None"""
         return self._id
 
     @property
@@ -1060,12 +1088,16 @@ class IssuerProperties(object):
 class CertificateIssuer(object):
     """The issuer for a Key Vault certificate.
 
-    :param str provider: The issuer provider
-    :param str account_id: The username / account name / account id.
-    :param str password: The password / secret / account key.
-    :param str organization_id: The ID of the organization.
+    :param provider: The issuer provider
+    :type provider: str or None
+    :param account_id: The username / account name / account id.
+    :type account_id: str or None
+    :param password: The password / secret / account key.
+    :type password: str or None
+    :param organization_id: The ID of the organization.
+    :type organization_id: str or None
     :param admin_contacts: Details of the organization administrator.
-    :type admin_contacts: list[~azure.keyvault.certificates.AdministratorContact]
+    :type admin_contacts: list[~azure.keyvault.certificates.AdministratorContact] or None
     """
 
     def __init__(
@@ -1112,8 +1144,8 @@ class CertificateIssuer(object):
         )
 
     @property
-    def id(self) -> str:
-        """:rtype: str"""
+    def id(self) -> "Optional[str]":
+        """:rtype: str or None"""
         return self._id
 
     @property
@@ -1191,16 +1223,18 @@ class LifetimeAction(object):
     """Action and its trigger that will be performed by certificate Vault over the lifetime of a certificate.
 
     :param action: The type of the action. For valid values, see CertificatePolicyAction
-    :type action: str or ~azure.keyvault.certificates.CertificatePolicyAction
-    :param int lifetime_percentage: Percentage of lifetime at which to trigger. Value should be between 1 and 99.
-    :param int days_before_expiry: Days before expiry to attempt renewal. Value should be between 1 and
+    :type action: str or ~azure.keyvault.certificates.CertificatePolicyAction or None
+    :param lifetime_percentage: Percentage of lifetime at which to trigger. Value should be between 1 and 99.
+    :type lifetime_percentage: int or None
+    :param days_before_expiry: Days before expiry to attempt renewal. Value should be between 1 and
         `validity_in_months` multiplied by 27. I.e., if validity_in_months is 36, then value should be between 1 and 972
         (36 * 27).
+    :type days_before_expiry: int or None
     """
 
     def __init__(
         self,
-        action: "Optional[CertificatePolicyAction]",
+        action: "Union[str, CertificatePolicyAction, None]",
         lifetime_percentage: "Optional[int]" = None,
         days_before_expiry: "Optional[int]" = None,
     ) -> None:
@@ -1232,10 +1266,10 @@ class LifetimeAction(object):
         return self._days_before_expiry
 
     @property
-    def action(self) -> "Optional[CertificatePolicyAction]":
+    def action(self) -> "Union[str, CertificatePolicyAction, None]":
         """The type of the action that will be executed. Valid values are "EmailContacts" and "AutoRenew".
 
-        :rtype: ~azure.keyvault.certificates.CertificatePolicyAction or None
+        :rtype: str or ~azure.keyvault.certificates.CertificatePolicyAction or None
         """
         return self._action
 
@@ -1244,11 +1278,15 @@ class DeletedCertificate(KeyVaultCertificate):
     """A deleted Certificate consisting of its previous ID, attributes, tags, and information on when it will be purged.
 
     :param policy: The management policy of the deleted certificate.
-    :type policy: ~azure.keyvault.certificates.CertificatePolicy
-    :param bytearray cer: CER contents of the X509 certificate.
-    :param datetime deleted_on: The time when the certificate was deleted, in UTC.
-    :param str recovery_id: The url of the recovery object, used to identify and recover the deleted certificate.
-    :param datetime scheduled_purge_date: The time when the certificate is scheduled to be purged, in UTC.
+    :type policy: ~azure.keyvault.certificates.CertificatePolicy or None
+    :param cer: CER contents of the X509 certificate.
+    :type cer: bytes or None
+    :param deleted_on: The time when the certificate was deleted, in UTC.
+    :type deleted_on: ~datetime.datetime or None
+    :param recovery_id: The url of the recovery object, used to identify and recover the deleted certificate.
+    :type recovery_id: str or None
+    :param scheduled_purge_date: The time when the certificate is scheduled to be purged, in UTC.
+    :type scheduled_purge_date: ~datetime.datetime or None
     """
 
     def __init__(
@@ -1302,25 +1340,25 @@ class DeletedCertificate(KeyVaultCertificate):
         )
 
     @property
-    def deleted_on(self) -> "datetime":
+    def deleted_on(self) -> "Optional[datetime]":
         """The datetime that the certificate was deleted.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._deleted_on
 
     @property
-    def recovery_id(self) -> str:
+    def recovery_id(self) -> "Optional[str]":
         """The url of the recovery object, used to identify and recover the deleted certificate.
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._recovery_id
 
     @property
-    def scheduled_purge_date(self) -> "datetime":
+    def scheduled_purge_date(self) -> "Optional[datetime]":
         """The datetime when the certificate is scheduled to be purged.
 
-        :rtype: str
+        :rtype: ~datetime.datetime or None
         """
         return self._scheduled_purge_date

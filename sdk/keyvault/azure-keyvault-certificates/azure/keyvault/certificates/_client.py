@@ -31,7 +31,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Iterable, List, Optional, Union
+    from typing import Any, List, Optional, Union
     from azure.core.paging import ItemPaged
 
 
@@ -71,8 +71,9 @@ class CertificateClient(KeyVaultClientBase):
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This operation requires the
-        certificates/create permission. The poller requires the certificates/get permission, otherwise raises an
-        :class:`~azure.core.exceptions.HttpResponseError`
+        certificates/create permission. Waiting on the returned poller requires the certificates/get permission and
+        gives you the certificate if creation is successful, or the CertificateOperation if not -- otherwise, it raises
+        an :class:`~azure.core.exceptions.HttpResponseError`.
 
         :param str certificate_name: The name of the certificate.
         :param policy: The management policy for the certificate. Either subject or one of the subject alternative
@@ -672,7 +673,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def set_contacts(self, contacts: "Iterable[CertificateContact]", **kwargs) -> "List[CertificateContact]":
+    def set_contacts(self, contacts: "List[CertificateContact]", **kwargs) -> "List[CertificateContact]":
         """Sets the certificate contacts for the key vault. Requires certificates/managecontacts permission.
 
         :param contacts: The contact list for the vault certificates.
@@ -802,7 +803,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def merge_certificate(
-        self, certificate_name: str, x509_certificates: "Iterable[bytes]", **kwargs
+        self, certificate_name: str, x509_certificates: "List[bytes]", **kwargs
     ) -> KeyVaultCertificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
@@ -815,9 +816,10 @@ class CertificateClient(KeyVaultClientBase):
         :param x509_certificates: The certificate or the certificate chain to merge.
         :type x509_certificates: list[bytes]
 
-        :keyword bool enabled: Whether the certificate is enabled for use.
+        :keyword enabled: Whether the certificate is enabled for use.
+        :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
+        :paramtype tags: dict[str, str] or None
 
         :return: The merged certificate
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate

@@ -394,6 +394,15 @@
                 "description": "ARM identifier of primary user assigned managed identity, in case multiple ones are specified. Also the default managed identity for clusterless compute."
             }
         },
+        "managedNetwork": {
+            "type": "object",
+            "defaultValue": {
+                "isolationMode": "Disabled"
+            },
+            "metadata": {
+                "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
+            }
+        },
         "spark_runtime_version": {
             "type": "string",
             "metadata": {
@@ -602,7 +611,7 @@
         {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
-            "apiVersion": "2022-01-01-preview",
+            "apiVersion": "2022-12-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
             "kind": "[parameters('kind')]",
@@ -637,6 +646,7 @@
                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                 },
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
+                "managedNetwork": "[parameters('managedNetwork')]",
                 "featurestore": {
                     "computeruntime": {
                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
