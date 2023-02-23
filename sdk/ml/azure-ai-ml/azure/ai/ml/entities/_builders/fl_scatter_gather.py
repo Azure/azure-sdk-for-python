@@ -20,7 +20,6 @@ from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearni
 from azure.ai.ml.entities._component.component import Component
 from .subcomponents import aggregate_output
 from azure.ai.ml.entities._validation import MutableValidationResult
-from azure.ai.ml._utils._experimental import experimental
 
 # TODO: Add merge component for string, int
 MERGE_COMPONENT_MAPPING = {
@@ -136,7 +135,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             experiment_name=None,
         )
 
-        self.outputs = self.subgraph[-1]["aggregation"].outputs
+        self._outputs = self.subgraph[-1]["aggregation"].outputs
 
     # TODO potential set default fail_on_missing value to false
     @classmethod
@@ -214,7 +213,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             # internal merge component is also siloed to wherever the aggregation component lives.
             for _, executed_merge_component in merge_comp_mapping.items():
                 FLScatterGather._anchor_step_in_silo(pipeline_step=executed_merge_component, compute=self.aggregation_compute, output_datastore=self.aggregation_datastore)            
-            FLScatterGather._anchor_step_in_silo(pipeline_step=executed_aggregation_component, compute=self.aggregation_config.compute, output_datastore=self.aggregation_datastore)
+            FLScatterGather._anchor_step_in_silo(pipeline_step=executed_aggregation_component, compute=self.aggregation_compute, output_datastore=self.aggregation_datastore)
         return sg_graph
 
     @classmethod
