@@ -530,8 +530,8 @@ class EncryptionProtectorsOperations:
         :param encryption_protector_name: The name of the encryption protector to be updated. "current"
          Required.
         :type encryption_protector_name: str or ~azure.mgmt.sql.models.EncryptionProtectorName
-        :param parameters: The requested encryption protector resource state. Is either a model type or
-         a IO type. Required.
+        :param parameters: The requested encryption protector resource state. Is either a
+         EncryptionProtector type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.EncryptionProtector or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
