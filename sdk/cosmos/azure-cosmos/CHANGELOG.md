@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.3.1 (Unreleased)
+### 4.3.1 (2023-02-23)
 #### Features Added
  - Added `correlated_activity_id` for query operations
  - Added cross regional retries for Service Unavailable/Request Timeouts for read/Query Plan operations
