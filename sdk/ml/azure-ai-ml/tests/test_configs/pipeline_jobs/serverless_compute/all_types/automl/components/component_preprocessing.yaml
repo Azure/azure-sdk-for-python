@@ -17,7 +17,7 @@ code: ./src/
 environment:
   name: pipeline-custom-environment
   image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
-  conda_file: ../environment/preprocessing_env.yaml
+  conda_file: ./env.yaml
 command: >-
   python preprocess.py
   --train_data ${{inputs.train_data}}
