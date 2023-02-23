@@ -1697,13 +1697,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_job.jobs["compare"].outputs.best_model.version == random_version
 
     def test_register_automl_output(self, client: MLClient, randstr: Callable[[str], str]):
-        register_pipeline_path = (
-            "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/automl_regression_with_command_node_register_output.yml"
-        )
+        register_pipeline_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/automl_regression_with_command_node_register_output.yml"
         pipeline = load_job(source=register_pipeline_path, params_override=[{"name": randstr("name")}])
         pipeline_job = assert_job_cancel(pipeline, client)
-        assert pipeline_job.jobs['regression_node'].outputs['best_model'].name == 'regression_name'
-        assert pipeline_job.jobs['regression_node'].outputs['best_model'].version == '1'
+        assert pipeline_job.jobs["regression_node"].outputs["best_model"].name == "regression_name"
+        assert pipeline_job.jobs["regression_node"].outputs["best_model"].version == "1"
 
         assert pipeline_job.outputs.regression_node_2.name == None
         assert pipeline_job.outputs.regression_node_2.version == None

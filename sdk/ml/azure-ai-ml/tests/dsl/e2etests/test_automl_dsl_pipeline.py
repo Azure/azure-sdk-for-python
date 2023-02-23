@@ -108,10 +108,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             )
             classification_node.set_limits(max_trials=1)
             classification_node.set_training(enable_stack_ensemble=False, enable_vote_ensemble=False)
-            classification_node.outputs['best_model'].name = 'classification_output_name'
-            classification_node.outputs['best_model'].version = '1'
+            classification_node.outputs["best_model"].name = "classification_output_name"
+            classification_node.outputs["best_model"].version = "1"
 
-            classification_node_2 = classification( # binding to pipeline output
+            classification_node_2 = classification(  # binding to pipeline output
                 training_data=class_train_data,
                 validation_data=class_valid_data,
                 test_data=class_valid_data,
@@ -122,10 +122,10 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             )
             classification_node_2.set_limits(max_trials=1)
             classification_node_2.set_training(enable_stack_ensemble=False, enable_vote_ensemble=False)
-            classification_node_2.outputs['best_model'].name = 'classification_output_name'
-            classification_node_2.outputs['best_model'].version = '2'
+            classification_node_2.outputs["best_model"].name = "classification_output_name"
+            classification_node_2.outputs["best_model"].version = "2"
 
-            return {'classification_2_output': classification_node_2.outputs.best_model}
+            return {"classification_2_output": classification_node_2.outputs.best_model}
 
         class_train = Input(
             type=AssetTypes.MLTABLE,
@@ -153,7 +153,9 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "target_column_name": "y",
             "tags": {},
             "type": "automl",
-            "outputs": {'best_model': {'job_output_type': 'mlflow_model', 'name': 'classification_output_name', 'version': '1'}},
+            "outputs": {
+                "best_model": {"job_output_type": "mlflow_model", "name": "classification_output_name", "version": "1"}
+            },
             "log_verbosity": "info",
             "limits": {"max_trials": 1},
             "featurization": {"mode": "auto"},
@@ -162,12 +164,14 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "primary_metric": "accuracy",
         }
 
-        classification_dict = pydash.omit(actual_dict["properties"]["outputs"]["classification_2_output"], fields_to_omit)
+        classification_dict = pydash.omit(
+            actual_dict["properties"]["outputs"]["classification_2_output"], fields_to_omit
+        )
         assert classification_dict == {
-            'asset_name': 'classification_output_name',
-            'asset_version': '2',
-            'job_output_type': 'mlflow_model',
-            'mode': 'ReadWriteMount'
+            "asset_name": "classification_output_name",
+            "asset_version": "2",
+            "job_output_type": "mlflow_model",
+            "mode": "ReadWriteMount",
         }
 
     def test_automl_regression_in_pipeline(self, client: MLClient):
