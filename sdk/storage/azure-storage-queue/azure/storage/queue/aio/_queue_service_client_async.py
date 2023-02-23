@@ -36,8 +36,8 @@ if TYPE_CHECKING:
     from .._models import (
         CorsRule,
         Metrics,
-        QueueProperties,
         QueueAnalyticsLogging,
+        QueueProperties,
     )
 
 
@@ -103,8 +103,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         self._configure_encryption(kwargs)
 
     @distributed_trace_async
-    async def get_service_stats(self, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+    async def get_service_stats(self, **kwargs: Any) -> Dict[str, Any]:
         """Retrieves statistics related to replication for the Queue service.
 
         It is only available when read-access geo-redundant replication is enabled for
@@ -137,8 +136,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_service_properties(self, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+    async def get_service_properties(self, **kwargs: Any) -> Dict[str, Any]:
         """Gets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
@@ -165,14 +163,13 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_service_properties( # type: ignore
-            self, analytics_logging=None,  # type: Optional[QueueAnalyticsLogging]
-            hour_metrics=None,  # type: Optional[Metrics]
-            minute_metrics=None,  # type: Optional[Metrics]
-            cors=None,  # type: Optional[List[CorsRule]]
-            **kwargs
-        ):
-        # type: (...) -> None
+    async def set_service_properties(
+            self, analytics_logging: Optional["QueueAnalyticsLogging"] = None,
+            hour_metrics: Optional["Metrics"] = None,
+            minute_metrics: Optional["Metrics"] = None,
+            cors: Optional[List["CorsRule"]] = None,
+            **kwargs: Any
+        ) -> None:
         """Sets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
@@ -222,10 +219,10 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
 
     @distributed_trace
     def list_queues(
-            self, name_starts_with=None,  # type: Optional[str]
-            include_metadata=False,  # type: Optional[bool]
-            **kwargs
-        ):  # type: (...) -> AsyncItemPaged
+            self, name_starts_with: Optional[str] = None,
+            include_metadata: Optional[bool] = False,
+            **kwargs: Any
+        ) -> AsyncItemPaged:
         """Returns a generator to list the queues under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -274,12 +271,11 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         )
 
     @distributed_trace_async
-    async def create_queue( # type: ignore
-            self, name,  # type: str
-            metadata=None,  # type: Optional[Dict[str, str]]
-            **kwargs
-        ):
-        # type: (...) -> QueueClient
+    async def create_queue(
+            self, name: str,
+            metadata: Optional[Dict[str, str]] = None,
+            **kwargs: Any
+        ) -> QueueClient:
         """Creates a new queue under the specified account.
 
         If a queue with the same name already exists, the operation fails.
@@ -311,11 +307,10 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         return queue
 
     @distributed_trace_async
-    async def delete_queue( # type: ignore
-            self, queue,  # type: Union[QueueProperties, str]
-            **kwargs
-        ):
-        # type: (...) -> None
+    async def delete_queue(
+            self, queue: Union["QueueProperties", str],
+            **kwargs: Any
+        ) -> None:
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
@@ -348,8 +343,11 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         kwargs.setdefault('merge_span', True)
         await queue_client.delete_queue(timeout=timeout, **kwargs)
 
-    def get_queue_client(self, queue, **kwargs):
-        # type: (Union[QueueProperties, str], Optional[Any]) -> QueueClient
+    def get_queue_client(
+            self,
+            queue: Union["QueueProperties", str],
+            **kwargs: Any
+        ) -> QueueClient:
         """Get a client to interact with the specified queue.
 
         The queue need not already exist.
