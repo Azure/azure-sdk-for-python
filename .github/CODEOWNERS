@@ -137,10 +137,10 @@
 /sdk/containerservice/                                               @zqingqing1
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @JericHunter
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @bambriz
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy @bambriz
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
