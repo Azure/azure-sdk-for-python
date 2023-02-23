@@ -122,7 +122,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :keyword bool enable_diagnostics_logging: Enable the CosmosHttpLogging policy.
         Must be used along with a logger to work.
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
-        level (to log all requests) or at a single request level.
+        level (to log all requests) or at a single request level. Requests will be logged at INFO level.
 
     .. admonition:: Example:
 

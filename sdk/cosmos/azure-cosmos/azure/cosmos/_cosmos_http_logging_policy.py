@@ -65,6 +65,9 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             http_response = response.http_response
             options = response.context.options
             logger = request.context.setdefault("logger", options.pop("logger", self.logger))
-            logger.info("Elapsed time in seconds: {}".format(time.time() - request.context.get("start_time")))
-            if http_response.status_code >= 400:
-                logger.info("Response error message: %r", _format_error(http_response.text()))
+            try:
+                logger.info("Elapsed time in seconds: {}".format(time.time() - request.context.get("start_time")))
+                if http_response.status_code >= 400:
+                    logger.info("Response error message: %r", _format_error(http_response.text()))
+            except Exception as err:  # pylint: disable=broad-except
+                logger.warning("Failed to log request: %s", repr(err))
