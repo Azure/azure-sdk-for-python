@@ -8,9 +8,8 @@ from typing import List, Dict
 
 from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml._utils._experimental import experimental
 
 # This should be the implementation of what's used in the spec here: https://github.com/Azure/azureml_run_specification/blob/aims/flspec/specs/federated-learning/examples/sdk/1_preprocessing.py#L189
 # General idea, this node will be used to warp code snippets into in a scatter gather loop
@@ -45,6 +44,7 @@ from azure.ai.ml.entities._component.component import Component
 #  - change output to be... whatever the standard output of a model training step is.
 # 
 # TODO decide on default values for this, and revove defaults from either here or builder.
+@experimental
 def fl_scatter_gather(
     *, 
     silo_configs: List[FederatedLearningSilo],
@@ -93,7 +93,7 @@ def fl_scatter_gather(
     # _pass_iteration_to_components: to be changed
     # _pass_index_to_silo_components: to be changed
     # _create_default_mappings_if_needed: if true, then try to automatically create i/o mappings if they're unset.
-    
+
     # Like most nodes, this is just a wrapper around a node builder entity initializer.
     return FLScatterGather(
         silo_configs=silo_configs,
