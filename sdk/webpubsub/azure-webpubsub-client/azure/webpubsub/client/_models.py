@@ -14,7 +14,7 @@ import json
 import math
 import threading
 import base64
-
+from azure.core.pipeline.policies import RetryMode
 from . import _model_base
 from ._model_base import rest_field, AzureJSONEncoder
 from ._enums import WebPubSubDataType, UpstreamMessageType
@@ -486,30 +486,30 @@ class CloseEvent:
 class RetryPolicy:
     def __init__(
         self,
-        max_retries: int = 3,
-        retry_delay_in_ms: int = 1000,
-        max_retry_delay_in_ms: int = 30000,
-        mode: Literal["Exponential", "Fixed"] = "Fixed",
+        retry_total: int,
+        retry_backoff_factor: float,
+        retry_backoff_max: int,
+        mode: RetryMode,
     ) -> None:
-        self.max_retries = max_retries
-        self.retry_delay_in_ms = retry_delay_in_ms
-        self.max_retry_delay_in_ms = max_retry_delay_in_ms
+        self.retry_total = retry_total
+        self.retry_backoff_factor = retry_backoff_factor
+        self.retry_backoff_max = retry_backoff_max
         self.mode = mode
         self.max_retries_to_get_max_delay = math.ceil(
-            math.log2(self.max_retry_delay_in_ms or 1) - math.log2(self.retry_delay_in_ms or 1) + 1
+            math.log2(self.retry_backoff_max) - math.log2(self.retry_backoff_factor) + 1
         )
 
     def next_retry_delay_in_ms(self, retry_attempt: int) -> Union[int, None]:
-        if retry_attempt > self.max_retries:
+        if retry_attempt > self.retry_total:
             return None
         if self.mode == "Fixed":
-            return self.retry_delay_in_ms
+            return self.retry_backoff_factor
         return self.calculate_exponential_delay(retry_attempt)
 
     def calculate_exponential_delay(self, attempt: int) -> int:
         if attempt >= self.max_retries_to_get_max_delay:
-            return self.max_retry_delay_in_ms
-        return (1 << (attempt - 1)) * self.retry_delay_in_ms
+            return self.retry_backoff_max
+        return (1 << (attempt - 1)) * self.retry_backoff_factor
 
 
 class WebPubSubGroup:

@@ -12,6 +12,7 @@ import threading
 import urllib.parse
 import websocket  # type: ignore
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.policies import RetryMode
 
 from ._models import (
     OnConnectedArgs,
@@ -78,13 +79,25 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :keyword bool auto_reconnect: Whether to auto reconnect after connection is dropped and not recoverable
     :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
     :keyword azure.webpubsub.client.WebPubSubProtocolType protocol_type: Subprotocol type
-    :keyword azure.webpubsub.client.RetryPolicy message_retry_policy: Retry policy when failing to send message
-    :keyword azure.webpubsub.client.RetryPolicy reconnect_retry_policy: Retry policy when failing to reconnect
-    :return: None
-    :rtype: None
+    :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
+     reconnect. Default is 10.
+    :keyword float reconnect_retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
+     sleep for {backoff factor}. In 'exponential' mode, retry policy will sleep for:
+     `{backoff factor} * (2 ** ({number of retries} - 1))` seconds. If the backoff_factor is 0.1, then the
+     retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 1.0.
+    :keyword int reconnect_retry_backoff_max: A backoff factor to apply between attempts after the second try
+    :keyword RetryMode reconnect_retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword int message_retry_total: total number of retries to allow for sending message. Default is 10.
+    :keyword float message_retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
+     sleep for {backoff factor}. In 'exponential' mode, retry policy will sleep for:
+     `{backoff factor} * (2 ** ({number of retries} - 1))` seconds. If the backoff_factor is 0.1, then the
+     retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 1.0.
+    :keyword int message_retry_backoff_max: A backoff factor to apply between attempts after the second try
+    :keyword RetryMode message_retry_mode: Fixed or exponential delay between attemps, default is exponential.
     """
 
-    # pylint: disable=unused-argument
     def __init__(
         self,
         credential: Union[WebPubSubClientCredential, str],
@@ -96,8 +109,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._credential = WebPubSubClientCredential(credential)
         else:
             raise TypeError("type of credential must be str or WebPubSubClientCredential")
-
-        self._auto_reconnect = kwargs.pop("auto_reconnect", True)
+        reconnect_retry_total = kwargs.pop("reconnect_retry_total", 10)
+        self._auto_reconnect = reconnect_retry_total > 0
         self._auto_rejoin_groups = kwargs.pop("auto_rejoin_groups", True)
         protocol_type = kwargs.pop("protocol_type", WebPubSubProtocolType.JSON_RELIABLE)
         protocol_map = {
@@ -109,9 +122,18 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         else:
             self._protocol = WebPubSubJsonReliableProtocol()
 
-        self._message_retry_policy = kwargs.pop("message_retry_policy", RetryPolicy())
-        self._reconnect_retry_policy = kwargs.pop("reconnect_retry_policy", RetryPolicy(max_retries=sys.maxsize))
-
+        self._reconnect_retry_policy = RetryPolicy(
+            retry_total=reconnect_retry_total,
+            retry_backoff_factor=kwargs.pop("reconnect_retry_backoff_factor", 1.0),
+            retry_backoff_max=kwargs.pop("reconnect_retry_backoff_max", 120),
+            mode=kwargs.pop("reconnect_retry_mode", RetryMode.Fixed),
+        )
+        self._message_retry_policy = RetryPolicy(
+            retry_total=kwargs.pop("message_retry_total", 10),
+            retry_backoff_factor=kwargs.pop("message_retry_backoff_factor", 1.0),
+            retry_backoff_max=kwargs.pop("message_retry_backoff_max", 120),
+            mode=kwargs.pop("message_retry_mode", RetryMode.Fixed),
+        )
         self._group_map: Dict[str, WebPubSubGroup] = {}
         self._ack_map: Dict[int, SendMessageErrorOptions] = {}
         self._sequence_id = SequenceId()
