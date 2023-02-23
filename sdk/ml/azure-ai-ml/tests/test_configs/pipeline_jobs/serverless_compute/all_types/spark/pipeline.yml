@@ -1,8 +1,8 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
 display_name: Serverless in Pipeline - Spark
-settings:
-  default_compute: azureml:serverless
+# settings:
+#   default_compute: azureml:serverless
 inputs:
   input1:
     type: uri_file
@@ -23,13 +23,13 @@ jobs:
     outputs:
       output1: ${{parent.outputs.output1}}
     resources:
-      instance_type: standard_e4s_v3
-      runtime_version: 3.1.0
+      instance_type: Standard_E8S_V3
+      runtime_version: 3.2.0
   count_word:
     type: spark
     component: file:./src/wordcount.yml
     inputs:
       input1: ${{parent.jobs.sample_word.outputs.output1}}
     resources:
-      instance_type: standard_e4s_v3
-      runtime_version: 3.1.0
+      instance_type: Standard_E8S_V3
+      runtime_version: 3.2.0
