@@ -108,7 +108,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
 
-    def _format_url(self, hostname):
+    def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.
         """
@@ -200,17 +200,19 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs) # type: ignore
+        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @distributed_trace
-    def create_queue(self, **kwargs):
-        # type: (Any) -> None
+    def create_queue(
+            self, metadata: Optional[Dict[str, Any]] = None,
+            **kwargs: Any
+        ) -> None:
         """Creates a new queue in the storage account.
 
         If a queue with the same name already exists, the operation fails with
         a `ResourceExistsError`.
 
-        :keyword dict(str,str) metadata:
+        :keyword Dict[str,str] metadata:
             A dict containing name-value pairs to associate with the queue as
             metadata. Note that metadata names preserve the case with which they
             were created, but are case-insensitive when set or read.
@@ -234,11 +236,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Create a queue.
         """
         headers = kwargs.pop('headers', {})
-        metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.queue.create( # type: ignore
+            return self._client.queue.create(
                 metadata=metadata,
                 timeout=timeout,
                 headers=headers,
@@ -248,8 +249,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def delete_queue(self, **kwargs):
-        # type: (Any) -> None
+    def delete_queue(self, **kwargs: Any) -> None:
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
@@ -284,8 +284,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_queue_properties(self, **kwargs):
-        # type: (Any) -> QueueProperties
+    def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -313,14 +312,14 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         except HttpResponseError as error:
             process_storage_error(error)
         response.name = self.queue_name
-        return response # type: ignore
+        return response
 
     @distributed_trace
-    def set_queue_metadata(self,
-                           metadata=None,  # type: Optional[Dict[str, Any]]
-                           **kwargs  # type: Any
-                           ):
-        # type: (...) -> None
+    def set_queue_metadata(
+            self,
+            metadata: Optional[Dict[str, Any]] = None,
+            **kwargs: Any
+        ) -> None:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
@@ -328,7 +327,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :param metadata:
             A dict containing name-value pairs to associate with the
             queue as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
@@ -347,9 +346,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata)) # type: ignore
+        headers.update(add_metadata_headers(metadata))
         try:
-            return self._client.queue.set_metadata( # type: ignore
+            return self._client.queue.set_metadata(
                 timeout=timeout,
                 headers=headers,
                 cls=return_response_headers,
@@ -358,8 +357,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_queue_access_policy(self, **kwargs):
-        # type: (Any) -> Dict[str, AccessPolicy]
+    def get_queue_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
@@ -370,7 +368,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
         :return: A dictionary of access policies associated with the queue.
-        :rtype: dict(str, ~azure.storage.queue.AccessPolicy)
+        :rtype: Dict[str, ~azure.storage.queue.AccessPolicy]
         """
         timeout = kwargs.pop('timeout', None)
         try:
@@ -383,11 +381,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
-    def set_queue_access_policy(self,
-                                signed_identifiers,  # type: Dict[str, AccessPolicy]
-                                **kwargs  # type: Any
-                                ):
-        # type: (...) -> None
+    def set_queue_access_policy(
+            self,
+            signed_identifiers: Dict[str, AccessPolicy],
+            **kwargs: Any
+        ) -> None:
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
 
@@ -406,7 +404,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             SignedIdentifier access policies to associate with the queue.
             This may contain up to 5 elements. An empty dict
             will clear the access policies set on the service.
-        :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
+        :type signed_identifiers: Dict[str, ~azure.storage.queue.AccessPolicy]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
@@ -434,7 +432,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers # type: ignore
+        signed_identifiers = identifiers
         try:
             self._client.queue.set_access_policy(
                 queue_acl=signed_identifiers or None,
@@ -446,10 +444,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     @distributed_trace
     def send_message(
             self,
-            content,  # type: Any
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> QueueMessage
+            content: Any,
+            **kwargs: Any
+        ) -> "QueueMessage":
         """Adds a new message to the back of the message queue.
 
         The visibility timeout specifies the time that the message will be
@@ -540,8 +537,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def receive_message(self, **kwargs):
-        # type: (Any) -> QueueMessage
+    def receive_message(self, **kwargs: Any) -> QueueMessage:
         """Removes one message from the front of the queue.
 
         When the message is retrieved from the queue, the response includes the message
@@ -600,8 +596,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def receive_messages(self, **kwargs):
-        # type: (Any) -> ItemPaged[QueueMessage]
+    def receive_messages(self, **kwargs: Any) -> ItemPaged[QueueMessage]:
         """Removes one or more messages from the front of the queue.
 
         When a message is retrieved from the queue, the response includes the message
@@ -684,13 +679,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def update_message(self,
-                       message,  # type: Any
-                       pop_receipt=None,  # type: Optional[str]
-                       content=None,  # type: Optional[Any]
-                       **kwargs  # type: Any
-                       ):
-        # type: (...) -> QueueMessage
+    def update_message(
+            self, message: Any,
+            pop_receipt: Optional[str] = None,
+            content: Optional[Any] = None, **kwargs: Any
+        ) -> QueueMessage:
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
 
@@ -781,7 +774,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             encoded_message_text = self._config.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:
-            updated = None # type: ignore
+            updated = None
         try:
             response = self._client.message_id.update(
                 queue_message=updated,
@@ -803,11 +796,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def peek_messages(self,
-                      max_messages=None,  # type: Optional[int]
-                      **kwargs  # type: Any
-                      ):
-        # type: (...) -> List[QueueMessage]
+    def peek_messages(
+            self, max_messages: Optional[int] = None,
+            **kwargs: Any
+        ) -> List[QueueMessage]:
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
 
@@ -868,8 +860,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def clear_messages(self, **kwargs):
-        # type: (Any) -> None
+    def clear_messages(self, **kwargs: Any) -> None:
         """Deletes all messages from the specified queue.
 
         :keyword int timeout:
@@ -895,12 +886,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def delete_message(self,
-                       message,  # type: Any
-                       pop_receipt=None,  # type: Optional[str]
-                       **kwargs  # type: Any
-                       ):
-        # type: (...) -> None
+    def delete_message(
+            self, message: Any,
+            pop_receipt: Optional[str] = None,
+            **kwargs: Any
+        ) -> None:
         """Deletes the specified message.
 
         Normally after a client retrieves a message with the receive messages operation,
