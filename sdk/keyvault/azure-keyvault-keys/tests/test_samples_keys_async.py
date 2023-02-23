@@ -147,21 +147,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END create_oct_key]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_4_hsm)
-    @AsyncKeysClientPreparer()
-    @recorded_by_proxy_async
-    async def test_example_create_okp_key(self, key_client, **kwargs):
-        key_name = self.get_resource_name("key")
-
-        # [START create_okp_key]
-        key = await key_client.create_okp_key(key_name, curve=KeyCurveName.ed25519, hardware_protected=True)
-
-        print(key.id)
-        print(key.name)
-        print(key.key_type)
-        # [END create_okp_key]
-
-    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async

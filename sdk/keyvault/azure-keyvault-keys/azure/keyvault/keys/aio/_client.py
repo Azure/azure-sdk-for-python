@@ -303,50 +303,6 @@ class KeyClient(AsyncKeyVaultClientBase):
         return await self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
 
     @distributed_trace_async
-    async def create_okp_key(self, name: str, **kwargs) -> KeyVaultKey:
-        """Create a new octet key pair or, if ``name`` is in use, create a new version of the key.
-
-        Requires the keys/create permission.
-
-        :param str name: The name for the new key.
-
-        :keyword curve: Elliptic curve name.
-        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str or None
-        :keyword key_operations: Allowed key operations.
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
-        :keyword hardware_protected: Whether the key should be created in a hardware security module.
-            Defaults to ``False``.
-        :paramtype hardware_protected: bool or None
-        :keyword enabled: Whether the key is enabled for use.
-        :paramtype enabled: bool or None
-        :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str] or None
-        :keyword not_before: Not before date of the key in UTC
-        :paramtype not_before: ~datetime.datetime or None
-        :keyword expires_on: Expiry date of the key in UTC
-        :paramtype expires_on: ~datetime.datetime or None
-        :keyword exportable: Whether the key can be exported.
-        :paramtype exportable: bool or None
-        :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
-
-        :returns: The created key
-        :rtype: ~azure.keyvault.keys.KeyVaultKey
-
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Example:
-            .. literalinclude:: ../tests/test_samples_keys_async.py
-                :start-after: [START create_okp_key]
-                :end-before: [END create_okp_key]
-                :language: python
-                :caption: Create an octet key pair (OKP)
-                :dedent: 8
-        """
-        hsm = kwargs.pop("hardware_protected", False)
-        return await self.create_key(name, key_type="OKP-HSM" if hsm else "OKP", **kwargs)
-
-    @distributed_trace_async
     async def delete_key(self, name: str, **kwargs) -> DeletedKey:
         """Delete all versions of a key and its cryptographic material.
 
