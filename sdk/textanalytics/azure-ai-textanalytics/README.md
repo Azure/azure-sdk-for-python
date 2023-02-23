@@ -39,6 +39,7 @@ your resource and a `credential` that allows you access:
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
+
 credential = AzureKeyCredential("<api_key>")
 text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
 ```
