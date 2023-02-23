@@ -647,7 +647,8 @@ logger.setLevel(logging.DEBUG)
 handler = logging.FileHandler(filename="azure")
 logger.addHandler(handler)
 
-# This client will log diagnostic information from the HTTP session by using the CosmosHttpLoggingPolicy
+# This client will log diagnostic information from the HTTP session by using the CosmosHttpLoggingPolicy.
+# Since we passed in the logger to the client, it will log information on every request.
 client = CosmosClient(URL, credential=KEY, logger=logger, enable_diagnostics_logging=True)
 ```
 Similarly, logging can be enabled for a single operation by passing in a logger to the singular request.
