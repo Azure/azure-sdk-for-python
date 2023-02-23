@@ -615,8 +615,8 @@ class ManagedClusterSnapshotsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param parameters: The managed cluster snapshot to create or update. Is either a model type or
-         a IO type. Required.
+        :param parameters: The managed cluster snapshot to create or update. Is either a
+         ManagedClusterSnapshot type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.containerservice.v2022_06_02_preview.models.ManagedClusterSnapshot or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -768,7 +768,7 @@ class ManagedClusterSnapshotsOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Update managed cluster snapshot Tags operation.
-         Is either a model type or a IO type. Required.
+         Is either a TagsObject type or a IO type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2022_06_02_preview.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

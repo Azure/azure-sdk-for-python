@@ -1,9 +1,10 @@
 # Release History
 
-## 12.15.0 (Unreleased)
+## 12.15.0 (2023-02-22)
 
 ### Features Added
 - Stable release of features from 12.15.0b1
+- The `download_blob` API now returns `creation_time` on the download response.
 
 ## 12.15.0b1 (2023-02-02)
 
