@@ -97,7 +97,7 @@ class Pipeline(BaseNode):
 
     @settings.setter
     def settings(self, value):
-        if value is not None and not isinstance(value, PipelineJobSettings):
+        if value and not isinstance(value, PipelineJobSettings):
             raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
         self._settings = value
 
