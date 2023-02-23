@@ -31,6 +31,7 @@ from typing import (  # pylint: disable=unused-import
     Iterator,
     Iterable,
     Tuple,
+    Any,
 )
 import logging
 
@@ -46,9 +47,9 @@ ResponseType = TypeVar("ResponseType")
 class PageIterator(Iterator[Iterator[ReturnType]]):
     def __init__(
         self,
-        get_next,  # type: Callable[[Optional[str]], ResponseType]
-        extract_data,  # type: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]]
-        continuation_token=None,  # type: Optional[str]
+        get_next: Callable[[Optional[str]], ResponseType],
+        extract_data: Callable[[ResponseType], Tuple[str, Iterable[ReturnType]]],
+        continuation_token: Optional[str] = None,
     ):
         """Return an iterator of pages.
 
@@ -61,15 +62,14 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
         self._extract_data = extract_data
         self.continuation_token = continuation_token
         self._did_a_call_already = False
-        self._response = None  # type: Optional[ResponseType]
-        self._current_page = None  # type: Optional[Iterable[ReturnType]]
+        self._response: Optional[ResponseType] = None
+        self._current_page: Optional[Iterable[ReturnType]] = None
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Iterator[ReturnType]]:
         """Return 'self'."""
         return self
 
-    def __next__(self):
-        # type: () -> Iterator[ReturnType]
+    def __next__(self) -> Iterator[ReturnType]:
         if self.continuation_token is None and self._did_a_call_already:
             raise StopIteration("End of paging")
         try:
@@ -85,11 +85,11 @@ class PageIterator(Iterator[Iterator[ReturnType]]):
 
         return iter(self._current_page)
 
-    next = __next__  # Python 2 compatibility.
+    next = __next__  # Python 2 compatibility. Can't be removed as some people are using ".next()" even in Py3
 
 
 class ItemPaged(Iterator[ReturnType]):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Return an iterator of items.
 
         args and kwargs will be passed to the PageIterator constructor directly,
@@ -97,14 +97,10 @@ class ItemPaged(Iterator[ReturnType]):
         """
         self._args = args
         self._kwargs = kwargs
-        self._page_iterator = None
-        self._page_iterator_class = self._kwargs.pop(
-            "page_iterator_class", PageIterator
-        )
+        self._page_iterator: Optional[Iterator[ReturnType]] = None
+        self._page_iterator_class = self._kwargs.pop("page_iterator_class", PageIterator)
 
-    def by_page(
-        self, continuation_token: Optional[str] = None
-    ) -> Iterator[Iterator[ReturnType]]:
+    def by_page(self, continuation_token: Optional[str] = None) -> Iterator[Iterator[ReturnType]]:
         """Get an iterator of pages of objects, instead of an iterator of objects.
 
         :param str continuation_token:
@@ -113,16 +109,12 @@ class ItemPaged(Iterator[ReturnType]):
             this generator will begin returning results from this point.
         :returns: An iterator of pages (themselves iterator of objects)
         """
-        return self._page_iterator_class(
-            continuation_token=continuation_token, *self._args, **self._kwargs
-        )
+        return self._page_iterator_class(continuation_token=continuation_token, *self._args, **self._kwargs)
 
-    def __repr__(self):
-        return "<iterator object azure.core.paging.ItemPaged at {}>".format(
-            hex(id(self))
-        )
+    def __repr__(self) -> str:
+        return "<iterator object azure.core.paging.ItemPaged at {}>".format(hex(id(self)))
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[ReturnType]:
         """Return 'self'."""
         return self
 
@@ -131,4 +123,4 @@ class ItemPaged(Iterator[ReturnType]):
             self._page_iterator = itertools.chain.from_iterable(self.by_page())
         return next(self._page_iterator)
 
-    next = __next__  # Python 2 compatibility.
+    next = __next__  # Python 2 compatibility. Can't be removed as some people are using ".next()" even in Py3

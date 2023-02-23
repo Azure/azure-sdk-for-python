@@ -1970,6 +1970,295 @@
           }
         }
       }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork": {
+      "get": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "operationId": "ManagedNetworkSettings_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/ManagedNetworkSettings"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get ManagedNetworkSettings": {
+            "$ref": "./examples/ManagedNetwork/get.json"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "operationId": "ManagedNetworkSettings_Update",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ManagedNetworkDto"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Update ManagedNetworkSettings": {
+            "$ref": "./examples/ManagedNetwork/patch.json"
+          }
+        },
+        "x-ms-long-running-operation": true
+      },
+      "put": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "operationId": "ManagedNetworkSettings_CreateOrUpdate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ManagedNetworkDto"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "CreateOrUpdate ManagedNetworkSettings": {
+            "$ref": "./examples/ManagedNetwork/put.json"
+          }
+        },
+        "x-ms-long-running-operation": true
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/outboundRules": {
+      "get": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "operationId": "ManagedNetworkSettingsRule_List",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                  "$ref": "#/definitions/OutboundRule"
+              }
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "List ManagedNetworkSettingsRule": {
+            "$ref": "./examples/ManagedNetwork/listRule.json"
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/outboundRules/{ruleName}": {
+      "delete": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "operationId": "ManagedNetworkSettingsRule_Delete",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "ruleName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Success"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Delete ManagedNetworkSettingsRule": {
+            "$ref": "./examples/ManagedNetwork/deleteRule.json"
+          }
+        },
+        "x-ms-long-running-operation": true
+      },
+      "get": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "operationId": "ManagedNetworkSettingsRule_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "ruleName",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request was successful; the request was well-formed and received properly.",
+            "schema": {
+              "$ref": "#/definitions/OutboundRule"
+            }
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get ManagedNetworkSettingsRule": {
+            "$ref": "./examples/ManagedNetwork/getRule.json"
+          }
+        }
+      }
     }
   },
   "parameters": {
@@ -2165,6 +2454,9 @@
         "sku": {
           "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Sku",
           "description": "The sku of the workspace."
+        },
+        "kind": {
+          "type": "string"
         }
       }
     },
@@ -2333,6 +2625,19 @@
         "systemDatastoresAuthMode": {
           "description": "The auth mode used for accessing the system datastores of the workspace",
           "type": "string"
+        },
+        "featureStoreSettings": {
+          "description": "Settings for feature store type workspace.",
+          "$ref": "#/definitions/FeatureStoreSettings"
+        },
+        "managedNetwork": {
+          "description": "Managed network settings.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ManagedNetworkSettings"
+            }
+          ],
+          "x-nullable": true
         }
       }
     },
@@ -2409,6 +2714,14 @@
         "encryption": {
           "$ref": "#/definitions/EncryptionUpdateProperties",
           "description": "The encryption settings of the workspace."
+        },
+        "managedNetwork": {
+          "description": "Managed network settings.",
+          "$ref": "#/definitions/ManagedNetworkSettings"
+        },
+        "featureStoreSettings": {
+          "description": "Settings for feature store type workspace.",
+          "$ref": "#/definitions/FeatureStoreSettings"
         }
       }
     },
@@ -5794,7 +6107,11 @@
         "S3",
         "Snowflake",
         "AzureSqlDb",
-        "AzureSynapseAnalytics"
+        "AzureSynapseAnalytics",
+        "AzureMySqlDb",
+        "AzurePostgresDb",
+        "AzureDataLakeGen2",
+        "Redis"
       ],
       "type": "string",
       "description": "Category of the connection",
@@ -6225,6 +6542,222 @@
         "idleTimeBeforeShutdown": {
           "type": "string",
           "description": "Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days."
+        }
+      }
+    },
+    "FeatureStoreSettings": {
+      "type": "object",
+      "properties": {
+        "computeRuntime": {
+          "$ref": "#/definitions/ComputeRuntimeDto"
+        },
+        "offlineStoreConnectionName": {
+          "type": "string"
+        },
+        "onlineStoreConnectionName": {
+          "type": "string"
+        },
+        "allowRoleAssignmentsOnResourceGroupLevel": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ManagedNetworkDto": {
+      "type": "object",
+      "properties": {
+        "isolationMode": {
+          "type": "string",
+          "allOf": [
+            {
+              "$ref": "#/definitions/IsolationMode"
+            }
+          ]
+        },
+        "outboundRules": {
+          "type": "object",
+          "additionalProperties": {
+              "$ref": "#/definitions/OutboundRule"
+          },
+          "x-nullable": true
+        }
+      }
+    },
+    "ManagedNetworkSettings": {
+      "type": "object",
+      "properties": {
+        "isolationMode": {
+          "type": "string",
+          "allOf": [
+            {
+              "$ref": "#/definitions/IsolationMode"
+            }
+          ]
+        },
+        "networkId": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "outboundRules": {
+          "type": "object",
+          "additionalProperties": {
+              "$ref": "#/definitions/OutboundRule"
+          },
+          "x-nullable": true
+        }
+      }
+    },
+    "IsolationMode": {
+      "enum": [
+        "Disabled",
+        "AllowInternetOutbound",
+        "AllowOnlyApprovedOutbound"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "IsolationMode",
+        "modelAsString": true
+      }
+    },
+    "OutboundRule": {
+      "required": [
+        "type"
+      ],
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "allOf": [
+            {
+              "$ref": "#/definitions/RuleType"
+            }
+          ]
+        },
+        "category": {
+          "type": "string",
+          "allOf": [
+            {
+              "$ref": "#/definitions/RuleCategory"
+            }
+          ]
+        }
+      },
+      "discriminator": "type"
+    },
+    "RuleType": {
+      "enum": [
+        "FQDN",
+        "PrivateEndpoint",
+        "ServiceTag"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "RuleType",
+        "modelAsString": true
+      }
+    },
+    "RuleCategory": {
+      "enum": [
+        "Required",
+        "Recommended",
+        "UserDefined"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "RuleCategory",
+        "modelAsString": true
+      }
+    },
+    "FqdnOutboundRule": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/OutboundRule"
+        }
+      ],
+      "properties": {
+        "destination": {
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "FQDN"
+    },
+    "PrivateEndpointOutboundRule": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/OutboundRule"
+        }
+      ],
+      "properties": {
+        "destination": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/PrivateEndpointDestination"
+            }
+          ],
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "PrivateEndpoint"
+    },
+    "PrivateEndpointDestination": {
+      "type": "object",
+      "properties": {
+        "serviceResourceId": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "subresourceTarget": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "sparkEnabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ServiceTagOutboundRule": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/OutboundRule"
+        }
+      ],
+      "properties": {
+        "destination": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/ServiceTagDestination"
+            }
+          ],
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "ServiceTag"
+    },
+    "ServiceTagDestination": {
+      "type": "object",
+      "properties": {
+        "serviceTag": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "protocol": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "portRanges": {
+          "type": "string",
+          "x-nullable": true
+        }
+      }
+    },
+    "ComputeRuntimeDto": {
+      "type": "object",
+      "properties": {
+        "sparkRuntimeVersion": {
+          "type": "string"
         }
       }
     }

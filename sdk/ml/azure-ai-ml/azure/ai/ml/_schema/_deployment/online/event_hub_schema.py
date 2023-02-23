@@ -18,7 +18,6 @@ module_logger = logging.getLogger(__name__)
 class EventHubSchema(metaclass=PatchedSchemaMeta):
     namespace = fields.Str()
     oversize_data_config = NestedField(OversizeDataConfigSchema)
-    client_id = fields.Str()
 
     @validates("namespace")
     def validate_namespace(self, value, **kwargs):

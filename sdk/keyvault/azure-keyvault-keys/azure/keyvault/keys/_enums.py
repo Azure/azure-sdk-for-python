@@ -57,8 +57,6 @@ class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     rsa_hsm = "RSA-HSM"  #: RSA with a private key which is not exportable from the HSM
     oct = "oct"  #: Octet sequence (used to represent symmetric keys)
     oct_hsm = "oct-HSM"  #: Octet sequence with a private key which is not exportable from the HSM
-    okp = "OKP"  #: Octet key pair (https://tools.ietf.org/html/rfc8037)
-    okp_hsm = "OKP-HSM"  #: Octet key pair with a private key which is not exportable from the HSM
 
     @classmethod
     def _missing_(cls, value):

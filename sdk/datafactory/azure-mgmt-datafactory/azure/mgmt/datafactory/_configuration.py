@@ -42,7 +42,7 @@ class DataFactoryManagementClientConfiguration(Configuration):  # pylint: disabl
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(DataFactoryManagementClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2018-06-01")  # type: Literal["2018-06-01"]
+        api_version: Literal["2018-06-01"] = kwargs.pop("api_version", "2018-06-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -56,10 +56,7 @@ class DataFactoryManagementClientConfiguration(Configuration):  # pylint: disabl
         kwargs.setdefault("sdk_moniker", "mgmt-datafactory/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

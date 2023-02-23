@@ -29,7 +29,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -67,7 +67,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -96,7 +96,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -134,7 +134,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -6865,6 +6865,31 @@ class ComputeResource(Resource, ComputeResourceSchema):
         self.system_data = None
 
 
+class ComputeRuntimeDto(msrest.serialization.Model):
+    """ComputeRuntimeDto.
+
+    :ivar spark_runtime_version:
+    :vartype spark_runtime_version: str
+    """
+
+    _attribute_map = {
+        'spark_runtime_version': {'key': 'sparkRuntimeVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        spark_runtime_version: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword spark_runtime_version:
+        :paramtype spark_runtime_version: str
+        """
+        super(ComputeRuntimeDto, self).__init__(**kwargs)
+        self.spark_runtime_version = spark_runtime_version
+
+
 class ComputeSchedules(msrest.serialization.Model):
     """The list of schedules to be applied on the computes.
 
@@ -10255,6 +10280,52 @@ class ExternalFQDNResponse(msrest.serialization.Model):
         self.value = value
 
 
+class FeatureStoreSettings(msrest.serialization.Model):
+    """FeatureStoreSettings.
+
+    :ivar compute_runtime:
+    :vartype compute_runtime: ~azure.mgmt.machinelearningservices.models.ComputeRuntimeDto
+    :ivar offline_store_connection_name:
+    :vartype offline_store_connection_name: str
+    :ivar online_store_connection_name:
+    :vartype online_store_connection_name: str
+    :ivar allow_role_assignments_on_resource_group_level:
+    :vartype allow_role_assignments_on_resource_group_level: bool
+    """
+
+    _attribute_map = {
+        'compute_runtime': {'key': 'computeRuntime', 'type': 'ComputeRuntimeDto'},
+        'offline_store_connection_name': {'key': 'offlineStoreConnectionName', 'type': 'str'},
+        'online_store_connection_name': {'key': 'onlineStoreConnectionName', 'type': 'str'},
+        'allow_role_assignments_on_resource_group_level': {'key': 'allowRoleAssignmentsOnResourceGroupLevel', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        compute_runtime: Optional["ComputeRuntimeDto"] = None,
+        offline_store_connection_name: Optional[str] = None,
+        online_store_connection_name: Optional[str] = None,
+        allow_role_assignments_on_resource_group_level: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword compute_runtime:
+        :paramtype compute_runtime: ~azure.mgmt.machinelearningservices.models.ComputeRuntimeDto
+        :keyword offline_store_connection_name:
+        :paramtype offline_store_connection_name: str
+        :keyword online_store_connection_name:
+        :paramtype online_store_connection_name: str
+        :keyword allow_role_assignments_on_resource_group_level:
+        :paramtype allow_role_assignments_on_resource_group_level: bool
+        """
+        super(FeatureStoreSettings, self).__init__(**kwargs)
+        self.compute_runtime = compute_runtime
+        self.offline_store_connection_name = offline_store_connection_name
+        self.online_store_connection_name = online_store_connection_name
+        self.allow_role_assignments_on_resource_group_level = allow_role_assignments_on_resource_group_level
+
+
 class FeaturizationSettings(msrest.serialization.Model):
     """Featurization Configuration.
 
@@ -10872,6 +10943,91 @@ class FQDNEndpointsProperties(msrest.serialization.Model):
         super(FQDNEndpointsProperties, self).__init__(**kwargs)
         self.category = category
         self.endpoints = endpoints
+
+
+class OutboundRule(msrest.serialization.Model):
+    """OutboundRule.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: FqdnOutboundRule, PrivateEndpointOutboundRule, ServiceTagOutboundRule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Constant filled by server. Possible values include: "FQDN",
+     "PrivateEndpoint", "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleType
+    :ivar category: Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'FQDN': 'FqdnOutboundRule', 'PrivateEndpoint': 'PrivateEndpointOutboundRule', 'ServiceTag': 'ServiceTagOutboundRule'}
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[Union[str, "OutboundRuleCategory"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+        """
+        super(OutboundRule, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+        self.category = category
+
+
+class FqdnOutboundRule(OutboundRule):
+    """FqdnOutboundRule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Constant filled by server. Possible values include: "FQDN",
+     "PrivateEndpoint", "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleType
+    :ivar category: Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+    :ivar destination:
+    :vartype destination: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[Union[str, "OutboundRuleCategory"]] = None,
+        destination: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+        :keyword destination:
+        :paramtype destination: str
+        """
+        super(FqdnOutboundRule, self).__init__(category=category, **kwargs)
+        self.type = 'FQDN'  # type: str
+        self.destination = destination
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
@@ -16006,7 +16162,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -16045,7 +16201,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -16061,6 +16217,85 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         super(ManagedIdentityAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, target=target, value=value, value_format=value_format, **kwargs)
         self.auth_type = 'ManagedIdentity'  # type: str
         self.credentials = credentials
+
+
+class ManagedNetworkDto(msrest.serialization.Model):
+    """ManagedNetworkDto.
+
+    :ivar isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+     "AllowOnlyApprovedOutbound".
+    :vartype isolation_mode: str or
+     ~azure.mgmt.machinelearningservices.models.ManagedNetworkDtoIsolationMode
+    :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
+    :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+    """
+
+    _attribute_map = {
+        'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
+        'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        isolation_mode: Optional[Union[str, "ManagedNetworkDtoIsolationMode"]] = None,
+        outbound_rules: Optional[Dict[str, "OutboundRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+         "AllowOnlyApprovedOutbound".
+        :paramtype isolation_mode: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedNetworkDtoIsolationMode
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+        """
+        super(ManagedNetworkDto, self).__init__(**kwargs)
+        self.isolation_mode = isolation_mode
+        self.outbound_rules = outbound_rules
+
+
+class ManagedNetworkSettings(msrest.serialization.Model):
+    """ManagedNetworkSettings.
+
+    :ivar isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+     "AllowOnlyApprovedOutbound".
+    :vartype isolation_mode: str or
+     ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+    :ivar network_id:
+    :vartype network_id: str
+    :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
+    :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+    """
+
+    _attribute_map = {
+        'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
+        'network_id': {'key': 'networkId', 'type': 'str'},
+        'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        isolation_mode: Optional[Union[str, "ManagedNetworkSettingsIsolationMode"]] = None,
+        network_id: Optional[str] = None,
+        outbound_rules: Optional[Dict[str, "OutboundRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+         "AllowOnlyApprovedOutbound".
+        :paramtype isolation_mode: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+        :keyword network_id:
+        :paramtype network_id: str
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+        """
+        super(ManagedNetworkSettings, self).__init__(**kwargs)
+        self.isolation_mode = isolation_mode
+        self.network_id = network_id
+        self.outbound_rules = outbound_rules
 
 
 class ManagedOnlineDeployment(OnlineDeploymentProperties):
@@ -17515,7 +17750,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -17549,7 +17784,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -18592,7 +18827,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -18631,7 +18866,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -18964,6 +19199,125 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = value
+
+
+class PrivateEndpointDestination(msrest.serialization.Model):
+    """PrivateEndpointDestination.
+
+    :ivar service_resource_id:
+    :vartype service_resource_id: str
+    :ivar subresource_target:
+    :vartype subresource_target: str
+    :ivar spark_enabled:
+    :vartype spark_enabled: bool
+    """
+
+    _attribute_map = {
+        'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
+        'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
+        'spark_enabled': {'key': 'sparkEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_resource_id: Optional[str] = None,
+        subresource_target: Optional[str] = None,
+        spark_enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_resource_id:
+        :paramtype service_resource_id: str
+        :keyword subresource_target:
+        :paramtype subresource_target: str
+        :keyword spark_enabled:
+        :paramtype spark_enabled: bool
+        """
+        super(PrivateEndpointDestination, self).__init__(**kwargs)
+        self.service_resource_id = service_resource_id
+        self.subresource_target = subresource_target
+        self.spark_enabled = spark_enabled
+
+
+class PrivateEndpointOutboundRule(OutboundRule):
+    """PrivateEndpointOutboundRule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Constant filled by server. Possible values include: "FQDN",
+     "PrivateEndpoint", "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleType
+    :ivar category: Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+    :ivar destination:
+    :vartype destination:
+     ~azure.mgmt.machinelearningservices.models.PrivateEndpointOutboundRuleDestination
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'PrivateEndpointOutboundRuleDestination'},
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[Union[str, "OutboundRuleCategory"]] = None,
+        destination: Optional["PrivateEndpointOutboundRuleDestination"] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+        :keyword destination:
+        :paramtype destination:
+         ~azure.mgmt.machinelearningservices.models.PrivateEndpointOutboundRuleDestination
+        """
+        super(PrivateEndpointOutboundRule, self).__init__(category=category, **kwargs)
+        self.type = 'PrivateEndpoint'  # type: str
+        self.destination = destination
+
+
+class PrivateEndpointOutboundRuleDestination(PrivateEndpointDestination):
+    """PrivateEndpointOutboundRuleDestination.
+
+    :ivar service_resource_id:
+    :vartype service_resource_id: str
+    :ivar subresource_target:
+    :vartype subresource_target: str
+    :ivar spark_enabled:
+    :vartype spark_enabled: bool
+    """
+
+    _attribute_map = {
+        'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
+        'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
+        'spark_enabled': {'key': 'sparkEnabled', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_resource_id: Optional[str] = None,
+        subresource_target: Optional[str] = None,
+        spark_enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_resource_id:
+        :paramtype service_resource_id: str
+        :keyword subresource_target:
+        :paramtype subresource_target: str
+        :keyword spark_enabled:
+        :paramtype spark_enabled: bool
+        """
+        super(PrivateEndpointOutboundRuleDestination, self).__init__(service_resource_id=service_resource_id, subresource_target=subresource_target, spark_enabled=spark_enabled, **kwargs)
 
 
 class PrivateLinkResource(Resource):
@@ -20324,7 +20678,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -20363,7 +20717,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -20853,7 +21207,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -20892,7 +21246,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -21014,6 +21368,125 @@ class ServicePrincipalDatastoreSecrets(DatastoreSecrets):
         super(ServicePrincipalDatastoreSecrets, self).__init__(**kwargs)
         self.secrets_type = 'ServicePrincipal'  # type: str
         self.client_secret = client_secret
+
+
+class ServiceTagDestination(msrest.serialization.Model):
+    """ServiceTagDestination.
+
+    :ivar service_tag:
+    :vartype service_tag: str
+    :ivar protocol:
+    :vartype protocol: str
+    :ivar port_ranges:
+    :vartype port_ranges: str
+    """
+
+    _attribute_map = {
+        'service_tag': {'key': 'serviceTag', 'type': 'str'},
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'port_ranges': {'key': 'portRanges', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_tag: Optional[str] = None,
+        protocol: Optional[str] = None,
+        port_ranges: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_tag:
+        :paramtype service_tag: str
+        :keyword protocol:
+        :paramtype protocol: str
+        :keyword port_ranges:
+        :paramtype port_ranges: str
+        """
+        super(ServiceTagDestination, self).__init__(**kwargs)
+        self.service_tag = service_tag
+        self.protocol = protocol
+        self.port_ranges = port_ranges
+
+
+class ServiceTagOutboundRule(OutboundRule):
+    """ServiceTagOutboundRule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Constant filled by server. Possible values include: "FQDN",
+     "PrivateEndpoint", "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleType
+    :ivar category: Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+    :ivar destination:
+    :vartype destination:
+     ~azure.mgmt.machinelearningservices.models.ServiceTagOutboundRuleDestination
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'ServiceTagOutboundRuleDestination'},
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[Union[str, "OutboundRuleCategory"]] = None,
+        destination: Optional["ServiceTagOutboundRuleDestination"] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.OutboundRuleCategory
+        :keyword destination:
+        :paramtype destination:
+         ~azure.mgmt.machinelearningservices.models.ServiceTagOutboundRuleDestination
+        """
+        super(ServiceTagOutboundRule, self).__init__(category=category, **kwargs)
+        self.type = 'ServiceTag'  # type: str
+        self.destination = destination
+
+
+class ServiceTagOutboundRuleDestination(ServiceTagDestination):
+    """ServiceTagOutboundRuleDestination.
+
+    :ivar service_tag:
+    :vartype service_tag: str
+    :ivar protocol:
+    :vartype protocol: str
+    :ivar port_ranges:
+    :vartype port_ranges: str
+    """
+
+    _attribute_map = {
+        'service_tag': {'key': 'serviceTag', 'type': 'str'},
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'port_ranges': {'key': 'portRanges', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_tag: Optional[str] = None,
+        protocol: Optional[str] = None,
+        port_ranges: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_tag:
+        :paramtype service_tag: str
+        :keyword protocol:
+        :paramtype protocol: str
+        :keyword port_ranges:
+        :paramtype port_ranges: str
+        """
+        super(ServiceTagOutboundRuleDestination, self).__init__(service_tag=service_tag, protocol=protocol, port_ranges=port_ranges, **kwargs)
 
 
 class SetupScripts(msrest.serialization.Model):
@@ -24455,7 +24928,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -24494,7 +24967,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -25080,6 +25553,8 @@ class Workspace(Resource):
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the workspace.
     :vartype sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar kind:
+    :vartype kind: str
     :ivar workspace_id: The immutable id associated with this workspace.
     :vartype workspace_id: str
     :ivar description: The description of this workspace.
@@ -25158,6 +25633,12 @@ class Workspace(Resource):
     :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
      the workspace.
     :vartype system_datastores_auth_mode: str
+    :ivar feature_store_settings: Settings for feature store type workspace.
+    :vartype feature_store_settings:
+     ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+    :ivar managed_network: Managed network settings.
+    :vartype managed_network:
+     ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
     """
 
     _validation = {
@@ -25187,6 +25668,7 @@ class Workspace(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
@@ -25215,6 +25697,8 @@ class Workspace(Resource):
         'soft_deleted_at': {'key': 'properties.softDeletedAt', 'type': 'str'},
         'scheduled_purge_date': {'key': 'properties.scheduledPurgeDate', 'type': 'str'},
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
+        'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'WorkspacePropertiesManagedNetwork'},
     }
 
     def __init__(
@@ -25224,6 +25708,7 @@ class Workspace(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["Sku"] = None,
+        kind: Optional[str] = None,
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
         key_vault: Optional[str] = None,
@@ -25241,6 +25726,8 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         v1_legacy_mode: Optional[bool] = False,
         system_datastores_auth_mode: Optional[str] = None,
+        feature_store_settings: Optional["FeatureStoreSettings"] = None,
+        managed_network: Optional["WorkspacePropertiesManagedNetwork"] = None,
         **kwargs
     ):
         """
@@ -25252,6 +25739,8 @@ class Workspace(Resource):
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the workspace.
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
+        :keyword kind:
+        :paramtype kind: str
         :keyword description: The description of this workspace.
         :paramtype description: str
         :keyword friendly_name: The friendly name for this workspace. This name in mutable.
@@ -25300,12 +25789,19 @@ class Workspace(Resource):
         :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
          the workspace.
         :paramtype system_datastores_auth_mode: str
+        :keyword feature_store_settings: Settings for feature store type workspace.
+        :paramtype feature_store_settings:
+         ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+        :keyword managed_network: Managed network settings.
+        :paramtype managed_network:
+         ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
         """
         super(Workspace, self).__init__(**kwargs)
         self.identity = identity
         self.location = location
         self.tags = tags
         self.sku = sku
+        self.kind = kind
         self.workspace_id = None
         self.description = description
         self.friendly_name = friendly_name
@@ -25334,6 +25830,8 @@ class Workspace(Resource):
         self.soft_deleted_at = None
         self.scheduled_purge_date = None
         self.system_datastores_auth_mode = system_datastores_auth_mode
+        self.feature_store_settings = feature_store_settings
+        self.managed_network = managed_network
 
 
 class WorkspaceConnectionAccessKey(msrest.serialization.Model):
@@ -25647,6 +26145,46 @@ class WorkspaceListResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
+class WorkspacePropertiesManagedNetwork(ManagedNetworkSettings):
+    """Managed network settings.
+
+    :ivar isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+     "AllowOnlyApprovedOutbound".
+    :vartype isolation_mode: str or
+     ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+    :ivar network_id:
+    :vartype network_id: str
+    :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
+    :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+    """
+
+    _attribute_map = {
+        'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
+        'network_id': {'key': 'networkId', 'type': 'str'},
+        'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        isolation_mode: Optional[Union[str, "ManagedNetworkSettingsIsolationMode"]] = None,
+        network_id: Optional[str] = None,
+        outbound_rules: Optional[Dict[str, "OutboundRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword isolation_mode: Possible values include: "Disabled", "AllowInternetOutbound",
+         "AllowOnlyApprovedOutbound".
+        :paramtype isolation_mode: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsIsolationMode
+        :keyword network_id:
+        :paramtype network_id: str
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+        """
+        super(WorkspacePropertiesManagedNetwork, self).__init__(isolation_mode=isolation_mode, network_id=network_id, outbound_rules=outbound_rules, **kwargs)
+
+
 class WorkspaceUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a machine learning workspace.
 
@@ -25678,6 +26216,11 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype container_registry: str
     :ivar encryption: The encryption settings of the workspace.
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+    :ivar managed_network: Managed network settings.
+    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
+    :ivar feature_store_settings: Settings for feature store type workspace.
+    :vartype feature_store_settings:
+     ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
     """
 
     _attribute_map = {
@@ -25693,6 +26236,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionUpdateProperties'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
+        'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
     }
 
     def __init__(
@@ -25710,6 +26255,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         application_insights: Optional[str] = None,
         container_registry: Optional[str] = None,
         encryption: Optional["EncryptionUpdateProperties"] = None,
+        managed_network: Optional["ManagedNetworkSettings"] = None,
+        feature_store_settings: Optional["FeatureStoreSettings"] = None,
         **kwargs
     ):
         """
@@ -25742,6 +26289,11 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype container_registry: str
         :keyword encryption: The encryption settings of the workspace.
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+        :keyword managed_network: Managed network settings.
+        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
+        :keyword feature_store_settings: Settings for feature store type workspace.
+        :paramtype feature_store_settings:
+         ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
         """
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
@@ -25756,3 +26308,5 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.application_insights = application_insights
         self.container_registry = container_registry
         self.encryption = encryption
+        self.managed_network = managed_network
+        self.feature_store_settings = feature_store_settings

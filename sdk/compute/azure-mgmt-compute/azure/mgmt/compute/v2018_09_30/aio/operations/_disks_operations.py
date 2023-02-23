@@ -219,7 +219,7 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param disk: Disk object supplied in the body of the Put disk operation. Is either a model type
+        :param disk: Disk object supplied in the body of the Put disk operation. Is either a Disk type
          or a IO type. Required.
         :type disk: ~azure.mgmt.compute.v2018_09_30.models.Disk or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -435,8 +435,8 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9 and _. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param disk: Disk object supplied in the body of the Patch disk operation. Is either a model
-         type or a IO type. Required.
+        :param disk: Disk object supplied in the body of the Patch disk operation. Is either a
+         DiskUpdate type or a IO type. Required.
         :type disk: ~azure.mgmt.compute.v2018_09_30.models.DiskUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -998,7 +998,7 @@ class DisksOperations:
          maximum name length is 80 characters. Required.
         :type disk_name: str
         :param grant_access_data: Access data object supplied in the body of the get disk access
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a GrantAccessData type or a IO type. Required.
         :type grant_access_data: ~azure.mgmt.compute.v2018_09_30.models.GrantAccessData or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

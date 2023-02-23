@@ -43,7 +43,7 @@ module_logger = ops_logger.module_logger
 
 
 def _strip_zeroes_from_traffic(traffic: Dict[str, str]) -> Dict[str, str]:
-    return {k: v for k, v in traffic.items() if v and int(v) != 0}
+    return {k.lower(): v for k, v in traffic.items() if v and int(v) != 0}
 
 
 class OnlineEndpointOperations(_ScopeDependentOperations):

@@ -1,9 +1,9 @@
 import pytest
 
 from azure.ai.ml import Input, Output
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken, JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJobPythonEntry
+from azure.ai.ml._restclient.v2022_12_01_preview.models import AmlToken, JobBase
+from azure.ai.ml._restclient.v2022_12_01_preview.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.v2022_12_01_preview.models import SparkJobPythonEntry
 from azure.ai.ml.entities import SparkJob
 from azure.ai.ml.entities._builders.spark_func import spark
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
@@ -398,7 +398,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
             jars=["simple-1.1.1.jar"],
@@ -436,7 +436,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
             jars=["simple-1.1.1.jar"],
@@ -474,7 +474,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
             jars=["simple-1.1.1.jar"],
@@ -522,7 +522,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs={
                 "input1": Input(
                     type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv", mode="direct"
@@ -558,7 +558,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs={
                 "input1": Input(
                     type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv", mode="direct"

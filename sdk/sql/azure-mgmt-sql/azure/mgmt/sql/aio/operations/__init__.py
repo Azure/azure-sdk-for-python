@@ -6,7 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._recoverable_databases_operations import RecoverableDatabasesOperations
 from ._data_masking_policies_operations import DataMaskingPoliciesOperations
 from ._data_masking_rules_operations import DataMaskingRulesOperations
 from ._geo_backup_policies_operations import GeoBackupPoliciesOperations
@@ -35,7 +34,6 @@ from ._elastic_pool_operations_operations import ElasticPoolOperationsOperations
 from ._encryption_protectors_operations import EncryptionProtectorsOperations
 from ._failover_groups_operations import FailoverGroupsOperations
 from ._firewall_rules_operations import FirewallRulesOperations
-from ._instance_failover_groups_operations import InstanceFailoverGroupsOperations
 from ._instance_pools_operations import InstancePoolsOperations
 from ._job_agents_operations import JobAgentsOperations
 from ._job_credentials_operations import JobCredentialsOperations
@@ -111,19 +109,15 @@ from ._time_zones_operations import TimeZonesOperations
 from ._virtual_network_rules_operations import VirtualNetworkRulesOperations
 from ._workload_classifiers_operations import WorkloadClassifiersOperations
 from ._workload_groups_operations import WorkloadGroupsOperations
-from ._transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
 from ._backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
 from ._database_extensions_operations import DatabaseExtensionsOperations
 from ._database_operations_operations import DatabaseOperationsOperations
 from ._database_usages_operations import DatabaseUsagesOperations
 from ._ledger_digest_uploads_operations import LedgerDigestUploadsOperations
 from ._outbound_firewall_rules_operations import OutboundFirewallRulesOperations
-from ._servers_operations import ServersOperations
 from ._usages_operations import UsagesOperations
 from ._long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from ._long_term_retention_managed_instance_backups_operations import LongTermRetentionManagedInstanceBackupsOperations
-from ._managed_instances_operations import ManagedInstancesOperations
-from ._restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from ._restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
 from ._server_connection_policies_operations import ServerConnectionPoliciesOperations
 from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations
@@ -162,8 +156,6 @@ from ._database_sql_vulnerability_assessments_settings_operations import (
 from ._managed_database_advanced_threat_protection_settings_operations import (
     ManagedDatabaseAdvancedThreatProtectionSettingsOperations,
 )
-from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
-from ._managed_databases_operations import ManagedDatabasesOperations
 from ._managed_instance_advanced_threat_protection_settings_operations import (
     ManagedInstanceAdvancedThreatProtectionSettingsOperations,
 )
@@ -181,13 +173,24 @@ from ._managed_database_move_operations_operations import ManagedDatabaseMoveOpe
 from ._managed_instance_dtcs_operations import ManagedInstanceDtcsOperations
 from ._synapse_link_workspaces_operations import SynapseLinkWorkspacesOperations
 from ._virtual_clusters_operations import VirtualClustersOperations
+from ._instance_failover_groups_operations import InstanceFailoverGroupsOperations
+from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
+from ._managed_databases_operations import ManagedDatabasesOperations
+from ._database_encryption_protectors_operations import DatabaseEncryptionProtectorsOperations
+from ._managed_instances_operations import ManagedInstancesOperations
+from ._managed_ledger_digest_uploads_operations import ManagedLedgerDigestUploadsOperations
+from ._recoverable_databases_operations import RecoverableDatabasesOperations
+from ._restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
+from ._server_configuration_options_operations import ServerConfigurationOptionsOperations
+from ._servers_operations import ServersOperations
+from ._start_stop_managed_instance_schedules_operations import StartStopManagedInstanceSchedulesOperations
+from ._transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "RecoverableDatabasesOperations",
     "DataMaskingPoliciesOperations",
     "DataMaskingRulesOperations",
     "GeoBackupPoliciesOperations",
@@ -214,7 +217,6 @@ __all__ = [
     "EncryptionProtectorsOperations",
     "FailoverGroupsOperations",
     "FirewallRulesOperations",
-    "InstanceFailoverGroupsOperations",
     "InstancePoolsOperations",
     "JobAgentsOperations",
     "JobCredentialsOperations",
@@ -278,19 +280,15 @@ __all__ = [
     "VirtualNetworkRulesOperations",
     "WorkloadClassifiersOperations",
     "WorkloadGroupsOperations",
-    "TransparentDataEncryptionsOperations",
     "BackupShortTermRetentionPoliciesOperations",
     "DatabaseExtensionsOperations",
     "DatabaseOperationsOperations",
     "DatabaseUsagesOperations",
     "LedgerDigestUploadsOperations",
     "OutboundFirewallRulesOperations",
-    "ServersOperations",
     "UsagesOperations",
     "LongTermRetentionBackupsOperations",
     "LongTermRetentionManagedInstanceBackupsOperations",
-    "ManagedInstancesOperations",
-    "RestorableDroppedDatabasesOperations",
     "RestorableDroppedManagedDatabasesOperations",
     "ServerConnectionPoliciesOperations",
     "DistributedAvailabilityGroupsOperations",
@@ -315,8 +313,6 @@ __all__ = [
     "DatabaseSqlVulnerabilityAssessmentScansOperations",
     "DatabaseSqlVulnerabilityAssessmentsSettingsOperations",
     "ManagedDatabaseAdvancedThreatProtectionSettingsOperations",
-    "ManagedDatabaseRestoreDetailsOperations",
-    "ManagedDatabasesOperations",
     "ManagedInstanceAdvancedThreatProtectionSettingsOperations",
     "ReplicationLinksOperations",
     "SqlVulnerabilityAssessmentBaselineOperations",
@@ -332,6 +328,18 @@ __all__ = [
     "ManagedInstanceDtcsOperations",
     "SynapseLinkWorkspacesOperations",
     "VirtualClustersOperations",
+    "InstanceFailoverGroupsOperations",
+    "ManagedDatabaseRestoreDetailsOperations",
+    "ManagedDatabasesOperations",
+    "DatabaseEncryptionProtectorsOperations",
+    "ManagedInstancesOperations",
+    "ManagedLedgerDigestUploadsOperations",
+    "RecoverableDatabasesOperations",
+    "RestorableDroppedDatabasesOperations",
+    "ServerConfigurationOptionsOperations",
+    "ServersOperations",
+    "StartStopManagedInstanceSchedulesOperations",
+    "TransparentDataEncryptionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

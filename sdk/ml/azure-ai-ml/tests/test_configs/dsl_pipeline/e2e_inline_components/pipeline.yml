@@ -45,7 +45,7 @@ jobs:
         model_output:
           type: uri_folder
       code: ./train_src
-      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+      environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
       command: >-
         python train.py
         --training_data ${{inputs.training_data}}
@@ -76,7 +76,7 @@ jobs:
       outputs:
         score_output:
           type: uri_folder
-      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+      environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
       code: ./score_src
       command: >-
         python score.py
@@ -102,7 +102,7 @@ jobs:
       outputs:
         eval_output:
           type: uri_folder
-      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+      environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
       code: ./eval_src
       command: >-
         python eval.py

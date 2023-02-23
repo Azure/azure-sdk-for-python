@@ -25,7 +25,8 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class ApiOperation(_serialization.Model):
-    """REST API operation description: see https://github.com/Azure/azure-rest-api-specs/blob/master/documentation/openapi-authoring-automated-guidelines.md#r3023-operationsapiimplementation.
+    """REST API operation description: see
+    https://github.com/Azure/azure-rest-api-specs/blob/master/documentation/openapi-authoring-automated-guidelines.md#r3023-operationsapiimplementation.
 
     :ivar display: The object that represents the operation.
     :vartype display: ~azure.mgmt.storagecache.models.ApiOperationDisplay
@@ -59,8 +60,8 @@ class ApiOperation(_serialization.Model):
         is_data_action: Optional[bool] = None,
         name: Optional[str] = None,
         service_specification: Optional["_models.ApiOperationPropertiesServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.storagecache.models.ApiOperationDisplay
@@ -110,8 +111,8 @@ class ApiOperationDisplay(_serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword operation: Operation type: Read, write, delete, etc.
         :paramtype operation: str
@@ -130,7 +131,8 @@ class ApiOperationDisplay(_serialization.Model):
 
 
 class ApiOperationListResult(_serialization.Model):
-    """Result of the request to list Resource Provider operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Resource Provider operations. It contains a list of operations
+    and a URL link to get the next set of results.
 
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
@@ -145,8 +147,8 @@ class ApiOperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ApiOperation"]] = None, **kwargs
-    ):
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ApiOperation"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
@@ -178,8 +180,8 @@ class ApiOperationPropertiesServiceSpecification(_serialization.Model):
         *,
         metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         log_specifications: Optional[List["_models.LogSpecification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_specifications: Details about operations related to metrics.
         :paramtype metric_specifications: list[~azure.mgmt.storagecache.models.MetricSpecification]
@@ -230,8 +232,8 @@ class AscOperation(_serialization.Model):
         status: Optional[str] = None,
         error: Optional["_models.ErrorResponse"] = None,
         output: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The operation Id.
         :paramtype id: str
@@ -265,28 +267,53 @@ class BlobNfsTarget(_serialization.Model):
     :vartype target: str
     :ivar usage_model: Identifies the StorageCache usage model to be used for this storage target.
     :vartype usage_model: str
+    :ivar verification_timer: Amount of time (in seconds) the cache waits before it checks the
+     back-end storage for file updates.
+    :vartype verification_timer: int
+    :ivar write_back_timer: Amount of time (in seconds) the cache waits after the last file change
+     before it copies the changed file to back-end storage.
+    :vartype write_back_timer: int
     """
 
     _attribute_map = {
         "target": {"key": "target", "type": "str"},
         "usage_model": {"key": "usageModel", "type": "str"},
+        "verification_timer": {"key": "verificationTimer", "type": "int"},
+        "write_back_timer": {"key": "writeBackTimer", "type": "int"},
     }
 
-    def __init__(self, *, target: Optional[str] = None, usage_model: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        target: Optional[str] = None,
+        usage_model: Optional[str] = None,
+        verification_timer: Optional[int] = None,
+        write_back_timer: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target: Resource ID of the storage container.
         :paramtype target: str
         :keyword usage_model: Identifies the StorageCache usage model to be used for this storage
          target.
         :paramtype usage_model: str
+        :keyword verification_timer: Amount of time (in seconds) the cache waits before it checks the
+         back-end storage for file updates.
+        :paramtype verification_timer: int
+        :keyword write_back_timer: Amount of time (in seconds) the cache waits after the last file
+         change before it copies the changed file to back-end storage.
+        :paramtype write_back_timer: int
         """
         super().__init__(**kwargs)
         self.target = target
         self.usage_model = usage_model
+        self.verification_timer = verification_timer
+        self.write_back_timer = write_back_timer
 
 
 class Cache(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """A Cache instance. Follows Azure Resource Manager standards: https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
+    """A Cache instance. Follows Azure Resource Manager standards:
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -396,8 +423,8 @@ class Cache(_serialization.Model):  # pylint: disable=too-many-instance-attribut
         security_settings: Optional["_models.CacheSecuritySettings"] = None,
         directory_services_settings: Optional["_models.CacheDirectorySettings"] = None,
         zones: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -506,8 +533,8 @@ class CacheActiveDirectorySettings(_serialization.Model):
         cache_net_bios_name: str,
         secondary_dns_ip_address: Optional[str] = None,
         credentials: Optional["_models.CacheActiveDirectorySettingsCredentials"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_dns_ip_address: Primary DNS IP address used to resolve the Active Directory
          domain controller's fully qualified domain name. Required.
@@ -561,7 +588,7 @@ class CacheActiveDirectorySettingsCredentials(_serialization.Model):
         "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(self, *, username: str, password: str, **kwargs):
+    def __init__(self, *, username: str, password: str, **kwargs: Any) -> None:
         """
         :keyword username: Username of the Active Directory domain administrator. This value is stored
          encrypted and not returned on response. Required.
@@ -596,8 +623,8 @@ class CacheDirectorySettings(_serialization.Model):
         *,
         active_directory: Optional["_models.CacheActiveDirectorySettings"] = None,
         username_download: Optional["_models.CacheUsernameDownloadSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword active_directory: Specifies settings for joining the HPC Cache to an Active Directory
          domain.
@@ -631,8 +658,8 @@ class CacheEncryptionSettings(_serialization.Model):
         *,
         key_encryption_key: Optional["_models.KeyVaultKeyReference"] = None,
         rotation_to_latest_key_version_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_encryption_key: Specifies the location of the key encryption key in Key Vault.
         :paramtype key_encryption_key: ~azure.mgmt.storagecache.models.KeyVaultKeyReference
@@ -646,7 +673,8 @@ class CacheEncryptionSettings(_serialization.Model):
 
 
 class CacheHealth(_serialization.Model):
-    """An indication of Cache health. Gives more information about health than just that related to provisioning.
+    """An indication of Cache health. Gives more information about health than just that related to
+    provisioning.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -675,8 +703,8 @@ class CacheHealth(_serialization.Model):
         *,
         state: Optional[Union[str, "_models.HealthStateType"]] = None,
         status_description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword state: List of Cache health states. Known values are: "Unknown", "Healthy",
          "Degraded", "Down", "Transitioning", "Stopping", "Stopped", "Upgrading", "Flushing",
@@ -726,8 +754,8 @@ class CacheIdentity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.CacheIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of identity used for the cache. Known values are: "SystemAssigned",
          "UserAssigned", "SystemAssigned, UserAssigned", and "None".
@@ -783,8 +811,8 @@ class CacheNetworkSettings(_serialization.Model):
         dns_servers: Optional[List[str]] = None,
         dns_search_domain: Optional[str] = None,
         ntp_server: str = "time.windows.com",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword mtu: The IPv4 maximum transmission unit configured for the subnet.
         :paramtype mtu: int
@@ -816,7 +844,7 @@ class CacheSecuritySettings(_serialization.Model):
         "access_policies": {"key": "accessPolicies", "type": "[NfsAccessPolicy]"},
     }
 
-    def __init__(self, *, access_policies: Optional[List["_models.NfsAccessPolicy"]] = None, **kwargs):
+    def __init__(self, *, access_policies: Optional[List["_models.NfsAccessPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword access_policies: NFS access policies defined for this cache.
         :paramtype access_policies: list[~azure.mgmt.storagecache.models.NfsAccessPolicy]
@@ -836,7 +864,7 @@ class CacheSku(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: SKU name for this Cache.
         :paramtype name: str
@@ -846,7 +874,8 @@ class CacheSku(_serialization.Model):
 
 
 class CachesListResult(_serialization.Model):
-    """Result of the request to list Caches. It contains a list of Caches and a URL link to get the next set of results.
+    """Result of the request to list Caches. It contains a list of Caches and a URL link to get the
+    next set of results.
 
     :ivar next_link: URL to get the next set of Cache list results, if there are any.
     :vartype next_link: str
@@ -859,7 +888,9 @@ class CachesListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Cache]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["_models.Cache"]] = None, **kwargs):
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Cache"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: URL to get the next set of Cache list results, if there are any.
         :paramtype next_link: str
@@ -894,8 +925,8 @@ class CacheUpgradeSettings(_serialization.Model):
         *,
         upgrade_schedule_enabled: Optional[bool] = None,
         scheduled_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword upgrade_schedule_enabled: True if the user chooses to select an installation time
          between now and firmwareUpdateDeadline. Else the firmware will automatically be installed after
@@ -949,7 +980,7 @@ class CacheUpgradeStatus(_serialization.Model):
         "pending_firmware_version": {"key": "pendingFirmwareVersion", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.current_firmware_version = None
@@ -1030,8 +1061,8 @@ class CacheUsernameDownloadSettings(_serialization.Model):  # pylint: disable=to
         auto_download_certificate: Optional[bool] = None,
         ca_certificate_uri: Optional[str] = None,
         credentials: Optional["_models.CacheUsernameDownloadSettingsCredentials"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword extended_groups: Whether or not Extended Groups is enabled.
         :paramtype extended_groups: bool
@@ -1094,7 +1125,7 @@ class CacheUsernameDownloadSettingsCredentials(_serialization.Model):
         "bind_password": {"key": "bindPassword", "type": "str"},
     }
 
-    def __init__(self, *, bind_dn: Optional[str] = None, bind_password: Optional[str] = None, **kwargs):
+    def __init__(self, *, bind_dn: Optional[str] = None, bind_password: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword bind_dn: The Bind Distinguished Name identity to be used in the secure LDAP
          connection. This value is stored encrypted and not returned on response.
@@ -1119,7 +1150,7 @@ class ClfsTarget(_serialization.Model):
         "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(self, *, target: Optional[str] = None, **kwargs):
+    def __init__(self, *, target: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword target: Resource ID of storage container.
         :paramtype target: str
@@ -1158,8 +1189,8 @@ class CloudErrorBody(_serialization.Model):
         details: Optional[List["_models.CloudErrorBody"]] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -1201,7 +1232,7 @@ class Condition(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.timestamp = None
@@ -1222,7 +1253,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -1255,7 +1286,7 @@ class KeyVaultKeyReference(_serialization.Model):
         "source_vault": {"key": "sourceVault", "type": "KeyVaultKeyReferenceSourceVault"},
     }
 
-    def __init__(self, *, key_url: str, source_vault: "_models.KeyVaultKeyReferenceSourceVault", **kwargs):
+    def __init__(self, *, key_url: str, source_vault: "_models.KeyVaultKeyReferenceSourceVault", **kwargs: Any) -> None:
         """
         :keyword key_url: The URL referencing a key encryption key in Key Vault. Required.
         :paramtype key_url: str
@@ -1278,7 +1309,7 @@ class KeyVaultKeyReferenceSourceVault(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -1301,7 +1332,7 @@ class LogSpecification(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the log.
         :paramtype name: str
@@ -1340,8 +1371,8 @@ class MetricDimension(_serialization.Model):
         display_name: Optional[str] = None,
         internal_name: Optional[str] = None,
         to_be_exported_for_shoebox: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the dimension.
         :paramtype name: str
@@ -1403,8 +1434,8 @@ class MetricSpecification(_serialization.Model):
         supported_aggregation_types: Optional[List[Union[str, "_models.MetricAggregationType"]]] = None,
         metric_class: Optional[str] = None,
         dimensions: Optional[List["_models.MetricDimension"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the metric.
         :paramtype name: str
@@ -1462,8 +1493,8 @@ class NamespaceJunction(_serialization.Model):
         target_path: Optional[str] = None,
         nfs_export: Optional[str] = None,
         nfs_access_policy: str = "default",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword namespace_path: Namespace path on a Cache for a Storage Target.
         :paramtype namespace_path: str
@@ -1488,6 +1519,12 @@ class Nfs3Target(_serialization.Model):
     :vartype target: str
     :ivar usage_model: Identifies the StorageCache usage model to be used for this storage target.
     :vartype usage_model: str
+    :ivar verification_timer: Amount of time (in seconds) the cache waits before it checks the
+     back-end storage for file updates.
+    :vartype verification_timer: int
+    :ivar write_back_timer: Amount of time (in seconds) the cache waits after the last file change
+     before it copies the changed file to back-end storage.
+    :vartype write_back_timer: int
     """
 
     _validation = {
@@ -1497,19 +1534,37 @@ class Nfs3Target(_serialization.Model):
     _attribute_map = {
         "target": {"key": "target", "type": "str"},
         "usage_model": {"key": "usageModel", "type": "str"},
+        "verification_timer": {"key": "verificationTimer", "type": "int"},
+        "write_back_timer": {"key": "writeBackTimer", "type": "int"},
     }
 
-    def __init__(self, *, target: Optional[str] = None, usage_model: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        target: Optional[str] = None,
+        usage_model: Optional[str] = None,
+        verification_timer: Optional[int] = None,
+        write_back_timer: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target: IP address or host name of an NFSv3 host (e.g., 10.0.44.44).
         :paramtype target: str
         :keyword usage_model: Identifies the StorageCache usage model to be used for this storage
          target.
         :paramtype usage_model: str
+        :keyword verification_timer: Amount of time (in seconds) the cache waits before it checks the
+         back-end storage for file updates.
+        :paramtype verification_timer: int
+        :keyword write_back_timer: Amount of time (in seconds) the cache waits after the last file
+         change before it copies the changed file to back-end storage.
+        :paramtype write_back_timer: int
         """
         super().__init__(**kwargs)
         self.target = target
         self.usage_model = usage_model
+        self.verification_timer = verification_timer
+        self.write_back_timer = write_back_timer
 
 
 class NfsAccessPolicy(_serialization.Model):
@@ -1534,7 +1589,7 @@ class NfsAccessPolicy(_serialization.Model):
         "access_rules": {"key": "accessRules", "type": "[NfsAccessRule]"},
     }
 
-    def __init__(self, *, name: str, access_rules: List["_models.NfsAccessRule"], **kwargs):
+    def __init__(self, *, name: str, access_rules: List["_models.NfsAccessRule"], **kwargs: Any) -> None:
         """
         :keyword name: Name identifying this policy. Access Policy names are not case sensitive.
          Required.
@@ -1607,8 +1662,8 @@ class NfsAccessRule(_serialization.Model):
         root_squash: Optional[bool] = None,
         anonymous_uid: Optional[str] = None,
         anonymous_gid: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: Scope for this rule. The scope and filter determine which clients match the
          rule. Required. Known values are: "default", "network", and "host".
@@ -1693,7 +1748,7 @@ class PrimingJob(_serialization.Model):
         "priming_job_percent_complete": {"key": "primingJobPercentComplete", "type": "float"},
     }
 
-    def __init__(self, *, priming_job_name: str, priming_manifest_url: str, **kwargs):
+    def __init__(self, *, priming_job_name: str, priming_manifest_url: str, **kwargs: Any) -> None:
         """
         :keyword priming_job_name: The priming job name. Required.
         :paramtype priming_job_name: str
@@ -1729,7 +1784,7 @@ class PrimingJobIdParameter(_serialization.Model):
         "priming_job_id": {"key": "primingJobId", "type": "str"},
     }
 
-    def __init__(self, *, priming_job_id: str, **kwargs):
+    def __init__(self, *, priming_job_id: str, **kwargs: Any) -> None:
         """
         :keyword priming_job_id: The unique identifier of the priming job. Required.
         :paramtype priming_job_id: str
@@ -1780,8 +1835,8 @@ class ResourceSku(_serialization.Model):
         location_info: Optional[List["_models.ResourceSkuLocationInfo"]] = None,
         name: Optional[str] = None,
         restrictions: Optional[List["_models.Restriction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword capabilities: A list of capabilities of this SKU, such as throughput or ops/sec.
         :paramtype capabilities: list[~azure.mgmt.storagecache.models.ResourceSkuCapabilities]
@@ -1816,7 +1871,7 @@ class ResourceSkuCapabilities(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of a capability, such as ops/sec.
         :paramtype name: str
@@ -1842,7 +1897,7 @@ class ResourceSkuLocationInfo(_serialization.Model):
         "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, zones: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, zones: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location where this SKU is available.
         :paramtype location: str
@@ -1874,7 +1929,7 @@ class ResourceSkusResult(_serialization.Model):
         "value": {"key": "value", "type": "[ResourceSku]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The URI to fetch the next page of Cache SKUs.
         :paramtype next_link: str
@@ -1913,7 +1968,7 @@ class ResourceUsage(_serialization.Model):
         "name": {"key": "name", "type": "ResourceUsageName"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.limit = None
@@ -1936,7 +1991,7 @@ class ResourceUsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Canonical name for this resource type.
         :paramtype value: str
@@ -1949,7 +2004,8 @@ class ResourceUsageName(_serialization.Model):
 
 
 class ResourceUsagesListResult(_serialization.Model):
-    """Result of the request to list resource usages. It contains a list of resource usages & limits and a URL link to get the next set of results.
+    """Result of the request to list resource usages. It contains a list of resource usages & limits
+    and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1970,7 +2026,7 @@ class ResourceUsagesListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ResourceUsage]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.next_link = None
@@ -2006,7 +2062,7 @@ class Restriction(_serialization.Model):
         "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
-    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs):
+    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs: Any) -> None:
         """
         :keyword reason_code: The reason for the restriction. As of now this can be "QuotaId" or
          "NotAvailableForSubscription". "QuotaId" is set when the SKU has requiredQuotas parameter as
@@ -2053,7 +2109,7 @@ class StorageTargetResource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -2139,8 +2195,8 @@ class StorageTarget(StorageTargetResource):  # pylint: disable=too-many-instance
         clfs: Optional["_models.ClfsTarget"] = None,
         unknown: Optional["_models.UnknownTarget"] = None,
         blob_nfs: Optional["_models.BlobNfsTarget"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword junctions: List of Cache namespace junctions to target for namespace associations.
         :paramtype junctions: list[~azure.mgmt.storagecache.models.NamespaceJunction]
@@ -2190,7 +2246,9 @@ class StorageTargetSpaceAllocation(_serialization.Model):
         "allocation_percentage": {"key": "allocationPercentage", "type": "int"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, allocation_percentage: Optional[int] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, allocation_percentage: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the storage target.
         :paramtype name: str
@@ -2218,8 +2276,8 @@ class StorageTargetsResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.StorageTarget"]] = None, **kwargs
-    ):
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.StorageTarget"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The URI to fetch the next page of Storage Targets.
         :paramtype next_link: str
@@ -2268,8 +2326,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -2307,7 +2365,7 @@ class UnknownTarget(_serialization.Model):
         "attributes": {"key": "attributes", "type": "{str}"},
     }
 
-    def __init__(self, *, attributes: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, attributes: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword attributes: Dictionary of string->string pairs containing information about the
          Storage Target.
@@ -2341,8 +2399,8 @@ class UsageModel(_serialization.Model):
         display: Optional["_models.UsageModelDisplay"] = None,
         model_name: Optional[str] = None,
         target_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display: Localized information describing this usage model.
         :paramtype display: ~azure.mgmt.storagecache.models.UsageModelDisplay
@@ -2369,7 +2427,7 @@ class UsageModelDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, **kwargs):
+    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword description: String to display for this usage model.
         :paramtype description: str
@@ -2393,8 +2451,8 @@ class UsageModelsResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.UsageModel"]] = None, **kwargs
-    ):
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.UsageModel"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The URI to fetch the next page of Cache usage models.
         :paramtype next_link: str
@@ -2427,7 +2485,7 @@ class UserAssignedIdentitiesValue(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None

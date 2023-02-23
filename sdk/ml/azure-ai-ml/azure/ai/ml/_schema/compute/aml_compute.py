@@ -29,9 +29,7 @@ class AmlComputeSshSettingsSchema(metaclass=PatchedSchemaMeta):
 class AmlComputeSchema(ComputeSchema):
     type = StringTransformedEnum(allowed_values=[ComputeType.AMLCOMPUTE], required=True)
     size = fields.Str()
-    tier = StringTransformedEnum(
-        allowed_values=[ComputeTier.LOWPRIORITY, ComputeTier.DEDICATED]
-    )
+    tier = StringTransformedEnum(allowed_values=[ComputeTier.LOWPRIORITY, ComputeTier.DEDICATED])
     min_instances = fields.Int()
     max_instances = fields.Int()
     idle_time_before_scale_down = fields.Int()
@@ -40,7 +38,5 @@ class AmlComputeSchema(ComputeSchema):
     network_settings = NestedField(NetworkSettingsSchema)
     identity = NestedField(IdentitySchema)
     enable_node_public_ip = fields.Bool(
-        metadata={
-            "description": "Enable or disable node public IP address provisioning."
-        }
+        metadata={"description": "Enable or disable node public IP address provisioning."}
     )

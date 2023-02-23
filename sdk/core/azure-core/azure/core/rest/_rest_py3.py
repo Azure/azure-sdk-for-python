@@ -34,6 +34,8 @@ from typing import (
     Optional,
     Union,
     MutableMapping,
+    Dict,
+    AsyncContextManager,
 )
 
 from ..utils._utils import case_insensitive_dict
@@ -97,7 +99,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         headers: Optional[MutableMapping[str, str]] = None,
         json: Any = None,
         content: Optional[ContentType] = None,
-        data: Optional[dict] = None,
+        data: Optional[Dict[str, Any]] = None,
         files: Optional[FilesType] = None,
         **kwargs
     ):
@@ -107,7 +109,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         if params:
             _format_parameters_helper(self, params)
         self._files = None
-        self._data = None  # type: Any
+        self._data: Any = None
 
         default_headers = self._set_body(
             content=content,
@@ -120,20 +122,18 @@ class HttpRequest(HttpRequestBackcompatMixin):
 
         if kwargs:
             raise TypeError(
-                "You have passed in kwargs '{}' that are not valid kwargs.".format(
-                    "', '".join(list(kwargs.keys()))
-                )
+                "You have passed in kwargs '{}' that are not valid kwargs.".format("', '".join(list(kwargs.keys())))
             )
 
     def _set_body(
         self,
         content: Optional[ContentType] = None,
-        data: Optional[dict] = None,
+        data: Optional[Dict[str, Any]] = None,
         files: Optional[FilesType] = None,
         json: Any = None,
     ) -> MutableMapping[str, str]:
         """Sets the body of the request, and returns the default headers"""
-        default_headers = {}  # type: MutableMapping[str, str]
+        default_headers: MutableMapping[str, str] = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?
             content = data
@@ -146,9 +146,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         if files:
             default_headers, self._files = set_multipart_body(files)
         if data:
-            default_headers, self._data = set_urlencoded_body(
-                data, has_files=bool(files)
-            )
+            default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
         return default_headers
 
     @property
@@ -369,15 +367,11 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<HttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
+        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        return "<HttpResponse: {} {}{}>".format(self.status_code, self.reason, content_type_str)
 
 
-class AsyncHttpResponse(_HttpResponseBase):
+class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpResponse"]):
     """Abstract base class for Async HTTP responses.
 
     Use this abstract base class to create your own transport responses.
@@ -425,8 +419,4 @@ class AsyncHttpResponse(_HttpResponseBase):
 
     @abc.abstractmethod
     async def close(self) -> None:
-        ...
-
-    @abc.abstractmethod
-    async def __aexit__(self, *args) -> None:
         ...
