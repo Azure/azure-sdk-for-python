@@ -91,7 +91,7 @@ class TestCommandJobEntity:
         node = command(
             name="builder-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="ls",
             compute="testCompute",
             distribution=MpiDistribution(process_count_per_instance=2),
@@ -118,7 +118,7 @@ class TestCommandJobEntity:
         node = command(
             name="builder-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs=inputs,
             command="echo ${{inputs.uri}} ${{inputs.data_asset}} ${{inputs.local_data}}",
             display_name="builder-command-job-display",
@@ -139,7 +139,7 @@ class TestCommandJobEntity:
         expected_job = CommandJob(
             name="builder-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs=inputs,
             command="echo ${{inputs.uri}} ${{inputs.data_asset}} ${{inputs.local_data}}",
             display_name="builder-command-job-display",

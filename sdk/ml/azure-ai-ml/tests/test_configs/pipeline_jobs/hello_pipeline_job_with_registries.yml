@@ -12,11 +12,11 @@ jobs:
     environment: azureml://registries/sdk-test/environments/openMPIUbuntu/versions/1
   b:
     command: echo "world" >> ${{outputs.world_output}}/world.txt
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
     outputs:
       world_output:
   c:
     command: echo ${{inputs.world_input}}/world.txt
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
     inputs:
       world_input: ${{parent.jobs.b.outputs.world_output}}
