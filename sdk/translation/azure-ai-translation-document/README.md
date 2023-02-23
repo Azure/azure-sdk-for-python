@@ -211,6 +211,25 @@ poller = client.begin_translation(inputs=[
     ]
 )
 result = poller.result()
+
+print(f"Status: {poller.status()}")
+print(f"Created on: {poller.details.created_on}")
+print(f"Last updated on: {poller.details.last_updated_on}")
+print(f"Total number of translations on documents: {poller.details.documents_total_count}")
+
+print("\nOf total documents...")
+print(f"{poller.details.documents_failed_count} failed")
+print(f"{poller.details.documents_succeeded_count} succeeded")
+
+for document in result:
+    print(f"Document ID: {document.id}")
+    print(f"Document status: {document.status}")
+    if document.status == "Succeeded":
+        print(f"Source document location: {document.source_document_url}")
+        print(f"Translated document location: {document.translated_document_url}")
+        print(f"Translated to language: {document.translated_to}\n")
+    elif document.error:
+        print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
 <!-- END SNIPPET -->
 
@@ -327,6 +346,25 @@ poller = client.begin_translation(inputs=[
     ]
 )
 result = poller.result()
+
+print(f"Status: {poller.status()}")
+print(f"Created on: {poller.details.created_on}")
+print(f"Last updated on: {poller.details.last_updated_on}")
+print(f"Total number of translations on documents: {poller.details.documents_total_count}")
+
+print("\nOf total documents...")
+print(f"{poller.details.documents_failed_count} failed")
+print(f"{poller.details.documents_succeeded_count} succeeded")
+
+for document in result:
+    print(f"Document ID: {document.id}")
+    print(f"Document status: {document.status}")
+    if document.status == "Succeeded":
+        print(f"Source document location: {document.source_document_url}")
+        print(f"Translated document location: {document.translated_document_url}")
+        print(f"Translated to language: {document.translated_to}\n")
+    elif document.error:
+        print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
 <!-- END SNIPPET -->
 

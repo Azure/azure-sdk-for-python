@@ -78,7 +78,6 @@ def sample_multiple_translation():
         ]
     )
     result = poller.result()
-    # [END multiple_translation]
 
     print(f"Status: {poller.status()}")
     print(f"Created on: {poller.details.created_on}")
@@ -98,6 +97,7 @@ def sample_multiple_translation():
             print(f"Translated to language: {document.translated_to}\n")
         elif document.error:
             print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
+    # [END multiple_translation]
 
 
 if __name__ == '__main__':
