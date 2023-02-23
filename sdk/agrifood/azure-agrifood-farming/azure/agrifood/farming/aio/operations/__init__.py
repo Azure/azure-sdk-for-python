@@ -6,44 +6,86 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._application_data_operations import ApplicationDataOperations
-from ._attachments_operations import AttachmentsOperations
-from ._boundaries_operations import BoundariesOperations
-from ._crops_operations import CropsOperations
-from ._crop_varieties_operations import CropVarietiesOperations
-from ._farmers_operations import FarmersOperations
-from ._farm_operations_operations import FarmOperationsOperations
-from ._farms_operations import FarmsOperations
-from ._fields_operations import FieldsOperations
-from ._harvest_data_operations import HarvestDataOperations
-from ._image_processing_operations import ImageProcessingOperations
-from ._oauth_providers_operations import OAuthProvidersOperations
-from ._oauth_tokens_operations import OAuthTokensOperations
-from ._planting_data_operations import PlantingDataOperations
-from ._scenes_operations import ScenesOperations
-from ._seasonal_fields_operations import SeasonalFieldsOperations
-from ._seasons_operations import SeasonsOperations
-from ._tillage_data_operations import TillageDataOperations
-from ._weather_operations import WeatherOperations
+from ._operations import ApplicationDataOperations
+from ._operations import AttachmentsOperations
+from ._operations import BoundariesOperations
+from ._operations import CropProductsOperations
+from ._operations import CropsOperations
+from ._operations import DeviceDataModelsOperations
+from ._operations import DevicesOperations
+from ._operations import FarmOperationsOperations
+from ._operations import FarmsOperations
+from ._operations import FieldsOperations
+from ._operations import HarvestDataOperations
+from ._operations import ImageProcessingOperations
+from ._operations import InsightAttachmentsOperations
+from ._operations import InsightsOperations
+from ._operations import ManagementZonesOperations
+from ._operations import ModelInferenceOperations
+from ._operations import NutrientAnalysesOperations
+from ._operations import OAuthProvidersOperations
+from ._operations import OAuthTokensOperations
+from ._operations import PartiesOperations
+from ._operations import PlantingDataOperations
+from ._operations import PlantTissueAnalysesOperations
+from ._operations import PrescriptionMapsOperations
+from ._operations import PrescriptionsOperations
+from ._operations import ScenesOperations
+from ._operations import SeasonalFieldsOperations
+from ._operations import SeasonsOperations
+from ._operations import SensorDataModelsOperations
+from ._operations import SensorEventsOperations
+from ._operations import SensorMappingsOperations
+from ._operations import SensorPartnerIntegrationsOperations
+from ._operations import SensorsOperations
+from ._operations import SolutionInferenceOperations
+from ._operations import TillageDataOperations
+from ._operations import WeatherOperations
+from ._operations import WeatherDataOperations
+from ._operations import ZonesOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ApplicationDataOperations',
-    'AttachmentsOperations',
-    'BoundariesOperations',
-    'CropsOperations',
-    'CropVarietiesOperations',
-    'FarmersOperations',
-    'FarmOperationsOperations',
-    'FarmsOperations',
-    'FieldsOperations',
-    'HarvestDataOperations',
-    'ImageProcessingOperations',
-    'OAuthProvidersOperations',
-    'OAuthTokensOperations',
-    'PlantingDataOperations',
-    'ScenesOperations',
-    'SeasonalFieldsOperations',
-    'SeasonsOperations',
-    'TillageDataOperations',
-    'WeatherOperations',
+    "ApplicationDataOperations",
+    "AttachmentsOperations",
+    "BoundariesOperations",
+    "CropProductsOperations",
+    "CropsOperations",
+    "DeviceDataModelsOperations",
+    "DevicesOperations",
+    "FarmOperationsOperations",
+    "FarmsOperations",
+    "FieldsOperations",
+    "HarvestDataOperations",
+    "ImageProcessingOperations",
+    "InsightAttachmentsOperations",
+    "InsightsOperations",
+    "ManagementZonesOperations",
+    "ModelInferenceOperations",
+    "NutrientAnalysesOperations",
+    "OAuthProvidersOperations",
+    "OAuthTokensOperations",
+    "PartiesOperations",
+    "PlantingDataOperations",
+    "PlantTissueAnalysesOperations",
+    "PrescriptionMapsOperations",
+    "PrescriptionsOperations",
+    "ScenesOperations",
+    "SeasonalFieldsOperations",
+    "SeasonsOperations",
+    "SensorDataModelsOperations",
+    "SensorEventsOperations",
+    "SensorMappingsOperations",
+    "SensorPartnerIntegrationsOperations",
+    "SensorsOperations",
+    "SolutionInferenceOperations",
+    "TillageDataOperations",
+    "WeatherOperations",
+    "WeatherDataOperations",
+    "ZonesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -54,7 +54,7 @@ class ApplicationClient(ApplicationClientOperationsMixin, MultiApiClientMixin, _
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2018-06-01'
+    DEFAULT_API_VERSION = '2019-07-01'
     _PROFILE_TAG = "azure.mgmt.resource.managedapplications.ApplicationClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -87,10 +87,10 @@ class ApplicationClient(ApplicationClientOperationsMixin, MultiApiClientMixin, _
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2018-06-01: :mod:`v2018_06_01.models<azure.mgmt.resource.managedapplications.v2018_06_01.models>`
+           * 2019-07-01: :mod:`v2019_07_01.models<azure.mgmt.resource.managedapplications.v2019_07_01.models>`
         """
-        if api_version == '2018-06-01':
-            from .v2018_06_01 import models
+        if api_version == '2019-07-01':
+            from .v2019_07_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -98,11 +98,11 @@ class ApplicationClient(ApplicationClientOperationsMixin, MultiApiClientMixin, _
     def application_definitions(self):
         """Instance depends on the API version:
 
-           * 2018-06-01: :class:`ApplicationDefinitionsOperations<azure.mgmt.resource.managedapplications.v2018_06_01.operations.ApplicationDefinitionsOperations>`
+           * 2019-07-01: :class:`ApplicationDefinitionsOperations<azure.mgmt.resource.managedapplications.v2019_07_01.operations.ApplicationDefinitionsOperations>`
         """
         api_version = self._get_api_version('application_definitions')
-        if api_version == '2018-06-01':
-            from .v2018_06_01.operations import ApplicationDefinitionsOperations as OperationClass
+        if api_version == '2019-07-01':
+            from .v2019_07_01.operations import ApplicationDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'application_definitions'".format(api_version))
         self._config.api_version = api_version
@@ -112,13 +112,27 @@ class ApplicationClient(ApplicationClientOperationsMixin, MultiApiClientMixin, _
     def applications(self):
         """Instance depends on the API version:
 
-           * 2018-06-01: :class:`ApplicationsOperations<azure.mgmt.resource.managedapplications.v2018_06_01.operations.ApplicationsOperations>`
+           * 2019-07-01: :class:`ApplicationsOperations<azure.mgmt.resource.managedapplications.v2019_07_01.operations.ApplicationsOperations>`
         """
         api_version = self._get_api_version('applications')
-        if api_version == '2018-06-01':
-            from .v2018_06_01.operations import ApplicationsOperations as OperationClass
+        if api_version == '2019-07-01':
+            from .v2019_07_01.operations import ApplicationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'applications'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def jit_requests(self):
+        """Instance depends on the API version:
+
+           * 2019-07-01: :class:`JitRequestsOperations<azure.mgmt.resource.managedapplications.v2019_07_01.operations.JitRequestsOperations>`
+        """
+        api_version = self._get_api_version('jit_requests')
+        if api_version == '2019-07-01':
+            from .v2019_07_01.operations import JitRequestsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'jit_requests'".format(api_version))
         self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
