@@ -92,12 +92,12 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
-        super(QueueServiceClient, self).__init__( # type: ignore
+        super(QueueServiceClient, self).__init__(
             account_url,
             credential=credential,
             loop=loop,
             **kwargs)
-        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop) # type: ignore
+        self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
         self._configure_encryption(kwargs)
@@ -129,7 +129,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            stats = await self._client.service.get_statistics( # type: ignore
+            stats = await self._client.service.get_statistics(
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
@@ -157,7 +157,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
+            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -213,7 +213,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
             cors=cors
         )
         try:
-            return await self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
+            return await self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -285,7 +285,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         :param metadata:
             A dict with name_value pairs to associate with the
             queue as metadata. Example: {'Category': 'test'}
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue.aio.QueueClient

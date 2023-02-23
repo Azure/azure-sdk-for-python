@@ -181,7 +181,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            stats = self._client.service.get_statistics( # type: ignore
+            stats = self._client.service.get_statistics(
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
             return service_stats_deserialize(stats)
         except HttpResponseError as error:
@@ -209,7 +209,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            service_props = self._client.service.get_properties(timeout=timeout, **kwargs) # type: ignore
+            service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -265,7 +265,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             cors=cors
         )
         try:
-            return self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
+            return self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -337,7 +337,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :param metadata:
             A dict with name_value pairs to associate with the
             queue as metadata. Example: {'Category': 'test'}
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: ~azure.storage.queue.QueueClient
