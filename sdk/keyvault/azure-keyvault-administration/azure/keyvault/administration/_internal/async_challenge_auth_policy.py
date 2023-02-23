@@ -44,7 +44,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
         if challenge:
             # Note that if the vault has moved to a new tenant since our last request for it, this request will fail.
-            if self._need_new_token:
+            if self._need_new_token():
                 # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
                 self._token = await self._credential.get_token(scope, tenant_id=challenge.tenant_id)
@@ -90,7 +90,5 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
 
         return True
 
-    @property
     def _need_new_token(self) -> bool:
-        # pylint:disable=invalid-overridden-method
         return not self._token or self._token.expires_on - time.time() < 300
