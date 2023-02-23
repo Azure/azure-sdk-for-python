@@ -36,6 +36,9 @@ jobs:
     outputs:
       best_model:
         type: mlflow_model
+    # BUG 2246569: resources should be optional, explicitly specify here with NC/ND-family for dnn tasks.
+    resources:
+      instance_type: Standard_NC6
   register_model_node:
     type: command
     component: file:./components/component_register_model.yaml
