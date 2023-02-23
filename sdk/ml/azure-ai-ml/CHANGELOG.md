@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fix experiment name wrongly set to 'Default' when schedule existing job.
+
 ### Other Changes
 
 - Added dependency on `azure-mgmt-resource`
