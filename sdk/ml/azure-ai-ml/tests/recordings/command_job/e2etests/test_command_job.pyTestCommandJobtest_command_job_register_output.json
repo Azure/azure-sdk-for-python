@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_480086623175?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_159047359492?api-version=2022-12-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -16,12 +16,12 @@
           "properties": {},
           "tags": {},
           "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/testCompute",
-          "displayName": "test_480086623175",
+          "displayName": "test_159047359492",
           "experimentName": "mfe-test1",
           "isArchived": false,
           "jobType": "Command",
           "command": "echo \u0022inputs dont need to be used in command\u0022",
-          "environmentId": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+          "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
           "environmentVariables": {},
           "inputs": {},
           "outputs": {
@@ -48,24 +48,24 @@
         "Cache-Control": "no-cache",
         "Content-Length": "3071",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 23 Feb 2023 05:18:21 GMT",
+        "Date": "Thu, 23 Feb 2023 18:57:37 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_480086623175?api-version=2022-12-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_159047359492?api-version=2022-12-01-preview",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-4cb137b23e3d4ff79be48e7382a4ee8b-277006341f1045b7-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-fbaa2f13f690ef308175ab04db3e1442-b0a4d053abe27cb0-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-eastus2-01",
+        "x-aml-cluster": "vienna-eastus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "6cb8525b-c0f9-4ce3-a493-01babbacb4bb",
+        "x-ms-correlation-request-id": "46337aca-52e0-47c5-a5f6-baa7ba1b668f",
         "x-ms-ratelimit-remaining-subscription-writes": "1190",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230223T051821Z:6cb8525b-c0f9-4ce3-a493-01babbacb4bb",
-        "x-request-time": "0.413"
+        "x-ms-routing-request-id": "WESTUS2:20230223T185738Z:46337aca-52e0-47c5-a5f6-baa7ba1b668f",
+        "x-request-time": "0.914"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_480086623175",
-        "name": "test_480086623175",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_159047359492",
+        "name": "test_159047359492",
         "type": "Microsoft.MachineLearningServices/workspaces/jobs",
         "properties": {
           "description": null,
@@ -73,7 +73,7 @@
           "properties": {
             "_azureml.ComputeTargetType": "amlctrain"
           },
-          "displayName": "test_480086623175",
+          "displayName": "test_159047359492",
           "status": "Starting",
           "experimentName": "mfe-test1",
           "services": {
@@ -89,7 +89,7 @@
             "Studio": {
               "jobServiceType": "Studio",
               "port": null,
-              "endpoint": "https://ml.azure.com/runs/test_480086623175?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "endpoint": "https://ml.azure.com/runs/test_159047359492?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,
               "errorMessage": null,
               "properties": null,
@@ -110,7 +110,7 @@
           },
           "codeId": null,
           "command": "echo \u0022inputs dont need to be used in command\u0022",
-          "environmentId": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+          "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
           "inputs": {},
           "outputs": {
             "test1": {
@@ -139,7 +139,7 @@
             },
             "default": {
               "description": null,
-              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_480086623175",
+              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_159047359492",
               "assetName": null,
               "assetVersion": null,
               "mode": "ReadWriteMount",
@@ -153,7 +153,7 @@
           "parameters": {}
         },
         "systemData": {
-          "createdAt": "2023-02-23T05:18:21.8143832\u002B00:00",
+          "createdAt": "2023-02-23T18:57:38.4174205\u002B00:00",
           "createdBy": "Diondra Peck",
           "createdByType": "User"
         }
@@ -161,6 +161,6 @@
     }
   ],
   "Variables": {
-    "job_name": "test_480086623175"
+    "job_name": "test_159047359492"
   }
 }

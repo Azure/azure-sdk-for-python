@@ -14,18 +14,18 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 23 Feb 2023 03:27:06 GMT",
+        "Date": "Thu, 23 Feb 2023 21:01:21 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "37f15514-f2ac-46f7-948c-61ad659b32b3",
+        "x-ms-correlation-request-id": "33bab0e7-269a-44ef-ab87-aaf97f454a5d",
         "x-ms-ratelimit-remaining-subscription-reads": "11974",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230223T032707Z:37f15514-f2ac-46f7-948c-61ad659b32b3",
-        "x-request-time": "0.037"
+        "x-ms-routing-request-id": "WESTUS2:20230223T210122Z:33bab0e7-269a-44ef-ab87-aaf97f454a5d",
+        "x-request-time": "0.333"
       },
       "ResponseBody": null
     },
@@ -44,11 +44,11 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 23 Feb 2023 03:27:06 GMT",
+        "Date": "Thu, 23 Feb 2023 21:01:22 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-9535e7cf8598f406adfa86a478e308a5-0e70d4dc6a234e7a-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-fb01c07a175292f175d5fda9f44cbc4c-2abad572354b5270-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
@@ -57,11 +57,11 @@
         ],
         "x-aml-cluster": "vienna-eastus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3f9b69ab-be07-4e0a-911c-bf9ee2b356a4",
+        "x-ms-correlation-request-id": "feebf7e0-79ea-4439-a64b-302d626a8cd3",
         "x-ms-ratelimit-remaining-subscription-reads": "11973",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230223T032707Z:3f9b69ab-be07-4e0a-911c-bf9ee2b356a4",
-        "x-request-time": "0.046"
+        "x-ms-routing-request-id": "WESTUS2:20230223T210123Z:feebf7e0-79ea-4439-a64b-302d626a8cd3",
+        "x-request-time": "0.455"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
@@ -89,18 +89,18 @@
               "nodeIdleTimeBeforeScaleDown": "PT2M"
             },
             "subnet": null,
-            "currentNodeCount": 2,
-            "targetNodeCount": 2,
+            "currentNodeCount": 3,
+            "targetNodeCount": 1,
             "nodeStateCounts": {
               "preparingNodeCount": 0,
               "runningNodeCount": 0,
-              "idleNodeCount": 2,
+              "idleNodeCount": 3,
               "unusableNodeCount": 0,
               "leavingNodeCount": 0,
               "preemptedNodeCount": 0
             },
-            "allocationState": "Steady",
-            "allocationStateTransitionTime": "2023-02-23T03:24:51.203\u002B00:00",
+            "allocationState": "Resizing",
+            "allocationStateTransitionTime": "2023-02-23T21:00:45.335\u002B00:00",
             "errors": null,
             "remoteLoginPortPublicAccess": "Enabled",
             "osType": "Linux",
@@ -113,6 +113,6 @@
     }
   ],
   "Variables": {
-    "name": "test_418144305802"
+    "name": "test_721055584506"
   }
 }

@@ -155,7 +155,7 @@ class TestSweepJob(AzureRecordedTestCase):
         node = command(
             name=randstr("name"),
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs=inputs,
             command="echo ${{inputs.uri}} ${{search_space.learning_rate}}",
             display_name="builder_command_job",
@@ -174,7 +174,7 @@ class TestSweepJob(AzureRecordedTestCase):
 
         sweep_node.set_limits(max_concurrent_trials=2, max_total_trials=10, timeout=300)
 
-        assert sweep_node.trial.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert sweep_node.trial.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert sweep_node.display_name == "builder_command_job"
         assert sweep_node.compute == "testCompute"
         assert sweep_node.experiment_name == "mfe-test1-dataset"
@@ -186,7 +186,7 @@ class TestSweepJob(AzureRecordedTestCase):
 
         result = client.create_or_update(sweep_node)
         assert result.description == "new-description"
-        assert result.trial.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert result.trial.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert result.display_name == "new_builder_command_job"
         assert result.compute == "testCompute"
         assert result.experiment_name == "mfe-test1-dataset"

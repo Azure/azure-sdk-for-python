@@ -379,6 +379,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         randstr: Callable[[str], str],
         test_case_i,
         test_case_name,
+        pipeline_samples_e2e_registered_train_components,  # Test depends on this being in the workspace
     ) -> None:
         set_bodiless_matcher()
 
