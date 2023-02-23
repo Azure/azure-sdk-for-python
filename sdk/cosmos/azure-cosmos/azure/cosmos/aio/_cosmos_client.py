@@ -32,7 +32,6 @@ from azure.core.tracing.decorator import distributed_trace
 from ..cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, _set_throughput_options
-from ..offer import ThroughputProperties
 from ._retry_utility_async import _ConnectionRetryPolicy
 from ._database import DatabaseProxy
 from ..documents import ConnectionPolicy, DatabaseAccount
@@ -100,6 +99,30 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :type credential: Union[str, Dict[str, str], ~azure.core.credentials_async.AsyncTokenCredential]
     :keyword str consistency_level: Consistency level to use for the session. Default value is None (account-level).
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
+    :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
+    :keyword int request_timeout: The HTTP request timeout in milliseconds.
+    :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
+    :keyword proxy_config: Connection proxy configuration.
+    :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
+    :keyword ssl_config: Connection SSL configuration.
+    :paramtype ssl_config: ~azure.cosmos.SSLConfiguration
+    :keyword bool connection_verify: Whether to verify the connection, default value is True.
+    :keyword str connection_cert: An alternative certificate to verify the connection.
+    :keyword int retry_total: Maximum retry attempts.
+    :keyword int retry_backoff_max: Maximum retry wait time in seconds.
+    :keyword int retry_fixed_interval: Fixed retry interval in milliseconds.
+    :keyword int retry_read: Maximum number of socket read retry attempts.
+    :keyword int retry_connect: Maximum number of connection error retry attempts.
+    :keyword int retry_status: Maximum number of retry attempts on error status codes.
+    :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
+    :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
+    :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
+        geo-replicated database accounts. (Default: True)
+    :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
+    :keyword bool enable_diagnostics_logging: Enable the CosmosHttpLogging policy.
+        Must be used along with a logger to work.
+    :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
+        level (to log all requests) or at a single request level. Requests will be logged at INFO level.
 
     .. admonition:: Example:
 
@@ -198,7 +221,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
         :param str id: ID (name) of the database to create.
         :keyword offer_throughput: The provisioned throughput for this offer.
-        :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
+        :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -248,7 +271,8 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             offer throughput if they differ from what is passed in.
 
         :param str id: ID (name) of the database to read or create.
-        :keyword int offer_throughput: The provisioned throughput for this offer.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource

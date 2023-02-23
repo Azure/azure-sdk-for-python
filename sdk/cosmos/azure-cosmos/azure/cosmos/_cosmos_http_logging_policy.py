@@ -21,149 +21,56 @@
 # SOFTWARE.
 
 
-
 """Http Logging Policy for Azure SDK"""
 
-import os
-import urllib
+import json
 import logging
-import types
-import ast
+import time
+from typing import Optional
 
+from azure.core.pipeline import PipelineRequest, PipelineResponse, HTTPRequestType, HTTPResponseType
 from azure.core.pipeline.policies import HttpLoggingPolicy
+from .http_constants import HttpHeaders
 
-
-
+def _format_error(payload: str) -> str:
+    output = json.loads(payload)
+    return output['message'].replace("\r", " ")
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
-    def __init__(self, logger=None, **kwargs): # pylint: disable=unused-argument
-        self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", None)
+    def __init__(
+            self,
+            logger: Optional[logging.Logger] = None,
+            *,
+            enable_diagnostics_logging: Optional[bool] = False,
+            **kwargs): # pylint: disable=unused-argument
+        self._enable_diagnostics_logging = enable_diagnostics_logging
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
-            self.logger = logger
+            cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
+            cosmos_allow_list = [
+                v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
+            ]
+            self.allowed_header_names = set(cosmos_allow_list)
 
     def on_request(self, request): # pylint: disable=too-many-return-statements, too-many-statements
         # type: (PipelineRequest) -> None
-        http_request = request.http_request
-        options = request.context.options
-        self._enable_diagnostics_logging = request.context.setdefault(
-            "enable_diagnostics_logging",
-            options.pop("enable_diagnostics_logging", self._enable_diagnostics_logging))
+        super().on_request(request)
         if self._enable_diagnostics_logging:
-            # Get logger in my context first (request has been retried)
-            # then read from kwargs (pop if that's the case)
-            # then use my instance logger
-            logger = request.context.setdefault("logger", options.pop("logger", self.logger))
+            request.context["start_time"] = time.time()
 
-            if not logger.isEnabledFor(logging.INFO):
-                return
-
-            try:
-                parsed_url = list(urllib.parse.urlparse(http_request.url))
-                parsed_qp = urllib.parse.parse_qsl(parsed_url[4], keep_blank_values=True)
-                filtered_qp = [(key, self._redact_query_param(key, value)) for key, value in parsed_qp]
-                # 4 is query
-                parsed_url[4] = "&".join(["=".join(part) for part in filtered_qp])
-                redacted_url = urllib.parse.urlunparse(parsed_url)
-
-                multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
-                if multi_record:
-                    logger.info("Request URL: %r", redacted_url)
-                    logger.info("Request method: %r", http_request.method)
-                    logger.info("Request headers:")
-                    for header, value in http_request.headers.items():
-                        logger.info("    %r: %r", header, value)
-                    if isinstance(http_request.body, types.GeneratorType):
-                        logger.info("File upload")
-                        return
-                    try:
-                        if isinstance(http_request.body, types.AsyncGeneratorType):
-                            logger.info("File upload")
-                            return
-                    except AttributeError:
-                        pass
-                    if http_request.body:
-                        logger.info("A body is sent with the request")
-                        return
-                    logger.info("No body was attached to the request")
-                    return
-                log_string = "Request URL: '{}'".format(redacted_url)
-                log_string += "\nRequest method: '{}'".format(http_request.method)
-                log_string += "\nRequest headers:"
-                for header, value in http_request.headers.items():
-                    log_string += "\n    '{}': '{}'".format(header, value)
-                if isinstance(http_request.body, types.GeneratorType):
-                    log_string += "\nFile upload"
-                    logger.info(log_string)
-                    return
-                try:
-                    if isinstance(http_request.body, types.AsyncGeneratorType):
-                        log_string += "\nFile upload"
-                        logger.info(log_string)
-                        return
-                except AttributeError:
-                    pass
-                if http_request.body:
-                    log_string += "\nA body is sent with the request"
-                    logger.info(log_string)
-                    return
-                log_string += "\nNo body was attached to the request"
-                logger.info(log_string)
-
-            except Exception as err:  # pylint: disable=broad-except
-                logger.warning("Failed to log request: %s", repr(err))
-        else:
-            super().on_request(request)
-
-
-    def on_response(self, request, response):  # pylint: disable=too-many-return-statements, too-many-statements
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+    ) -> None:
+        super().on_response(request, response)
         if self._enable_diagnostics_logging:
             http_response = response.http_response
-            ir = http_response.internal_response
+            options = response.context.options
+            logger = request.context.setdefault("logger", options.pop("logger", self.logger))
             try:
-                logger = response.context["logger"]
-
-                if not logger.isEnabledFor(logging.INFO):
-                    return
-
-                multi_record = os.environ.get(HttpLoggingPolicy.MULTI_RECORD_LOG, False)
-                if multi_record:
-                    logger.info("Response status: %r", http_response.status_code)
-                    logger.info("Response status reason: %r", ir.reason)
-                    try:
-                        logger.info("Elapsed Time: %r", ir.elapsed)
-                    except AttributeError:
-                        logger.info("Elapsed Time: %r", None)
-                    if http_response.status_code >= 400:
-                        sm = ir.text
-                        sm.replace("true", "True")
-                        sm.replace("false", "False")
-                        temp_sm = ast.literal_eval(sm)
-                        temp_sm['message'] = temp_sm['message'].replace("\r", " ")
-                        logger.into("Response status error message: %r", temp_sm['message'])
-                    logger.info("Response headers:")
-                    for res_header, value in http_response.headers.items():
-                        logger.info("    %r: %r", res_header, value)
-                    return
-                log_string = "Response status: {}".format(http_response.status_code)
-                log_string += "\nResponse status reason: {}".format(ir.reason)
-                try:
-                    log_string += "\nElapsed Time: {}".format(ir.elapsed)
-                except AttributeError:
-                    log_string += "\nElapsed Time: {}".format(None)
+                logger.info("Elapsed time in seconds: {}".format(time.time() - request.context.get("start_time")))
                 if http_response.status_code >= 400:
-                    sm = ir.text
-                    sm.replace("true", "True")
-                    sm.replace("false", "False")
-                    temp_sm = ast.literal_eval(sm)
-                    temp_sm['message'] = temp_sm['message'].replace("\r", " ")
-                    log_string += "\nResponse status error message: {}".format(temp_sm['message'])
-                log_string += "\nResponse headers:"
-                for res_header, value in http_response.headers.items():
-                    log_string += "\n    '{}': '{}'".format(res_header, value)
-                logger.info(log_string)
+                    logger.info("Response error message: %r", _format_error(http_response.text()))
             except Exception as err:  # pylint: disable=broad-except
-                logger.warning("Failed to log response: %s", repr(err))
-        else:
-            super().on_response(request, response)
+                logger.warning("Failed to log request: %s", repr(err))
