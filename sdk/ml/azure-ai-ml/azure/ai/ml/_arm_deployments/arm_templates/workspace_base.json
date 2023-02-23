@@ -411,14 +411,14 @@
         },
         "offline_store_connection_name": {
             "type": "string",
-            "defaultValue": "OfflineStoreConnectionName",
+            "defaultValue": "",
             "metadata": {
                 "description": "Feature store offline store config"
             }
         },
         "online_store_connection_name": {
             "type": "string",
-            "defaultValue": "OnlineStoreConnectionName",
+            "defaultValue": "",
             "metadata": {
                 "description": "Feature store online store config"
             }
@@ -484,7 +484,8 @@
             }
         },
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
-        "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]"
+        "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
+        "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnection', parameters('offline_store_connection_name'))]"
     },
     "resources": [
         {
@@ -659,7 +660,7 @@
                 "condition": "[equals(parameters('setup_feature_store'), 'true')]",
                 "type": "connections",
                 "apiVersion": "2022-05-01",
-                "name": "[parameters('offline_store_connection_name')]",
+                "name": "[variables('offlineStoreConnectionName')]",
                 "location": "[parameters('location')]",
                 "dependsOn": [
                     "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"

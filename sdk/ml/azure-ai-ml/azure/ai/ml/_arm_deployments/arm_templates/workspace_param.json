@@ -126,7 +126,7 @@
         "value": ""
     },
     "offline_store_connection_name" : {
-        "value": "OfflineStoreConnectionName"
+        "value": ""
     },
     "offline_store_connection_target" : {
         "value": ""
@@ -138,7 +138,7 @@
         "value": ""
     },
     "online_store_connection_name" : {
-        "value": "OnlineStoreConnectionName"
+        "value": ""
     },
     "managedNetwork": {
         "value": {}
