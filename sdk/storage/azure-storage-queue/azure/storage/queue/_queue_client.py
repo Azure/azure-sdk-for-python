@@ -445,6 +445,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def send_message(
             self,
             content: Any,
+            *,
+            visibility_timeout: Optional[int] = None,
+            time_to_live: Optional[int] = 7,
             **kwargs: Any
         ) -> "QueueMessage":
         """Adds a new message to the back of the message queue.
@@ -537,7 +540,12 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def receive_message(self, **kwargs: Any) -> QueueMessage:
+    def receive_message(
+            self,
+            *,
+            visibility_timeout: Optional[int] = None,
+            **kwargs: Any
+        ) -> QueueMessage:
         """Removes one message from the front of the queue.
 
         When the message is retrieved from the queue, the response includes the message
@@ -596,7 +604,14 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def receive_messages(self, **kwargs: Any) -> ItemPaged[QueueMessage]:
+    def receive_messages(
+            self,
+            *,
+            messages_per_page: Optional[int] = None,
+            visibility_timeout: Optional[int] = None,
+            max_messages: Optional[int] = None,
+            **kwargs: Any
+        ) -> ItemPaged[QueueMessage]:
         """Removes one or more messages from the front of the queue.
 
         When a message is retrieved from the queue, the response includes the message
@@ -654,10 +669,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Receive messages from the queue.
         """
-        messages_per_page = kwargs.pop('messages_per_page', None)
-        visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
-        max_messages = kwargs.pop('max_messages', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -682,7 +694,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def update_message(
             self, message: Any,
             pop_receipt: Optional[str] = None,
-            content: Optional[Any] = None, **kwargs: Any
+            content: Optional[Any] = None,
+            *,
+            visibility_timeout: Optional[int] = None,
+            **kwargs: Any
         ) -> QueueMessage:
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
@@ -734,7 +749,6 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Update a message.
         """
-        visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
         try:
             message_id = message.id
