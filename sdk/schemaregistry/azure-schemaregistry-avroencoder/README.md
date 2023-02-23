@@ -297,7 +297,7 @@ encoder = AvroEncoder(client=schema_registry_client, group_name=group_name)
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 encoder.encode(dict_content, schema=definition, logging_enable=True)
 ```
 

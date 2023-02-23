@@ -171,7 +171,7 @@ The following sections provide several code snippets covering some of the most c
 
 This example publishes an Event Grid event.
 
-```Python
+```python
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
@@ -196,7 +196,7 @@ client.send(event)
 
 This example publishes a Cloud event.
 
-```Python
+```python
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
@@ -223,7 +223,7 @@ It is possible to send events as a batch when sending multiple events to a topic
 
 **WARNING:** When sending a list of multiple events at one time, iterating over and sending each event will not result in optimal performance. For best performance, it is highly recommended to send a list of events.
 
-```Python
+```python
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
@@ -257,7 +257,7 @@ A dict representation of respective serialized models can also be used to publis
 
 Use a dict-like representation to send to a topic with custom schema as shown below.
 
-```Python
+```python
 import os
 import uuid
 import datetime as dt
@@ -287,7 +287,7 @@ client.send(event)
 
 This example consumes a message received from storage queue and deserializes it to a CloudEvent object.
 
-```Python
+```python
 from azure.core.messaging import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
 import os
@@ -311,7 +311,7 @@ with QueueServiceClient.from_connection_string(connection_str) as qsc:
 
 This example consumes a payload message received from ServiceBus and deserializes it to an EventGridEvent object.
 
-```Python
+```python
 from azure.eventgrid import EventGridEvent
 from azure.servicebus import ServiceBusClient
 import os

@@ -398,7 +398,7 @@ service_client = BlobServiceClient.from_connection_string("your_connection_strin
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 service_client.get_service_stats(logging_enable=True)
 ```
 

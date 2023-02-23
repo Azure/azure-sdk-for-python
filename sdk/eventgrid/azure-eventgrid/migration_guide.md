@@ -35,7 +35,7 @@ The modern Event Grid client library also provides the ability to share in some 
 
 The v4.x major version comes with support for [CloudEvents](https://github.com/cloudevents/spec). Now the cloud native Cloud Events can be directly published using the `CloudEvent` constructor or as a dictionary as follows:
 
-```Python
+```python
 from azure.core.messaging import CloudEvent
 
 cloud_event = CloudEvent(
@@ -80,7 +80,7 @@ The v4.x major version supports deserializing dictionaries into strongly typed o
 
 This example consumes a payload message received from ServiceBus and deserializes it to an EventGridEvent object.
 
-```Python
+```python
 from azure.eventgrid import EventGridEvent
 from azure.servicebus import ServiceBusClient
 import os

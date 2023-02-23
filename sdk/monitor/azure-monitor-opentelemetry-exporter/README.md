@@ -32,7 +32,7 @@ Please find the samples linked below for demonstration as to how to construct th
 
 NOTE: The logging signal for the `AzureMonitorLogExporter` is currently in an EXPERIMENTAL state. Possible breaking changes may ensue in the future.
 
-```Python
+```python
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 exporter = AzureMonitorLogExporter(
     connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
@@ -41,7 +41,7 @@ exporter = AzureMonitorLogExporter(
 
 #### Metrics
 
-```Python
+```python
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
 exporter = AzureMonitorMetricExporter(
     connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
@@ -50,7 +50,7 @@ exporter = AzureMonitorMetricExporter(
 
 #### Tracing
 
-```Python
+```python
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 exporter = AzureMonitorTraceExporter(
     connection_string=os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
@@ -153,7 +153,7 @@ Review the [OpenTelemetry Logging SDK][ot_logging_sdk] to learn how to use OpenT
 
 #### Export Hello World Log
 
-```Python
+```python
 """
 An example to show an application using Opentelemetry logging sdk. Logging calls to the standard Python
 logging library are tracked and telemetry is exported to application insights with the AzureMonitorLogExporter.
@@ -191,7 +191,7 @@ logger.warning("Hello World!")
 
 #### Export Correlated Log
 
-```Python
+```python
 """
 An example showing how to include context correlation information in logging telemetry.
 """
@@ -235,7 +235,7 @@ logger.error("ERROR: After span")
 
 #### Export Custom Properties Log
 
-```Python
+```python
 """
 An example showing how to add custom properties to logging telemetry.
 """
@@ -273,7 +273,7 @@ logger.debug("DEBUG: Debug with properties", extra={"debug": "true"})
 
 #### Export Exceptions Log
 
-```Python
+```python
 """
 An example showing how to export exception telemetry using the AzureMonitorLogExporter.
 """
@@ -509,7 +509,7 @@ Review the [OpenTelemetry Tracing SDK][ot_tracing_sdk] to learn how to use OpenT
 
 #### Export Hello World Trace
 
-```Python
+```python
 """
 An example to show an application using Opentelemetry tracing api and sdk. Custom dependencies are
 tracked via spans and telemetry is exported to application insights with the AzureMonitorTraceExporter.
@@ -543,7 +543,7 @@ This example shows how to instrument with the [requests](https://pypi.org/projec
 
 * Install the requests instrumentation package using pip install opentelemetry-instrumentation-requests.
 
-```Python
+```python
 """
 An example to show an application instrumented with the OpenTelemetry requests instrumentation.
 Calls made with the requests library will be automatically tracked and telemetry is exported to 
@@ -578,7 +578,7 @@ response = requests.get(url="https://azure.microsoft.com/")
 
 You can enable sampling to limit the amount of telemetry records you receive. In order to enable correct sampling in Application Insights, use the `ApplicationInsightsSampler` as shown below.
 
-```Python
+```python
 """
 An example to show an application using the ApplicationInsightsSampler to enable sampling for your telemetry.
 Specify a sampling rate for the sampler to limit the amount of telemetry records you receive. Custom dependencies

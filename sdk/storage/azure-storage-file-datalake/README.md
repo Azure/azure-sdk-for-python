@@ -244,7 +244,7 @@ service_client = DataLakeServiceClient.from_connection_string("your_connection_s
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 service_client.list_file_systems(logging_enable=True)
 ```
 

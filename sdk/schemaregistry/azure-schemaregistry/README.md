@@ -219,7 +219,7 @@ schema_registry_client = SchemaRegistryClient("your_fully_qualified_namespace", 
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 schema_registry_client.get_schema(schema_id, logging_enable=True)
 ```
 

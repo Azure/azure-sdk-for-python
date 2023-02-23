@@ -188,7 +188,7 @@ Async clients and credentials should be closed when they're no longer needed. Th
 objects are async context managers and define async `close` methods. For
 example:
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
 
@@ -277,7 +277,7 @@ level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument:
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import CertificateClient
 import sys

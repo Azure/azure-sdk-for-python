@@ -203,7 +203,7 @@ for key in keys:
 [CryptographyClient](https://aka.ms/azsdk/python/keyvault-keys/crypto/docs#azure.keyvault.keys.crypto.CryptographyClient)
 enables cryptographic operations (encrypt/decrypt, wrap/unwrap, sign/verify) using a particular key.
 
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
@@ -234,7 +234,7 @@ Async clients and credentials should be closed when they're no longer needed. Th
 objects are async context managers and define async `close` methods. For
 example:
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys.aio import KeyClient
 
@@ -326,7 +326,7 @@ level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument:
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 import sys
@@ -348,7 +348,7 @@ client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 client.get_key("my-key", logging_enable=True)
 ```
 
