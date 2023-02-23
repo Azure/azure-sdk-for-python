@@ -1,9 +1,10 @@
 ## Release History
 
-### 4.3.1b2 (Unreleased)
+### 4.3.1 (Unreleased)
 #### Features Added
  - Added `correlated_activity_id` for query operations
  - Added cross regional retries for Service Unavailable/Request Timeouts for read/Query Plan operations
+ - GA release of CosmosHttpLoggingPolicy and autoscale feature
 #### Breaking Changes
 
 #### Bugs Fixed
