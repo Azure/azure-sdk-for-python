@@ -176,7 +176,7 @@ deployments:
         code_configuration:
             code: ./endpoint
             scoring_script: ./test.py
-        environment: azureml:/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/sdk_vnext_cli/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1
+        environment: azureml:/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/sdk_vnext_cli/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/1
     """
     p = tmp_path / "create_model_inline.yaml"
     p.write_text(content)

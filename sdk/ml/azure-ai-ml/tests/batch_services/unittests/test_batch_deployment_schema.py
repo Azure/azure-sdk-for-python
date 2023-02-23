@@ -27,7 +27,7 @@ class TestBatchDeploymentSchema:
         batch_deployment_entity = load_batch_deployment_entity_from_yaml(test_path)
 
         assert batch_deployment_entity
-        assert batch_deployment_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert batch_deployment_entity.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert batch_deployment_entity.compute == "cpu-cluster"
         assert batch_deployment_entity.output_action == BatchDeploymentOutputAction.APPEND_ROW
         assert batch_deployment_entity.output_file_name == "append_row.txt"

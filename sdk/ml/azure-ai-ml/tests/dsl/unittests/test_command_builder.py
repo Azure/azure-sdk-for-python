@@ -834,7 +834,7 @@ class TestCommandFunction:
         command_obj = command(
             name="interactive-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="ls",
             compute="testCompute",
             services=services,
@@ -871,7 +871,7 @@ class TestCommandFunction:
         node = command(
             name="interactive-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="ls",
             compute="testCompute",
             services=services,
@@ -893,7 +893,7 @@ class TestCommandFunction:
             node = command(
                 name="interactive-command-job",
                 description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 command="ls",
                 compute="testCompute",
                 services=invalid_services_0,
@@ -905,7 +905,7 @@ class TestCommandFunction:
             node = command(
                 name="interactive-command-job",
                 description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 command="ls",
                 compute="testCompute",
                 services=invalid_services_1,
@@ -917,7 +917,7 @@ class TestCommandFunction:
             node = command(
                 name="interactive-command-job",
                 description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 command="ls",
                 compute="testCompute",
                 services=invalid_services_2,
@@ -945,7 +945,7 @@ class TestCommandFunction:
         node = command(
             name="interactive-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="ls",
             compute="testCompute",
             services=services,
