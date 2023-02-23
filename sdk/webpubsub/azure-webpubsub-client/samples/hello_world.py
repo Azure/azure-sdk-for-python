@@ -1,5 +1,5 @@
 import os
-from azure.webpubsub.client import WebPubSubClient
+from azure.webpubsub.client import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from azure.webpubsub.client import (
     OnConnectedArgs,
@@ -23,20 +23,24 @@ def on_disconnected(msg: OnDisconnectedArgs):
 
 def on_group_message(msg: OnGroupDataMessageArgs):
     print("========== group message =========")
-    if isinstance(msg.message.data, memoryview):
-        print(f"Received message from {msg.message.group}: {bytes(msg.message.data).decode()}")
+    if isinstance(msg.data, memoryview):
+        print(f"Received message from {msg.group}: {bytes(msg.data).decode()}")
     else:
-        print(f"Received message from {msg.message.group}: {msg.message.data}")
+        print(f"Received message from {msg.group}: {msg.data}")
 
 
 def main():
     service_client = WebPubSubServiceClient.from_connection_string(
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING"), hub="hub"
     )
-    url = service_client.get_client_access_token(roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"])["url"]
-    print(url)
-
-    client = WebPubSubClient(credential=url, auto_reconnect=False)
+    client = WebPubSubClient(
+        credential=WebPubSubClientCredential(
+            client_access_url_provider=lambda: service_client.get_client_access_token(
+                roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
+            )["url"]
+        ),
+        auto_reconnect=False,
+    )
     client.on("connected", on_connected)
     client.on("disconnected", on_disconnected)
     client.on("group-message", on_group_message)

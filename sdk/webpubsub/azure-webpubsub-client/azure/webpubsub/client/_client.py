@@ -241,7 +241,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :param data_type: The data type. Required.
         :type data_type: Any.
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
-        :keyword bool fire_and_forget: If true, the message won't contains ackId and no AckMessage 
+        :keyword bool fire_and_forget: If true, the message won't contains ackId and no AckMessage
          will be returned from the service.
         """
 
@@ -437,7 +437,16 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                         # // drop duplicated message
                         return
 
-                self._call_back(CallBackType.GROUP_MESSAGE, OnGroupDataMessageArgs(message))
+                self._call_back(
+                    CallBackType.GROUP_MESSAGE,
+                    OnGroupDataMessageArgs(
+                        data_type=message.data_type,
+                        data=message.data,
+                        group=message.group,
+                        from_user_id=message.from_user_id,
+                        sequence_id=message.sequence_id,
+                    ),
+                )
 
             def handle_server_data_message(message: ServerDataMessage):
                 if message.sequence_id:
@@ -445,7 +454,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                         # // drop duplicated message
                         return
 
-                self._call_back(CallBackType.SERVER_MESSAGE, OnServerDataMessageArgs(message))
+                self._call_back(
+                    CallBackType.SERVER_MESSAGE,
+                    OnServerDataMessageArgs(
+                        data_type=message.data_type, data=message.data, sequence_id=message.sequence_id
+                    ),
+                )
 
             parsed_message = self._protocol.parse_messages(data)
             if parsed_message is None:

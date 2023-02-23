@@ -231,6 +231,7 @@ class DisconnectedMessage:
 class GroupDataMessage:
     def __init__(
         self,
+        *,
         data_type: WebPubSubDataType,
         data: Any,
         group: str,
@@ -435,17 +436,31 @@ class SendMessageError(Exception):
 
 
 class OnGroupDataMessageArgs:
-    def __init__(self, message: GroupDataMessage) -> None:
-        self.message = message
+    def __init__(
+        self,
+        *,
+        data_type: WebPubSubDataType,
+        data: Any,
+        group: str,
+        from_user_id: Optional[str] = None,
+        sequence_id: Optional[int] = None,
+    ) -> None:
+        self.data_type = data_type
+        self.data = data
+        self.group = group
+        self.from_user_id = from_user_id
+        self.sequence_id = sequence_id
 
 
 class OnServerDataMessageArgs:
-    def __init__(self, message: ServerDataMessage) -> None:
-        self.message = message
+    def __init__(self, data_type: WebPubSubDataType, data: Any, sequence_id: Optional[int] = None) -> None:
+        self.data_type = data_type
+        self.data = data
+        self.sequence_id = sequence_id
 
 
 class OnDisconnectedArgs:
-    def __init__(self, connection_id: Optional[str] = None, message: Optional[DisconnectedMessage] = None) -> None:
+    def __init__(self, connection_id: Optional[str] = None, message: Optional[str] = None) -> None:
         self.connection_id = connection_id
         self.message = message
 
