@@ -488,7 +488,7 @@ class RetryPolicy:
         self,
         retry_total: int,
         retry_backoff_factor: float,
-        retry_backoff_max: int,
+        retry_backoff_max: float,
         mode: RetryMode,
     ) -> None:
         self.retry_total = retry_total
@@ -499,14 +499,14 @@ class RetryPolicy:
             math.log2(self.retry_backoff_max) - math.log2(self.retry_backoff_factor) + 1
         )
 
-    def next_retry_delay_in_ms(self, retry_attempt: int) -> Union[int, None]:
+    def next_retry_delay(self, retry_attempt: int) -> Union[float, None]:
         if retry_attempt > self.retry_total:
             return None
         if self.mode == "Fixed":
             return self.retry_backoff_factor
         return self.calculate_exponential_delay(retry_attempt)
 
-    def calculate_exponential_delay(self, attempt: int) -> int:
+    def calculate_exponential_delay(self, attempt: int) -> float:
         if attempt >= self.max_retries_to_get_max_delay:
             return self.retry_backoff_max
         return (1 << (attempt - 1)) * self.retry_backoff_factor

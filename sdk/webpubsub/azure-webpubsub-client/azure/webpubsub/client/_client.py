@@ -70,13 +70,15 @@ class WebPubSubClientCredential:
     def get_client_access_url(self) -> str:
         return self._client_access_url_provider()
 
+_RETRY_TOTAL = 3
+_RETRY_BACKOFF_FACTOR = 1.0
+_RETRY_BACKOFF_MAX = 120.0
 
 class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """WebPubSubClient
 
     :param credential: The url to connect or credential to use when connecting. Required.
     :type credential: str or WebPubSubClientCredential
-    :keyword bool auto_reconnect: Whether to auto reconnect after connection is dropped and not recoverable
     :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
     :keyword azure.webpubsub.client.WebPubSubProtocolType protocol_type: Subprotocol type
     :keyword int reconnect_retry_total: total number of retries to allow for reconnect. If 0, it means disable
@@ -86,7 +88,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
      sleep for {backoff factor}. In 'exponential' mode, retry policy will sleep for:
      `{backoff factor} * (2 ** ({number of retries} - 1))` seconds. If the backoff_factor is 0.1, then the
      retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 1.0.
-    :keyword int reconnect_retry_backoff_max: A backoff factor to apply between attempts after the second try
+    :keyword float reconnect_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
     :keyword RetryMode reconnect_retry_mode: Fixed or exponential delay between attemps, default is exponential.
     :keyword int message_retry_total: total number of retries to allow for sending message. Default is 10.
     :keyword float message_retry_backoff_factor: A backoff factor to apply between attempts after the second try
@@ -94,7 +96,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
      sleep for {backoff factor}. In 'exponential' mode, retry policy will sleep for:
      `{backoff factor} * (2 ** ({number of retries} - 1))` seconds. If the backoff_factor is 0.1, then the
      retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 1.0.
-    :keyword int message_retry_backoff_max: A backoff factor to apply between attempts after the second try
+    :keyword float message_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
     :keyword RetryMode message_retry_mode: Fixed or exponential delay between attemps, default is exponential.
     """
 
@@ -109,7 +111,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._credential = WebPubSubClientCredential(credential)
         else:
             raise TypeError("type of credential must be str or WebPubSubClientCredential")
-        reconnect_retry_total = kwargs.pop("reconnect_retry_total", 10)
+        reconnect_retry_total = kwargs.pop("reconnect_retry_total", _RETRY_TOTAL)
         self._auto_reconnect = reconnect_retry_total > 0
         self._auto_rejoin_groups = kwargs.pop("auto_rejoin_groups", True)
         protocol_type = kwargs.pop("protocol_type", WebPubSubProtocolType.JSON_RELIABLE)
@@ -124,14 +126,14 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         self._reconnect_retry_policy = RetryPolicy(
             retry_total=reconnect_retry_total,
-            retry_backoff_factor=kwargs.pop("reconnect_retry_backoff_factor", 1.0),
-            retry_backoff_max=kwargs.pop("reconnect_retry_backoff_max", 120),
+            retry_backoff_factor=kwargs.pop("reconnect_retry_backoff_factor", _RETRY_BACKOFF_FACTOR),
+            retry_backoff_max=kwargs.pop("reconnect_retry_backoff_max", _RETRY_BACKOFF_MAX),
             mode=kwargs.pop("reconnect_retry_mode", RetryMode.Fixed),
         )
         self._message_retry_policy = RetryPolicy(
-            retry_total=kwargs.pop("message_retry_total", 10),
-            retry_backoff_factor=kwargs.pop("message_retry_backoff_factor", 1.0),
-            retry_backoff_max=kwargs.pop("message_retry_backoff_max", 120),
+            retry_total=kwargs.pop("message_retry_total", _RETRY_TOTAL),
+            retry_backoff_factor=kwargs.pop("message_retry_backoff_factor", _RETRY_BACKOFF_FACTOR),
+            retry_backoff_max=kwargs.pop("message_retry_backoff_max", _RETRY_BACKOFF_MAX),
             mode=kwargs.pop("message_retry_mode", RetryMode.Fixed),
         )
         self._group_map: Dict[str, WebPubSubGroup] = {}
@@ -158,7 +160,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._cv: threading.Condition = threading.Condition()
         self._thread_seq_ack: Optional[threading.Thread] = None
         self._thread: Optional[threading.Thread] = None
-        self._ack_timeout: float = kwargs.pop("ack_timeout", 60.0)
+        self._ack_timeout: float = kwargs.pop("ack_timeout", 1.0)
         self._start_timeout: float = kwargs.pop("start_timeout", 60.0)
 
     def _next_ack_id(self) -> int:
@@ -191,7 +193,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._ack_map.pop(ack_id)
             raise e
 
-        # wait for ack from service
         with self._ack_map[ack_id].cv:
             self._ack_map[ack_id].cv.wait(self._ack_timeout)
             options = self._ack_map.pop(ack_id)
@@ -326,14 +327,17 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 return
             except Exception as e:  # pylint: disable=broad-except
                 retry_attempt = retry_attempt + 1
-                delay_in_ms = self._message_retry_policy.next_retry_delay_in_ms(retry_attempt)
-                if delay_in_ms is None:
+                delay_seconds = self._message_retry_policy.next_retry_delay(retry_attempt)
+                if delay_seconds is None:
                     raise e
-                delay(delay_in_ms)
+                _LOGGER.debug("will retry %sth times after %s seconds", retry_attempt, delay_seconds)
+                delay(delay_seconds)
 
     def _call_back(self, callback_type: CallBackType, *args):
         for func in self._handler[callback_type]:
-            func(*args)
+            # _call_back works in listener thread which must not be blocked so we have to execute the func
+            # in new thread to avoid dead lock
+            threading.Thread(target=func, args=args).start()
 
     def _start_from_restarting(self):
         if self._state != WebPubSubClientState.DISCONNECTED:
@@ -357,11 +361,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.warning("An attempt to reconnect connection failed %s", e)
                 attempt = attempt + 1
-                delay_in_ms = self._reconnect_retry_policy.next_retry_delay_in_ms(attempt)
-                if not delay_in_ms:
+                delay_seconds = self._reconnect_retry_policy.next_retry_delay(attempt)
+                if not delay_seconds:
                     break
-                _LOGGER.debug("Delay time for reconnect attempt %d: %d", attempt, delay_in_ms)
-                delay(delay_in_ms)
+                _LOGGER.debug("Delay time for reconnect attempt %d: %d", attempt, delay_seconds)
+                delay(delay_seconds)
         if not success:
             self._handle_connection_stopped()
 
@@ -536,7 +540,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                         self._connect(recovery_url)
                         return
                     except:  # pylint: disable=bare-except
-                        delay(1000)
+                        delay(1.0)
                     i = i + 1
 
                 _LOGGER.warning("Recovery attempts failed more than 30 times or the client is stopping")
@@ -576,7 +580,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                         if is_updated:
                             self._send_message(SequenceAckMessage(sequence_id=seq_id))
                     finally:
-                        delay(1000)
+                        delay(1.0)
 
             self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically)
             self._thread_seq_ack.start()

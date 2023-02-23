@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def on_connected(msg: OnConnectedArgs):
     print("======== connected ===========")
     print(f"Connection {msg.connection_id} is connected")

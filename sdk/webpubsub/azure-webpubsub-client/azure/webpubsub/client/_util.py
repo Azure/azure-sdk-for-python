@@ -8,5 +8,5 @@
 import time
 
 
-def delay(delay_in_ms: int):
-    time.sleep(float(delay_in_ms) / 1000.0)
+def delay(delay_seconds: float):
+    time.sleep(delay_seconds)
