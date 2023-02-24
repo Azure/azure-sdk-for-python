@@ -224,7 +224,7 @@ except HttpResponseError as e:
 
 ## Next steps
 
-More samples can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/loadtestservice/azure-developer-loadtesting/samples).
+More samples can be found [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/loadtesting/azure-developer-loadtesting/samples).
 
 ## Contributing
 
