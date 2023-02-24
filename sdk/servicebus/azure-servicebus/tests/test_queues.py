@@ -341,7 +341,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
                     # send 5 more messages, those messages would arrive at the client while the program is sleeping
                     sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-                    time.sleep(40)  # sleep > message expiration time
+                    time.sleep(15)  # sleep > message expiration time
 
                     # issue 5 link credits, client should consume 5 msgs from the internal buffer which is already lock expired
                     target_msgs_count = 5
