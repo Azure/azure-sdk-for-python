@@ -334,7 +334,7 @@ service_client = ShareServiceClient.from_connection_string("your_connection_stri
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 service_client.get_service_properties(logging_enable=True)
 ```
 
