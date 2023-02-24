@@ -202,7 +202,7 @@
           "provisioningErrors": null,
           "isAttachedCompute": false,
           "properties": {
-            "vmSize": "STANDARD_DS2_V2",
+            "vmSize": "STANDARD_DS3_V2",
             "vmPriority": "Dedicated",
             "scaleSettings": {
               "maxNodeCount": 4,
@@ -223,7 +223,7 @@
             "allocationState": "Steady",
             "allocationStateTransitionTime": "2023-02-21T21:51:31.798\u002B00:00",
             "errors": null,
-            "remoteLoginPortPublicAccess": "Enabled",
+            "remoteLoginPortPublicAccess": "Disabled",
             "osType": "Linux",
             "virtualMachineImage": null,
             "isolatedNetwork": false,
@@ -284,7 +284,7 @@
           "provisioningErrors": null,
           "isAttachedCompute": false,
           "properties": {
-            "vmSize": "STANDARD_DS2_V2",
+            "vmSize": "STANDARD_DS3_V2",
             "vmPriority": "Dedicated",
             "scaleSettings": {
               "maxNodeCount": 4,
@@ -305,7 +305,7 @@
             "allocationState": "Steady",
             "allocationStateTransitionTime": "2023-02-21T21:51:31.798\u002B00:00",
             "errors": null,
-            "remoteLoginPortPublicAccess": "Enabled",
+            "remoteLoginPortPublicAccess": "Disabled",
             "osType": "Linux",
             "virtualMachineImage": null,
             "isolatedNetwork": false,
@@ -366,7 +366,7 @@
           "provisioningErrors": null,
           "isAttachedCompute": false,
           "properties": {
-            "vmSize": "STANDARD_DS2_V2",
+            "vmSize": "STANDARD_DS3_V2",
             "vmPriority": "Dedicated",
             "scaleSettings": {
               "maxNodeCount": 4,
@@ -387,7 +387,7 @@
             "allocationState": "Steady",
             "allocationStateTransitionTime": "2023-02-21T21:51:31.798\u002B00:00",
             "errors": null,
-            "remoteLoginPortPublicAccess": "Enabled",
+            "remoteLoginPortPublicAccess": "Disabled",
             "osType": "Linux",
             "virtualMachineImage": null,
             "isolatedNetwork": false,
@@ -698,7 +698,7 @@
         "x-ms-meta-upload_status": "completed",
         "x-ms-meta-version": "1",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2021-08-06"
+        "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
     },
@@ -724,7 +724,7 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Origin",
         "x-ms-error-code": "BlobNotFound",
-        "x-ms-version": "2021-08-06"
+        "x-ms-version": "2021-06-08"
       },
       "ResponseBody": null
     },
@@ -1267,7 +1267,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "519",
+        "Content-Length": "512",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Linux-5.15.79.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
       },
@@ -1279,7 +1279,7 @@
           "action": {
             "actionType": "CreateJob",
             "jobDefinition": {
-              "experimentName": "Default",
+              "experimentName": "",
               "isArchived": false,
               "jobType": "Pipeline",
               "sourceJobId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_782110198079"
@@ -1297,7 +1297,7 @@
       "ResponseHeaders": {
         "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus/mfeOperationsStatus/s:3bd2018e-4b43-401e-ad49-85df181c9e0a:vFPYZfAKLIUZe2A_I4kms4cZhl_15MQWW1R5GJMc2U0?api-version=2022-10-01-preview",
         "Cache-Control": "no-cache",
-        "Content-Length": "1086",
+        "Content-Length": "1079",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Tue, 21 Feb 2023 22:06:47 GMT",
         "Expires": "-1",
@@ -1337,7 +1337,7 @@
               "properties": null,
               "displayName": null,
               "status": "NotStarted",
-              "experimentName": "Default",
+              "experimentName": "",
               "services": null,
               "computeId": null,
               "isArchived": false,
@@ -1494,7 +1494,7 @@
               "properties": null,
               "displayName": null,
               "status": "NotStarted",
-              "experimentName": "Default",
+              "experimentName": "",
               "services": null,
               "computeId": null,
               "isArchived": false,
@@ -1577,7 +1577,7 @@
               "properties": null,
               "displayName": null,
               "status": "NotStarted",
-              "experimentName": "Default",
+              "experimentName": "",
               "services": null,
               "computeId": null,
               "isArchived": false,
@@ -1610,7 +1610,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "695",
+        "Content-Length": "688",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Linux-5.15.79.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
       },
@@ -1624,7 +1624,7 @@
             "jobDefinition": {
               "properties": {},
               "tags": {},
-              "experimentName": "Default",
+              "experimentName": "",
               "isArchived": false,
               "jobType": "Pipeline",
               "inputs": {},
@@ -1650,7 +1650,7 @@
       "ResponseHeaders": {
         "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus/mfeOperationsStatus/s:3bd2018e-4b43-401e-ad49-85df181c9e0a:7Y1CMDu7zVnaa3GUdA5bhAXdzpTupp2PncN0QEU4wrM?api-version=2022-10-01-preview",
         "Cache-Control": "no-cache",
-        "Content-Length": "1145",
+        "Content-Length": "1138",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Tue, 21 Feb 2023 22:06:54 GMT",
         "Expires": "-1",
@@ -1690,7 +1690,7 @@
               "properties": {},
               "displayName": null,
               "status": "NotStarted",
-              "experimentName": "Default",
+              "experimentName": "",
               "services": null,
               "computeId": null,
               "isArchived": false,
