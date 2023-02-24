@@ -394,12 +394,15 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     os.chdir(Path(spec_folder) / cadl_relative_path)
     if Path("package.json").exists():
         with open("package.json", "r") as file_in:
-            cadl_tools = json.load(file_in)
+            existing_packages = json.load(file_in)
     else:
-        cadl_tools = {"dependencies": dict()}
-    cadl_tools["dependencies"].update(cadl_python_dep["dependencies"])
+        existing_packages = {"dependencies": dict()}
+    for k, v in existing_packages.get("dependencies", dict()).items():
+        if cadl_python_dep["dependencies"].get(k) is None:
+            cadl_python_dep["dependencies"][k] = v
     with open("package.json", "w") as file_out:
-        json.dump(cadl_tools, file_out)
+        json.dump(cadl_python_dep, file_out)
+    _LOGGER.info("merged dependencies: %s", json.dumps(cadl_python_dep, indent=2))
     check_call("npm install", shell=True)
 
     # generate code
