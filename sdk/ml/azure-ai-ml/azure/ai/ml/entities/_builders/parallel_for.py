@@ -125,7 +125,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
             **cls._input_entity_to_rest_inputs(input_entity=asset_inputs),
             # primitive inputs has primitive type value like this
             # {"int_param": 1}
-            **primitive_inputs
+            **primitive_inputs,
         }
 
     @classmethod
@@ -153,10 +153,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
-        rest_node.update(dict(
-            items=rest_items,
-            outputs=self._to_rest_outputs()
-        ))
+        rest_node.update(dict(items=rest_items, outputs=self._to_rest_outputs()))
         return convert_ordered_dict_to_dict(rest_node)
 
     @classmethod
@@ -168,10 +165,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 asset_inputs[key] = val
             else:
                 primitive_inputs[key] = val
-        return {
-            **cls._from_rest_inputs(inputs=asset_inputs),
-            **primitive_inputs
-        }
+        return {**cls._from_rest_inputs(inputs=asset_inputs), **primitive_inputs}
 
     @classmethod
     def _from_rest_items(cls, rest_items: str) -> Union[dict, list, str]:
@@ -247,7 +241,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                     if not is_data_binding_expression(items, ["parent"]):
                         validation_result.append_error(
                             yaml_path="items",
-                            message=f"Items is neither a valid JSON string due to {e} or a binding string."
+                            message=f"Items is neither a valid JSON string due to {e} or a binding string.",
                         )
             if isinstance(items, dict):
                 # Validate dict keys
@@ -256,9 +250,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 if len(items) > 0:
                     cls._validate_items_list(items, validation_result, body_component=body_component)
                 else:
-                    validation_result.append_error(
-                        yaml_path="items",
-                        message="Items is an empty list/dict.")
+                    validation_result.append_error(yaml_path="items", message="Items is an empty list/dict.")
         else:
             validation_result.append_error(
                 yaml_path="items",
@@ -280,7 +272,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
             if not isinstance(item, dict):
                 validation_result.append_error(
                     yaml_path="items",
-                    message=f"Items has to be list/dict of dict as value, " f"but got {type(item)} for {item}."
+                    message=f"Items has to be list/dict of dict as value, " f"but got {type(item)} for {item}.",
                 )
             else:
                 # item has to have matched meta
@@ -289,17 +281,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
                         meta = item
                     else:
                         msg = f"Items should have same keys with body inputs, but got {item.keys()} and {meta.keys()}."
-                        validation_result.append_error(
-                            yaml_path="items",
-                            message=msg
-                        )
+                        validation_result.append_error(yaml_path="items", message=msg)
                 # items' keys should appear in body's inputs
                 if isinstance(body_component, Component) and (not item.keys() <= body_component.inputs.keys()):
                     msg = f"Item {item} got unmatched inputs with loop body component inputs {body_component.inputs}."
-                    validation_result.append_error(
-                        yaml_path="items",
-                        message=msg
-                    )
+                    validation_result.append_error(yaml_path="items", message=msg)
                 # validate item value type
                 cls._validate_item_value_type(item=item, validation_result=validation_result)
 
@@ -313,7 +299,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                     yaml_path="items",
                     message="Unsupported type {} in parallel_for items. Supported types are: {}".format(
                         type(val), supported_types
-                    )
+                    ),
                 )
             if isinstance(val, Input):
                 cls._validate_input_item_value(entry=val, validation_result=validation_result)

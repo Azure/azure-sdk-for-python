@@ -421,7 +421,9 @@ class TestMachineLearningClient:
             assert ml_client._kwargs["cloud"] == "SomeInvalidCloudName"
         assert "Unknown cloud environment supplied" in str(e)
 
-    def test_ml_client_with_both_workspace_registry_names_throws(self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> None:
+    def test_ml_client_with_both_workspace_registry_names_throws(
+        self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential
+    ) -> None:
         with pytest.raises(ValidationException) as exception:
             MLClient(
                 credential=auth,
@@ -429,7 +431,4 @@ class TestMachineLearningClient:
                 registry_name="testfeed",
             )
         message = exception.value.args[0]
-        assert (
-            message
-            == "Both workspace_name and registry_name cannot be used together, for the ml_client."
-        )
+        assert message == "Both workspace_name and registry_name cannot be used together, for the ml_client."

@@ -18,6 +18,7 @@ class DataAssetSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str()
     path = fields.Str()
     version = fields.Int()
+    data_id = fields.Str()
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument

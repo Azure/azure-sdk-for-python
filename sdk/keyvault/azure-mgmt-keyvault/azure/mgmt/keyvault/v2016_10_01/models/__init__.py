@@ -30,54 +30,56 @@ from ._models_py3 import VaultPatchParameters
 from ._models_py3 import VaultPatchProperties
 from ._models_py3 import VaultProperties
 
-
-from ._key_vault_management_client_enums import (
-    AccessPolicyUpdateKind,
-    CertificatePermissions,
-    CreateMode,
-    KeyPermissions,
-    Reason,
-    SecretPermissions,
-    SkuFamily,
-    SkuName,
-    StoragePermissions,
-)
+from ._key_vault_management_client_enums import AccessPolicyUpdateKind
+from ._key_vault_management_client_enums import CertificatePermissions
+from ._key_vault_management_client_enums import CreateMode
+from ._key_vault_management_client_enums import Enum5
+from ._key_vault_management_client_enums import Enum6
+from ._key_vault_management_client_enums import KeyPermissions
+from ._key_vault_management_client_enums import Reason
+from ._key_vault_management_client_enums import SecretPermissions
+from ._key_vault_management_client_enums import SkuFamily
+from ._key_vault_management_client_enums import SkuName
+from ._key_vault_management_client_enums import StoragePermissions
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccessPolicyEntry',
-    'CheckNameAvailabilityResult',
-    'DeletedVault',
-    'DeletedVaultListResult',
-    'DeletedVaultProperties',
-    'LogSpecification',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'Permissions',
-    'Resource',
-    'ResourceListResult',
-    'ServiceSpecification',
-    'Sku',
-    'Vault',
-    'VaultAccessPolicyParameters',
-    'VaultAccessPolicyProperties',
-    'VaultCheckNameAvailabilityParameters',
-    'VaultCreateOrUpdateParameters',
-    'VaultListResult',
-    'VaultPatchParameters',
-    'VaultPatchProperties',
-    'VaultProperties',
-    'AccessPolicyUpdateKind',
-    'CertificatePermissions',
-    'CreateMode',
-    'KeyPermissions',
-    'Reason',
-    'SecretPermissions',
-    'SkuFamily',
-    'SkuName',
-    'StoragePermissions',
+    "AccessPolicyEntry",
+    "CheckNameAvailabilityResult",
+    "DeletedVault",
+    "DeletedVaultListResult",
+    "DeletedVaultProperties",
+    "LogSpecification",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "Permissions",
+    "Resource",
+    "ResourceListResult",
+    "ServiceSpecification",
+    "Sku",
+    "Vault",
+    "VaultAccessPolicyParameters",
+    "VaultAccessPolicyProperties",
+    "VaultCheckNameAvailabilityParameters",
+    "VaultCreateOrUpdateParameters",
+    "VaultListResult",
+    "VaultPatchParameters",
+    "VaultPatchProperties",
+    "VaultProperties",
+    "AccessPolicyUpdateKind",
+    "CertificatePermissions",
+    "CreateMode",
+    "Enum5",
+    "Enum6",
+    "KeyPermissions",
+    "Reason",
+    "SecretPermissions",
+    "SkuFamily",
+    "SkuName",
+    "StoragePermissions",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

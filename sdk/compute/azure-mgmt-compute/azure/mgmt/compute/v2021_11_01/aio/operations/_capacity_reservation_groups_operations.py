@@ -140,7 +140,7 @@ class CapacityReservationGroupsOperations:
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
         :param parameters: Parameters supplied to the Create capacity reservation Group. Is either a
-         model type or a IO type. Required.
+         CapacityReservationGroup type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2021_11_01.models.CapacityReservationGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -287,7 +287,7 @@ class CapacityReservationGroupsOperations:
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
         :param parameters: Parameters supplied to the Update capacity reservation Group operation. Is
-         either a model type or a IO type. Required.
+         either a CapacityReservationGroupUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2021_11_01.models.CapacityReservationGroupUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -32,6 +32,8 @@ from typing import (
     TypeVar,
     AsyncContextManager,
     Generator,
+    Generic,
+    Optional,
     cast,
     TYPE_CHECKING,
 )
@@ -58,9 +60,7 @@ if TYPE_CHECKING:  # Protocol and non-Protocol can't mix in Python 3.7
 
 
 HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncHTTPResponseType = TypeVar(
-    "AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable"
-)
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -127,7 +127,9 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
 
 
 class AsyncPipelineClient(
-    PipelineClientBase, AsyncContextManager["AsyncPipelineClient"]
+    PipelineClientBase,
+    AsyncContextManager["AsyncPipelineClient"],
+    Generic[HTTPRequestType, AsyncHTTPResponseType],
 ):
     """Service client core methods.
 
@@ -157,14 +159,18 @@ class AsyncPipelineClient(
             :caption: Builds the async pipeline client.
     """
 
-    def __init__(self, base_url, **kwargs):
+    def __init__(
+        self,
+        base_url: str,
+        *,
+        pipeline: Optional[AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]] = None,
+        config: Optional[Configuration] = None,
+        **kwargs
+    ):
         super(AsyncPipelineClient, self).__init__(base_url)
-        self._config = kwargs.pop("config", None) or Configuration(**kwargs)
+        self._config: Configuration = config or Configuration(**kwargs)
         self._base_url = base_url
-        if kwargs.get("pipeline"):
-            self._pipeline = kwargs["pipeline"]
-        else:
-            self._pipeline = self._build_pipeline(self._config, **kwargs)
+        self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 
     async def __aenter__(self):
         await self._pipeline.__aenter__()
@@ -176,11 +182,18 @@ class AsyncPipelineClient(
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(self, config, **kwargs):  # pylint: disable=no-self-use
+    def _build_pipeline(    # pylint: disable=no-self-use
+        self,
+        config: Configuration,
+        *,
+        policies=None,
+        per_call_policies=None,
+        per_retry_policies=None,
+        **kwargs
+    ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         transport = kwargs.get("transport")
-        policies = kwargs.get("policies")
-        per_call_policies = kwargs.get("per_call_policies", [])
-        per_retry_policies = kwargs.get("per_retry_policies", [])
+        per_call_policies = per_call_policies or []
+        per_retry_policies = per_retry_policies or []
 
         if policies is None:  # [] is a valid policy list
             policies = [
@@ -233,8 +246,7 @@ class AsyncPipelineClient(
                         index_of_retry = index
                 if index_of_retry == -1:
                     raise ValueError(
-                        "Failed to add per_retry_policies; "
-                        "no RetryPolicy found in the supplied list of policies. "
+                        "Failed to add per_retry_policies; no RetryPolicy found in the supplied list of policies. "
                     )
                 policies_1 = policies[: index_of_retry + 1]
                 policies_2 = policies[index_of_retry + 1 :]
@@ -247,15 +259,17 @@ class AsyncPipelineClient(
 
             transport = AioHttpTransport(**kwargs)
 
-        return AsyncPipeline(transport, policies)
-
-    async def _make_pipeline_call(self, request, **kwargs):
-        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = await self._pipeline.run(
-            request, **kwargs  # pylint: disable=protected-access
+        return AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType](
+            transport, policies
         )
+
+    async def _make_pipeline_call(
+        self, request: HTTPRequestType, **kwargs
+    ) -> AsyncHTTPResponseType:
+        return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
+        pipeline_response = await self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         if return_pipeline_response:
-            return pipeline_response
+            return pipeline_response  # type: ignore  # This is a private API we don't want to type in signature
         return pipeline_response.http_response
 
     def send_request(

@@ -11,8 +11,11 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
-from azure.ai.ml._schema.job.data_transfer_job import DataTransferCopyJobSchema, DataTransferImportJobSchema, \
-    DataTransferExportJobSchema
+from azure.ai.ml._schema.job.data_transfer_job import (
+    DataTransferCopyJobSchema,
+    DataTransferImportJobSchema,
+    DataTransferExportJobSchema,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -44,7 +47,6 @@ class PipelineDataTransferImportJobSchema(DataTransferImportJobSchema):
 
 
 class PipelineDataTransferExportJobSchema(DataTransferExportJobSchema):
-
     @post_load
     def make(self, data: Any, **kwargs: Any):
         from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferExportJob

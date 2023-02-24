@@ -10,15 +10,25 @@ from typing import Dict, List, Optional, Union
 from marshmallow import Schema
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._schema.job.data_transfer_job import DataTransferCopyJobSchema, DataTransferImportJobSchema, \
-    DataTransferExportJobSchema
-from azure.ai.ml.constants._component import  NodeType, ExternalDataType, DataTransferTaskType
-from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent, \
-    DataTransferImportComponent, DataTransferExportComponent, DataTransferComponent
+from azure.ai.ml._schema.job.data_transfer_job import (
+    DataTransferCopyJobSchema,
+    DataTransferImportJobSchema,
+    DataTransferExportJobSchema,
+)
+from azure.ai.ml.constants._component import NodeType, ExternalDataType, DataTransferTaskType
+from azure.ai.ml.entities._component.datatransfer_component import (
+    DataTransferCopyComponent,
+    DataTransferImportComponent,
+    DataTransferExportComponent,
+    DataTransferComponent,
+)
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob, DataTransferImportJob, \
-    DataTransferExportJob
+from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
+    DataTransferCopyJob,
+    DataTransferImportJob,
+    DataTransferExportJob,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
@@ -52,8 +62,9 @@ def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
             msg = "Source or sink only support type {} and {}, currently got {}."
             raise ValidationException(
                 message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
-                no_personal_data_message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM,
-                                                    "data_type"),
+                no_personal_data_message=msg.format(
+                    ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
+                ),
                 target=ErrorTarget.COMPONENT,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
@@ -68,6 +79,7 @@ class DataTransfer(BaseNode):
 
     You should not instantiate this class directly.
     """
+
     def __init__(
         self,
         *,
@@ -194,10 +206,7 @@ class DataTransferCopy(DataTransfer):
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
-        for key, value in {
-            "componentId": self._get_component_id(),
-            "data_copy_mode": self.data_copy_mode
-        }.items():
+        for key, value in {"componentId": self._get_component_id(), "data_copy_mode": self.data_copy_mode}.items():
             if value is not None:
                 rest_obj[key] = value
         return convert_ordered_dict_to_dict(rest_obj)
@@ -225,7 +234,7 @@ class DataTransferCopy(DataTransfer):
             services=self.services,
             compute=self.compute,
             task=self.task,
-            data_copy_mode=self.data_copy_mode
+            data_copy_mode=self.data_copy_mode,
         )
 
     def __call__(self, *args, **kwargs) -> "DataTransferCopy":
@@ -251,8 +260,7 @@ class DataTransferCopy(DataTransfer):
             # Pass through the display name only if the display name is not system generated.
             node.display_name = self.display_name if self.display_name != self.name else None
             return node
-        msg = "copy_data can be called as a function only when referenced component is {}, " \
-              "currently got {}."
+        msg = "copy_data can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
             no_personal_data_message=msg.format(type(Component), "self._component"),

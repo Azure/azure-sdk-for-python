@@ -124,9 +124,7 @@ class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attribu
         if self.extensions:
             for key in self.extensions.keys():
                 if not key.islower() or not key.isalnum():
-                    raise ValueError(
-                        "Extension attributes should be lower cased and alphanumeric."
-                    )
+                    raise ValueError("Extension attributes should be lower cased and alphanumeric.")
 
         if kwargs:
             remaining = ", ".join(kwargs.keys())
@@ -163,17 +161,13 @@ class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attribu
         ]
 
         if "data" in event and "data_base64" in event:
-            raise ValueError(
-                "Invalid input. Only one of data and data_base64 must be present."
-            )
+            raise ValueError("Invalid input. Only one of data and data_base64 must be present.")
 
         if "data" in event:
             data = event.get("data")
             kwargs["data"] = data if data is not None else NULL
         elif "data_base64" in event:
-            kwargs["data"] = b64decode(
-                cast(Union[str, bytes], event.get("data_base64"))
-            )
+            kwargs["data"] = b64decode(cast(Union[str, bytes], event.get("data_base64")))
 
         for item in ["datacontenttype", "dataschema", "subject"]:
             if item in event:

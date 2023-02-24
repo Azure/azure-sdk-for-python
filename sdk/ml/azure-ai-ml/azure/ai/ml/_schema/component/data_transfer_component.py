@@ -15,8 +15,13 @@ from azure.ai.ml._schema.component.input_output import InputPortSchema
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import FileRefField, StringTransformedEnum, NestedField
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
-from azure.ai.ml.constants._component import ComponentSource, NodeType, DataTransferTaskType, DataCopyMode, \
-    ExternalDataType
+from azure.ai.ml.constants._component import (
+    ComponentSource,
+    NodeType,
+    DataTransferTaskType,
+    DataCopyMode,
+    ExternalDataType,
+)
 
 
 class DataTransferComponentSchemaMixin(ComponentSchema):
@@ -25,8 +30,9 @@ class DataTransferComponentSchemaMixin(ComponentSchema):
 
 class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA], required=True)
-    data_copy_mode = StringTransformedEnum(allowed_values=[DataCopyMode.MERGE_WITH_OVERWRITE,
-                                                           DataCopyMode.FAIL_IF_CONFLICT])
+    data_copy_mode = StringTransformedEnum(
+        allowed_values=[DataCopyMode.MERGE_WITH_OVERWRITE, DataCopyMode.FAIL_IF_CONFLICT]
+    )
     inputs = fields.Dict(
         keys=fields.Str(),
         values=NestedField(InputPortSchema),
@@ -34,24 +40,25 @@ class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):
 
 
 class SinkSourceSchema(metaclass=PatchedSchemaMeta):
-    type = StringTransformedEnum(allowed_values=[ExternalDataType.FILE_SYSTEM, ExternalDataType.DATABASE],
-                                 required=True)
+    type = StringTransformedEnum(
+        allowed_values=[ExternalDataType.FILE_SYSTEM, ExternalDataType.DATABASE], required=True
+    )
 
 
 class SourceInputsSchema(metaclass=PatchedSchemaMeta):
     """
     For export task in DataTransfer, inputs type only support uri_file for database and uri_folder for filesystem.
     """
-    type = StringTransformedEnum(allowed_values=[AssetTypes.URI_FOLDER, AssetTypes.URI_FILE],
-                                 required=True)
+
+    type = StringTransformedEnum(allowed_values=[AssetTypes.URI_FOLDER, AssetTypes.URI_FILE], required=True)
 
 
 class SinkOutputsSchema(metaclass=PatchedSchemaMeta):
     """
     For import task in DataTransfer, outputs type only support mltable for database and uri_folder for filesystem;
     """
-    type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE, AssetTypes.URI_FOLDER],
-                                 required=True)
+
+    type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE, AssetTypes.URI_FOLDER], required=True)
 
 
 class DataTransferImportComponentSchema(DataTransferComponentSchemaMixin):
@@ -64,14 +71,15 @@ class DataTransferImportComponentSchema(DataTransferComponentSchemaMixin):
 
     @validates("inputs")
     def inputs_key(self, value):
-        raise ValidationError(f"inputs field is not a valid filed in task type "
-                              f"{DataTransferTaskType.IMPORT_DATA}.")
+        raise ValidationError(f"inputs field is not a valid filed in task type " f"{DataTransferTaskType.IMPORT_DATA}.")
 
     @validates("outputs")
     def outputs_key(self, value):
         if len(value) != 1 or value and list(value.keys())[0] != "sink":
-            raise ValidationError(f"outputs field only support one output called sink in task type "
-                                  f"{DataTransferTaskType.IMPORT_DATA}.")
+            raise ValidationError(
+                f"outputs field only support one output called sink in task type "
+                f"{DataTransferTaskType.IMPORT_DATA}."
+            )
 
 
 class DataTransferExportComponentSchema(DataTransferComponentSchemaMixin):
@@ -85,13 +93,16 @@ class DataTransferExportComponentSchema(DataTransferComponentSchemaMixin):
     @validates("inputs")
     def inputs_key(self, value):
         if len(value) != 1 or value and list(value.keys())[0] != "source":
-            raise ValidationError(f"inputs field only support one input called source in task type "
-                                  f"{DataTransferTaskType.EXPORT_DATA}.")
+            raise ValidationError(
+                f"inputs field only support one input called source in task type "
+                f"{DataTransferTaskType.EXPORT_DATA}."
+            )
 
     @validates("outputs")
     def outputs_key(self, value):
-        raise ValidationError(f"outputs field is not a valid filed in task type "
-                              f"{DataTransferTaskType.EXPORT_DATA}.")
+        raise ValidationError(
+            f"outputs field is not a valid filed in task type " f"{DataTransferTaskType.EXPORT_DATA}."
+        )
 
 
 class RestDataTransferCopyComponentSchema(DataTransferCopyComponentSchema):

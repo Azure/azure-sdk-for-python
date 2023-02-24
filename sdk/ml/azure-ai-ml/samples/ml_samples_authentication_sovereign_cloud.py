@@ -25,7 +25,6 @@ import os
 
 
 class MLClientSamples(object):
-
     def ml_auth_azure_default_credential(self):
         # [START create_ml_client_default_credential]
         # Get a credential for authentication
@@ -48,14 +47,14 @@ class MLClientSamples(object):
         # AzureAuthorityHosts.AZURE_CHINA or AzureAuthorityHosts.AZURE_GOVERNMENT
         # credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA)
         credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_PUBLIC_CLOUD)
-        
+
         # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
         # you must pass in the cloud name in kwargs. Default cloud is AzureCloud
         kwargs = {"cloud": "AzureCloud"}
         # get a handle to the subscription
         ml_client = MLClient(credential, subscription_id, resource_group, **kwargs)
         # [END create_ml_client_default_credential]
-        
+
         from azure.ai.ml.entities import Workspace
 
         # Get a list of workspaces in a resource group
@@ -63,6 +62,6 @@ class MLClientSamples(object):
             print(ws.name, ":", ws.location, ":", ws.description)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = MLClientSamples()
     sample.ml_auth_azure_default_credential()

@@ -27,8 +27,9 @@ parameters:
 extends:
   template: /eng/pipelines/templates/jobs/perf.yml
   parameters:
-    ServiceDirectory: storage/azure-storage-blob
+    TimeoutInMinutes: 720
     LanguageVersion: ${{ parameters.LanguageVersion }}
+    ServiceDirectory: storage/azure-storage-blob
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
     Arguments: ${{ parameters.Arguments }}

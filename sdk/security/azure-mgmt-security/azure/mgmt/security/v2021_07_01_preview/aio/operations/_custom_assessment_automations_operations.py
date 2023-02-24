@@ -94,10 +94,10 @@ class CustomAssessmentAutomationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-07-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-07-01-preview")
-        )  # type: Literal["2021-07-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CustomAssessmentAutomation]
+        )
+        cls: ClsType[_models.CustomAssessmentAutomation] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -109,9 +109,9 @@ class CustomAssessmentAutomationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -128,7 +128,9 @@ class CustomAssessmentAutomationsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Security/customAssessmentAutomations/{customAssessmentAutomationName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Security/customAssessmentAutomations/{customAssessmentAutomationName}"
+    }
 
     @overload
     async def create(
@@ -211,8 +213,8 @@ class CustomAssessmentAutomationsOperations:
         :type resource_group_name: str
         :param custom_assessment_automation_name: Name of the Custom Assessment Automation. Required.
         :type custom_assessment_automation_name: str
-        :param custom_assessment_automation_body: Custom Assessment Automation body. Is either a model
-         type or a IO type. Required.
+        :param custom_assessment_automation_body: Custom Assessment Automation body. Is either a
+         CustomAssessmentAutomationRequest type or a IO type. Required.
         :type custom_assessment_automation_body:
          ~azure.mgmt.security.v2021_07_01_preview.models.CustomAssessmentAutomationRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -234,11 +236,11 @@ class CustomAssessmentAutomationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-07-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-07-01-preview")
-        )  # type: Literal["2021-07-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CustomAssessmentAutomation]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CustomAssessmentAutomation] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -261,9 +263,9 @@ class CustomAssessmentAutomationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -280,11 +282,13 @@ class CustomAssessmentAutomationsOperations:
             deserialized = self._deserialize("CustomAssessmentAutomation", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Security/customAssessmentAutomations/{customAssessmentAutomationName}"}  # type: ignore
+    create.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Security/customAssessmentAutomations/{customAssessmentAutomationName}"
+    }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -315,10 +319,10 @@ class CustomAssessmentAutomationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-07-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-07-01-preview")
-        )  # type: Literal["2021-07-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -330,9 +334,9 @@ class CustomAssessmentAutomationsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -345,7 +349,9 @@ class CustomAssessmentAutomationsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Security/customAssessmentAutomations/{customAssessmentAutomationName}"}  # type: ignore
+    delete.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Security/customAssessmentAutomations/{customAssessmentAutomationName}"
+    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -368,10 +374,10 @@ class CustomAssessmentAutomationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-07-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-07-01-preview")
-        )  # type: Literal["2021-07-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CustomAssessmentAutomationsListResult]
+        )
+        cls: ClsType[_models.CustomAssessmentAutomationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -393,7 +399,7 @@ class CustomAssessmentAutomationsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -409,7 +415,7 @@ class CustomAssessmentAutomationsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -417,13 +423,13 @@ class CustomAssessmentAutomationsOperations:
             deserialized = self._deserialize("CustomAssessmentAutomationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -436,7 +442,9 @@ class CustomAssessmentAutomationsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Security/customAssessmentAutomations"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Security/customAssessmentAutomations"
+    }
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.CustomAssessmentAutomation"]:
@@ -454,10 +462,10 @@ class CustomAssessmentAutomationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-07-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-07-01-preview")
-        )  # type: Literal["2021-07-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.CustomAssessmentAutomationsListResult]
+        )
+        cls: ClsType[_models.CustomAssessmentAutomationsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -478,7 +486,7 @@ class CustomAssessmentAutomationsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -494,7 +502,7 @@ class CustomAssessmentAutomationsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -502,13 +510,13 @@ class CustomAssessmentAutomationsOperations:
             deserialized = self._deserialize("CustomAssessmentAutomationsListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -521,4 +529,6 @@ class CustomAssessmentAutomationsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/customAssessmentAutomations"}  # type: ignore
+    list_by_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/customAssessmentAutomations"
+    }

@@ -21,16 +21,17 @@ class TestEmailClient(AzureRecordedTestCase):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     }
                 ]
             },
-            "sender": self.sender_address
+            "senderAddress": self.sender_address
         }
 
-        response = email_client.send(message)
-        assert response['messageId'] is not None
+        poller = email_client.begin_send(message)
+        response = poller.result()
+        assert response['status'] == "Succeeded"
 
     @email_decorator
     @recorded_by_proxy
@@ -45,20 +46,21 @@ class TestEmailClient(AzureRecordedTestCase):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     },
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name 2"
                     }
                 ]
             },
-            "sender": self.sender_address
+            "senderAddress": self.sender_address
         }
 
-        response = email_client.send(message)
-        assert response['messageId'] is not None
+        poller = email_client.begin_send(message)
+        response = poller.result()
+        assert response['status'] == "Succeeded"
 
     @email_decorator
     @recorded_by_proxy
@@ -73,79 +75,22 @@ class TestEmailClient(AzureRecordedTestCase):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     }
                 ]
             },
-            "sender": self.sender_address,
+            "senderAddress": self.sender_address,
             "attachments": [
                 {
                     "name": "readme.txt",
-                    "attachmentType": "txt",
-                    "contentBytesBase64": "ZW1haWwgdGVzdCBhdHRhY2htZW50" #cspell:disable-line
+                    "contentType": "text/plain",
+                    "contentInBase64": "ZW1haWwgdGVzdCBhdHRhY2htZW50" #cspell:disable-line
                 }
             ]
         }
 
-        response = email_client.send(message)
-        assert response['messageId'] is not None
+        poller = email_client.begin_send(message)
+        response = poller.result()
+        assert response['status'] == "Succeeded"
 
-    @email_decorator
-    @recorded_by_proxy
-    def test_check_message_status(self):
-        email_client = EmailClient.from_connection_string(self.communication_connection_string)
-
-        message = {
-            "content": {
-                "subject": "This is the subject",
-                "plainText": "This is the body",
-            },
-            "recipients": {
-                "to": [
-                    {
-                        "email": self.recipient_address,
-                        "displayName": "Customer Name"
-                    }
-                ]
-            },
-            "sender": self.sender_address
-        }
-
-        response = email_client.send(message)
-        message_id = response['messageId']
-        if message_id is not None:
-            message_status_response = email_client.get_send_status(message_id)
-            assert message_status_response['status'] is not None
-        else:
-            assert False
-
-    @email_decorator
-    @recorded_by_proxy
-    def test_send_email_empty_to_recipients(self):
-        email_client = EmailClient.from_connection_string(self.communication_connection_string)
-
-        message = {
-            "content": {
-                "subject": "This is the subject",
-                "plainText": "This is the body",
-            },
-            "recipients": {
-                "cc": [
-                    {
-                        "email": self.recipient_address,
-                        "displayName": "Customer Name"
-                    }
-                ],
-                "bcc": [
-                    {
-                        "email": self.recipient_address,
-                        "displayName": "Customer Name"
-                    }
-                ],
-            },
-            "sender": self.sender_address
-        }
-
-        response = email_client.send(message)
-        assert response['messageId'] is not None

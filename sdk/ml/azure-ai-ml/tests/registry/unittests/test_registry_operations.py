@@ -54,11 +54,7 @@ class TestRegistryOperations:
 
     def test_create(self, mock_registry_operation: RegistryOperations, randstr: Callable[[], str]) -> None:
         reg_name = f"unittest{randstr('reg_name')}"
-        params_override = [
-            {
-                "name": reg_name
-            }
-        ]
+        params_override = [{"name": reg_name}]
         reg = load_registry(
             source="./tests/test_configs/registry/registry_valid_min.yaml", params_override=params_override
         )

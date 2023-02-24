@@ -34,22 +34,22 @@ exporter = ConsoleSpanExporter()
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(
-    SimpleSpanProcessor(exporter)
-)
+trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
 
 from azure.eventhub import EventHubProducerClient, EventData, EventHubConsumerClient
 import os
 
-FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
+EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
 
-credential = os.environ['EVENTHUB_CONN_STR']
+credential = os.environ["EVENTHUB_CONN_STR"]
+
 
 def on_event(partition_context, event):
     # Put your code here.
     # If the operation is i/o intensive, multi-thread will have better performance.
     print("Received event from partition: {}.".format(partition_context.partition_id))
+
 
 def on_partition_initialize(partition_context):
     # Put your code here.
@@ -58,26 +58,25 @@ def on_partition_initialize(partition_context):
 
 def on_partition_close(partition_context, reason):
     # Put your code here.
-    print("Partition: {} has been closed, reason for closing: {}.".format(
-        partition_context.partition_id,
-        reason
-    ))
+    print("Partition: {} has been closed, reason for closing: {}.".format(partition_context.partition_id, reason))
 
 
 def on_error(partition_context, error):
     # Put your code here. partition_context can be None in the on_error callback.
     if partition_context:
-        print("An exception: {} occurred during receiving from Partition: {}.".format(
-            partition_context.partition_id,
-            error
-        ))
+        print(
+            "An exception: {} occurred during receiving from Partition: {}.".format(
+                partition_context.partition_id, error
+            )
+        )
     else:
         print("An exception: {} occurred during the load balance process.".format(error))
+
 
 with tracer.start_as_current_span(name="MyApplication"):
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=credential,
-        consumer_group='$Default',
+        consumer_group="$Default",
         eventhub_name=EVENTHUB_NAME,
     )
 
@@ -91,5 +90,4 @@ with tracer.start_as_current_span(name="MyApplication"):
                 starting_position="-1",  # "-1" is from the beginning of the partition.
             )
     except KeyboardInterrupt:
-        print('Stopped receiving.')
-
+        print("Stopped receiving.")

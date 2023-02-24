@@ -6,8 +6,11 @@ from typing import Dict, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._schema.component.data_transfer_component import DataTransferCopyComponentSchema, \
-    DataTransferImportComponentSchema, DataTransferExportComponentSchema
+from azure.ai.ml._schema.component.data_transfer_component import (
+    DataTransferCopyComponentSchema,
+    DataTransferImportComponentSchema,
+    DataTransferExportComponentSchema,
+)
 from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes
 from azure.ai.ml.constants._component import NodeType, DataTransferTaskType, ExternalDataType
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException, ValidationErrorType
@@ -91,8 +94,9 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
                 msg = "Source or sink only support type {} and {}, currently got {}."
                 raise ValidationException(
                     message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
-                    no_personal_data_message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM,
-                                                        "data_type"),
+                    no_personal_data_message=msg.format(
+                        ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
+                    ),
                     target=ErrorTarget.COMPONENT,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -163,8 +167,9 @@ class DataTransferCopyComponent(DataTransferComponent):
         outputs_count = len(self.outputs)
         if outputs_count != 1:
             msg = "Only support single output in {}, but there're {} outputs."
-            validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count),
-                                           yaml_path="outputs")
+            validation_result.append_error(
+                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count), yaml_path="outputs"
+            )
         else:
             input_type = None
             output_type = None
@@ -175,18 +180,18 @@ class DataTransferCopyComponent(DataTransferComponent):
                     output_type = output_data.type
                 if input_type is None or output_type is None or input_type != output_type:
                     msg = "Input type {} doesn't exactly match with output type {} in task {}"
-                    validation_result.append_error(message=msg.format(input_type, output_type,
-                                                                      DataTransferTaskType.COPY_DATA),
-                                                   yaml_path="outputs")
+                    validation_result.append_error(
+                        message=msg.format(input_type, output_type, DataTransferTaskType.COPY_DATA), yaml_path="outputs"
+                    )
             elif inputs_count > 1:
                 for _, output_data in self.outputs.items():
                     output_type = output_data.type
                 if output_type is None or output_type != AssetTypes.URI_FOLDER:
                     msg = "output type {} need to be {} in task {}"
-                    validation_result.append_error(message=msg.format(output_type,
-                                                                      AssetTypes.URI_FOLDER,
-                                                                      DataTransferTaskType.COPY_DATA),
-                                                   yaml_path="outputs")
+                    validation_result.append_error(
+                        message=msg.format(output_type, AssetTypes.URI_FOLDER, DataTransferTaskType.COPY_DATA),
+                        yaml_path="outputs",
+                    )
             else:
                 msg = "Inputs must be set in task {}."
                 validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path="outputs")
@@ -215,7 +220,7 @@ class DataTransferImportComponent(DataTransferComponent):
         **kwargs,
     ):
 
-        outputs = outputs or {'sink': Output(type=AssetTypes.MLTABLE)}
+        outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
         super().__init__(
             task=task,
             outputs=outputs,

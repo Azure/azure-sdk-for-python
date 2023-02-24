@@ -23,11 +23,9 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_dynamic_classification() -> None:
     # [START dynamic_classification]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 

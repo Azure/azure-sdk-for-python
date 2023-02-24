@@ -307,16 +307,19 @@ class PipelineComponent(Component):
         # command component), so we just use rest object to generate hash for pipeline component,
         # which doesn't have reuse issue.
         component_interface_dict = self._to_rest_object().properties.component_spec
-        hash_value = hash_dict(component_interface_dict, keys_to_omit=[
-            # omit name since anonymous component will have same name
-            "name",
-            # omit _source since it doesn't impact component's uniqueness
-            "_source",
-            # omit id since it will be set after component is registered
-            "id",
-            # omit version since it will be set to this hash later
-            "version"
-        ])
+        hash_value = hash_dict(
+            component_interface_dict,
+            keys_to_omit=[
+                # omit name since anonymous component will have same name
+                "name",
+                # omit _source since it doesn't impact component's uniqueness
+                "_source",
+                # omit id since it will be set after component is registered
+                "id",
+                # omit version since it will be set to this hash later
+                "version",
+            ],
+        )
         return hash_value
 
     def _get_flattened_inputs(self):
@@ -354,7 +357,7 @@ class PipelineComponent(Component):
             # TODO: Remove this ad-hoc fix after unified arm id format in object
             component_id = node.get("componentId", "")
             if isinstance(component_id, str) and re.match(ASSET_ARM_ID_REGEX_FORMAT, component_id):
-                node["componentId"] = component_id[len(ARM_ID_PREFIX):]
+                node["componentId"] = component_id[len(ARM_ID_PREFIX) :]
             if not LoopNode._is_loop_node_dict(node):
                 # skip resolve LoopNode first since it may reference other nodes
                 # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode

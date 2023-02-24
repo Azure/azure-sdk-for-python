@@ -106,7 +106,7 @@ class ParallelForSchema(BaseLoopSchema):
             if isinstance(items, str):
                 items = json.loads(items)
             data["items"] = items
-        except Exception: # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             pass
         return data
 

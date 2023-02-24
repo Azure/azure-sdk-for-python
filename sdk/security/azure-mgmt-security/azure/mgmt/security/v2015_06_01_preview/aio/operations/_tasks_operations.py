@@ -81,10 +81,10 @@ class TasksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2015-06-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2015-06-01-preview")
-        )  # type: Literal["2015-06-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityTaskList]
+        )
+        cls: ClsType[_models.SecurityTaskList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -106,7 +106,7 @@ class TasksOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -122,7 +122,7 @@ class TasksOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -130,13 +130,13 @@ class TasksOperations:
             deserialized = self._deserialize("SecurityTaskList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -149,7 +149,7 @@ class TasksOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/tasks"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/tasks"}
 
     @distributed_trace
     def list_by_home_region(
@@ -171,10 +171,10 @@ class TasksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2015-06-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2015-06-01-preview")
-        )  # type: Literal["2015-06-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityTaskList]
+        )
+        cls: ClsType[_models.SecurityTaskList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -197,7 +197,7 @@ class TasksOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -213,7 +213,7 @@ class TasksOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -221,13 +221,13 @@ class TasksOperations:
             deserialized = self._deserialize("SecurityTaskList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -240,7 +240,9 @@ class TasksOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_home_region.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/tasks"}  # type: ignore
+    list_by_home_region.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/tasks"
+    }
 
     @distributed_trace_async
     async def get_subscription_level_task(
@@ -269,10 +271,10 @@ class TasksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2015-06-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2015-06-01-preview")
-        )  # type: Literal["2015-06-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityTask]
+        )
+        cls: ClsType[_models.SecurityTask] = kwargs.pop("cls", None)
 
         request = build_get_subscription_level_task_request(
             asc_location=asc_location,
@@ -284,9 +286,9 @@ class TasksOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -303,7 +305,9 @@ class TasksOperations:
 
         return deserialized
 
-    get_subscription_level_task.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/tasks/{taskName}"}  # type: ignore
+    get_subscription_level_task.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/tasks/{taskName}"
+    }
 
     @distributed_trace_async
     async def update_subscription_level_task_state(  # pylint: disable=inconsistent-return-statements
@@ -340,10 +344,10 @@ class TasksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2015-06-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2015-06-01-preview")
-        )  # type: Literal["2015-06-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_update_subscription_level_task_state_request(
             asc_location=asc_location,
@@ -356,9 +360,9 @@ class TasksOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -371,7 +375,9 @@ class TasksOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_subscription_level_task_state.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/tasks/{taskName}/{taskUpdateActionType}"}  # type: ignore
+    update_subscription_level_task_state.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/tasks/{taskName}/{taskUpdateActionType}"
+    }
 
     @distributed_trace
     def list_by_resource_group(
@@ -396,10 +402,10 @@ class TasksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2015-06-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2015-06-01-preview")
-        )  # type: Literal["2015-06-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityTaskList]
+        )
+        cls: ClsType[_models.SecurityTaskList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -423,7 +429,7 @@ class TasksOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -439,7 +445,7 @@ class TasksOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -447,13 +453,13 @@ class TasksOperations:
             deserialized = self._deserialize("SecurityTaskList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -466,7 +472,9 @@ class TasksOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list_by_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/tasks"}  # type: ignore
+    list_by_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/tasks"
+    }
 
     @distributed_trace_async
     async def get_resource_group_level_task(
@@ -498,10 +506,10 @@ class TasksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2015-06-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2015-06-01-preview")
-        )  # type: Literal["2015-06-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityTask]
+        )
+        cls: ClsType[_models.SecurityTask] = kwargs.pop("cls", None)
 
         request = build_get_resource_group_level_task_request(
             resource_group_name=resource_group_name,
@@ -514,9 +522,9 @@ class TasksOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -533,7 +541,9 @@ class TasksOperations:
 
         return deserialized
 
-    get_resource_group_level_task.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/tasks/{taskName}"}  # type: ignore
+    get_resource_group_level_task.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/tasks/{taskName}"
+    }
 
     @distributed_trace_async
     async def update_resource_group_level_task_state(  # pylint: disable=inconsistent-return-statements
@@ -574,10 +584,10 @@ class TasksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2015-06-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2015-06-01-preview")
-        )  # type: Literal["2015-06-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_update_resource_group_level_task_state_request(
             resource_group_name=resource_group_name,
@@ -591,9 +601,9 @@ class TasksOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -606,4 +616,6 @@ class TasksOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    update_resource_group_level_task_state.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/tasks/{taskName}/{taskUpdateActionType}"}  # type: ignore
+    update_resource_group_level_task_state.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/locations/{ascLocation}/tasks/{taskName}/{taskUpdateActionType}"
+    }

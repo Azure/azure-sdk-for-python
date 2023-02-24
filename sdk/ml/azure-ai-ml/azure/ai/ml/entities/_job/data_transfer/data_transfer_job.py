@@ -9,12 +9,19 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._schema.job.data_transfer_job import DataTransferCopyJobSchema, DataTransferImportJobSchema, \
-    DataTransferExportJobSchema
+from azure.ai.ml._schema.job.data_transfer_job import (
+    DataTransferCopyJobSchema,
+    DataTransferImportJobSchema,
+    DataTransferExportJobSchema,
+)
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
-from azure.ai.ml.constants._component import ExternalDataType, DataTransferBuiltinComponentUri, ComponentSource, \
-    DataTransferTaskType
+from azure.ai.ml.constants._component import (
+    ExternalDataType,
+    DataTransferBuiltinComponentUri,
+    ComponentSource,
+    DataTransferTaskType,
+)
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -113,8 +120,9 @@ class DataTransferJob(Job, JobIOMixin):
                 msg = "Source or sink only support type {} and {}, currently got {}."
                 raise ValidationException(
                     message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
-                    no_personal_data_message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM,
-                                                        "data_type"),
+                    no_personal_data_message=msg.format(
+                        ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
+                    ),
                     target=ErrorTarget.COMPONENT,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -169,7 +177,7 @@ class DataTransferCopyJob(DataTransferJob):
             inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
             outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
             task=self.task,
-            data_copy_mode=self.data_copy_mode
+            data_copy_mode=self.data_copy_mode,
         )
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs):

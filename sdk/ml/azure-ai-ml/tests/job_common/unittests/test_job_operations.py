@@ -189,14 +189,16 @@ class TestJobOperations:
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
             mock_get_token.return_value = AccessToken(
-                token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234)
+                token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234
+            )
             mock_job_operation.create_or_update(job=job)
             mock_job_operation._operation_2022_12_preview.create_or_update.assert_called_once()
             mock_job_operation._credential.get_token.assert_called_once_with(azure_ml_scopes[0])
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
             mock_get_token.return_value = AccessToken(
-                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234)
+                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234
+            )
             with pytest.raises(Exception):
                 mock_job_operation.create_or_update(job=job)
 

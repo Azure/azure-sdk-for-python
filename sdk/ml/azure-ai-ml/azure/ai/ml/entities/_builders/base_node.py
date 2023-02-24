@@ -365,6 +365,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             obj[CommonYamlFields.TYPE] = NodeType.COMMAND
 
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
         # todo: refine Hard code for now to support different task type for DataTransfer node
         _type = obj[CommonYamlFields.TYPE]
         if _type == NodeType.DATA_TRANSFER:

@@ -24,7 +24,8 @@ def generate_dsl_pipeline_from_yaml() -> PipelineJob:
             type=AssetTypes.URI_FOLDER,
         ),
         cosmos_folder_dup=Input(
-            type=AssetTypes.URI_FOLDER, path=parent_dir + "/data/iris_model",
+            type=AssetTypes.URI_FOLDER,
+            path=parent_dir + "/data/iris_model",
         ),
     )
 
@@ -62,8 +63,7 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
         return {"merged_blob": merge_files.outputs.output_folder}
 
     pipeline = data_transfer_copy_pipeline_from_builder(
-        cosmos_folder=cosmos_folder,
-        cosmos_folder_dup=cosmos_folder_dup
+        cosmos_folder=cosmos_folder, cosmos_folder_dup=cosmos_folder_dup
     )
     pipeline.settings.default_compute = "adftest"
     return pipeline

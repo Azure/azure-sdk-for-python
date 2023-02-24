@@ -142,7 +142,7 @@ def necessary_to_install(version_requested) -> bool:
         if version_from_spec > Version(f"{precached_version.major}.{precached_version.minor}"):
             precached = False
     else:
-        precached = version_from_spec > precached_version
+        precached = version_from_spec <= precached_version
 
     return not precached
 

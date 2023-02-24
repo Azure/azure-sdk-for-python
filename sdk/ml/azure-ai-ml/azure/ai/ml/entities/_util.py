@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
 import hashlib
 import json
 import os
@@ -458,3 +459,16 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
             error_category=ErrorCategory.USER_ERROR,
         )
     return extract_label(_type)[0]
+
+
+def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutput"):
+    """Copy node output setting from source to target.
+    Currently only path, name, version will be copied."""
+    # pylint: disable=protected-access
+    from azure.ai.ml.entities._job.pipeline._io import NodeOutput
+
+    if not isinstance(source, NodeOutput):
+        # Only copy when source is an output builder
+        return
+    if source._data:
+        target._data = copy.deepcopy(source._data)

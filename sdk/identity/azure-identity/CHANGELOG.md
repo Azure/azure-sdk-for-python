@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Changed parameter from `instance_discovery` to `disable_instance_discovery` to make it more explicit.
+
 ### Breaking Changes
 
 ### Bugs Fixed

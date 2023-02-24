@@ -4,7 +4,11 @@
 
 ### Features Added
 
+- Added support for `tags` on Compute Resources.
+
 ### Bugs Fixed
+
+- Fix experiment name wrongly set to 'Default' when schedule existing job.
 
 ### Other Changes
 

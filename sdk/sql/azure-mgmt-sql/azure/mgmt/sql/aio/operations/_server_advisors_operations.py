@@ -275,7 +275,7 @@ class ServerAdvisorsOperations:
         :type server_name: str
         :param advisor_name: The name of the Server Advisor. Required.
         :type advisor_name: str
-        :param parameters: The requested advisor resource state. Is either a model type or a IO type.
+        :param parameters: The requested advisor resource state. Is either a Advisor type or a IO type.
          Required.
         :type parameters: ~azure.mgmt.sql.models.Advisor or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

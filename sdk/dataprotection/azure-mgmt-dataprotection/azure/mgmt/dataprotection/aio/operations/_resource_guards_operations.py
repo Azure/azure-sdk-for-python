@@ -64,7 +64,7 @@ class ResourceGuardsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dataprotection.aio.DataProtectionClient`'s
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
         :attr:`resource_guards` attribute.
     """
 
@@ -93,7 +93,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ResourceGuardResourceList] = kwargs.pop("cls", None)
@@ -172,7 +172,7 @@ class ResourceGuardsOperations:
 
         Returns ResourceGuards collection belonging to a ResourceGroup.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -185,7 +185,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ResourceGuardResourceList] = kwargs.pop("cls", None)
@@ -271,7 +271,7 @@ class ResourceGuardsOperations:
 
         Creates or updates a ResourceGuard resource belonging to a resource group.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
@@ -301,7 +301,7 @@ class ResourceGuardsOperations:
 
         Creates or updates a ResourceGuard resource belonging to a resource group.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
@@ -329,12 +329,13 @@ class ResourceGuardsOperations:
 
         Creates or updates a ResourceGuard resource belonging to a resource group.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
-        :param parameters: Request body for operation. Is either a model type or a IO type. Required.
+        :param parameters: Request body for operation. Is either a ResourceGuardResource type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.ResourceGuardResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -355,7 +356,7 @@ class ResourceGuardsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -390,16 +391,20 @@ class ResourceGuardsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ResourceGuardResource", pipeline_response)
+        if response.status_code == 200:
+            deserialized = self._deserialize("ResourceGuardResource", pipeline_response)
+
+        if response.status_code == 201:
+            deserialized = self._deserialize("ResourceGuardResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     put.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/resourceGuards/{resourceGuardsName}"
@@ -413,7 +418,7 @@ class ResourceGuardsOperations:
 
         Returns a ResourceGuard belonging to a resource group.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
@@ -434,7 +439,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ResourceGuardResource] = kwargs.pop("cls", None)
@@ -480,7 +485,7 @@ class ResourceGuardsOperations:
 
         Deletes a ResourceGuard resource from the resource group.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
@@ -501,7 +506,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -540,7 +545,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: _models.PatchResourceRequestInput,
+        parameters: _models.PatchResourceGuardInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -551,13 +556,13 @@ class ResourceGuardsOperations:
         Updates a ResourceGuard resource belonging to a resource group. For example, updating tags for
         a resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceRequestInput
+        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceGuardInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -583,7 +588,7 @@ class ResourceGuardsOperations:
         Updates a ResourceGuard resource belonging to a resource group. For example, updating tags for
         a resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
@@ -604,7 +609,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: Union[_models.PatchResourceRequestInput, IO],
+        parameters: Union[_models.PatchResourceGuardInput, IO],
         **kwargs: Any
     ) -> _models.ResourceGuardResource:
         """Updates a ResourceGuard resource belonging to a resource group. For example, updating tags for
@@ -613,13 +618,14 @@ class ResourceGuardsOperations:
         Updates a ResourceGuard resource belonging to a resource group. For example, updating tags for
         a resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
-        :param parameters: Request body for operation. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceRequestInput or IO
+        :param parameters: Request body for operation. Is either a PatchResourceGuardInput type or a IO
+         type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceGuardInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -639,7 +645,7 @@ class ResourceGuardsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -651,7 +657,7 @@ class ResourceGuardsOperations:
         if isinstance(parameters, (IO, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "PatchResourceRequestInput")
+            _json = self._serialize.body(parameters, "PatchResourceGuardInput")
 
         request = build_patch_request(
             resource_group_name=resource_group_name,
@@ -699,7 +705,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -713,7 +719,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResourceList] = kwargs.pop("cls", None)
@@ -796,7 +802,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -810,7 +816,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResourceList] = kwargs.pop("cls", None)
@@ -893,7 +899,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -907,7 +913,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResourceList] = kwargs.pop("cls", None)
@@ -990,7 +996,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -1004,7 +1010,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResourceList] = kwargs.pop("cls", None)
@@ -1087,7 +1093,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -1101,7 +1107,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResourceList] = kwargs.pop("cls", None)
@@ -1184,7 +1190,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -1198,7 +1204,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResourceList] = kwargs.pop("cls", None)
@@ -1281,7 +1287,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -1304,7 +1310,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResource] = kwargs.pop("cls", None)
@@ -1353,7 +1359,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -1376,7 +1382,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResource] = kwargs.pop("cls", None)
@@ -1425,7 +1431,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -1448,7 +1454,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResource] = kwargs.pop("cls", None)
@@ -1497,7 +1503,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -1520,7 +1526,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResource] = kwargs.pop("cls", None)
@@ -1569,7 +1575,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -1592,7 +1598,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResource] = kwargs.pop("cls", None)
@@ -1641,7 +1647,7 @@ class ResourceGuardsOperations:
         Returns collection of operation request objects for a critical operation protected by the given
         ResourceGuard resource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param resource_guards_name: Required.
@@ -1664,7 +1670,7 @@ class ResourceGuardsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.DppBaseResource] = kwargs.pop("cls", None)
