@@ -2641,7 +2641,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     def test_queue_receive_iterator_resume_after_link_detach(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
 
-        def hack_iter_next_mock_error(self):
+        def hack_iter_next_mock_error(self, wait_time=None):
             try:
                 self._receive_context.set()
                 self._open()
@@ -2654,7 +2654,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 else:
                     self.execution_times += 1
                 if not self._message_iter:
-                    self._message_iter = self._handler.receive_messages_iter()
+                    self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
                 pyamqp_message = next(self._message_iter)
                 message = self._build_message(pyamqp_message)
                 return message
