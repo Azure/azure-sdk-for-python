@@ -553,7 +553,6 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_command_job_e2e_short_uri.yml",

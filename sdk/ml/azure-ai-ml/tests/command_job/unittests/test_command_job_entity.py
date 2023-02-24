@@ -106,7 +106,6 @@ class TestCommandJobEntity:
         assert from_rest_job.distribution.process_count_per_instance == 2
 
     def test_command_job_builder_serialization(self) -> None:
-
         inputs = {
             "uri": Input(
                 type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"

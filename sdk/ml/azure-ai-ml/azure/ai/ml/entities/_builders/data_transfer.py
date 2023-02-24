@@ -221,7 +221,6 @@ class DataTransferCopy(DataTransfer):
         return data_transfer_job
 
     def _to_job(self) -> DataTransferCopyJob:
-
         return DataTransferCopyJob(
             experiment_name=self.experiment_name,
             name=self.name,
@@ -377,7 +376,6 @@ class DataTransferImport(DataTransfer):
         return data_transfer_job
 
     def _to_job(self) -> DataTransferImportJob:
-
         return DataTransferImportJob(
             experiment_name=self.experiment_name,
             name=self.name,
@@ -514,7 +512,6 @@ class DataTransferExport(DataTransfer):
         return data_transfer_job
 
     def _to_job(self) -> DataTransferExportJob:
-
         return DataTransferExportJob(
             experiment_name=self.experiment_name,
             name=self.name,

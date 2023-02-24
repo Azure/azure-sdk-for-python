@@ -114,7 +114,6 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         **kwargs,
     ) -> None:
-
         self.deployment_type = kwargs.pop("type", "Model")
         self.job_definition = kwargs.pop("job_definition", None)
 
@@ -181,7 +180,6 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
 
     @classmethod
     def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: str) -> str:
-
         output_switcher = {
             BatchDeploymentOutputAction.APPEND_ROW: BatchOutputAction.APPEND_ROW,
             BatchDeploymentOutputAction.SUMMARY_ONLY: BatchOutputAction.SUMMARY_ONLY,
@@ -236,7 +234,6 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
 
     @classmethod
     def _from_rest_object(cls, deployment: BatchDeploymentData):  # pylint: disable=arguments-renamed
-
         modelId = deployment.properties.model.asset_id if deployment.properties.model else None
         code_configuration = (
             CodeConfiguration._from_rest_code_configuration(deployment.properties.code_configuration)

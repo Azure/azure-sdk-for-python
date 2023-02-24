@@ -12,7 +12,6 @@ from azure.core.credentials import TokenCredential
 def get_resources_from_subscriptions(
     strQuery: str, credential: TokenCredential, subscription_list: Optional[List[str]] = None
 ):
-
     # If a subscription list is passed in, use it. Otherwise, get all subscriptions
     subsList = []
     if subscription_list is not None:
@@ -39,7 +38,6 @@ def get_resources_from_subscriptions(
 def get_virtual_clusters_from_subscriptions(
     credential: TokenCredential, subscription_list: Optional[List[str]] = None
 ) -> List[Dict]:
-
     # cspell:ignore tolower
     strQuery = """resources
     | where type == 'microsoft.machinelearningservices/virtualclusters'
@@ -52,7 +50,6 @@ def get_virtual_clusters_from_subscriptions(
 def get_generic_resource_by_id(
     arm_id: str, credential: TokenCredential, subscription_id: str, api_version: Optional[str] = None
 ) -> Dict:
-
     resource_client = ResourceManagementClient(credential, subscription_id)
     generic_resource = resource_client.resources.get_by_id(arm_id, api_version)
 
@@ -62,7 +59,6 @@ def get_generic_resource_by_id(
 def get_virtual_cluster_by_id(
     name: str, resource_group: str, subscription_id: str, credential: TokenCredential
 ) -> Dict:
-
     arm_id = (
         f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
         f"/providers/Microsoft.MachineLearningServices/virtualClusters/{name}"

@@ -115,7 +115,6 @@ class AzureMLDatastorePathUri:
         )
 
     def get_uri_type(self) -> str:
-
         if self.uri[0:20] == "azureml://datastores":
             return "Datastore"
         if self.uri[0:14] == "azureml://jobs":

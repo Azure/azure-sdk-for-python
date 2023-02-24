@@ -167,7 +167,6 @@ def is_local_run(job_definition: JobBaseData) -> bool:
 
 
 class CommonRuntimeHelper:
-
     COMMON_RUNTIME_BOOTSTRAPPER_INFO = "common_runtime_bootstrapper_info.json"
     COMMON_RUNTIME_JOB_SPEC = "common_runtime_job_spec.json"
     VM_BOOTSTRAPPER_FILE_NAME = "vm-bootstrapper"

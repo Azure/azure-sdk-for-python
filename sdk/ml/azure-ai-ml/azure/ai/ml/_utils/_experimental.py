@@ -105,7 +105,6 @@ def _should_skip_warning():
 
 
 def _is_warning_cached(warning_msg):
-
     # use cache to make sure we only print same warning message once under same session
     # this prevents duplicated warnings got printed when user does a loop call on a method or a class
     if warning_msg in _warning_cache:
