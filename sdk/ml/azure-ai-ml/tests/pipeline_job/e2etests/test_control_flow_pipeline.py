@@ -43,6 +43,7 @@ class TestConditionalNodeInPipeline(AzureRecordedTestCase):
 
 
 class TestIfElse(TestConditionalNodeInPipeline):
+    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_happy_path_if_else(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
@@ -77,6 +78,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
             "result": {"name": "result", "type": "command"},
         }
 
+    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_if_else_one_branch(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
 
@@ -104,6 +106,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
             "result": {"name": "result", "type": "command"},
         }
 
+    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_if_else_literal_condition(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
 
@@ -137,6 +140,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
 
 
 class TestDoWhile(TestConditionalNodeInPipeline):
+    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.disable_mock_code_hash
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
@@ -156,6 +160,7 @@ class TestDoWhile(TestConditionalNodeInPipeline):
         assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
 
+    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
 
@@ -312,6 +317,7 @@ def assert_control_flow_in_pipeline_component(client, component_path, pipeline_p
 
 
 class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):
+    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_if_else(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()

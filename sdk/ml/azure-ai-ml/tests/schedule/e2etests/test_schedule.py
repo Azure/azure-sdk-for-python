@@ -82,6 +82,7 @@ class TestSchedule(AzureRecordedTestCase):
         assert isinstance(job.identity, AmlTokenConfiguration)
         assert job.inputs["hello_string_top_level_input"]._data == "${{creation_context.trigger_time}}"
 
+    @pytest.mark.skip(reason="TODO (2258616): JSON token setup error for test proxy")
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
 
