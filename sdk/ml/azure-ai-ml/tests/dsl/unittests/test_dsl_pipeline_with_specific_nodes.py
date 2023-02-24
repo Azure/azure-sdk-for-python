@@ -379,7 +379,7 @@ class TestDSLPipelineWithSpecificNodes:
         component_func = load_component(source=yaml_file)
 
         # command job with dict distribution
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
         inputs = {
@@ -1215,7 +1215,7 @@ class TestDSLPipelineWithSpecificNodes:
         yaml_file = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_component.yml"
         component_func = load_component(yaml_file)
 
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         iris_data = Input(
             path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/dataset/shakespeare.txt",
             type=AssetTypes.URI_FILE,
@@ -1393,7 +1393,7 @@ class TestDSLPipelineWithSpecificNodes:
         yaml_file = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_component.yml"
         component_func = load_component(yaml_file)
 
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         iris_data = Input(
             path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/dataset/shakespeare.txt",
             type=AssetTypes.URI_FILE,
@@ -1571,7 +1571,7 @@ class TestDSLPipelineWithSpecificNodes:
         }
 
     def test_pipeline_with_spark_job_dynamic_allocation_disabled(self, client):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         iris_data = Input(
             path="https://azuremlexamples.blob.core.windows.net/datasets/iris.csv",
             type=AssetTypes.URI_FILE,
@@ -1619,7 +1619,7 @@ class TestDSLPipelineWithSpecificNodes:
             assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
 
     def test_pipeline_with_spark_job(self):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         iris_data = Input(
             path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/dataset/shakespeare.txt",
             type=AssetTypes.URI_FILE,
@@ -2235,7 +2235,7 @@ class TestDSLPipelineWithSpecificNodes:
 
     def test_pipeline_with_parallel_job(self):
         # command job with dict distribution
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         inputs = {
             "job_data_path": Input(type=AssetTypes.MLTABLE, path="./tests/test_configs/data", mode="eval_mount"),
         }
@@ -2330,7 +2330,7 @@ class TestDSLPipelineWithSpecificNodes:
                                 "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/"
                             ),
                             "entry_script": "score.py",
-                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                             "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                             "type": "run_function",
                         },
@@ -2345,7 +2345,7 @@ class TestDSLPipelineWithSpecificNodes:
         }
 
     def test_pipeline_with_parallel_function_inside(self):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         expected_environment_variables = {"key": "val"}
         expected_resources = {"instance_count": 2}
         inputs = {
@@ -2432,7 +2432,7 @@ class TestDSLPipelineWithSpecificNodes:
                                 "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/"
                             ),
                             "entry_script": "score.py",
-                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                             "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                             "type": "run_function",
                         },
@@ -2461,7 +2461,7 @@ class TestDSLPipelineWithSpecificNodes:
                                 "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/"
                             ),
                             "entry_script": "score.py",
-                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                             "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                             "type": "run_function",
                         },
@@ -2479,7 +2479,7 @@ class TestDSLPipelineWithSpecificNodes:
         }
 
     def test_pipeline_with_command_function_inside(self):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
         inputs = {
@@ -2636,7 +2636,7 @@ class TestDSLPipelineWithSpecificNodes:
                     "task": {
                         "code": parse_local_path("./src", batch_inference1.base_path),
                         "entry_script": "score.py",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "type": "run_function",
                     },
@@ -2661,7 +2661,7 @@ class TestDSLPipelineWithSpecificNodes:
                     "task": {
                         "code": parse_local_path("./src", batch_inference2.base_path),
                         "entry_script": "score.py",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "type": "run_function",
                     },
@@ -2994,7 +2994,7 @@ class TestDSLPipelineWithSpecificNodes:
         command_func = command(
             name="test_component_with_services",
             display_name="command_with_services",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command=('echo "hello world" & sleep 1h'),
             environment_variables={"key": "val"},
             inputs={},
@@ -3078,7 +3078,7 @@ class TestDSLPipelineWithSpecificNodes:
         command_func = command(
             name="test_component_with_services",
             display_name="command_with_services",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command=('echo "hello world" & sleep 1h'),
             environment_variables={"key": "val"},
             inputs={},
