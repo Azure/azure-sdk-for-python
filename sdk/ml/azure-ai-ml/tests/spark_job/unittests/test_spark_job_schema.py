@@ -77,7 +77,7 @@ class TestSparkJobSchema:
                 )
             },
             compute="douglassynapse",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             resources={
                 "instance_type": "Standard_E8S_V3",
                 "runtime_version": "3.1.0",
