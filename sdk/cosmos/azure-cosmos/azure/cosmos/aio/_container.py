@@ -605,7 +605,8 @@ class ContainerProxy(object):
 
         If no ThroughputProperties already exist for the container, an exception is raised.
 
-        :param int throughput: The throughput to be set (an integer).
+        :param throughput: The throughput to be set.
+        :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container

@@ -55,17 +55,10 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
     """An HTTP policy ABC.
 
     Use with a synchronous pipeline.
-
-    :param next: Use to process the next policy in the pipeline. Set when pipeline is
-     instantiated and all policies chained.
-    :type next: ~azure.core.pipeline.policies.HTTPPolicy or ~azure.core.pipeline.transport.HttpTransport
     """
 
-    next: Union[
-        "HTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]",
-        "HttpTransport[HTTPRequestTypeVar, HTTPResponseTypeVar]",
-    ]
-    """Pointer to the next policy or a transport. Will be set at pipeline creation."""
+    next: "HTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]"
+    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     @abc.abstractmethod
     def send(
@@ -137,7 +130,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
         return
 
 
-class RequestHistory:
+class RequestHistory(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
     """A container for an attempted request and the applicable response.
 
     This is used to document requests/responses that resulted in redirected/retried requests.
