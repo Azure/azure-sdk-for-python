@@ -4,9 +4,7 @@ This package contains a Python SDK for Azure Communication Services for Email.
 
 ## Key concepts
 
-The Azure Communication Email package is used to do following:
-- Send emails to multiple types of recipients
-- Query the status of a sent email message
+The Azure Communication Email package is used to send emails to multiple types of recipients.
 
 ## Getting started
 
@@ -26,7 +24,7 @@ pip install azure-communication-email
 
 ## Examples
 
-`EmailClient` provides the functionality to send email messages .
+`EmailClient` provides the functionality to send email messages.
 
 ## Authentication
 
@@ -63,7 +61,7 @@ client = EmailClient(endpoint, credential);
 
 ### Send an Email Message
 
-To send an email message, call the `send` function from the `EmailClient`.
+To send an email message, call the `begin_send` function from the `EmailClient`. This will return a poller. You can use this poller to check on the status of the operation and retrieve the result once it's finished.
 
 ```python
 message = {
@@ -75,15 +73,16 @@ message = {
     "recipients": {
         "to": [
             {
-                "email": "customer@domain.com",
+                "address": "customer@domain.com",
                 "displayName": "Customer Name"
             }
         ]
     },
-    "sender": "sender@contoso.com"
+    "senderAddress": "sender@contoso.com"
 }
 
-response = client.send(message)
+poller = email_client.begin_send(message)
+result = poller.result()
 ```
 
 ### Send an Email Message to Multiple Recipients
@@ -99,22 +98,23 @@ message = {
     },
     "recipients": {
         "to": [
-            {"email": "customer@domain.com", "displayName": "Customer Name"},
-            {"email": "customer2@domain.com", "displayName": "Customer Name 2"}
+            {"address": "customer@domain.com", "displayName": "Customer Name"},
+            {"address": "customer2@domain.com", "displayName": "Customer Name 2"}
         ],
         "cc": [
-            {"email": "ccCustomer@domain.com", "displayName": "CC Customer Name"},
-            {"email": "ccCustomer2@domain.com", "displayName": "CC Customer Name 2"}
+            {"address": "ccCustomer@domain.com", "displayName": "CC Customer Name"},
+            {"address": "ccCustomer2@domain.com", "displayName": "CC Customer Name 2"}
         ],
         "bcc": [
-            {"email": "bccCustomer@domain.com", "displayName": "BCC Customer Name"},
-            {"email": "bccCustomer2@domain.com", "displayName": "BCC Customer Name 2"}
+            {"address": "bccCustomer@domain.com", "displayName": "BCC Customer Name"},
+            {"address": "bccCustomer2@domain.com", "displayName": "BCC Customer Name 2"}
         ]
     },
-    "sender": "sender@contoso.com"
+    "senderAddress": "sender@contoso.com"
 }
 
-response = client.send(message)
+poller = email_client.begin_send(message)
+result = poller.result()
 ```
 
 ### Send Email with Attachments
@@ -138,31 +138,23 @@ message = {
     "recipients": {
         "to": [
             {
-                "email": "customer@domain.com",
+                "address": "customer@domain.com",
                 "displayName": "Customer Name"
             }
         ]
     },
-    "sender": "sender@contoso.com",
+    "senderAddress": "sender@contoso.com",
     "attachments": [
         {
             "name": "attachment.txt",
-            "attachmentType": "txt",
-            "contentBytesBase64": file_bytes_b64.decode()
+            "attachmentType": "text/plain",
+            "contentInBase64": file_bytes_b64.decode()
         }
     ]
 }
 
-response = client.send(message)
-```
-
-### Get Email Message Status
-
-The result from the `send` call contains a `messageId` which can be used to query the status of the email.
-
-```python
-response = client.send(message)
-status = client.get_send_status(response['messageId'])
+poller = email_client.begin_send(message)
+result = poller.result()
 ```
 
 ## Troubleshooting
