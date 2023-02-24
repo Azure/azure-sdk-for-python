@@ -1088,6 +1088,9 @@ class AmlComputeProperties(msrest.serialization.Model):
      provisioned. false - Indicates that the compute nodes will have a private endpoint and no
      public IPs.
     :vartype enable_node_public_ip: bool
+    :ivar enable_batch_private_link: Whether or not to provision a private endpoint to underlying
+     batch account.
+    :vartype enable_batch_private_link: bool
     :ivar property_bag: A property bag containing additional properties.
     :vartype property_bag: any
     """
@@ -1118,6 +1121,7 @@ class AmlComputeProperties(msrest.serialization.Model):
         'target_node_count': {'key': 'targetNodeCount', 'type': 'int'},
         'node_state_counts': {'key': 'nodeStateCounts', 'type': 'NodeStateCounts'},
         'enable_node_public_ip': {'key': 'enableNodePublicIp', 'type': 'bool'},
+        'enable_batch_private_link': {'key': 'enableBatchPrivateLink', 'type': 'bool'},
         'property_bag': {'key': 'propertyBag', 'type': 'object'},
     }
 
@@ -1161,6 +1165,9 @@ class AmlComputeProperties(msrest.serialization.Model):
          provisioned. false - Indicates that the compute nodes will have a private endpoint and no
          public IPs.
         :paramtype enable_node_public_ip: bool
+        :keyword enable_batch_private_link: Whether or not to provision a private endpoint to
+         underlying batch account.
+        :paramtype enable_batch_private_link: bool
         :keyword property_bag: A property bag containing additional properties.
         :paramtype property_bag: any
         """
@@ -1181,6 +1188,7 @@ class AmlComputeProperties(msrest.serialization.Model):
         self.target_node_count = None
         self.node_state_counts = None
         self.enable_node_public_ip = kwargs.get('enable_node_public_ip', True)
+        self.enable_batch_private_link = kwargs.get('enable_batch_private_link', None)
         self.property_bag = kwargs.get('property_bag', None)
 
 
@@ -6009,6 +6017,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
      provisioned. false - Indicates that the compute nodes will have a private endpoint and no
      public IPs.
     :vartype enable_node_public_ip: bool
+    :ivar enable_batch_private_link: Whether or not to provision a private endpoint to underlying
+     batch account.
+    :vartype enable_batch_private_link: bool
     :ivar containers: Describes informations of containers on this ComputeInstance.
     :vartype containers: list[~azure.mgmt.machinelearningservices.models.ComputeInstanceContainer]
     :ivar data_disks: Describes informations of dataDisks on this ComputeInstance.
@@ -6054,6 +6065,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         'schedules': {'key': 'schedules', 'type': 'ComputeSchedules'},
         'idle_time_before_shutdown': {'key': 'idleTimeBeforeShutdown', 'type': 'str'},
         'enable_node_public_ip': {'key': 'enableNodePublicIp', 'type': 'bool'},
+        'enable_batch_private_link': {'key': 'enableBatchPrivateLink', 'type': 'bool'},
         'containers': {'key': 'containers', 'type': '[ComputeInstanceContainer]'},
         'data_disks': {'key': 'dataDisks', 'type': '[ComputeInstanceDataDisk]'},
         'data_mounts': {'key': 'dataMounts', 'type': '[ComputeInstanceDataMount]'},
@@ -6101,6 +6113,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
          provisioned. false - Indicates that the compute nodes will have a private endpoint and no
          public IPs.
         :paramtype enable_node_public_ip: bool
+        :keyword enable_batch_private_link: Whether or not to provision a private endpoint to
+         underlying batch account.
+        :paramtype enable_batch_private_link: bool
         """
         super(ComputeInstanceProperties, self).__init__(**kwargs)
         self.vm_size = kwargs.get('vm_size', None)
@@ -6122,6 +6137,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         self.schedules = None
         self.idle_time_before_shutdown = kwargs.get('idle_time_before_shutdown', None)
         self.enable_node_public_ip = kwargs.get('enable_node_public_ip', None)
+        self.enable_batch_private_link = kwargs.get('enable_batch_private_link', None)
         self.containers = None
         self.data_disks = None
         self.data_mounts = None

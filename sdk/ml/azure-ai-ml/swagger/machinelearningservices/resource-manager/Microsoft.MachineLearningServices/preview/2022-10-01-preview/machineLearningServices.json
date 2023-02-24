@@ -3650,6 +3650,12 @@
           "description": "Enable or disable node public IP address provisioning. Possible values are: Possible values are: true - Indicates that the compute nodes will have public IPs provisioned. false - Indicates that the compute nodes will have a private endpoint and no public IPs.",
           "x-nullable": true
         },
+        "enableBatchPrivateLink": {
+          "type": "boolean",
+          "title": "Enable Batch Private Link",
+          "description": "Whether or not to provision a private endpoint to underlying batch account.",
+          "x-nullable": true
+        },
         "propertyBag": {
           "type": "object",
           "description": "A property bag containing additional properties.",
@@ -3816,6 +3822,12 @@
           "type": "boolean",
           "title": "Enable node public IP.",
           "description": "Enable or disable node public IP address provisioning. Possible values are: Possible values are: true - Indicates that the compute nodes will have public IPs provisioned. false - Indicates that the compute nodes will have a private endpoint and no public IPs."
+        },
+        "enableBatchPrivateLink": {
+          "type": "boolean",
+          "title": "Enable Batch Private Link",
+          "description": "Whether or not to provision a private endpoint to underlying batch account.",
+          "x-nullable": true
         },
         "containers": {
           "type": "array",

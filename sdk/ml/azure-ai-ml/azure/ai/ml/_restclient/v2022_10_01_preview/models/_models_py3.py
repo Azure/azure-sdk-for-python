@@ -1148,6 +1148,9 @@ class AmlComputeProperties(msrest.serialization.Model):
      provisioned. false - Indicates that the compute nodes will have a private endpoint and no
      public IPs.
     :vartype enable_node_public_ip: bool
+    :ivar enable_batch_private_link: Whether or not to provision a private endpoint to underlying
+     batch account.
+    :vartype enable_batch_private_link: bool
     :ivar property_bag: A property bag containing additional properties.
     :vartype property_bag: any
     """
@@ -1178,6 +1181,7 @@ class AmlComputeProperties(msrest.serialization.Model):
         'target_node_count': {'key': 'targetNodeCount', 'type': 'int'},
         'node_state_counts': {'key': 'nodeStateCounts', 'type': 'NodeStateCounts'},
         'enable_node_public_ip': {'key': 'enableNodePublicIp', 'type': 'bool'},
+        'enable_batch_private_link': {'key': 'enableBatchPrivateLink', 'type': 'bool'},
         'property_bag': {'key': 'propertyBag', 'type': 'object'},
     }
 
@@ -1194,6 +1198,7 @@ class AmlComputeProperties(msrest.serialization.Model):
         subnet: Optional["ResourceId"] = None,
         remote_login_port_public_access: Optional[Union[str, "RemoteLoginPortPublicAccess"]] = "NotSpecified",
         enable_node_public_ip: Optional[bool] = True,
+        enable_batch_private_link: Optional[bool] = None,
         property_bag: Optional[Any] = None,
         **kwargs
     ):
@@ -1233,6 +1238,9 @@ class AmlComputeProperties(msrest.serialization.Model):
          provisioned. false - Indicates that the compute nodes will have a private endpoint and no
          public IPs.
         :paramtype enable_node_public_ip: bool
+        :keyword enable_batch_private_link: Whether or not to provision a private endpoint to
+         underlying batch account.
+        :paramtype enable_batch_private_link: bool
         :keyword property_bag: A property bag containing additional properties.
         :paramtype property_bag: any
         """
@@ -1253,6 +1261,7 @@ class AmlComputeProperties(msrest.serialization.Model):
         self.target_node_count = None
         self.node_state_counts = None
         self.enable_node_public_ip = enable_node_public_ip
+        self.enable_batch_private_link = enable_batch_private_link
         self.property_bag = property_bag
 
 
@@ -4118,18 +4127,18 @@ class BuildContext(msrest.serialization.Model):
 
     :ivar context_uri: Required. [Required] URI of the Docker build context used to build the
      image. Supports blob URIs on environment creation and may return blob or Git URIs.
-
-
+    
+    
      .. raw:: html
-
+    
         <seealso
      href="https://docs.docker.com/engine/reference/commandline/build/#extended-description" />.
     :vartype context_uri: str
     :ivar dockerfile_path: Path to the Dockerfile in the build context.
-
-
+    
+    
      .. raw:: html
-
+    
         <seealso href="https://docs.docker.com/engine/reference/builder/" />.
     :vartype dockerfile_path: str
     """
@@ -4153,18 +4162,18 @@ class BuildContext(msrest.serialization.Model):
         """
         :keyword context_uri: Required. [Required] URI of the Docker build context used to build the
          image. Supports blob URIs on environment creation and may return blob or Git URIs.
-
-
+        
+        
          .. raw:: html
-
+        
             <seealso
          href="https://docs.docker.com/engine/reference/commandline/build/#extended-description" />.
         :paramtype context_uri: str
         :keyword dockerfile_path: Path to the Dockerfile in the build context.
-
-
+        
+        
          .. raw:: html
-
+        
             <seealso href="https://docs.docker.com/engine/reference/builder/" />.
         :paramtype dockerfile_path: str
         """
@@ -5769,10 +5778,10 @@ class ComponentVersionProperties(AssetBase):
     :ivar is_archived: Is the asset archived?.
     :vartype is_archived: bool
     :ivar component_spec: Defines Component definition details.
-
-
+    
+    
      .. raw:: html
-
+    
         <see
      href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
      />.
@@ -5820,10 +5829,10 @@ class ComponentVersionProperties(AssetBase):
         :keyword is_archived: Is the asset archived?.
         :paramtype is_archived: bool
         :keyword component_spec: Defines Component definition details.
-
-
+        
+        
          .. raw:: html
-
+        
             <see
          href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
          />.
@@ -6467,6 +6476,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
      provisioned. false - Indicates that the compute nodes will have a private endpoint and no
      public IPs.
     :vartype enable_node_public_ip: bool
+    :ivar enable_batch_private_link: Whether or not to provision a private endpoint to underlying
+     batch account.
+    :vartype enable_batch_private_link: bool
     :ivar containers: Describes informations of containers on this ComputeInstance.
     :vartype containers: list[~azure.mgmt.machinelearningservices.models.ComputeInstanceContainer]
     :ivar data_disks: Describes informations of dataDisks on this ComputeInstance.
@@ -6485,6 +6497,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         'errors': {'readonly': True},
         'state': {'readonly': True},
         'last_operation': {'readonly': True},
+        'schedules': {'readonly': True},
         'containers': {'readonly': True},
         'data_disks': {'readonly': True},
         'data_mounts': {'readonly': True},
@@ -6511,6 +6524,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         'schedules': {'key': 'schedules', 'type': 'ComputeSchedules'},
         'idle_time_before_shutdown': {'key': 'idleTimeBeforeShutdown', 'type': 'str'},
         'enable_node_public_ip': {'key': 'enableNodePublicIp', 'type': 'bool'},
+        'enable_batch_private_link': {'key': 'enableBatchPrivateLink', 'type': 'bool'},
         'containers': {'key': 'containers', 'type': '[ComputeInstanceContainer]'},
         'data_disks': {'key': 'dataDisks', 'type': '[ComputeInstanceDataDisk]'},
         'data_mounts': {'key': 'dataMounts', 'type': '[ComputeInstanceDataMount]'},
@@ -6531,7 +6545,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         setup_scripts: Optional["SetupScripts"] = None,
         idle_time_before_shutdown: Optional[str] = None,
         enable_node_public_ip: Optional[bool] = None,
-        schedules: Optional["ComputeSchedules"] = None,
+        enable_batch_private_link: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -6571,6 +6585,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
          provisioned. false - Indicates that the compute nodes will have a private endpoint and no
          public IPs.
         :paramtype enable_node_public_ip: bool
+        :keyword enable_batch_private_link: Whether or not to provision a private endpoint to
+         underlying batch account.
+        :paramtype enable_batch_private_link: bool
         """
         super(ComputeInstanceProperties, self).__init__(**kwargs)
         self.vm_size = vm_size
@@ -6589,9 +6606,10 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         self.personal_compute_instance_settings = personal_compute_instance_settings
         self.setup_scripts = setup_scripts
         self.last_operation = None
-        self.schedules = schedules
+        self.schedules = None
         self.idle_time_before_shutdown = idle_time_before_shutdown
         self.enable_node_public_ip = enable_node_public_ip
+        self.enable_batch_private_link = enable_batch_private_link
         self.containers = None
         self.data_disks = None
         self.data_mounts = None
@@ -9489,10 +9507,10 @@ class EndpointScheduleAction(ScheduleActionBase):
     :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleActionType
     :ivar endpoint_invocation_definition: Required. [Required] Defines Schedule action definition
      details.
-
-
+    
+    
      .. raw:: html
-
+    
         <see href="TBD" />.
     :vartype endpoint_invocation_definition: any
     """
@@ -9516,10 +9534,10 @@ class EndpointScheduleAction(ScheduleActionBase):
         """
         :keyword endpoint_invocation_definition: Required. [Required] Defines Schedule action
          definition details.
-
-
+        
+        
          .. raw:: html
-
+        
             <see href="TBD" />.
         :paramtype endpoint_invocation_definition: any
         """
@@ -9791,29 +9809,29 @@ class EnvironmentVersionProperties(AssetBase):
     :vartype build: ~azure.mgmt.machinelearningservices.models.BuildContext
     :ivar conda_file: Standard configuration file used by Conda that lets you install any kind of
      package, including Python, R, and C/C++ packages.
-
-
+    
+    
      .. raw:: html
-
+    
         <see
      href="https://repo2docker.readthedocs.io/en/latest/config_files.html#environment-yml-install-a-conda-environment"
      />.
     :vartype conda_file: str
     :ivar environment_type: Environment type is either user managed or curated by the Azure ML
      service
-
-
+    
+    
      .. raw:: html
-
+    
         <see
      href="https://docs.microsoft.com/en-us/azure/machine-learning/resource-curated-environments"
      />. Possible values include: "Curated", "UserCreated".
     :vartype environment_type: str or ~azure.mgmt.machinelearningservices.models.EnvironmentType
     :ivar image: Name of the image that will be used for the environment.
-
-
+    
+    
      .. raw:: html
-
+    
         <seealso
      href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
      />.
@@ -9879,19 +9897,19 @@ class EnvironmentVersionProperties(AssetBase):
         :paramtype build: ~azure.mgmt.machinelearningservices.models.BuildContext
         :keyword conda_file: Standard configuration file used by Conda that lets you install any kind
          of package, including Python, R, and C/C++ packages.
-
-
+        
+        
          .. raw:: html
-
+        
             <see
          href="https://repo2docker.readthedocs.io/en/latest/config_files.html#environment-yml-install-a-conda-environment"
          />.
         :paramtype conda_file: str
         :keyword image: Name of the image that will be used for the environment.
-
-
+        
+        
          .. raw:: html
-
+        
             <seealso
          href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
          />.
