@@ -664,6 +664,7 @@ if uamqp_installed:
             message = message_type(
                 message=received, receive_mode=receiver._receive_mode, receiver=receiver
             )
+            message._uamqp_message = received
             receiver._last_received_sequenced_number = message.sequence_number
             return message
 

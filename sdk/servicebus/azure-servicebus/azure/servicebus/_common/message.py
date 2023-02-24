@@ -14,6 +14,7 @@ from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TY
 from azure.core.tracing import AbstractSpan
 
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
+from .._pyamqp.message import Message as pyamqp_Message
 from .._transport._pyamqp_transport import PyamqpTransport
 
 from .constants import (
@@ -58,7 +59,6 @@ if TYPE_CHECKING:
         )
     except ImportError:
         pass
-    from .._pyamqp.message import Message as pyamqp_Message
     from .._pyamqp.performatives import TransferFrame
     from ..aio._servicebus_receiver_async import (
         ServiceBusReceiver as AsyncServiceBusReceiver,
@@ -237,14 +237,6 @@ class ServiceBusMessage(
                 pass
         else:
             self._raw_amqp_message.annotations[key] = value
-
-    #def _to_outgoing_message(self) -> "ServiceBusMessage":
-    #    return self
-
-    #def _encode_message(self):
-    #    output = bytearray()
-    #    encode_payload(output, self.raw_amqp_message._to_outgoing_amqp_message())  # pylint: disable=protected-access
-    #    return output
 
     # TODO: test these
     @property
@@ -718,9 +710,7 @@ class ServiceBusMessageBatch(object):
 
         if size_after_add > self.max_size_in_bytes:
             raise MessageSizeExceededError(
-                message="ServiceBusMessageBatch has reached its size limit: {}".format(
-                    self.max_size_in_bytes
-                )
+                message=f"ServiceBusMessageBatch has reached its size limit: {self.max_size_in_bytes}"
             )
         self._amqp_transport.add_batch(self, outgoing_sb_message)  # pylint: disable=protected-access
         self._size = size_after_add

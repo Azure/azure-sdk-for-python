@@ -63,11 +63,13 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         )
         self.application_properties = (
             self._message.application_properties
-            if any(self._message.application_properties)
+            if self._message.application_properties and any(self._message.application_properties)
             else None
         )
         self.annotations = (
-            self._message.annotations if any(self._message.annotations) else None
+            self._message.annotations
+            if self._message.annotations and any(self._message.annotations)
+            else None
         )
         self.header = (
             LegacyMessageHeader(self._message.header) if self._message.header else None
@@ -241,6 +243,8 @@ class LegacyMessageHeader(object):
         )
 
     def get_header_obj(self):
+        # TODO: uamqp returned object has property: `time_to_live`.
+        # This Header has `ttl`.
         return Header(
             self.durable,
             self.priority,
