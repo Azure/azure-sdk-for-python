@@ -159,7 +159,7 @@ try:
                 }
             },
             "environmentVariables": {
-                "my-varaible": "value"
+                "my-variable": "value"
             }
         }
     )
