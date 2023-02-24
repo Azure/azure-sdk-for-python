@@ -278,14 +278,14 @@ class KeyVaultCertificate(object):
     :param properties: The certificate's properties.
     :type properties: ~azure.keyvault.certificates.CertificateProperties or None
     :param cer: CER contents of the X509 certificate.
-    :type cer: bytes or None
+    :type cer: bytearray or None
     """
 
     def __init__(
         self,
         policy: "Optional[CertificatePolicy]" = None,
         properties: "Optional[CertificateProperties]" = None,
-        cer: "Optional[bytes]" = None,
+        cer: "Optional[bytearray]" = None,
         **kwargs,
     ) -> None:
         self._properties = properties
@@ -312,7 +312,7 @@ class KeyVaultCertificate(object):
             key_id=certificate_bundle.kid,
             secret_id=certificate_bundle.sid,
             policy=policy,
-            cer=certificate_bundle.cer,
+            cer=certificate_bundle.cer,  # type: ignore
         )
 
     @property
@@ -364,10 +364,10 @@ class KeyVaultCertificate(object):
         return self._policy
 
     @property
-    def cer(self) -> "Optional[bytes]":
+    def cer(self) -> "Optional[bytearray]":
         """The CER contents of the certificate.
 
-        :rtype: bytes or None
+        :rtype: bytearray or None
         """
         return self._cer
 
@@ -1280,7 +1280,7 @@ class DeletedCertificate(KeyVaultCertificate):
     :param policy: The management policy of the deleted certificate.
     :type policy: ~azure.keyvault.certificates.CertificatePolicy or None
     :param cer: CER contents of the X509 certificate.
-    :type cer: bytes or None
+    :type cer: bytearray or None
     :param deleted_on: The time when the certificate was deleted, in UTC.
     :type deleted_on: ~datetime.datetime or None
     :param recovery_id: The url of the recovery object, used to identify and recover the deleted certificate.
@@ -1293,7 +1293,7 @@ class DeletedCertificate(KeyVaultCertificate):
         self,
         properties: "Optional[CertificateProperties]" = None,
         policy: "Optional[CertificatePolicy]" = None,
-        cer: "Optional[bytes]" = None,
+        cer: "Optional[bytearray]" = None,
         **kwargs,
     ) -> None:
         super(DeletedCertificate, self).__init__(properties=properties, policy=policy, cer=cer, **kwargs)
@@ -1333,7 +1333,7 @@ class DeletedCertificate(KeyVaultCertificate):
             key_id=deleted_certificate_bundle.kid,
             secret_id=deleted_certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(deleted_certificate_bundle.policy),
-            cer=deleted_certificate_bundle.cer,
+            cer=deleted_certificate_bundle.cer,  # type: ignore
             deleted_on=deleted_certificate_bundle.deleted_date,
             recovery_id=deleted_certificate_bundle.recovery_id,
             scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date,

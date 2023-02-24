@@ -19,4 +19,4 @@ command: >-
 
 code: azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-2021W10/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/codes/e736692c-8542-11eb-b746-6c2b59f8af4d/versions/1
 
-environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
