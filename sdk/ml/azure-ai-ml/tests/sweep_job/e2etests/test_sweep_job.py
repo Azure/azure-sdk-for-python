@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, is_live
 from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import MLClient, load_job
@@ -28,7 +28,7 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 )
 @pytest.mark.training_experiences_test
 class TestSweepJob(AzureRecordedTestCase):
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.e2etest
     def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
         set_bodiless_matcher()

@@ -102,7 +102,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert str(job.jobs["a"].component).startswith("azureml://registries/")
         assert str(job.jobs["a"].component).endswith("/components/hello_world_asset/versions/1")
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     @pytest.mark.parametrize(
         "pipeline_job_path",
@@ -163,7 +163,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         ):
             client.jobs.create_or_update(pipeline_job)
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.usefixtures("mock_anon_component_version")
     def test_pipeline_job_with_inline_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
@@ -205,7 +205,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component_id = pipeline_job.jobs["hello_world_component_inline_file"].component
         self.assert_component_is_anonymous(client, created_component_id)
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_pipeline_job__with_inline_component_file_in_component_folder(
         self,
         client: MLClient,
@@ -289,7 +289,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # name & version in a local component yml will be ignored if it's a sub-job of a pipeline job
         _ = client.jobs.create_or_update(pipeline_job)
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_output(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
@@ -358,7 +358,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component = client.components.get(arm_id.asset_name, arm_id.asset_version)
         assert created_component._is_anonymous
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_default_datastore_compute(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
@@ -578,7 +578,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -607,7 +607,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 1
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_pipeline_job_with_multiple_parallel_job(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
 
@@ -621,7 +621,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 3
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -771,7 +771,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         # original job did not change
         assert_job_input_output_types(job)
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_pipeline_job_with_sweep_node(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -822,7 +822,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             loaded_value = pydash.get(created_pipeline_dict, dot_key, None)
             assert loaded_value == expected_value, f"{dot_key} isn't as expected: {loaded_value} != {expected_value}"
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.parametrize(
         "policy_yaml_dict",
         [
@@ -1502,7 +1502,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert created_pipeline_job.settings.default_compute == singularity_compute_id
         assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_register_output_yaml(
         self,

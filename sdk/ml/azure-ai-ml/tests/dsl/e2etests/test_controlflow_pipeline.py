@@ -41,7 +41,7 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
 
 
 class TestIfElse(TestControlFlowPipeline):
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     @pytest.mark.usefixtures("mock_anon_component_version")
     def test_dsl_condition_pipeline(self, client: MLClient):
         set_bodiless_matcher()
@@ -100,7 +100,7 @@ class TestIfElse(TestControlFlowPipeline):
             },
         }
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_dsl_condition_pipeline_with_primitive_input(self, client: MLClient):
         set_bodiless_matcher()
 
@@ -144,7 +144,7 @@ class TestIfElse(TestControlFlowPipeline):
             },
         }
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_dsl_condition_pipeline_with_one_branch(self, client: MLClient):
         set_bodiless_matcher()
 

@@ -163,7 +163,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="component_name",
         )
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_parallel_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
 
@@ -241,7 +241,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="registry_component_name",
         )
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         set_bodiless_matcher()
 
@@ -615,7 +615,7 @@ class TestComponent(AzureRecordedTestCase):
         tensorflow_component_resource = client.components.create_or_update(component_entity)
         assert tensorflow_component_resource.distribution.__dict__ == tensorflow_distribution(has_strs=True)
 
-    @pytest.mark.skipif(condition=not islive(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
     def test_command_component_create_autoincrement(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
 
