@@ -604,7 +604,7 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 ## Long-running operation (LRO) customization
 
  Operations that are started by an initial call, then need to be monitored for status until completion are often represented as long-running operations (LRO).
- The `azure-core` library provides the [LROPoller][lro_poller] (and [AsyncLROPoller`][async_lro_poller]) protocols
+ The `azure-core` library provides the [LROPoller][lro_poller] (and [AsyncLROPoller][async_lro_poller]) protocols
  that expose methods to interact with the LRO such as waiting until the operation reaches a terminal state, checking its status, or
  providing a callback to do work on the final result when it is ready. If the LRO follows the 
  [Azure REST API guidelines][rest_api_guidelines_lro], 
@@ -889,10 +889,10 @@ class ServiceOperations:
 
     def begin_upload(self, data: AnyStr, **kwargs) -> LROPoller[JSON]:
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_method = CustomLROBasePolling(**kwargs)
+        polling_method = CustomLROPolling(**kwargs)
         
         # if continuation_token is provided, we should rehydrate the LRO using the from_continuation_token method
-        # which calls our implementation on the CustomLROBasePolling method
+        # which calls our implementation on the CustomLROPolling method
         if continuation_token is not None:
             return LROPoller.from_continuation_token(
                 continuation_token=continuation_token,
@@ -913,7 +913,54 @@ class ServiceOperations:
 ```
 
 Note that we need to account for a `continuation_token` being passed by the user, in which case we should not make the
-initial call again, but rather resume polling from the rehydrated state.
+initial call again, but rather resume polling from the rehydrated state. Since passing `continuation_token` doesn't 
+require the user to provide the parameters for the initial call, it can be helpful to add overloads to the method to 
+clarify its usage, especially in cases where required parameters become non-required:
+
+```python
+from typing import AnyStr, MutableMapping, Any, overload
+from azure.core.polling import LROPoller
+JSON = MutableMapping[str, Any]
+
+
+class ServiceOperations:
+    @overload
+    def begin_upload(self, data: AnyStr, **kwargs: Any) -> LROPoller[JSON]:
+        ...
+
+
+    @overload
+    def begin_upload(self, *, continuation_token: str, **kwargs: Any) -> LROPoller[JSON]:
+        ...
+
+    def begin_upload(self, *args, **kwargs) -> LROPoller[JSON]:
+        continuation_token = kwargs.pop("continuation_token", None)
+        polling_method = CustomLROPolling(**kwargs)
+        if continuation_token is not None:
+            return LROPoller.from_continuation_token(
+                continuation_token=continuation_token,
+                polling_method=polling_method,
+                deserialization_callback=lambda x: x,
+                client=self
+            )
+
+        data = kwargs.pop("data", None)
+        if data is None:
+            try:
+                data = args[0]
+            except IndexError:
+                raise TypeError("begin_upload() missing 1 required positional argument: 'data'")
+
+        pipeline_response = self._generated_client.create_upload(data, cls=lambda response, x, y: response, **kwargs)
+
+        return LROPoller(
+            client=self,
+            initial_response=pipeline_response,
+            deserialization_callback=lambda x: x,
+            polling_method=polling_method,
+        )
+```
+
 
 ### Poller API - LROPoller/AsyncLROPoller
 
@@ -963,7 +1010,7 @@ class ServiceOperations:
 
     def begin_upload(self, data: AnyStr, **kwargs) -> CustomLROPoller[JSON]:
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_method = CustomLROBasePolling(**kwargs)
+        polling_method = CustomLROPolling(**kwargs)
         if continuation_token is not None:
             return CustomLROPoller.from_continuation_token(
                 continuation_token=continuation_token,
