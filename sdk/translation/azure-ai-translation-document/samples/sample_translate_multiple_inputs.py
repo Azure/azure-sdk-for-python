@@ -33,6 +33,7 @@ USAGE:
 
 
 def sample_multiple_translation():
+    # [START multiple_translation]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import (
@@ -96,6 +97,7 @@ def sample_multiple_translation():
             print(f"Translated to language: {document.translated_to}\n")
         elif document.error:
             print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
+    # [END multiple_translation]
 
 
 if __name__ == '__main__':
