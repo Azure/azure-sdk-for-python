@@ -2247,10 +2247,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 await self._open()
                 # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
                 if self.execution_times == 1:
-                    from azure.servicebus._pyamqp.error import ErrorCondition, AMQPConnectionError
+                    from azure.servicebus._pyamqp.error import ErrorCondition, AMQPLinkError
                     self.execution_times += 1
                     self.error_raised = True
-                    raise AMQPConnectionError(condition=ErrorCondition.LinkDetachForced)
+                    raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced)
                 else:
                     self.execution_times += 1
                 if not self._message_iter:
