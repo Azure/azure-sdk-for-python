@@ -86,10 +86,10 @@ class FileServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-08-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-08-01-preview")
-        )  # type: Literal["2020-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FileServiceItems]
+        )
+        cls: ClsType[_models.FileServiceItems] = kwargs.pop("cls", None)
 
         request = build_list_request(
             resource_group_name=resource_group_name,
@@ -101,9 +101,9 @@ class FileServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -120,7 +120,9 @@ class FileServicesOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices"}  # type: ignore
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices"
+    }
 
     @overload
     async def set_service_properties(
@@ -217,7 +219,8 @@ class FileServicesOperations:
          File Service Name must be "default". "default" Required.
         :type file_services_name: str or ~azure.mgmt.storage.v2020_08_01_preview.models.Enum28
         :param parameters: The properties of file services in storage accounts, including CORS
-         (Cross-Origin Resource Sharing) rules. Is either a model type or a IO type. Required.
+         (Cross-Origin Resource Sharing) rules. Is either a FileServiceProperties type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.storage.v2020_08_01_preview.models.FileServiceProperties or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -238,11 +241,11 @@ class FileServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-08-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-08-01-preview")
-        )  # type: Literal["2020-08-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FileServiceProperties]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FileServiceProperties] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -266,9 +269,9 @@ class FileServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -285,7 +288,9 @@ class FileServicesOperations:
 
         return deserialized
 
-    set_service_properties.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}"}  # type: ignore
+    set_service_properties.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}"
+    }
 
     @distributed_trace_async
     async def get_service_properties(
@@ -320,10 +325,10 @@ class FileServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2020-08-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2020-08-01-preview")
-        )  # type: Literal["2020-08-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FileServiceProperties]
+        )
+        cls: ClsType[_models.FileServiceProperties] = kwargs.pop("cls", None)
 
         request = build_get_service_properties_request(
             resource_group_name=resource_group_name,
@@ -336,9 +341,9 @@ class FileServicesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -355,4 +360,6 @@ class FileServicesOperations:
 
         return deserialized
 
-    get_service_properties.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}"}  # type: ignore
+    get_service_properties.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}"
+    }
