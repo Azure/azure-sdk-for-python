@@ -904,7 +904,8 @@
               },
               "bool_param_output": {
                 "type": "boolean",
-                "is_control": "True"
+                "is_control": "True",
+                "early_available": "True"
               },
               "int_param_output": {
                 "type": "integer",

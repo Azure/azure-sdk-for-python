@@ -211,8 +211,6 @@ class TestIfElse(TestControlFlowPipeline):
 
         registered_pipeline_component = client.components.create_or_update(test_pipeline_component_control_output)
         rest_dict = registered_pipeline_component._to_dict()
-        # Update expected dict, early_available will be removed for subgraph output.
-        expected_dict["bool_param_output"] = {"type": "boolean", "is_control": True}
         assert rest_dict["outputs"] == expected_dict
 
     def test_do_while_combined_if_else(self, client: MLClient):
