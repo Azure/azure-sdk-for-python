@@ -27,12 +27,14 @@ from azure.storage.blob._shared.policies import StorageContentValidation
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
+from .fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
 from test_helpers import NonSeekableStream, ProgressTracker
 
 #------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 LARGE_BLOB_SIZE = 5 * 1024 + 5
+TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
 #------------------------------------------------------------------------------
 
 
@@ -321,8 +323,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         # Act
         self._setup(storage_account_name, storage_account_key)
         source_blob = self._create_blob(data=b"This is test data to be copied over.")
-        test_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
-                                                 key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
@@ -337,12 +337,12 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_name = self.get_resource_name("blobcopy")
         new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
         new_blob.upload_blob_from_url(
-            source_blob_url, include_source_blob_properties=True, cpk=test_cpk)
+            source_blob_url, include_source_blob_properties=True, cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
         with pytest.raises(HttpResponseError):
             new_blob.create_snapshot()
-        new_blob.create_snapshot(cpk=test_cpk)
+        new_blob.create_snapshot(cpk=TEST_ENCRYPTION_KEY)
         assert new_blob.create_snapshot is not None
 
     @BlobPreparer()
@@ -357,8 +357,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         new_blob_content_settings = ContentSettings(content_language='english')
         source_blob_tags = {"tag1": "sourcetag", "tag2": "secondsourcetag"}
         new_blob_tags = {"tag1": "copytag"}
-        new_blob_cpk = CustomerProvidedEncryptionKey(key_value="MDEyMzQ1NjcwMTIzNDU2NzAxMjM0NTY3MDEyMzQ1Njc=",
-                                                     key_hash="3QFFFpRA5+XANHqwwbT4yXDmrT/2JaLt/FKHjzhOdoE=")
+
         source_blob = self._create_blob(
             data=b"This is test data to be copied over.",
             tags=source_blob_tags,
@@ -382,8 +381,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
                                       tags=new_blob_tags,
                                       content_settings=new_blob_content_settings,
                                       overwrite=True,
-                                      cpk=new_blob_cpk)
-        new_blob_props = new_blob.get_blob_properties(cpk=new_blob_cpk)
+                                      cpk=TEST_ENCRYPTION_KEY)
+        new_blob_props = new_blob.get_blob_properties(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert that source blob properties did not take precedence.
         assert new_blob_props.tag_count == 1
