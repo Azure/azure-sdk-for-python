@@ -182,7 +182,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_file_url(
-            cls, file_url: str,  # type: str
+            cls, file_url: str,
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
