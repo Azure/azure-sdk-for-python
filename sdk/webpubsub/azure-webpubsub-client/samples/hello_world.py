@@ -1,7 +1,7 @@
 import os
 from azure.webpubsub.client import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
-from azure.webpubsub.client import (
+from azure.webpubsub.client.models import (
     OnConnectedArgs,
     OnGroupDataMessageArgs,
     OnDisconnectedArgs,

@@ -6,7 +6,7 @@
 # -------------------------------------------------------------------------
 import pytest
 import json
-from azure.webpubsub.client._models import (
+from azure.webpubsub.client.models._models import (
     JoinGroupMessage,
     LeaveGroupMessage,
     SendToGroupMessage,
@@ -83,7 +83,9 @@ def compare_dict(dict1, dict2):
         ),
         (
             "sendToGroup3",
-            SendToGroupMessage(group="group", data=memoryview("xyz".encode()), data_type="binary", ack_id=12345, no_echo=True),
+            SendToGroupMessage(
+                group="group", data=memoryview("xyz".encode()), data_type="binary", ack_id=12345, no_echo=True
+            ),
             {
                 "type": "sendToGroup",
                 "group": "group",
@@ -95,7 +97,9 @@ def compare_dict(dict1, dict2):
         ),
         (
             "sendToGroup4",
-            SendToGroupMessage(group="group", data=memoryview("xyz".encode()), data_type="protobuf", ack_id=12345, no_echo=True),
+            SendToGroupMessage(
+                group="group", data=memoryview("xyz".encode()), data_type="protobuf", ack_id=12345, no_echo=True
+            ),
             {
                 "type": "sendToGroup",
                 "group": "group",

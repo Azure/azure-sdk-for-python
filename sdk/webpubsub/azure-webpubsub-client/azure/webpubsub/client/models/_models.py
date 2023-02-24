@@ -15,8 +15,8 @@ import math
 import threading
 import base64
 from azure.core.pipeline.policies import RetryMode
-from . import _model_base
-from ._model_base import rest_field, AzureJSONEncoder
+from .. import _model_base
+from .._model_base import rest_field, AzureJSONEncoder
 from ._enums import WebPubSubDataType, UpstreamMessageType
 
 if sys.version_info >= (3, 9):

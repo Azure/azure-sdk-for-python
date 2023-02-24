@@ -8,7 +8,7 @@ import time
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer
-from azure.webpubsub.client import OnGroupDataMessageArgs
+from azure.webpubsub.client.models import OnGroupDataMessageArgs
 
 
 @pytest.mark.live_test_only
