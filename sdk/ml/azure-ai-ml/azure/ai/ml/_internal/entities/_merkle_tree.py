@@ -77,6 +77,17 @@ def _create_merkletree_helper(projectDir, rootNode, exclude_function):
                 _create_merkletree_helper(path, newNode, exclude_function)
 
 
+def _read_next_n_normalized_bytes(f, n):
+    content_in_bytes = []
+    while f.readable() and n > 0:
+        data = f.read(n).replace(b"\r\n", b"\n")
+        if not data:
+            break
+        content_in_bytes.append(data)
+        n -= len(data)
+    return b"".join(content_in_bytes)
+
+
 def _get_hash(filePath, name, file_type):
     h = hashlib.new(HASH_ALGORITHM)
     if not os.access(filePath, os.R_OK):
@@ -84,10 +95,8 @@ def _get_hash(filePath, name, file_type):
         print("Cannot access file, so excluded from snapshot: {}".format(filePath))
         return (None, None)
     with open(filePath, "rb") as f:
-        content_in_bytes = f.read()
-        content_in_bytes = content_in_bytes.replace(b"\r\n", b"\n")
         while True:
-            data = content_in_bytes
+            data = _read_next_n_normalized_bytes(f, HASH_FILE_CHUNK_SIZE)
             if not data:
                 break
             h.update(data)

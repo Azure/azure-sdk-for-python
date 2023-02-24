@@ -876,12 +876,11 @@ class TestComponent:
                 code.name = expected_snapshot_id + "1"
 
     def test_anonymous_component_reuse_auto_crlf(self):
-        file_path = Path("./tests/test_configs/internal/component-reuse/simple-command/copyfiles.ps1")
         with build_temp_folder(
             source_base_dir="./tests/test_configs/internal/component-reuse/",
             relative_dirs_to_copy=["simple-command"],
         ) as test_configs_dir:
-            with open(file_path, "rb") as f:
+            with open("./tests/test_configs/internal/component-reuse/simple-command/copyfiles.ps1", "rb") as f:
                 lf_content = f.read().replace(b"\r\n", b"\n")
                 crlf_content = lf_content.replace(b"\n", b"\r\n")
             yaml_path = Path(test_configs_dir) / "simple-command" / "powershell_copy.yaml"
@@ -889,7 +888,7 @@ class TestComponent:
             component: InternalComponent = load_component(source=yaml_path)
 
             for content in [lf_content, crlf_content]:
-                with open(file_path, "wb") as f:
+                with open(Path(test_configs_dir) / "simple-command" / "copyfiles.ps1", "wb") as f:
                     f.write(content)
                 # resolve and check snapshot directory
                 with component._resolve_local_code() as code:
