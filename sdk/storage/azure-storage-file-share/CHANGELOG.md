@@ -1,6 +1,6 @@
 # Release History
 
-## 12.11.0 (Unreleased)
+## 12.11.0 (2023-02-22)
 
 ### Features Added
 - Stable release of features from 12.11.0b1

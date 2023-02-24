@@ -349,12 +349,12 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:
         for collection in deployment.data_collector.collections:
-            data_name = deployment.endpoint_name + "-" + deployment.name + "-" + collection
+            data_name = f"{deployment.endpoint_name}-{deployment.name}-{collection}"
             data_object = Data(
                 name=data_name,
                 path=deployment.data_collector.destination.path
                 if deployment.data_collector.destination and deployment.data_collector.destination.path
-                else DEFAULT_MDC_PATH,
+                else f"{DEFAULT_MDC_PATH}/{deployment.endpoint_name}/{deployment.name}/{collection}",
                 is_anonymous=True,
             )
             result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
