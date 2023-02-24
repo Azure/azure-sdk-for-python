@@ -264,6 +264,8 @@ class ServiceBusReceiver(
             self._open()
             if not self._message_iter:
                 self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
+            elif wait_time:
+                self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(self._message_iter)
             message = self._build_message(pyamqp_message)
             if (
@@ -690,6 +692,7 @@ class ServiceBusReceiver(
         self._check_live()
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
+        print(f"MAX wait time {max_wait_time}")
         return self._iter_contextual_wrapper(max_wait_time)
 
     def receive_messages(
