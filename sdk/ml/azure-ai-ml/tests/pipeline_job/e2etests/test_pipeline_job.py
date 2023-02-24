@@ -57,6 +57,7 @@ def assert_job_input_output_types(job: PipelineJob):
 class TestPipelineJob(AzureRecordedTestCase):
     # Please set ML_TENANT_ID in your environment variables when recording this test.
     # It will to help sanitize RequestBody.Studio.endpoint for job creation request.
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_create(
         self,
         client: MLClient,
@@ -65,7 +66,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     ) -> None:
         set_bodiless_matcher()
         set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5", ignored_query_parameters="api-version"
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length", ignored_query_parameters="api-version"
         )
 
         params_override = [{"name": randstr("name")}]
