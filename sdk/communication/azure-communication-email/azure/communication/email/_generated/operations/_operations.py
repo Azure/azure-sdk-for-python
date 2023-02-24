@@ -331,9 +331,6 @@ class EmailOperations:
                             "name": "str"  # Name of the attachment. Required.
                         }
                     ],
-                    "disableUserEngagementTracking": bool,  # Optional. Indicates whether user
-                      engagement tracking should be disabled for this request if the resource-level
-                      user engagement tracking setting was already enabled in the control plane.
                     "headers": {
                         "str": "str"  # Optional. Custom email headers to be passed.
                     },
@@ -342,7 +339,10 @@ class EmailOperations:
                             "address": "str",  # Email address. Required.
                             "displayName": "str"  # Optional. Email display name.
                         }
-                    ]
+                    ],
+                    "userEngagementTrackingDisabled": bool  # Optional. Indicates whether user
+                      engagement tracking should be disabled for this request if the resource-level
+                      user engagement tracking setting was already enabled in the control plane.
                 }
 
                 # response body for status code(s): 202

@@ -24,7 +24,7 @@ pip install azure-communication-email
 
 ## Examples
 
-`EmailClient` provides the functionality to send email messages .
+`EmailClient` provides the functionality to send email messages.
 
 ## Authentication
 
@@ -82,7 +82,7 @@ message = {
 }
 
 poller = email_client.begin_send(message)
-response = poller.result()
+result = poller.result()
 ```
 
 ### Send an Email Message to Multiple Recipients
@@ -114,7 +114,7 @@ message = {
 }
 
 poller = email_client.begin_send(message)
-response = poller.result()
+result = poller.result()
 ```
 
 ### Send Email with Attachments
@@ -154,7 +154,7 @@ message = {
 }
 
 poller = email_client.begin_send(message)
-response = poller.result()
+result = poller.result()
 ```
 
 ## Troubleshooting
