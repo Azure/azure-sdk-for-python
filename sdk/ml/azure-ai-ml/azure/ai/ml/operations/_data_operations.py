@@ -328,12 +328,12 @@ class DataOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Job
         """
 
-        connection_name = data_import.source.connection.split(':')[-1]
+        connection_name = data_import.source.connection.split(":")[-1]
         experiment_name = "data_import_" + data_import.name
         display_name = experiment_name + "_" + connection_name
-        component_name = "import_data_database" \
-            if isinstance(data_import.source, Database) \
-            else "import_data_file_system"
+        component_name = (
+            "import_data_database" if isinstance(data_import.source, Database) else "import_data_file_system"
+        )
         import_job = import_data(
             description=display_name,
             display_name=display_name,
@@ -342,14 +342,14 @@ class DataOperations(_ScopeDependentOperations):
             source=data_import.source,
             outputs={"sink": Output(type=data_import.type, path=data_import.path, name=data_import.name)},
             is_deterministic=False,
-            component="azureml://registries/azureml-dev/components/" + component_name + "/versions/1"
+            component="azureml://registries/azureml-dev/components/" + component_name + "/versions/1",
         )
         import_pipeline = PipelineJob(
             description=display_name,
             display_name=display_name,
             experiment_name=experiment_name,
             properties={"azureml.materializationAssetName": data_import.name},
-            jobs={experiment_name: import_job}
+            jobs={experiment_name: import_job},
         )
         return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True)
 
