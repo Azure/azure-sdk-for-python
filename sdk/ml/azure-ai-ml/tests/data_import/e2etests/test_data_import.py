@@ -15,7 +15,7 @@ class TestDataImport(AzureRecordedTestCase):
     # It will to help sanitize RequestBody.Studio.endpoint for job creation request.
     def test_data_import(self, client: MLClient) -> None:
         data_import = load_data_import(
-            source="./tests/test_configs/data_import/data_import_database.yaml",
+            source="./tests/test_configs/data_import/data_import_e2e.yaml",
         )
         pipeline_job: PipelineJob = client.data.import_data(data_import)
 

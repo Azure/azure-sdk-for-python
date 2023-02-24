@@ -334,6 +334,9 @@ class DataOperations(_ScopeDependentOperations):
         component_name = (
             "import_data_database" if isinstance(data_import.source, Database) else "import_data_file_system"
         )
+        data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
+        if "{name}" not in data_import.path:
+            data_import.path = data_import.path.rstrip("/") + "/{name}"
         import_job = import_data(
             description=display_name,
             display_name=display_name,

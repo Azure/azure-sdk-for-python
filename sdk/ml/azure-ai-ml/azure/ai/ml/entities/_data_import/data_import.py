@@ -17,7 +17,7 @@ from azure.ai.ml.entities._util import load_from_dict
 class DataImport(Data):
     """Data import job to create the data asset.
 
-    :param name: Name of the resource.
+    :param name: Name of the asset.
     :type name: str
     :param version: Version of the resource.
     :type version: str
@@ -38,24 +38,14 @@ class DataImport(Data):
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        version: Optional[str] = None,
-        description: Optional[str] = None,
-        tags: Optional[Dict] = None,
-        properties: Optional[Dict] = None,
-        path: Optional[str] = None,  # if type is mltable, the path has to be a folder.
-        type: str = AssetTypes.URI_FOLDER,  # pylint: disable=redefined-builtin
-        source: Optional[Union[Dict, Database, FileSystem]] = None,
+        name: str,
+        path: str,
+        source: Union[Database, FileSystem],
         **kwargs,
     ):
         super().__init__(
             name=name,
-            version=version,
-            description=description,
-            tags=tags,
-            properties=properties,
             path=path,
-            type=type,
             **kwargs,
         )
         self.source = source

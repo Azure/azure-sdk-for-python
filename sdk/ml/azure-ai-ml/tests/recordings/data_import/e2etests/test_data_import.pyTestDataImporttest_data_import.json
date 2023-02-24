@@ -54,22 +54,22 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "3093",
+        "Content-Length": "2461",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 24 Feb 2023 00:01:17 GMT",
+        "Date": "Fri, 24 Feb 2023 19:47:32 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2022-12-01-preview",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-0254f27b20d1412a4a99c3d517447d85-c0f75ee3a7e9cb58-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-a4a6091ae577fc9af09076f2a7ca11a1-0d74f5160d93c0d5-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d7ac3d67-bd34-4f18-b9f1-602ea4cc001f",
+        "x-ms-correlation-request-id": "a351cf9c-b7ab-4c38-aadf-1958b2041fb4",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTCENTRALUS:20230224T000117Z:d7ac3d67-bd34-4f18-b9f1-602ea4cc001f",
-        "x-request-time": "3.851"
+        "x-ms-routing-request-id": "WESTUS:20230224T194733Z:a351cf9c-b7ab-4c38-aadf-1958b2041fb4",
+        "x-request-time": "3.026"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
@@ -148,8 +148,8 @@
           "sourceJobId": null
         },
         "systemData": {
-          "createdAt": "2023-02-24T00:01:16.9352911\u002B00:00",
-          "createdBy": "Renyi Xiong",
+          "createdAt": "2023-02-24T19:47:33.0249721\u002B00:00",
+          "createdBy": "Firstname Lastname",
           "createdByType": "User"
         }
       }
