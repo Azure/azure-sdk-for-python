@@ -323,7 +323,7 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
-        tag = kwargs.get("tag", None) if kwargs else None
+        tag = kwargs.pop("tag", None)
 
         if not tag:
             return self._operation_2022_12_preview.begin_cancel(
