@@ -108,6 +108,7 @@ class CodeOperations(_ScopeDependentOperations):
                 workspace_info = self._datastore_operation._service_client.workspaces.get(
                     resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
                 )
+                print("about to call get by hash")
                 existing_asset = _get_existing_snapshot_by_hash(
                     self._datastore_operation, asset_hash, workspace_info, requests_pipeline=self._requests_pipeline
                 )

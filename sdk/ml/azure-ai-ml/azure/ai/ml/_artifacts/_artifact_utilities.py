@@ -478,6 +478,7 @@ def _get_asset_by_hash(
         f"{workspace.name}/snapshots/getByHash?hash={hash_str}&hashVersion={hash_version}"
     )
 
+    print("now making the request")
     response = requests_pipeline.get(request_url, headers=request_headers)
     if response.status_code != 200:
         # If API is unresponsive, create new asset
@@ -610,6 +611,7 @@ def _get_existing_snapshot_by_hash(
     request_headers = {"Authorization": "Bearer " + token}
     request_headers["Content-Type"] = "application/json; charset=UTF-8"
 
+    print("about to make the call to get the asset by hash")
     existing_asset = _get_asset_by_hash(
         operations=datastore_operation,
         hash_str=asset_hash,
