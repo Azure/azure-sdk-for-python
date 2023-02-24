@@ -12,12 +12,14 @@ import signal
 import platform
 import shutil
 import tarfile
+from typing import Optional
 import zipfile
 
 import pytest
 import subprocess
 
-import urllib3
+from urllib3 import PoolManager, Retry
+from urllib3.exceptions import SSLError
 
 from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
@@ -34,13 +36,12 @@ TOOL_ENV_VAR = "PROXY_PID"
 
 AVAILABLE_TEST_PROXY_BINARIES = {
     "Windows": {
-        "AMD64":
-            {
-                "system": "Windows",
-                "machine": "AMD64",
-                "file_name": "test-proxy-standalone-win-x64.zip",
-                "executable": "Azure.Sdk.Tools.TestProxy.exe",
-            },
+        "AMD64": {
+            "system": "Windows",
+            "machine": "AMD64",
+            "file_name": "test-proxy-standalone-win-x64.zip",
+            "executable": "Azure.Sdk.Tools.TestProxy.exe",
+        },
     },
     "Linux": {
         "X86_64": {
@@ -54,7 +55,7 @@ AVAILABLE_TEST_PROXY_BINARIES = {
             "machine": "ARM64",
             "file_name": "test-proxy-standalone-linux-arm64.tar.gz",
             "executable": "Azure.Sdk.Tools.TestProxy",
-        }
+        },
     },
     "Darwin": {
         "X86_64": {
@@ -68,16 +69,13 @@ AVAILABLE_TEST_PROXY_BINARIES = {
             "machine": "ARM64",
             "file_name": "test-proxy-standalone-osx-arm64.zip",
             "executable": "Azure.Sdk.Tools.TestProxy",
-        }
-    }
+        },
+    },
 }
 
 PROXY_DOWNLOAD_URL = "https://github.com/Azure/azure-sdk-tools/releases/download/Azure.Sdk.Tools.TestProxy_{}/{}"
 
 discovered_roots = []
-
-from urllib3 import PoolManager, Retry
-from urllib3.exceptions import HTTPError
 
 if os.getenv("REQUESTS_CA_BUNDLE"):
     http_client = PoolManager(
@@ -100,11 +98,11 @@ def get_target_version(repo_root: str) -> str:
     return target_version
 
 
-def get_downloaded_version(repo_root: str) -> str:
+def get_downloaded_version(repo_root: str) -> Optional[str]:
     """Gets version from downloaded_version.txt within the local download folder"""
 
     downloaded_version_file = os.path.abspath(os.path.join(repo_root, ".proxy", "downloaded_version.txt"))
-    
+
     if os.path.exists(downloaded_version_file):
         with open(downloaded_version_file, "r") as f:
             version = f.read().strip()
@@ -112,9 +110,9 @@ def get_downloaded_version(repo_root: str) -> str:
     else:
         return None
 
+
 def ascend_to_root(start_dir_or_file: str) -> str:
-    """
-    Given a path, ascend until encountering a folder with a `.git` folder present within it. Return that directory.
+    """Given a path, ascend until encountering a folder with a `.git` folder present within it. Return that directory.
 
     :param str start_dir_or_file: The starting directory or file. Either is acceptable.
     """
@@ -143,7 +141,7 @@ def check_availability() -> None:
         response = http_client.request(method="GET", url=PROXY_CHECK_URL, timeout=10)
         return response.status
     # We get an SSLError if the container is started but the endpoint isn't available yet
-    except urllib3.exceptions.SSLError as sslError:
+    except SSLError as sslError:
         _LOGGER.debug(sslError)
         return 404
     except Exception as e:
@@ -173,16 +171,14 @@ def check_proxy_availability() -> None:
 
 
 def prepare_local_tool(repo_root: str) -> str:
-    """
-    Returns the path to a downloaded executable
-    """
+    """Returns the path to a downloaded executable."""
 
     target_proxy_version = get_target_version(repo_root)
 
     download_folder = os.path.join(repo_root, ".proxy")
 
-    system = platform.system() # Darwin, Linux, Windows
-    machine = platform.machine().upper() # arm64, x86_64, AMD64
+    system = platform.system()  # Darwin, Linux, Windows
+    machine = platform.machine().upper()  # arm64, x86_64, AMD64
 
     if system in AVAILABLE_TEST_PROXY_BINARIES:
         available_for_system = AVAILABLE_TEST_PROXY_BINARIES[system]
@@ -190,24 +186,21 @@ def prepare_local_tool(repo_root: str) -> str:
         if machine in available_for_system:
             target_info = available_for_system[machine]
 
-            download_necessary = True
             downloaded_version = get_downloaded_version(repo_root)
+            download_necessary = not downloaded_version == target_proxy_version
 
-            if downloaded_version == target_proxy_version:
-                download_necessary = False
-            else:
+            if download_necessary:
                 if os.path.exists(download_folder):
                     # cleanup the directory for re-download
                     shutil.rmtree(download_folder)
                 os.makedirs(download_folder)
 
-            if download_necessary:
                 download_url = PROXY_DOWNLOAD_URL.format(target_proxy_version, target_info["file_name"])
                 download_file = os.path.join(download_folder, target_info["file_name"])
-                
-                http = urllib3.PoolManager()
-                with open(download_file, 'wb') as out:
-                    r = http.request('GET', download_url, preload_content=False)
+
+                http_client = PoolManager()
+                with open(download_file, "wb") as out:
+                    r = http_client.request("GET", download_url, preload_content=False)
                     shutil.copyfileobj(r, out)
 
                 if download_file.endswith(".zip"):
@@ -217,24 +210,34 @@ def prepare_local_tool(repo_root: str) -> str:
                 if download_file.endswith(".tar.gz"):
                     with tarfile.open(download_file) as tar_ref:
                         tar_ref.extractall(download_folder)
-                
-                os.remove(download_file)
 
+                os.remove(download_file)  # Remove downloaded file after contents are extracted
+
+                # Record downloaded version for later comparison with target version in repo
                 with open(os.path.join(download_folder, "downloaded_version.txt"), "w") as f:
                     f.writelines([target_proxy_version])
 
             return os.path.abspath(os.path.join(download_folder, target_info["executable"])).replace("\\", "/")
         else:
-            _LOGGER.error(f"There are no available standalone proxy binaries for platform \"{machine}\".")
-            raise Exception("Unable to download a compatible standalone proxy for the current platform. File an issue against Azure/azure-sdk-tools with this error.")
+            _LOGGER.error(f'There are no available standalone proxy binaries for platform "{machine}".')
+            raise Exception(
+                "Unable to download a compatible standalone proxy for the current platform. File an issue against "
+                "Azure/azure-sdk-tools with this error."
+            )
     else:
-        _LOGGER.error(f"There are no available standalone proxy binaries for system \"{system}\".")
-        raise Exception("Unable to download a compatible standalone proxy for the current system. File an issue against Azure/azure-sdk-tools with this error.")
+        _LOGGER.error(f'There are no available standalone proxy binaries for system "{system}".')
+        raise Exception(
+            "Unable to download a compatible standalone proxy for the current system. File an issue against "
+            "Azure/azure-sdk-tools with this error."
+        )
+
 
 def start_test_proxy(request) -> None:
-    """Starts the test proxy and returns when the proxy server is ready to receive requests. In regular use
-    cases, this will auto-start the test-proxy docker container. In CI, or when environment variable TF_BUILD is set, this
-    function will start the test-proxy .NET tool."""
+    """Starts the test proxy and returns when the proxy server is ready to receive requests.
+
+    In regular use cases, this will auto-start the test-proxy docker container. In CI, or when environment variable
+    TF_BUILD is set, this function will start the test-proxy .NET tool.
+    """
 
     repo_root = ascend_to_root(request.node.items[0].module.__file__)
     check_system_proxy_availability()
@@ -262,8 +265,10 @@ def start_test_proxy(request) -> None:
 
             # always start the proxy with these two defaults set
             passenv = {
-                "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(root, "eng", "common", "testproxy", "dotnet-devcert.pfx"),
-                "ASPNETCORE_Kestrel__Certificates__Default__Password": "password"
+                "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(
+                    root, "eng", "common", "testproxy", "dotnet-devcert.pfx"
+                ),
+                "ASPNETCORE_Kestrel__Certificates__Default__Password": "password",
             }
             # if they are already set, override with what is in os.environ
             passenv.update(os.environ)
@@ -272,10 +277,9 @@ def start_test_proxy(request) -> None:
                 shlex.split(f'{tool_name} start --storage-location="{root}" -- --urls "{PROXY_URL}"'),
                 stdout=log,
                 stderr=log,
-                env=passenv
+                env=passenv,
             )
             os.environ[TOOL_ENV_VAR] = str(proc.pid)
-
 
     # Wait for the proxy server to become available
     check_proxy_availability()
@@ -296,6 +300,7 @@ def stop_test_proxy() -> None:
             os.kill(int(os.getenv(TOOL_ENV_VAR)), signal.SIGTERM)
         except:
             _LOGGER.debug("Unable to kill running test-proxy process.")
+
 
 @pytest.fixture(scope="session")
 def test_proxy(request) -> None:

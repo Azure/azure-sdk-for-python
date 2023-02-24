@@ -1,4 +1,9 @@
-from devtools_testutils import test_proxy
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from urllib3 import PoolManager, Retry
 import os
 from devtools_testutils.config import PROXY_URL
@@ -15,7 +20,7 @@ else:
 
 class TestProxyIntegration:
     # These tests are checking spinup of the proxy, not automatic redirect.
-    # Therefor we are not using recorded_by_proxy decorator or recorded_test fixture
+    # Therefore we are not using recorded_by_proxy decorator or recorded_test fixture
     def test_tool_spinup_http(self):
         result = http_client.request("GET", f"{PROXY_URL}/Info/Available")
         assert(result.status == 200)
