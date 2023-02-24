@@ -875,20 +875,38 @@ class TestComponent:
             ):
                 code.name = expected_snapshot_id + "1"
 
-    def test_snapshot_id_calculation(self):
-        origin_test_configs_dir = Path("./tests/test_configs/internal/")
-        with tempfile.TemporaryDirectory() as test_configs_dir:
-            shutil.copytree(
-                origin_test_configs_dir / "component-reuse/simple-command", Path(test_configs_dir) / "simple-command"
-            )
-
+    def test_anonymous_component_reuse_auto_crlf(self):
+        file_path = Path("./tests/test_configs/internal/component-reuse/simple-command/copyfiles.ps1")
+        with build_temp_folder(
+            source_base_dir="./tests/test_configs/internal/component-reuse/",
+            relative_dirs_to_copy=["simple-command"],
+        ) as test_configs_dir:
+            with open(file_path, "rb") as f:
+                lf_content = f.read().replace(b"\r\n", b"\n")
+                crlf_content = lf_content.replace(b"\n", b"\r\n")
             yaml_path = Path(test_configs_dir) / "simple-command" / "powershell_copy.yaml"
 
             component: InternalComponent = load_component(source=yaml_path)
-            # create some files/folders expected to ignore
-            code_pycache = yaml_path.parent / "__pycache__"
-            code_pycache.mkdir()
-            (code_pycache / "a.pyc").touch()
+
+            for content in [lf_content, crlf_content]:
+                with open(file_path, "wb") as f:
+                    f.write(content)
+                # resolve and check snapshot directory
+                with component._resolve_local_code() as code:
+                    # ANONYMOUS_COMPONENT_TEST_PARAMS[0] is the test params for simple-command
+                    assert code.name == ANONYMOUS_COMPONENT_TEST_PARAMS[0][1]
+
+    def test_snapshot_id_calculation(self):
+        with build_temp_folder(
+                source_base_dir="./tests/test_configs/internal/component-reuse/",
+                relative_dirs_to_copy=["simple-command"],
+                extra_files_to_create={
+                    "simple-command/__pycache__/a.pyc": None,
+                },
+        ) as test_configs_dir:
+            yaml_path = Path(test_configs_dir) / "simple-command" / "powershell_copy.yaml"
+
+            component: InternalComponent = load_component(source=yaml_path)
 
             # resolve and check snapshot directory
             with component._resolve_local_code() as code:

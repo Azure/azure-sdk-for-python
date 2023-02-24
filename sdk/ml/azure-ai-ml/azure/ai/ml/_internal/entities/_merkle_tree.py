@@ -84,11 +84,14 @@ def _get_hash(filePath, name, file_type):
         print("Cannot access file, so excluded from snapshot: {}".format(filePath))
         return (None, None)
     with open(filePath, "rb") as f:
+        content_in_bytes = f.read()
+        content_in_bytes = content_in_bytes.replace(b"\r\n", b"\n")
         while True:
-            data = f.read(HASH_FILE_CHUNK_SIZE)
+            data = content_in_bytes
             if not data:
                 break
             h.update(data)
+            break
     h.update(name.encode("utf-8"))
     h.update(file_type.encode("utf-8"))
     return (h.hexdigest(), h.digest())
