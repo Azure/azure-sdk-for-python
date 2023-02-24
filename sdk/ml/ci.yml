@@ -24,6 +24,9 @@ pr:
     include:
     - sdk/ml/
 
+variables:
+  Skip.ScheduledApiReview: 'true'
+
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
