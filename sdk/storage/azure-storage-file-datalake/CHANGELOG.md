@@ -4,6 +4,10 @@
 
 ### Features Added
 
+## 12.10.0 (2023-02-22)
+
+### Features Added
+
 ### Bugs Fixed
 
 ## 12.10.0b1 (Unreleased)

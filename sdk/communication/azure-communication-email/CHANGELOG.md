@@ -3,10 +3,19 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
-- Added the ability specify the API version by an optional `api_version` keyword parameter.
+- Adding support for AAD token authentication
+- Added the ability to specify the API version by an optional `api_version` keyword parameter.
 
 ### Breaking Changes
 - Made the SDK Model-less. Objects are now constructed using a dictionary instead of a model.
+- Reworked the SDK to follow the LRO (long running operation) approach. The 'begin_send' method returns a poller that can be used to check for the status of sending the email and retrieve the result. The return object has been adjusted to fit this approach. 
+- The `get_send_status` method has been removed.
+- The `sender` property has been changed to `senderAddress`.
+- The `email` property under the recipient object has been changed to `address`.
+- The `attachmentType` property under `attachments` has been changed to 'contentType'. This now accepts the attachment mime type.
+- The `contentBytesBase64` property under `attachments` has been changed to `contentInBase64`
+- Custom headers in the email message are now key/value pairs.
+- The importance property was removed. Email importance can now be specified through either the `x-priority` or `x-msmail-priority` custom headers.
 
 ### Bugs Fixed
 

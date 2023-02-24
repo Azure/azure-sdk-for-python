@@ -29,7 +29,7 @@ jobs:
     type: command
     component:
       command: echo Hello World &
-      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
       inputs:
         component_in_number:
           type: integer
@@ -49,7 +49,7 @@ jobs:
     type: command
 
     command: pip freeze && echo ${{inputs.literal_input}}
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     inputs:
       "test1": "${{parent.inputs.job_data}}"
       "test2": "${{parent.inputs.job_data_uri}}"
@@ -61,7 +61,7 @@ jobs:
     type: command
 
     command: pip freeze && echo ${{inputs.test1}}
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     inputs:
       "test1": "${{parent.inputs.job_data}}"
       "test2": "${{parent.jobs.hello_world_inline_commandjob_1.outputs.test1}}"
@@ -71,7 +71,7 @@ jobs:
     type: command
 
     command: pip freeze && echo ${{inputs.test1}}
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     inputs:
       "test1": "${{parent.inputs.job_data}}"
       "test2": "${{parent.jobs.hello_world_component_before.outputs.test1}}"
@@ -84,7 +84,7 @@ jobs:
     type: command
     component:
       command: echo Hello World
-      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
       inputs:
         component_in_number:
           type: integer
