@@ -159,6 +159,8 @@ def list_rules_op(status_code, rules, description):
             amqp_rule = entry[b'rule-description']
             rule_description = build_rule_description(amqp_rule)
             rule_descriptions.append(rule_description)
+        
+        return rule_descriptions
 
         
     if status_code in [202, 204]:
@@ -199,17 +201,41 @@ def build_rule_description(description):
     return rule_description
 
 def build_filter(filter):
+    filter_obj = None
     if len(filter) == 2 and filter[1] == 20: # this is a sql filter
-        filter = SqlRuleFilter(sql_expression=filter[0])
-        return filter
+        filter_obj = SqlRuleFilter(sql_expression=filter[0])
+        return filter_obj
+    if len(filter) == 9: #correlation filter
+        correlation_id = filter[0]
+        message_id = filter[1]
+        to = filter[2]
+        reply_to = filter[3]
+        label = filter[4]
+        session_id = filter[5]
+        reply_to_session_id = filter[6]
+        content_type = filter[7]
+        properties = filter[8]
+
+        filter_obj = CorrelationRuleFilter(
+            correlation_id=correlation_id,
+            message_id=message_id,
+            to = to,
+            reply_to = reply_to,
+            session_id = session_id,
+            reply_to_session_id = reply_to_session_id,
+            label=label,
+            content_type = content_type,
+            properties = properties,
+
+        )
+        return filter_obj
     pass
 
 def build_rule_action(action):
-    action = None
+    action_obj = None
 
     if action:
-        pass
-
-    return action
-
+        action_obj = SqlRuleAction(sql_expression=action[0])
+    
+    return action_obj
         
