@@ -14,7 +14,6 @@ from ._generated.models import (
     MultiLanguageInput,
     AgeResolution,
     AreaResolution,
-    BooleanResolution,
     CurrencyResolution,
     DateTimeResolution,
     InformationResolution,
@@ -339,34 +338,27 @@ class DetectedLanguage(DictMixin):
     """DetectedLanguage contains the predicted language found in text,
     its confidence score, and its ISO 639-1 representation.
 
-    :ivar name: Long name of a detected language (e.g. English,
-        French).
-    :vartype name: str
-    :ivar iso6391_name: A two letter representation of the detected
-        language according to the ISO 639-1 standard (e.g. en, fr).
-    :vartype iso6391_name: str
-    :ivar confidence_score: A confidence score between 0 and 1. Scores close
-        to 1 indicate 100% certainty that the identified language is true.
-    :vartype confidence_score: float
-    :ivar Optional[str] script: Identifies the script of the input document. Possible values: "Latin".
-
     .. versionadded:: 2022-10-01-preview
         The *script* property.
     """
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        iso6391_name: str,
-        confidence_score: float,
-        script: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        self.name = name
-        self.iso6391_name = iso6391_name
-        self.confidence_score = confidence_score
-        self.script = script
+    name: str
+    """Long name of a detected language (e.g. English,
+        French)."""
+    iso6391_name: str
+    """A two letter representation of the detected
+        language according to the ISO 639-1 standard (e.g. en, fr)."""
+    confidence_score: float
+    """A confidence score between 0 and 1. Scores close
+        to 1 indicate 100% certainty that the identified language is true."""
+    script: Optional[str] = None
+    """Identifies the script of the input document. Possible value is 'Latin'."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.name = kwargs.get("name", None)
+        self.iso6391_name = kwargs.get("iso6391_name", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
+        self.script = kwargs.get("script", None)
 
     @classmethod
     def _from_generated(cls, language):
@@ -389,46 +381,37 @@ class RecognizeEntitiesResult(DictMixin):
     """RecognizeEntitiesResult is a result object which contains
     the recognized entities from a particular document.
 
-    :ivar id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :vartype id: str
-    :ivar entities: Recognized entities in the document.
-    :vartype entities:
-        list[~azure.ai.textanalytics.CategorizedEntity]
-    :ivar warnings: Warnings encountered while processing document. Results will still be returned
-        if there are warnings, but they may not be fully accurate.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics:
-        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a RecognizeEntitiesResult.
-    :ivar str kind: The text analysis kind - "EntityRecognition".
-
     .. versionadded:: 2022-10-01-preview
         The *detected_language* property.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        entities: List["CategorizedEntity"],
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["TextDocumentStatistics"] = None,
-        detected_language: Optional[DetectedLanguage] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.entities = entities
-        self.warnings = warnings
-        self.statistics = statistics
-        self.detected_language = detected_language
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document."""
+    entities: List["CategorizedEntity"]
+    """Recognized entities in the document."""
+    warnings: List["TextAnalyticsWarning"]
+    """Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate."""
+    statistics: Optional["TextDocumentStatistics"] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    detected_language: Optional[DetectedLanguage] = None
+    """If automatic language detection is enabled, then this
+        field will contain the DetectedLanguage for the document."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a RecognizeEntitiesResult."""
+    kind: Literal["EntityRecognition"] = "EntityRecognition"
+    """The text analysis kind - "EntityRecognition"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.detected_language = kwargs.get("detected_language", None)
         self.is_error: Literal[False] = False
         self.kind: Literal["EntityRecognition"] = "EntityRecognition"
 
@@ -446,49 +429,41 @@ class RecognizePiiEntitiesResult(DictMixin):
     the recognized Personally Identifiable Information (PII) entities
     from a particular document.
 
-    :ivar str id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :ivar entities: Recognized PII entities in the document.
-    :vartype entities:
-        list[~azure.ai.textanalytics.PiiEntity]
-    :ivar str redacted_text: Returns the text of the input document with all of the PII information
-        redacted out.
-    :ivar warnings: Warnings encountered while processing document. Results will still be returned
-        if there are warnings, but they may not be fully accurate.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics:
-        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a RecognizePiiEntitiesResult.
-    :ivar str kind: The text analysis kind - "PiiEntityRecognition".
-
     .. versionadded:: 2022-10-01-preview
         The *detected_language* property.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        entities: List["PiiEntity"],
-        redacted_text: str,
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["TextDocumentStatistics"] = None,
-        detected_language: Optional[DetectedLanguage] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.entities = entities
-        self.redacted_text = redacted_text
-        self.warnings = warnings
-        self.statistics = statistics
-        self.detected_language = detected_language
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document."""
+    entities: List["PiiEntity"]
+    """Recognized PII entities in the document."""
+    redacted_text: str
+    """Returns the text of the input document with all of the PII information
+        redacted out."""
+    warnings: List["TextAnalyticsWarning"]
+    """Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate."""
+    statistics: Optional["TextDocumentStatistics"] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    detected_language: Optional[DetectedLanguage] = None
+    """If automatic language detection is enabled, then this
+        field will contain the DetectedLanguage for the document."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a RecognizePiiEntitiesResult."""
+    kind: Literal["PiiEntityRecognition"] = "PiiEntityRecognition"
+    """The text analysis kind - "PiiEntityRecognition"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.redacted_text = kwargs.get("redacted_text", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.detected_language = kwargs.get('detected_language', None)
         self.is_error: Literal[False] = False
         self.kind: Literal["PiiEntityRecognition"] = "PiiEntityRecognition"
 
@@ -506,59 +481,49 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
     AnalyzeHealthcareEntitiesResult contains the Healthcare entities from a
     particular document.
 
-    :ivar str id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :ivar entities: Identified Healthcare entities in the document, i.e. in
-        the document "The subject took ibuprofen", "ibuprofen" is an identified entity
-        from the document.
-    :vartype entities:
-        list[~azure.ai.textanalytics.HealthcareEntity]
-    :ivar entity_relations: Identified Healthcare relations between entities. For example, in the
-        document "The subject took 100mg of ibuprofen", we would identify the relationship
-        between the dosage of 100mg and the medication ibuprofen.
-    :vartype entity_relations: list[~azure.ai.textanalytics.HealthcareRelation]
-    :ivar warnings: Warnings encountered while processing document. Results will still be returned
-        if there are warnings, but they may not be fully accurate.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If show_stats=true was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics:
-        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar fhir_bundle: If `fhir_version` is passed, this will contain a
-        FHIR compatible object for consumption in other Healthcare tools. For additional
-        information see https://www.hl7.org/fhir/overview.html.
-    :vartype fhir_bundle: Optional[dict[str, any]]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the detected language for the document.
-    :vartype detected_language: Optional[str]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a AnalyzeHealthcareEntitiesResult.
-    :ivar str kind: The text analysis kind - "Healthcare".
-
     .. versionadded:: 2022-10-01-preview
         The *fhir_bundle* and *detected_language* properties.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        entities: List["HealthcareEntity"],
-        entity_relations: List["HealthcareRelation"],
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["TextDocumentStatistics"] = None,
-        fhir_bundle: Optional[Dict[str, Any]] = None,
-        detected_language: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.entities = entities
-        self.entity_relations = entity_relations
-        self.warnings = warnings
-        self.statistics = statistics
-        self.fhir_bundle = fhir_bundle
-        self.detected_language = detected_language
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document."""
+    entities: List["HealthcareEntity"]
+    """Identified Healthcare entities in the document, i.e. in
+        the document "The subject took ibuprofen", "ibuprofen" is an identified entity
+        from the document."""
+    entity_relations: List["HealthcareRelation"]
+    """Identified Healthcare relations between entities. For example, in the
+        document "The subject took 100mg of ibuprofen", we would identify the relationship
+        between the dosage of 100mg and the medication ibuprofen."""
+    warnings: List["TextAnalyticsWarning"]
+    """Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate."""
+    statistics: Optional["TextDocumentStatistics"] = None
+    """If show_stats=true was specified in the request this
+        field will contain information about the document payload."""
+    fhir_bundle: Optional[Dict[str, Any]] = None
+    """If `fhir_version` is passed, this will contain a
+        FHIR compatible object for consumption in other Healthcare tools. For additional
+        information see https://www.hl7.org/fhir/overview.html."""
+    detected_language: Optional[str] = None
+    """If automatic language detection is enabled, then this
+        field will contain the detected language for the document."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a AnalyzeHealthcareEntitiesResult."""
+    kind: Literal["Healthcare"] = "Healthcare"
+    """The text analysis kind - "Healthcare"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.entity_relations = kwargs.get("entity_relations", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.fhir_bundle = kwargs.get("fhir_bundle", None)
+        self.detected_language = kwargs.get('detected_language', None)
         self.is_error: Literal[False] = False
         self.kind: Literal["Healthcare"] = "Healthcare"
 
@@ -612,31 +577,24 @@ class HealthcareRelation(DictMixin):
     Every HealthcareRelation is an entity graph of a certain relation type,
     where all entities are connected and have specific roles within the relation context.
 
-    :ivar relation_type: The type of relation, i.e. the relationship between "100mg" and
-        "ibuprofen" in the document "The subject took 100 mg of ibuprofen" is "DosageOfMedication".
-        Possible values found in :class:`~azure.ai.textanalytics.HealthcareEntityRelation`
-    :vartype relation_type: str
-    :ivar roles: The roles present in this relation. I.e., in the document
-        "The subject took 100 mg of ibuprofen", the present roles are "Dosage" and "Medication".
-    :vartype roles: list[~azure.ai.textanalytics.HealthcareRelationRole]
-    :ivar confidence_score: Confidence score between 0 and 1 of the extracted relation.
-    :vartype confidence_score: Optional[float]
-
     .. versionadded:: 2022-10-01-preview
         The *confidence_score* property.
     """
 
-    def __init__(
-        self,
-        *,
-        relation_type: str,
-        roles: List["HealthcareRelationRole"],
-        confidence_score: Optional[float] = None,
-        **kwargs: Any
-    ) -> None:
-        self.relation_type = relation_type
-        self.roles = roles
-        self.confidence_score = confidence_score
+    relation_type: str
+    """The type of relation, i.e. the relationship between "100mg" and
+        "ibuprofen" in the document "The subject took 100 mg of ibuprofen" is "DosageOfMedication".
+        Possible values found in :class:`~azure.ai.textanalytics.HealthcareEntityRelation`"""
+    roles: List["HealthcareRelationRole"]
+    """The roles present in this relation. I.e., in the document
+        "The subject took 100 mg of ibuprofen", the present roles are "Dosage" and "Medication"."""
+    confidence_score: Optional[float] = None
+    """Confidence score between 0 and 1 of the extracted relation."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.relation_type = kwargs.get("relation_type", None)
+        self.roles = kwargs.get("roles", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
 
     @classmethod
     def _from_generated(cls, healthcare_relation_result, entities):
@@ -665,20 +623,20 @@ class HealthcareRelationRole(DictMixin):
     For example, in "The subject took 100 mg of ibuprofen",
     "100 mg" is a dosage entity fulfilling the role "Dosage"
     in the extracted relation "DosageOfMedication".
-
-    :ivar name: The role of the entity in the relationship. I.e., in the relation
-        "The subject took 100 mg of ibuprofen", the dosage entity "100 mg" has role
-        "Dosage".
-    :vartype name: str
-    :ivar entity: The entity that is present in the relationship. For example, in
-        "The subject took 100 mg of ibuprofen", this property holds the dosage entity
-        of "100 mg".
-    :vartype entity: ~azure.ai.textanalytics.HealthcareEntity
     """
 
-    def __init__(self, *, name: str, entity: "HealthcareEntity", **kwargs: Any) -> None:
-        self.name = name
-        self.entity = entity
+    name: str
+    """The role of the entity in the relationship. I.e., in the relation
+        "The subject took 100 mg of ibuprofen", the dosage entity "100 mg" has role
+        "Dosage"."""
+    entity: "HealthcareEntity"
+    """The entity that is present in the relationship. For example, in
+        "The subject took 100 mg of ibuprofen", this property holds the dosage entity
+        of "100 mg"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.name = kwargs.get("name", None)
+        self.entity = kwargs.get("entity", None)
 
     @staticmethod
     def _get_entity(healthcare_role_result, entities):
@@ -702,38 +660,31 @@ class HealthcareRelationRole(DictMixin):
 class DetectLanguageResult(DictMixin):
     """DetectLanguageResult is a result object which contains
     the detected language of a particular document.
-
-    :ivar id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :vartype id: str
-    :ivar primary_language: The primary language detected in the document.
-    :vartype primary_language: ~azure.ai.textanalytics.DetectedLanguage
-    :ivar warnings: Warnings encountered while processing document. Results will still be returned
-        if there are warnings, but they may not be fully accurate.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics:
-        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a DetectLanguageResult.
-    :ivar str kind: The text analysis kind - "LanguageDetection".
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        primary_language: DetectedLanguage,
-        warnings: List["TextAnalyticsWarning"],
-        statistics: Optional["TextDocumentStatistics"] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.primary_language = primary_language
-        self.warnings = warnings
-        self.statistics = statistics
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document."""
+    primary_language: DetectedLanguage
+    """The primary language detected in the document."""
+    warnings: List["TextAnalyticsWarning"]
+    """Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate."""
+    statistics: Optional["TextDocumentStatistics"] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a DetectLanguageResult."""
+    kind: Literal["LanguageDetection"] = "LanguageDetection"
+    """The text analysis kind - "LanguageDetection"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.primary_language = kwargs.get("primary_language", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
         self.is_error: Literal[False] = False
         self.kind: Literal["LanguageDetection"] = "LanguageDetection"
 
@@ -749,73 +700,58 @@ class CategorizedEntity(DictMixin):
     """CategorizedEntity contains information about a particular
     entity found in text.
 
-    :ivar text: Entity text as appears in the request.
-    :vartype text: str
-    :ivar category: Entity category, such as Person/Location/Org/SSN etc
-    :vartype category: str
-    :ivar subcategory: Entity subcategory, such as Age/Year/TimeRange etc
-    :vartype subcategory: Optional[str]
-    :ivar int length: The entity text length.  This value depends on the value of the
-        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default.
-    :ivar int offset: The entity text offset from the start of the document.
-        The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoints by default.
-    :ivar confidence_score: Confidence score between 0 and 1 of the extracted
-        entity.
-    :vartype confidence_score: float
-    :ivar resolutions: The collection of entity resolution objects. More information can be found here:
-        https://aka.ms/azsdk/language/ner-resolutions
-    :vartype resolutions: Optional[list[AgeResolution or AreaResolution or BooleanResolution or
-        CurrencyResolution or DateTimeResolution or InformationResolution or LengthResolution or
-        NumberResolution or NumericRangeResolution or OrdinalResolution or SpeedResolution or
-        TemperatureResolution or TemporalSpanResolution or VolumeResolution or WeightResolution]]
-
     .. versionadded:: v3.1
         The *offset* and *length* properties.
     .. versionadded:: 2022-10-01-preview
         The *resolutions* property.
     """
 
-    def __init__(
-        self,
-        *,
-        text: str,
-        category: str,
-        length: int,
-        offset: int,
-        confidence_score: float,
-        subcategory: Optional[str] = None,
-        resolutions: Optional[
-            List[
-                Union[
-                    AgeResolution,
-                    AreaResolution,
-                    BooleanResolution,
-                    CurrencyResolution,
-                    DateTimeResolution,
-                    InformationResolution,
-                    LengthResolution,
-                    NumberResolution,
-                    NumericRangeResolution,
-                    OrdinalResolution,
-                    SpeedResolution,
-                    TemperatureResolution,
-                    TemporalSpanResolution,
-                    VolumeResolution,
-                    WeightResolution,
-                ]
-            ]
-        ],
-        **kwargs: Any
-    ) -> None:
-        self.text = text
-        self.category = category
-        self.subcategory = subcategory
-        self.length = length
-        self.offset = offset
-        self.confidence_score = confidence_score
-        self.resolutions = resolutions
+    text: str
+    """Entity text as appears in the request."""
+    category: str
+    """Entity category, such as Person/Location/Org/SSN etc"""
+    length: int
+    """The entity text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
+        by default."""
+    offset: int
+    """The entity text offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default."""
+    confidence_score: float
+    """Confidence score between 0 and 1 of the extracted
+        entity."""
+    subcategory: Optional[str] = None
+    """Entity subcategory, such as Age/Year/TimeRange etc"""
+    resolutions: List[
+        Union[
+            AgeResolution,
+            AreaResolution,
+            CurrencyResolution,
+            DateTimeResolution,
+            InformationResolution,
+            LengthResolution,
+            NumberResolution,
+            NumericRangeResolution,
+            OrdinalResolution,
+            SpeedResolution,
+            TemperatureResolution,
+            TemporalSpanResolution,
+            VolumeResolution,
+            WeightResolution,
+        ]
+    ]
+    """The collection of entity resolution objects. More information can be found here:
+        https://aka.ms/azsdk/language/ner-resolutions"""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.text = kwargs.get("text", None)
+        self.category = kwargs.get("category", None)
+        self.subcategory = kwargs.get("subcategory", None)
+        self.length = kwargs.get("length", None)
+        self.offset = kwargs.get("offset", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
+        self.resolutions = kwargs.get("resolutions", None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -826,6 +762,7 @@ class CategorizedEntity(DictMixin):
             # the correct encoding was not introduced for v3.0
             offset = None
             length = None
+        entity_resolutions = entity.resolutions if hasattr(entity, "resolutions") else None
         return cls(
             text=entity.text,
             category=entity.category,
@@ -833,7 +770,7 @@ class CategorizedEntity(DictMixin):
             length=length,
             offset=offset,
             confidence_score=entity.confidence_score,
-            resolutions=entity.resolutions if hasattr(entity, "resolutions") else None
+            resolutions=entity_resolutions or []
         )
 
     def __repr__(self) -> str:
@@ -847,39 +784,34 @@ class CategorizedEntity(DictMixin):
 class PiiEntity(DictMixin):
     """PiiEntity contains information about a Personally Identifiable
     Information (PII) entity found in text.
-
-    :ivar str text: Entity text as appears in the request.
-    :ivar str category: Entity category, such as Financial Account
-        Identification/Social Security Number/Phone Number, etc.
-    :ivar Optional[str] subcategory: Entity subcategory, such as Credit Card/EU
-        Phone number/ABA Routing Numbers, etc.
-    :ivar int length: The PII entity text length.  This value depends on the value
-        of the `string_index_type` parameter specified in the original request, which
-        is UnicodeCodePoints by default.
-    :ivar int offset: The PII entity text offset from the start of the document.
-        This value depends on the value of the `string_index_type` parameter specified
-        in the original request, which is UnicodeCodePoints by default.
-    :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
-        entity.
     """
 
-    def __init__(
-        self,
-        *,
-        text: str,
-        category: str,
-        length: int,
-        offset: int,
-        confidence_score: float,
-        subcategory: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        self.text = text
-        self.category = category
-        self.subcategory = subcategory
-        self.length = length
-        self.offset = offset
-        self.confidence_score = confidence_score
+    text: str
+    """Entity text as appears in the request."""
+    category: str
+    """Entity category, such as Financial Account
+        Identification/Social Security Number/Phone Number, etc."""
+    length: int
+    """The PII entity text length.  This value depends on the value
+        of the `string_index_type` parameter specified in the original request, which
+        is UnicodeCodePoints by default."""
+    offset: int
+    """The PII entity text offset from the start of the document.
+        This value depends on the value of the `string_index_type` parameter specified
+        in the original request, which is UnicodeCodePoints by default."""
+    confidence_score: float
+    """Confidence score between 0 and 1 of the extracted entity."""
+    subcategory: Optional[str] = None
+    """Entity subcategory, such as Credit Card/EU
+        Phone number/ABA Routing Numbers, etc."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.text = kwargs.get("text", None)
+        self.category = kwargs.get("category", None)
+        self.subcategory = kwargs.get("subcategory", None)
+        self.length = kwargs.get("length", None)
+        self.offset = kwargs.get("offset", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -901,53 +833,46 @@ class PiiEntity(DictMixin):
 
 class HealthcareEntity(DictMixin):
     """HealthcareEntity contains information about a Healthcare entity found in text.
-
-    :ivar str text: Entity text as appears in the document.
-    :ivar Optional[str] normalized_text: Normalized version of the raw `text` we extract
-        from the document. Not all `text` will have a normalized version.
-    :ivar str category: Entity category, see the :class:`~azure.ai.textanalytics.HealthcareEntityCategory`
-        type for possible healthcare entity categories.
-    :ivar Optional[str] subcategory: Entity subcategory.
-    :ivar assertion: Contains various assertions about this entity. For example, if
-        an entity is a diagnosis, is this diagnosis 'conditional' on a symptom?
-        Are the doctors 'certain' about this diagnosis? Is this diagnosis 'associated'
-        with another diagnosis?
-    :vartype assertion: Optional[~azure.ai.textanalytics.HealthcareEntityAssertion]
-    :ivar int length: The entity text length.  This value depends on the value
-        of the `string_index_type` parameter specified in the original request, which is
-        UnicodeCodePoints by default.
-    :ivar int offset: The entity text offset from the start of the document.
-        This value depends on the value of the `string_index_type` parameter specified
-        in the original request, which is UnicodeCodePoints by default.
-    :ivar float confidence_score: Confidence score between 0 and 1 of the extracted
-        entity.
-    :ivar data_sources: A collection of entity references in known data sources.
-    :vartype data_sources: Optional[list[~azure.ai.textanalytics.HealthcareEntityDataSource]]
     """
 
-    def __init__(
-        self,
-        *,
-        text: str,
-        category: str,
-        length: int,
-        offset: int,
-        confidence_score: float,
-        subcategory: Optional[str] = None,
-        assertion: Optional["HealthcareEntityAssertion"] = None,
-        normalized_text: Optional[str] = None,
-        data_sources: Optional[List["HealthcareEntityDataSource"]],
-        **kwargs: Any
-    ) -> None:
-        self.text = text
-        self.normalized_text = normalized_text
-        self.category = category
-        self.subcategory = subcategory
-        self.assertion = assertion
-        self.length = length
-        self.offset = offset
-        self.confidence_score = confidence_score
-        self.data_sources = data_sources
+    text: str
+    """Entity text as appears in the document."""
+    category: str
+    """Entity category, see the :class:`~azure.ai.textanalytics.HealthcareEntityCategory`
+        type for possible healthcare entity categories."""
+    length: int
+    """The entity text length.  This value depends on the value
+        of the `string_index_type` parameter specified in the original request, which is
+        UnicodeCodePoints by default."""
+    offset: int
+    """The entity text offset from the start of the document.
+        This value depends on the value of the `string_index_type` parameter specified
+        in the original request, which is UnicodeCodePoints by default."""
+    confidence_score: float
+    """Confidence score between 0 and 1 of the extracted entity."""
+    subcategory: Optional[str] = None
+    """Entity subcategory."""
+    assertion: Optional["HealthcareEntityAssertion"] = None
+    """Contains various assertions about this entity. For example, if
+        an entity is a diagnosis, is this diagnosis 'conditional' on a symptom?
+        Are the doctors 'certain' about this diagnosis? Is this diagnosis 'associated'
+        with another diagnosis?"""
+    normalized_text: Optional[str] = None
+    """Normalized version of the raw `text` we extract
+        from the document. Not all `text` will have a normalized version."""
+    data_sources: Optional[List["HealthcareEntityDataSource"]]
+    """A collection of entity references in known data sources."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.text = kwargs.get("text", None)
+        self.normalized_text = kwargs.get("normalized_text", None)
+        self.category = kwargs.get("category", None)
+        self.subcategory = kwargs.get("subcategory", None)
+        self.assertion = kwargs.get("assertion", None)
+        self.length = kwargs.get("length", None)
+        self.offset = kwargs.get("offset", None)
+        self.confidence_score = kwargs.get("confidence_score", None)
+        self.data_sources = kwargs.get("data_sources", [])
 
     @classmethod
     def _from_generated(cls, healthcare_entity):
@@ -995,32 +920,28 @@ class HealthcareEntityAssertion(DictMixin):
     For example, if an entity is a diagnosis, is this diagnosis 'conditional' on a symptom?
     Are the doctors 'certain' about this diagnosis? Is this diagnosis 'associated'
     with another diagnosis?
-
-    :ivar Optional[str] conditionality: Describes whether the healthcare entity it's on is conditional
-        on another entity. For example, "If the patient has a fever, he has pneumonia", the diagnosis of pneumonia
-        is 'conditional' on whether the patient has a fever. Possible values are "hypothetical" and
-        "conditional".
-    :ivar Optional[str] certainty: Describes how certain the healthcare entity it's on is. For example,
-        in "The patient may have a fever", the fever entity is not 100% certain, but is instead
-        "positivePossible". Possible values are "positive", "positivePossible", "neutralPossible",
-        "negativePossible", and "negative".
-    :ivar Optional[str] association: Describes whether the healthcare entity it's on is the subject of the document, or
-        if this entity describes someone else in the document. For example, in "The subject's mother has
-        a fever", the "fever" entity is not associated with the subject themselves, but with the subject's
-        mother. Possible values are "subject" and "other".
     """
 
-    def __init__(
-        self,
-        *,
-        conditionality: Optional[str] = None,
-        certainty: Optional[str] = None,
-        association: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        self.conditionality = conditionality
-        self.certainty = certainty
-        self.association = association
+    conditionality: Optional[str] = None
+    """Describes whether the healthcare entity it's on is conditional
+        on another entity. For example, "If the patient has a fever, he has pneumonia", the diagnosis of pneumonia
+        is 'conditional' on whether the patient has a fever. Possible values are "hypothetical" and
+        "conditional"."""
+    certainty: Optional[str] = None
+    """Describes how certain the healthcare entity it's on is. For example,
+        in "The patient may have a fever", the fever entity is not 100% certain, but is instead
+        "positivePossible". Possible values are "positive", "positivePossible", "neutralPossible",
+        "negativePossible", and "negative"."""
+    association: Optional[str] = None
+    """Describes whether the healthcare entity it's on is the subject of the document, or
+        if this entity describes someone else in the document. For example, in "The subject's mother has
+        a fever", the "fever" entity is not associated with the subject themselves, but with the subject's
+        mother. Possible values are "subject" and "other"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.conditionality = kwargs.get("conditionality", None)
+        self.certainty = kwargs.get("certainty", None)
+        self.association = kwargs.get("association", None)
 
     @classmethod
     def _from_generated(cls, healthcare_assertion):
@@ -1038,14 +959,16 @@ class HealthcareEntityAssertion(DictMixin):
 class HealthcareEntityDataSource(DictMixin):
     """
     HealthcareEntityDataSource contains information representing an entity reference in a known data source.
-
-    :ivar str entity_id: ID of the entity in the given source catalog.
-    :ivar str name: The name of the entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc.
     """
 
-    def __init__(self, *, entity_id: str, name: str, **kwargs: Any) -> None:
-        self.entity_id = entity_id
-        self.name = name
+    entity_id: str
+    """ID of the entity in the given source catalog."""
+    name: str
+    """The name of the entity catalog from where the entity was identified, such as UMLS, CHV, MSH, etc."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.entity_id = kwargs.get("entity_id", None)
+        self.name = kwargs.get("name", None)
 
     def __repr__(self) -> str:
         return (
@@ -1057,25 +980,23 @@ class TextAnalyticsError(DictMixin):
     """TextAnalyticsError contains the error code, message, and
     other details that explain why the batch or individual document
     failed to be processed by the service.
+    """
 
-    :ivar code: Error code. Possible values include:
+    code: str
+    """Error code. Possible values include
      'invalidRequest', 'invalidArgument', 'internalServerError',
      'serviceUnavailable', 'invalidParameterValue', 'invalidRequestBodyFormat',
      'emptyRequest', 'missingInputRecords', 'invalidDocument', 'modelVersionIncorrect',
-     'invalidDocumentBatch', 'unsupportedLanguageCode', 'invalidCountryHint'
-    :vartype code: str
-    :ivar message: Error message.
-    :vartype message: str
-    :ivar target: Error target.
-    :vartype target: Optional[str]
-    """
+     'invalidDocumentBatch', 'unsupportedLanguageCode', 'invalidCountryHint'"""
+    message: str
+    """Error message."""
+    target: Optional[str] = None
+    """Error target."""
 
-    def __init__(
-        self, *, code: str, message: str, target: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        self.code = code
-        self.message = message
-        self.target = target
+    def __init__(self, **kwargs: Any) -> None:
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
+        self.target = kwargs.get("target", None)
 
     @classmethod
     def _from_generated(cls, err):
@@ -1094,17 +1015,17 @@ class TextAnalyticsError(DictMixin):
 class TextAnalyticsWarning(DictMixin):
     """TextAnalyticsWarning contains the warning code and message that explains why
     the response has a warning.
-
-    :ivar code: Warning code. Possible values include: 'LongWordsInDocument',
-     'DocumentTruncated'.
-    :vartype code: str
-    :ivar message: Warning message.
-    :vartype message: str
     """
 
-    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
-        self.code = code
-        self.message = message
+    code: str
+    """Warning code. Possible values include 'LongWordsInDocument',
+     'DocumentTruncated'."""
+    message: str
+    """Warning message."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.code = kwargs.get("code", None)
+        self.message = kwargs.get("message", None)
 
     @classmethod
     def _from_generated(cls, warning):
@@ -1121,47 +1042,39 @@ class ExtractKeyPhrasesResult(DictMixin):
     """ExtractKeyPhrasesResult is a result object which contains
     the key phrases found in a particular document.
 
-    :ivar id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :vartype id: str
-    :ivar key_phrases: A list of representative words or phrases.
-        The number of key phrases returned is proportional to the number of words
-        in the input document.
-    :vartype key_phrases: list[str]
-    :ivar warnings: Warnings encountered while processing document. Results will still be returned
-        if there are warnings, but they may not be fully accurate.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics:
-        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a ExtractKeyPhrasesResult.
-    :ivar str kind: The text analysis kind - "KeyPhraseExtraction".
-
     .. versionadded:: 2022-10-01-preview
         The *detected_language* property.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        key_phrases: List[str],
-        warnings: List[TextAnalyticsWarning],
-        statistics: Optional["TextDocumentStatistics"] = None,
-        detected_language: Optional[DetectedLanguage] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.key_phrases = key_phrases
-        self.warnings = warnings
-        self.statistics = statistics
-        self.detected_language = detected_language
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document."""
+    key_phrases: List[str]
+    """A list of representative words or phrases.
+        The number of key phrases returned is proportional to the number of words
+        in the input document."""
+    warnings: List[TextAnalyticsWarning]
+    """Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate."""
+    statistics: Optional["TextDocumentStatistics"] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    detected_language: Optional[DetectedLanguage] = None
+    """If automatic language detection is enabled, then this
+        field will contain the DetectedLanguage for the document."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a ExtractKeyPhrasesResult."""
+    kind: Literal["KeyPhraseExtraction"] = "KeyPhraseExtraction"
+    """The text analysis kind - "KeyPhraseExtraction"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.key_phrases = kwargs.get("key_phrases", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.detected_language = kwargs.get('detected_language', None)
         self.is_error: Literal[False] = False
         self.kind: Literal["KeyPhraseExtraction"] = "KeyPhraseExtraction"
 
@@ -1177,46 +1090,37 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     """RecognizeLinkedEntitiesResult is a result object which contains
     links to a well-known knowledge base, like for example, Wikipedia or Bing.
 
-    :ivar id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :vartype id: str
-    :ivar entities: Recognized well-known entities in the document.
-    :vartype entities:
-        list[~azure.ai.textanalytics.LinkedEntity]
-    :ivar warnings: Warnings encountered while processing document. Results will still be returned
-        if there are warnings, but they may not be fully accurate.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics:
-        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a RecognizeLinkedEntitiesResult.
-    :ivar str kind: The text analysis kind - "EntityLinking".
-
     .. versionadded:: 2022-10-01-preview
         The *detected_language* property.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        entities: List["LinkedEntity"],
-        warnings: List[TextAnalyticsWarning],
-        statistics: Optional["TextDocumentStatistics"] = None,
-        detected_language: Optional[DetectedLanguage] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.entities = entities
-        self.warnings = warnings
-        self.statistics = statistics
-        self.detected_language = detected_language
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document."""
+    entities: List["LinkedEntity"]
+    """Recognized well-known entities in the document."""
+    warnings: List[TextAnalyticsWarning]
+    """Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate."""
+    statistics: Optional["TextDocumentStatistics"] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    detected_language: Optional[DetectedLanguage] = None
+    """If automatic language detection is enabled, then this
+        field will contain the DetectedLanguage for the document."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a RecognizeLinkedEntitiesResult."""
+    kind: Literal["EntityLinking"] = "EntityLinking"
+    """The text analysis kind - "EntityLinking"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.detected_language = kwargs.get('detected_language', None)
         self.is_error: Literal[False] = False
         self.kind: Literal["EntityLinking"] = "EntityLinking"
 
@@ -1233,58 +1137,46 @@ class AnalyzeSentimentResult(DictMixin):
     the overall predicted sentiment and confidence scores for your document
     and a per-sentence sentiment prediction with scores.
 
-    :ivar id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :vartype id: str
-    :ivar sentiment: Predicted sentiment for document (Negative,
-        Neutral, Positive, or Mixed). Possible values include: 'positive',
-        'neutral', 'negative', 'mixed'
-    :vartype sentiment: str
-    :ivar warnings: Warnings encountered while processing document. Results will still be returned
-        if there are warnings, but they may not be fully accurate.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics:
-        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar confidence_scores: Document level sentiment confidence
-        scores between 0 and 1 for each sentiment label.
-    :vartype confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar sentences: Sentence level sentiment analysis.
-    :vartype sentences:
-        list[~azure.ai.textanalytics.SentenceSentiment]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a AnalyzeSentimentResult.
-    :ivar str kind: The text analysis kind - "SentimentAnalysis".
-
     .. versionadded:: 2022-10-01-preview
         The *detected_language* property.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        sentiment: str,
-        confidence_scores: "SentimentConfidenceScores",
-        sentences: List["SentenceSentiment"],
-        warnings: List[TextAnalyticsWarning],
-        statistics: Optional["TextDocumentStatistics"] = None,
-        detected_language: Optional[DetectedLanguage] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.sentiment = sentiment
-        self.warnings = warnings
-        self.statistics = statistics
-        self.confidence_scores = confidence_scores
-        self.sentences = sentences
-        self.detected_language = detected_language
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document."""
+    sentiment: str
+    """Predicted sentiment for document (Negative,
+        Neutral, Positive, or Mixed). Possible values include 'positive',
+        'neutral', 'negative', 'mixed'"""
+    confidence_scores: "SentimentConfidenceScores"
+    """Document level sentiment confidence
+        scores between 0 and 1 for each sentiment label."""
+    sentences: List["SentenceSentiment"]
+    """Sentence level sentiment analysis."""
+    warnings: List[TextAnalyticsWarning]
+    """Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate."""
+    statistics: Optional["TextDocumentStatistics"] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    detected_language: Optional[DetectedLanguage] = None
+    """If automatic language detection is enabled, then this
+        field will contain the DetectedLanguage for the document."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a AnalyzeSentimentResult."""
+    kind: Literal["SentimentAnalysis"] = "SentimentAnalysis"
+    """The text analysis kind - "SentimentAnalysis"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.sentiment = kwargs.get("sentiment", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.sentences = kwargs.get("sentences", None)
+        self.detected_language = kwargs.get('detected_language', None)
         self.is_error: Literal[False] = False
         self.kind: Literal["SentimentAnalysis"] = "SentimentAnalysis"
 
@@ -1300,17 +1192,17 @@ class AnalyzeSentimentResult(DictMixin):
 class TextDocumentStatistics(DictMixin):
     """TextDocumentStatistics contains information about
     the document payload.
-
-    :ivar character_count: Number of text elements recognized in
-        the document.
-    :vartype character_count: int
-    :ivar transaction_count: Number of transactions for the document.
-    :vartype transaction_count: int
     """
 
-    def __init__(self, *, character_count: int, transaction_count: int, **kwargs: Any) -> None:
-        self.character_count = character_count
-        self.transaction_count = transaction_count
+    character_count: int
+    """Number of text elements recognized in
+        the document."""
+    transaction_count: int
+    """Number of transactions for the document."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.character_count = kwargs.get("character_count", None)
+        self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
     def _from_generated(cls, stats):
@@ -1329,43 +1221,43 @@ class TextDocumentStatistics(DictMixin):
 class DocumentError(DictMixin):
     """DocumentError is an error object which represents an error on
     the individual document.
-
-    :ivar id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :vartype id: str
-    :ivar error: The document error.
-    :vartype error: ~azure.ai.textanalytics.TextAnalyticsError
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always True for an instance of a DocumentError.
-    :ivar str kind: Error kind - "DocumentError".
     """
 
-    def __init__(
-            self, *, id: str, error: TextAnalyticsError, **kwargs: Any  # pylint: disable=redefined-builtin
-    ) -> None:
-        self.id = id
-        self.error = error
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document."""
+    error: TextAnalyticsError
+    """The document error."""
+    is_error: Literal[True] = True
+    """Boolean check for error item when iterating over list of
+        results. Always True for an instance of a DocumentError."""
+    kind: Literal["DocumentError"] = "DocumentError"
+    """Error kind - "DocumentError"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.error = kwargs.get("error", None)
         self.is_error: Literal[True] = True
         self.kind: Literal["DocumentError"] = "DocumentError"
 
     def __getattr__(self, attr: str) -> Any:
-        result_attrs = [
-            'key_phrases',
-            'warnings',
-            'primary_language',
-            'sentences',
-            'statistics',
-            'fhir_bundle',
-            'redacted_text',
-            'sentiment',
-            'entities',
-            'entity_relations',
-            'classifications',
-            'detected_language',
-            'confidence_scores',
-            'summaries'
-        ]
+        result_set = set()
+        result_set.update(
+            RecognizeEntitiesResult().keys()  # type: ignore[operator]
+            + RecognizePiiEntitiesResult().keys()
+            + DetectLanguageResult().keys()
+            + RecognizeLinkedEntitiesResult().keys()
+            + AnalyzeSentimentResult().keys()
+            + ExtractKeyPhrasesResult().keys()
+            + AnalyzeHealthcareEntitiesResult().keys()
+            + RecognizeCustomEntitiesResult().keys()
+            + ClassifyDocumentResult().keys()
+            + ExtractSummaryResult().keys()
+            + AbstractiveSummaryResult().keys()
+            + DynamicClassificationResult().keys()
+        )
+        result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
             raise AttributeError(
                 "'DocumentError' object has no attribute '{}'. The service was unable to process this document:\n"
@@ -1400,16 +1292,17 @@ class DetectLanguageInput(LanguageInput):
      the language of the text. Accepts two letter country codes
      specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
      in the string "none" to not use a country_hint.
-    :ivar id: Required. Unique, non-empty document identifier.
-    :vartype id: str
-    :ivar text: Required. The input text to process.
-    :vartype text: str
-    :ivar country_hint: A country hint to help better detect
-     the language of the text. Accepts two letter country codes
-     specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
-     in the string "none" to not use a country_hint.
-    :vartype country_hint: Optional[str]
     """
+
+    id: str  # pylint: disable=redefined-builtin
+    """Required. Unique, non-empty document identifier."""
+    text: str
+    """Required. The input text to process."""
+    country_hint: Optional[str] = None
+    """A country hint to help better detect
+        the language of the text. Accepts two letter country codes
+        specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
+        in the string "none" to not use a country_hint."""
 
     def __init__(
         self,
@@ -1417,7 +1310,7 @@ class DetectLanguageInput(LanguageInput):
         id: str,  # pylint: disable=redefined-builtin
         text: str,
         country_hint: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(id=id, text=text, country_hint=country_hint)
         self.id = id
@@ -1434,47 +1327,36 @@ class LinkedEntity(DictMixin):
     or Bing. It additionally includes all of the matches of this
     entity found in the document.
 
-    :ivar name: Entity Linking formal name.
-    :vartype name: str
-    :ivar matches: List of instances this entity appears in the text.
-    :vartype matches:
-        list[~azure.ai.textanalytics.LinkedEntityMatch]
-    :ivar language: Language used in the data source.
-    :vartype language: str
-    :ivar data_source_entity_id: Unique identifier of the recognized entity from the data
-        source.
-    :vartype data_source_entity_id: Optional[str]
-    :ivar url: URL to the entity's page from the data source.
-    :vartype url: str
-    :ivar data_source: Data source used to extract entity linking,
-        such as Wiki/Bing etc.
-    :vartype data_source: str
-    :ivar Optional[str] bing_entity_search_api_id: Bing Entity Search unique identifier of the recognized entity.
-        Use in conjunction with the Bing Entity Search SDK to fetch additional relevant information.
-
     .. versionadded:: v3.1
         The *bing_entity_search_api_id* property.
     """
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        matches: List["LinkedEntityMatch"],
-        language: str,
-        url: str,
-        data_source: str,
-        data_source_entity_id: Optional[str] = None,
-        bing_entity_search_api_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        self.name = name
-        self.matches = matches
-        self.language = language
-        self.data_source_entity_id = data_source_entity_id
-        self.url = url
-        self.data_source = data_source
-        self.bing_entity_search_api_id = bing_entity_search_api_id
+    name: str
+    """Entity Linking formal name."""
+    matches: List["LinkedEntityMatch"]
+    """List of instances this entity appears in the text."""
+    language: str
+    """Language used in the data source."""
+    url: str
+    """URL to the entity's page from the data source."""
+    data_source: str
+    """Data source used to extract entity linking,
+        such as Wiki/Bing etc."""
+    data_source_entity_id: Optional[str] = None
+    """Unique identifier of the recognized entity from the data
+        source."""
+    bing_entity_search_api_id: Optional[str] = None
+    """Bing Entity Search unique identifier of the recognized entity.
+        Use in conjunction with the Bing Entity Search SDK to fetch additional relevant information."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.name = kwargs.get("name", None)
+        self.matches = kwargs.get("matches", None)
+        self.language = kwargs.get("language", None)
+        self.data_source_entity_id = kwargs.get("data_source_entity_id", None)
+        self.url = kwargs.get("url", None)
+        self.data_source = kwargs.get("data_source", None)
+        self.bing_entity_search_api_id = kwargs.get("bing_entity_search_api_id", None)
 
     @classmethod
     def _from_generated(cls, entity):
@@ -1507,28 +1389,29 @@ class LinkedEntityMatch(DictMixin):
     the confidence score of the prediction and where the entity
     was found in the text.
 
-    :ivar confidence_score: If a well-known item is recognized, a
-        decimal number denoting the confidence level between 0 and 1 will be
-        returned.
-    :vartype confidence_score: float
-    :ivar str text: Entity text as appears in the request.
-    :ivar int length: The linked entity match text length.  This value depends on the value of the
-        `string_index_type` parameter set in the original request, which is UnicodeCodePoints by default.
-    :ivar int offset: The linked entity match text offset from the start of the document.
-        The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoints by default.
-
     .. versionadded:: v3.1
         The *offset* and *length* properties.
     """
 
-    def __init__(
-        self, *, confidence_score: float, text: str, length: int, offset: int, **kwargs: Any
-    ) -> None:
-        self.confidence_score = confidence_score
-        self.text = text
-        self.length = length
-        self.offset = offset
+    confidence_score: float
+    """If a well-known item is recognized, a
+        decimal number denoting the confidence level between 0 and 1 will be
+        returned."""
+    text: str
+    """Entity text as appears in the request."""
+    length: int
+    """The linked entity match text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints by default."""
+    offset: int
+    """The linked entity match text offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.confidence_score = kwargs.get("confidence_score", None)
+        self.text = kwargs.get("text", None)
+        self.length = kwargs.get("length", None)
+        self.offset = kwargs.get("offset", None)
 
     @classmethod
     def _from_generated(cls, match):
@@ -1558,23 +1441,17 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     :keyword str text: Required. The input text to process.
     :keyword str language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc.
-     For automatic language detection, use "auto" (Only supported by long-running
-     operation APIs with API version 2022-10-01-preview or newer). If
-     not set, uses "en" for English as default.
-    :ivar id: Required. Unique, non-empty document identifier.
-    :vartype id: str
-    :ivar text: Required. The input text to process.
-    :vartype text: str
-    :ivar language: This is the 2 letter ISO 639-1 representation
-     of a language. For example, use "en" for English; "es" for Spanish etc.
-     For automatic language detection, use "auto" (Only supported by long-running
-     operation APIs with API version 2022-10-01-preview or newer). If
-     not set, uses "en" for English as default.
-    :vartype language: Optional[str]
-
-    .. versionadded:: 2022-10-01-preview
-        The 'auto' option for language.
+     If not set, uses "en" for English as default.
     """
+
+    id: str  # pylint: disable=redefined-builtin
+    """Required. Unique, non-empty document identifier."""
+    text: str
+    """Required. The input text to process."""
+    language: Optional[str] = None
+    """This is the 2 letter ISO 639-1 representation
+     of a language. For example, use "en" for English; "es" for Spanish etc.
+     If not set, uses "en" for English as default."""
 
     def __init__(
         self,
@@ -1582,7 +1459,7 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
         id: str,  # pylint: disable=redefined-builtin
         text: str,
         language: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
         super().__init__(id=id, text=text, language=language)
         self.id = id
@@ -1597,32 +1474,24 @@ class TextDocumentBatchStatistics(DictMixin):
     """TextDocumentBatchStatistics contains information about the
     request payload. Note: This object is not returned
     in the response and needs to be retrieved by a response hook.
-
-    :ivar document_count: Number of documents submitted in the request.
-    :vartype document_count: int
-    :ivar valid_document_count: Number of valid documents. This
-        excludes empty, over-size limit or non-supported languages documents.
-    :vartype valid_document_count: int
-    :ivar erroneous_document_count: Number of invalid documents.
-        This includes empty, over-size limit or non-supported languages documents.
-    :vartype erroneous_document_count: int
-    :ivar transaction_count: Number of transactions for the request.
-    :vartype transaction_count: int
     """
 
-    def __init__(
-        self,
-        *,
-        document_count: int,
-        valid_document_count: int,
-        erroneous_document_count: int,
-        transaction_count: int,
-        **kwargs: Any
-    ) -> None:
-        self.document_count = document_count
-        self.valid_document_count = valid_document_count
-        self.erroneous_document_count = erroneous_document_count
-        self.transaction_count = transaction_count
+    document_count: int
+    """Number of documents submitted in the request"""
+    valid_document_count: int
+    """Number of valid documents. This
+        excludes empty, over-size limit or non-supported languages documents."""
+    erroneous_document_count: int
+    """Number of invalid documents.
+        This includes empty, over-size limit or non-supported languages documents."""
+    transaction_count: int
+    """Number of transactions for the request."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.document_count = kwargs.get("document_count", None)
+        self.valid_document_count = kwargs.get("valid_document_count", None)
+        self.erroneous_document_count = kwargs.get("erroneous_document_count", None)
+        self.transaction_count = kwargs.get("transaction_count", None)
 
     @classmethod
     def _from_generated(cls, statistics):
@@ -1648,50 +1517,40 @@ class SentenceSentiment(DictMixin):
     """SentenceSentiment contains the predicted sentiment and
     confidence scores for each individual sentence in the document.
 
-    :ivar text: The sentence text.
-    :vartype text: str
-    :ivar sentiment: The predicted Sentiment for the sentence.
-        Possible values include: 'positive', 'neutral', 'negative'
-    :vartype sentiment: str
-    :ivar confidence_scores: The sentiment confidence score between 0
-        and 1 for the sentence for all labels.
-    :vartype confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int length: The sentence text length.  This value depends on the value of the
-        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default.
-    :ivar int offset: The sentence text offset from the start of the document.
-        The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoints by default.
-    :ivar mined_opinions: The list of opinions mined from this sentence.
-        For example in the sentence "The food is good, but the service is bad", we would
-        mine the two opinions "food is good" and "service is bad". Only returned
-        if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
-        api version is v3.1 and up.
-    :vartype mined_opinions:
-        Optional[list[~azure.ai.textanalytics.MinedOpinion]]
-
     .. versionadded:: v3.1
         The *offset*, *length*, and *mined_opinions* properties.
     """
 
-    def __init__(
-        self,
-        *,
-        text: str,
-        sentiment: str,
-        confidence_scores: "SentimentConfidenceScores",
-        length: int,
-        offset: int,
-        mined_opinions: Optional[List["MinedOpinion"]] = None,
-        **kwargs: Any
-    ) -> None:
-        self.text = text
-        self.sentiment = sentiment
-        self.confidence_scores = confidence_scores
-        self.length = length
-        self.offset = offset
-        self.mined_opinions = mined_opinions
+    text: str
+    """The sentence text."""
+    sentiment: str
+    """The predicted Sentiment for the sentence.
+        Possible values include 'positive', 'neutral', 'negative'"""
+    confidence_scores: "SentimentConfidenceScores"
+    """The sentiment confidence score between 0
+        and 1 for the sentence for all labels."""
+    length: int
+    """The sentence text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
+        by default."""
+    offset: int
+    """The sentence text offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default."""
+    mined_opinions: Optional[List["MinedOpinion"]] = None
+    """The list of opinions mined from this sentence.
+        For example in the sentence "The food is good, but the service is bad", we would
+        mine the two opinions "food is good" and "service is bad". Only returned
+        if `show_opinion_mining` is set to True in the call to `analyze_sentiment` and
+        api version is v3.1 and up."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.text = kwargs.get("text", None)
+        self.sentiment = kwargs.get("sentiment", None)
+        self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.length = kwargs.get("length", None)
+        self.offset = kwargs.get("offset", None)
+        self.mined_opinions = kwargs.get("mined_opinions", None)
 
     @classmethod
     def _from_generated(cls, sentence, results, sentiment):
@@ -1738,18 +1597,16 @@ class MinedOpinion(DictMixin):
     """A mined opinion object represents an opinion we've extracted from a sentence.
     It consists of both a target that these opinions are about, and the assessments
     representing the opinion.
-
-    :ivar target: The target of an opinion about a product/service.
-    :vartype target: ~azure.ai.textanalytics.TargetSentiment
-    :ivar assessments: The assessments representing the opinion of the target.
-    :vartype assessments: list[~azure.ai.textanalytics.AssessmentSentiment]
     """
 
-    def __init__(
-        self, *, target: "TargetSentiment", assessments: List["AssessmentSentiment"], **kwargs: Any
-    ) -> None:
-        self.target = target
-        self.assessments = assessments
+    target: "TargetSentiment"
+    """The target of an opinion about a product/service."""
+    assessments: List["AssessmentSentiment"]
+    """The assessments representing the opinion of the target."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.target = kwargs.get("target", None)
+        self.assessments = kwargs.get("assessments", None)
 
     @staticmethod
     def _get_assessments(
@@ -1795,38 +1652,32 @@ class TargetSentiment(DictMixin):
     confidence scores and other information about a key component of a product/service.
     For example in "The food at Hotel Foo is good", "food" is an key component of
     "Hotel Foo".
-
-    :ivar str text: The text value of the target.
-    :ivar str sentiment: The predicted Sentiment for the target. Possible values
-        include 'positive', 'mixed', and 'negative'.
-    :ivar confidence_scores: The sentiment confidence score between 0
-        and 1 for the target for 'positive' and 'negative' labels. It's score
-        for 'neutral' will always be 0
-    :vartype confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int length: The target text length.  This value depends on the value of the
-        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default.
-    :ivar int offset: The target text offset from the start of the document.
-        The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoints by default.
     """
 
-    def __init__(
-        self,
-        *,
-        text: str,
-        sentiment: str,
-        confidence_scores: "SentimentConfidenceScores",
-        length: int,
-        offset: int,
-        **kwargs: Any
-    ) -> None:
-        self.text = text
-        self.sentiment = sentiment
-        self.confidence_scores = confidence_scores
-        self.length = length
-        self.offset = offset
+    text: str
+    """The text value of the target."""
+    sentiment: str
+    """The predicted Sentiment for the target. Possible values
+        include 'positive', 'mixed', and 'negative'."""
+    confidence_scores: "SentimentConfidenceScores"
+    """The sentiment confidence score between 0
+        and 1 for the target for 'positive' and 'negative' labels. It's score
+        for 'neutral' will always be 0"""
+    length: int
+    """The target text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
+        by default."""
+    offset: int
+    """The target text offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.text = kwargs.get("text", None)
+        self.sentiment = kwargs.get("sentiment", None)
+        self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.length = kwargs.get("length", None)
+        self.offset = kwargs.get("offset", None)
 
     @classmethod
     def _from_generated(cls, target):
@@ -1853,42 +1704,36 @@ class AssessmentSentiment(DictMixin):
     confidence scores and other information about an assessment given about
     a particular target.  For example, in the sentence "The food is good", the assessment
     of the target 'food' is 'good'.
-
-    :ivar str text: The assessment text.
-    :ivar str sentiment: The predicted Sentiment for the assessment. Possible values
-        include 'positive', 'mixed', and 'negative'.
-    :ivar confidence_scores: The sentiment confidence score between 0
-        and 1 for the assessment for 'positive' and 'negative' labels. It's score
-        for 'neutral' will always be 0
-    :vartype confidence_scores:
-        ~azure.ai.textanalytics.SentimentConfidenceScores
-    :ivar int length: The assessment text length.  This value depends on the value of the
-        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
-        by default.
-    :ivar int offset: The assessment text offset from the start of the document.
-        The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoints by default.
-    :ivar bool is_negated: Whether the value of the assessment is negated. For example, in
-        "The food is not good", the assessment "good" is negated.
     """
 
-    def __init__(
-        self,
-        *,
-        text: str,
-        sentiment: str,
-        confidence_scores: "SentimentConfidenceScores",
-        length: int,
-        offset: int,
-        is_negated: bool,
-        **kwargs: Any
-    ) -> None:
-        self.text = text
-        self.sentiment = sentiment
-        self.confidence_scores = confidence_scores
-        self.length = length
-        self.offset = offset
-        self.is_negated = is_negated
+    text: str
+    """The assessment text."""
+    sentiment: str
+    """The predicted Sentiment for the assessment. Possible values
+        include 'positive', 'mixed', and 'negative'."""
+    confidence_scores: "SentimentConfidenceScores"
+    """The sentiment confidence score between 0
+        and 1 for the assessment for 'positive' and 'negative' labels. It's score
+        for 'neutral' will always be 0"""
+    length: int
+    """The assessment text length.  This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoints
+        by default."""
+    offset: int
+    """The assessment text offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoints by default."""
+    is_negated: bool
+    """Whether the value of the assessment is negated. For example, in
+        "The food is not good", the assessment "good" is negated."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.text = kwargs.get("text", None)
+        self.sentiment = kwargs.get("sentiment", None)
+        self.confidence_scores = kwargs.get("confidence_scores", None)
+        self.length = kwargs.get("length", None)
+        self.offset = kwargs.get("offset", None)
+        self.is_negated = kwargs.get("is_negated", None)
 
     @classmethod
     def _from_generated(cls, assessment):
@@ -1914,19 +1759,19 @@ class AssessmentSentiment(DictMixin):
 class SentimentConfidenceScores(DictMixin):
     """The confidence scores (Softmax scores) between 0 and 1.
     Higher values indicate higher confidence.
-
-    :ivar positive: Positive score.
-    :vartype positive: float
-    :ivar neutral: Neutral score.
-    :vartype neutral: float
-    :ivar negative: Negative score.
-    :vartype negative: float
     """
 
-    def __init__(self, *, positive: float, neutral: float, negative: float, **kwargs: Any) -> None:
-        self.positive = positive
-        self.neutral = neutral
-        self.negative = negative
+    positive: float
+    """Positive score."""
+    neutral: float
+    """Neutral score."""
+    negative: float
+    """Negative score."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.positive = kwargs.get("positive", 0.0)
+        self.neutral = kwargs.get("neutral", 0.0)
+        self.negative = kwargs.get("negative", 0.0)
 
     @classmethod
     def _from_generated(cls, score):
@@ -1990,20 +1835,24 @@ class RecognizeEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar Optional[str] model_version: The model version to use for the analysis.
-    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+    """
+
+    model_version: Optional[str] = None
+    """The model version to use for the analysis."""
+    string_index_type: Optional[str] = None
+    """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        see https://aka.ms/text-analytics-offsets"""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
         self,
@@ -2069,25 +1918,30 @@ class AnalyzeSentimentAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar Optional[str] model_version: The model version to use for the analysis.
-    :ivar Optional[bool] show_opinion_mining: Whether to mine the opinions of a sentence and conduct more
+    """
+
+    show_opinion_mining: Optional[bool] = None
+    """Whether to mine the opinions of a sentence and conduct more
         granular analysis around the aspects of a product or service (also known as
         aspect-based sentiment analysis). If set to true, the returned
         :class:`~azure.ai.textanalytics.SentenceSentiment` objects
-        will have property `mined_opinions` containing the result of this analysis.
-    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        will have property `mined_opinions` containing the result of this analysis."""
+    model_version: Optional[str] = None
+    """The model version to use for the analysis."""
+    string_index_type: Optional[str] = None
+    """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        see https://aka.ms/text-analytics-offsets"""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
         self,
@@ -2160,26 +2014,31 @@ class RecognizePiiEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar Optional[str] model_version: The model version to use for the analysis.
-    :ivar Optional[str] domain_filter: An optional string to set the PII domain to include only a
-        subset of the PII entity categories. Possible values include 'phi' or None.
-    :ivar categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
+    """
+
+    categories_filter: Optional[List[Union[str, PiiEntityCategory]]] = None
+    """Instead of filtering over all PII entity categories, you can pass in a list of
         the specific PII entity categories you want to filter out. For example, if you only want to filter out
         U.S. social security numbers in a document, you can pass in
-        `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg.
-    :vartype categories_filter: Optional[list[str or ~azure.ai.textanalytics.PiiEntityCategory]]
-    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        `[PiiEntityCategory.US_SOCIAL_SECURITY_NUMBER]` for this kwarg."""
+    domain_filter: Optional[str] = None
+    """An optional string to set the PII domain to include only a
+        subset of the PII entity categories. Possible values include 'phi' or None."""
+    model_version: Optional[str] = None
+    """The model version to use for the analysis."""
+    string_index_type: Optional[str] = None
+    """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar Optional[bool] disable_service_logs: Defaults to true, meaning that the Language service will not log your
+        see https://aka.ms/text-analytics-offsets"""
+    disable_service_logs: Optional[bool] = None
+    """Defaults to true, meaning that the Language service will not log your
         input text on the service side for troubleshooting. If set to False, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
         self,
@@ -2247,16 +2106,19 @@ class ExtractKeyPhrasesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar Optional[str] model_version: The model version to use for the analysis.
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+    """
+
+    model_version: Optional[str] = None
+    """The model version to use for the analysis."""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
         self,
@@ -2312,20 +2174,24 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar Optional[str] model_version: The model version to use for the analysis.
-    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+    """
+
+    model_version: Optional[str] = None
+    """The model version to use for the analysis."""
+    string_index_type: Optional[str] = None
+    """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        see https://aka.ms/text-analytics-offsets"""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
         self,
@@ -2386,24 +2252,29 @@ class RecognizeCustomEntitiesAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str project_name: This field indicates the project name for the model.
-    :ivar str deployment_name: This field indicates the deployment name for the model.
-    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+
+    .. versionadded:: 2022-05-01
+        The *RecognizeCustomEntitiesAction* model.
+    """
+
+    project_name: str
+    """This field indicates the project name for the model."""
+    deployment_name: str
+    """This field indicates the deployment name for the model."""
+    string_index_type: Optional[str] = None
+    """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        see https://aka.ms/text-analytics-offsets"""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-
-    .. versionadded:: 2022-05-01
-        The *RecognizeCustomEntitiesAction* model.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
         self,
@@ -2442,43 +2313,36 @@ class RecognizeCustomEntitiesResult(DictMixin):
     """RecognizeCustomEntitiesResult is a result object which contains
     the custom recognized entities from a particular document.
 
-    :ivar str id: Unique, non-empty document identifier that matches the
-        document id that was passed in with the request. If not specified
-        in the request, an id is assigned for the document.
-    :ivar entities: Recognized custom entities in the document.
-    :vartype entities:
-        list[~azure.ai.textanalytics.CategorizedEntity]
-    :ivar warnings: Warnings encountered while processing document.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a RecognizeCustomEntitiesResult.
-    :ivar str kind: The text analysis kind - "CustomEntityRecognition".
-
     .. versionadded:: 2022-10-01-preview
         The *detected_language* property.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        entities: List[CategorizedEntity],
-        warnings: List[TextAnalyticsWarning],
-        statistics: Optional[TextDocumentStatistics] = None,
-        detected_language: Optional[DetectedLanguage] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.entities = entities
-        self.warnings = warnings
-        self.statistics = statistics
-        self.detected_language = detected_language
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier that matches the
+        document id that was passed in with the request. If not specified
+        in the request, an id is assigned for the document."""
+    entities: List[CategorizedEntity]
+    """Recognized custom entities in the document."""
+    warnings: List[TextAnalyticsWarning]
+    """Warnings encountered while processing document."""
+    statistics: Optional[TextDocumentStatistics] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    detected_language: Optional[DetectedLanguage] = None
+    """If automatic language detection is enabled, then this
+        field will contain the DetectedLanguage for the document."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a RecognizeCustomEntitiesResult."""
+    kind: Literal["CustomEntityRecognition"] = "CustomEntityRecognition"
+    """The text analysis kind - "CustomEntityRecognition"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.entities = kwargs.get("entities", None)
+        self.warnings = kwargs.get("warnings", [])
+        self.statistics = kwargs.get("statistics", None)
+        self.detected_language = kwargs.get("detected_language", None)
         self.is_error: Literal[False] = False
         self.kind: Literal["CustomEntityRecognition"] = "CustomEntityRecognition"
 
@@ -2528,20 +2392,24 @@ class MultiLabelClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str project_name: This field indicates the project name for the model.
-    :ivar str deployment_name: This field indicates the deployment name for the model.
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+
+    .. versionadded:: 2022-05-01
+        The *MultiLabelClassifyAction* model.
+    """
+
+    project_name: str
+    """This field indicates the project name for the model."""
+    deployment_name: str
+    """This field indicates the deployment name for the model."""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-
-    .. versionadded:: 2022-05-01
-        The *MultiLabelClassifyAction* model.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
         self,
@@ -2576,40 +2444,34 @@ class ClassifyDocumentResult(DictMixin):
     """ClassifyDocumentResult is a result object which contains
     the classifications for a particular document.
 
-    :ivar str id: Unique, non-empty document identifier.
-    :ivar classifications: Recognized classification results in the document.
-    :vartype classifications: list[~azure.ai.textanalytics.ClassificationCategory]
-    :ivar warnings: Warnings encountered while processing document.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a ClassifyDocumentResult.
-    :ivar str kind: The text analysis kind - "CustomDocumentClassification".
-
     .. versionadded:: 2022-10-01-preview
         The *detected_language* property.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        classifications: List["ClassificationCategory"],
-        warnings: List[TextAnalyticsWarning],
-        statistics: Optional[TextDocumentStatistics] = None,
-        detected_language: Optional[DetectedLanguage] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.classifications = classifications
-        self.warnings = warnings
-        self.statistics = statistics
-        self.detected_language = detected_language
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier."""
+    classifications: List["ClassificationCategory"]
+    """Recognized classification results in the document."""
+    warnings: List[TextAnalyticsWarning]
+    """Warnings encountered while processing document."""
+    statistics: Optional[TextDocumentStatistics] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    detected_language: Optional[DetectedLanguage] = None
+    """If automatic language detection is enabled, then this
+        field will contain the DetectedLanguage for the document."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a ClassifyDocumentResult."""
+    kind: Literal["CustomDocumentClassification"] = "CustomDocumentClassification"
+    """The text analysis kind - "CustomDocumentClassification"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get('id', None)
+        self.classifications = kwargs.get('classifications', None)
+        self.warnings = kwargs.get('warnings', [])
+        self.statistics = kwargs.get('statistics', None)
+        self.detected_language = kwargs.get('detected_language', None)
         self.is_error: Literal[False] = False
         self.kind: Literal["CustomDocumentClassification"] = "CustomDocumentClassification"
 
@@ -2659,20 +2521,24 @@ class SingleLabelClassifyAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar str project_name: This field indicates the project name for the model.
-    :ivar str deployment_name: This field indicates the deployment name for the model.
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+
+    .. versionadded:: 2022-05-01
+        The *SingleLabelClassifyAction* model.
+    """
+
+    project_name: str
+    """This field indicates the project name for the model."""
+    deployment_name: str
+    """This field indicates the deployment name for the model."""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-
-    .. versionadded:: 2022-05-01
-        The *SingleLabelClassifyAction* model.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
         self,
@@ -2705,14 +2571,16 @@ class SingleLabelClassifyAction(DictMixin):
 
 class ClassificationCategory(DictMixin):
     """ClassificationCategory represents a classification of the input document.
-
-    :ivar str category: Classification category for the document.
-    :ivar float confidence_score: Confidence score between 0 and 1 of the recognized classification.
     """
 
-    def __init__(self, *, category: str, confidence_score: float, **kwargs: Any) -> None:
-        self.category = category
-        self.confidence_score = confidence_score
+    category: str
+    """Classification category for the document."""
+    confidence_score: float
+    """Confidence score between 0 and 1 of the recognized classification."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.category = kwargs.get('category', None)
+        self.confidence_score = kwargs.get('confidence_score', None)
 
     def __repr__(self) -> str:
         return f"ClassificationCategory(category={self.category}, " \
@@ -2755,33 +2623,38 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
         "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
     :paramtype document_type: Optional[str or ~azure.ai.textanalytics.HealthcareDocumentType]
-    :ivar Optional[str] model_version: The model version to use for the analysis.
-    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
-        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
-        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
-        logged on the service side for troubleshooting. By default, the Language service logs your
-        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-        the service's natural language processing functions. Setting this parameter to true,
-        disables input logging and may limit our ability to remediate issues that occur. Please see
-        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
-        additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    :ivar Optional[str] fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
-        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
-        The only acceptable values to pass in are None and "4.0.1". The default value is None.
-    :ivar document_type: Document type that can be provided as input for Fhir Documents. Expect to
-        have fhir_version provided when used. Behavior of using None enum is the same as not using the
-        document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
-        "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
-    :vartype document_type: Optional[str or ~azure.ai.textanalytics.HealthcareDocumentType]
 
     .. versionadded:: 2022-05-01
         The *AnalyzeHealthcareEntitiesAction* model.
     .. versionadded:: 2022-10-01-preview
         The *fhir_version* and *document_type* keyword arguments.
     """
+
+    model_version: Optional[str] = None
+    """The model version to use for the analysis."""
+    string_index_type: Optional[str] = None
+    """Specifies the method used to interpret string offsets.
+        `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
+        you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
+        see https://aka.ms/text-analytics-offsets"""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
+        logged on the service side for troubleshooting. By default, the Language service logs your
+        input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+        the service's natural language processing functions. Setting this parameter to true,
+        disables input logging and may limit our ability to remediate issues that occur. Please see
+        Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+        additional details, and Microsoft Responsible AI principles at
+        https://www.microsoft.com/ai/responsible-ai."""
+    fhir_version: Optional[str] = None
+    """The FHIR Spec version that the result will use to format the fhir_bundle
+        on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+        The only acceptable values to pass in are None and "4.0.1". The default value is None."""
+    document_type: Optional[Union[str, HealthcareDocumentType]] = None
+    """Document type that can be provided as input for Fhir Documents. Expect to
+        have fhir_version provided when used. Behavior of using None enum is the same as not using the
+        document_type parameter. Known values are "None", "ClinicalTrial", "DischargeSummary",
+        "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote"."""
 
     def __init__(
         self,
@@ -2839,25 +2712,31 @@ class ExtractSummaryAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
     :keyword Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
-    :ivar Optional[str] model_version: The model version to use for the analysis.
-    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+
+    .. versionadded:: 2022-10-01-preview
+        The *ExtractSummaryAction* model.
+    """
+
+    model_version: Optional[str] = None
+    """The model version to use for the analysis."""
+    string_index_type: Optional[str] = None
+    """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        see https://aka.ms/text-analytics-offsets"""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-    :ivar Optional[int] max_sentence_count: Number of sentences to return. Defaults to 3.
-    :ivar Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
-
-    .. versionadded:: 2022-10-01-preview
-        The *ExtractSummaryAction* model.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
+    max_sentence_count: Optional[int] = None
+    """Number of sentences to return. Defaults to 3."""
+    order_by: Optional[str] = None
+    """Possible values include "Offset", "Rank". Default value is "Offset"."""
 
     def __init__(
         self,
@@ -2899,40 +2778,34 @@ class ExtractSummaryResult(DictMixin):
     """ExtractSummaryResult is a result object which contains
     the extractive text summarization from a particular document.
 
-    :ivar str id: Unique, non-empty document identifier.
-    :ivar sentences: A ranked list of sentences representing the extracted summary.
-    :vartype sentences: list[~azure.ai.textanalytics.SummarySentence]
-    :ivar warnings: Warnings encountered while processing document.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of an ExtractSummaryResult.
-    :ivar str kind: The text analysis kind - "ExtractiveSummarization".
-
     .. versionadded:: 2022-10-01-preview
         The *ExtractSummaryResult* model.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        sentences: List["SummarySentence"],
-        warnings: List[TextAnalyticsWarning],
-        statistics: Optional[TextDocumentStatistics] = None,
-        detected_language: Optional[DetectedLanguage] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.sentences = sentences
-        self.warnings = warnings
-        self.statistics = statistics
-        self.detected_language = detected_language
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier."""
+    sentences: List["SummarySentence"]
+    """A ranked list of sentences representing the extracted summary."""
+    warnings: List[TextAnalyticsWarning]
+    """Warnings encountered while processing document."""
+    statistics: Optional[TextDocumentStatistics] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    detected_language: Optional[DetectedLanguage] = None
+    """If automatic language detection is enabled, then this
+        field will contain the DetectedLanguage for the document."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of an ExtractSummaryResult."""
+    kind: Literal["ExtractiveSummarization"] = "ExtractiveSummarization"
+    """The text analysis kind - "ExtractiveSummarization"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.sentences = kwargs.get("sentences", None)
+        self.warnings = kwargs.get("warnings", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.detected_language = kwargs.get("detected_language", None)
         self.is_error: Literal[False] = False
         self.kind: Literal["ExtractiveSummarization"] = "ExtractiveSummarization"
 
@@ -2972,27 +2845,29 @@ class ExtractSummaryResult(DictMixin):
 class SummarySentence(DictMixin):
     """Represents a single sentence from the extractive text summarization.
 
-    :ivar str text: The extracted sentence text.
-    :ivar float rank_score: A float value representing the relevance of the sentence within
-        the summary. Higher values indicate higher importance.
-    :ivar int offset: The sentence offset from the start of the document.
-        The value depends on the value of the `string_index_type` parameter
-        set in the original request, which is UnicodeCodePoint by default.
-    :ivar int length: The length of the sentence. This value depends on the value of the
-        `string_index_type` parameter set in the original request, which is UnicodeCodePoint
-        by default.
-
     .. versionadded:: 2022-10-01-preview
         The *SummarySentence* model.
     """
 
-    def __init__(
-        self, *, text: str, rank_score: float, offset: int, length: int, **kwargs: Any
-    ) -> None:
-        self.text = text
-        self.rank_score = rank_score
-        self.offset = offset
-        self.length = length
+    text: str
+    """The extracted sentence text."""
+    rank_score: float
+    """A float value representing the relevance of the sentence within
+        the summary. Higher values indicate higher importance."""
+    offset: int
+    """The sentence offset from the start of the document.
+        The value depends on the value of the `string_index_type` parameter
+        set in the original request, which is UnicodeCodePoint by default."""
+    length: int
+    """The length of the sentence. This value depends on the value of the
+        `string_index_type` parameter set in the original request, which is UnicodeCodePoint
+        by default."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.text = kwargs.get("text", None)
+        self.rank_score = kwargs.get("rank_score", None)
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
 
     def __repr__(self) -> str:
         return f"SummarySentence(text={self.text}, rank_score={self.rank_score}, " \
@@ -3008,53 +2883,45 @@ class SummarySentence(DictMixin):
         )
 
 
-class AbstractSummaryResult(DictMixin):
-    """AbstractSummaryResult is a result object which contains
+class AbstractiveSummaryResult(DictMixin):
+    """AbstractiveSummaryResult is a result object which contains
     the summary generated for a particular document.
 
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
-    :ivar warnings: Warnings encountered while processing document. Results will still be returned
-        if there are warnings, but they may not be fully accurate.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics:
-        Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar summaries: A list of abstractive summaries. Required.
-    :vartype summaries: list[~azure.ai.textanalytics.AbstractiveSummary]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a AbstractSummaryResult.
-    :ivar str kind: The text analysis kind - "AbstractiveSummarization".
-
     .. versionadded:: 2022-10-01-preview
-        The *AbstractSummaryResult* model.
+        The *AbstractiveSummaryResult* model.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        summaries: List["AbstractiveSummary"],
-        warnings: List[TextAnalyticsWarning],
-        detected_language: Optional[DetectedLanguage] = None,
-        statistics: Optional[TextDocumentStatistics] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.detected_language = detected_language
-        self.warnings = warnings
-        self.statistics = statistics
-        self.summaries = summaries
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier. Required."""
+    summaries: List["AbstractiveSummary"]
+    """A list of abstractive summaries. Required."""
+    warnings: List[TextAnalyticsWarning]
+    """Warnings encountered while processing document. Results will still be returned
+        if there are warnings, but they may not be fully accurate."""
+    detected_language: Optional[DetectedLanguage] = None
+    """If automatic language detection is enabled, then this
+        field will contain the DetectedLanguage for the document."""
+    statistics: Optional[TextDocumentStatistics] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a AbstractiveSummaryResult."""
+    kind: Literal["AbstractiveSummarization"] = "AbstractiveSummarization"
+    """The text analysis kind - "AbstractiveSummarization"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get("id", None)
+        self.detected_language = kwargs.get("detected_language", None)
+        self.warnings = kwargs.get("warnings", None)
+        self.statistics = kwargs.get("statistics", None)
+        self.summaries = kwargs.get("summaries", None)
         self.is_error: Literal[False] = False
         self.kind: Literal["AbstractiveSummarization"] = "AbstractiveSummarization"
 
     def __repr__(self) -> str:
         return (
-            f"AbstractSummaryResult(id={self.id}, detected_language={repr(self.detected_language)}, "
+            f"AbstractiveSummaryResult(id={self.id}, detected_language={repr(self.detected_language)}, "
             f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
             f"summaries={repr(self.summaries)}, is_error={self.is_error}, kind={self.kind})"[:1024]
         )
@@ -3085,20 +2952,18 @@ class AbstractSummaryResult(DictMixin):
 class AbstractiveSummary(DictMixin):
     """An object representing a single summary with context for given document.
 
-    :ivar text: The text of the summary. Required.
-    :vartype text: str
-    :ivar contexts: The context list of the summary.
-    :vartype contexts: Optional[list[~azure.ai.textanalytics.SummaryContext]]
-
     .. versionadded:: 2022-10-01-preview
         The *AbstractiveSummary* model.
     """
 
-    def __init__(
-        self, *, text: str, contexts: Optional[List["SummaryContext"]] = None, **kwargs: Any
-    ) -> None:
-        self.text = text
-        self.contexts = contexts
+    text: str
+    """The text of the summary. Required."""
+    contexts: List["SummaryContext"]
+    """The context list of the summary."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.text = kwargs.get("text", None)
+        self.contexts = kwargs.get("contexts", None)
 
     def __repr__(self) -> str:
         return f"AbstractiveSummary(text={self.text}, contexts={repr(self.contexts)})"[:1024]
@@ -3110,27 +2975,27 @@ class AbstractiveSummary(DictMixin):
             contexts=[
                 SummaryContext._from_generated(context)  # pylint: disable=protected-access
                 for context in result.contexts
-            ] if result.contexts else None
+            ] if result.contexts else []
         )
 
 
 class SummaryContext(DictMixin):
     """The context of the summary.
 
-    :ivar offset: Start position for the context. Use of different 'stringIndexType' values can
-     affect the offset returned. Required.
-    :vartype offset: int
-    :ivar length: The length of the context. Use of different 'stringIndexType' values can affect
-     the length returned. Required.
-    :vartype length: int
-
     .. versionadded:: 2022-10-01-preview
         The *SummaryContext* model.
     """
 
-    def __init__(self, *, offset: int, length: int, **kwargs: Any) -> None:
-        self.offset = offset
-        self.length = length
+    offset: int
+    """Start position for the context. Use of different 'stringIndexType' values can
+     affect the offset returned. Required."""
+    length: int
+    """The length of the context. Use of different 'stringIndexType' values can affect
+     the length returned. Required."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.offset = kwargs.get("offset", None)
+        self.length = kwargs.get("length", None)
 
     def __repr__(self) -> str:
         return f"SummaryContext(offset={self.offset}, length={self.length})"[:1024]
@@ -3143,8 +3008,8 @@ class SummaryContext(DictMixin):
         )
 
 
-class AbstractSummaryAction(DictMixin):
-    """AbstractSummaryAction encapsulates the parameters for starting a long-running
+class AbstractiveSummaryAction(DictMixin):
+    """AbstractiveSummaryAction encapsulates the parameters for starting a long-running
     abstractive summarization operation. For a conceptual discussion of extractive summarization,
     see the service documentation:
     https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
@@ -3157,7 +3022,7 @@ class AbstractSummaryAction(DictMixin):
     .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
         https://aka.ms/applyforgatedsummarizationfeatures
 
-    :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
+    :keyword Optional[int] max_sentence_count: It controls the approximate number of sentences in the output summaries.
     :keyword Optional[str] model_version: The model version to use for the analysis.
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -3171,44 +3036,49 @@ class AbstractSummaryAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
-    :ivar Optional[str] model_version: The model version to use for the analysis.
-    :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+
+    .. versionadded:: 2022-10-01-preview
+        The *AbstractiveSummaryAction* model.
+    """
+
+    max_sentence_count: Optional[int] = None
+    """It controls the approximate number of sentences in the output summaries."""
+    model_version: Optional[str] = None
+    """The model version to use for the analysis."""
+    string_index_type: Optional[str] = None
+    """Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
         you can also pass in `Utf16CodeUnit` or `TextElement_v8`. For additional information
-        see https://aka.ms/text-analytics-offsets
-    :ivar Optional[bool] disable_service_logs: If set to true, you opt-out of having your text input
+        see https://aka.ms/text-analytics-offsets"""
+    disable_service_logs: Optional[bool] = None
+    """If set to true, you opt-out of having your text input
         logged on the service side for troubleshooting. By default, the Language service logs your
         input text for 48 hours, solely to allow for troubleshooting issues in providing you with
         the service's natural language processing functions. Setting this parameter to true,
         disables input logging and may limit our ability to remediate issues that occur. Please see
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
-        https://www.microsoft.com/ai/responsible-ai.
-
-    .. versionadded:: 2022-10-01-preview
-        The *AbstractSummaryAction* model.
-    """
+        https://www.microsoft.com/ai/responsible-ai."""
 
     def __init__(
         self,
         *,
-        sentence_count: Optional[int] = None,
+        max_sentence_count: Optional[int] = None,
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
-        self.sentence_count = sentence_count
+        self.max_sentence_count = max_sentence_count
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
         return (
-            f"AbstractSummaryAction(model_version={self.model_version}, "
+            f"AbstractiveSummaryAction(model_version={self.model_version}, "
             f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
-            f"sentence_count={self.sentence_count})"[:1024]
+            f"max_sentence_count={self.max_sentence_count})"[:1024]
         )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
@@ -3218,7 +3088,7 @@ class AbstractSummaryAction(DictMixin):
                 model_version=self.model_version,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
-                sentence_count=self.sentence_count,
+                sentence_count=self.max_sentence_count,
             )
         )
 
@@ -3227,35 +3097,30 @@ class DynamicClassificationResult(DictMixin):
     """DynamicClassificationResult is a result object which contains
     the classifications for a particular document.
 
-    :ivar str id: Unique, non-empty document identifier.
-    :ivar classifications: Recognized classification results in the document.
-    :vartype classifications: list[~azure.ai.textanalytics.ClassificationCategory]
-    :ivar warnings: Warnings encountered while processing document.
-    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
-    :ivar statistics: If `show_stats=True` was specified in the request this
-        field will contain information about the document payload.
-    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar bool is_error: Boolean check for error item when iterating over list of
-        results. Always False for an instance of a DynamicClassificationResult.
-    :ivar str kind: The text analysis kind - "DynamicClassification".
-
     .. versionadded:: 2022-10-01-preview
         The *DynamicClassificationResult* model.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        classifications: List[ClassificationCategory],
-        warnings: List[TextAnalyticsWarning],
-        statistics: Optional[TextDocumentStatistics] = None,
-        **kwargs: Any
-    ) -> None:
-        self.id = id
-        self.classifications = classifications
-        self.warnings = warnings
-        self.statistics = statistics
+    id: str  # pylint: disable=redefined-builtin
+    """Unique, non-empty document identifier."""
+    classifications: List[ClassificationCategory]
+    """Recognized classification results in the document."""
+    warnings: List[TextAnalyticsWarning]
+    """Warnings encountered while processing document."""
+    statistics: Optional[TextDocumentStatistics] = None
+    """If `show_stats=True` was specified in the request this
+        field will contain information about the document payload."""
+    is_error: Literal[False] = False
+    """Boolean check for error item when iterating over list of
+        results. Always False for an instance of a DynamicClassificationResult."""
+    kind: Literal["DynamicClassification"] = "DynamicClassification"
+    """The text analysis kind - "DynamicClassification"."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.id = kwargs.get('id', None)
+        self.classifications = kwargs.get('classifications', None)
+        self.warnings = kwargs.get('warnings', [])
+        self.statistics = kwargs.get('statistics', None)
         self.is_error: Literal[False] = False
         self.kind: Literal["DynamicClassification"] = "DynamicClassification"
 

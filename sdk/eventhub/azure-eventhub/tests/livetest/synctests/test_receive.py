@@ -8,8 +8,14 @@ import threading
 import pytest
 import time
 
+try:
+    import uamqp
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
+
 from azure.eventhub import EventData, TransportType, EventHubConsumerClient
 from azure.eventhub.exceptions import EventHubError
+from azure.eventhub._pyamqp._message_backcompat import LegacyMessage
 
 
 @pytest.mark.liveTest
@@ -25,6 +31,11 @@ def test_receive_end_of_stream(connstr_senders, uamqp_transport):
             assert ", sequence_number: " in event_str
             assert ", enqueued_time: " in event_str
             assert ", partition_key: 0" in event_str
+        if uamqp_transport:
+            assert isinstance(event.message, uamqp.Message)
+        else:
+            assert isinstance(event.message, LegacyMessage)
+
     on_event.called = False
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(

@@ -24,6 +24,8 @@ class KubernetesCompute(Compute):
     :type location: Optional[str], optional
     :param description: Description of the resource.
     :type description: Optional[str], optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param resource_id: ARM resource id of the underlying compute, defaults to None
     :type resource_id: Optional[str], optional
     :param created_on: defaults to None
@@ -63,6 +65,7 @@ class KubernetesCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
             if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
@@ -101,4 +104,5 @@ class KubernetesCompute(Compute):
             properties=kubernetes_comp,
             name=self.name,
             identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            tags=self.tags,
         )

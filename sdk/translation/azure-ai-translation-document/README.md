@@ -21,6 +21,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 [Translator resource][DT_resource] to use this package.
 
 ### Install the package
+
 Install the Azure Document Translation client library for Python with [pip][pip]:
 
 ```bash
@@ -30,6 +31,7 @@ pip install azure-ai-translation-document
 > Note: This version of the client library defaults to the v1.0 version of the service
 
 #### Create a Translator resource
+
 The Document Translation feature supports [single-service access][single_service] only.
 To access the service, create a Translator resource.
 
@@ -59,11 +61,12 @@ az cognitiveservices account create \
 ```
 
 ### Authenticate the client
+
 In order to interact with the Document Translation feature service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
-
 #### Looking up the endpoint
+
 You can find the endpoint for your Translator resource using the
 [Azure Portal][azure_portal_get_endpoint].
 
@@ -81,14 +84,17 @@ The API key can be found in the Azure Portal or by running the following Azure C
 To use an [API key][cognitive_authentication_api_key] as the `credential` parameter,
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
 
+<!-- SNIPPET:sample_authentication.create_dt_client_with_key -->
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import DocumentTranslationClient
 
-endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-document_translation_client = DocumentTranslationClient(endpoint, credential)
+endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
+key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
+
+document_translation_client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 ```
+<!-- END SNIPPET -->
 
 #### Create the client with an Azure Active Directory credential
 
@@ -106,16 +112,20 @@ Translator resource by assigning the `"Cognitive Services User"` role to your se
 Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
+<!-- SNIPPET:sample_authentication.create_dt_client_with_aad -->
 ```python
+"""DefaultAzureCredential will use the values from these environment
+variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+"""
 from azure.identity import DefaultAzureCredential
 from azure.ai.translation.document import DocumentTranslationClient
+
+endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
 credential = DefaultAzureCredential()
 
-document_translation_client = DocumentTranslationClient(
-    endpoint="https://<resource-name>.cognitiveservices.azure.com/",
-    credential=credential
-)
+document_translation_client = DocumentTranslationClient(endpoint, credential)
 ```
+<!-- END SNIPPET -->
 
 ## Key concepts
 
@@ -155,37 +165,73 @@ poller = document_translation_client.begin_translation("<sas_url_to_source>", "<
 
 2) Or multiple different sources can be provided each with their own targets.
 
+<!-- SNIPPET:sample_translate_multiple_inputs.multiple_translation -->
 ```python
+import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import (
+    DocumentTranslationClient,
+    DocumentTranslationInput,
+    TranslationTarget
+)
 
-my_input = [
-    DocumentTranslationInput(
-        source_url="<sas_url_to_source_A>",
-        targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language="de")
-        ]
-    ),
-    DocumentTranslationInput(
-        source_url="<sas_url_to_source_B>",
-        targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language="de")
-        ]
-    ),
-    DocumentTranslationInput(
-        source_url="<sas_url_to_source_C>",
-        targets=[
-            TranslationTarget(target_url="<sas_url_to_target_fr>", language="fr"),
-            TranslationTarget(target_url="<sas_url_to_target_de>", language="de")
-        ]
-    )
-]
+endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
+key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
+source_container_url_1 = os.environ["AZURE_SOURCE_CONTAINER_URL_1"]
+source_container_url_2 = os.environ["AZURE_SOURCE_CONTAINER_URL_2"]
+target_container_url_fr = os.environ["AZURE_TARGET_CONTAINER_URL_FR"]
+target_container_url_ar = os.environ["AZURE_TARGET_CONTAINER_URL_AR"]
+target_container_url_es = os.environ["AZURE_TARGET_CONTAINER_URL_ES"]
 
-document_translation_client = DocumentTranslationClient("<endpoint>", AzureKeyCredential("<api_key>"))
-poller = document_translation_client.begin_translation(my_input)
+client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+
+poller = client.begin_translation(inputs=[
+        DocumentTranslationInput(
+            source_url=source_container_url_1,
+            targets=[
+                TranslationTarget(
+                    target_url=target_container_url_fr,
+                    language="fr"
+                ),
+                TranslationTarget(
+                    target_url=target_container_url_ar,
+                    language="ar"
+                )
+            ]
+        ),
+        DocumentTranslationInput(
+            source_url=source_container_url_2,
+            targets=[
+                TranslationTarget(
+                    target_url=target_container_url_es,
+                    language="es"
+                )
+            ]
+        )
+    ]
+)
+result = poller.result()
+
+print(f"Status: {poller.status()}")
+print(f"Created on: {poller.details.created_on}")
+print(f"Last updated on: {poller.details.last_updated_on}")
+print(f"Total number of translations on documents: {poller.details.documents_total_count}")
+
+print("\nOf total documents...")
+print(f"{poller.details.documents_failed_count} failed")
+print(f"{poller.details.documents_succeeded_count} succeeded")
+
+for document in result:
+    print(f"Document ID: {document.id}")
+    print(f"Document status: {document.status}")
+    if document.status == "Succeeded":
+        print(f"Source document location: {document.source_document_url}")
+        print(f"Translated document location: {document.translated_document_url}")
+        print(f"Translated to language: {document.translated_to}\n")
+    elif document.error:
+        print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
+<!-- END SNIPPET -->
 
 > Note: the target_url for each target language must be unique.
 
@@ -193,6 +239,7 @@ To translate documents under a folder, or only translate certain documents, see 
 See the service documentation for all [supported languages][supported_languages].
 
 ### Long-Running Operations
+
 Long-running operations are operations which consist of an initial request sent to the service to start an operation,
 followed by polling the service at intervals to determine whether the operation has completed or failed, and if it has
 succeeded, to get the result.
@@ -211,6 +258,7 @@ The following section provides several code snippets covering some of the most c
 * [List translation operations](#list-translation-operations "List Translation Operations")
 
 ### Translate your documents
+
 Translate all the documents in your source container to the target container. To translate documents under a folder, or only translate certain documents, see [sample_begin_translation_with_filters.py][sample_begin_translation_with_filters].
 
 ```python
@@ -249,41 +297,64 @@ for document in result:
 ```
 
 ### Translate multiple inputs
+
 Begin translating with documents in multiple source containers to multiple target containers in different languages.
 
+<!-- SNIPPET:sample_translate_multiple_inputs.multiple_translation -->
 ```python
+import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import (
+    DocumentTranslationClient,
+    DocumentTranslationInput,
+    TranslationTarget
+)
 
-endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-source_container_sas_url_de = "<sas-url-de>"
-source_container_sas_url_en = "<sas-url-en>"
-target_container_sas_url_es = "<sas-url-es>"
-target_container_sas_url_fr = "<sas-url-fr>"
-target_container_sas_url_ar = "<sas-url-ar>"
+endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
+key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
+source_container_url_1 = os.environ["AZURE_SOURCE_CONTAINER_URL_1"]
+source_container_url_2 = os.environ["AZURE_SOURCE_CONTAINER_URL_2"]
+target_container_url_fr = os.environ["AZURE_TARGET_CONTAINER_URL_FR"]
+target_container_url_ar = os.environ["AZURE_TARGET_CONTAINER_URL_AR"]
+target_container_url_es = os.environ["AZURE_TARGET_CONTAINER_URL_ES"]
 
-document_translation_client = DocumentTranslationClient(endpoint, credential)
+client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
-poller = document_translation_client.begin_translation(
-    [
+poller = client.begin_translation(inputs=[
         DocumentTranslationInput(
-            source_url=source_container_sas_url_en,
+            source_url=source_container_url_1,
             targets=[
-                TranslationTarget(target_url=target_container_sas_url_es, language="es"),
-                TranslationTarget(target_url=target_container_sas_url_fr, language="fr"),
-            ],
+                TranslationTarget(
+                    target_url=target_container_url_fr,
+                    language="fr"
+                ),
+                TranslationTarget(
+                    target_url=target_container_url_ar,
+                    language="ar"
+                )
+            ]
         ),
         DocumentTranslationInput(
-            source_url=source_container_sas_url_de,
+            source_url=source_container_url_2,
             targets=[
-                TranslationTarget(target_url=target_container_sas_url_ar, language="ar"),
-            ],
+                TranslationTarget(
+                    target_url=target_container_url_es,
+                    language="es"
+                )
+            ]
         )
     ]
 )
-
 result = poller.result()
+
+print(f"Status: {poller.status()}")
+print(f"Created on: {poller.details.created_on}")
+print(f"Last updated on: {poller.details.last_updated_on}")
+print(f"Total number of translations on documents: {poller.details.documents_total_count}")
+
+print("\nOf total documents...")
+print(f"{poller.details.documents_failed_count} failed")
+print(f"{poller.details.documents_succeeded_count} succeeded")
 
 for document in result:
     print(f"Document ID: {document.id}")
@@ -292,37 +363,41 @@ for document in result:
         print(f"Source document location: {document.source_document_url}")
         print(f"Translated document location: {document.translated_document_url}")
         print(f"Translated to language: {document.translated_to}\n")
-    else:
+    elif document.error:
         print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
+<!-- END SNIPPET -->
 
 ### List translation operations
+
 Enumerate over the translation operations submitted for the resource.
 
+<!-- SNIPPET:sample_list_translations.list_translations -->
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import DocumentTranslationClient
 
-endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
 
-document_translation_client = DocumentTranslationClient(endpoint, credential)
+endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
+key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
-operations = document_translation_client.list_translation_statuses()  # type: ItemPaged[TranslationStatus]
+client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
+operations = client.list_translation_statuses()
 
 for operation in operations:
-    print(f"\nID: {operation.id}")
+    print(f"ID: {operation.id}")
     print(f"Status: {operation.status}")
     print(f"Created on: {operation.created_on}")
     print(f"Last updated on: {operation.last_updated_on}")
-    print(f"Total number of translations on documents: {operation.documents_total_count}")
+    print(f"Total number of operations on documents: {operation.documents_total_count}")
     print(f"Total number of characters charged: {operation.total_characters_charged}")
 
-    print("Of total documents...")
+    print("\nOf total documents...")
     print(f"{operation.documents_failed_count} failed")
     print(f"{operation.documents_succeeded_count} succeeded")
-    print(f"{operation.documents_canceled_count} canceled")
+    print(f"{operation.documents_canceled_count} canceled\n")
 ```
+<!-- END SNIPPET -->
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens
 for your containers, and download the finished translated documents, see this [sample][sample_translation_with_azure_blob].
@@ -333,7 +408,8 @@ Note that you will need to install the [azure-storage-blob][azure_storage_blob] 
 The following section provides some insights for some advanced translation features such as glossaries and custom translation models.
 
 ### **Glossaries**
-Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary, or you simply need specific translation. This is why Document Translation provides support for glossaries. 
+
+Glossaries are domain-specific dictionaries. For example, if you want to translate some medical-related documents, you may need support for the many words, terminology, and idioms in the medical field which you can't find in the standard translation dictionary, or you simply need specific translation. This is why Document Translation provides support for glossaries.
 
 #### **How To Create Glossary File**
 
@@ -348,25 +424,30 @@ Document Translation supports glossaries in the following formats:
 View all supported formats [here][supported_glossary_formats].
 
 #### **How Use Glossaries in Document Translation**
+
 In order to use glossaries with Document Translation, you first need to upload your glossary file to a blob container, and then provide the SAS URL to the file as in the code samples [sample_translation_with_glossaries.py][sample_translation_with_glossaries].
 
 ### **Custom Translation Models**
+
 Instead of using Document Translation's engine for translation, you can use your own custom Azure machine/deep learning model.
- 
+
 #### **How To Create a Custom Translation Model**
+
 For more info on how to create, provision, and deploy your own custom Azure translation model, please follow the instructions here: [Build, deploy, and use a custom model for translation][custom_translation_article]
 
 #### **How To Use a Custom Translation Model With Document Translation**
+
 In order to use a custom translation model with Document Translation, you first 
 need to create and deploy your model, then follow the code sample [sample_translation_with_custom_model.py][sample_translation_with_custom_model] to use with Document Translation.
-
 
 ## Troubleshooting
 
 ### General
+
 Document Translation client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
 
 ### Logging
+
 This library uses the standard
 [logging][python_logging] library for logging.
 
@@ -400,8 +481,8 @@ These code samples show common scenario operations with the Azure Document Trans
 * Apply a custom glossary to translation: [sample_translation_with_glossaries.py][sample_translation_with_glossaries]
 * Use Azure Blob Storage to set up translation resources: [sample_translation_with_azure_blob.py][sample_translation_with_azure_blob]
 
-
 ### Async samples
+
 This library also includes a complete set of async APIs. To use them, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/). Async clients
 are found under the `azure.ai.translation.document.aio` namespace.
@@ -419,6 +500,7 @@ are found under the `azure.ai.translation.document.aio` namespace.
 For more extensive documentation on Azure Cognitive Services Document Translation, see the [Document Translation documentation][python-dt-product-docs] on docs.microsoft.com.
 
 ## Contributing
+
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.

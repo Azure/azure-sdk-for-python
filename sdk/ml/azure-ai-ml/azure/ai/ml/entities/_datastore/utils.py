@@ -4,8 +4,8 @@
 
 # pylint: disable=protected-access
 
-from azure.ai.ml._restclient.v2022_02_01_preview import models as models_preview
-from azure.ai.ml._restclient.v2022_05_01 import models
+from azure.ai.ml._restclient.v2022_10_01_preview import models as models_preview
+from azure.ai.ml._restclient.v2022_10_01 import models
 from azure.ai.ml.entities._credentials import (
     AccountKeyConfiguration,
     CertificateConfiguration,

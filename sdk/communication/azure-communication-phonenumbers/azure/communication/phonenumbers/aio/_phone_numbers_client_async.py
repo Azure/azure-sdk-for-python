@@ -73,7 +73,7 @@ class PhoneNumbersClient(object):
 
         self._endpoint = endpoint
         self._accepted_language = accepted_language
-        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION.value)
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
             api_version=self._api_version,

@@ -95,35 +95,12 @@ You can rearrange sequence or disable particular tests.
 
 ## Running Test
 
-First of all set the variable, to enable live tests:
-
-    export AZURE_TEST_RUN_LIVE=true
-
-Live test requires credentials, in order to do that create **mgmt_settings_real.py** file:
-
-    cd /_/azure-sdk-for-python
-    cp tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py tools/azure-sdk-tools/devtools_testutils/mgmt_settings_real.py
-    vi tools/azure-sdk-tools/devtools_testutils/mgmt_settings_real.py
-
-and make sure your subscription ID is correct:
-
-    SUBSCRIPTION_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
-and **get_credentials** looks as follows:
-
-    def get_credentials(**kwargs):
-        from azure.common.credentials import ServicePrincipalCredentials
-        return ServicePrincipalCredentials(
-            client_id =  'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-            secret = 'XxxxXxxxXXXxxxXXXXxxxxXXxxxXxxx',
-            tenant = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx'
-        )
-
-now you can run live integration test:
-
-    pytest -s sdk/attestation/azure-mgmt-attestation
-
->NOTE: To create service principal, follow instructions here: https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+To run tests, refer to the documentation at
+[/doc/dev/mgmt/tests.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/tests.md). Most test
+suites in the Azure SDK have been migrated to use the Azure SDK test proxy, but some libraries that have inactive tests
+may still be using an older, deprecated system. The
+[test proxy migration guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md)
+describes the differences between the systems and their requirements.
 
 ## Fixing Test
 

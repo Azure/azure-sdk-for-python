@@ -1,5 +1,13 @@
 # Release History
 
+## 5.1.0 (2023-01-30)
+
+### Features Added
+
+  - Added operation group DeletedProtectionContainersOperations
+  - Model AzureIaaSVMProtectionPolicy has a new parameter tiering_policy
+  - Model SubProtectionPolicy has a new parameter tiering_policy
+
 ## 5.1.0b3 (2023-01-03)
 
 ### Other Changes

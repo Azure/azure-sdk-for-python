@@ -1,5 +1,55 @@
 # Release History
 
+## 4.0.0b8 (2023-02-17)
+
+### Features Added
+
+  - Added operation ManagedInstancesOperations.begin_start
+  - Added operation ManagedInstancesOperations.begin_stop
+  - Added operation ManagedInstancesOperations.list_outbound_network_dependencies_by_managed_instance
+  - Added operation ServersOperations.begin_refresh_status
+  - Added operation group DatabaseEncryptionProtectorsOperations
+  - Added operation group ManagedLedgerDigestUploadsOperations
+  - Added operation group ServerConfigurationOptionsOperations
+  - Added operation group StartStopManagedInstanceSchedulesOperations
+  - Model Database has a new parameter availability_zone
+  - Model Database has a new parameter encryption_protector
+  - Model Database has a new parameter keys
+  - Model Database has a new parameter manual_cutover
+  - Model Database has a new parameter perform_cutover
+  - Model DatabaseUpdate has a new parameter encryption_protector
+  - Model DatabaseUpdate has a new parameter keys
+  - Model DatabaseUpdate has a new parameter manual_cutover
+  - Model DatabaseUpdate has a new parameter perform_cutover
+  - Model PrivateEndpointConnectionProperties has a new parameter group_ids
+  - Model RecoverableDatabase has a new parameter keys
+  - Model RecoverableDatabaseListResult has a new parameter next_link
+  - Model RestorableDroppedDatabase has a new parameter keys
+  - Model Server has a new parameter external_governance_status
+  - Model ServerUpdate has a new parameter external_governance_status
+  - Operation DatabasesOperations.get has a new optional parameter expand
+  - Operation DatabasesOperations.get has a new optional parameter filter
+  - Operation RecoverableDatabasesOperations.get has a new optional parameter expand
+  - Operation RecoverableDatabasesOperations.get has a new optional parameter filter
+  - Operation RestorableDroppedDatabasesOperations.get has a new optional parameter expand
+  - Operation RestorableDroppedDatabasesOperations.get has a new optional parameter filter
+
+### Breaking Changes
+
+  - Renamed operation TransparentDataEncryptionsOperations.create_or_update to TransparentDataEncryptionsOperations.begin_create_or_update
+
+## 4.0.0b7 (2023-01-29)
+
+### Features Added
+
+  - Model InstanceFailoverGroup has a new parameter secondary_type
+  - Model ManagedDatabase has a new parameter cross_subscription_restorable_dropped_database_id
+  - Model ManagedDatabase has a new parameter cross_subscription_source_database_id
+  - Model ManagedDatabase has a new parameter cross_subscription_target_managed_instance_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_restorable_dropped_database_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_source_database_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_target_managed_instance_id
+
 ## 4.0.0b6 (2022-12-30)
 
 ### Features Added

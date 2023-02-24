@@ -51,7 +51,7 @@ def test_mgmt_call_sas_credential(live_eventhub):
     hostname = live_eventhub["hostname"]
     credential = EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
     auth_uri = "sb://{}/{}".format(hostname, live_eventhub['event_hub'])
-    token = credential.get_token(auth_uri).token.decode()
+    token = credential.get_token(auth_uri).token
     client = EventHubProducerClient(fully_qualified_namespace=hostname,
                                              eventhub_name=live_eventhub['event_hub'],
                                              credential=AzureSasCredential(token))

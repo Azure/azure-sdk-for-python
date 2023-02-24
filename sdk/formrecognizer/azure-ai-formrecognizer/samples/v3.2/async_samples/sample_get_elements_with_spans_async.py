@@ -86,52 +86,55 @@ async def get_elements_with_spans_async():
     # can also be used to search for related elements, such as lines in this case.
     # To see an example for searching for words which have a `span` field, see
     # `sample_get_words_on_document_line.py` under the samples v3.2 directory.
-    for table_idx, table in enumerate(result.tables):
-        print(
-            "Table # {} has {} rows and {} columns".format(
-                table_idx, table.row_count, table.column_count
-            )
-        )
-
-        lines = []
-
-        for region in table.bounding_regions:
+    if result.tables is not None:
+        for table_idx, table in enumerate(result.tables):
             print(
-                "Table # {} location on page: {}".format(
-                    table_idx,
-                    region.page_number,
+                "Table # {} has {} rows and {} columns".format(
+                    table_idx, table.row_count, table.column_count
                 )
             )
-            lines.extend(get_lines(table.spans, get_page(region.page_number, result.pages)))
 
-        print("Found # {} lines in the table".format(len(lines)))
-        for line in lines:
-            print(
-                "...Line '{}' is within bounding polygon: '{}'".format(
-                    line.content,
-                    line.polygon,
+            lines = []
+
+            if table.bounding_regions is not None:
+                for region in table.bounding_regions:
+                    print(
+                        "Table # {} location on page: {}".format(
+                            table_idx,
+                            region.page_number,
+                        )
+                    )
+                    lines.extend(get_lines(table.spans, get_page(region.page_number, result.pages)))
+
+            print("Found # {} lines in the table".format(len(lines)))
+            for line in lines:
+                print(
+                    "...Line '{}' is within bounding polygon: '{}'".format(
+                        line.content,
+                        line.polygon,
+                    )
                 )
-            )
 
     # Below is a method to search for the style of a particular element by using spans.
     # This example uses DocumentLine, but other elements that also have a `spans` or `span`
     # field can also be used to search for document text style.
-    for line in result.pages[0].lines:
-        styles = get_styles(line.spans, result.styles)
-        print(
-            "Found line '{}' with style:".format(
-                line.content
-            )
-        )
-        if not styles:
+    if result.pages[0].lines is not None:
+        for line in result.pages[0].lines:
+            styles = get_styles(line.spans, result.styles)
             print(
-                "...no handwritten text found"
-            )
-        for style in styles:
-            if style.is_handwritten:
-                print(
-                    "...handwritten with confidence {}".format(style.confidence)
+                "Found line '{}' with style:".format(
+                    line.content
                 )
+            )
+            if not styles:
+                print(
+                    "...no handwritten text found"
+                )
+            for style in styles:
+                if style.is_handwritten:
+                    print(
+                        "...handwritten with confidence {}".format(style.confidence)
+                    )
     print("----------------------------------------")
 
 
@@ -140,4 +143,24 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    import sys
+    from azure.core.exceptions import HttpResponseError
+    try:
+        asyncio.run(main())
+    except HttpResponseError as error:
+        # Examples of how to check an HttpResponseError
+        # Check by error code:
+        if error.error is not None:
+            if error.error.code == "InvalidRequest":
+                print(f"Received an invalid request error: {error.error}")
+                sys.exit(1)
+            if error.error.code == "InvalidImage":
+                print(f"Received an invalid image error: {error.error}")
+                sys.exit(1)
+        # If the inner error is None and then it is possible to check the message to get more information:
+        filter_msg = ["Generic error", "Timeout", "Invalid request", "InvalidImage"]
+        if any(example_error.casefold() in error.message.casefold() for example_error in filter_msg):
+            print(f"Uh-oh! Something unexpected happened: {error}")
+            sys.exit(1)
+        # Print the full error content:
+        print(f"Full HttpResponseError: {error}")

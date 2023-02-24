@@ -139,6 +139,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: Union[str, Dict[str, str], ~azure.core.credentials.TokenCredential]
     :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
+        More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int request_timeout: The HTTP request timeout in milliseconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
@@ -159,6 +160,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
+    :keyword bool enable_diagnostics_logging: Enable the CosmosHttpLogging policy.
+        Must be used along with a logger to work.
+    :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
+        level (to log all requests) or at a single request level. Requests will be logged at INFO level.
 
     .. admonition:: Example:
 

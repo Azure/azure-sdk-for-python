@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/botservice/resource-manager/Microsoft.BotService/preview/2022-06-15-preview/examples/PutEmailChannel.json
+# x-ms-original-file: specification/botservice/resource-manager/Microsoft.BotService/stable/2022-09-15/examples/PutEmailChannel.json
 if __name__ == "__main__":
     main()

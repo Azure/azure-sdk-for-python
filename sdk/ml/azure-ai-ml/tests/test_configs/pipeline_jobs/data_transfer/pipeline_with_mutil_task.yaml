@@ -1,0 +1,61 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'pipeline with data transfer components'
+settings:
+  default_compute: azureml:adf_compute
+inputs:
+  path_source_s3: s3://my_bucket/my_folder
+  query_source_snowflake: SELECT * FROM my_table
+  connection_target_s3: azureml:my_s3_connection
+
+outputs:
+  merged_blob:
+    type: uri_folder
+    path: azureml://datastores/my_blob/paths/merged_blob
+
+jobs:
+    snowflake_blob:
+      type: data_transfer
+      task: import_data
+      source:
+        type: database
+        query: ${{parent.inputs.query_source_snowflake}}
+        connection: azureml:my_snowflake_connection
+      outputs:
+        sink:
+          type: mltable
+      compute: azureml:adf_compute1
+
+    s3_blob:
+      type: data_transfer
+      task: import_data
+      source:
+        type: file_system
+        path: ${{parent.inputs.path_source_s3}}
+        connection: azureml:my_s3_connection
+      outputs:
+        sink:
+          type: uri_folder
+          path: azureml://datastores/managed/paths/some_path
+
+    merge_files:
+      type: data_transfer
+      task: copy_data
+      component: ../../components/data_transfer/merge_files.yaml
+      inputs:
+        folder1: ${{parent.jobs.s3_blob.outputs.sink}}
+        folder2: ${{parent.jobs.snowflake_blob.outputs.sink}}
+      outputs:
+        output_folder: ${{parent.outputs.merged_blob}}
+      # use default compute
+
+    blob_s3:
+      type: data_transfer
+      task: export_data
+      inputs:
+        source: ${{parent.jobs.merge_files.outputs.output_folder}}
+      sink:
+        type: file_system
+        path: ${{parent.inputs.path_source_s3}}
+        connection: ${{parent.inputs.connection_target_s3}}

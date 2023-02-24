@@ -248,10 +248,15 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             self._token = access_token.token.decode()
         except AttributeError:
             self._token = access_token.token
+        try:
+            token_type = self._auth.token_type.decode()
+        except AttributeError:
+            token_type = self._auth.token_type
+
         self._token_put_time = int(utc_now().timestamp())
         self._put_token(
             self._token,
-            self._auth.token_type,
+            token_type,
             self._auth.audience,
             utc_from_timestamp(self._expires_on),
         )

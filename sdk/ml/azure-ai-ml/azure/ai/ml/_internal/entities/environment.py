@@ -84,7 +84,7 @@ class InternalEnvironment:
 
     def _validate(self, base_path: str, skip_path_validation: bool = False) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
-        if self.os is not None and self.os not in {"Linux", "Windows"}:
+        if self.os is not None and self.os not in {"Linux", "Windows", "linux", "windows"}:
             validation_result.append_error(
                 yaml_path="os",
                 message=f"Only support 'Linux' and 'Windows', but got {self.os!r}",

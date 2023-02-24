@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Union, Sequence, Dict, List, cast, Tuple
+from typing import Any, Union, Sequence, Dict, List, cast, Tuple, Optional
 from datetime import timedelta, datetime
 
 from azure.core.credentials import TokenCredential
@@ -44,7 +44,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
-    :paramtype endpoint: str
+    :paramtype endpoint: Optional[str]
     """
 
     def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
@@ -52,9 +52,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
+        auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential, endpoint),
+            authentication_policy=auth_policy or get_authentication_policy(credential, endpoint),
             endpoint=self._endpoint.rstrip('/') + "/v1",
             **kwargs
         )
@@ -66,8 +67,8 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         workspace_id: str,
         query: str,
         *,
-        timespan: Union[
-            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
+        timespan: Optional[Union[
+            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]
         ],
         **kwargs: Any
         ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
@@ -82,9 +83,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
-         a timedelta and a start datetime, or a start datetime/end datetime.
+         a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+         the query to a timespan.
         :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
-         or tuple[~datetime.datetime, ~datetime.datetime]
+         or tuple[~datetime.datetime, ~datetime.datetime] or None
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
@@ -93,7 +95,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
-        :paramtype additional_workspaces: list[str]
+        :paramtype additional_workspaces: Optional[list[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -107,7 +109,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        timespan = construct_iso8601(timespan)
+        timespan_iso = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
@@ -119,7 +121,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
 
         body = {
             "query": query,
-            "timespan": timespan,
+            "timespan": timespan_iso,
             "workspaces": additional_workspaces
         }
 
@@ -131,7 +133,8 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
-        response = None
+
+        response: Union[LogsQueryResult, LogsQueryPartialResult]
         if not generated_response.get("error"):
             response = LogsQueryResult._from_generated( # pylint: disable=protected-access
                 generated_response
@@ -140,14 +143,14 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
                 generated_response, LogsQueryError
             )
-        return cast(Union[LogsQueryResult, LogsQueryPartialResult], response)
+        return response
 
     @distributed_trace
     def query_batch(
         self,
         queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
         **kwargs: Any
-    ) -> List[Union[LogsQueryResult, LogsQueryPartialResult, LogsQueryError]]:
+    ) -> List[Union[LogsQueryResult, LogsQueryError, LogsQueryPartialResult]]:
         """Execute a list of Kusto queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
 
@@ -200,5 +203,5 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

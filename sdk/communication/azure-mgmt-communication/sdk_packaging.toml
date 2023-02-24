@@ -5,5 +5,5 @@ package_pprint_name = "Communication Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-sample_link = "communication"
+sample_link = ""
 title = "CommunicationServiceManagementClient"

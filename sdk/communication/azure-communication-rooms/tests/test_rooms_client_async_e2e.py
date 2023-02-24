@@ -16,7 +16,7 @@ from azure.communication.rooms import (
     RoomJoinPolicy,
     RoleType
 )
-from _shared.asynctestcase import AsyncCommunicationTestCase
+from testcase_async import RoomsAsyncTestCase
 from _shared.testcase import (
     ResponseReplacerProcessor
 )
@@ -24,7 +24,7 @@ from _shared.testcase import (
 from _shared.utils import get_http_logging_policy
 from helper import URIIdentityReplacer, RequestBodyIdentityReplacer
 
-class RoomsClientTestAsync(AsyncCommunicationTestCase):
+class RoomsClientTestAsync(RoomsAsyncTestCase):
     def __init__(self, method_name):
         super(RoomsClientTestAsync, self).__init__(method_name)
 
@@ -72,7 +72,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             for user in self.users.values():
                 self.identity_client.delete_user(user.communication_identifier)
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_no_attributes_async(self):
         async with self.rooms_client:
             response = await self.rooms_client.create_room()
@@ -80,7 +80,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_only_validFrom_async(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
@@ -90,11 +90,11 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
 
             # verify room is valid for 180 days
-            valid_until = datetime.now() + timedelta(days=180)
+            valid_until = datetime.utcnow() + timedelta(days=180)
             self.assertEqual(valid_until.date(), response.valid_until.date())
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_only_validUntil_async(self):
         # room attributes
         valid_until =  datetime.now() + timedelta(weeks=3)
@@ -105,7 +105,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.verify_successful_room_response(response=response, valid_until=valid_until)
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_only_participants_async(self):
         # add john and chris to room
         participants = [
@@ -120,7 +120,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
             self.verify_successful_room_response(response=response, participants=participants)
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_validUntil_7Months_async(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
@@ -132,7 +132,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_validFrom_7Months_async(self):
         # room attributes
         valid_from = datetime.now() + timedelta(weeks=29)
@@ -144,7 +144,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert ex.value.message is not None
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_correct_timerange_async(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
@@ -157,7 +157,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
             self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until)
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_incorrectMri_async(self):
         # room attributes
         participants = [
@@ -176,7 +176,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert ex.value.message is not None
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_open_room(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
@@ -189,7 +189,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         await self.rooms_client.delete_room(room_id=response.id)
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_all_attributes_async(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
@@ -208,7 +208,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             response=response, valid_from=valid_from, valid_until=valid_until, participants=participants)
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_get_room_async(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
@@ -229,7 +229,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.verify_successful_room_response(
                 response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id, participants=participants)
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_get_invalid_room_async(self):
         # random room id
         async with self.rooms_client:
@@ -246,7 +246,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
 
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_only_ValidFrom_async(self):
         # room with no attributes
         async with self.rooms_client:
@@ -263,7 +263,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_only_ValidUntil_async(self):
         # room with no attributes
         async with self.rooms_client:
@@ -281,7 +281,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_ValidFrom_7Months_async(self):
         # room with no attributes
         async with self.rooms_client:
@@ -299,7 +299,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_ValidUntil_7Months_async(self):
         # room with no attributes
         async with self.rooms_client:
@@ -317,7 +317,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_incorrect_timerange_async(self):
         # room with no attributes
         async with self.rooms_client:
@@ -337,7 +337,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert ex.value.message is not None
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_correct_timerange_async(self):
         # room with no attributes
         async with self.rooms_client:
@@ -355,7 +355,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_change_open_room_in_past(self):
         # room with no attributes
         create_response = await self.rooms_client.create_room()
@@ -375,7 +375,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         assert ex.value.message is not None
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_change_open_room_in_future(self):
         # room with no attributes
         create_response = await self.rooms_client.create_room()
@@ -391,7 +391,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
         await self.rooms_client.delete_room(room_id=create_response.id)
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_add_participant_async(self):
         # room with no attributes
         async with self.rooms_client:
@@ -408,7 +408,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.assertListEqual(participants, updated_participants.participants)
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_participant_async(self):
         # add john and chris to room
         create_participants = [
@@ -431,7 +431,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             self.assertListEqual(update_participants, update_response.participants)
 
     @pytest.mark.live_test_only
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_remove_participant_async(self):
         # add john and chris to room
         create_participants = [
@@ -451,7 +451,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             participants = [self.users["chris"]]
             self.assertListEqual(participants, update_response.participants)
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_add_participants_incorrectMri_async(self):
         # room with no attributes
         async with self.rooms_client:
@@ -471,7 +471,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_add_participants_wrongRoleName_async(self):
         # room with no attributes
         async with self.rooms_client:
@@ -491,7 +491,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_incorrect_roomId_async(self):
         # try to update room with random room_id
         with pytest.raises(HttpResponseError) as ex:
@@ -502,7 +502,7 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
                 assert str(ex.value.status_code) == "404"
                 assert ex.value.message is not None
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RoomsAsyncTestCase.await_prepared_test
     async def test_update_room_deleted_room_async(self):
         # create a room -> delete it -> try to update it
         async with self.rooms_client:

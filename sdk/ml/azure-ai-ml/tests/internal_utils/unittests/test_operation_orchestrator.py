@@ -59,11 +59,11 @@ def component_operations(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_aml_services_2022_10_01: Mock
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
 
@@ -176,7 +176,7 @@ deployments:
         code_configuration:
             code: ./endpoint
             scoring_script: ./test.py
-        environment: azureml:/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/sdk_vnext_cli/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1
+        environment: azureml:/subscriptions/5f08d643-1910-4a38-a7c7-84a39d4f42e0/resourceGroups/sdk_vnext_cli/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/1
     """
     p = tmp_path / "create_model_inline.yaml"
     p.write_text(content)
@@ -187,8 +187,8 @@ deployments:
 @pytest.mark.core_sdk_test
 class TestOperationOrchestration:
     def test_registry_environment(self, operation_orchestrator: OperationOrchestrator) -> None:
-        test_input = '//registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2'
-        expected = 'azureml://registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2'
+        test_input = "//registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2"
+        expected = "azureml://registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2"
         actual = operation_orchestrator.get_asset_arm_id(test_input, azureml_type=AzureMLResourceType.ENVIRONMENT)
         assert actual == expected
 
@@ -197,8 +197,10 @@ class TestOperationOrchestration:
         model = Model(id=test_id, name="some_name", version="1")
         actual = operation_orchestrator.get_asset_arm_id(model, azureml_type=AzureMLResourceType.MODEL)
         assert actual == test_id
-    
-    def test_get_asset_arm_id_when_environment_already_created(self, operation_orchestrator: OperationOrchestrator) -> None:
+
+    def test_get_asset_arm_id_when_environment_already_created(
+        self, operation_orchestrator: OperationOrchestrator
+    ) -> None:
         test_id = "azureml://registries/my-registry/environments/env-base/versions/1"
         environment = Environment(id=test_id, name="some_name", version="1")
         actual = operation_orchestrator.get_asset_arm_id(environment, azureml_type=AzureMLResourceType.ENVIRONMENT)

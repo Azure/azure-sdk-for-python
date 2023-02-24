@@ -48,90 +48,92 @@ from ._models_py3 import VaultPatchProperties
 from ._models_py3 import VaultProperties
 from ._models_py3 import VirtualNetworkRule
 
-
-from ._key_vault_management_client_enums import (
-    AccessPolicyUpdateKind,
-    CertificatePermissions,
-    CreateMode,
-    DeletionRecoveryLevel,
-    JsonWebKeyCurveName,
-    JsonWebKeyOperation,
-    JsonWebKeyType,
-    KeyPermissions,
-    NetworkRuleAction,
-    NetworkRuleBypassOptions,
-    PrivateEndpointConnectionProvisioningState,
-    PrivateEndpointServiceConnectionStatus,
-    Reason,
-    SecretPermissions,
-    SkuFamily,
-    SkuName,
-    StoragePermissions,
-    VaultProvisioningState,
-)
+from ._key_vault_management_client_enums import AccessPolicyUpdateKind
+from ._key_vault_management_client_enums import CertificatePermissions
+from ._key_vault_management_client_enums import CreateMode
+from ._key_vault_management_client_enums import DeletionRecoveryLevel
+from ._key_vault_management_client_enums import Enum10
+from ._key_vault_management_client_enums import Enum11
+from ._key_vault_management_client_enums import JsonWebKeyCurveName
+from ._key_vault_management_client_enums import JsonWebKeyOperation
+from ._key_vault_management_client_enums import JsonWebKeyType
+from ._key_vault_management_client_enums import KeyPermissions
+from ._key_vault_management_client_enums import NetworkRuleAction
+from ._key_vault_management_client_enums import NetworkRuleBypassOptions
+from ._key_vault_management_client_enums import PrivateEndpointConnectionProvisioningState
+from ._key_vault_management_client_enums import PrivateEndpointServiceConnectionStatus
+from ._key_vault_management_client_enums import Reason
+from ._key_vault_management_client_enums import SecretPermissions
+from ._key_vault_management_client_enums import SkuFamily
+from ._key_vault_management_client_enums import SkuName
+from ._key_vault_management_client_enums import StoragePermissions
+from ._key_vault_management_client_enums import VaultProvisioningState
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccessPolicyEntry',
-    'Attributes',
-    'CheckNameAvailabilityResult',
-    'CloudErrorBody',
-    'DeletedVault',
-    'DeletedVaultListResult',
-    'DeletedVaultProperties',
-    'DimensionProperties',
-    'IPRule',
-    'Key',
-    'KeyAttributes',
-    'KeyCreateParameters',
-    'KeyListResult',
-    'KeyProperties',
-    'LogSpecification',
-    'MetricSpecification',
-    'NetworkRuleSet',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'Permissions',
-    'PrivateEndpoint',
-    'PrivateEndpointConnection',
-    'PrivateEndpointConnectionItem',
-    'PrivateLinkResource',
-    'PrivateLinkResourceListResult',
-    'PrivateLinkServiceConnectionState',
-    'Resource',
-    'ResourceListResult',
-    'ServiceSpecification',
-    'Sku',
-    'Vault',
-    'VaultAccessPolicyParameters',
-    'VaultAccessPolicyProperties',
-    'VaultCheckNameAvailabilityParameters',
-    'VaultCreateOrUpdateParameters',
-    'VaultListResult',
-    'VaultPatchParameters',
-    'VaultPatchProperties',
-    'VaultProperties',
-    'VirtualNetworkRule',
-    'AccessPolicyUpdateKind',
-    'CertificatePermissions',
-    'CreateMode',
-    'DeletionRecoveryLevel',
-    'JsonWebKeyCurveName',
-    'JsonWebKeyOperation',
-    'JsonWebKeyType',
-    'KeyPermissions',
-    'NetworkRuleAction',
-    'NetworkRuleBypassOptions',
-    'PrivateEndpointConnectionProvisioningState',
-    'PrivateEndpointServiceConnectionStatus',
-    'Reason',
-    'SecretPermissions',
-    'SkuFamily',
-    'SkuName',
-    'StoragePermissions',
-    'VaultProvisioningState',
+    "AccessPolicyEntry",
+    "Attributes",
+    "CheckNameAvailabilityResult",
+    "CloudErrorBody",
+    "DeletedVault",
+    "DeletedVaultListResult",
+    "DeletedVaultProperties",
+    "DimensionProperties",
+    "IPRule",
+    "Key",
+    "KeyAttributes",
+    "KeyCreateParameters",
+    "KeyListResult",
+    "KeyProperties",
+    "LogSpecification",
+    "MetricSpecification",
+    "NetworkRuleSet",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "Permissions",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionItem",
+    "PrivateLinkResource",
+    "PrivateLinkResourceListResult",
+    "PrivateLinkServiceConnectionState",
+    "Resource",
+    "ResourceListResult",
+    "ServiceSpecification",
+    "Sku",
+    "Vault",
+    "VaultAccessPolicyParameters",
+    "VaultAccessPolicyProperties",
+    "VaultCheckNameAvailabilityParameters",
+    "VaultCreateOrUpdateParameters",
+    "VaultListResult",
+    "VaultPatchParameters",
+    "VaultPatchProperties",
+    "VaultProperties",
+    "VirtualNetworkRule",
+    "AccessPolicyUpdateKind",
+    "CertificatePermissions",
+    "CreateMode",
+    "DeletionRecoveryLevel",
+    "Enum10",
+    "Enum11",
+    "JsonWebKeyCurveName",
+    "JsonWebKeyOperation",
+    "JsonWebKeyType",
+    "KeyPermissions",
+    "NetworkRuleAction",
+    "NetworkRuleBypassOptions",
+    "PrivateEndpointConnectionProvisioningState",
+    "PrivateEndpointServiceConnectionStatus",
+    "Reason",
+    "SecretPermissions",
+    "SkuFamily",
+    "SkuName",
+    "StoragePermissions",
+    "VaultProvisioningState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

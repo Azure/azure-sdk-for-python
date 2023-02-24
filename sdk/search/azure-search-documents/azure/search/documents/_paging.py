@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import List, Optional, Dict
 
 import base64
 import itertools
@@ -11,17 +11,15 @@ import json
 
 from azure.core.paging import ItemPaged, PageIterator, ReturnType
 from ._generated.models import SearchRequest
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Union
-    from ..documents.models import AnswerResult
+from ..documents.models import AnswerResult
 
 
 def convert_search_result(result):
     ret = result.additional_properties
     ret["@search.score"] = result.score
+    ret["@search.reranker_score"] = result.reranker_score
     ret["@search.highlights"] = result.highlights
+    ret["@search.captions"] = result.captions
     return ret
 
 
@@ -45,12 +43,11 @@ def unpack_continuation_token(token):
 
 
 class SearchItemPaged(ItemPaged[ReturnType]):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super(SearchItemPaged, self).__init__(*args, **kwargs)
         self._first_page_iterator_instance = None
 
-    def __next__(self):
-        # type: () -> ReturnType
+    def __next__(self) -> ReturnType:
         if self._page_iterator is None:
             first_iterator = self._first_iterator_instance()
             self._page_iterator = itertools.chain.from_iterable(first_iterator)
@@ -61,29 +58,25 @@ class SearchItemPaged(ItemPaged[ReturnType]):
             self._first_page_iterator_instance = self.by_page()
         return self._first_page_iterator_instance
 
-    def get_facets(self):
-        # type: () -> Union[dict, None]
+    def get_facets(self) -> Optional[Dict]:
         """Return any facet results if faceting was requested."""
         return self._first_iterator_instance().get_facets()
 
-    def get_coverage(self):
-        # type: () -> float
+    def get_coverage(self) -> float:
         """Return the coverage percentage, if `minimum_coverage` was
         specificied for the query.
 
         """
         return self._first_iterator_instance().get_coverage()
 
-    def get_count(self):
-        # type: () -> float
+    def get_count(self) -> int:
         """Return the count of results if `include_total_count` was
         set for the query.
 
         """
         return self._first_iterator_instance().get_count()
 
-    def get_answers(self):
-        # type: () -> Union[list[AnswerResult], None]
+    def get_answers(self) -> Optional[List[AnswerResult]]:
         """Return answers."""
         return self._first_iterator_instance().get_answers()
 
@@ -104,7 +97,7 @@ def _ensure_response(f):
 
 
 class SearchPageIterator(PageIterator):
-    def __init__(self, client, initial_query, kwargs, continuation_token=None):
+    def __init__(self, client, initial_query, kwargs, continuation_token=None) -> None:
         super(SearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -128,7 +121,7 @@ class SearchPageIterator(PageIterator):
             search_request=next_page_request, **self._kwargs
         )
 
-    def _extract_data_cb(self, response):  # pylint:disable=no-self-use
+    def _extract_data_cb(self, response):
         continuation_token = pack_continuation_token(
             response, api_version=self._api_version
         )

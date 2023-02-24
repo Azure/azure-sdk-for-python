@@ -11,14 +11,34 @@ from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIden
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 from .creation_context import CreationContextSchema
-from .services import JobServiceSchema
+from .services import (
+    JobServiceSchema,
+    SshJobServiceSchema,
+    VsCodeJobServiceSchema,
+    TensorBoardJobServiceSchema,
+    JupyterLabJobServiceSchema,
+)
 
 module_logger = logging.getLogger(__name__)
 
 
 class BaseJobSchema(ResourceSchema):
     creation_context = NestedField(CreationContextSchema, dump_only=True)
-    services = fields.Dict(keys=fields.Str(), values=NestedField(JobServiceSchema))
+    services = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(SshJobServiceSchema),
+                NestedField(TensorBoardJobServiceSchema),
+                NestedField(VsCodeJobServiceSchema),
+                NestedField(JupyterLabJobServiceSchema),
+                # JobServiceSchema should be the last in the list.
+                # To support types not set by users like Custom, Tracking, Studio.
+                NestedField(JobServiceSchema),
+            ],
+            is_strict=True,
+        ),
+    )
     name = fields.Str()
     id = ArmStr(azureml_type=AzureMLResourceType.JOB, dump_only=True, required=False)
     display_name = fields.Str(required=False)

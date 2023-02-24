@@ -16,6 +16,7 @@ from azure_devtools.scenario_tests.preparers import (
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
 from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
 AZURE_ARM_ENDPOINT = 'https://management.azure.com'
@@ -182,7 +183,7 @@ class PoolPreparer(AzureMgmtPreparer):
                 base_url=AZURE_ARM_ENDPOINT)
             group = self._get_resource_group(**kwargs)
             batch_account = self._get_batch_account(**kwargs)
-            user = models.UserAccount(name='task-user', password='kt#_gahr!@aGERDXA', elevation_level=models.ElevationLevel.admin)
+            user = models.UserAccount(name='task-user', password=BATCH_TEST_PASSWORD, elevation_level=models.ElevationLevel.admin)
             vm_size = 'standard_d2_v2'
 
             if self.config == 'paas':

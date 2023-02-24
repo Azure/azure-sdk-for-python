@@ -17,32 +17,44 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+
+    This sample assumes your registry has at least one repository with more than three tags,
+    run load_registry() if you don't have.
+    Set the environment variables with your own values before running load_registry():
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
+    3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
+    4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
+    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
+    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
-
-from dotenv import find_dotenv, load_dotenv
 import os
-
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient, ArtifactTagOrder
-from azure.identity import DefaultAzureCredential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class DeleteTags(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.authority = get_authority(self.endpoint)
+        self.audience = get_audience(self.authority)
+        self.credential = get_credential(self.authority)
 
     def delete_tags(self):
-        # [START list_repository_names]      
-        audience = "https://management.azure.com"
-        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
-
-        with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
+        load_registry()
+        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+            # [START list_repository_names]
             for repository in client.list_repository_names():
                 print(repository)
                 # [END list_repository_names]
 
                 # Keep the three most recent tags, delete everything else
                 tag_count = 0
-                for tag in client.list_tag_properties(repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
+                for tag in client.list_tag_properties(
+                    repository, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING
+                ):
                     tag_count += 1
                     if tag_count > 3:
                         print(f"Deleting {repository}:{tag.name}")

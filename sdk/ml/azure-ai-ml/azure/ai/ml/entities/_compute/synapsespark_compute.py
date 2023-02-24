@@ -97,6 +97,8 @@ class SynapseSparkCompute(Compute):
     :type description: Optional[str], optional
     :param resource_id: ARM resource id of the underlying compute, defaults to None
     :type resource_id: Optional[str], optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
     """
@@ -106,6 +108,7 @@ class SynapseSparkCompute(Compute):
         *,
         name: str,
         description: Optional[str] = None,
+        tags: Optional[dict] = None,
         node_count: Optional[int] = None,
         node_family: Optional[str] = None,
         node_size: Optional[str] = None,
@@ -116,7 +119,7 @@ class SynapseSparkCompute(Compute):
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
-        super().__init__(name=name, description=description, location=kwargs.pop("location", None), **kwargs)
+        super().__init__(name=name, description=description, location=kwargs.pop("location", None), tags=tags, **kwargs)
         self.identity = identity
         self.node_count = node_count
         self.node_family = node_family
@@ -148,6 +151,7 @@ class SynapseSparkCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             created_on=prop.created_on if prop.properties else None,
             node_count=prop.properties.node_count if prop.properties else None,
             node_family=prop.properties.node_size_family if prop.properties else None,
@@ -189,4 +193,5 @@ class SynapseSparkCompute(Compute):
                 if self.identity
                 else None
             ),
+            tags=self.tags,
         )

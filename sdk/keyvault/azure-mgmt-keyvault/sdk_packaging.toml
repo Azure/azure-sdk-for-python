@@ -5,5 +5,5 @@ package_pprint_name = "Key Vault Management"
 package_doc_id = "?view=azure-python-preview"
 is_stable = false
 is_arm = true
-sample_link = "keyvault"
+sample_link = ""
 title = "KeyVaultManagementClient"

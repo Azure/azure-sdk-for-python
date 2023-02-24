@@ -3,12 +3,12 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 import azure.ai.ml._schema._datastore as DatastoreSchemaDir
 from azure.ai.ml import load_datastore
-from azure.ai.ml._restclient.v2022_02_01_preview import models as models_preview
-from azure.ai.ml._restclient.v2022_05_01.models import AzureBlobDatastore as RestAzureBlobDatastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureFileDatastore as RestAzureFileDatastore
-from azure.ai.ml._restclient.v2022_05_01.models import NoneDatastoreCredentials, ServicePrincipalDatastoreCredentials
+from azure.ai.ml._restclient.v2022_10_01_preview import models as models_preview
+from azure.ai.ml._restclient.v2022_10_01.models import AzureBlobDatastore as RestAzureBlobDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureFileDatastore as RestAzureFileDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import NoneDatastoreCredentials, ServicePrincipalDatastoreCredentials
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import DATASTORE_SCHEMA_TYPES
 from azure.ai.ml.entities import (

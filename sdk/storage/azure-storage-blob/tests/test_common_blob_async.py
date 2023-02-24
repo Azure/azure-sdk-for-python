@@ -1995,7 +1995,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
         resp = await blob.upload_blob(b'hello 2', length=7, lease=lease)
-        self.sleep(17)
+        self.sleep(20)
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -3181,5 +3181,31 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         assert await blob_client.exists()
         assert (await blob_client.get_blob_properties()).size == 0
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_download_properties(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob.upload_blob(blob_data)
+
+        # Assert
+        stream = await blob.download_blob(encoding='utf-8')
+        props = stream.properties
+        data = await stream.readall()
+
+        assert data is not None
+        assert data == blob_data
+        assert props['creation_time'] is not None
+        assert props['content_settings'] is not None
+        assert props['size'] == len(blob_data)
 
 # ------------------------------------------------------------------------------

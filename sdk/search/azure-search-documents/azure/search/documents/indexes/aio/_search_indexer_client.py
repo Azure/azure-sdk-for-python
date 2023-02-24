@@ -3,32 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Union
+from typing import Union, Any, Optional, Sequence, List
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
-from .._generated.models import SkillNames
-from ..models import SearchIndexerSkillset
+from .._generated.models import SkillNames, SearchIndexer, SearchIndexerStatus, DocumentKeysOrIds
+from ..models import SearchIndexerSkillset, SearchIndexerDataSourceConnection
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,
-    )
-from ..models import (
-    SearchIndexerDataSourceConnection,
 )
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
 from ..._utils import get_authentication_policy
 from ..._version import SDK_MONIKER
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from .._generated.models import SearchIndexer, SearchIndexerStatus, DocumentKeysOrIds
-    from typing import Any, Optional, Sequence
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
@@ -44,13 +36,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
      will be assumed.
     """
 
-    _ODATA_ACCEPT = "application/json;odata.metadata=minimal"  # type: str
+    _ODATA_ACCEPT: str = "application/json;odata.metadata=minimal"
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        **kwargs
+            self,
+            endpoint: str,
+            credential: Union[AzureKeyCredential, AsyncTokenCredential],
+            **kwargs
     ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
@@ -58,40 +50,36 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client = _SearchServiceClient(
+            self._client: _SearchServiceClient = _SearchServiceClient(
                 endpoint=endpoint,
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
                 **kwargs
-            )  # type: _SearchServiceClient
+            )
         else:
             self._aad = True
             authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
-            self._client = _SearchServiceClient(
+            self._client: _SearchServiceClient = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
                 **kwargs
-            )  # type: _SearchServiceClient
+            )
 
     async def __aenter__(self):
-        # type: () -> SearchIndexersClient
-        await self._client.__aenter__()  # pylint:disable=no-member
+        await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
-        # type: (*Any) -> None
-        return await self._client.__aexit__(*args)  # pylint:disable=no-member
+        return await self._client.__aexit__(*args)
 
-    async def close(self):
-        # type: () -> None
+    async def close(self) -> None:
         """Close the :class:`~azure.search.documents.indexes.aio.SearchIndexerClient` session."""
         return await self._client.close()
 
     @distributed_trace_async
-    async def create_indexer(self, indexer, **kwargs):
-        # type: (SearchIndexer, **Any) -> SearchIndexer
+    async def create_indexer(self, indexer: SearchIndexer, **kwargs: Any) -> SearchIndexer:
         """Creates a new SearchIndexer.
 
         :param indexer: The definition of the indexer to create.
@@ -113,8 +101,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return result
 
     @distributed_trace_async
-    async def create_or_update_indexer(self, indexer, **kwargs):
-        # type: (SearchIndexer, **Any) -> SearchIndexer
+    async def create_or_update_indexer(
+            self,
+            indexer: SearchIndexer,
+            *,
+            match_condition: MatchConditions = MatchConditions.Unconditionally,
+            **kwargs: Any
+    ) -> SearchIndexer:
         """Creates a new indexer or updates a indexer if it already exists.
 
         :param indexer: The definition of the indexer to create or update.
@@ -128,9 +121,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(indexer, match_condition)
         kwargs.update(access_condition)
         name = indexer.name
         result = await self._client.indexers.create_or_update(
@@ -139,8 +130,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return result
 
     @distributed_trace_async
-    async def get_indexer(self, name, **kwargs):
-        # type: (str, **Any) -> SearchIndexer
+    async def get_indexer(self, name: str, **kwargs: Any) -> SearchIndexer:
         """Retrieves a indexer definition.
 
         :param name: The name of the indexer to retrieve.
@@ -162,14 +152,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return result
 
     @distributed_trace_async
-    async def get_indexers(self, **kwargs):
-        # type: (**Any) -> Sequence[SearchIndexer]
+    async def get_indexers(self, *, select: Optional[List[str]] = None, **kwargs) -> Sequence[SearchIndexer]:
         """Lists all indexers available for a search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: list[str]
+        :paramtype select: List[str]
         :return: List of all the SearchIndexers.
         :rtype: `list[~azure.search.documents.indexes.models.SearchIndexer]`
 
@@ -183,18 +172,17 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: List all the SearchIndexers
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        if kwargs.get('select', None):
-            kwargs['select'] = ','.join(kwargs['select'])
+        if select:
+            kwargs['select'] = ','.join(select)
         result = await self._client.indexers.list(**kwargs)
         return result.indexers
 
     @distributed_trace_async
-    async def get_indexer_names(self, **kwargs):
-        # type: (**Any) -> Sequence[str]
+    async def get_indexer_names(self, **kwargs) -> Sequence[str]:
         """Lists all indexer names available for a search service.
 
         :return: List of all the SearchIndexer names.
-        :rtype: `list[str]`
+        :rtype: `List[str]`
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -202,8 +190,12 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return [x.name for x in result.indexers]
 
     @distributed_trace_async
-    async def delete_indexer(self, indexer, **kwargs):
-        # type: (Union[str, SearchIndexer], **Any) -> None
+    async def delete_indexer(
+            self,
+            indexer: Union[str, SearchIndexer],
+            *,
+            match_condition: MatchConditions = MatchConditions.Unconditionally,
+            **kwargs: Any) -> None:
         """Deletes an indexer. To use access conditions, the SearchIndexer model
         must be provided instead of the name. It is enough to provide
         the name of the indexer to delete unconditionally.
@@ -226,9 +218,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            indexer, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(indexer, match_condition)
         kwargs.update(access_condition)
         try:
             name = indexer.name
@@ -237,8 +227,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         await self._client.indexers.delete(name, error_map=error_map, **kwargs)
 
     @distributed_trace_async
-    async def run_indexer(self, name, **kwargs):
-        # type: (str, **Any) -> None
+    async def run_indexer(self, name: str, **kwargs: Any) -> None:
         """Run an indexer.
 
         :param name: The name of the indexer to run.
@@ -260,8 +249,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         await self._client.indexers.run(name, **kwargs)
 
     @distributed_trace_async
-    async def reset_indexer(self, name, **kwargs):
-        # type: (str, **Any) -> None
+    async def reset_indexer(self, name: str, **kwargs: Any) -> None:
         """Resets the change tracking state associated with an indexer.
 
         :param name: The name of the indexer to reset.
@@ -283,8 +271,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         await self._client.indexers.reset(name, **kwargs)
 
     @distributed_trace_async
-    async def reset_documents(self, indexer, keys_or_ids, **kwargs):
-        # type: (Union[str, SearchIndexer], DocumentKeysOrIds, **Any) -> None
+    async def reset_documents(
+            self, indexer: Union[str, SearchIndexer], keys_or_ids: DocumentKeysOrIds, **kwargs: Any
+    ) -> None:
         """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
 
         :param indexer: The indexer to reset documents for.
@@ -308,8 +297,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return result
 
     @distributed_trace_async
-    async def get_indexer_status(self, name, **kwargs):
-        # type: (str, **Any) -> SearchIndexerStatus
+    async def get_indexer_status(self, name: str, **kwargs: Any) -> SearchIndexerStatus:
         """Get the status of the indexer.
 
         :param name: The name of the indexer to fetch the status.
@@ -331,8 +319,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return await self._client.indexers.get_status(name, **kwargs)
 
     @distributed_trace_async
-    async def create_data_source_connection(self, data_source_connection, **kwargs):
-        # type: (SearchIndexerDataSourceConnection, **Any) -> SearchIndexerDataSourceConnection
+    async def create_data_source_connection(
+            self, data_source_connection: SearchIndexerDataSourceConnection, **kwargs: Any
+    ) -> SearchIndexerDataSourceConnection:
         """Creates a new data source connection.
         :param data_source_connection: The definition of the data source connection to create.
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
@@ -356,9 +345,12 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
     @distributed_trace_async
     async def create_or_update_data_source_connection(
-        self, data_source_connection, **kwargs
-    ):
-        # type: (SearchIndexerDataSourceConnection, **Any) -> SearchIndexerDataSourceConnection
+            self,
+            data_source_connection: SearchIndexerDataSourceConnection,
+            *,
+            match_condition: MatchConditions = MatchConditions.Unconditionally,
+            **kwargs: Any
+    ) -> SearchIndexerDataSourceConnection:
         """Creates a new data source connection or updates a data source connection if it already exists.
         :param data_source_connection: The definition of the data source connection to create or update.
         :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
@@ -372,7 +364,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
             data_source_connection,
-            kwargs.pop("match_condition", MatchConditions.Unconditionally),
+            match_condition,
         )
         kwargs.update(access_condition)
         name = data_source_connection.name
@@ -388,8 +380,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return SearchIndexerDataSourceConnection._from_generated(result)
 
     @distributed_trace_async
-    async def delete_data_source_connection(self, data_source_connection, **kwargs):
-        # type: (Union[str, SearchIndexerDataSourceConnection], **Any) -> None
+    async def delete_data_source_connection(
+            self,
+            data_source_connection: Union[str, SearchIndexerDataSourceConnection],
+            *,
+            match_condition: MatchConditions = MatchConditions.Unconditionally,
+            **kwargs: Any
+    ) -> None:
         """Deletes a data source connection. To use access conditions, the
         SearchIndexerDataSourceConnection model must be provided instead of the name.
         It is enough to provide the name of the data source connection to delete unconditionally
@@ -413,7 +410,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(
             data_source_connection,
-            kwargs.pop("match_condition", MatchConditions.Unconditionally),
+            match_condition,
         )
         kwargs.update(access_condition)
         try:
@@ -425,14 +422,15 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         )
 
     @distributed_trace_async
-    async def get_data_source_connection(self, name, **kwargs):
-        # type: (str, **Any) -> SearchIndexerDataSourceConnection
+    async def get_data_source_connection(
+            self, name: str, *, select: Optional[List[str]] = None, **kwargs: Any
+    ) -> SearchIndexerDataSourceConnection:
         """Retrieves a data source connection definition.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: list[str]
+        :paramtype select: List[str]
         :param name: The name of the data source connection to retrieve.
         :type name: str
         :return: The SearchIndexerDataSourceConnection that is fetched.
@@ -446,19 +444,18 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Retrieve a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        if kwargs.get('select', None):
-            kwargs['select'] = ','.join(kwargs['select'])
+        if select:
+            kwargs['select'] = ','.join(select)
         result = await self._client.data_sources.get(name, **kwargs)
         # pylint:disable=protected-access
         return SearchIndexerDataSourceConnection._from_generated(result)
 
     @distributed_trace_async
-    async def get_data_source_connections(self, **kwargs):
-        # type: (**Any) -> Sequence[SearchIndexerDataSourceConnection]
+    async def get_data_source_connections(self, **kwargs: Any) -> Sequence[SearchIndexerDataSourceConnection]:
         """Lists all data source connections available for a search service.
 
         :return: List of all the data source connections.
-        :rtype: `list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]`
+        :rtype: List[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
 
         .. admonition:: Example:
 
@@ -478,12 +475,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         ]
 
     @distributed_trace_async
-    async def get_data_source_connection_names(self, **kwargs):
-        # type: (**Any) -> Sequence[str]
+    async def get_data_source_connection_names(self, **kwargs) -> Sequence[str]:
         """Lists all data source connection names available for a search service.
 
         :return: List of all the data source connection names.
-        :rtype: `list[str]`
+        :rtype: List[str]
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -491,16 +487,17 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return [x.name for x in result.data_sources]
 
     @distributed_trace_async
-    async def get_skillsets(self, **kwargs):
-        # type: (**Any) -> List[SearchIndexerSkillset]
+    async def get_skillsets(
+            self, *, select: Optional[List[str]] = None, **kwargs
+    ) -> List[SearchIndexerSkillset]:
         """List the SearchIndexerSkillsets in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: list[str]
+        :paramtype select: List[str]
         :return: List of SearchIndexerSkillsets
-        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
+        :rtype: List[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -514,18 +511,17 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        if kwargs.get('select', None):
-            kwargs['select'] = ','.join(kwargs['select'])
+        if select:
+            kwargs['select'] = ','.join(select)
         result = await self._client.skillsets.list(**kwargs)
-        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets] # pylint:disable=protected-access
+        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_skillset_names(self, **kwargs):
-        # type: (**Any) -> List[str]
+    async def get_skillset_names(self, **kwargs) -> List[str]:
         """List the SearchIndexerSkillset names in an Azure Search service.
 
         :return: List of SearchIndexerSkillset names
-        :rtype: list[str]
+        :rtype: List[str]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
@@ -534,8 +530,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return [x.name for x in result.skillsets]
 
     @distributed_trace_async
-    async def get_skillset(self, name, **kwargs):
-        # type: (str, **Any) -> SearchIndexerSkillset
+    async def get_skillset(self, name: str, **kwargs) -> SearchIndexerSkillset:
         """Retrieve a named SearchIndexerSkillset in an Azure Search service
 
         :param name: The name of the SearchIndexerSkillset to get
@@ -556,11 +551,16 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.skillsets.get(name, **kwargs)
-        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+        return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def delete_skillset(self, skillset, **kwargs):
-        # type: (Union[str, SearchIndexerSkillset], **Any) -> None
+    async def delete_skillset(
+            self,
+            skillset: Union[str, SearchIndexerSkillset],
+            *,
+            match_condition: MatchConditions = MatchConditions.Unconditionally,
+            **kwargs: Any
+    ) -> None:
         """Delete a named SearchIndexerSkillset in an Azure Search service. To use access conditions,
         the SearchIndexerSkillset model must be provided instead of the name. It is enough to provide
         the name of the skillset to delete unconditionally
@@ -581,9 +581,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(skillset, match_condition)
         kwargs.update(access_condition)
         try:
             name = skillset.name
@@ -592,8 +590,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         await self._client.skillsets.delete(name, error_map=error_map, **kwargs)
 
     @distributed_trace_async
-    async def create_skillset(self, skillset, **kwargs):
-        # type: (SearchIndexerSkillset, **Any) -> SearchIndexerSkillset
+    async def create_skillset(self, skillset: SearchIndexerSkillset, **kwargs: Any) -> SearchIndexerSkillset:
         """Create a new SearchIndexerSkillset in an Azure Search service
 
         :param skillset: The SearchIndexerSkillset object to create
@@ -612,13 +609,18 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset  # pylint:disable=protected-access
         result = await self._client.skillsets.create(skillset, **kwargs)
-        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+        return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def create_or_update_skillset(self, skillset, **kwargs):
-        # type: (SearchIndexerSkillset, **Any) -> SearchIndexerSkillset
+    async def create_or_update_skillset(
+            self,
+            skillset: SearchIndexerSkillset,
+            *,
+            match_condition: MatchConditions = MatchConditions.Unconditionally,
+            **kwargs: Any
+    ) -> SearchIndexerSkillset:
         """Create a new SearchIndexerSkillset in an Azure Search service, or update an
         existing one.
 
@@ -636,11 +638,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(
-            skillset, kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        )
+        error_map, access_condition = get_access_conditions(skillset, match_condition)
         kwargs.update(access_condition)
-        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset # pylint:disable=protected-access
+        skillset = skillset._to_generated() if hasattr(skillset, '_to_generated') else skillset  # pylint:disable=protected-access
 
         result = await self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
@@ -649,17 +649,16 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             error_map=error_map,
             **kwargs
         )
-        return SearchIndexerSkillset._from_generated(result) # pylint:disable=protected-access
+        return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def reset_skills(self, skillset, skill_names, **kwargs):
-        # type: (Union[str, SearchIndexerSkillset], List[str], **Any) -> None
+    async def reset_skills(self, skillset: Union[str, SearchIndexerSkillset], skill_names: List[str], **kwargs) -> None:
         """Reset an existing skillset in a search service.
 
         :param skillset: The SearchIndexerSkillset to reset
         :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :param skill_names: the names of skills to be reset.
-        :type skill_names: list[str]
+        :type skill_names: List[str]
         :return: None, or the result of cls(response)
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError

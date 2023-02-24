@@ -1,5 +1,34 @@
 # Release History
 
+## 29.2.0b1 (2023-02-20)
+
+### Features Added
+
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter computer_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter hyper_v_generation
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_version
+
+## 29.1.0 (2023-01-17)
+
+### Features Added
+
+  - Model CloudService has a new parameter zones
+  - Model RestorePointSourceMetadata has a new parameter user_data
+  - Model RollingUpgradePolicy has a new parameter max_surge
+  - Model RollingUpgradePolicy has a new parameter rollback_failed_instances_on_policy_breach
+  - Model ScheduledEventsProfile has a new parameter os_image_notification_profile
+  - Model VirtualMachineImage has a new parameter image_deprecation_status
+  - Model VirtualMachineReimageParameters has a new parameter exact_version
+  - Model VirtualMachineReimageParameters has a new parameter os_profile
+  - Model VirtualMachineScaleSet has a new parameter constrained_maximum_capacity
+  - Model VirtualMachineScaleSetOSProfile has a new parameter require_guest_provision_signal
+  - Model VirtualMachineScaleSetReimageParameters has a new parameter exact_version
+  - Model VirtualMachineScaleSetReimageParameters has a new parameter os_profile
+  - Model VirtualMachineScaleSetVMProfile has a new parameter service_artifact_reference
+  - Model VirtualMachineScaleSetVMReimageParameters has a new parameter exact_version
+  - Model VirtualMachineScaleSetVMReimageParameters has a new parameter os_profile
+
 ## 29.0.0 (2022-10-13)
 
 ### Features Added

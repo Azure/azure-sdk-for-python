@@ -3,5 +3,5 @@ package_name = "azure-mgmt-servicebus"
 package_pprint_name = "Service Bus Management"
 package_doc_id = "servicebus"
 is_stable = false
-sample_link = "servicebus"
+sample_link = ""
 title = "ServiceBusManagementClient"

@@ -908,50 +908,91 @@ def get_all_enum_values_iter(enum_type):
             yield getattr(enum_type, key)
 
 
-def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resource_group: Optional[str]):
-    """Determine if subscription or resource group is missing and raise exception
-    as appropriate."""
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
-
-    msg = "Both subscription id and resource group are required for this operation, missing {}"
-    sub_msg = None
-    if not subscription_id and not resource_group:
-        sub_msg = "subscription id and resource group"
-    elif not subscription_id and resource_group:
-        sub_msg = "subscription id"
-    elif subscription_id and not resource_group:
-        sub_msg = "resource group"
-
-    if sub_msg:
-        raise ValidationException(
-            message=msg.format(sub_msg),
-            no_personal_data_message=msg.format(sub_msg),
-            target=ErrorTarget.GENERAL,
-            error_category=ErrorCategory.USER_ERROR,
-        )
-
-
-@contextmanager
-def open_file_with_int_mode(file: Union[str, PathLike], mode: str = 'r', int_mode: int = 0o666, **kwargs) -> IO:
+def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     """Open file with specific mode and return the file object.
 
-    :param file: Path to the file.
-    :param mode: Mode to open the file.
-    :param int_mode: Mode for opener in integer. Default value is 0o666, which means
-    w+r for owner, group and others.
-    :param int_mode: Mode for the opener.
-    :return: The file object.
+    :param file_path: Path to the file.
+    :param content: Content to write to the file.
     """
-    origin_mask = os.umask(0)
-    try:
-        def opener(path, flags):
-            # w+r for owner, group and others
-            return os.open(path, flags, int_mode)
+    with open(file_path, "w") as f:
+        f.write(content)
 
-        with open(file=file, mode=mode, **kwargs, opener=opener) as f:
-            yield f
-    finally:
-        os.umask(origin_mask)
+    # share_mode means read/write for owner, group and others
+    share_mode, mode_mask = 0o666, 0o777
+    if os.stat(file_path).st_mode & mode_mask != share_mode:
+        try:
+            os.chmod(file_path, share_mode)
+        except PermissionError:
+            pass
+
+
+def _get_valid_dot_keys_with_wildcard_impl(
+    left_reversed_parts, root, *, validate_func=None, cur_node=None, processed_parts=None
+):
+    if len(left_reversed_parts) == 0:
+        if validate_func is None or validate_func(root, processed_parts):
+            return [".".join(processed_parts)]
+        return []
+
+    if cur_node is None:
+        cur_node = root
+    if not isinstance(cur_node, dict):
+        return []
+    if processed_parts is None:
+        processed_parts = []
+
+    key: str = left_reversed_parts.pop()
+    result = []
+    if key == "*":
+        for next_key in cur_node:
+            if not isinstance(next_key, str):
+                continue
+            processed_parts.append(next_key)
+            result.extend(
+                _get_valid_dot_keys_with_wildcard_impl(
+                    left_reversed_parts,
+                    root,
+                    validate_func=validate_func,
+                    cur_node=cur_node[next_key],
+                    processed_parts=processed_parts,
+                )
+            )
+            processed_parts.pop()
+    elif key in cur_node:
+        processed_parts.append(key)
+        result = _get_valid_dot_keys_with_wildcard_impl(
+            left_reversed_parts,
+            root,
+            validate_func=validate_func,
+            cur_node=cur_node[key],
+            processed_parts=processed_parts,
+        )
+        processed_parts.pop()
+
+    left_reversed_parts.append(key)
+    return result
+
+
+def get_valid_dot_keys_with_wildcard(
+    root: Dict[str, Any],
+    dot_key_wildcard: str,
+    *,
+    validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]] = None,
+):
+    """Get all valid dot keys with wildcard. Only "x.*.x" and "x.*" is supported for now.
+
+    A valid dot key should satisfy the following conditions:
+    1) It should be a valid dot key in the root node.
+    2) It should satisfy the validation function.
+
+    :param root: Root node.
+    :type root: Dict[str, Any]
+    :param dot_key_wildcard: Dot key with wildcard, e.g. "a.*.c".
+    :type dot_key_wildcard: str
+    :param validate_func: Validation function. It takes two parameters: the root node and the dot key parts.
+    If None, no validation will be performed.
+    :type validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
+    :return: List of valid dot keys.
+    """
+    left_reversed_parts = dot_key_wildcard.split(".")[::-1]
+    return _get_valid_dot_keys_with_wildcard_impl(left_reversed_parts, root, validate_func=validate_func)

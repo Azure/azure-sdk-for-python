@@ -3,5 +3,5 @@ package_name = "azure-mgmt-containerservice"
 package_pprint_name = "Container Service Management"
 package_doc_id = "container-service"
 is_stable = true
-sample_link = "containerservice"
+sample_link = ""
 title = "ContainerServiceClient"

@@ -1,5 +1,26 @@
 # Release History
 
+## 8.0.0b1 (2023-02-13)
+
+### Features Added
+
+  - Added operation BuildServiceBuilderOperations.list_deployments
+  - Added operation DeploymentsOperations.begin_disable_remote_debugging
+  - Added operation DeploymentsOperations.begin_enable_remote_debugging
+  - Added operation DeploymentsOperations.get_remote_debugging_config
+  - Added operation group ApplicationAcceleratorsOperations
+  - Added operation group ApplicationLiveViewsOperations
+  - Added operation group CustomizedAcceleratorsOperations
+  - Added operation group DevToolPortalsOperations
+  - Added operation group PredefinedAcceleratorsOperations
+  - Model AppResourceProperties has a new parameter ingress_settings
+  - Model GatewayRouteConfigProperties has a new parameter protocol
+  - Model NetworkProfile has a new parameter outbound_type
+
+### Breaking Changes
+
+  - Model ClusterResourceProperties no longer has parameter marketplace_resource
+
 ## 7.1.0 (2022-05-16)
 
 **Features**

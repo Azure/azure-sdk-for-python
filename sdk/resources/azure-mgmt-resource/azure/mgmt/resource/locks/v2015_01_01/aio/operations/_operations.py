@@ -138,8 +138,8 @@ class ManagementLocksOperations:
         :type resource_group_name: str
         :param lock_name: The lock name. Required.
         :type lock_name: str
-        :param parameters: The management lock parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: The management lock parameters. Is either a ManagementLockObject type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -436,8 +436,8 @@ class ManagementLocksOperations:
         :type resource_name: str
         :param lock_name: The name of lock. Required.
         :type lock_name: str
-        :param parameters: Create or update management lock parameters. Is either a model type or a IO
-         type. Required.
+        :param parameters: Create or update management lock parameters. Is either a
+         ManagementLockObject type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -642,8 +642,8 @@ class ManagementLocksOperations:
 
         :param lock_name: The name of lock. Required.
         :type lock_name: str
-        :param parameters: The management lock parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: The management lock parameters. Is either a ManagementLockObject type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.resource.locks.v2015_01_01.models.ManagementLockObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

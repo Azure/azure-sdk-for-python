@@ -6,7 +6,6 @@
 import logging
 import os
 import pytest
-import time
 
 from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
@@ -16,7 +15,7 @@ from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
 from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 
-from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential, is_live_and_not_recording
+from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential
 
 logger = logging.getLogger()
 
@@ -28,7 +27,8 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         if not self.is_live:
             return
         authority = get_authority(endpoint)
-        import_image(authority, repository, tags)
+        registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
+        import_image(authority, repository, tags, registry_name)
 
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
@@ -114,19 +114,19 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         return os.path.join(os.getcwd(), "tests")
 
 
-def get_authority(endpoint):
+def get_authority(endpoint: str) -> str:
     if ".azurecr.io" in endpoint:
-        logger.warning("Public cloud Authority:")
+        logger.warning("Public cloud Authority")
         return AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
     if ".azurecr.cn" in endpoint:
-        logger.warning("China Authority:")
+        logger.warning("China Authority")
         return AzureAuthorityHosts.AZURE_CHINA
     if ".azurecr.us" in endpoint:
-        logger.warning("US Gov Authority:")
+        logger.warning("US Gov Authority")
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
-def get_audience(authority):
+def get_audience(authority: str) -> str:
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public cloud auth audience")
         return AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
@@ -137,18 +137,14 @@ def get_audience(authority):
         logger.warning("US Gov cloud auth audience")
         return "https://management.usgovcloudapi.net"
 
-# Moving this out of testcase so the fixture and individual tests can use it
 def import_image(authority, repository, tags, registry_name):
     logger.warning(f"Import image authority: {authority}")
     sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
-    tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-    client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
+    tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID")
+    client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID")
     client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET")
     credential = ClientSecretCredential(
-        tenant_id=tenant_id,
-        client_id=client_id,
-        client_secret=client_secret,
-        authority=authority
+        tenant_id=tenant_id, client_id=client_id, client_secret=client_secret, authority=authority
     )
     audience = get_audience(authority)
     scope = [audience + "/.default"]
@@ -169,8 +165,7 @@ def import_image(authority, repository, tags, registry_name):
         parameters=import_params,
     )
 
-    while not result.done():
-        pass
+    result.wait()
 
 @pytest.fixture(scope="session")
 def load_registry():
@@ -202,9 +197,6 @@ def load_registry():
             import_image(authority_anon, repo, tag, registry_name_anon)
         except Exception as e:
             print(e)
-
-    time.sleep(10)
-
 
 def assert_manifest_config_or_layer_properties(value, expected):
     assert value.media_type == expected.media_type

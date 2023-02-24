@@ -33,28 +33,28 @@ class Deployment(Resource, RestTranslatableMixin):
 
     :param name: Name of the deployment resource, defaults to None
     :type name: typing.Optional[str]
-    :param endpoint_name: Name of the Endpoint resource, defaults to None
+    :keyword endpoint_name: Name of the Endpoint resource, defaults to None
     :type endpoint_name: typing.Optional[str]
-    :param description: Description of the deployment resource, defaults to None
+    :keyword description: Description of the deployment resource, defaults to None
     :type description: typing.Optional[str]
-    :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
     :type tags: typing.Optional[typing.Dict[str, typing.Any]]
-    :param properties: The asset property dictionary, defaults to None
+    :keyword properties: The asset property dictionary, defaults to None
     :type properties: typing.Optional[typing.Dict[str, typing.Any]]
-    :param model: The Model entity, defaults to None
-    :type model: typing.Optional[Union[str, ~azure.ai.ml.entities.Model]]
-    :param code_configuration: Code Configuration, defaults to None
+    :keyword model: The Model entity, defaults to None
+    :type model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+    :keyword code_configuration: Code Configuration, defaults to None
     :type code_configuration: typing.Optional[CodeConfiguration]
-    :param environment: The Environment entity, defaults to None
-    :type environment: typing.Optional[Union[str, ~azure.ai.ml.entities.Environment]]
-    :param environment_variables: Environment variables that will be set in deployment, defaults to None
+    :keyword environment: The Environment entity, defaults to None
+    :type environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+    :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
     :type environment_variables: typing.Optional[typing.Dict[str, str]]
-    :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
+    :keyword code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
         , defaults to None
-    :type code_path: typing.Optional[Union[str, PathLike]]
-    :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
+    :type code_path: typing.Optional[typing.Union[str, PathLike]]
+    :keyword scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
         , defaults to None
-    :type scoring_script: typing.Optional[Union[str, PathLike]]
+    :type scoring_script: typing.Optional[typing.Union[str, PathLike]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
         Exception details will be provided in the error message.
     """
@@ -82,28 +82,28 @@ class Deployment(Resource, RestTranslatableMixin):
 
         :param name: Name of the deployment resource, defaults to None
         :type name: typing.Optional[str]
-        :param endpoint_name: Name of the Endpoint resource, defaults to None
+        :keyword endpoint_name: Name of the Endpoint resource, defaults to None
         :type endpoint_name: typing.Optional[str]
-        :param description: Description of the deployment resource, defaults to None
+        :keyword description: Description of the deployment resource, defaults to None
         :type description: typing.Optional[str]
-        :param tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
         :type tags: typing.Optional[typing.Dict[str, typing.Any]]
-        :param properties: The asset property dictionary, defaults to None
+        :keyword properties: The asset property dictionary, defaults to None
         :type properties: typing.Optional[typing.Dict[str, typing.Any]]
-        :param model: The Model entity, defaults to None
-        :type model: typing.Optional[Union[str, ~azure.ai.ml.entities.Model]]
-        :param code_configuration: Code Configuration, defaults to None
+        :keyword model: The Model entity, defaults to None
+        :type model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+        :keyword code_configuration: Code Configuration, defaults to None
         :type code_configuration: typing.Optional[CodeConfiguration]
-        :param environment: The Environment entity, defaults to None
-        :type environment: typing.Optional[Union[str, ~azure.ai.ml.entities.Environment]]
-        :param environment_variables: Environment variables that will be set in deployment, defaults to None
+        :keyword environment: The Environment entity, defaults to None
+        :type environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+        :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
         :type environment_variables: typing.Optional[typing.Dict[str, str]]
-        :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
+        :keyword code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
             , defaults to None
-        :type code_path: typing.Optional[Union[str, PathLike]]
-        :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
+        :type code_path: typing.Optional[typing.Union[str, PathLike]]
+        :keyword scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
             , defaults to None
-        :type scoring_script: typing.Optional[Union[str, PathLike]]
+        :type scoring_script: typing.Optional[typing.Union[str, PathLike]]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
             Exception details will be provided in the error message.
         """
@@ -167,7 +167,7 @@ class Deployment(Resource, RestTranslatableMixin):
             and an exception is raised if the file exists.
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
-        :type dest: typing.Union[typing.PathLike, str, typing.IO[typing.AnyStr]]
+        :type dest: typing.Union[os.PathLike, str, typing.IO[typing.AnyStr]]
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()

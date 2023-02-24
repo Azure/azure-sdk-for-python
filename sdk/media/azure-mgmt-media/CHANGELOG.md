@@ -1,5 +1,13 @@
 # Release History
 
+## 10.2.0 (2023-01-12)
+
+### Features Added
+
+  - Model Filters has a new parameter fade_in
+  - Model Filters has a new parameter fade_out
+  - Model StandardEncoderPreset has a new parameter experimental_options
+
 ## 10.2.0b1 (2022-12-27)
 
 ### Other Changes

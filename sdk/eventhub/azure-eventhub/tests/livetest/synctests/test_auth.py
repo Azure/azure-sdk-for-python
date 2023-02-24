@@ -81,7 +81,7 @@ def test_client_sas_credential(live_eventhub, uamqp_transport):
         producer_client.send_batch(batch)
 
     # Finally let's do it with SAS token + conn str
-    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token.decode())
+    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token)
     conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
                                                                              eventhub_name=live_eventhub['event_hub'],
                                                                              uamqp_transport=uamqp_transport)
@@ -108,7 +108,7 @@ def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
     # This should also work, but now using SAS tokens.
     credential = EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
     auth_uri = "sb://{}/{}".format(hostname, live_eventhub['event_hub'])
-    token = credential.get_token(auth_uri).token.decode()
+    token = credential.get_token(auth_uri).token
     producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
                                              eventhub_name=live_eventhub['event_hub'],
                                              credential=AzureSasCredential(token),
@@ -119,6 +119,8 @@ def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
         batch = producer_client.create_batch(partition_id='0')
         batch.add(EventData(body='A single message'))
         producer_client.send_batch(batch)
+
+    assert producer_client.get_eventhub_properties() is not None
 
 
 @pytest.mark.liveTest

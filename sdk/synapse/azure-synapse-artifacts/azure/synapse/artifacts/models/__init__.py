@@ -492,6 +492,7 @@ from ._models_py3 import PolybaseSettings
 from ._models_py3 import PostgreSqlLinkedService
 from ._models_py3 import PostgreSqlSource
 from ._models_py3 import PostgreSqlTableDataset
+from ._models_py3 import PowerBIWorkspaceLinkedService
 from ._models_py3 import PrestoLinkedService
 from ._models_py3 import PrestoObjectDataset
 from ._models_py3 import PrestoSource
@@ -608,6 +609,7 @@ from ._models_py3 import SparkBatchJob
 from ._models_py3 import SparkBatchJobState
 from ._models_py3 import SparkConfiguration
 from ._models_py3 import SparkConfigurationListResponse
+from ._models_py3 import SparkConfigurationParametrizationReference
 from ._models_py3 import SparkConfigurationReference
 from ._models_py3 import SparkConfigurationResource
 from ._models_py3 import SparkJobDefinition
@@ -738,6 +740,7 @@ from ._artifacts_client_enums import BlobEventType
 from ._artifacts_client_enums import CassandraSourceReadConsistencyLevels
 from ._artifacts_client_enums import CellOutputType
 from ._artifacts_client_enums import CompressionCodec
+from ._artifacts_client_enums import ConfigurationType
 from ._artifacts_client_enums import CopyBehaviorType
 from ._artifacts_client_enums import CreateMode
 from ._artifacts_client_enums import DataFlowComputeType
@@ -846,7 +849,7 @@ from ._artifacts_client_enums import WebAuthenticationType
 from ._artifacts_client_enums import WebHookActivityMethod
 from ._artifacts_client_enums import ZendeskAuthenticationType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -1336,6 +1339,7 @@ __all__ = [
     "PostgreSqlLinkedService",
     "PostgreSqlSource",
     "PostgreSqlTableDataset",
+    "PowerBIWorkspaceLinkedService",
     "PrestoLinkedService",
     "PrestoObjectDataset",
     "PrestoSource",
@@ -1452,6 +1456,7 @@ __all__ = [
     "SparkBatchJobState",
     "SparkConfiguration",
     "SparkConfigurationListResponse",
+    "SparkConfigurationParametrizationReference",
     "SparkConfigurationReference",
     "SparkConfigurationResource",
     "SparkJobDefinition",
@@ -1581,6 +1586,7 @@ __all__ = [
     "CassandraSourceReadConsistencyLevels",
     "CellOutputType",
     "CompressionCodec",
+    "ConfigurationType",
     "CopyBehaviorType",
     "CreateMode",
     "DataFlowComputeType",

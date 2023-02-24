@@ -20,7 +20,8 @@ DEPENDENCIES = [
     "pyopenssl",
     "python-dotenv",
     "PyYAML",
-    "urllib3"
+    "urllib3",
+    "tomli"
 ]
 
 setup(

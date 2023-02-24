@@ -219,7 +219,7 @@ schema_registry_client = SchemaRegistryClient("your_fully_qualified_namespace", 
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 schema_registry_client.get_schema(schema_id, logging_enable=True)
 ```
 
@@ -257,7 +257,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [schemas]: https://docs.microsoft.com/azure/event-hubs/schema-registry-overview#schemas
 [schema_groups]: https://docs.microsoft.com/azure/event-hubs/schema-registry-overview#schema-groups
 [schemaregistry_service]: https://aka.ms/schemaregistry
-[schemaregistry_avroserializer_pypi]: https://pypi.org/project/azure-schemaregistry-avroserializer/
 [token_credential_interface]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core/azure/core/credentials.py
 [pypi_azure_identity]: https://pypi.org/project/azure-identity/
 [quickstart_guide]: https://docs.microsoft.com/azure/event-hubs/create-schema-registry

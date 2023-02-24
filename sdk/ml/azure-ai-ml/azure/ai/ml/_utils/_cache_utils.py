@@ -15,8 +15,12 @@ from pathlib import Path
 from typing import List, Dict, Optional, Union, Callable
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
-from azure.ai.ml._utils.utils import is_on_disk_cache_enabled, is_concurrent_component_registration_enabled, \
-    is_private_preview_enabled, open_file_with_int_mode
+from azure.ai.ml._utils.utils import (
+    is_on_disk_cache_enabled,
+    is_concurrent_component_registration_enabled,
+    is_private_preview_enabled,
+    write_to_shared_file,
+)
 from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
@@ -98,9 +102,7 @@ class CachedNodeResolver(object):
         self._cache: Dict[str, _CacheContent] = {}
         self._nodes_to_resolve: List[BaseNode] = []
 
-        self._client_hash = self._get_client_hash(
-            subscription_id, resource_group_name, workspace_name, registry_name
-        )
+        self._client_hash = self._get_client_hash(subscription_id, resource_group_name, workspace_name, registry_name)
         # the same client share 1 lock
         self._lock = _node_resolution_lock[self._client_hash]
 
@@ -141,7 +143,7 @@ class CachedNodeResolver(object):
                 "Please reset the value to an integer.",
                 AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS,
                 os.environ.get(AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS),
-                default_max_workers
+                default_max_workers,
             )
             max_workers = default_max_workers
         return max_workers
@@ -208,6 +210,7 @@ class CachedNodeResolver(object):
     def _on_disk_cache_dir(self) -> Path:
         """Get the base path for on disk cache."""
         from azure.ai.ml._version import VERSION
+
         return Path(tempfile.gettempdir()).joinpath(
             ".azureml",
             "azure-ai-ml",
@@ -245,8 +248,7 @@ class CachedNodeResolver(object):
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         on_disk_cache_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            with open_file_with_int_mode(on_disk_cache_path, "w") as f:
-                f.write(arm_id)
+            write_to_shared_file(on_disk_cache_path, arm_id)
         except PermissionError:
             logger.warning(
                 "Failed to save on-disk cache for component due to permission error. "
@@ -255,8 +257,7 @@ class CachedNodeResolver(object):
             )
 
     def _resolve_cache_contents(self, cache_contents_to_resolve: List[_CacheContent], resolver):
-        """Resolve all components to resolve and save the results in cache.
-        """
+        """Resolve all components to resolve and save the results in cache."""
         _components = list(map(lambda x: x.component_ref, cache_contents_to_resolve))
         _map_func = partial(resolver, azureml_type=AzureMLResourceType.COMPONENT)
 
@@ -298,10 +299,7 @@ class CachedNodeResolver(object):
         self._nodes_to_resolve.clear()
         return dict_of_nodes_to_resolve, cache_contents_to_resolve
 
-    def _resolve_cache_contents_from_disk(
-        self,
-        cache_contents_to_resolve: List[_CacheContent]
-    ) -> List[_CacheContent]:
+    def _resolve_cache_contents_from_disk(self, cache_contents_to_resolve: List[_CacheContent]) -> List[_CacheContent]:
         """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return
         unresolved cache contents.
         """
@@ -309,8 +307,7 @@ class CachedNodeResolver(object):
         # we can't assume that the code folder won't change among dependency resolution
         for cache_content in cache_contents_to_resolve:
             cache_content.on_disk_hash = self._get_on_disk_hash_for_component(
-                cache_content.component_ref,
-                cache_content.in_memory_hash
+                cache_content.component_ref, cache_content.in_memory_hash
             )
 
         left_cache_contents_to_resolve = []
@@ -343,16 +340,14 @@ class CachedNodeResolver(object):
         self._fill_back_component_to_nodes(dict_of_nodes_to_resolve)
 
     def register_node_for_lazy_resolution(self, node: BaseNode):
-        """Register a node with its component to resolve.
-        """
+        """Register a node with its component to resolve."""
         component = node._component  # pylint: disable=protected-access
 
         # directly resolve node and skip registration if the resolution involves no remote call
         # so that all node will be skipped when resolving a subgraph recursively
         if isinstance(component, str):
             node._component = self._resolver(  # pylint: disable=protected-access
-                component,
-                azureml_type=AzureMLResourceType.COMPONENT
+                component, azureml_type=AzureMLResourceType.COMPONENT
             )
             return
         if component.id is not None:

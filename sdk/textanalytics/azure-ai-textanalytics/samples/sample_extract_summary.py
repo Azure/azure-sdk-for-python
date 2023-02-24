@@ -20,15 +20,11 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_extractive_summarization():
+    # [START extract_summary]
+    import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.textanalytics import (
-        TextAnalyticsClient,
-        ExtractSummaryAction
-    )
+    from azure.ai.textanalytics import TextAnalyticsClient
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
@@ -57,24 +53,18 @@ def sample_extractive_summarization():
         "component of this aspiration, if grounded with external knowledge sources in the downstream AI tasks."
     ]
 
-    poller = text_analytics_client.begin_analyze_actions(
-        document,
-        actions=[
-            ExtractSummaryAction(),
-        ],
-    )
-
-    document_results = poller.result()
-    for extract_summary_results in document_results:
-        for result in extract_summary_results:
-            if result.kind == "ExtractiveSummarization":
-                print("Summary extracted: \n{}".format(
-                    " ".join([sentence.text for sentence in result.sentences]))
-                )
-            elif result.is_error is True:
-                print("...Is an error with code '{}' and message '{}'".format(
-                    result.code, result.message
-                ))
+    poller = text_analytics_client.begin_extract_summary(document)
+    extract_summary_results = poller.result()
+    for result in extract_summary_results:
+        if result.kind == "ExtractiveSummarization":
+            print("Summary extracted: \n{}".format(
+                " ".join([sentence.text for sentence in result.sentences]))
+            )
+        elif result.is_error is True:
+            print("...Is an error with code '{}' and message '{}'".format(
+                result.error.code, result.error.message
+            ))
+    # [END extract_summary]
 
 
 if __name__ == "__main__":

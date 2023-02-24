@@ -10,6 +10,7 @@ except ImportError:
 from azure.identity._credentials.application import AzureApplicationCredential
 from azure.identity import (
     AzureCliCredential,
+    AzureDeveloperCliCredential,
     AzurePowerShellCredential,
     AuthorizationCodeCredential,
     CertificateCredential,
@@ -109,6 +110,7 @@ def test_exit_args(fixture):
     "cls",
     (
         AzureCliCredential,
+        AzureDeveloperCliCredential,
         AzureApplicationCredential,
         AzurePowerShellCredential,
         EnvironmentCredential,
