@@ -46,8 +46,11 @@ from azure.ai.ml._utils._registry_utils import (
 )
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import (
-    MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes, ASSET_ID_FORMAT,
-    AzureMLResourceType)
+    MLTABLE_METADATA_SCHEMA_URL_FALLBACK,
+    AssetTypes,
+    ASSET_ID_FORMAT,
+    AzureMLResourceType,
+)
 from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.exceptions import (
@@ -218,8 +221,7 @@ class DataOperations(_ScopeDependentOperations):
             log_and_raise_error(ex)
 
     # @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, data: Union[Data,
-                                           WorkspaceAssetReference]) -> Data:
+    def create_or_update(self, data: Union[Data, WorkspaceAssetReference]) -> Data:
         """Returns created or updated data asset.
 
         If not already in storage, asset will be uploaded to the workspace's blob storage.
@@ -256,7 +258,8 @@ class DataOperations(_ScopeDependentOperations):
                             name=data.name,
                             version=data.version,
                             resource_group_name=self._resource_group_name,
-                            registry_name=self._registry_name)
+                            registry_name=self._registry_name,
+                        )
                     except Exception as err:  # pylint: disable=broad-except
                         if isinstance(err, ResourceNotFoundError):
                             pass
@@ -272,9 +275,8 @@ class DataOperations(_ScopeDependentOperations):
                         )
                     data = data._to_rest_object()
                     result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name,
-                        registry_name=self._registry_name,
-                        body=data)
+                        resource_group_name=self._resource_group_name, registry_name=self._registry_name, body=data
+                    )
                     return result
 
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -512,6 +514,7 @@ class DataOperations(_ScopeDependentOperations):
             version=version if version else data.version,
             asset_id=asset_id,
         )
+
 
 def _assert_local_path_matches_asset_type(
     local_path: str,
