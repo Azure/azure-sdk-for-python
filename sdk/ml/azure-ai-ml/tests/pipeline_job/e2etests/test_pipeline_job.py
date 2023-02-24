@@ -1703,6 +1703,8 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_job.jobs["regression_node"].outputs["best_model"].name == "regression_name"
         assert pipeline_job.jobs["regression_node"].outputs["best_model"].version == "1"
 
+        # Current code won't copy NodeOutput to the binding PipelineOutput for yaml defined job.
+        # To register a binding NodeOutput, define name and version in pipeline level is more expected.
         assert pipeline_job.outputs.regression_node_2.name == None
         assert pipeline_job.outputs.regression_node_2.version == None
 
