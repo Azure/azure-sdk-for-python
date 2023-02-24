@@ -68,7 +68,9 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     def test_batch_invoke(
         self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
     ) -> None:
@@ -146,7 +148,9 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         )
         assert job
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     def test_batch_invoke_outputs(
         self,
         client: MLClient,

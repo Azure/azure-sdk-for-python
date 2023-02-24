@@ -53,7 +53,9 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestDSLPipelineSamples(AzureRecordedTestCase):
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_e2e_local_components(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -103,7 +105,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_basic_component(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -113,7 +117,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = basic_component()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_component_with_input_output(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -125,7 +131,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = component_with_input_output()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_basic_pipeline(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -135,7 +143,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = basic_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_pipeline_with_data(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -145,7 +155,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pipline_with_data()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_local_data_input(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -155,7 +167,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = local_data_input()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_datastore_datapath_uri_folder(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -167,7 +181,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = datastore_datapath_uri_folder()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_datastore_datapath_uri_file(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -179,7 +195,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = datastore_datapath_uri_file()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_dataset_input(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -189,7 +207,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = dataset_input(client)
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_web_url_input(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -199,7 +219,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = web_url_input()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_env_public_docker_image(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.env_public_docker_image.pipeline import (
@@ -209,7 +231,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = env_public_docker_image()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_env_registered(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -219,7 +243,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = env_registered()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_env_conda_file(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -250,7 +276,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pytorch_hello_world()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_nyc_taxi_data_regression(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -262,7 +290,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = nyc_taxi_data_regression()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_tf_mnist(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -272,7 +302,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = tf_mnist()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_e2e_inline_components(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -294,7 +326,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = command_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_multi_parallel_components_with_file_input_pipeline_output(
         self,
@@ -309,7 +343,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pipeline_with_parallel_components()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_parallel_components_with_tabular_input_pipeline_output(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -321,7 +357,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pipeline_with_parallel_components()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_parallel_components(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -360,7 +398,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pipeline_with_pipeline_component(client)
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_spark_job_in_pipeline(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -372,7 +412,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = spark_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_spark_job_with_builder_in_pipeline(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -384,7 +426,9 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = spark_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_spark_job_with_multiple_node_in_pipeline(self, client: MLClient) -> None:
         set_bodiless_matcher()
