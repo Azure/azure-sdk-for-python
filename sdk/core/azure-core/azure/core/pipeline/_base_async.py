@@ -23,12 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Union, Generic, TypeVar, List, Dict
+from typing import Any, Union, Generic, TypeVar, List, Dict, Optional
 from contextlib import AbstractAsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
+from .transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -49,11 +50,15 @@ class _SansIOAsyncHTTPPolicyRunner(
     :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
-    def __init__(self, policy: SansIOHTTPPolicy) -> None:
+    def __init__(
+        self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
+    ) -> None:
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
         self._policy = policy
 
-    async def send(self, request: PipelineRequest) -> PipelineResponse:
+    async def send(
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Modifies the request and sends to the next policy in the chain.
 
         :param request: The PipelineRequest object.
@@ -62,11 +67,12 @@ class _SansIOAsyncHTTPPolicyRunner(
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         await _await_result(self._policy.on_request, request)
+        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
         try:
-            response = await self.next.send(request)  # type: ignore
+            response = await self.next.send(request)
         except Exception:  # pylint: disable=broad-except
-            if not await _await_result(self._policy.on_exception, request):
-                raise
+            await _await_result(self._policy.on_exception, request)
+            raise
         else:
             await _await_result(self._policy.on_response, request, response)
         return response
@@ -82,11 +88,15 @@ class _AsyncTransportRunner(
     :param sender: The async Http Transport instance.
     """
 
-    def __init__(self, sender) -> None:
+    def __init__(
+        self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
+    ) -> None:
         super(_AsyncTransportRunner, self).__init__()
         self._sender = sender
 
-    async def send(self, request):
+    async def send(
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Async HTTP transport send method.
 
         :param request: The PipelineRequest object.
@@ -120,8 +130,14 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
             :caption: Builds the async pipeline for asynchronous transport.
     """
 
-    def __init__(self, transport, policies: AsyncPoliciesType = None) -> None:
-        self._impl_policies = []  # type: ImplPoliciesType
+    def __init__(
+        self,
+        transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
+        policies: Optional[AsyncPoliciesType] = None,
+    ) -> None:
+        self._impl_policies: List[
+            AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
+        ] = []
         self._transport = transport
 
         for policy in policies or []:
@@ -177,7 +193,9 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         await self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    async def run(self, request: HTTPRequestType, **kwargs: Any):
+    async def run(
+        self, request: HTTPRequestType, **kwargs: Any
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Runs the HTTP Request through the chained policies.
 
         :param request: The HTTP request object.
