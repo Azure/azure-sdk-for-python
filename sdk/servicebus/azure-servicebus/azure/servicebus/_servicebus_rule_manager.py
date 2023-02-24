@@ -1,14 +1,34 @@
 import functools
 import threading
 import time
-from uamqp import AMQPClient, Message
+from uamqp import AMQPClient
 from uamqp.constants import SenderSettleMode
 from uamqp.authentication.common import AMQPAuth
 from typing import TYPE_CHECKING, Any, Optional, Union
 from azure.core.paging import ItemPaged
-from azure.servicebus._common.constants import CONSUMER_IDENTIFIER, MGMT_REQUEST_ADD_RULE, MGMT_REQUEST_GET_RULES, MGMT_REQUEST_REMOVE_RULE, MGMT_REQUEST_RULE_DESCRIPTION, MGMT_REQUEST_RULE_NAME, MGMT_REQUEST_SKIP, MGMT_REQUEST_TOP, ServiceBusReceiveMode, ServiceBusToAMQPReceiveModeMap
+from azure.servicebus._common.constants import (
+    MGMT_REQUEST_ADD_RULE,
+    MGMT_REQUEST_CORRELATION_FILTER,
+    MGMT_REQUEST_EXPRESSION,
+    MGMT_REQUEST_GET_RULES,
+    MGMT_REQUEST_REMOVE_RULE,
+    MGMT_REQUEST_RULE_DESCRIPTION,
+    MGMT_REQUEST_RULE_NAME,
+    MGMT_REQUEST_SKIP,
+    MGMT_REQUEST_SQL_RULE_FILTER,
+    MGMT_REQUEST_TOP,
+    ServiceBusReceiveMode,
+    ServiceBusToAMQPReceiveModeMap,
+)
 from azure.servicebus._common.receiver_mixins import ReceiverMixin
-from azure.servicebus.management import CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, FalseRuleFilter, SqlRuleAction, RuleProperties
+from azure.servicebus.management import (
+    CorrelationRuleFilter,
+    SqlRuleFilter,
+    TrueRuleFilter,
+    FalseRuleFilter,
+    SqlRuleAction,
+    RuleProperties,
+)
 from azure.servicebus._common.utils import create_authentication, get_receive_links, receive_trace_context_manager
 from ._servicebus_session import ServiceBusSession
 from ._base_handler import BaseHandler
@@ -21,9 +41,8 @@ if TYPE_CHECKING:
         AzureNamedKeyCredential,
     )
 
-class ServiceBusRuleManager(ReceiverMixin,
-    BaseHandler
-):  # pylint: disable=too-many-instance-attributes
+
+class ServiceBusRuleManager(ReceiverMixin, BaseHandler):  # pylint: disable=too-many-instance-attributes
     """The ServiceBusRuleManager class defines a high level interface for
     managing rules on a specific topic subscription. The rule manager requires only Listen claims
 
@@ -73,9 +92,7 @@ class ServiceBusRuleManager(ReceiverMixin,
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union[
-            "TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"
-        ],
+        credential: Union["TokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
         *,
         topic_name: Optional[str] = None,
         subscription_name: Optional[str] = None,
@@ -91,14 +108,10 @@ class ServiceBusRuleManager(ReceiverMixin,
             )
         else:
             if topic_name and not subscription_name:
-                raise ValueError(
-                    "Subscription name is missing for the topic. Please specify subscription_name."
-                )
+                raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
             entity_name = topic_name
             if not entity_name:
-                raise ValueError(
-                    "Topic name is missing. Please specify queue_name/topic_name."
-                )
+                raise ValueError("Topic name is missing. Please specify queue_name/topic_name.")
 
             super(ServiceBusRuleManager, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -114,11 +127,7 @@ class ServiceBusRuleManager(ReceiverMixin,
             subscription_name=subscription_name,
             **kwargs,
         )
-        self._session =  self._session = (
-            None
-            if self._session_id is None
-            else ServiceBusSession(self._session_id, self)
-        )
+        self._session = self._session = None if self._session_id is None else ServiceBusSession(self._session_id, self)
         self._receive_context = threading.Event()
 
     def __iter__(self):
@@ -237,9 +246,7 @@ class ServiceBusRuleManager(ReceiverMixin,
             raise ValueError("Queue entity does not have subscription.")
 
         if kwargs.get("topic_name") and not kwargs.get("subscription_name"):
-            raise ValueError(
-                "Subscription name is missing for the topic. Please specify subscription_name."
-            )
+            raise ValueError("Subscription name is missing for the topic. Please specify subscription_name.")
         return cls(**constructor_args)
 
     def _create_handler(self, auth):
@@ -258,9 +265,7 @@ class ServiceBusRuleManager(ReceiverMixin,
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else None,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
-            keep_alive_interval=self._config.keep_alive
-            if self._prefetch_count != 1
-            else 5,
+            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
         )
         if self._prefetch_count == 1:
             self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
@@ -294,16 +299,17 @@ class ServiceBusRuleManager(ReceiverMixin,
         # type: () -> None
         super(ServiceBusRuleManager, self).close()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
-        
+
     def create_rule(
         self,
         rule_name: str,
         *,
         filter: Union[  # pylint: disable=redefined-builtin
             CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, FalseRuleFilter
-        ]=TrueRuleFilter(),
+        ] = TrueRuleFilter(),
         action: Optional[SqlRuleAction] = None,
-        **kwargs: Any):
+        **kwargs: Any,
+    ):
         """Create a rule for a topic subscription.
 
         :param rule_name: Name of the rule.
@@ -315,37 +321,24 @@ class ServiceBusRuleManager(ReceiverMixin,
         :paramtype action: Optional[~azure.servicebus.management.SqlRuleAction]
         :rtype: None
         """
-       
-        message = {
-            MGMT_REQUEST_RULE_NAME: rule_name,
-        }
+        if not rule_name:
+            raise ValueError("rule name cannot be empty")
 
         if type(filter) in (SqlRuleFilter, TrueRuleFilter, FalseRuleFilter):
             rule_description = {
-                'sql-filter':{
-                'expression': filter.sql_expression,
+                MGMT_REQUEST_SQL_RULE_FILTER: {
+                    MGMT_REQUEST_EXPRESSION: filter.sql_expression,
                 }
             }
-        
+
         else:
-            rule_description = {
-                'correlation-filter':{
-                'correlation-id': filter.correlation_id,
-                'message-id': filter.message_id,
-                'to': filter.to,
-                'reply-to': filter.reply_to,
-                'label': filter.label,
-                'session-id': filter.session_id,
-                'reply-to-session-id': filter.reply_to_session_id,
-                'content-type': filter.content_type,
-                'properties': filter.properties,
-                }
-            }
-        
-        message[MGMT_REQUEST_RULE_DESCRIPTION] = rule_description
+            rule_description = {MGMT_REQUEST_CORRELATION_FILTER: vars(filter)}
 
+        message = {
+            MGMT_REQUEST_RULE_NAME: rule_name,
+            MGMT_REQUEST_RULE_DESCRIPTION: rule_description,
+        }
 
-        
         handler = functools.partial(mgmt_handlers.create_rule_op)
 
         self._mgmt_request_response_with_retry(MGMT_REQUEST_ADD_RULE, message, handler)
@@ -358,14 +351,12 @@ class ServiceBusRuleManager(ReceiverMixin,
         """
         if not rule_name:
             raise ValueError("rule name cannot be empty")
-        
-        message = {
-            MGMT_REQUEST_RULE_NAME: rule_name
-        }
+
+        message = {MGMT_REQUEST_RULE_NAME: rule_name}
         handler = functools.partial(mgmt_handlers.delete_rule_op)
         self._mgmt_request_response_with_retry(MGMT_REQUEST_REMOVE_RULE, message, handler)
 
-    def list_rules(self, top: int = 10, skip: int = 0,  **kwargs: Any) -> ItemPaged[RuleProperties]:
+    def list_rules(self, top: int = 10, skip: int = 0, **kwargs: Any) -> ItemPaged[RuleProperties]:
         """List the rules of a topic subscription.
 
         :param int top: The number of rules to fetch, default is 10
@@ -374,22 +365,21 @@ class ServiceBusRuleManager(ReceiverMixin,
         :rtype: ~azure.core.paging.ItemPaged[RuleProperties]
         """
         if top is None or top <= 0:
-            raise ValueError('top must be a number greater than 0')
-        
+            raise ValueError("top must be a number greater than 0")
+
         if skip is None or skip < 0:
-            raise ValueError('top must be a number greater than 0')
-        
+            raise ValueError("top must be a number greater than 0")
+
         message = {
-            MGMT_REQUEST_TOP: top, 
-            MGMT_REQUEST_SKIP:skip,
-            }
+            MGMT_REQUEST_TOP: top,
+            MGMT_REQUEST_SKIP: skip,
+        }
 
         handler = functools.partial(mgmt_handlers.list_rules_op)
-        
+
         rules = self._mgmt_request_response_with_retry(MGMT_REQUEST_GET_RULES, message, handler)
 
         return ItemPaged(rules)
-
 
     @property
     def client_identifier(self) -> str:
