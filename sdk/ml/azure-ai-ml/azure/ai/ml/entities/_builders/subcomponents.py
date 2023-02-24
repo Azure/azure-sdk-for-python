@@ -11,7 +11,6 @@ from mldesigner import command_component, Output
 
 def save_mltable_yaml(path, mltable_paths):
     import os
-    import yaml
     path = os.path.abspath(path)
 
     if os.path.isfile(path):
@@ -21,6 +20,8 @@ def save_mltable_yaml(path, mltable_paths):
         os.makedirs(path, exist_ok=True)
 
     save_path = os.path.join(path, 'MLTable')
+    # Do not touch - this is MLTable syntax that is needed to mount these paths
+    # To the MLTable's inputs
     mltable_file_content = "\n".join(["paths:"] + [f"- folder : {path}" for path in mltable_paths])
 
     # mltable_yaml_dict = yaml.dump({"paths": mltable_paths}, default_)
@@ -32,5 +33,7 @@ def save_mltable_yaml(path, mltable_paths):
 @command_component()
 def aggregate_output(aggregated_output: Output(type="mltable"), **kwargs):
     print("Aggregated Output {}".format(aggregated_output))
-    path_list = [k for k,v in kwargs.items()]
+    # keys are inputs names (ex: silo_output_silo_1)
+    # values are uri_folder paths 
+    path_list = [v for v in kwargs.values()] 
     save_mltable_yaml(aggregated_output, path_list)

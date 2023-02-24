@@ -104,7 +104,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
 
         executed_aggregation_component = None
-
         for i in range(self.max_iterations):
             silo_inputs = {}
             # Create inputs for silo components by merging last iteration's aggregation ouput into the standard,
@@ -180,8 +179,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         siloed_outputs = {}
         for i in range(len(self.silo_configs)):
             silo_config = self.silo_configs[i]
-            silo_inputs.update(self.silo_configs[i].inputs)
+            silo_inputs.update(silo_config.inputs)
             executed_silo_component = self.silo_component(**silo_inputs)
+            for v, k in executed_silo_component.inputs.items():
+                if v in silo_config.inputs and k.type == "uri_folder":
+                    k.mode = "ro_mount"
             FLScatterGather._anchor_step_in_silo(pipeline_step=executed_silo_component, compute=silo_config.compute, output_datastore=silo_config.datastore)
 
             sg_graph["silos"].append(executed_silo_component)
@@ -196,9 +198,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         agg_inputs = {}
         agg_inputs.update(self.aggregation_kwargs)
-        agg_inputs.update({
-            self._get_aggregator_input_name(k): v.outputs.aggregated_output for k, v in merge_comp_mapping.items()
-        })
+        internal_merge_outputs = {self._get_aggregator_input_name(k): v.outputs.aggregated_output for k, v in merge_comp_mapping.items()}
+        agg_inputs.update(internal_merge_outputs)
 
         # big TODO: For some reason, including this file in the __init__ causes a circular import exception on the first attempted import
         # The second import succeeds, but then causes a silent failure where the MLDEsigner component just... does work.
@@ -206,13 +207,19 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
 
         executed_aggregation_component = self.aggregation_component(**agg_inputs)
+        # Set mode of mltable inputs as eval mount to allow files referenced within the table
+        # to be accessible by the component
+        for name, agg_input in executed_aggregation_component.inputs.items():
+            if agg_input.type == "mltable":
+                agg_input.mode = "eval_download"
         sg_graph["aggregation"] = executed_aggregation_component
 
         # Todo potentially allow only 1 to be set/used
         if self.aggregation_compute is not None and self.aggregation_datastore:
             # internal merge component is also siloed to wherever the aggregation component lives.
             for _, executed_merge_component in merge_comp_mapping.items():
-                FLScatterGather._anchor_step_in_silo(pipeline_step=executed_merge_component, compute=self.aggregation_compute, output_datastore=self.aggregation_datastore)            
+                executed_merge_component.compute = self.aggregation_compute
+                #FLScatterGather._anchor_step_in_silo(pipeline_step=executed_merge_component, compute=self.aggregation_compute, output_datastore=self.aggregation_datastore)            
             FLScatterGather._anchor_step_in_silo(pipeline_step=executed_aggregation_component, compute=self.aggregation_compute, output_datastore=self.aggregation_datastore)
         return sg_graph
 
