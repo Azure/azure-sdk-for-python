@@ -43,9 +43,7 @@ def build_get_request(location: str, operation_id: str, subscription_id: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -76,7 +74,7 @@ class OperationStatusOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dataprotection.DataProtectionClient`'s
+        :class:`~azure.mgmt.dataprotection.DataProtectionMgmtClient`'s
         :attr:`operation_status` attribute.
     """
 
@@ -115,7 +113,7 @@ class OperationStatusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.OperationResource] = kwargs.pop("cls", None)

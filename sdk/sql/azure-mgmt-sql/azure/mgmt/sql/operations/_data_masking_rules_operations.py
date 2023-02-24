@@ -236,7 +236,7 @@ class DataMaskingRulesOperations:
         :param data_masking_rule_name: The name of the data masking rule. Required.
         :type data_masking_rule_name: str
         :param parameters: The required parameters for creating or updating a data masking rule. Is
-         either a model type or a IO type. Required.
+         either a DataMaskingRule type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DataMaskingRule or IO
         :keyword data_masking_policy_name: The name of the database for which the data masking rule
          applies. Default value is "Default". Note that overriding this default value may result in

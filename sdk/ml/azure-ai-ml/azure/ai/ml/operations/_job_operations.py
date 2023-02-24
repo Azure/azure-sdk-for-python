@@ -958,6 +958,9 @@ class JobOperations(_ScopeDependentOperations):
             if isinstance(item, _GroupAttrDict):
                 inputs.extend(item.flatten(group_parameter_name=key))
             else:
+                # skip resolving inferred optional input without path (in do-while + dynamic input case)
+                if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
+                    continue
                 inputs.append(item._data)
         for entry in inputs:
             self._resolve_job_input(entry, base_path)

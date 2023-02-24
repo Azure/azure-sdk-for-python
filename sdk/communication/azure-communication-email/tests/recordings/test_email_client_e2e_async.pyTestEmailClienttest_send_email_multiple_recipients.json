@@ -1,20 +1,18 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://someEndpoint/emails:send?api-version=2021-10-01-preview",
+      "RequestUri": "https://someEndpoint/emails:send?api-version=2023-01-15-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
-        "Content-Length": "284",
+        "Content-Length": "295",
         "Content-Type": "application/json",
-        "repeatability-first-sent": "sanitized",
-        "repeatability-request-id": "sanitized",
-        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25236-SP0)",
-        "x-ms-client-request-id": "sanitized",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25300-SP0)",
+        "x-ms-client-request-id": "b4b65f9f-b23d-11ed-9771-ac74b1c5ffa4",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Thu, 17 Nov 2022 17:37:45 GMT",
+        "x-ms-date": "Tue, 21 Feb 2023 23:16:01 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -25,30 +23,68 @@
         "recipients": {
           "to": [
             {
-              "email": "someRecipient@domain.com",
+              "address": "someRecipient@domain.com",
               "displayName": "Customer Name"
             },
             {
-              "email": "someRecipient@domain.com",
+              "address": "someRecipient@domain.com",
               "displayName": "Customer Name 2"
             }
           ]
         },
-        "sender": "someSender@contoso.com"
+        "senderAddress": "someSender@contoso.com"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-10-01-preview",
-        "Content-Length": "0",
-        "Date": "sanitized",
-        "mise-correlation-id": "68395c1c-dff9-4104-8e73-af981fe8375c",
-        "Operation-Location": "https://someEndpoint/emails/someMessageId/status",
-        "Repeatability-Result": "accepted",
-        "X-Azure-Ref": "sanitized",
-        "X-Cache": "CONFIG_NOCACHE",
-        "x-ms-request-id": "someMessageId"
+        "api-supported-versions": "2021-10-01-preview, 2023-01-15-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "47",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 21 Feb 2023 23:16:01 GMT",
+        "mise-correlation-id": "c490b858-cc3e-4ca9-8557-cbd3a5c571e6",
+        "Operation-Location": "https://someEndpoint/emails/operations/someId?api-version=2023-01-15-preview",
+        "Retry-After": "30",
+        "x-azure-ref": "20230221T231601Z-6w338xvd611b9f9rm4rttd4rv0000000013000000001vgh1",
+        "X-Cache": "CONFIG_NOCACHE"
       },
-      "ResponseBody": null
+      "ResponseBody": {
+        "id": "someId",
+        "status": "Running",
+        "error": null
+      }
+    },
+    {
+      "RequestUri": "https://someEndpoint/emails/operations/someId?api-version=2023-01-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25300-SP0)",
+        "x-ms-client-request-id": "b4b65f9f-b23d-11ed-9771-ac74b1c5ffa4",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "Tue, 21 Feb 2023 23:16:31 GMT",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "api-supported-versions": "2021-10-01-preview, 2023-01-15-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "49",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 21 Feb 2023 23:16:31 GMT",
+        "mise-correlation-id": "416e9d67-f3ff-45d6-b6af-f1b75e82bc11",
+        "x-azure-ref": "20230221T231631Z-6w338xvd611b9f9rm4rttd4rv0000000013000000001vqkh",
+        "X-Cache": "CONFIG_NOCACHE"
+      },
+      "ResponseBody": {
+        "id": "someId",
+        "status": "Succeeded",
+        "error": null
+      }
     }
   ],
   "Variables": {}

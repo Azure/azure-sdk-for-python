@@ -21,8 +21,6 @@ def get_local_cryptography_provider(key: "JsonWebKey") -> LocalCryptographyProvi
         return RsaCryptographyProvider(key)
     if key.kty in (KeyType.oct, KeyType.oct_hsm):  # type: ignore[attr-defined]
         return SymmetricCryptographyProvider(key)
-    if key.kty in (KeyType.okp, KeyType.okp_hsm):  # type: ignore[attr-defined]
-        return NoLocalCryptography()
 
     raise ValueError(f'Unsupported key type "{key.kty}"')  # type: ignore[attr-defined]
 
