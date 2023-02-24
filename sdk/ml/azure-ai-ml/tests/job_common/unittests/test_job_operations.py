@@ -252,3 +252,8 @@ class TestJobOperations:
             mock_thing.assert_not_called()
             mock_job_operation.create_or_update(job=job)
             mock_thing.assert_called_once()
+
+    def test_download_with_none(self, mock_job_operation: JobOperations) -> None:
+        with pytest.raises(Exception) as ex:
+            mock_job_operation.download(None)
+        assert "None is a invalid input for client.jobs.get()." in ex.value.message
