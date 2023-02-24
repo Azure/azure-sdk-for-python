@@ -61,6 +61,9 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: SkipScheduledApiReviewGen
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
@@ -132,6 +135,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        SkipScheduledApiReviewGen: ${{ parameters.SkipScheduledApiReviewGen }}
 
   - job: Compliance
     pool:

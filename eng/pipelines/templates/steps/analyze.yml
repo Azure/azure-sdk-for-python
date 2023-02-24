@@ -6,6 +6,7 @@ parameters:
   TestPipeline: false
   VerifyAutorest: false
   ValidateFormatting: false
+  SkipScheduledApiReviewGen: false
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -140,6 +141,7 @@ steps:
   - template: /eng/pipelines/templates/steps/create-apireview.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
+      SkipScheduledApiReviewGen: ${{ parameters.SkipScheduledApiReviewGen }}
 
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:

@@ -4,13 +4,16 @@ parameters:
   ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
   Language: 'Python'
   APIViewUri: 'https://apiview.dev/AutoReview/CreateApiReview'
+  SkipScheduledApiReviewGen: false
 
 steps:
   # ideally this should be done as initial step of a job in caller template
   # We can remove this step later once it is added in caller
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-
-  - ${{ if or(ne(variables['Skip.ScheduledApiReview'], 'true') ,eq(variables['Build.Reason'], 'Manual')) }}:
+ 
+  # Run Automatic API review step only for manually running pipeline if a pipeline has paramter to disable API review gen from scheduled run
+  # Otherwise generate API review for all type of pipeline run and this is the default case.
+  - ${{ if or(eq(variables['Build.Reason'], 'Manual'), eq(parameters.SkipScheduledApiReviewGen, false)) }}:
     - task: Powershell@2
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/scripts/Create-ApiReview.ps1
