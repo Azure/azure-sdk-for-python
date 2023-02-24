@@ -77,8 +77,6 @@ class TestRunOps(LoadtestingAsyncTest):
             }
         )
 
-        assert run_poller.get_initial_response() is not None
-
         result = await run_poller.result()
         assert result is not None
 
@@ -166,7 +164,6 @@ class TestRunOps(LoadtestingAsyncTest):
                 "displayName": "My New Load Test Run from PyTest",
             }
         )
-        assert run_poller.get_initial_response() is not None
 
         result = await run_client.stop_test_run("my-new-test-run-from-pytest-aio-abc")
         assert result is not None

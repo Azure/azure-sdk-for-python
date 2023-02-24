@@ -1,7 +1,7 @@
 ### Settings
 
 ```yaml
-input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/loadtestservice/data-plane/Microsoft.LoadTestService/stable/2022-11-01/loadtestservice.json
+input-file: C:\azure-rest-api-specs\specification\loadtestservice\data-plane\Microsoft.LoadTestService\stable\2022-11-01\loadtestservice.json
 output-folder: ../
 namespace: azure.developer.loadtesting._generated
 package-name: azure-developer-loadtesting
@@ -25,7 +25,14 @@ directive:
   - from: swagger-document
     where: $["paths"]["/test-runs/{testRunId}/metric-definitions"].get
     transform: $["operationId"] = "LoadTestRun_GetMetricDefinitions";
-  
+  - from: swagger-document
+    where: $["paths"]["/test-runs/{testRunId}/metric-dimensions/{name}/values"].get
+    transform: >
+      $["parameters"][5]["x-ms-client-name"] = "timeInterval";
+  - from: swagger-document
+    where: $["paths"]["/test-runs/{testRunId}/metric-dimensions/{name}/values"].get
+    transform: >
+      $["parameters"][3]["x-ms-client-name"] = "metricName";
   - from: swagger-document
     where: '$.paths.*[?(@.tags=="Test")]'
     transform: >

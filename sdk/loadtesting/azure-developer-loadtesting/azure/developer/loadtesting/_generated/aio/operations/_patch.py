@@ -21,7 +21,7 @@ PollingReturnType = TypeVar("PollingReturnType")
 logger = logging.getLogger(__name__)
 
 
-class AsyncLoadTestingPollingMethod(AsyncPollingMethod, Generic[PollingReturnType]):
+class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
     """Base class for custom async polling methods."""
 
     def _update_status(self) -> None:
@@ -83,41 +83,6 @@ class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
         self._status = self._resource["status"]
 
 
-class AsyncLoadTestingLROPoller(AsyncLROPoller, Generic[PollingReturnType]):
-    """Async poller for long-running operations.
-
-    :param client: A pipeline service client
-    :type client: ~azure.core.PipelineClient
-    :param initial_response: The initial call response
-    :type initial_response: ~azure.core.pipeline.PipelineResponse
-    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
-                                     If a subclass of Model is given, this passes "deserialize" as callback.
-    :type deserialization_callback: callable or msrest.serialization.Model
-    :param polling_method: The polling strategy to adopt
-    :type polling_method: ~azure.core.polling.AsyncPollingMethod
-    """
-
-    def __init__(
-        self,
-        client: Any,
-        initial_response: Any,
-        deserialization_callback: Callable,
-        polling_method: AsyncPollingMethod[PollingReturnType],
-    ):
-        self._initial_response = initial_response
-        super(AsyncLoadTestingLROPoller, self).__init__(
-            client, initial_response, deserialization_callback, polling_method
-        )
-
-    def get_initial_response(self) -> JSON:
-        """Return the result of the initial operation.
-
-        :return: The result of the initial operation.
-        :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
-        """
-        return self._initial_response
-
-
 class AdministrationOperations(AdministrationOperationsGenerated):
     """
     for performing the operations on test
@@ -129,7 +94,7 @@ class AdministrationOperations(AdministrationOperationsGenerated):
     @distributed_trace
     async def begin_upload_test_file(
         self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
-    ) -> AsyncLoadTestingLROPoller[JSON]:
+    ) -> AsyncLROPoller[JSON]:
         """Upload file to the test
 
         :param test_id: Unique id for the test
@@ -156,9 +121,7 @@ class AdministrationOperations(AdministrationOperationsGenerated):
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
 
         create_validation_status_polling = AsyncValidationCheckPoller(interval=polling_interval)
-        return AsyncLoadTestingLROPoller(
-            command, upload_test_file_operation, lambda *_: None, create_validation_status_polling
-        )
+        return AsyncLROPoller(command, upload_test_file_operation, lambda *_: None, create_validation_status_polling)
 
 
 class TestRunOperations(TestRunOperationsGenerated):
@@ -178,7 +141,7 @@ class TestRunOperations(TestRunOperationsGenerated):
         old_test_run_id: Optional[str] = None,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> AsyncLoadTestingLROPoller[JSON]:
+    ) -> AsyncLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -210,7 +173,7 @@ class TestRunOperations(TestRunOperationsGenerated):
         old_test_run_id: Optional[str] = None,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> AsyncLoadTestingLROPoller[JSON]:
+    ) -> AsyncLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -236,7 +199,7 @@ class TestRunOperations(TestRunOperationsGenerated):
     @distributed_trace
     async def begin_test_run(
         self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
-    ) -> AsyncLoadTestingLROPoller[JSON]:
+    ) -> AsyncLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -270,12 +233,10 @@ class TestRunOperations(TestRunOperationsGenerated):
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
         create_test_run_polling = AsyncTestRunStatusPoller(interval=polling_interval)
-        return AsyncLoadTestingLROPoller(
-            command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling
-        )
+        return AsyncLROPoller(command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling)
 
 
-__all__: List[str] = ["AdministrationOperations", "TestRunOperations", "AsyncLoadTestingLROPoller"]
+__all__: List[str] = ["AdministrationOperations", "TestRunOperations"]
 
 
 # Add all objects you want publicly available to users at this package level

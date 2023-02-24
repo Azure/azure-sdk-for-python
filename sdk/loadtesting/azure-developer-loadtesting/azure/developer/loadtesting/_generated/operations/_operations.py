@@ -646,9 +646,9 @@ def build_test_run_list_metric_dimension_values_request(
     test_run_id: str,
     name: str,
     *,
-    metricname: str,
+    metric_name: str,
     metric_namespace: str,
-    timespan: str,
+    time_interval: str,
     interval: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -672,9 +672,9 @@ def build_test_run_list_metric_dimension_values_request(
     # Construct parameters
     if interval is not None:
         _params["interval"] = _SERIALIZER.query("interval", interval, "str")
-    _params["metricname"] = _SERIALIZER.query("metricname", metricname, "str")
+    _params["metricname"] = _SERIALIZER.query("metric_name", metric_name, "str")
     _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
-    _params["timespan"] = _SERIALIZER.query("timespan", timespan, "str")
+    _params["timespan"] = _SERIALIZER.query("time_interval", time_interval, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -6347,9 +6347,9 @@ class TestRunOperations:
         test_run_id: str,
         name: str,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
-        timespan: str,
+        time_interval: str,
         interval: Optional[str] = None,
         **kwargs: Any
     ) -> Iterable[str]:
@@ -6362,13 +6362,13 @@ class TestRunOperations:
         :type test_run_id: str
         :param name: Dimension name. Required.
         :type name: str
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :keyword time_interval: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
-        :paramtype timespan: str
+        :paramtype time_interval: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
          "PT10S", "PT1M", "PT5M", and "PT1H". Default value is None.
         :paramtype interval: str
@@ -6401,9 +6401,9 @@ class TestRunOperations:
                 request = build_test_run_list_metric_dimension_values_request(
                     test_run_id=test_run_id,
                     name=name,
-                    metricname=metricname,
+                    metric_name=metric_name,
                     metric_namespace=metric_namespace,
-                    timespan=timespan,
+                    time_interval=time_interval,
                     interval=interval,
                     api_version=self._config.api_version,
                     headers=_headers,

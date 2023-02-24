@@ -76,8 +76,6 @@ class TestRunOps(LoadtestingTest):
             },
         )
 
-        assert run_poller.get_initial_response() is not None
-
         result = run_poller.result(10800)
         assert result is not None
 
@@ -165,7 +163,6 @@ class TestRunOps(LoadtestingTest):
                 "displayName": "My New Load Test Run from PyTest",
             }
         )
-        assert run_poller.get_initial_response() is not None
 
         result = run_client.stop_test_run("my-new-test-run-from-pytest")
         assert result is not None
