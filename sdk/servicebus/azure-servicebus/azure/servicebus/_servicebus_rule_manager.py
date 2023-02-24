@@ -15,6 +15,7 @@ from azure.servicebus._common.constants import (
     MGMT_REQUEST_RULE_DESCRIPTION,
     MGMT_REQUEST_RULE_NAME,
     MGMT_REQUEST_SKIP,
+    MGMT_REQUEST_SQL_RULE_ACTION,
     MGMT_REQUEST_SQL_RULE_FILTER,
     MGMT_REQUEST_TOP,
     ServiceBusReceiveMode,
@@ -309,7 +310,7 @@ class ServiceBusRuleManager(ReceiverMixin, BaseHandler):  # pylint: disable=too-
         ] = TrueRuleFilter(),
         action: Optional[SqlRuleAction] = None,
         **kwargs: Any,
-    ):
+    ) -> None:
         """Create a rule for a topic subscription.
 
         :param rule_name: Name of the rule.
@@ -333,6 +334,9 @@ class ServiceBusRuleManager(ReceiverMixin, BaseHandler):  # pylint: disable=too-
 
         else:
             rule_description = {MGMT_REQUEST_CORRELATION_FILTER: vars(filter)}
+
+        if action:
+            rule_description[MGMT_REQUEST_SQL_RULE_ACTION] = action.sql_expression
 
         message = {
             MGMT_REQUEST_RULE_NAME: rule_name,
