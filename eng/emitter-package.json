@@ -6,6 +6,7 @@
     "@azure-tools/cadl-autorest": "~0.26.0",
     "@azure-tools/cadl-azure-core": "~0.26.0",
     "@azure-tools/cadl-dpg": "~0.26.0",
+    "@azure-tools/cadl-azure-resource-manager": "~0.26.0",
     "@cadl-lang/compiler": "~0.40.0",
     "@cadl-lang/eslint-config-cadl": "~0.5.0",
     "@cadl-lang/openapi": "~0.40.0",
