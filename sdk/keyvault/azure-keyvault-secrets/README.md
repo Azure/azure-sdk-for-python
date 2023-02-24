@@ -39,16 +39,15 @@ In order to interact with the Azure Key Vault service, you will need an instance
 See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
 
 #### Create a client
-After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a secret client (replacing the value of `vault_url` with your vault's URL):
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a secret client (replacing the value of `VAULT_URL` with your vault's URL):
 
+<!-- SNIPPET:hello_world.create_secret_client -->
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.secrets import SecretClient
-
+VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
-
-secret_client = SecretClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+client = SecretClient(vault_url=VAULT_URL, credential=credential)
 ```
+<!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.secrets.aio`'s `SecretClient` instead.
 
@@ -186,7 +185,7 @@ Async clients and credentials should be closed when they're no longer needed. Th
 objects are async context managers and define async `close` methods. For
 example:
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.secrets.aio import SecretClient
 
@@ -299,7 +298,7 @@ secret_client = SecretClient(
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 secret_client.get_secret("my-secret", logging_enable=True)
 ```
 
