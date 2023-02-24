@@ -32,9 +32,11 @@ from azure.identity import DefaultAzureCredential
 
 # Instantiate a secret client that will be used to call the service.
 # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
+# [START create_secret_client]
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=VAULT_URL, credential=credential)
+# [END create_secret_client]
 
 # Let's create a secret holding bank account credentials valid for 1 year.
 # if the secret already exists in the Key Vault, then a new version of the secret is created.

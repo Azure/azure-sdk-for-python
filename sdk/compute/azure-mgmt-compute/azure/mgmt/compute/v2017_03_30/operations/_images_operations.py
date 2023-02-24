@@ -354,7 +354,7 @@ class ImagesOperations:
         :type resource_group_name: str
         :param image_name: The name of the image. Required.
         :type image_name: str
-        :param parameters: Parameters supplied to the Create Image operation. Is either a model type or
+        :param parameters: Parameters supplied to the Create Image operation. Is either a Image type or
          a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2017_03_30.models.Image or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

@@ -190,7 +190,7 @@ class TestCommandJob:
                 }
             },
             compute="local",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         assert isinstance(command_job.inputs["input1"], Input)
 

@@ -321,8 +321,8 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         :type database_name: str
         :param policy_name: The policy name. Should always be "default". "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is either a model type or a IO type.
-         Required.
+        :param parameters: The short term retention policy info. Is either a
+         ManagedBackupShortTermRetentionPolicy type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -574,8 +574,8 @@ class ManagedBackupShortTermRetentionPoliciesOperations:
         :type database_name: str
         :param policy_name: The policy name. Should always be "default". "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ManagedShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is either a model type or a IO type.
-         Required.
+        :param parameters: The short term retention policy info. Is either a
+         ManagedBackupShortTermRetentionPolicy type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

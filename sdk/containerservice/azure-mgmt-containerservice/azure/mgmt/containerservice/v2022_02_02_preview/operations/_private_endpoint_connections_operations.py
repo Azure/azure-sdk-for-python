@@ -479,8 +479,8 @@ class PrivateEndpointConnectionsOperations:
         :type resource_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: The updated private endpoint connection. Is either a model type or a IO
-         type. Required.
+        :param parameters: The updated private endpoint connection. Is either a
+         PrivateEndpointConnection type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.containerservice.v2022_02_02_preview.models.PrivateEndpointConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

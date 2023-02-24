@@ -30,10 +30,6 @@ class InternalInput(Input):
     def __init__(self, *, datastore_mode=None, is_resource=None, **kwargs):
         self.datastore_mode = datastore_mode
         self.is_resource = is_resource
-        if "type" in kwargs and kwargs["type"] == "ComputeSelection":
-            # Convert UIWidgetType ComputeSelection to string type.
-            # Remove it when backend convert UIWidgetType to supported type.
-            kwargs["type"] = ComponentParameterTypes.STRING
         super().__init__(**kwargs)
 
     @property

@@ -460,7 +460,8 @@ class ManagedInstanceAzureADOnlyAuthenticationsOperations:
          "Default" Required.
         :type authentication_name: str or ~azure.mgmt.sql.models.AuthenticationName
         :param parameters: The required parameters for creating or updating an Active Directory only
-         authentication property. Is either a model type or a IO type. Required.
+         authentication property. Is either a ManagedInstanceAzureADOnlyAuthentication type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAzureADOnlyAuthentication or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

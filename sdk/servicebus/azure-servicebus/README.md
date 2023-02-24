@@ -111,7 +111,7 @@ Please find further examples in the [samples](https://github.com/Azure/azure-sdk
 
 This example sends single message and array of messages to a queue that is assumed to already exist, created via the Azure portal or az commands.
 
-```Python
+```python
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 import os
@@ -139,7 +139,7 @@ To receive from a queue, you can either perform an ad-hoc receive via `receiver.
 
 #### [Receive messages from a queue through iterating over ServiceBusReceiver][streaming_receive_reference]
 
-```Python
+```python
 from azure.servicebus import ServiceBusClient
 
 import os
@@ -164,7 +164,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 > **NOTE:** `ServiceBusReceiver.receive_messages()` receives a single or constrained list of messages through an ad-hoc method call, as opposed to receiving perpetually from the generator. It always returns a list.
 
-```Python
+```python
 from azure.servicebus import ServiceBusClient
 
 import os
@@ -193,7 +193,7 @@ In this example, max_message_count declares the maximum number of messages to at
 
 Sessions provide first-in-first-out and single-receiver semantics on top of a queue or subscription.  While the actual receive syntax is the same, initialization differs slightly.
 
-```Python
+```python
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 import os
@@ -221,7 +221,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 Topics and subscriptions give an alternative to queues for sending and receiving messages.  See documents [here][topic_concept] for more overarching detail,
 and of how these differ from queues.
 
-```Python
+```python
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
 import os
@@ -256,7 +256,7 @@ See [AutoLockRenewer](#automatically-renew-message-or-session-locks "Automatical
 
 Declares the message processing to be successfully completed, removing the message from the queue.
 
-```Python
+```python
 from azure.servicebus import ServiceBusClient
 
 import os
@@ -274,7 +274,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 Abandon processing of the message for the time being, returning the message immediately back to the queue to be picked up by another (or the same) receiver.
 
-```Python
+```python
 from azure.servicebus import ServiceBusClient
 
 import os
@@ -292,7 +292,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 
 Transfer the message from the primary queue into a special "dead-letter sub-queue" where it can be accessed using the `ServiceBusClient.get_<queue|subscription>_receiver` function with parameter `sub_queue=ServiceBusSubQueue.DEAD_LETTER` and consumed from like any other receiver. (see sample [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deadlettered_messages.py))
 
-```Python
+```python
 from azure.servicebus import ServiceBusClient
 
 import os
@@ -311,7 +311,7 @@ with ServiceBusClient.from_connection_string(connstr) as client:
 Defer is subtly different from the prior settlement methods.  It prevents the message from being directly received from the queue
 by setting it aside such that it must be received by sequence number in a call to `ServiceBusReceiver.receive_deferred_messages` (see sample [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples/sync_samples/receive_deferred_message_queue.py))
 
-```Python
+```python
 from azure.servicebus import ServiceBusClient
 
 import os

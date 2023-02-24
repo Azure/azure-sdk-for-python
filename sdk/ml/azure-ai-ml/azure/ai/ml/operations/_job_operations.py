@@ -256,6 +256,7 @@ class JobOperations(_ScopeDependentOperations):
             scheduled=schedule_defined,
             schedule_id=scheduled_job_name,
             **self._kwargs,
+            **kwargs,
         )
 
     def _handle_rest_errors(self, job_object):
@@ -312,7 +313,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
-    def begin_cancel(self, name: str) -> LROPoller[None]:
+    def begin_cancel(self, name: str, **kwargs) -> LROPoller[None]:
         """Cancel job resource.
 
         :param str name: Name of the job.
@@ -322,12 +323,30 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
-        return self._operation_2023_02_preview.begin_cancel(
-            id=name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            **self._kwargs,
-        )
+        tag = kwargs.pop("tag", None)
+
+        if not tag:
+            return self._operation_2023_02_preview.begin_cancel(
+                id=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+                **kwargs,
+            )
+
+        # Note: Below batch cancel is experimental and for private usage
+        results = []
+        jobs = self.list(tag=tag)
+        # TODO: Do we need to show error message when no jobs is returned for the given tag?
+        for job in jobs:
+            result = self._operation_2023_02_preview.begin_cancel(
+                id=job.name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+            )
+            results.append(result)
+        return results
 
     def _try_get_compute_arm_id(self, compute: Union[Compute, str]):
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
@@ -939,6 +958,9 @@ class JobOperations(_ScopeDependentOperations):
             if isinstance(item, _GroupAttrDict):
                 inputs.extend(item.flatten(group_parameter_name=key))
             else:
+                # skip resolving inferred optional input without path (in do-while + dynamic input case)
+                if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
+                    continue
                 inputs.append(item._data)
         for entry in inputs:
             self._resolve_job_input(entry, base_path)
