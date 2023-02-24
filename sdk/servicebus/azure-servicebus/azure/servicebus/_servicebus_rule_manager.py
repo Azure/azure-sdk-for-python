@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Optional, Union
 from azure.core.paging import ItemPaged
 from azure.servicebus._common.constants import CONSUMER_IDENTIFIER, MGMT_REQUEST_ADD_RULE, MGMT_REQUEST_GET_RULES, MGMT_REQUEST_REMOVE_RULE, MGMT_REQUEST_RULE_DESCRIPTION, MGMT_REQUEST_RULE_NAME, MGMT_REQUEST_SKIP, MGMT_REQUEST_TOP, ServiceBusReceiveMode, ServiceBusToAMQPReceiveModeMap
 from azure.servicebus._common.receiver_mixins import ReceiverMixin
-from azure.servicebus.management import TrueRuleFilter, CorrelationRuleFilter, SqlRuleFilter, SqlRuleAction, RuleProperties
+from azure.servicebus.management import CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, FalseRuleFilter, SqlRuleAction, RuleProperties
 from azure.servicebus._common.utils import create_authentication, get_receive_links, receive_trace_context_manager
 from ._servicebus_session import ServiceBusSession
 from ._base_handler import BaseHandler
@@ -300,7 +300,7 @@ class ServiceBusRuleManager(ReceiverMixin,
         rule_name: str,
         *,
         filter: Union[  # pylint: disable=redefined-builtin
-            CorrelationRuleFilter, SqlRuleFilter
+            CorrelationRuleFilter, SqlRuleFilter, TrueRuleFilter, FalseRuleFilter
         ]=TrueRuleFilter(),
         action: Optional[SqlRuleAction] = None,
         **kwargs: Any):
@@ -316,18 +316,39 @@ class ServiceBusRuleManager(ReceiverMixin,
         :rtype: None
         """
        
-        amqp_body = {
+        message = {
             MGMT_REQUEST_RULE_NAME: rule_name,
-            MGMT_REQUEST_RULE_DESCRIPTION: filter # TODO, function to take filter and convert it to AMQP value
-        }
-        amqp_rule_message = Message(body=amqp_body)
-        amqp_rule_message.application_properties = {
-            'operation': MGMT_REQUEST_ADD_RULE,
         }
 
-        self._handler.mgmt_request(amqp_rule_message, b'CREATE')
-    
-        pass
+        if type(filter) in (SqlRuleFilter, TrueRuleFilter, FalseRuleFilter):
+            rule_description = {
+                'sql-filter':{
+                'expression': filter.sql_expression,
+                }
+            }
+        
+        else:
+            rule_description = {
+                'correlation-filter':{
+                'correlation-id': filter.correlation_id,
+                'message-id': filter.message_id,
+                'to': filter.to,
+                'reply-to': filter.reply_to,
+                'label': filter.label,
+                'session-id': filter.session_id,
+                'reply-to-session-id': filter.reply_to_session_id,
+                'content-type': filter.content_type,
+                'properties': filter.properties,
+                }
+            }
+        
+        message[MGMT_REQUEST_RULE_DESCRIPTION] = rule_description
+
+
+        
+        handler = functools.partial(mgmt_handlers.create_rule_op)
+
+        self._mgmt_request_response_with_retry(MGMT_REQUEST_ADD_RULE, message, handler)
 
     def delete_rule(self, rule_name: str, **kwargs: Any) -> None:
         """Delete a topic subscription rule.
