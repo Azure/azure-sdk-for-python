@@ -2800,6 +2800,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             }
         }
 
+    @pytest.mark.skip(reason="TODO (2256981): Pipeline step fails with ServiceError")
     @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk_succeed(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")

@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher, set_custom_default_matcher
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
@@ -64,6 +64,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         randstr: Callable[[str], str],
     ) -> None:
         set_bodiless_matcher()
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5", ignored_query_parameters="api-version"
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -98,6 +101,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert str(job.jobs["a"].component).startswith("azureml://registries/")
         assert str(job.jobs["a"].component).endswith("/components/hello_world_asset/versions/1")
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -112,6 +116,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         self, client: MLClient, randstr: Callable[[], str], pipeline_job_path: str
     ) -> None:
         set_bodiless_matcher()
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5", ignored_query_parameters="api-version"
+        )
 
         # todo: run failed
         params_override = [{"name": randstr("name")}]
@@ -176,10 +183,14 @@ class TestPipelineJob(AzureRecordedTestCase):
         self.assert_component_is_anonymous(client, created_component_id)
         assert rest_job_sources == job_sources
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_inline_component_file_create(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
         set_bodiless_matcher()
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5", ignored_query_parameters="api-version"
+        )
 
         # Create the component used in the job
         params_override = [{"name": randstr("name")}]
@@ -208,6 +219,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component_id = pipeline_job.jobs["hello_python_world_job"].component
         self.assert_component_is_anonymous(client, created_component_id)
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_component_arm_id_create(
         self,
         client: MLClient,
@@ -215,6 +227,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         randstr: Callable[[str], str],
     ) -> None:
         set_bodiless_matcher()
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5", ignored_query_parameters="api-version"
+        )
 
         # Generate pipeline with component defined by arm id
         pipeline_spec_path = Path("./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_file_comps.yml")
@@ -236,6 +251,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             == f"{hello_world_component.name}:{hello_world_component.version}"
         )
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_create_with_resolve_reuse(
         self,
         client: MLClient,
@@ -243,6 +259,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         randstr: Callable[[str], str],
     ) -> None:
         set_bodiless_matcher()
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5", ignored_query_parameters="api-version"
+        )
 
         # Generate pipeline with component defined by arm id
         pipeline_spec_path = Path("./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_resolve_reuse.yml")
@@ -266,8 +285,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         # name & version in a local component yml will be ignored if it's a sub-job of a pipeline job
         _ = client.jobs.create_or_update(pipeline_job)
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_output(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5", ignored_query_parameters="api-version"
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -292,6 +315,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         hello_world_component_2_outputs = created_job.jobs["hello_world_component_2"].outputs
         assert hello_world_component_2_outputs.component_out_path_1.mode == InputOutputModes.RW_MOUNT
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_path_inputs(
         self,
         client: MLClient,
@@ -299,6 +323,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         randstr: Callable[[str], str],
     ) -> None:
         set_bodiless_matcher()
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5", ignored_query_parameters="api-version"
+        )
 
         # Create a data asset to put in the PipelineJob inputs
         data_override = [{"name": randstr("data_override_name")}]
@@ -830,6 +857,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_pipeline_dict = created_pipeline._to_dict()
         assert pydash.get(created_pipeline_dict, "jobs.hello_sweep_inline_trial.early_termination") == policy_yaml_dict
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     @pytest.mark.parametrize(
         "test_case_i, test_case_name",
         DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
@@ -842,6 +870,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         test_case_name: str,
     ):
         set_bodiless_matcher()
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5", ignored_query_parameters="api-version"
+        )
 
         pipeline_job_path, expected_error = DATABINDING_EXPRESSION_TEST_CASES[test_case_i]
 

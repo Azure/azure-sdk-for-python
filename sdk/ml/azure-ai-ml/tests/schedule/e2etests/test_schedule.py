@@ -136,6 +136,7 @@ class TestSchedule(AzureRecordedTestCase):
         # assert rest_schedule.create_job.inputs["hello_string_top_level_input"] == "${{name}}"
         # assert rest_schedule.create_job.settings.continue_on_step_failure is True
 
+    @pytest.mark.skip(reason="TODO (225960): code asset authorization failure")
     def test_load_recurrence_schedule_no_pattern(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
 
@@ -157,6 +158,7 @@ class TestSchedule(AzureRecordedTestCase):
             "schedule": {"hours": [], "minutes": []},
         }
 
+    @pytest.mark.skip(reason="TODO (225960): code asset authorization failure")
     def test_load_recurrence_schedule_with_pattern(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
 
@@ -204,6 +206,7 @@ class TestSchedule(AzureRecordedTestCase):
         schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
         assert schedule_job_dict == rest_schedule_job_dict
 
+    @pytest.mark.skip(reason="TODO (225960): code asset authorization failure")
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
     )
