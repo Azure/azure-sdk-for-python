@@ -398,7 +398,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
             jars=["simple-1.1.1.jar"],
@@ -436,7 +436,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
             jars=["simple-1.1.1.jar"],
@@ -473,7 +473,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
             jars=["simple-1.1.1.jar"],
@@ -521,7 +521,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs={
                 "input1": Input(
                     type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv", mode="direct"
@@ -557,7 +557,7 @@ class TestSparkJobEntity:
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             inputs={
                 "input1": Input(
                     type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv", mode="direct"
