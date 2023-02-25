@@ -92,10 +92,8 @@ class FeatureStoreOperations():
         """
 
         feature_store = None
-        resource_group = kwargs.get(
-            "resource_group") or self._resource_group_name
-        rest_workspace_obj = self._workspace_operation.get(
-            resource_group, name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+        rest_workspace_obj = self._workspace_operation.get(resource_group, name)
         if (rest_workspace_obj and
             rest_workspace_obj.kind and
             rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
@@ -186,10 +184,8 @@ class FeatureStoreOperations():
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
-        resource_group = kwargs.get(
-            "resource_group") or self._resource_group_name
-        rest_workspace_obj = self._workspace_operation.get(
-            resource_group, feature_store.name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+        rest_workspace_obj = self._workspace_operation.get(resource_group, feature_store.name)
         if not (
             rest_workspace_obj and
             rest_workspace_obj.kind and
@@ -279,10 +275,18 @@ class FeatureStoreOperations():
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        if self.get(name=name):
-            return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_delete(
-                name=name,
-                delete_dependent_resources=delete_dependent_resources,
-                **kwargs
-            )
-        raise ValidationError("{0} is not a feature store".format(name))
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+        rest_workspace_obj = self._workspace_operation.get(resource_group, name)
+        if not (
+            rest_workspace_obj and
+            rest_workspace_obj.kind and
+            rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
+        ):
+            raise ValidationError(
+                "{0} is not a feature store".format(name))
+        
+        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_delete(
+            name=name,
+            delete_dependent_resources=delete_dependent_resources,
+            **kwargs
+        )
