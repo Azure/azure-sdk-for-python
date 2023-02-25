@@ -405,7 +405,6 @@ class ServiceBusReceiver(
 
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages # type: ignore[attr-defined]
-            amqp_receive_client._running_iter = False # type: ignore[attr-defined]
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
                 timeout or self._max_wait_time
@@ -692,7 +691,6 @@ class ServiceBusReceiver(
         self._check_live()
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
-        print(f"MAX wait time {max_wait_time}")
         return self._iter_contextual_wrapper(max_wait_time)
 
     def receive_messages(

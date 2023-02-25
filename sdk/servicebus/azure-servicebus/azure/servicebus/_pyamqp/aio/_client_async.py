@@ -732,7 +732,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             if self._link.current_link_credit == 0:
                 await self._link.flow()
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
-            self._timeout_reached = False
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
             self._shutdown = True
@@ -860,9 +859,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         self._timeout = timeout if timeout else self._timeout
         try:
             while receiving and not self._timeout_reached:
-                if not self._running_iter:
-                    self._last_activity_stamp = time.time()
-                self._running_iter = True
                 if self._timeout > 0:
                     if time.time() - self._last_activity_stamp >= self._timeout:
                         self._timeout_reached = True
@@ -872,7 +868,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
                 while not self._received_messages.empty():
                     message = self._received_messages.get()
-                    self._last_activity_stamp = time.time()
                     self._received_messages.task_done()
                     yield message
 

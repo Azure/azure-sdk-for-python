@@ -406,7 +406,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self._open()
 
             amqp_receive_client = self._handler
-            amqp_receive_client._running_iter = False # type: ignore[attr-defined]
             received_messages_queue = amqp_receive_client._received_messages # type: ignore[attr-defined]
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
