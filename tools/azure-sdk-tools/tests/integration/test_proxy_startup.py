@@ -6,7 +6,7 @@
 
 from urllib3 import PoolManager, Retry
 import os
-from devtools_testutils.config import PROXY_URL
+from devtools_testutils.proxy_startup import PROXY_CHECK_URL
 
 if os.getenv("REQUESTS_CA_BUNDLE"):
     http_client = PoolManager(
@@ -22,5 +22,5 @@ class TestProxyIntegration:
     # These tests are checking spinup of the proxy, not automatic redirect.
     # Therefore we are not using recorded_by_proxy decorator or recorded_test fixture
     def test_tool_spinup_http(self):
-        result = http_client.request("GET", f"{PROXY_URL}/Info/Available")
+        result = http_client.request("GET", PROXY_CHECK_URL)
         assert(result.status == 200)

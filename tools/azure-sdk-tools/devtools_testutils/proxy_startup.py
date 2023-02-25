@@ -15,6 +15,7 @@ import tarfile
 from typing import Optional
 import zipfile
 
+import certifi
 import pytest
 import subprocess
 
@@ -149,15 +150,49 @@ def check_availability() -> None:
         return 404
 
 
-def check_system_proxy_availability() -> None:
-    """Checks for SSL_CERT_DIR and REQUESTS_CA_BUNDLE environment variables."""
-    ssl_cert = "SSL_CERT_DIR"
-    ca_bundle = "REQUESTS_CA_BUNDLE"
+def check_certificate_location(repo_root: str) -> None:
+    """Checks for SSL_CERT_DIR and REQUESTS_CA_BUNDLE environment variables.
 
-    if PROXY_URL.startswith("https") and not os.environ.get(ssl_cert):
-        _LOGGER.error(f"Please ensure the '{ssl_cert}' environment variable is correctly set in your test environment")
-    if PROXY_URL.startswith("https") and not os.environ.get(ca_bundle):
-        _LOGGER.error(f"Please ensure the '{ca_bundle}' environment variable is correctly set in your test environment")
+    If both variables aren't set, this function configures the certificate bundle and sets these environment variables
+    for the duration of the process.
+    """
+    ssl_cert_dir = "SSL_CERT_DIR"
+    requests_ca_bundle = "REQUESTS_CA_BUNDLE"
+
+    if PROXY_URL.startswith("https") and not (os.environ.get(ssl_cert_dir) and os.environ.get(requests_ca_bundle)):
+        _LOGGER.info(
+            "Missing SSL_CERT_DIR and/or REQUESTS_CA_BUNDLE environment variables. "
+            "Setting these for the current session."
+        )
+
+        existing_root_pem = certifi.where()
+        local_dev_cert = os.path.abspath(os.path.join(repo_root, 'eng', 'common', 'testproxy', 'dotnet-devcert.crt'))
+        combined_filename = os.path.basename(local_dev_cert).split(".")[0] + ".pem"
+        combined_folder = os.path.join(repo_root, '.certificate')
+        combined_location = os.path.join(combined_folder, combined_filename)
+
+        # If no local certificate folder exists, create one
+        if not os.path.exists(combined_folder):
+            _LOGGER.info("Missing a test proxy certificate under azure-sdk-for-python/.certificate. Creating one now.")
+            os.mkdir(combined_folder)
+
+        if not os.path.exists(combined_location):
+            # Copy the dev cert's content into the new certificate bundle
+            with open(local_dev_cert, "r") as f:
+                data = f.read()
+            with open(combined_location, "w") as f:
+                f.write(data)
+
+            # Copy the existing CA bundle contents into the repository's certificate bundle
+            with open(existing_root_pem, "r") as f:
+                content = f.readlines()
+            with open(combined_location, "a") as f:
+                f.writelines(content)
+
+        if not os.environ.get(ssl_cert_dir):
+            os.environ[ssl_cert_dir] = combined_folder
+        if not os.environ.get(requests_ca_bundle):
+            os.environ[requests_ca_bundle] = combined_location
 
 
 def check_proxy_availability() -> None:
@@ -240,7 +275,7 @@ def start_test_proxy(request) -> None:
     """
 
     repo_root = ascend_to_root(request.node.items[0].module.__file__)
-    check_system_proxy_availability()
+    check_certificate_location(repo_root)
 
     if not PROXY_MANUALLY_STARTED:
         if check_availability() == 200:
