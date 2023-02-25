@@ -190,6 +190,7 @@ class WorkspaceOperations:
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
             )
+            workspace.feature_store_settings = workspace.feature_store_settings or existing_workspace.feature_store_settings
             return self.begin_update(
                 workspace,
                 update_dependent_resources=update_dependent_resources,
@@ -201,11 +202,8 @@ class WorkspaceOperations:
         if workspace.tags.get("createdByToolkit") is None:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
-        feature_store_setup = kwargs.get("setup_feature_store", False)
-        offline_store_connection = kwargs.get("offline_store_connection", None)
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(
-            workspace, feature_store_setup, offline_store_connection)
+        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -223,7 +221,8 @@ class WorkspaceOperations:
         )
 
         def callback():
-            if feature_store_setup:
+            setup_feature_store = kwargs.get("setup_feature_store", False)
+            if setup_feature_store:
                 return self._all_operations.all_operations[AzureMLResourceType.FEATURE_STORE].get(
                     workspace.name, resource_group=resource_group)
             return self.get(workspace.name, resource_group=resource_group)
@@ -323,6 +322,10 @@ class WorkspaceOperations:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+        feature_store_settings = kwargs.get("feature_store_settings", workspace.feature_store_settings)
+        if feature_store_settings:
+            feature_store_settings = feature_store_settings._to_rest_object()
+
         update_param = WorkspaceUpdateParameters(
             tags=kwargs.get("tags", workspace.tags),
             description=kwargs.get("description", workspace.description),
@@ -334,6 +337,7 @@ class WorkspaceOperations:
                 "primary_user_assigned_identity", workspace.primary_user_assigned_identity
             ),
             managed_network=managed_network,
+            feature_store_settings=feature_store_settings
         )
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
@@ -352,8 +356,8 @@ class WorkspaceOperations:
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            feature_store_setup = kwargs.get("setup_feature_store", False)
-            if feature_store_setup:
+            setup_feature_store = kwargs.get("setup_feature_store", False)
+            if setup_feature_store:
                 return FeatureStore._from_rest_object(deserialized)
             return Workspace._from_rest_object(deserialized)
 
@@ -443,8 +447,7 @@ class WorkspaceOperations:
     def _populate_arm_paramaters(
             self,
             workspace: Workspace,
-            setup_feature_store: bool = False,
-            offline_store_connection: WorkspaceConnection = None
+            **kwargs: Dict,
         ) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
@@ -626,21 +629,25 @@ class WorkspaceOperations:
 
         if workspace.feature_store_settings:
             _set_val(param["spark_runtime_version"],
-                    workspace.feature_store_settings.compute_runtime.spark_runtime_version
-                    if workspace.feature_store_settings.compute_runtime.spark_runtime_version else '')
+                    workspace.feature_store_settings.compute_runtime.spark_runtime_version)
             _set_val(param["offline_store_connection_name"],
                      workspace.feature_store_settings.offline_store_connection_name
                      if workspace.feature_store_settings.offline_store_connection_name else '')
             _set_val(param["online_store_connection_name"], '')
 
-        _set_val(param["setup_feature_store"], "true" if setup_feature_store else "false")
+        setup_feature_store = kwargs.get("setup_feature_store", False)
+        materialization_identity = kwargs.get("materialization_identity", None)
+        offline_store_target = kwargs.get("offline_store_target", None)
 
-        if setup_feature_store and offline_store_connection:
-            _set_val(param["offline_store_connection_target"], offline_store_connection.target)
-            _set_val(param["offline_store_connection_credential_clientid"],
-                     offline_store_connection.credentials.client_id)
-            _set_val(param["offline_store_connection_credential_resourceid"],
-                     offline_store_connection.credentials.resource_id)
+        setup_materialization_store = setup_feature_store and offline_store_target and materialization_identity
+        _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")
+
+        if setup_materialization_store:
+            _set_val(param["offline_store_connection_target"], offline_store_target)
+            _set_val(param["materialization_identity_client_id"], 
+                     materialization_identity.client_id)
+            _set_val(param["materialization_identity_resource_id"],
+                     materialization_identity.resource_id)
 
         managed_network = None
         if workspace.managed_network:

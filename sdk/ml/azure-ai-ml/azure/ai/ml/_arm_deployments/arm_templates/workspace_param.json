@@ -119,7 +119,7 @@
     "primaryUserAssignedIdentity": {
         "value": ""
     },
-    "setup_feature_store" : {
+    "setup_materialization_store" : {
         "value": "false"
     },
     "spark_runtime_version" : {
@@ -131,10 +131,10 @@
     "offline_store_connection_target" : {
         "value": ""
     },
-    "offline_store_connection_credential_clientid" : {
+    "materialization_identity_client_id" : {
         "value": ""
     },
-    "offline_store_connection_credential_resourceid" : {
+    "materialization_identity_resource_id" : {
         "value": ""
     },
     "online_store_connection_name" : {

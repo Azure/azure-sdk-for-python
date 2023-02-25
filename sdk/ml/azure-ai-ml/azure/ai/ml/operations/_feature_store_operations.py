@@ -14,8 +14,22 @@ from azure.ai.ml._scope_dependent_operations import OperationsContainer, Operati
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities import FeatureStore, ManagedIdentityConfiguration
+from azure.ai.ml.entities import (
+    FeatureStore,
+    FeatureStoreSettings,
+    ManagedIdentityConfiguration,
+    IdentityConfiguration,
+    WorkspaceConnection,
+    MaterializationStore
+)
 from azure.ai.ml.constants._common import AzureMLResourceType, Scope
+from azure.ai.ml.entities._feature_store._constants import (
+    OFFLINE_STORE_CONNECTION_NAME,
+    OFFLINE_MATERIALIZATION_STORE_TYPE,
+    OFFLINE_STORE_CONNECTION_CATEGORY
+)
+from azure.ai.ml.constants import ManagedServiceIdentityType
+from azure.ai.ml._utils.utils import camel_to_snake
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -38,6 +52,7 @@ class FeatureStoreOperations():
     ):
         self._all_operations = operations_container
         self._workspace_operation = service_client.workspaces
+        self._workspace_connection_operation = service_client.workspace_connections
         self._resource_group_name = operation_scope.resource_group_name
         self._init_kwargs = kwargs
 
@@ -54,14 +69,14 @@ class FeatureStoreOperations():
 
         if scope == Scope.SUBSCRIPTION:
             return self._workspace_operation.list_by_subscription(
-            cls=lambda objs: [
-                FeatureStore._from_rest_object(filterObj) for filterObj in filter(lambda ws: ws.kind == "FeatureStore", objs)]
+                cls=lambda objs: [
+                    FeatureStore._from_rest_object(filterObj) for filterObj in filter(lambda ws: ws.kind == "FeatureStore", objs)]
             )
         return self._workspace_operation.list_by_resource_group(
             self._resource_group_name,
             cls=lambda objs: [
                 FeatureStore._from_rest_object(filterObj) for filterObj in filter(lambda ws: ws.kind == "FeatureStore", objs)]
-            )
+        )
 
     @distributed_trace
     def get(self, name: str, **kwargs: Dict) -> FeatureStore:
@@ -73,11 +88,43 @@ class FeatureStoreOperations():
         :rtype: FeatureStore
         """
 
-        resource_group = kwargs.get("resource_group") or self._resource_group_name
-        obj = self._workspace_operation.get(resource_group, name)
-        if obj and obj.kind and obj.kind.lower() == "featurestore":
-            return FeatureStore._from_rest_object(obj)
-        return None
+        feature_store = None
+        resource_group = kwargs.get(
+            "resource_group") or self._resource_group_name
+        rest_workspace_obj = self._workspace_operation.get(
+            resource_group, name)
+        if (rest_workspace_obj and
+                    rest_workspace_obj.kind and
+                    rest_workspace_obj.kind.lower() == "featurestore"
+                ):
+            feature_store = FeatureStore._from_rest_object(rest_workspace_obj)
+
+        if feature_store:
+            offline_Store_connection = None
+            if (rest_workspace_obj.feature_store_settings and
+                        rest_workspace_obj.feature_store_settings.offline_store_connection_name
+                    ):
+                offline_Store_connection = self._workspace_connection_operation.get(
+                    resource_group, name, rest_workspace_obj.feature_store_settings.offline_store_connection_name)
+
+            if offline_Store_connection:
+                if (offline_Store_connection.properties and
+                            offline_Store_connection.properties.category == OFFLINE_STORE_CONNECTION_CATEGORY
+                        ):
+                    feature_store.offline_store = MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE,
+                        target=offline_Store_connection.properties.target
+                    )
+                # materialization identity = identity when created through feature store operations
+                if (offline_Store_connection.name == OFFLINE_STORE_CONNECTION_NAME and
+                            feature_store.identity and
+                            feature_store.identity.user_assigned_identities and
+                            isinstance(feature_store.identity.user_assigned_identities[0],
+                                       ManagedIdentityConfiguration)
+                        ):
+                    feature_store.materialization_identity = feature_store.identity.user_assigned_identities[0]
+
+        return feature_store
 
     @distributed_trace
     def begin_create(
@@ -96,17 +143,20 @@ class FeatureStoreOperations():
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
-        if(feature_store.offline_store_connection and 
-           feature_store.offline_store_connection.credentials and
-           not isinstance(feature_store.offline_store_connection.credentials, ManagedIdentityConfiguration)):
-            raise ValidationError("ManagedIdentityConfiguration is required for feature store")
+        if feature_store.offline_store and feature_store.offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
+            raise ValidationError(
+                "offline store type should be azure_data_lake_gen2")
+        if feature_store.offline_store and not feature_store.materialization_identity:
+            raise ValidationError(
+                "materialization_identity is required to setup offline store")
 
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
             setup_feature_store=True,
-            offline_store_connection=feature_store.offline_store_connection,
-            *kwargs
+            offline_store_target=feature_store.offline_store.target if feature_store.offline_store else None,
+            materialization_identity=feature_store.materialization_identity,
+            **kwargs
         )
 
     @distributed_trace
@@ -133,14 +183,85 @@ class FeatureStoreOperations():
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
-        if self.get(name=feature_store.name):
-            return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_update(
-                workspace=feature_store,
-                update_dependent_resources=update_dependent_resources,
-                setup_feature_store=True,
-                **kwargs
+        resource_group = kwargs.get(
+            "resource_group") or self._resource_group_name
+        rest_workspace_obj = self._workspace_operation.get(
+            resource_group, feature_store.name)
+        if not (
+            rest_workspace_obj and
+            rest_workspace_obj.kind and
+            rest_workspace_obj.kind.lower() == "featurestore"
+        ):
+            raise ValidationError(
+                "{0} is not a feature store".format(feature_store.name))
+
+        resource_group = kwargs.get(
+            "resource_group") or self._resource_group_name
+        offline_store = kwargs.get(
+            "offline_store", feature_store.offline_store)
+        materialization_identity = kwargs.get(
+            "materialization_identity", feature_store.materialization_identity)
+
+        if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
+            raise ValidationError(
+                "offline store type should be azure_data_lake_gen2")
+
+        if offline_store and rest_workspace_obj.feature_store_settings.offline_store_connection_name:
+            existing_offline_Store_connection = self._workspace_connection_operation.get(
+                resource_group,
+                feature_store.name,
+                rest_workspace_obj.feature_store_settings.offline_store_connection_name)
+
+            if existing_offline_Store_connection:
+                if (not existing_offline_Store_connection.properties or
+                        existing_offline_Store_connection.properties.target != offline_store.target):
+                    raise ValidationError("Cannot update the offline store")
+            else:
+                if not materialization_identity:
+                    raise ValidationError(
+                        "Materialization identity is required to setup offline store connection")
+
+        feature_store_settings = FeatureStoreSettings._from_rest_object(
+            rest_workspace_obj.feature_store_settings)
+
+        if offline_store and materialization_identity:
+            offline_store_connection_name = (
+                feature_store_settings.offline_store_connection_name
+                if feature_store_settings.offline_store_connection_name
+                else OFFLINE_STORE_CONNECTION_NAME
             )
-        raise ValidationError("{0} is not a feature store".format(feature_store.name))
+            offline_store_connection = WorkspaceConnection(
+                name=offline_store_connection_name,
+                type=offline_store.type,
+                target=offline_store.target,
+                credentials=materialization_identity
+            )
+            rest_offline_store_connection = offline_store_connection._to_rest_object()
+            self._workspace_connection_operation.create(
+                resource_group_name=resource_group,
+                workspace_name=feature_store.name,
+                connection_name=offline_store_connection_name,
+                parameters=rest_offline_store_connection
+            )
+            feature_store_settings.offline_store_connection_name = offline_store_connection_name
+
+        identity = kwargs.get("identity", feature_store.identity)
+        if materialization_identity:
+            identity = IdentityConfiguration(
+                type=camel_to_snake(
+                    ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED),
+                # At most 1 UAI can be attached to workspace when materialization is enabled
+                user_assigned_identities=[materialization_identity]
+            )
+
+        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_update(
+            workspace=feature_store,
+            update_dependent_resources=update_dependent_resources,
+            setup_feature_store=True,
+            feature_store_settings=feature_store_settings,
+            identity=identity,
+            **kwargs
+        )
 
     @distributed_trace
     def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:

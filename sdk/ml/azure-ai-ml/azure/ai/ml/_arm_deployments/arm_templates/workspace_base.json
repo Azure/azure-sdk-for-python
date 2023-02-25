@@ -430,21 +430,21 @@
                 "description": "Feature store offline store connection target"
             }
         },
-        "offline_store_connection_credential_clientid": {
+        "materialization_identity_client_id": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store offline store connection client id credential"
             }
         },
-        "offline_store_connection_credential_resourceid": {
+        "materialization_identity_resource_id": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store offline store connection resourceId credential"
             }
         },
-        "setup_feature_store": {
+        "setup_materialization_store": {
             "type": "string",
             "defaultValue": "false",
             "allowedValues": [
@@ -452,7 +452,7 @@
                 "true"
             ],
             "metadata": {
-                "description": "Whether to set up feature store workspace connections and do incremental update"
+                "description": "Whether to set up materialization store"
             }
         }
     },
@@ -648,7 +648,7 @@
                 },
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
                 "managedNetwork": "[parameters('managedNetwork')]",
-                "featurestore": {
+                "featureStoreSettings": {
                     "computeruntime": {
                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
                     },
@@ -657,7 +657,7 @@
                 }
             },
             "resources": [{
-                "condition": "[equals(parameters('setup_feature_store'), 'true')]",
+                "condition": "[equals(parameters('setup_materialization_store'), 'true')]",
                 "type": "connections",
                 "apiVersion": "2022-05-01",
                 "name": "[variables('offlineStoreConnectionName')]",
@@ -673,14 +673,14 @@
                     "target": "[parameters('offline_store_connection_target')]",
                     "authType": "ManagedIdentity",
                     "credentials": {
-                        "clientid": "[parameters('offline_store_connection_credential_clientid')]",
-                        "resourceid": "[parameters('offline_store_connection_credential_resourceid')]"
+                        "clientid": "[parameters('materialization_identity_client_id')]",
+                        "resourceid": "[parameters('materialization_identity_resource_id')]"
                     }
                 }
             }]
         },
         {
-            "condition": "[equals(parameters('setup_feature_store'), 'true')]",
+            "condition": "[equals(parameters('setup_materialization_store'), 'true')]",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2022-05-01",
 			"name": "[concat(parameters('workspaceName'), '-update-UAI')]",
@@ -702,7 +702,7 @@
 						"identity": {
 							"type": "SystemAssigned,UserAssigned",
 							"userAssignedIdentities": {
-							    "[parameters('offline_store_connection_credential_resourceid')]": {}
+							    "[parameters('materialization_identity_resource_id')]": {}
 							}
 						},
 						"properties": {
@@ -728,7 +728,7 @@
                                 "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                             },
                             "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                            "featurestore": {
+                            "featureStoreSettings": {
                                 "computeruntime": {
                                     "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
                                 },

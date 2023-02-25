@@ -45,8 +45,8 @@ class Workspace(Resource):
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
-        feature_store_settings: Optional[FeatureStoreSettings] = None,
         managed_network: Optional[ManagedNetwork] = None,
+        feature_store_settings: Optional[FeatureStoreSettings] = None,
         **kwargs,
     ):
 
