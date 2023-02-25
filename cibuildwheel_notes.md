@@ -23,8 +23,10 @@ https://github.com/Azure/azure-uamqp-python/blob/5b31ff4fbb824c35320646b912818b2
 in root pyproject.toml
 
 [tool.cibuildwheel]
+
+```toml
 # skip musl and pypy
-skip = ["*-musllinux*", "pp*"] 
+skip = ["*-musllinux*", "pp*"]
 #test-requires = "pytest"
 #test-command = "python -X dev -m pytest {project}/tests"
 
@@ -45,5 +47,4 @@ archs = ["x86_64"]
 manylinux-x86_64-image = "manylinux2014"
 before-build = "bash utils/install_openssl.sh"
 environment = {OPENSSL_ROOT_DIR="/opt/pyca/cryptography/openssl", LIBRARY_PATH="/opt/pyca/cryptography/openssl/lib", CPATH="/opt/pyca/cryptography/openssl/include"}
-
-
+```

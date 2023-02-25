@@ -21,6 +21,7 @@ wrapt==1.12.1; python_version <= '3.10'
 wrapt==1.14.1; python_version >= '3.11'
 markupsafe==2.0.1; python_version > '2.7'
 markupsafe==1.1.1; python_version == '2.7'
+cibuildwheel==2.12.0
 
 # python 3.10 pinned packages
 cffi==1.15.0rc2; python_version >= '3.10'
