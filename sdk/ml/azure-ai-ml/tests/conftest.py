@@ -22,6 +22,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
+    add_uri_string_sanitizer,
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
@@ -97,6 +98,9 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         value="000000000000000000000000000000000000",
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
+    )
+    add_uri_string_sanitizer(
+        target="https://master.api.azureml-test.ms/mferp/managementfrontend/", value="https://management.azure.com/"
     )
 
     identity_json_paths = [
