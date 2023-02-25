@@ -53,15 +53,11 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
-    def __init__(
-        self, policy: SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]
-    ) -> None:
+    def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]) -> None:
         super(_SansIOHTTPPolicyRunner, self).__init__()
         self._policy = policy
 
-    def send(
-        self, request: PipelineRequest[HTTPRequestType]
-    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Modifies the request and sends to the next policy in the chain.
 
         :param request: The PipelineRequest object.
@@ -88,15 +84,11 @@ class _TransportRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :param sender: The Http Transport instance.
     """
 
-    def __init__(
-        self, sender: HttpTransport[HTTPRequestType, HTTPResponseType]
-    ) -> None:
+    def __init__(self, sender: HttpTransport[HTTPRequestType, HTTPResponseType]) -> None:
         super(_TransportRunner, self).__init__()
         self._sender = sender
 
-    def send(
-        self, request: PipelineRequest[HTTPRequestType]
-    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """HTTP transport send method.
 
         :param request: The PipelineRequest object.
@@ -195,9 +187,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    def run(
-        self, request: HTTPRequestType, **kwargs: Any
-    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
+    def run(self, request: HTTPRequestType, **kwargs: Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Runs the HTTP Request through the chained policies.
 
         :param request: The HTTP request object.
@@ -207,12 +197,6 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         """
         self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
-        pipeline_request: PipelineRequest[HTTPRequestType] = PipelineRequest(
-            request, context
-        )
-        first_node = (
-            self._impl_policies[0]
-            if self._impl_policies
-            else _TransportRunner(self._transport)
-        )
+        pipeline_request: PipelineRequest[HTTPRequestType] = PipelineRequest(request, context)
+        first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
         return first_node.send(pipeline_request)
