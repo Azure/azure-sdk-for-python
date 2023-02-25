@@ -852,6 +852,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         """
+        self._last_activity_stamp = time.time()
         if self._message_received_callback:
             self._message_received_callback(message)
         if not self._streaming_receive:
@@ -860,7 +861,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def _receive_message_batch_impl(
         self, max_batch_size=None, on_message_received=None, timeout=0
     ):
-        print("ah")
         self._message_received_callback = on_message_received
         max_batch_size = max_batch_size or self._link_credit
         timeout = time.time() + timeout if timeout else 0
@@ -965,6 +965,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
                 while not self._received_messages.empty():
                     message = self._received_messages.get()
+                    self._last_activity_stamp = time.time()
                     self._received_messages.task_done()
                     yield message
 

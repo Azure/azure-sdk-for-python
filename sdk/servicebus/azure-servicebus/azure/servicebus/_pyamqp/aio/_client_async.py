@@ -747,6 +747,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         """
+        self._last_activity_stamp = time.time()
         if self._message_received_callback:
             await self._message_received_callback(message)
         if not self._streaming_receive:
@@ -868,6 +869,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
                 while not self._received_messages.empty():
                     message = self._received_messages.get()
+                    self._last_activity_stamp = time.time()
                     self._received_messages.task_done()
                     yield message
 
