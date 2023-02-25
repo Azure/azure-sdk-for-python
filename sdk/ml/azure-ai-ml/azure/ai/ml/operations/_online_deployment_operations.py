@@ -351,10 +351,10 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         for collection in deployment.data_collector.collections:
             data_name = f"{deployment.endpoint_name}-{deployment.name}-{collection}"
             short_form_path = (
-                f"{deployment.data_collector.destination.path}/{deployment.endpoint_name}/{deployment.name}/{collection}"
+                f"{deployment.data_collector.destination.path}/{deployment.endpoint_name}/{deployment.name}/{collection}"  # pylint: disable=line-too-long
                 if deployment.data_collector.destination and deployment.data_collector.destination.path
                 else f"{DEFAULT_MDC_PATH}/{deployment.endpoint_name}/{deployment.name}/{collection}"
-            )  # pylint: disable=line-too-long
+            )
             data_object = Data(
                 name=data_name,
                 path=short_form_path,
