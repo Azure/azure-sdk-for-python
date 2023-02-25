@@ -12,15 +12,18 @@ from azure.ai.ml.entities import (
     CustomerManagedKey,
     FeatureStoreSettings,
     ComputeRuntime,
-    WorkspaceConnection,
     ManagedNetwork
 )
-from .materialization_store import MaterializationStore
 from azure.ai.ml.entities._credentials import (
     IdentityConfiguration,
     ManagedIdentityConfiguration
 )
-from ._constants import OFFLINE_STORE_CONNECTION_NAME, DEFAULT_SPARK_RUNTIME_VERSION
+from .materialization_store import MaterializationStore
+from ._constants import (
+    OFFLINE_STORE_CONNECTION_NAME,
+    DEFAULT_SPARK_RUNTIME_VERSION,
+    FEATURE_STORE_KIND
+)
 
 
 class FeatureStore(Workspace):
@@ -51,13 +54,15 @@ class FeatureStore(Workspace):
         feature_store_settings = FeatureStoreSettings(
             compute_runtime=compute_runtime if compute_runtime else ComputeRuntime(
                 spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
-            offline_store_connection_name=OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
+            offline_store_connection_name=(OFFLINE_STORE_CONNECTION_NAME
+                                           if materialization_identity and offline_store
+                                           else None)
         )
         super().__init__(
             name=name,
             description=description,
             tags=tags,
-            kind="FeatureStore",
+            kind=FEATURE_STORE_KIND,
             display_name=display_name,
             location=location,
             resource_group=resource_group,

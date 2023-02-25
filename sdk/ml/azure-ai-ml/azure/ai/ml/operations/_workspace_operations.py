@@ -46,8 +46,7 @@ from azure.ai.ml.entities import (
     DiagnoseWorkspaceParameters,
     Workspace,
     WorkspaceKeys,
-    FeatureStore,
-    WorkspaceConnection
+    FeatureStore
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -190,7 +189,8 @@ class WorkspaceOperations:
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
             )
-            workspace.feature_store_settings = workspace.feature_store_settings or existing_workspace.feature_store_settings
+            workspace.feature_store_settings = (workspace.feature_store_settings or
+                                                existing_workspace.feature_store_settings)
             return self.begin_update(
                 workspace,
                 update_dependent_resources=update_dependent_resources,
@@ -644,7 +644,7 @@ class WorkspaceOperations:
 
         if setup_materialization_store:
             _set_val(param["offline_store_connection_target"], offline_store_target)
-            _set_val(param["materialization_identity_client_id"], 
+            _set_val(param["materialization_identity_client_id"],
                      materialization_identity.client_id)
             _set_val(param["materialization_identity_resource_id"],
                      materialization_identity.resource_id)

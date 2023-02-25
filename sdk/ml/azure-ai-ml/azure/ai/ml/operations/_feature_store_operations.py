@@ -26,7 +26,8 @@ from azure.ai.ml.constants._common import AzureMLResourceType, Scope
 from azure.ai.ml.entities._feature_store._constants import (
     OFFLINE_STORE_CONNECTION_NAME,
     OFFLINE_MATERIALIZATION_STORE_TYPE,
-    OFFLINE_STORE_CONNECTION_CATEGORY
+    OFFLINE_STORE_CONNECTION_CATEGORY,
+    FEATURE_STORE_KIND
 )
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -70,12 +71,14 @@ class FeatureStoreOperations():
         if scope == Scope.SUBSCRIPTION:
             return self._workspace_operation.list_by_subscription(
                 cls=lambda objs: [
-                    FeatureStore._from_rest_object(filterObj) for filterObj in filter(lambda ws: ws.kind == "FeatureStore", objs)]
+                    FeatureStore._from_rest_object(filterObj) for filterObj in filter(
+                        lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)]
             )
         return self._workspace_operation.list_by_resource_group(
             self._resource_group_name,
             cls=lambda objs: [
-                FeatureStore._from_rest_object(filterObj) for filterObj in filter(lambda ws: ws.kind == "FeatureStore", objs)]
+                FeatureStore._from_rest_object(filterObj) for filterObj in filter(
+                    lambda ws: ws.kind.lower() == FEATURE_STORE_KIND, objs)]
         )
 
     @distributed_trace
@@ -94,34 +97,34 @@ class FeatureStoreOperations():
         rest_workspace_obj = self._workspace_operation.get(
             resource_group, name)
         if (rest_workspace_obj and
-                    rest_workspace_obj.kind and
-                    rest_workspace_obj.kind.lower() == "featurestore"
-                ):
+            rest_workspace_obj.kind and
+            rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
+            ):
             feature_store = FeatureStore._from_rest_object(rest_workspace_obj)
 
         if feature_store:
             offline_Store_connection = None
             if (rest_workspace_obj.feature_store_settings and
-                        rest_workspace_obj.feature_store_settings.offline_store_connection_name
-                    ):
+                rest_workspace_obj.feature_store_settings.offline_store_connection_name
+                ):
                 offline_Store_connection = self._workspace_connection_operation.get(
                     resource_group, name, rest_workspace_obj.feature_store_settings.offline_store_connection_name)
 
             if offline_Store_connection:
                 if (offline_Store_connection.properties and
-                            offline_Store_connection.properties.category == OFFLINE_STORE_CONNECTION_CATEGORY
-                        ):
+                    offline_Store_connection.properties.category == OFFLINE_STORE_CONNECTION_CATEGORY
+                    ):
                     feature_store.offline_store = MaterializationStore(
                         type=OFFLINE_MATERIALIZATION_STORE_TYPE,
                         target=offline_Store_connection.properties.target
                     )
                 # materialization identity = identity when created through feature store operations
                 if (offline_Store_connection.name == OFFLINE_STORE_CONNECTION_NAME and
-                            feature_store.identity and
-                            feature_store.identity.user_assigned_identities and
-                            isinstance(feature_store.identity.user_assigned_identities[0],
+                    feature_store.identity and
+                    feature_store.identity.user_assigned_identities and
+                    isinstance(feature_store.identity.user_assigned_identities[0],
                                        ManagedIdentityConfiguration)
-                        ):
+                    ):
                     feature_store.materialization_identity = feature_store.identity.user_assigned_identities[0]
 
         return feature_store
@@ -190,7 +193,7 @@ class FeatureStoreOperations():
         if not (
             rest_workspace_obj and
             rest_workspace_obj.kind and
-            rest_workspace_obj.kind.lower() == "featurestore"
+            rest_workspace_obj.kind.lower() == FEATURE_STORE_KIND
         ):
             raise ValidationError(
                 "{0} is not a feature store".format(feature_store.name))

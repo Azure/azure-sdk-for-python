@@ -6,7 +6,7 @@
 class MaterializationStore:
     def __init__(
         self,
-        type: str,
+        type: str,  # pylint: disable=redefined-builtin
         target: str
     ):
         self.type = type
