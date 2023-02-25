@@ -12,7 +12,6 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
 
 
-@experimental
 class SystemCreatedStorageAccountSchema(metaclass=PatchedSchemaMeta):
     arm_resource_id = fields.Str(dump_only=True)
     storage_account_hns = fields.Bool(load_default=False)

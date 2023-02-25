@@ -27,7 +27,6 @@ CONTAINER_REGISTRY = "container_registry"
 REPLICATION_LOCATIONS = "replication_locations"
 
 
-@experimental
 class Registry(Resource):
     def __init__(
         self,

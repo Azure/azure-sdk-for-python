@@ -26,7 +26,6 @@ from .util import _make_rest_user_storage_from_id
 
 # This exists despite not being used by the schema validator because this entire
 # class is an output only value from the API.
-@experimental
 class SystemCreatedAcrAccount:
     def __init__(
         self,
@@ -89,7 +88,6 @@ class SystemCreatedAcrAccount:
             return None
 
 
-@experimental
 class SystemCreatedStorageAccount:
     def __init__(
         self,
@@ -126,7 +124,6 @@ class SystemCreatedStorageAccount:
 
 
 # Per-region information for registries.
-@experimental
 class RegistryRegionDetails:
     def __init__(
         self,
