@@ -10,6 +10,7 @@ from typing import Dict, List, Optional, Union, Iterable
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities import Job, PipelineJob
 from azure.ai.ml.data_transfer import import_data
 from azure.ai.ml.entities._inputs_outputs import Output
@@ -319,6 +320,7 @@ class DataOperations(_ScopeDependentOperations):
                     )
             raise ex
 
+    @experimental
     def import_data(self, data_import: DataImport) -> Job:
         """Returns the data import job that is creating the data asset.
 
@@ -360,6 +362,7 @@ class DataOperations(_ScopeDependentOperations):
         import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
         return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True)
 
+    @experimental
     def show_materialization_status(
         self,
         name: str,

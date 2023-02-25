@@ -8,12 +8,14 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 from azure.ai.ml._schema import DataImportSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._util import load_from_dict
 
 
+@experimental
 class DataImport(Data):
     """Data import job to create the data asset.
 
