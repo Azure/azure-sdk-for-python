@@ -52,6 +52,9 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_sweep_job_submit_with_inputs(self, randstr: Callable[[str], str], client: MLClient) -> None:
         set_bodiless_matcher()
@@ -76,6 +79,9 @@ class TestSweepJob(AzureRecordedTestCase):
         assert "iris_csv" in sweep_job_resource_2.inputs
         assert "some_number" in sweep_job_resource_2.inputs
 
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_sweep_job_submit_minimal(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure the Minimal required properties does not fail on submisison"""
@@ -95,6 +101,9 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_sweep_job_await_completion(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure sweep job runs to completion"""
