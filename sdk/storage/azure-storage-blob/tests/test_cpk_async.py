@@ -20,7 +20,7 @@ from azure.storage.blob.aio import BlobServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from .fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------

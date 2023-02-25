@@ -19,7 +19,7 @@ from azure.storage.blob import (
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
-from .fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
 from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
