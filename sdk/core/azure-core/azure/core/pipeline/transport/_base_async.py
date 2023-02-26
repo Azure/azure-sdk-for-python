@@ -72,6 +72,7 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
         """
+        raise NotImplementedError("stream_download is not implemented.")
 
     def parts(self) -> AsyncIterator:
         """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.

@@ -429,6 +429,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
 
         :rtype: iterator[bytes]
         """
+        raise NotImplementedError("stream_download is not implemented.")
 
     def parts(self) -> Iterator["HttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
