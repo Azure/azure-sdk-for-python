@@ -328,7 +328,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with sender, receiver:
                     # send 5 msgs to queue first
                     sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-                    receiver._handler._link.on_transfer = types.MethodType(
+                    receiver._handler._link._on_transfer = types.MethodType(
                         _hack_disable_receive_context_message_received, receiver)
                     received_msgs = []
                     while len(received_msgs) < 5:
