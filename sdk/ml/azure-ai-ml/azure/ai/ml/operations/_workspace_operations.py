@@ -443,7 +443,7 @@ class WorkspaceOperations:
         module_logger.info("Diagnose request initiated for workspace: %s\n", name)
         return poller
 
-    # pylint: disable=too-many-statements,too-many-branches, too-many-locals
+    # pylint: disable=too-many-statements,too-many-branches,too-many-locals
     def _populate_arm_paramaters(
             self,
             workspace: Workspace,
