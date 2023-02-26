@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, Iterable, Optional
+from typing import Dict, Iterable
 
 from marshmallow import ValidationError
 
