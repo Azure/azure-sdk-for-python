@@ -36,6 +36,7 @@ class TabularLimitSettings(RestTranslatableMixin):
         exit_score: Optional[float] = None,
         max_concurrent_trials: Optional[int] = None,
         max_cores_per_trial: Optional[int] = None,
+        max_nodes: Optional[int] = None,
         max_trials: Optional[int] = None,
         timeout_minutes: Optional[int] = None,
         trial_timeout_minutes: Optional[int] = None,
@@ -44,6 +45,7 @@ class TabularLimitSettings(RestTranslatableMixin):
         self.exit_score = exit_score
         self.max_concurrent_trials = max_concurrent_trials
         self.max_cores_per_trial = max_cores_per_trial
+        self.max_nodes = max_nodes
         self.max_trials = max_trials
         self.timeout_minutes = timeout_minutes
         self.trial_timeout_minutes = trial_timeout_minutes
@@ -54,6 +56,7 @@ class TabularLimitSettings(RestTranslatableMixin):
             exit_score=self.exit_score,
             max_concurrent_trials=self.max_concurrent_trials,
             max_cores_per_trial=self.max_cores_per_trial,
+            max_nodes=self.max_nodes,
             max_trials=self.max_trials,
             timeout=to_iso_duration_format_mins(self.timeout_minutes),
             trial_timeout=to_iso_duration_format_mins(self.trial_timeout_minutes),
@@ -66,6 +69,7 @@ class TabularLimitSettings(RestTranslatableMixin):
             exit_score=obj.exit_score,
             max_concurrent_trials=obj.max_concurrent_trials,
             max_cores_per_trial=obj.max_cores_per_trial,
+            max_nodes=obj.max_nodes,
             max_trials=obj.max_trials,
             timeout_minutes=from_iso_duration_format_mins(obj.timeout),
             trial_timeout_minutes=from_iso_duration_format_mins(obj.trial_timeout),
@@ -79,6 +83,7 @@ class TabularLimitSettings(RestTranslatableMixin):
             and self.exit_score == other.exit_score
             and self.max_concurrent_trials == other.max_concurrent_trials
             and self.max_cores_per_trial == other.max_cores_per_trial
+            and self.max_nodes == other.max_nodes
             and self.max_trials == other.max_trials
             and self.timeout_minutes == other.timeout_minutes
             and self.trial_timeout_minutes == other.trial_timeout_minutes

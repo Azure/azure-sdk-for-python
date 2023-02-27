@@ -39,6 +39,7 @@ class TrainingSettings(RestTranslatableMixin):
         ensemble_model_download_timeout: Optional[int] = None,
         allowed_training_algorithms: Optional[List[str]] = None,
         blocked_training_algorithms: Optional[List[str]] = None,
+        training_mode: Optional[TrainingMode] = None,
     ):
         """TrainingSettings class for Azure Machine Learning.
 
@@ -61,6 +62,7 @@ class TrainingSettings(RestTranslatableMixin):
         self.ensemble_model_download_timeout = ensemble_model_download_timeout
         self.allowed_training_algorithms = allowed_training_algorithms
         self.blocked_training_algorithms = blocked_training_algorithms
+        self.training_mode = training_mode
 
     @property
     def allowed_training_algorithms(self):
@@ -81,6 +83,7 @@ class TrainingSettings(RestTranslatableMixin):
             if self.stack_ensemble_settings
             else None,
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
+            training_mode=self.training_mode,
         )
 
     @classmethod
@@ -97,6 +100,7 @@ class TrainingSettings(RestTranslatableMixin):
                 if obj.stack_ensemble_settings
                 else None
             ),
+            training_mode=obj.training_mode,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -112,6 +116,7 @@ class TrainingSettings(RestTranslatableMixin):
             and self.stack_ensemble_settings == other.stack_ensemble_settings
             and self.allowed_training_algorithms == other.allowed_training_algorithms
             and self.blocked_training_algorithms == other.blocked_training_algorithms
+            and self.training_mode == other.training_mode
         )
 
     def __ne__(self, other: object) -> bool:
