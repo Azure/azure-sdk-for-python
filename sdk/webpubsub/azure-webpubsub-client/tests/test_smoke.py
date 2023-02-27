@@ -41,9 +41,18 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         client.start()
         client.join_group(group_name)
         client.on("group-message", on_group_message)
-        client.send_to_group(group_name, "hello text1", "text")
-        client.send_to_group(group_name, "hello text2", "text")
-        client.send_to_group(group_name, "hello text3", "text")
+        client.send_to_group(group_name, "hello test_call_back_deadlock1", "text")
+        client.send_to_group(group_name, "hello test_call_back_deadlock2", "text")
+        client.send_to_group(group_name, "hello test_call_back_deadlock3", "text")
         # sleep to make sure the callback has enough time to execute before stop
         time.sleep(0.001)
         client.stop()
+
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_context_manager(self, webpubsubclient_connection_string):
+        client = self.create_client(connection_string=webpubsubclient_connection_string)
+        with client:
+            group_name = "test"
+            client.join_group(group_name)
+            client.send_to_group(group_name, "hello test_context_manager", "text")

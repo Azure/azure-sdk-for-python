@@ -70,9 +70,11 @@ class WebPubSubClientCredential:
     def get_client_access_url(self) -> str:
         return self._client_access_url_provider()
 
+
 _RETRY_TOTAL = 3
 _RETRY_BACKOFF_FACTOR = 1.0
 _RETRY_BACKOFF_MAX = 120.0
+
 
 class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """WebPubSubClient
@@ -774,3 +776,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 _LOGGER.info("target listener does not exist")
         else:
             _LOGGER.error("wrong event type: %s", event)
+
+    def __enter__(self):
+        self.start()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.stop()
