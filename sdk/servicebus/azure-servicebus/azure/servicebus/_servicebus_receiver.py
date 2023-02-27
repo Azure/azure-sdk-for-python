@@ -244,6 +244,19 @@ class ServiceBusReceiver(
             except StopIteration:
                 self._message_iter = None
                 raise
+            
+    def __next__(self):
+        # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
+        try:
+            self._receive_context.set()
+            message = self._inner_next()
+            links = get_receive_links(message)
+            with receive_trace_context_manager(self, links=links):
+                return message
+        finally:
+            self._receive_context.clear()
+
+    next = __next__ 
 
     def _iter_next(self, wait_time=None):
         try:
