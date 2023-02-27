@@ -459,7 +459,7 @@ def generate_container_sas(
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
-        generating and distributing the SAS. This can only be used when to generate sas with delegation key.
+        generating and distributing the SAS. This can only be used when generating a SAS with delegation key.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
 
@@ -586,7 +586,7 @@ def generate_blob_sas(
         Specifies the encryption scope for a request made so that all write operations will be service encrypted.
     :keyword str correlation_id:
         The correlation id to correlate the storage audit logs with the audit logs used by the principal
-        generating and distributing the SAS. This can only be used when to generate sas with delegation key.
+        generating and distributing the SAS. This can only be used when generating a SAS with delegation key.
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
