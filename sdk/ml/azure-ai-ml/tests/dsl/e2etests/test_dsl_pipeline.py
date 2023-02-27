@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
@@ -66,6 +66,7 @@ common_omit_fields = [
     "mock_code_hash",
     "mock_component_hash",
     "recorded_test",
+    "mock_snapshot_hash",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -293,6 +294,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             experiment_name="dsl_pipeline_e2e",
         )
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
+    )
     def test_data_input(self, client: MLClient) -> None:
         parent_dir = str(tests_root_dir / "test_configs/dsl_pipeline/nyc_taxi_data_regression")
 
@@ -356,7 +361,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # update component display name to work around same component register multiple time issue
         hello_world_component_func.display_name = "test_command_function_node"
 
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         distribution = {"type": "Pytorch", "process_count_per_instance": 2}
         resources = {"instance_count": 2}
         environment_variables = {"environ": "val"}
@@ -491,7 +496,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         command_func = command(
             name=f"test_optional_input_component_" + randstr("component_name"),
             display_name="command_with_optional_inputs",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command=(
                 'echo "hello world" '
                 "& echo $[[${{inputs.float}}]] "
@@ -583,6 +588,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
+    )
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
@@ -1528,6 +1537,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job = client.jobs.create_or_update(pipeline, force_rerun=True)
         assert job.settings.force_rerun is True
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
+    )
     def test_parallel_components_with_tabular_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1562,7 +1575,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
+        set_bodiless_matcher()
+
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
         batch_inference = load_component(source=str(components_dir / "score.yml"))
@@ -1592,9 +1610,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
+    )
     def test_parallel_run_function(self, client: MLClient):
         # command job with dict distribution
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         inputs = {
             "job_data_path": Input(
                 type=AssetTypes.MLTABLE,
@@ -1706,8 +1728,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        set_bodiless_matcher()
+
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         inputs = {
             "job_data_path": Input(
                 type=AssetTypes.MLTABLE,
@@ -1816,9 +1843,14 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     def test_multi_parallel_components_with_file_input_pipeline_output(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
+        set_bodiless_matcher()
+
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
@@ -1941,6 +1973,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             client.jobs.get(child.name)
             client.jobs.get(child.name)._repr_html_()
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
+    )
     def test_dsl_pipeline_without_setting_binding_node(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_without_setting_binding_node,
@@ -2203,6 +2239,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
+    )
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
@@ -2533,6 +2573,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
+    )
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
             BanditPolicy,
@@ -2764,6 +2808,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             }
         }
 
+    @pytest.mark.skip(reason="TODO (2256981): Pipeline step fails with ServiceError")
     @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk_succeed(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")

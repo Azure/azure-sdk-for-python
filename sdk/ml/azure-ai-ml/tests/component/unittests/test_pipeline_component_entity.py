@@ -47,7 +47,7 @@ class TestPipelineComponentEntity:
                 "component_a_job": {
                     "component": {
                         "command": 'echo "hello" && echo ' '"world" > ' "${{outputs.world_output}}/world.txt",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest",
                         "is_deterministic": True,
                         "name": "azureml_anonymous",
                         "outputs": {"world_output": {"type": "uri_folder"}},
@@ -95,7 +95,7 @@ class TestPipelineComponentEntity:
                         "${{outputs.component_out_path}}/component_in_number",
                         "description": "This is the basic " "command component",
                         "display_name": "CommandComponentBasic",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "component_in_number": {
                                 "default": "10.99",
@@ -181,7 +181,7 @@ class TestPipelineComponentEntity:
                                     "${{outputs.component_out_path}}/component_in_number",
                                     "description": "This " "is " "the " "basic " "command " "component",
                                     "display_name": "CommandComponentBasic",
-                                    "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                                    "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                                     "inputs": {
                                         "component_in_number": {
                                             "default": "10.99",

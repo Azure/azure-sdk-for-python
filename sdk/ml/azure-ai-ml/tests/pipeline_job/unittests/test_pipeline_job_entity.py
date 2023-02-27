@@ -1421,7 +1421,7 @@ class TestPipelineJobEntity:
                     "score_job": {
                         "_source": "YAML.JOB",
                         "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
                         "is_deterministic": True,
                         "outputs": {"score_output": {"type": "uri_folder"}},
@@ -1437,7 +1437,7 @@ class TestPipelineJobEntity:
                     "score_job": {
                         "_source": "YAML.JOB",
                         "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"model_input": {"type": "mltable"}, "test_data": {"type": "uri_folder"}},
                         "is_deterministic": True,
                         "outputs": {"score_output": {"type": "uri_folder"}},
@@ -1453,7 +1453,7 @@ class TestPipelineJobEntity:
                     "score_job": {
                         "_source": "YAML.JOB",
                         "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
                         "is_deterministic": True,
                         "outputs": {"score_output": {"type": "uri_folder"}},

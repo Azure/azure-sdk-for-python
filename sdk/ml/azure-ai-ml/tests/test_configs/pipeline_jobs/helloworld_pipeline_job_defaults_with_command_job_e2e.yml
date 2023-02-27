@@ -28,7 +28,7 @@ jobs:
     type: command
 
     command: pip freeze && echo Hello World
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     code: ../python
 
     experiment_name: test-iris-example-1
@@ -48,7 +48,7 @@ jobs:
     type: command
 
     command: echo Hello World
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     name: "test2"
     experiment_name: test-iris-example-2
     description: Train a model on the Iris dataset-2.
