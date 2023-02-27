@@ -68,9 +68,7 @@ _environments = {
 def _get_cloud(cloud: str):
     if cloud in _environments:
         return _environments[cloud]
-    arm_url = os.environ.get(
-        ArmConstants.METADATA_URL_ENV_NAME, ArmConstants.DEFAULT_URL
-    )
+    arm_url = os.environ.get(ArmConstants.METADATA_URL_ENV_NAME, ArmConstants.DEFAULT_URL)
     arm_clouds = _get_clouds_by_metadata_url(arm_url)
     try:
         new_cloud = arm_clouds[cloud]
@@ -115,9 +113,7 @@ def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud
 
 
-def _get_base_url_from_metadata(
-    cloud_name: Optional[str] = None, is_local_mfe: bool = False
-):
+def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False):
     """Retrieve the base url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -150,9 +146,7 @@ def _get_active_directory_url_from_metadata(cloud_name: Optional[str] = None):
     :return: active_directory for a cloud
     """
     cloud_details = _get_cloud_details(cloud_name)
-    active_directory_url = cloud_details.get(
-        EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT
-    ).strip("/")
+    active_directory_url = cloud_details.get(EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT).strip("/")
     return active_directory_url
 
 
@@ -178,18 +172,14 @@ def _get_azure_portal_id_from_metadata(cloud_name: Optional[str] = None):
     return azure_portal_id
 
 
-def _get_cloud_information_from_metadata(
-    cloud_name: Optional[str] = None, **kwargs
-) -> Dict:
+def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwargs) -> Dict:
     """Retrieve the cloud information from the metadata in SDK.
 
     :param cloud_name: cloud name
     :return: A dictionary of additional configuration parameters required for passing in cloud information.
     """
     cloud_details = _get_cloud_details(cloud_name)
-    credential_scopes = _resource_to_scopes(
-        cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/")
-    )
+    credential_scopes = _resource_to_scopes(cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/"))
 
     # Update the kwargs with the cloud information
     client_kwargs = {"cloud": cloud_name}
@@ -206,9 +196,7 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = N
     :return: registry_discovery_endpoint for a cloud
     """
     cloud_details = _get_cloud_details(cloud_name)
-    registry_discovery_endpoint = cloud_details.get(
-        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT
-    )
+    registry_discovery_endpoint = cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT)
     return registry_discovery_endpoint
 
 
@@ -243,9 +231,7 @@ def _get_registry_discovery_url(cloud, cloud_suffix=""):
     registry_discovery_region_default = "https://{}{}.api.azureml.{}/".format(
         cloud_name.lower(), registry_discovery_region, cloud_suffix
     )
-    return os.environ.get(
-        ArmConstants.REGISTRY_ENV_URL, registry_discovery_region_default
-    )
+    return os.environ.get(ArmConstants.REGISTRY_ENV_URL, registry_discovery_region_default)
 
 
 def _get_clouds_by_metadata_url(metadata_url):
@@ -254,9 +240,7 @@ def _get_clouds_by_metadata_url(metadata_url):
     :return: list of the clouds
     """
     try:
-        module_logger.debug(
-            "Start : Loading cloud metadata from the url specified by %s", metadata_url
-        )
+        module_logger.debug("Start : Loading cloud metadata from the url specified by %s", metadata_url)
         client = ARMPipelineClient(base_url=metadata_url, policies=[])
         HttpRequest("GET", metadata_url)
         with client.send_request(HttpRequest("GET", metadata_url)) as meta_response:
@@ -295,19 +279,13 @@ def _convert_arm_to_cli(arm_cloud_metadata):
             cli_cloud_metadata_dict[cloud_name] = {
                 EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud["portal"],
                 EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud["resourceManager"],
-                EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud["authentication"][
-                    "loginEndpoint"
-                ],
-                EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.{}".format(
-                    cloud_suffix
-                ),
+                EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud["authentication"]["loginEndpoint"],
+                EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.{}".format(cloud_suffix),
                 EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"],
                 EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: registry_discovery_url,
             }
         except KeyError as ex:
-            module_logger.warning(
-                "Property on cloud not found in arm cloud metadata: %s", ex
-            )
+            module_logger.warning("Property on cloud not found in arm cloud metadata: %s", ex)
             continue
     return cli_cloud_metadata_dict
 
@@ -318,22 +296,12 @@ def _add_cloud_to_environments(kwargs):
         raise AttributeError(f"Cannot overwrite existing cloud: {cloud_name}")
     cloud_metadata = kwargs[CloudArgumentKeys.CLOUD_METADATA]
     if cloud_metadata is None:
-        raise LookupError(
-            f"{CloudArgumentKeys.CLOUD_METADATA} not present in kwargs, no environment to add!"
-        )
+        raise LookupError(f"{CloudArgumentKeys.CLOUD_METADATA} not present in kwargs, no environment to add!")
     _environments[kwargs["cloud"]] = {
-        EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud_metadata[
-            EndpointURLS.AZURE_PORTAL_ENDPOINT
-        ],
-        EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud_metadata[
-            EndpointURLS.RESOURCE_MANAGER_ENDPOINT
-        ],
-        EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud_metadata[
-            EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT
-        ],
+        EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud_metadata[EndpointURLS.AZURE_PORTAL_ENDPOINT],
+        EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud_metadata[EndpointURLS.RESOURCE_MANAGER_ENDPOINT],
+        EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud_metadata[EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT],
         EndpointURLS.AML_RESOURCE_ID: cloud_metadata[EndpointURLS.AML_RESOURCE_ID],
         EndpointURLS.STORAGE_ENDPOINT: cloud_metadata[EndpointURLS.STORAGE_ENDPOINT],
-        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: cloud_metadata[
-            EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT
-        ],
+        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: cloud_metadata[EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT],
     }

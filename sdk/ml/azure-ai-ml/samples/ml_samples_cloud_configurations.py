@@ -26,9 +26,7 @@ class CloudConfigurationOptions(object):
     def ml_cloud_config_from_environment_arm(self):
         subscription_id = "AZURE_SUBSCRIPTION_ID"
         resource_group = "RESOURCE_GROUP_NAME"
-        credential = DefaultAzureCredential(
-            authority=AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-        )
+        credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_PUBLIC_CLOUD)
 
         # This environment variable should be set when running python.  If it is set, and the configured cloud is not
         # one of the default ones in _azure_environments.py, it will follow the url to find the cloud config.  If it
@@ -53,9 +51,7 @@ class CloudConfigurationOptions(object):
     def ml_cloud_config_from_keyword_args(self):
         subscription_id = "AZURE_SUBSCRIPTION_ID"
         resource_group = "RESOURCE_GROUP_NAME"
-        credential = DefaultAzureCredential(
-            authority=AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-        )
+        credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_PUBLIC_CLOUD)
 
         # All of these configurations are needed in the kwargs, otherwise the SDK will not recognize the configuration
         # and will throw an "Unknown cloud environment" error.
