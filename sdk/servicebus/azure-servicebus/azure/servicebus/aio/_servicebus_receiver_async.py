@@ -223,9 +223,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                     yield message
             except StopAsyncIteration:
                 break
-
+    
     def __aiter__(self):
-        return self._iter_contextual_wrapper(self)
+        return self._iter_contextual_wrapper()
 
     async def _inner_anext(self, wait_time=None):
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
@@ -251,6 +251,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         try:
             self._receive_context.set()
             await self._open()
+            # TODO: Add in Recieve Message Iterator
             if not self._message_iter:
                 self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
             elif wait_time:
