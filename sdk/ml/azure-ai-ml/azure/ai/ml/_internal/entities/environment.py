@@ -76,7 +76,11 @@ class InternalEnvironment:
             return validation_result
         dockerfile_file = self.docker[self.BUILD][self.DOCKERFILE]
         dockerfile_file = self._parse_file_path(dockerfile_file)
-        if not self._docker_file_resolved and not skip_path_validation and not (Path(base_path) / dockerfile_file).is_file():
+        if (
+            not self._docker_file_resolve
+            and not skip_path_validation
+            and not (Path(base_path) / dockerfile_file).is_file()
+        ):
             validation_result.append_error(
                 yaml_path=f"docker.{self.BUILD}.{self.DOCKERFILE}",
                 message=f"Dockerfile not exists: {dockerfile_file}",
