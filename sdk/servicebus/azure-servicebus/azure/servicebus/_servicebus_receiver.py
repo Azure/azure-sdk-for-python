@@ -244,7 +244,7 @@ class ServiceBusReceiver(
             except StopIteration:
                 self._message_iter = None
                 raise
-            
+
     def __next__(self):
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
         try:
@@ -256,7 +256,7 @@ class ServiceBusReceiver(
         finally:
             self._receive_context.clear()
 
-    next = __next__ 
+    next = __next__  # for python2.7
 
     def _iter_next(self, wait_time=None):
         try:
