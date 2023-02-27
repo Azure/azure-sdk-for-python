@@ -434,14 +434,14 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Feature store offline store connection client id credential"
+                "description": "Feature store offline store connection credential client id"
             }
         },
         "materialization_identity_resource_id": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Feature store offline store connection resourceId credential"
+                "description": "Feature store offline store connection credential resource id"
             }
         },
         "setup_materialization_store": {
@@ -485,7 +485,7 @@
         },
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
-        "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnection', parameters('offline_store_connection_name'))]"
+        "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]"
     },
     "resources": [
         {

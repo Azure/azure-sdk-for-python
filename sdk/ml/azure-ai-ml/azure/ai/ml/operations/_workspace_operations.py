@@ -187,6 +187,8 @@ class WorkspaceOperations:
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
             )
+            workspace.feature_store_settings = (workspace.feature_store_settings or
+                                                existing_workspace.feature_store_settings)
             return self.begin_update(
                 workspace,
                 update_dependent_resources=update_dependent_resources,
@@ -199,7 +201,7 @@ class WorkspaceOperations:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace)
+        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -314,6 +316,10 @@ class WorkspaceOperations:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+        feature_store_settings = kwargs.get("feature_store_settings", workspace.feature_store_settings)
+        if feature_store_settings:
+            feature_store_settings = feature_store_settings._to_rest_object()
+
         update_param = WorkspaceUpdateParameters(
             tags=kwargs.get("tags", workspace.tags),
             description=kwargs.get("description", workspace.description),
@@ -325,6 +331,7 @@ class WorkspaceOperations:
                 "primary_user_assigned_identity", workspace.primary_user_assigned_identity
             ),
             managed_network=managed_network,
+            feature_store_settings=feature_store_settings
         )
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
@@ -427,8 +434,12 @@ class WorkspaceOperations:
         module_logger.info("Diagnose request initiated for workspace: %s\n", name)
         return poller
 
-    # pylint: disable=too-many-statements,too-many-branches
-    def _populate_arm_paramaters(self, workspace: Workspace) -> Tuple[dict, dict, dict]:
+    # pylint: disable=too-many-statements,too-many-branches,too-many-locals
+    def _populate_arm_paramaters(
+            self,
+            workspace: Workspace,
+            **kwargs: Dict,
+        ) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
@@ -448,6 +459,11 @@ class WorkspaceOperations:
         else:
             _set_val(param["description"], workspace.description)
         _set_val(param["location"], workspace.location)
+
+        if not workspace.kind:
+            _set_val(param["kind"], "Default")
+        else:
+            _set_val(param["kind"], workspace.kind)
 
         _set_val(param["resourceGroupName"], workspace.resource_group)
 
@@ -601,6 +617,28 @@ class WorkspaceOperations:
 
         if workspace.primary_user_assigned_identity:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
+
+        if workspace.feature_store_settings:
+            _set_val(param["spark_runtime_version"],
+                    workspace.feature_store_settings.compute_runtime.spark_runtime_version)
+            _set_val(param["offline_store_connection_name"],
+                     workspace.feature_store_settings.offline_store_connection_name
+                     if workspace.feature_store_settings.offline_store_connection_name else '')
+            _set_val(param["online_store_connection_name"], '')
+
+        setup_feature_store = kwargs.get("setup_feature_store", False)
+        materialization_identity = kwargs.get("materialization_identity", None)
+        offline_store_target = kwargs.get("offline_store_target", None)
+
+        setup_materialization_store = setup_feature_store and offline_store_target and materialization_identity
+        _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")
+
+        if setup_materialization_store:
+            _set_val(param["offline_store_connection_target"], offline_store_target)
+            _set_val(param["materialization_identity_client_id"],
+                     materialization_identity.client_id)
+            _set_val(param["materialization_identity_resource_id"],
+                     materialization_identity.resource_id)
 
         managed_network = None
         if workspace.managed_network:
