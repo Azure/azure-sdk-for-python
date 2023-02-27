@@ -223,7 +223,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                     yield message
             except StopAsyncIteration:
                 break
-  
+
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 

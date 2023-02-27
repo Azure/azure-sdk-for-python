@@ -789,7 +789,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
 
-        # Iterator 
+        # Iterator
         self._timeout = kwargs.pop("timeout", 0)
         self._timeout_reached = False
         self._last_activity_timestamp = time.time()
