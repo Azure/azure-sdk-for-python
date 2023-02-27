@@ -559,7 +559,8 @@ class ElasticPoolsOperations:
         :type server_name: str
         :param elastic_pool_name: The name of the elastic pool. Required.
         :type elastic_pool_name: str
-        :param parameters: The elastic pool parameters. Is either a model type or a IO type. Required.
+        :param parameters: The elastic pool parameters. Is either a ElasticPool type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.sql.models.ElasticPool or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -916,8 +917,8 @@ class ElasticPoolsOperations:
         :type server_name: str
         :param elastic_pool_name: The name of the elastic pool. Required.
         :type elastic_pool_name: str
-        :param parameters: The elastic pool update parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: The elastic pool update parameters. Is either a ElasticPoolUpdate type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ElasticPoolUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

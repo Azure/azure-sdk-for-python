@@ -119,6 +119,9 @@
     "primaryUserAssignedIdentity": {
         "value": ""
     },
+    "managedNetwork": {
+        "value": {}
+    },
     "setup_materialization_store" : {
         "value": "false"
     },
@@ -139,8 +142,5 @@
     },
     "online_store_connection_name" : {
         "value": ""
-    },
-    "managedNetwork": {
-        "value": {}
     }
 }

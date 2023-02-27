@@ -56,6 +56,7 @@ def load_registered_component(
     "mock_code_hash",
     "mock_asset_name",
     "mock_component_hash",
+    "mock_snapshot_hash",
 )
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test

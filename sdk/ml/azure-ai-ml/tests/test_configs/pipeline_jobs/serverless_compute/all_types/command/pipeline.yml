@@ -1,0 +1,11 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: Serverless in Pipeline - Command
+settings:
+  default_compute: azureml:serverless
+jobs:
+  hello_world:
+    command: echo "Hello World"
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    resources:
+      instance_type: Standard_D3_v2
