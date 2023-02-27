@@ -3,7 +3,6 @@
 ## 1.5.0 (Unreleased)
 
 ### Features Added
-
 - Added support for `tags` on Compute Resources.
 
 ### Bugs Fixed
