@@ -38,6 +38,15 @@ class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):
         values=NestedField(InputPortSchema),
     )
 
+    @validates("outputs")
+    def outputs_key(self, value):
+        outputs_count = len(value)
+        if outputs_count != 1:
+            msg = "Only support single output in {}, but there're {} outputs."
+            raise ValidationError(
+                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count), field_name="outputs"
+            )
+
 
 class SinkSourceSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(

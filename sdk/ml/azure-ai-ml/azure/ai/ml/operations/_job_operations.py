@@ -62,6 +62,7 @@ from azure.ai.ml.constants._common import (
     TID_FMT,
     AssetTypes,
     AzureMLResourceType,
+    SERVERLESS_COMPUTE,
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -87,6 +88,7 @@ from azure.ai.ml.exceptions import (
     PipelineChildJobError,
     ValidationErrorType,
     ValidationException,
+    UserErrorException,
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
@@ -276,6 +278,8 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: Job
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
+        if not isinstance(name, str):
+            raise UserErrorException(f"{name} is a invalid input for client.jobs.get().")
         job_object = self._get_job(name)
 
         if not _is_pipeline_child_job(job_object):
@@ -376,7 +380,8 @@ class JobOperations(_ScopeDependentOperations):
 
             if is_data_binding_expression(compute_name):
                 return compute_name
-
+            if compute_name == SERVERLESS_COMPUTE:
+                return compute_name
             try:
                 return self._compute_operations.get(compute_name).id
             except ResourceNotFoundError as e:

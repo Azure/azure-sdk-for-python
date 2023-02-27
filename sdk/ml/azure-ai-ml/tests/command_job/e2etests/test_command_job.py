@@ -34,6 +34,7 @@ TEST_PARAMS = {"a_param": "1", "another_param": "2"}
     "mock_code_hash",
     "mock_asset_name",
     "enable_environment_id_arm_expansion",
+    "mock_snapshot_hash",
 )
 @pytest.mark.training_experiences_test
 class TestCommandJob(AzureRecordedTestCase):
@@ -256,6 +257,9 @@ class TestCommandJob(AzureRecordedTestCase):
         command_job_resource_2 = client.jobs.get(job_name)
         assert command_job_resource_2.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED)
 
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
     @pytest.mark.e2etest
     def test_command_job_dependency_label_resolution(self, randstr: Callable[[], str], client: MLClient) -> None:
         """Checks that dependencies of the form azureml:name@label are resolved to a version"""
