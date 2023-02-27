@@ -1,7 +1,7 @@
 ### Settings
 
 ```yaml
-input-file: C:\azure-rest-api-specs\specification\loadtestservice\data-plane\Microsoft.LoadTestService\stable\2022-11-01\loadtestservice.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/loadtestservice/data-plane/Microsoft.LoadTestService/stable/2022-11-01/loadtestservice.json
 output-folder: ../
 namespace: azure.developer.loadtesting._generated
 package-name: azure-developer-loadtesting
