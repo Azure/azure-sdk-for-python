@@ -11,6 +11,9 @@
     "description": {
         "value": ""
     },
+    "kind": {
+        "value": "Default"
+    },
     "friendlyName": {
         "value": ""
     },
@@ -115,5 +118,29 @@
     },
     "primaryUserAssignedIdentity": {
         "value": ""
+    },
+    "setup_materialization_store" : {
+        "value": "false"
+    },
+    "spark_runtime_version" : {
+        "value": ""
+    },
+    "offline_store_connection_name" : {
+        "value": ""
+    },
+    "offline_store_connection_target" : {
+        "value": ""
+    },
+    "materialization_identity_client_id" : {
+        "value": ""
+    },
+    "materialization_identity_resource_id" : {
+        "value": ""
+    },
+    "online_store_connection_name" : {
+        "value": ""
+    },
+    "managedNetwork": {
+        "value": {}
     }
 }
