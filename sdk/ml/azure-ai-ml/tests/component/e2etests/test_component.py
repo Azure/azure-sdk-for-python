@@ -280,6 +280,7 @@ class TestComponent(AzureRecordedTestCase):
     def test_datatransfer_copy_urifolder_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            'data_copy_mode': 'merge_with_overwrite',
             "display_name": "Data Transfer Component copy-files",
             "type": "data_transfer",
             "task": "copy_data",
@@ -300,6 +301,7 @@ class TestComponent(AzureRecordedTestCase):
     def test_datatransfer_copy_urifile_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            'data_copy_mode': 'fail_if_conflict',
             "display_name": "Data Transfer Component copy uri files",
             "type": "data_transfer",
             "task": "copy_data",
@@ -322,6 +324,7 @@ class TestComponent(AzureRecordedTestCase):
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
             "display_name": "Data Transfer Component merge-files",
             "type": "data_transfer",
+            'data_copy_mode': 'merge_with_overwrite',
             "task": "copy_data",
             "inputs": {
                 "folder1": {"type": "uri_folder", "optional": False},
@@ -345,6 +348,7 @@ class TestComponent(AzureRecordedTestCase):
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
             "display_name": "Data Transfer Component merge mix type files",
             "type": "data_transfer",
+            'data_copy_mode': 'merge_with_overwrite',
             "task": "copy_data",
             "inputs": {
                 "input1": {"type": "uri_file", "optional": False},
