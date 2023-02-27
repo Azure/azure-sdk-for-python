@@ -628,6 +628,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._is_stopping = True
 
         # we can't use self._ws.close otherwise on_close may not be triggered
+        # (realted issue: https://github.com/websocket-client/websocket-client/issues/899)
         if self._ws and self._ws.sock:
             self._ws.sock.close()
 
