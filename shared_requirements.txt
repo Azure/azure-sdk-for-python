@@ -520,6 +520,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-machinelearningcompute azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-cognitiveservices-vision-contentmoderator azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-vision-customvision azure-mgmt-core>=1.2.0,<2.0.0
+#override azure-mgmt-defendereasm msrest>=0.7.1
 #override azure-cognitiveservices-vision-face azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-mgmt-billing typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-graphrbac azure-mgmt-core>=1.2.0,<2.0.0
@@ -790,6 +791,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-agrifood msrest>=0.7.1
 #override azure-mgmt-agrifood azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-rdbms azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-defendereasm azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-devcenter msrest>=0.7.1
 #override azure-mgmt-hybridkubernetes msrest>=0.7.1
 #override azure-mgmt-devcenter azure-mgmt-core>=1.3.2,<2.0.0
@@ -822,6 +824,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-connectedvmware msrest>=0.7.1
 #override azure-mgmt-connectedvmware azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-testbase azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-defendereasm typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-testbase msrest>=0.7.1
 #override azure-mgmt-redis azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourcegraph azure-mgmt-core>=1.3.2,<2.0.0
