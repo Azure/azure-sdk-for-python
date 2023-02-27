@@ -30,11 +30,13 @@ class InternalEnvironment:
         python: Optional[Dict] = None,
     ):
         self.docker = docker
+        print("Init: ", self.docker)
         self.conda = conda
         self.os = os if os else "Linux"
         self.name = name
         self.version = version
         self.python = python
+        self._docker_file_resolved = False
 
     @staticmethod
     def _parse_file_path(value: str) -> str:
@@ -75,7 +77,7 @@ class InternalEnvironment:
             return validation_result
         dockerfile_file = self.docker[self.BUILD][self.DOCKERFILE]
         dockerfile_file = self._parse_file_path(dockerfile_file)
-        if not skip_path_validation and not (Path(base_path) / dockerfile_file).is_file():
+        if not self._docker_file_resolved and not skip_path_validation and not (Path(base_path) / dockerfile_file).is_file():
             validation_result.append_error(
                 yaml_path=f"docker.{self.BUILD}.{self.DOCKERFILE}",
                 message=f"Dockerfile not exists: {dockerfile_file}",
@@ -128,6 +130,7 @@ class InternalEnvironment:
         dockerfile_file = self._parse_file_path(dockerfile_file)
         with open(Path(base_path) / dockerfile_file, "r") as f:
             self.docker[self.BUILD][self.DOCKERFILE] = f.read()
+            self._docker_file_resolved = True
         return
 
     def resolve(self, base_path: Union[Path, str]) -> None:
