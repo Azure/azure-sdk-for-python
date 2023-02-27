@@ -1,5 +1,81 @@
 # Release History
 
+## 8.0.0b2 (2022-12-15)
+
+### Features Added
+
+  - Added operation ClustersOperations.delete
+  - Added operation group GalleryimagesOperations
+  - Added operation group GuestAgentOperations
+  - Added operation group GuestAgentsOperations
+  - Added operation group HybridIdentityMetadataOperations
+  - Added operation group MachineExtensionsOperations
+  - Added operation group MarketplacegalleryimagesOperations
+  - Added operation group NetworkinterfacesOperations
+  - Added operation group StoragecontainersOperations
+  - Added operation group VirtualharddisksOperations
+  - Added operation group VirtualmachinesOperations
+  - Added operation group VirtualnetworksOperations
+  - Model ArcSetting has a new parameter created_at
+  - Model ArcSetting has a new parameter created_by
+  - Model ArcSetting has a new parameter created_by_type
+  - Model ArcSetting has a new parameter last_modified_at
+  - Model ArcSetting has a new parameter last_modified_by
+  - Model ArcSetting has a new parameter last_modified_by_type
+  - Model Cluster has a new parameter created_at
+  - Model Cluster has a new parameter created_by
+  - Model Cluster has a new parameter created_by_type
+  - Model Cluster has a new parameter last_modified_at
+  - Model Cluster has a new parameter last_modified_by
+  - Model Cluster has a new parameter last_modified_by_type
+  - Model Extension has a new parameter created_at
+  - Model Extension has a new parameter created_by
+  - Model Extension has a new parameter created_by_type
+  - Model Extension has a new parameter last_modified_at
+  - Model Extension has a new parameter last_modified_by
+  - Model Extension has a new parameter last_modified_by_type
+
+### Breaking Changes
+
+  - Model ArcSetting no longer has parameter arc_application_client_id
+  - Model ArcSetting no longer has parameter arc_application_object_id
+  - Model ArcSetting no longer has parameter arc_application_tenant_id
+  - Model ArcSetting no longer has parameter arc_service_principal_object_id
+  - Model ArcSetting no longer has parameter connectivity_properties
+  - Model ArcSetting no longer has parameter system_data
+  - Model Cluster no longer has parameter aad_application_object_id
+  - Model Cluster no longer has parameter aad_service_principal_object_id
+  - Model Cluster no longer has parameter principal_id
+  - Model Cluster no longer has parameter service_endpoint
+  - Model Cluster no longer has parameter software_assurance_properties
+  - Model Cluster no longer has parameter system_data
+  - Model Cluster no longer has parameter tenant_id
+  - Model Cluster no longer has parameter type_identity_type
+  - Model Cluster no longer has parameter user_assigned_identities
+  - Model ClusterNode no longer has parameter node_type
+  - Model ClusterNode no longer has parameter os_display_version
+  - Model ClusterPatch no longer has parameter principal_id
+  - Model ClusterPatch no longer has parameter tenant_id
+  - Model ClusterPatch no longer has parameter type
+  - Model ClusterPatch no longer has parameter user_assigned_identities
+  - Model Extension no longer has parameter system_data
+  - Model ProxyResource no longer has parameter system_data
+  - Model Resource no longer has parameter system_data
+  - Model TrackedResource no longer has parameter system_data
+  - Removed operation ArcSettingsOperations.begin_create_identity
+  - Removed operation ArcSettingsOperations.generate_password
+  - Removed operation ArcSettingsOperations.update
+  - Removed operation ClustersOperations.begin_create_identity
+  - Removed operation ClustersOperations.begin_delete
+  - Removed operation ClustersOperations.begin_extend_software_assurance_benefit
+  - Removed operation ClustersOperations.begin_upload_certificate
+  - Removed operation group OffersOperations
+  - Removed operation group PublishersOperations
+  - Removed operation group SkusOperations
+  - Removed operation group UpdateRunsOperations
+  - Removed operation group UpdateSummariesOperations
+  - Removed operation group UpdatesOperations
+
 ## 8.0.0b1 (2022-11-25)
 
 ### Features Added

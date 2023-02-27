@@ -12,13 +12,14 @@ from typing import Any, TYPE_CHECKING
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import SqlVirtualMachineManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
     AvailabilityGroupListenersOperations,
     Operations,
     SqlVirtualMachineGroupsOperations,
+    SqlVirtualMachineTroubleshootOperations,
     SqlVirtualMachinesOperations,
 )
 
@@ -44,13 +45,16 @@ class SqlVirtualMachineManagementClient:  # pylint: disable=client-accepts-api-v
     :ivar sql_virtual_machines: SqlVirtualMachinesOperations operations
     :vartype sql_virtual_machines:
      azure.mgmt.sqlvirtualmachine.operations.SqlVirtualMachinesOperations
+    :ivar sql_virtual_machine_troubleshoot: SqlVirtualMachineTroubleshootOperations operations
+    :vartype sql_virtual_machine_troubleshoot:
+     azure.mgmt.sqlvirtualmachine.operations.SqlVirtualMachineTroubleshootOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription ID that identifies an Azure subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-08-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -69,7 +73,7 @@ class SqlVirtualMachineManagementClient:  # pylint: disable=client-accepts-api-v
         )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -81,6 +85,9 @@ class SqlVirtualMachineManagementClient:  # pylint: disable=client-accepts-api-v
             self._client, self._config, self._serialize, self._deserialize
         )
         self.sql_virtual_machines = SqlVirtualMachinesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sql_virtual_machine_troubleshoot = SqlVirtualMachineTroubleshootOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
@@ -106,15 +113,12 @@ class SqlVirtualMachineManagementClient:  # pylint: disable=client-accepts-api-v
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> SqlVirtualMachineManagementClient
+    def __enter__(self) -> "SqlVirtualMachineManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

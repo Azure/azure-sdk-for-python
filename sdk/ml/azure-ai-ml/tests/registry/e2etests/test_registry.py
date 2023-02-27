@@ -4,11 +4,13 @@
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+
 from azure.ai.ml import MLClient, load_registry
 from azure.ai.ml.constants._common import LROConfigurations
-from azure.core.paging import ItemPaged
 from azure.ai.ml.constants._registry import StorageAccountType
-from devtools_testutils import AzureRecordedTestCase
+from azure.core.paging import ItemPaged
+
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
@@ -46,7 +48,9 @@ class TestRegistry(AzureRecordedTestCase):
 
         # Some values are assigned by registries, but hidden in the local representation to avoid confusing users.
         # Double check that they're set properly by examining the raw registry format.
-        rest_registry = crud_registry_client.registries._operation.get(resource_group_name=crud_registry_client.resource_group_name, registry_name=reg_name)
+        rest_registry = crud_registry_client.registries._operation.get(
+            resource_group_name=crud_registry_client.resource_group_name, registry_name=reg_name
+        )
         assert rest_registry
         # don't do a standard dictionary equality check to avoid being surprised by auto-set tags
         assert rest_registry.tags["one"] == "two"
@@ -80,7 +84,7 @@ class TestRegistry(AzureRecordedTestCase):
         registry = crud_registry_client.registries.begin_create(registry=reg).result(
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
-        
+
         assert registry.name == reg_name
         assert registry.replication_locations[0].storage_config.replication_count == 3
         assert registry.replication_locations[0].storage_config.storage_account_hns == False
@@ -94,7 +98,9 @@ class TestRegistry(AzureRecordedTestCase):
 
         # Some values are assigned by registries, but hidden in the local representation to avoid confusing users.
         # Double check that they're set properly by examining the raw registry format.
-        rest_registry = crud_registry_client.registries._operation.get(resource_group_name=crud_registry_client.resource_group_name, registry_name=reg_name)
+        rest_registry = crud_registry_client.registries._operation.get(
+            resource_group_name=crud_registry_client.resource_group_name, registry_name=reg_name
+        )
         assert rest_registry
 
         # ensure that the underlying data behind the replicated storage looks reasonable.

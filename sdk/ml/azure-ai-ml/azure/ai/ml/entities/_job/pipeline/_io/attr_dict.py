@@ -7,10 +7,15 @@ from typing import Union
 
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
-from azure.ai.ml.entities._job.pipeline._io.base import NodeInput, NodeOutput, PipelineInput
-from azure.ai.ml.exceptions import ValidationException, ErrorTarget, ErrorCategory, UnexpectedAttributeError, \
-    UnexpectedKeywordError
 from azure.ai.ml.entities._job.pipeline._attr_dict import K, V
+from azure.ai.ml.entities._job.pipeline._io.base import NodeInput, NodeOutput, PipelineInput
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UnexpectedAttributeError,
+    UnexpectedKeywordError,
+    ValidationException,
+)
 
 
 class InputsAttrDict(dict):

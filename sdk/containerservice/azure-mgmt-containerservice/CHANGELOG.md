@@ -1,5 +1,29 @@
 # Release History
 
+## 21.2.0 (2023-02-20)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter upgrade_settings
+
+## 21.1.0 (2022-12-30)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter node_resource_group_profile
+
+## 21.0.0 (2022-12-15)
+
+### Features Added
+
+  - Model MaintenanceConfiguration has a new parameter maintenance_window
+  - Model ManagedClusterAutoUpgradeProfile has a new parameter node_os_upgrade_channel
+
+### Breaking Changes
+
+  - Renamed operation AgentPoolsOperations.abort_latest_operation to AgentPoolsOperations.begin_abort_latest_operation
+  - Renamed operation ManagedClustersOperations.abort_latest_operation to ManagedClustersOperations.begin_abort_latest_operation
+
 ## 20.7.0 (2022-11-09)
 
 ### Features Added

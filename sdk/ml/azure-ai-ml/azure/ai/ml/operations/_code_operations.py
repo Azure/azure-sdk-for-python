@@ -8,7 +8,12 @@ from typing import Dict, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_path,
+    _check_and_upload_snapshot,
+    _get_existing_snapshot_by_hash,
+    _get_snapshot_path_info,
+)
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -20,7 +25,9 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
 from azure.ai.ml.entities._assets import Code
@@ -61,6 +68,8 @@ class CodeOperations(_ScopeDependentOperations):
         self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+
     # @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, code: Code) -> Code:
         """Returns created or updated code asset.
@@ -91,9 +100,29 @@ class CodeOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
-            code, _ = _check_and_upload_path(
-                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
-            )
+                code, _ = _check_and_upload_path(
+                    artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
+                )
+            else:
+                path, ignore_file, asset_hash = _get_snapshot_path_info(code)
+                workspace_info = self._datastore_operation._service_client.workspaces.get(
+                    resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+                )
+                existing_asset = _get_existing_snapshot_by_hash(
+                    self._datastore_operation, asset_hash, workspace_info, requests_pipeline=self._requests_pipeline
+                )
+                if existing_asset:
+                    return self.get(name=existing_asset.get("name"), version=existing_asset.get("version"))
+
+                code = _check_and_upload_snapshot(
+                    artifact=code,
+                    path=path,
+                    ignore_file=ignore_file,
+                    asset_operations=self,
+                    sas_uri=sas_uri,
+                    workspace=workspace_info,
+                    requests_pipeline=self._requests_pipeline,
+                )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,
             # version stored in the storage metadata so the same anonymous code won't be created again.

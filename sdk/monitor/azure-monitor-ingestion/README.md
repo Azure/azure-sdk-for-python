@@ -1,6 +1,6 @@
 # Azure Monitor Ingestion client library for Python
 
-The Azure Monitor Ingestion client library is used to send custom logs to [Azure Monitor][azure_monitor_overview].
+The Azure Monitor Ingestion client library is used to send custom logs to [Azure Monitor][azure_monitor_overview] using the [Logs Ingestion API][ingestion_overview].
 
 This library allows you to send data from virtually any source to supported built-in tables or to custom tables that you create in Log Analytics workspace. You can even extend the schema of built-in tables with custom columns.
 
@@ -75,7 +75,7 @@ Data collection rules (DCR) define data collected by Azure Monitor and specify h
 
 The DCR must understand the structure of the input data and the structure of the target table. If the two don't match, it can use a transformation to convert the source data to match the target table. You may also use the transform to filter source data and perform any other calculations or conversions.
 
-For more details, refer to [Data collection rules in Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-overview).
+For more details, see [Data collection rules in Azure Monitor][data_collection_rule]. For information on how to retrieve a DCR ID, see [this tutorial][data_collection_rule_tutorial].
 
 ### Log Analytics workspace tables
 
@@ -93,6 +93,7 @@ The logs that were uploaded using this library can be queried using the [Azure M
 ## Examples
 
 - [Upload custom logs](#upload-custom-logs)
+- [Upload with custom error handling](#upload-with-custom-error-handling)
 
 ### Upload custom logs
 
@@ -100,8 +101,10 @@ This example shows uploading logs to Azure Monitor.
 
 ```python
 import os
-from azure.monitor.ingestion import LogsIngestionClient, UploadLogsStatus
+
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.ingestion import LogsIngestionClient
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
 credential = DefaultAzureCredential()
@@ -122,10 +125,28 @@ body = [
       }
     ]
 
-response = client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-if response.status != UploadLogsStatus.SUCCESS:
-    failed_logs = response.failed_logs_index
-    print(failed_logs)
+try:
+    client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+except HttpResponseError as e:
+    print(f"Upload failed: {e}")
+```
+
+### Upload with custom error handling
+
+To upload logs with custom error handling, you can pass a callback function to the `on_error` parameter of the `upload` method. The callback function will be called for each error that occurs during the upload and should expect one argument that corresponds to an `LogsUploadError` object. This object contains the error encountered and the list of logs that failed to upload.
+
+```python
+# Example 1: Collect all logs that failed to upload.
+failed_logs = []
+def on_error(error):
+    print("Log chunk failed to upload with error: ", error.error)
+    failed_logs.extend(error.failed_logs)
+
+# Example 2: Ignore all errors.
+def on_error_pass(error):
+    pass
+
+client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body, on_error=on_error)
 ```
 
 ## Troubleshooting
@@ -154,7 +175,10 @@ The following code samples show common scenarios with the Azure Monitor Ingestio
 
 #### Logs Ingestion samples
 
-- [Upload a list of logs](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/sample_send_small_logs.py) ([async sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/async_samples/sample_send_small_logs_async.py))
+- [Upload a list of logs][sample_send_small_logs] ([async sample][sample_send_small_logs_async])
+- [Upload a list of logs with custom error handling][sample_custom_error_callback] ([async sample][sample_custom_error_callback_async])
+- [Upload the contents of a file][sample_upload_file_contents] ([async sample][sample_upload_file_contents_async])
+- [Upload data in a pandas DataFrame][sample_upload_pandas_dataframe] ([async sample][sample_upload_pandas_dataframe_async])
 
 ## Contributing
 
@@ -175,12 +199,23 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-ingestion/CHANGELOG.md
 [data_collection_endpoint]: https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-endpoint-overview
 [data_collection_rule]: https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-overview
+[data_collection_rule_tutorial]: https://learn.microsoft.com/azure/azure-monitor/logs/tutorial-logs-ingestion-portal#collect-information-from-the-dcr
+[ingestion_overview]: https://learn.microsoft.com/azure/azure-monitor/logs/logs-ingestion-api-overview
 [package]: https://aka.ms/azsdk-python-monitor-ingestion-pypi
 [pip]: https://pypi.org/project/pip/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [python-ingestion-ref-docs]: https://aka.ms/azsdk/python/monitor-ingestion/docs
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-ingestion/samples
 [source]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/
+
+[sample_send_small_logs]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/sample_send_small_logs.py
+[sample_send_small_logs_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/async_samples/sample_send_small_logs_async.py
+[sample_custom_error_callback]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/sample_custom_error_callback.py
+[sample_custom_error_callback_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/async_samples/sample_custom_error_callback_async.py
+[sample_upload_file_contents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/sample_upload_file_contents.py
+[sample_upload_file_contents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/async_samples/sample_upload_file_contents_async.py
+[sample_upload_pandas_dataframe]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/sample_upload_pandas_dataframe.py
+[sample_upload_pandas_dataframe_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-ingestion/samples/async_samples/sample_upload_pandas_dataframe_async.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

@@ -1,13 +1,13 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers?skip=0\u0026top=100\u0026api-version=2022-01-11-preview2",
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers?skip=0\u0026top=100\u0026api-version=2022-12-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -23,7 +23,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "2444ms"
+        "X-Processing-Time": "1690ms"
       },
       "ResponseBody": {
         "phoneNumbers": [
@@ -373,8 +373,8 @@
             "countryCode": "US",
             "phoneNumberType": "tollFree",
             "capabilities": {
-              "calling": "inbound\u002Boutbound",
-              "sms": "inbound\u002Boutbound"
+              "calling": "inbound",
+              "sms": "outbound"
             },
             "assignmentType": "application",
             "purchaseDate": "2021-06-23T23:31:24.7610118\u002B00:00",
@@ -1728,17 +1728,17 @@
             }
           }
         ],
-        "nextLink": "/phoneNumbers?skip=100\u0026top=100\u0026api-version=2022-01-11-preview2"
+        "nextLink": "/phoneNumbers?skip=100\u0026top=100\u0026api-version=2022-12-01"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers?skip=100\u0026top=100\u0026api-version=2022-01-11-preview2",
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers?skip=100\u0026top=100\u0026api-version=2022-12-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -1754,7 +1754,7 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "2331ms"
+        "X-Processing-Time": "981ms"
       },
       "ResponseBody": {
         "phoneNumbers": []

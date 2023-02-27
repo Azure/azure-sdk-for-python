@@ -58,13 +58,17 @@ class ParameterizedSweep:
 
     def __init__(
         self,
-        limits: SweepJobLimits = None,
-        sampling_algorithm: Union[str, SamplingAlgorithm] = None,
+        limits: Optional[SweepJobLimits] = None,
+        sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Union[Dict, Objective]] = None,
-        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
-        search_space: Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
         ] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
@@ -97,10 +101,10 @@ class ParameterizedSweep:
     def set_limits(
         self,
         *,
-        max_concurrent_trials: int = None,
-        max_total_trials: int = None,
-        timeout: int = None,
-        trial_timeout: int = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_total_trials: Optional[int] = None,
+        timeout: Optional[int] = None,
+        trial_timeout: Optional[int] = None,
     ) -> None:
         """Set limits for Sweep node. Leave parameters as None if you don't
         want to update corresponding values.
@@ -131,7 +135,7 @@ class ParameterizedSweep:
             if trial_timeout is not None:
                 self.limits.trial_timeout = trial_timeout
 
-    def set_objective(self, *, goal: str = None, primary_metric: str = None) -> None:
+    def set_objective(self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None) -> None:
         """Set the sweep object.
 
         :param goal: Required. Defines supported metric goals for hyperparameter tuning. Possible values

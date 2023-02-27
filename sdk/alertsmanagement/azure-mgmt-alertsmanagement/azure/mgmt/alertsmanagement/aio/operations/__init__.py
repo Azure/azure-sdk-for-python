@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 from ._alert_processing_rules_operations import AlertProcessingRulesOperations
+from ._prometheus_rule_groups_operations import PrometheusRuleGroupsOperations
 from ._operations import Operations
 from ._alerts_operations import AlertsOperations
 from ._smart_groups_operations import SmartGroupsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AlertProcessingRulesOperations",
+    "PrometheusRuleGroupsOperations",
     "Operations",
     "AlertsOperations",
     "SmartGroupsOperations",

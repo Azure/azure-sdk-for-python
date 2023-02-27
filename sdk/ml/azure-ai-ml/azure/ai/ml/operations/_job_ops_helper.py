@@ -15,7 +15,7 @@ from typing import Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
 from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
-from azure.ai.ml._restclient.v2021_10_01.models import JobBaseData
+from azure.ai.ml._restclient.v2022_10_01.models import JobBase
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelType
@@ -36,7 +36,7 @@ module_logger = logging.getLogger(__name__)
 
 
 def _get_sorted_filtered_logs(
-    logs_dict: dict, job_type: str, processed_logs: dict = None, only_streamable=True
+    logs_dict: dict, job_type: str, processed_logs: Optional[dict] = None, only_streamable=True
 ) -> List[str]:
     """Filters log file names, sorts, and returns list starting with where we
     left off last iteration.
@@ -162,7 +162,7 @@ def _wait_before_polling(current_seconds):
     return max(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MIN, duration)
 
 
-def list_logs(run_operations: RunOperations, job_resource: JobBaseData):
+def list_logs(run_operations: RunOperations, job_resource: JobBase):
     details: RunDetails = run_operations.get_run_details(job_resource.name)
     logs_dict = details.log_files
     keys = _get_sorted_filtered_logs(logs_dict, job_resource.properties.job_type)
@@ -172,8 +172,8 @@ def list_logs(run_operations: RunOperations, job_resource: JobBaseData):
 # pylint: disable=too-many-statements,too-many-locals
 def stream_logs_until_completion(
     run_operations: RunOperations,
-    job_resource: JobBaseData,
-    datastore_operations: DatastoreOperations = None,
+    job_resource: JobBase,
+    datastore_operations: Optional[DatastoreOperations] = None,
     raise_exception_on_failed_job=True,
     *,
     requests_pipeline: HttpPipeline
@@ -184,7 +184,7 @@ def stream_logs_until_completion(
     :param run_operations: The run history operations class.
     :type run_operations: RunOperations
     :param job_resource: The job to stream
-    :type job_resource: JobBaseData
+    :type job_resource: JobBase
     :param datastore_operations: Optional, the datastore operations class, used to get logs from datastore
     :type datastore_operations: Optional[DatastoreOperations]
     :param raise_exception_on_failed_job: Should this method fail if job fails

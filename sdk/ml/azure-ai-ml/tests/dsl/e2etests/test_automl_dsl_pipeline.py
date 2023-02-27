@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pydash
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import cancel_job
 
 from azure.ai.ml import Input, MLClient, automl, dsl
 from azure.ai.ml.automl import (
@@ -19,9 +21,6 @@ from azure.ai.ml.entities._job.automl.nlp import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
-
-from devtools_testutils import AzureRecordedTestCase
-from test_utilities.utils import cancel_job
 
 tests_root_dir = Path(__file__).parent.parent.parent
 

@@ -1,5 +1,25 @@
 # Release History
 
+## 2.0.0b2 (2022-12-27)
+
+### Features Added
+
+  - Added operation group GetOperations
+  - Added operation group GetRecommendationsOperations
+  - Added operation group IncidentTasksOperations
+  - Added operation group UpdateOperations
+  - Model AlertDetailsOverride has a new parameter alert_dynamic_properties
+  - Model NrtAlertRule has a new parameter sentinel_entities_mappings
+  - Model NrtAlertRuleTemplate has a new parameter sentinel_entities_mappings
+  - Model NrtAlertRuleTemplateProperties has a new parameter sentinel_entities_mappings
+  - Model QueryBasedAlertRuleTemplateProperties has a new parameter sentinel_entities_mappings
+  - Model ScheduledAlertRule has a new parameter sentinel_entities_mappings
+  - Model ScheduledAlertRuleCommonProperties has a new parameter sentinel_entities_mappings
+  - Model ScheduledAlertRuleProperties has a new parameter sentinel_entities_mappings
+  - Model ScheduledAlertRuleTemplate has a new parameter sentinel_entities_mappings
+  - Model SecurityAlertTimelineItem has a new parameter intent
+  - Model SecurityAlertTimelineItem has a new parameter techniques
+
 ## 2.0.0b1 (2022-09-29)
 
 ### Features Added

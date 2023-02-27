@@ -22,6 +22,9 @@ from ._models_py3 import CheckSkuAvailabilityParameter
 from ._models_py3 import CommitmentCost
 from ._models_py3 import CommitmentPeriod
 from ._models_py3 import CommitmentPlan
+from ._models_py3 import CommitmentPlanAccountAssociation
+from ._models_py3 import CommitmentPlanAccountAssociationListResult
+from ._models_py3 import CommitmentPlanAssociation
 from ._models_py3 import CommitmentPlanListResult
 from ._models_py3 import CommitmentPlanProperties
 from ._models_py3 import CommitmentQuota
@@ -42,10 +45,13 @@ from ._models_py3 import IpRule
 from ._models_py3 import KeyVaultProperties
 from ._models_py3 import MetricName
 from ._models_py3 import ModelDeprecationInfo
+from ._models_py3 import MultiRegionSettings
 from ._models_py3 import NetworkRuleSet
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import PatchResourceTags
+from ._models_py3 import PatchResourceTagsAndSku
 from ._models_py3 import PrivateEndpoint
 from ._models_py3 import PrivateEndpointConnection
 from ._models_py3 import PrivateEndpointConnectionListResult
@@ -57,6 +63,7 @@ from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import QuotaLimit
 from ._models_py3 import RegenerateKeyParameters
+from ._models_py3 import RegionSetting
 from ._models_py3 import RequestMatchPattern
 from ._models_py3 import Resource
 from ._models_py3 import ResourceSku
@@ -77,12 +84,14 @@ from ._models_py3 import UserOwnedStorage
 from ._models_py3 import VirtualNetworkRule
 
 from ._cognitive_services_management_client_enums import ActionType
+from ._cognitive_services_management_client_enums import CommitmentPlanProvisioningState
 from ._cognitive_services_management_client_enums import CreatedByType
 from ._cognitive_services_management_client_enums import DeploymentProvisioningState
 from ._cognitive_services_management_client_enums import DeploymentScaleType
 from ._cognitive_services_management_client_enums import HostingModel
 from ._cognitive_services_management_client_enums import KeyName
 from ._cognitive_services_management_client_enums import KeySource
+from ._cognitive_services_management_client_enums import ModelLifecycleStatus
 from ._cognitive_services_management_client_enums import NetworkRuleAction
 from ._cognitive_services_management_client_enums import Origin
 from ._cognitive_services_management_client_enums import PrivateEndpointConnectionProvisioningState
@@ -93,10 +102,11 @@ from ._cognitive_services_management_client_enums import QuotaUsageStatus
 from ._cognitive_services_management_client_enums import ResourceIdentityType
 from ._cognitive_services_management_client_enums import ResourceSkuRestrictionsReasonCode
 from ._cognitive_services_management_client_enums import ResourceSkuRestrictionsType
+from ._cognitive_services_management_client_enums import RoutingMethods
 from ._cognitive_services_management_client_enums import SkuTier
 from ._cognitive_services_management_client_enums import UnitType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -116,6 +126,9 @@ __all__ = [
     "CommitmentCost",
     "CommitmentPeriod",
     "CommitmentPlan",
+    "CommitmentPlanAccountAssociation",
+    "CommitmentPlanAccountAssociationListResult",
+    "CommitmentPlanAssociation",
     "CommitmentPlanListResult",
     "CommitmentPlanProperties",
     "CommitmentQuota",
@@ -136,10 +149,13 @@ __all__ = [
     "KeyVaultProperties",
     "MetricName",
     "ModelDeprecationInfo",
+    "MultiRegionSettings",
     "NetworkRuleSet",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "PatchResourceTags",
+    "PatchResourceTagsAndSku",
     "PrivateEndpoint",
     "PrivateEndpointConnection",
     "PrivateEndpointConnectionListResult",
@@ -151,6 +167,7 @@ __all__ = [
     "ProxyResource",
     "QuotaLimit",
     "RegenerateKeyParameters",
+    "RegionSetting",
     "RequestMatchPattern",
     "Resource",
     "ResourceSku",
@@ -170,12 +187,14 @@ __all__ = [
     "UserOwnedStorage",
     "VirtualNetworkRule",
     "ActionType",
+    "CommitmentPlanProvisioningState",
     "CreatedByType",
     "DeploymentProvisioningState",
     "DeploymentScaleType",
     "HostingModel",
     "KeyName",
     "KeySource",
+    "ModelLifecycleStatus",
     "NetworkRuleAction",
     "Origin",
     "PrivateEndpointConnectionProvisioningState",
@@ -186,6 +205,7 @@ __all__ = [
     "ResourceIdentityType",
     "ResourceSkuRestrictionsReasonCode",
     "ResourceSkuRestrictionsType",
+    "RoutingMethods",
     "SkuTier",
     "UnitType",
 ]

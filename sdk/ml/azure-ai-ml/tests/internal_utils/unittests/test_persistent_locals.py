@@ -2,7 +2,10 @@ import re
 
 import pytest
 
-from azure.ai.ml._utils._func_utils import persistent_locals
+from azure.ai.ml._utils._func_utils import (
+    PersistentLocalsFunctionBytecodeBuilder,
+    PersistentLocalsFunctionProfilerBuilder,
+)
 
 
 class MockClass:
@@ -36,55 +39,71 @@ def mock_function_with_self(self):
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestPersistentLocals:
+    def get_outputs_and_locals(self, func, injected_params):
+        return PersistentLocalsFunctionProfilerBuilder().call(func, injected_params)
+
     def test_simple(self):
         def mock_function(mock_arg):
             mock_local_variable = 1
             return mock_local_variable, mock_arg
 
-        persistent_func = persistent_locals(mock_function)
-        assert persistent_func(mock_arg=1) == (1, 1)
-        assert set(persistent_func.locals.keys()) == {'mock_arg', 'mock_local_variable'}
+        outputs, _locals = self.get_outputs_and_locals(mock_function, {"mock_arg": 1})
+        assert outputs == (1, 1)
+        assert set(_locals.keys()) == {"mock_arg", "mock_local_variable"}
 
     def test_func_with_named_self_argument(self):
-        persistent_func = persistent_locals(mock_function_with_self)
-        assert persistent_func(self=1) == 1
-        assert set(persistent_func.locals.keys()) == {'self'}
+        outputs, _locals = self.get_outputs_and_locals(mock_function_with_self, {"self": 1})
+        assert outputs == 1
+        assert set(_locals.keys()) == {"self"}
 
     def test_raise_exception(self):
         def mock_error_exception():
             mock_local_variable = 1
             return mock_local_variable / 0
 
-        persistent_func = persistent_locals(mock_error_exception)
         with pytest.raises(ZeroDivisionError):
-            persistent_func()
-        assert list(persistent_func.locals.keys()) == ['mock_local_variable']
+            self.get_outputs_and_locals(mock_error_exception, {})
 
     def test_instance_func(self):
         mock_obj = MockClass(1)
-        persistent_func = persistent_locals(mock_obj.mock_instance_func)
-        assert persistent_func(1) == 2
-        assert set(persistent_func.locals.keys()) == {'result', 'arg', 'self'}
+        outputs, _locals = self.get_outputs_and_locals(mock_obj.mock_instance_func, {"arg": 1})
+        assert outputs == 2
+        assert set(_locals.keys()) == {"result", "arg", "self"}
 
     def test_class_method(self):
         mock_obj = MockClass(1)
-        persistent_func = persistent_locals(mock_obj.mock_class_method)
-        assert persistent_func(1) == 3
-        assert set(persistent_func.locals.keys()) == {'result', 'arg', 'cls'}
+        outputs, _locals = self.get_outputs_and_locals(mock_obj.mock_class_method, {"arg": 1})
+        assert outputs == 3
+        assert set(_locals.keys()) == {"result", "arg", "cls"}
 
     def test_instance_call(self):
         mock_obj = MockClass(1)
-        persistent_func = persistent_locals(mock_obj)
-        assert persistent_func(1) == 2
-        assert set(persistent_func.locals.keys()) == {'result', 'arg', 'self'}
+        outputs, _locals = self.get_outputs_and_locals(mock_obj, {"arg": 1})
+        assert outputs == 2
+        assert set(_locals.keys()) == {"result", "arg", "self"}
 
     def test_invalid_passed_func(self):
-        with pytest.raises(TypeError, match='func must be a function or a callable object'):
-            persistent_locals(1)
+        with pytest.raises(TypeError, match="func must be a function or a callable object"):
+            self.get_outputs_and_locals(1, {"arg": 1})
 
     def test_param_conflict(self):
         with pytest.raises(
             ValueError,
-            match=re.escape('Injected param name __self conflicts with function args [\'__self\']'),
+            match=re.escape("Injected param name __self conflicts with function args ['__self']"),
         ):
-            persistent_locals(mock_conflict_function)
+            self.get_outputs_and_locals(mock_conflict_function, {"arg": 1})
+
+
+@pytest.mark.unittest
+@pytest.mark.pipeline_test
+class TestPersistentLocalsPrivatePreview(TestPersistentLocals):
+    def get_outputs_and_locals(self, func, injected_params):
+        try:
+            import bytecode
+        except ImportError:
+            import subprocess
+
+            subprocess.check_call(["pip", "install", "bytecode"])
+        import bytecode
+
+        return PersistentLocalsFunctionBytecodeBuilder().call(func, injected_params)

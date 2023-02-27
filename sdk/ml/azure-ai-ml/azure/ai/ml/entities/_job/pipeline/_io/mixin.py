@@ -5,17 +5,22 @@
 import copy
 from typing import Dict, Union
 
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml.constants._component import ComponentJobConstants
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
-from azure.ai.ml.exceptions import ValidationException, ErrorTarget
+from azure.ai.ml.entities._util import copy_output_setting
+from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 
+from ..._input_output_helpers import (
+    from_rest_data_outputs,
+    from_rest_inputs_to_dataset_literal,
+    to_rest_data_outputs,
+    to_rest_dataset_literal_inputs,
+)
+from .._pipeline_job_helpers import from_dict_to_rest_io, process_sdk_component_job_io
 from .attr_dict import InputsAttrDict, OutputsAttrDict, _GroupAttrDict
 from .base import NodeInput, NodeOutput, PipelineInput, PipelineOutput
-from .._pipeline_job_helpers import process_sdk_component_job_io, from_dict_to_rest_io
-from ..._input_output_helpers import to_rest_dataset_literal_inputs, to_rest_data_outputs, \
-    from_rest_inputs_to_dataset_literal, from_rest_data_outputs
 
 
 class NodeIOMixin:
@@ -23,11 +28,11 @@ class NodeIOMixin:
     dynamically."""
 
     def _build_input(self, name, meta: Input, data) -> NodeInput:
-        return NodeInput(name=name, meta=meta, data=data, owner=self)
+        return NodeInput(port_name=name, meta=meta, data=data, owner=self)
 
     def _build_output(self, name, meta: Output, data) -> NodeOutput:
         # For un-configured outputs, settings it to None, so we won't pass extra fields(eg: default mode)
-        return NodeOutput(name=name, meta=meta, data=data, owner=self)
+        return NodeOutput(port_name=name, meta=meta, data=data, owner=self)
 
     def _get_default_input_val(self, val):  # pylint: disable=unused-argument, no-self-use
         # use None value as data placeholder for unfilled inputs.
@@ -150,10 +155,14 @@ class NodeIOMixin:
         }
         """
         built_inputs = self._build_inputs()
+        return self._input_entity_to_rest_inputs(input_entity=built_inputs)
+
+    @classmethod
+    def _input_entity_to_rest_inputs(cls, input_entity: Dict[str, Input]) -> Dict[str, Dict]:
 
         # Convert io entity to rest io objects
         input_bindings, dataset_literal_inputs = process_sdk_component_job_io(
-            built_inputs, [ComponentJobConstants.INPUT_PATTERN]
+            input_entity, [ComponentJobConstants.INPUT_PATTERN]
         )
 
         # parse input_bindings to InputLiteral(value=str(binding))
@@ -192,7 +201,19 @@ class NodeIOMixin:
             rest_output_bindings[key] = {"value": binding["value"], "type": "literal"}
             if "mode" in binding:
                 rest_output_bindings[key].update({"mode": binding["mode"].value})
-        rest_data_outputs = {name: val.as_dict() for name, val in rest_data_outputs.items()}
+            if "name" in binding:
+                rest_output_bindings[key].update({"name": binding["name"]})
+            if "version" in binding:
+                rest_output_bindings[key].update({"version": binding["version"]})
+
+        def _rename_name_and_version(output_dict):
+            if "asset_name" in output_dict.keys():
+                output_dict["name"] = output_dict.pop("asset_name")
+            if "asset_version" in output_dict.keys():
+                output_dict["version"] = output_dict.pop("asset_version")
+            return output_dict
+
+        rest_data_outputs = {name: _rename_name_and_version(val.as_dict()) for name, val in rest_data_outputs.items()}
         rest_data_outputs.update(rest_output_bindings)
         return rest_data_outputs
 
@@ -299,12 +320,53 @@ class PipelineIOMixin(PipelineNodeIOMixin):
 
     def _build_output(self, name, meta: Output, data) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
-        return PipelineOutput(name=name, meta=meta, data=data, owner=self)
+        result = PipelineOutput(port_name=name, meta=meta, data=data, owner=self)
+        return result
 
     def _build_inputs_dict_without_meta(self, inputs: Dict[str, Union[Input, str, bool, int, float]]) -> InputsAttrDict:
         input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}
         input_dict = GroupInput.restore_flattened_inputs(input_dict)
         return InputsAttrDict(input_dict)
+
+    def _build_output_for_pipeline(self, name, data) -> "PipelineOutput":
+        """Build an output object for pipeline and copy settings from source output.
+
+        :param name: Output name.
+        :param meta: Output metadata.
+        :param data: Output data.
+        :return: Built output object.
+        """
+        # pylint: disable=protected-access
+        if data is None:
+            # For None output, build an empty output builder
+            output_val = self._build_output(name=name, meta=None, data=None)
+        elif isinstance(data, Output):
+            # For output entity, build an output builder with data points to it
+            output_val = self._build_output(name=name, meta=data, data=data)
+        elif isinstance(data, NodeOutput):
+            # For output builder, build a new output builder and copy settings from it
+            output_val = self._build_output(name=name, meta=data._meta, data=None)
+            copy_output_setting(source=data, target=output_val)
+        else:
+            message = "Unsupported output type: {} for pipeline output: {}: {}"
+            raise ValidationException(
+                message=message.format(type(data), name, data),
+                no_personal_data_message=message,
+                target=ErrorTarget.PIPELINE,
+            )
+        return output_val
+
+    def _build_pipeline_outputs_dict(self, outputs: Dict[str, Union[Output, NodeOutput]]) -> OutputsAttrDict:
+        """Build an output attribute dict without output definition metadata.
+        For pipeline outputs, its setting should be copied from node level outputs.
+
+        :param outputs: Node output dict or pipeline component's outputs.
+        :return: Built dynamic output attribute dict.
+        """
+        output_dict = {}
+        for key, val in outputs.items():
+            output_dict[key] = self._build_output_for_pipeline(name=key, data=val)
+        return OutputsAttrDict(output_dict)
 
     def _build_outputs(self) -> Dict[str, Output]:
         """Build outputs of this pipeline to a dict which maps output to actual

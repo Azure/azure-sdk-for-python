@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Any
 from .._internal.client_credential_base import ClientCredentialBase
 
 
@@ -28,7 +29,7 @@ class ClientSecretCredential(ClientCredentialBase):
             tenant_id: str,
             client_id: str,
             client_secret: str,
-            **kwargs
+            **kwargs: Any
     ) -> None:
         if not client_id:
             raise ValueError("client_id should be the id of an Azure Active Directory application")

@@ -3,5 +3,7 @@
 -e ../../identity/azure-identity
 -e ../azure-mgmt-eventhub
 azure-mgmt-resource==20.0.0
-aiohttp>=3.0
+aiohttp>=3.0,<4.0
+websocket-client==1.4.2
 -e ../../../tools/azure-devtools
+uamqp>=1.6.3,<2.0.0

@@ -16,6 +16,18 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class CommitmentPlanProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the status of the resource at the time the operation was called."""
+
+    ACCEPTED = "Accepted"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    MOVING = "Moving"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -63,6 +75,13 @@ class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MICROSOFT_COGNITIVE_SERVICES = "Microsoft.CognitiveServices"
     MICROSOFT_KEY_VAULT = "Microsoft.KeyVault"
+
+
+class ModelLifecycleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Model lifecycle status."""
+
+    GENERALLY_AVAILABLE = "GenerallyAvailable"
+    PREVIEW = "Preview"
 
 
 class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -150,6 +169,14 @@ class ResourceSkuRestrictionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     LOCATION = "Location"
     ZONE = "Zone"
+
+
+class RoutingMethods(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Multiregion routing methods."""
+
+    PRIORITY = "Priority"
+    WEIGHTED = "Weighted"
+    PERFORMANCE = "Performance"
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):

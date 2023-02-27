@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional
+from typing import Optional, Any, cast
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -48,16 +48,19 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             client_id: str,
             authorization_code: str,
             redirect_uri: str,
+            *,
+            client_secret: Optional[str] = None,
+            client: Optional[AadClient] = None,
             **kwargs
     ) -> None:
-        self._authorization_code = authorization_code  # type: Optional[str]
+        self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
-        self._client_secret = kwargs.pop("client_secret", None)
-        self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
+        self._client_secret = client_secret
+        self._client = client or AadClient(tenant_id, client_id, **kwargs)
         self._redirect_uri = redirect_uri
         super().__init__()
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -77,10 +80,10 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         """
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    async def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if self._authorization_code:
             token = await self._client.obtain_token_by_authorization_code(
                 scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs
@@ -88,7 +91,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             self._authorization_code = None  # auth codes are single-use
             return token
 
-        token = None
+        token = cast(AccessToken, None)
         for refresh_token in self._client.get_cached_refresh_tokens(scopes):
             if "secret" in refresh_token:
                 token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)

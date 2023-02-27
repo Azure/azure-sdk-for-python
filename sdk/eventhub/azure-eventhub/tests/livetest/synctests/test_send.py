@@ -11,8 +11,8 @@ import time
 import json
 import sys
 
-import uamqp
-from uamqp.message import MessageProperties
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError
@@ -23,9 +23,17 @@ from azure.eventhub.amqp import (
     AmqpMessageProperties,
 )
 try:
-    from azure.eventhub._transport._uamqp_transport import UamqpTransport
-except (ImportError, ModuleNotFoundError):
-    UamqpTransport = None
+    import uamqp
+    from uamqp.constants import TransportType as uamqp_TransportType, MessageState
+    from uamqp.message import MessageProperties
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
+    uamqp_TransportType = TransportType
+    MessageProperties = None
+from azure.eventhub._pyamqp.message import Properties
+from azure.eventhub._pyamqp.authentication import SASTokenAuth
+from azure.eventhub._pyamqp import ReceiveClient
+from azure.eventhub._pyamqp.error import AMQPConnectionError
 
 
 @pytest.mark.liveTest
@@ -55,47 +63,27 @@ def test_send_with_partition_key(connstr_receivers, live_eventhub, uamqp_transpo
     batch_cnt = 0
     single_cnt = 0
     found_partition_keys = {}
-    reconnect_receivers = []
     for index, partition in enumerate(receivers):
         retry_total = 0
         while retry_total < 3:
             timeout = (5 + retry_total) * timeout_factor
-            try:
-                received = partition.receive_message_batch(timeout=timeout)
-                for message in received:
-                    try:
-                        event_data = EventData._from_message(message)
-                        if event_data.properties and event_data.properties[b'is_single']:
-                            single_cnt += 1
-                        else:
-                            batch_cnt += 1
-                        existing = found_partition_keys[event_data.partition_key]
-                        assert existing == index
-                    except KeyError:
-                        found_partition_keys[event_data.partition_key] = index
-                if received:
-                    break
-                retry_total += 1
-            except uamqp.errors.ConnectionClose:
-                for r in reconnect_receivers:
-                    r.close()
-                uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-                sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
-                    uri, live_eventhub['key_name'], live_eventhub['access_key'])
-
-                source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
-                    live_eventhub['hostname'],
-                    live_eventhub['event_hub'],
-                    live_eventhub['consumer_group'],
-                    index)
-                partition = uamqp.ReceiveClient(source, auth=sas_auth, debug=True, timeout=0, prefetch=500)
-                reconnect_receivers.append(partition)
-                retry_total += 1
-        if retry_total == 3:
+            received = partition.receive_message_batch(timeout=timeout)
+            for message in received:
+                try:
+                    event_data = EventData._from_message(message)
+                    if event_data.properties and event_data.properties[b'is_single']:
+                        single_cnt += 1
+                    else:
+                        batch_cnt += 1
+                    existing = found_partition_keys[event_data.partition_key]
+                    assert existing == index
+                except KeyError:
+                    found_partition_keys[event_data.partition_key] = index
+            if received:
+                break
+            retry_total += 1
+        if retry_total >= 3:
             raise OperationTimeoutError(f"Exhausted retries for receiving from {live_eventhub['hostname']}.")
-
-    for r in reconnect_receivers:
-        r.close()
 
     assert single_cnt == 60
     assert batch_cnt == 60
@@ -117,22 +105,6 @@ def test_send_and_receive_large_body_size(connstr_receivers, uamqp_transport, ti
 
     received = []
     timeout = 10 * timeout_factor
-    for r in receivers:
-        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
-
-    assert len(received) == 2
-    assert len(list(received[0].body)[0]) == payload
-    assert len(list(received[1].body)[0]) == payload
-
-    client = EventHubProducerClient.from_connection_string(connection_str)
-    with client:
-        payload = 250 * 1024
-        batch = client.create_batch()
-        batch.add(EventData("A" * payload))
-        client.send_batch(batch)
-        client.send_event(EventData("A" * payload))
-
-    received = []
     for r in receivers:
         received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
 
@@ -266,28 +238,47 @@ def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
 @pytest.mark.parametrize("payload",
                          [b"", b"A single event"])
 @pytest.mark.liveTest
-def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport, timeout_factor):
+def test_send_and_receive_small_body(connstr_receivers, payload, uamqp_transport, timeout_factor, fake_span):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
-    with client:
-        batch = client.create_batch()
-        batch.add(EventData(payload))
-        client.send_batch(batch)
-        client.send_event(EventData(payload))
-    received = []
-    timeout = 5 * timeout_factor
-    for r in receivers:
-        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
+
+    settings.tracing_implementation.set_value(fake_span)
+    with fake_span(name="SendTest") as root_span:
+        client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+        with client:
+            batch = client.create_batch()
+            batch.add(EventData(payload))
+            client.send_batch(batch)
+            client.send_event(EventData(payload))
+        received = []
+        timeout = 5 * timeout_factor
+        for r in receivers:
+            received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
 
     assert len(received) == 2
     assert list(received[0].body)[0] == payload
     assert list(received[1].body)[0] == payload
 
+    # TODO: check for send/message span links and traceparents (issue #28141).
+    # Will need to modify FakeSpan in conftest.
+    assert root_span.name == "SendTest"
+    assert len(root_span.children[0].children) == 3
+    assert root_span.children[0].children[0].name == "Azure.EventHubs.message"
+    assert root_span.children[0].children[0].kind == SpanKind.PRODUCER
+    assert root_span.children[0].children[1].name == "Azure.EventHubs.send"
+    assert root_span.children[0].children[1].kind == SpanKind.CLIENT
+    assert root_span.children[0].children[2].name == "Azure.EventHubs.send"
+    assert root_span.children[0].children[2].kind == SpanKind.CLIENT
+    assert len(root_span.children[0].children[2].children) == 1
+    assert root_span.children[0].children[2].children[0].name == "Azure.EventHubs.message"
+    assert root_span.children[0].children[2].children[0].kind == SpanKind.PRODUCER
+    # MUST RESET TRACING IMPLEMENTATION TO NONE, ELSE ALL OTHER TESTS ADD TRACING
+    settings.tracing_implementation.set_value(None)
+
 
 @pytest.mark.liveTest
 def test_send_partition(connstr_receivers, uamqp_transport, timeout_factor):
     connection_str, receivers = connstr_receivers
-    timeout = 5 * timeout_factor
+    timeout = 10 * timeout_factor
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
 
     with client:
@@ -319,11 +310,16 @@ def test_send_partition(connstr_receivers, uamqp_transport, timeout_factor):
         client.send_batch(batch)
         client.send_event(EventData(b"Data"), partition_id="0")
 
+    with client:
+        batch = EventDataBatch(partition_id="0")
+        batch.add(EventData(b"Data"))
+        client.send_batch(batch)
+
     time.sleep(5)
     partition_0 = receivers[0].receive_message_batch(timeout=timeout)
     partition_1 = receivers[1].receive_message_batch(timeout=timeout)
-    assert len(partition_0) >= 2
-    assert len(partition_0) + len(partition_1) == 4
+    assert len(partition_0) >= 3
+    assert len(partition_0) + len(partition_1) == 5
 
 
 @pytest.mark.liveTest
@@ -358,7 +354,11 @@ def test_send_multiple_partitions_with_app_prop(connstr_receivers, uamqp_transpo
     app_prop_key = "raw_prop"
     app_prop_value = "raw_value"
     app_prop = {app_prop_key: app_prop_value}
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+    client = EventHubProducerClient.from_connection_string(
+            connection_str,
+            uamqp_transport=uamqp_transport,
+            transport_type=TransportType.Amqp
+        )
     with client:
         ed0 = EventData(b"Message 0")
         ed0.properties = app_prop
@@ -389,7 +389,7 @@ def test_send_over_websocket_sync(connstr_receivers, uamqp_transport, timeout_fa
     timeout = 10 * timeout_factor
     connection_str, receivers = connstr_receivers
     client = EventHubProducerClient.from_connection_string(
-        connection_str, transport_type=uamqp.constants.TransportType.AmqpOverWebsocket, uamqp_transport=uamqp_transport
+        connection_str, transport_type=uamqp_TransportType.AmqpOverWebsocket, uamqp_transport=uamqp_transport
     )
 
     with client:
@@ -435,7 +435,11 @@ def test_send_with_create_event_batch_with_app_prop_sync(connstr_receivers, uamq
 def test_send_list(connstr_receivers, uamqp_transport, timeout_factor):
     connection_str, receivers = connstr_receivers
     timeout = 10 * timeout_factor
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+    client = EventHubProducerClient.from_connection_string(
+        connection_str,
+        uamqp_transport=uamqp_transport,
+        transport_type=uamqp_TransportType.Amqp
+    )
     payload = "A1"
     with client:
         client.send_batch([EventData(payload)])
@@ -460,7 +464,6 @@ def test_send_list_partition(connstr_receivers, uamqp_transport, timeout_factor)
     assert received.body_as_str() == payload
 
 
-
 @pytest.mark.parametrize("to_send, exception_type",
                          [([EventData("A"*1024)]*1100, ValueError),
                           ("any str", AttributeError)])
@@ -472,11 +475,9 @@ def test_send_list_wrong_data(connection_str, to_send, exception_type, uamqp_tra
             client.send_batch(to_send)
 
 
-
 @pytest.mark.parametrize("partition_id, partition_key", [("0", None), (None, "pk")])
 def test_send_batch_pid_pk(invalid_hostname, partition_id, partition_key, uamqp_transport):
     # Use invalid_hostname because this is not a live test.
-    amqp_transport = UamqpTransport if uamqp_transport else None
     client = EventHubProducerClient.from_connection_string(invalid_hostname, uamqp_transport=uamqp_transport)
     batch = EventDataBatch(partition_id=partition_id, partition_key=partition_key)
     with client:
@@ -484,7 +485,7 @@ def test_send_batch_pid_pk(invalid_hostname, partition_id, partition_key, uamqp_
             client.send_batch(batch, partition_id=partition_id, partition_key=partition_key)
 
 
-
+@pytest.mark.liveTest
 def test_send_with_callback(connstr_receivers, uamqp_transport):
 
     def on_error(events, pid, err):
@@ -530,63 +531,3 @@ def test_send_with_callback(connstr_receivers, uamqp_transport):
         assert sent_events[-1][1] == "0"
 
         assert not on_error.err
-
-# TODO: add more checks after LegacyMessage has been added
-@pytest.mark.liveTest
-def test_send_message_modify_backcompat(connstr_receivers, uamqp_transport, timeout_factor):
-    connection_str, receivers = connstr_receivers
-    if uamqp_transport:
-        properties = MessageProperties
-
-    timeout = 10 * timeout_factor
-    outgoing_event_data = EventData(body="hello")
-    message = outgoing_event_data.message
-    message.properties = properties(user_id='fake_user')
-    assert outgoing_event_data.message.properties.user_id == b'fake_user'
-    assert outgoing_event_data.message.state == uamqp.constants.MessageState.WaitingToBeSent
-    assert outgoing_event_data.message.delivery_annotations is None
-    assert outgoing_event_data.message.delivery_no is None
-    assert outgoing_event_data.message.delivery_tag is None
-    assert outgoing_event_data.message.on_send_complete is None
-    assert outgoing_event_data.message.footer is None
-    assert outgoing_event_data.message.retries == 0
-    assert outgoing_event_data.message.idle_time == 0
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
-    with client:
-        client.send_batch([outgoing_event_data])
-    received = []
-    for r in receivers:
-        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
-
-    assert len(received) == 1
-    received_ed = received[0]
-    # check that setting properties directly on uamqp message doesn't update the outgoing message from the event data
-    assert received_ed.message.properties.user_id is None
-    assert received_ed.message.state == uamqp.constants.MessageState.ReceivedSettled
-    assert received_ed.message.delivery_annotations is None
-    assert received_ed.message.delivery_no >= 1
-    assert received_ed.message.delivery_tag is None
-    assert received_ed.message.on_send_complete is None
-    assert received_ed.message.footer is None
-    assert received_ed.message.retries >= 0
-    assert received_ed.message.idle_time >= 0
-
-    # setting message properties by calling event data properties SHOULD update the outgoing uamqp message
-    received_ed.properties = {'prop': 'test'}
-    received_ed.message_id = "id_message"
-    received_ed.content_type = "content type"
-    received_ed.correlation_id = "correlation"
-
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
-    with client:
-        client.send_batch([received_ed])
-    received = []
-    for r in receivers:
-        received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
-
-    assert len(received) == 1
-    received_ed = received[0]
-    assert received_ed.message.application_properties == {b"prop": b"test"}
-    assert received_ed.message_id == "id_message"
-    assert received_ed.content_type == "content type"
-    assert received_ed.correlation_id == "correlation"

@@ -5,7 +5,7 @@
 
 import os
 import abc
-import threading
+import multiprocessing
 import argparse
 
 
@@ -106,17 +106,15 @@ class _PerfTestBase(_PerfTestABC):
     """Base class for implementing a python perf test."""
 
     args = {}
-    _global_parallel_index_lock = threading.Lock()
+    _global_parallel_index_lock = multiprocessing.Lock()
     _global_parallel_index = 0
 
     def __init__(self, arguments):
         self.args = arguments
         self._completed_operations = 0
         self._last_completion_time = 0.0
-
-        with _PerfTestBase._global_parallel_index_lock:
-            self._parallel_index = _PerfTestBase._global_parallel_index
-            _PerfTestBase._global_parallel_index += 1
+        self._parallel_index = _PerfTestBase._global_parallel_index
+        _PerfTestBase._global_parallel_index += 1
 
     @property
     def completed_operations(self) -> int:
@@ -136,14 +134,14 @@ class _PerfTestBase(_PerfTestABC):
 
     async def global_setup(self) -> None:
         """
-        Setup called once across all parallel test instances.
+        Setup called once per process across all threaded test instances.
         Used to setup state that can be used by all test instances.
         """
         return
 
     async def global_cleanup(self) -> None:
         """
-        Cleanup called once across all parallel test instances.
+        Cleanup called once per process across all threaded test instances.
         Used to cleanup state that can be used by all test instances.
         """
         return

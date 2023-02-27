@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional
+from typing import Optional, Any
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -37,9 +37,9 @@ class AuthorizationCodeCredential(GetTokenMixin):
             client_id: str,
             authorization_code: str,
             redirect_uri: str,
-            **kwargs
+            **kwargs: Any
     ) -> None:
-        self._authorization_code = authorization_code  # type: Optional[str]
+        self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
         self._client_secret = kwargs.pop("client_secret", None)
         self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
@@ -57,7 +57,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
         """Close the credential's transport session."""
         self.__exit__()
 
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

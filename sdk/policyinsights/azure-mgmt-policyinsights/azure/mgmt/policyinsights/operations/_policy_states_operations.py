@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import sys
 from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, Union, cast
 
 from azure.core.exceptions import (
@@ -31,6 +32,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -55,8 +60,10 @@ def build_list_query_results_for_management_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    management_groups_namespace = kwargs.pop("management_groups_namespace", "Microsoft.Management")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    management_groups_namespace: Literal["Microsoft.Management"] = kwargs.pop(
+        "management_groups_namespace", "Microsoft.Management"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +77,7 @@ def build_list_query_results_for_management_group_request(
         "managementGroupName": _SERIALIZER.url("management_group_name", management_group_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -101,7 +108,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -110,7 +117,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
         "nextLink": _SERIALIZER.url("next_link", next_link, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -136,8 +143,10 @@ def build_summarize_for_management_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    management_groups_namespace = kwargs.pop("management_groups_namespace", "Microsoft.Management")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    management_groups_namespace: Literal["Microsoft.Management"] = kwargs.pop(
+        "management_groups_namespace", "Microsoft.Management"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -153,7 +162,7 @@ def build_summarize_for_management_group_request(
         "managementGroupName": _SERIALIZER.url("management_group_name", management_group_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -189,7 +198,7 @@ def build_list_query_results_for_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -202,7 +211,7 @@ def build_list_query_results_for_subscription_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -233,7 +242,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -242,7 +251,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
         "nextLink": _SERIALIZER.url("next_link", next_link, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -268,7 +277,7 @@ def build_summarize_for_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -283,7 +292,7 @@ def build_summarize_for_subscription_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -320,7 +329,7 @@ def build_list_query_results_for_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -334,7 +343,7 @@ def build_list_query_results_for_resource_group_request(
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -365,7 +374,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -374,7 +383,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
         "nextLink": _SERIALIZER.url("next_link", next_link, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -401,7 +410,7 @@ def build_summarize_for_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -417,7 +426,7 @@ def build_summarize_for_resource_group_request(
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -454,7 +463,7 @@ def build_list_query_results_for_resource_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -467,7 +476,7 @@ def build_list_query_results_for_resource_request(
         "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -500,7 +509,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -509,7 +518,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
         "nextLink": _SERIALIZER.url("next_link", next_link, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -535,7 +544,7 @@ def build_summarize_for_resource_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -550,7 +559,7 @@ def build_summarize_for_resource_request(
         "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -573,7 +582,7 @@ def build_trigger_subscription_evaluation_request(subscription_id: str, **kwargs
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -585,7 +594,7 @@ def build_trigger_subscription_evaluation_request(subscription_id: str, **kwargs
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -602,7 +611,7 @@ def build_trigger_resource_group_evaluation_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -615,7 +624,7 @@ def build_trigger_resource_group_evaluation_request(
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -644,8 +653,10 @@ def build_list_query_results_for_policy_set_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+        "authorization_namespace", "Microsoft.Authorization"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -660,7 +671,7 @@ def build_list_query_results_for_policy_set_definition_request(
         "policySetDefinitionName": _SERIALIZER.url("policy_set_definition_name", policy_set_definition_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -691,7 +702,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -700,7 +711,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
         "nextLink": _SERIALIZER.url("next_link", next_link, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -727,8 +738,10 @@ def build_summarize_for_policy_set_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+        "authorization_namespace", "Microsoft.Authorization"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -745,7 +758,7 @@ def build_summarize_for_policy_set_definition_request(
         "policySetDefinitionName": _SERIALIZER.url("policy_set_definition_name", policy_set_definition_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -782,8 +795,10 @@ def build_list_query_results_for_policy_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+        "authorization_namespace", "Microsoft.Authorization"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -798,7 +813,7 @@ def build_list_query_results_for_policy_definition_request(
         "policyDefinitionName": _SERIALIZER.url("policy_definition_name", policy_definition_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -829,7 +844,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -838,7 +853,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
         "nextLink": _SERIALIZER.url("next_link", next_link, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -865,8 +880,10 @@ def build_summarize_for_policy_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+        "authorization_namespace", "Microsoft.Authorization"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -883,7 +900,7 @@ def build_summarize_for_policy_definition_request(
         "policyDefinitionName": _SERIALIZER.url("policy_definition_name", policy_definition_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -920,8 +937,10 @@ def build_list_query_results_for_subscription_level_policy_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+        "authorization_namespace", "Microsoft.Authorization"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -936,7 +955,7 @@ def build_list_query_results_for_subscription_level_policy_assignment_request(
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -967,7 +986,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -976,7 +995,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
         "nextLink": _SERIALIZER.url("next_link", next_link, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1003,8 +1022,10 @@ def build_summarize_for_subscription_level_policy_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+        "authorization_namespace", "Microsoft.Authorization"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1021,7 +1042,7 @@ def build_summarize_for_subscription_level_policy_assignment_request(
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1059,8 +1080,10 @@ def build_list_query_results_for_resource_group_level_policy_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+        "authorization_namespace", "Microsoft.Authorization"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1076,7 +1099,7 @@ def build_list_query_results_for_resource_group_level_policy_assignment_request(
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1107,7 +1130,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1116,7 +1139,7 @@ def build_next_link_request(next_link: str, *, skip_token: Optional[str] = None,
         "nextLink": _SERIALIZER.url("next_link", next_link, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1144,8 +1167,10 @@ def build_summarize_for_resource_group_level_policy_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
+    authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+        "authorization_namespace", "Microsoft.Authorization"
+    )
+    api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1163,7 +1188,7 @@ def build_summarize_for_resource_group_level_policy_assignment_request(
         "policyAssignmentName": _SERIALIZER.url("policy_assignment_name", policy_assignment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1231,9 +1256,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        management_groups_namespace = kwargs.pop("management_groups_namespace", "Microsoft.Management")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PolicyStatesQueryResults]
+        management_groups_namespace: Literal["Microsoft.Management"] = kwargs.pop(
+            "management_groups_namespace", "Microsoft.Management"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1281,7 +1308,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 _top = None
@@ -1311,7 +1338,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             return request
 
@@ -1319,13 +1346,13 @@ class PolicyStatesOperations:
             deserialized = self._deserialize("PolicyStatesQueryResults", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1339,7 +1366,9 @@ class PolicyStatesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_query_results_for_management_group.metadata = {"url": "/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"}  # type: ignore
+    list_query_results_for_management_group.metadata = {
+        "url": "/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
+    }
 
     @distributed_trace
     def summarize_for_management_group(
@@ -1380,9 +1409,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        management_groups_namespace = kwargs.pop("management_groups_namespace", "Microsoft.Management")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SummarizeResults]
+        management_groups_namespace: Literal["Microsoft.Management"] = kwargs.pop(
+            "management_groups_namespace", "Microsoft.Management"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
         _from_property = None
@@ -1408,9 +1439,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1428,7 +1459,9 @@ class PolicyStatesOperations:
 
         return deserialized
 
-    summarize_for_management_group.metadata = {"url": "/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"}  # type: ignore
+    summarize_for_management_group.metadata = {
+        "url": "/providers/{managementGroupsNamespace}/managementGroups/{managementGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
+    }
 
     @distributed_trace
     def list_query_results_for_subscription(
@@ -1456,8 +1489,8 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PolicyStatesQueryResults]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1504,7 +1537,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 _top = None
@@ -1534,7 +1567,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             return request
 
@@ -1542,13 +1575,13 @@ class PolicyStatesOperations:
             deserialized = self._deserialize("PolicyStatesQueryResults", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1562,7 +1595,9 @@ class PolicyStatesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_query_results_for_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"}  # type: ignore
+    list_query_results_for_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
+    }
 
     @distributed_trace
     def summarize_for_subscription(
@@ -1599,8 +1634,8 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SummarizeResults]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
         _from_property = None
@@ -1625,9 +1660,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1645,7 +1680,9 @@ class PolicyStatesOperations:
 
         return deserialized
 
-    summarize_for_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"}  # type: ignore
+    summarize_for_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
+    }
 
     @distributed_trace
     def list_query_results_for_resource_group(
@@ -1676,8 +1713,8 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PolicyStatesQueryResults]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1725,7 +1762,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 _top = None
@@ -1755,7 +1792,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             return request
 
@@ -1763,13 +1800,13 @@ class PolicyStatesOperations:
             deserialized = self._deserialize("PolicyStatesQueryResults", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1783,7 +1820,9 @@ class PolicyStatesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_query_results_for_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"}  # type: ignore
+    list_query_results_for_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
+    }
 
     @distributed_trace
     def summarize_for_resource_group(
@@ -1823,8 +1862,8 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SummarizeResults]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
         _from_property = None
@@ -1850,9 +1889,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1870,7 +1909,9 @@ class PolicyStatesOperations:
 
         return deserialized
 
-    summarize_for_resource_group.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"}  # type: ignore
+    summarize_for_resource_group.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
+    }
 
     @distributed_trace
     def list_query_results_for_resource(
@@ -1898,8 +1939,8 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PolicyStatesQueryResults]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1949,7 +1990,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 _top = None
@@ -1981,7 +2022,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             return request
 
@@ -1989,13 +2030,13 @@ class PolicyStatesOperations:
             deserialized = self._deserialize("PolicyStatesQueryResults", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2009,7 +2050,9 @@ class PolicyStatesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_query_results_for_resource.metadata = {"url": "/{resourceId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"}  # type: ignore
+    list_query_results_for_resource.metadata = {
+        "url": "/{resourceId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
+    }
 
     @distributed_trace
     def summarize_for_resource(
@@ -2046,8 +2089,8 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SummarizeResults]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
         _from_property = None
@@ -2072,9 +2115,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2092,7 +2135,9 @@ class PolicyStatesOperations:
 
         return deserialized
 
-    summarize_for_resource.metadata = {"url": "/{resourceId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"}  # type: ignore
+    summarize_for_resource.metadata = {
+        "url": "/{resourceId}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
+    }
 
     def _trigger_subscription_evaluation_initial(  # pylint: disable=inconsistent-return-statements
         self, subscription_id: str, **kwargs: Any
@@ -2108,8 +2153,8 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_trigger_subscription_evaluation_request(
             subscription_id=subscription_id,
@@ -2119,9 +2164,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2135,7 +2180,9 @@ class PolicyStatesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _trigger_subscription_evaluation_initial.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation"}  # type: ignore
+    _trigger_subscription_evaluation_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation"
+    }
 
     @distributed_trace
     def begin_trigger_subscription_evaluation(self, subscription_id: str, **kwargs: Any) -> LROPoller[None]:
@@ -2158,11 +2205,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._trigger_subscription_evaluation_initial(  # type: ignore
                 subscription_id=subscription_id,
@@ -2179,9 +2226,9 @@ class PolicyStatesOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2193,9 +2240,11 @@ class PolicyStatesOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_trigger_subscription_evaluation.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation"}  # type: ignore
+    begin_trigger_subscription_evaluation.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation"
+    }
 
     def _trigger_resource_group_evaluation_initial(  # pylint: disable=inconsistent-return-statements
         self, subscription_id: str, resource_group_name: str, **kwargs: Any
@@ -2211,8 +2260,8 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_trigger_resource_group_evaluation_request(
             subscription_id=subscription_id,
@@ -2223,9 +2272,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2239,7 +2288,9 @@ class PolicyStatesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _trigger_resource_group_evaluation_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation"}  # type: ignore
+    _trigger_resource_group_evaluation_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation"
+    }
 
     @distributed_trace
     def begin_trigger_resource_group_evaluation(
@@ -2266,11 +2317,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._trigger_resource_group_evaluation_initial(  # type: ignore
                 subscription_id=subscription_id,
@@ -2288,9 +2339,9 @@ class PolicyStatesOperations:
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2302,9 +2353,11 @@ class PolicyStatesOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_trigger_resource_group_evaluation.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation"}  # type: ignore
+    begin_trigger_resource_group_evaluation.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.PolicyInsights/policyStates/latest/triggerEvaluation"
+    }
 
     @distributed_trace
     def list_query_results_for_policy_set_definition(
@@ -2339,9 +2392,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PolicyStatesQueryResults]
+        authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+            "authorization_namespace", "Microsoft.Authorization"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2390,7 +2445,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 _top = None
@@ -2420,7 +2475,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             return request
 
@@ -2428,13 +2483,13 @@ class PolicyStatesOperations:
             deserialized = self._deserialize("PolicyStatesQueryResults", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2448,7 +2503,9 @@ class PolicyStatesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_query_results_for_policy_set_definition.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"}  # type: ignore
+    list_query_results_for_policy_set_definition.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
+    }
 
     @distributed_trace
     def summarize_for_policy_set_definition(
@@ -2492,9 +2549,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SummarizeResults]
+        authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+            "authorization_namespace", "Microsoft.Authorization"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
         _from_property = None
@@ -2521,9 +2580,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2541,7 +2600,9 @@ class PolicyStatesOperations:
 
         return deserialized
 
-    summarize_for_policy_set_definition.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"}  # type: ignore
+    summarize_for_policy_set_definition.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policySetDefinitions/{policySetDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
+    }
 
     @distributed_trace
     def list_query_results_for_policy_definition(
@@ -2576,9 +2637,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PolicyStatesQueryResults]
+        authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+            "authorization_namespace", "Microsoft.Authorization"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2627,7 +2690,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 _top = None
@@ -2657,7 +2720,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             return request
 
@@ -2665,13 +2728,13 @@ class PolicyStatesOperations:
             deserialized = self._deserialize("PolicyStatesQueryResults", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2685,7 +2748,9 @@ class PolicyStatesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_query_results_for_policy_definition.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"}  # type: ignore
+    list_query_results_for_policy_definition.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
+    }
 
     @distributed_trace
     def summarize_for_policy_definition(
@@ -2729,9 +2794,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SummarizeResults]
+        authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+            "authorization_namespace", "Microsoft.Authorization"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
         _from_property = None
@@ -2758,9 +2825,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2778,7 +2845,9 @@ class PolicyStatesOperations:
 
         return deserialized
 
-    summarize_for_policy_definition.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"}  # type: ignore
+    summarize_for_policy_definition.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyDefinitions/{policyDefinitionName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
+    }
 
     @distributed_trace
     def list_query_results_for_subscription_level_policy_assignment(
@@ -2813,9 +2882,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PolicyStatesQueryResults]
+        authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+            "authorization_namespace", "Microsoft.Authorization"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2864,7 +2935,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 _top = None
@@ -2894,7 +2965,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             return request
 
@@ -2902,13 +2973,13 @@ class PolicyStatesOperations:
             deserialized = self._deserialize("PolicyStatesQueryResults", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2922,7 +2993,9 @@ class PolicyStatesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_query_results_for_subscription_level_policy_assignment.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"}  # type: ignore
+    list_query_results_for_subscription_level_policy_assignment.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
+    }
 
     @distributed_trace
     def summarize_for_subscription_level_policy_assignment(
@@ -2966,9 +3039,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SummarizeResults]
+        authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+            "authorization_namespace", "Microsoft.Authorization"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
         _from_property = None
@@ -2995,9 +3070,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3015,7 +3090,9 @@ class PolicyStatesOperations:
 
         return deserialized
 
-    summarize_for_subscription_level_policy_assignment.metadata = {"url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"}  # type: ignore
+    summarize_for_subscription_level_policy_assignment.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
+    }
 
     @distributed_trace
     def list_query_results_for_resource_group_level_policy_assignment(
@@ -3053,9 +3130,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PolicyStatesQueryResults]
+        authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+            "authorization_namespace", "Microsoft.Authorization"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.PolicyStatesQueryResults] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -3105,7 +3184,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 _top = None
@@ -3135,7 +3214,7 @@ class PolicyStatesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             return request
 
@@ -3143,13 +3222,13 @@ class PolicyStatesOperations:
             deserialized = self._deserialize("PolicyStatesQueryResults", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.odata_next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -3163,7 +3242,9 @@ class PolicyStatesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_query_results_for_resource_group_level_policy_assignment.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"}  # type: ignore
+    list_query_results_for_resource_group_level_policy_assignment.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesResource}/queryResults"
+    }
 
     @distributed_trace
     def summarize_for_resource_group_level_policy_assignment(
@@ -3210,9 +3291,11 @@ class PolicyStatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        authorization_namespace = kwargs.pop("authorization_namespace", "Microsoft.Authorization")  # type: str
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SummarizeResults]
+        authorization_namespace: Literal["Microsoft.Authorization"] = kwargs.pop(
+            "authorization_namespace", "Microsoft.Authorization"
+        )
+        api_version: Literal["2019-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-10-01"))
+        cls: ClsType[_models.SummarizeResults] = kwargs.pop("cls", None)
 
         _top = None
         _from_property = None
@@ -3240,9 +3323,9 @@ class PolicyStatesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3260,4 +3343,6 @@ class PolicyStatesOperations:
 
         return deserialized
 
-    summarize_for_resource_group_level_policy_assignment.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"}  # type: ignore
+    summarize_for_resource_group_level_policy_assignment.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{authorizationNamespace}/policyAssignments/{policyAssignmentName}/providers/Microsoft.PolicyInsights/policyStates/{policyStatesSummaryResource}/summarize"
+    }

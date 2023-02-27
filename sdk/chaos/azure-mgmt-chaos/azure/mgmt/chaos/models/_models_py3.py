@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,58 +10,50 @@
 import datetime
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class Action(msrest.serialization.Model):
+class Action(_serialization.Model):
     """Model that represents the base action model.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ContinuousAction, DelayAction, DiscreteAction.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ContinuousAction, DelayAction, DiscreteAction
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Enum that discriminates between action models.Constant filled by server.
+    :ivar type: Enum that discriminates between action models. Required.
     :vartype type: str
-    :ivar name: Required. String that represents a Capability URN.
+    :ivar name: String that represents a Capability URN. Required.
     :vartype name: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True, 'max_length': 2048, 'min_length': 0},
+        "type": {"required": True},
+        "name": {"required": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'continuous': 'ContinuousAction', 'delay': 'DelayAction', 'discrete': 'DiscreteAction'}
-    }
+    _subtype_map = {"type": {"continuous": "ContinuousAction", "delay": "DelayAction", "discrete": "DiscreteAction"}}
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, **kwargs):
         """
-        :keyword name: Required. String that represents a Capability URN.
+        :keyword name: String that represents a Capability URN. Required.
         :paramtype name: str
         """
-        super(Action, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.name = name
 
 
-class ActionStatus(msrest.serialization.Model):
+class ActionStatus(_serialization.Model):
     """Model that represents the an action and its status.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -81,30 +74,26 @@ class ActionStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'action_name': {'readonly': True},
-        'action_id': {'readonly': True},
-        'status': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'targets': {'readonly': True},
+        "action_name": {"readonly": True},
+        "action_id": {"readonly": True},
+        "status": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "targets": {"readonly": True},
     }
 
     _attribute_map = {
-        'action_name': {'key': 'actionName', 'type': 'str'},
-        'action_id': {'key': 'actionId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'targets': {'key': 'targets', 'type': '[ExperimentExecutionActionTargetDetailsProperties]'},
+        "action_name": {"key": "actionName", "type": "str"},
+        "action_id": {"key": "actionId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "targets": {"key": "targets", "type": "[ExperimentExecutionActionTargetDetailsProperties]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ActionStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.action_name = None
         self.action_id = None
         self.status = None
@@ -113,46 +102,40 @@ class ActionStatus(msrest.serialization.Model):
         self.targets = None
 
 
-class Branch(msrest.serialization.Model):
+class Branch(_serialization.Model):
     """Model that represents a branch in the step.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. String of the branch name.
+    :ivar name: String of the branch name. Required.
     :vartype name: str
-    :ivar actions: Required. List of actions.
+    :ivar actions: List of actions. Required.
     :vartype actions: list[~azure.mgmt.chaos.models.Action]
     """
 
     _validation = {
-        'name': {'required': True, 'min_length': 1},
-        'actions': {'required': True, 'min_items': 1},
+        "name": {"required": True, "min_length": 1},
+        "actions": {"required": True, "min_items": 1},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'actions': {'key': 'actions', 'type': '[Action]'},
+        "name": {"key": "name", "type": "str"},
+        "actions": {"key": "actions", "type": "[Action]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        actions: List["_models.Action"],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, actions: List["_models.Action"], **kwargs):
         """
-        :keyword name: Required. String of the branch name.
+        :keyword name: String of the branch name. Required.
         :paramtype name: str
-        :keyword actions: Required. List of actions.
+        :keyword actions: List of actions. Required.
         :paramtype actions: list[~azure.mgmt.chaos.models.Action]
         """
-        super(Branch, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.actions = actions
 
 
-class BranchStatus(msrest.serialization.Model):
+class BranchStatus(_serialization.Model):
     """Model that represents the a list of actions and action statuses.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -168,33 +151,29 @@ class BranchStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'branch_name': {'readonly': True},
-        'branch_id': {'readonly': True},
-        'status': {'readonly': True},
-        'actions': {'readonly': True},
+        "branch_name": {"readonly": True},
+        "branch_id": {"readonly": True},
+        "status": {"readonly": True},
+        "actions": {"readonly": True},
     }
 
     _attribute_map = {
-        'branch_name': {'key': 'branchName', 'type': 'str'},
-        'branch_id': {'key': 'branchId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'actions': {'key': 'actions', 'type': '[ActionStatus]'},
+        "branch_name": {"key": "branchName", "type": "str"},
+        "branch_id": {"key": "branchId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "actions": {"key": "actions", "type": "[ActionStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BranchStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.branch_name = None
         self.branch_id = None
         self.status = None
         self.actions = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -210,24 +189,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -261,36 +236,32 @@ class Capability(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'publisher': {'readonly': True},
-        'target_type': {'readonly': True},
-        'description': {'readonly': True},
-        'parameters_schema': {'readonly': True, 'max_length': 2048, 'min_length': 0},
-        'urn': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "publisher": {"readonly": True},
+        "target_type": {"readonly": True},
+        "description": {"readonly": True},
+        "parameters_schema": {"readonly": True, "max_length": 2048},
+        "urn": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'target_type': {'key': 'properties.targetType', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'parameters_schema': {'key': 'properties.parametersSchema', 'type': 'str'},
-        'urn': {'key': 'properties.urn', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "target_type": {"key": "properties.targetType", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "parameters_schema": {"key": "properties.parametersSchema", "type": "str"},
+        "urn": {"key": "properties.urn", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Capability, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.system_data = None
         self.publisher = None
         self.target_type = None
@@ -299,7 +270,7 @@ class Capability(Resource):
         self.urn = None
 
 
-class CapabilityListResult(msrest.serialization.Model):
+class CapabilityListResult(_serialization.Model):
     """Model that represents a list of Capability resources and a link for pagination.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -311,27 +282,23 @@ class CapabilityListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Capability]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Capability]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CapabilityListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class CapabilityType(Resource):
+class CapabilityType(Resource):  # pylint: disable=too-many-instance-attributes
     """Model that represents a Capability Type resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -367,33 +334,36 @@ class CapabilityType(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'publisher': {'readonly': True},
-        'target_type': {'readonly': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'parameters_schema': {'readonly': True, 'max_length': 2048, 'min_length': 0},
-        'urn': {'readonly': True, 'max_length': 2048, 'min_length': 0},
-        'kind': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "publisher": {"readonly": True},
+        "target_type": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "parameters_schema": {"readonly": True, "max_length": 2048},
+        "urn": {"readonly": True, "max_length": 2048},
+        "kind": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'location': {'key': 'location', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'target_type': {'key': 'properties.targetType', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'parameters_schema': {'key': 'properties.parametersSchema', 'type': 'str'},
-        'urn': {'key': 'properties.urn', 'type': 'str'},
-        'kind': {'key': 'properties.kind', 'type': 'str'},
-        'runtime_properties': {'key': 'properties.runtimeProperties', 'type': 'CapabilityTypePropertiesRuntimeProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "target_type": {"key": "properties.targetType", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "parameters_schema": {"key": "properties.parametersSchema", "type": "str"},
+        "urn": {"key": "properties.urn", "type": "str"},
+        "kind": {"key": "properties.kind", "type": "str"},
+        "runtime_properties": {
+            "key": "properties.runtimeProperties",
+            "type": "CapabilityTypePropertiesRuntimeProperties",
+        },
     }
 
     def __init__(
@@ -410,7 +380,7 @@ class CapabilityType(Resource):
         :paramtype runtime_properties:
          ~azure.mgmt.chaos.models.CapabilityTypePropertiesRuntimeProperties
         """
-        super(CapabilityType, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.location = location
         self.publisher = None
@@ -423,7 +393,7 @@ class CapabilityType(Resource):
         self.runtime_properties = runtime_properties
 
 
-class CapabilityTypeListResult(msrest.serialization.Model):
+class CapabilityTypeListResult(_serialization.Model):
     """Model that represents a list of Capability Type resources and a link for pagination.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -435,27 +405,23 @@ class CapabilityTypeListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CapabilityType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CapabilityType]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CapabilityTypeListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class CapabilityTypePropertiesRuntimeProperties(msrest.serialization.Model):
+class CapabilityTypePropertiesRuntimeProperties(_serialization.Model):
     """Runtime properties of this Capability Type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -465,20 +431,16 @@ class CapabilityTypePropertiesRuntimeProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'kind': {'readonly': True},
+        "kind": {"readonly": True},
     }
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        "kind": {"key": "kind", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CapabilityTypePropertiesRuntimeProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.kind = None
 
 
@@ -487,55 +449,55 @@ class ContinuousAction(Action):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Enum that discriminates between action models.Constant filled by server.
+    :ivar type: Enum that discriminates between action models. Required.
     :vartype type: str
-    :ivar name: Required. String that represents a Capability URN.
+    :ivar name: String that represents a Capability URN. Required.
     :vartype name: str
-    :ivar duration: Required. ISO8601 formatted string that represents a duration.
-    :vartype duration: str
-    :ivar parameters: Required. List of key value pairs.
+    :ivar duration: ISO8601 formatted string that represents a duration. Required.
+    :vartype duration: ~datetime.timedelta
+    :ivar parameters: List of key value pairs. Required.
     :vartype parameters: list[~azure.mgmt.chaos.models.KeyValuePair]
-    :ivar selector_id: Required. String that represents a selector.
+    :ivar selector_id: String that represents a selector. Required.
     :vartype selector_id: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True, 'max_length': 2048, 'min_length': 0},
-        'duration': {'required': True, 'pattern': r'^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$'},
-        'parameters': {'required': True},
-        'selector_id': {'required': True, 'min_length': 1},
+        "type": {"required": True},
+        "name": {"required": True, "max_length": 2048},
+        "duration": {"required": True},
+        "parameters": {"required": True},
+        "selector_id": {"required": True, "min_length": 1},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[KeyValuePair]'},
-        'selector_id': {'key': 'selectorId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "duration": {"key": "duration", "type": "duration"},
+        "parameters": {"key": "parameters", "type": "[KeyValuePair]"},
+        "selector_id": {"key": "selectorId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        duration: str,
+        duration: datetime.timedelta,
         parameters: List["_models.KeyValuePair"],
         selector_id: str,
         **kwargs
     ):
         """
-        :keyword name: Required. String that represents a Capability URN.
+        :keyword name: String that represents a Capability URN. Required.
         :paramtype name: str
-        :keyword duration: Required. ISO8601 formatted string that represents a duration.
-        :paramtype duration: str
-        :keyword parameters: Required. List of key value pairs.
+        :keyword duration: ISO8601 formatted string that represents a duration. Required.
+        :paramtype duration: ~datetime.timedelta
+        :keyword parameters: List of key value pairs. Required.
         :paramtype parameters: list[~azure.mgmt.chaos.models.KeyValuePair]
-        :keyword selector_id: Required. String that represents a selector.
+        :keyword selector_id: String that represents a selector. Required.
         :paramtype selector_id: str
         """
-        super(ContinuousAction, self).__init__(name=name, **kwargs)
-        self.type = 'continuous'  # type: str
+        super().__init__(name=name, **kwargs)
+        self.type: str = "continuous"
         self.duration = duration
         self.parameters = parameters
         self.selector_id = selector_id
@@ -546,41 +508,35 @@ class DelayAction(Action):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Enum that discriminates between action models.Constant filled by server.
+    :ivar type: Enum that discriminates between action models. Required.
     :vartype type: str
-    :ivar name: Required. String that represents a Capability URN.
+    :ivar name: String that represents a Capability URN. Required.
     :vartype name: str
-    :ivar duration: Required. ISO8601 formatted string that represents a duration.
-    :vartype duration: str
+    :ivar duration: ISO8601 formatted string that represents a duration. Required.
+    :vartype duration: ~datetime.timedelta
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True, 'max_length': 2048, 'min_length': 0},
-        'duration': {'required': True, 'pattern': r'^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$'},
+        "type": {"required": True},
+        "name": {"required": True, "max_length": 2048},
+        "duration": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'duration': {'key': 'duration', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "duration": {"key": "duration", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        duration: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, duration: datetime.timedelta, **kwargs):
         """
-        :keyword name: Required. String that represents a Capability URN.
+        :keyword name: String that represents a Capability URN. Required.
         :paramtype name: str
-        :keyword duration: Required. ISO8601 formatted string that represents a duration.
-        :paramtype duration: str
+        :keyword duration: ISO8601 formatted string that represents a duration. Required.
+        :paramtype duration: ~datetime.timedelta
         """
-        super(DelayAction, self).__init__(name=name, **kwargs)
-        self.type = 'delay'  # type: str
+        super().__init__(name=name, **kwargs)
+        self.type: str = "delay"
         self.duration = duration
 
 
@@ -589,53 +545,46 @@ class DiscreteAction(Action):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Enum that discriminates between action models.Constant filled by server.
+    :ivar type: Enum that discriminates between action models. Required.
     :vartype type: str
-    :ivar name: Required. String that represents a Capability URN.
+    :ivar name: String that represents a Capability URN. Required.
     :vartype name: str
-    :ivar parameters: Required. List of key value pairs.
+    :ivar parameters: List of key value pairs. Required.
     :vartype parameters: list[~azure.mgmt.chaos.models.KeyValuePair]
-    :ivar selector_id: Required. String that represents a selector.
+    :ivar selector_id: String that represents a selector. Required.
     :vartype selector_id: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True, 'max_length': 2048, 'min_length': 0},
-        'parameters': {'required': True},
-        'selector_id': {'required': True, 'min_length': 1},
+        "type": {"required": True},
+        "name": {"required": True, "max_length": 2048},
+        "parameters": {"required": True},
+        "selector_id": {"required": True, "min_length": 1},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[KeyValuePair]'},
-        'selector_id': {'key': 'selectorId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[KeyValuePair]"},
+        "selector_id": {"key": "selectorId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        parameters: List["_models.KeyValuePair"],
-        selector_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, parameters: List["_models.KeyValuePair"], selector_id: str, **kwargs):
         """
-        :keyword name: Required. String that represents a Capability URN.
+        :keyword name: String that represents a Capability URN. Required.
         :paramtype name: str
-        :keyword parameters: Required. List of key value pairs.
+        :keyword parameters: List of key value pairs. Required.
         :paramtype parameters: list[~azure.mgmt.chaos.models.KeyValuePair]
-        :keyword selector_id: Required. String that represents a selector.
+        :keyword selector_id: String that represents a selector. Required.
         :paramtype selector_id: str
         """
-        super(DiscreteAction, self).__init__(name=name, **kwargs)
-        self.type = 'discrete'  # type: str
+        super().__init__(name=name, **kwargs)
+        self.type: str = "discrete"
         self.parameters = parameters
         self.selector_id = selector_id
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -643,31 +592,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -685,28 +630,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -714,7 +655,7 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
@@ -722,20 +663,15 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.chaos.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
@@ -754,41 +690,35 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
@@ -808,17 +738,17 @@ class Experiment(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar system_data: The system metadata of the experiment resource.
     :vartype system_data: ~azure.mgmt.chaos.models.SystemData
     :ivar identity: The identity of the experiment resource.
     :vartype identity: ~azure.mgmt.chaos.models.ResourceIdentity
-    :ivar steps: Required. List of steps.
+    :ivar steps: List of steps. Required.
     :vartype steps: list[~azure.mgmt.chaos.models.Step]
-    :ivar selectors: Required. List of selectors.
+    :ivar selectors: List of selectors. Required.
     :vartype selectors: list[~azure.mgmt.chaos.models.Selector]
     :ivar start_on_creation: A boolean value that indicates if experiment should be started on
      creation or not.
@@ -826,26 +756,26 @@ class Experiment(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'steps': {'required': True, 'min_items': 1},
-        'selectors': {'required': True, 'min_items': 1},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "steps": {"required": True, "min_items": 1},
+        "selectors": {"required": True, "min_items": 1},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'steps': {'key': 'properties.steps', 'type': '[Step]'},
-        'selectors': {'key': 'properties.selectors', 'type': '[Selector]'},
-        'start_on_creation': {'key': 'properties.startOnCreation', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "steps": {"key": "properties.steps", "type": "[Step]"},
+        "selectors": {"key": "properties.selectors", "type": "[Selector]"},
+        "start_on_creation": {"key": "properties.startOnCreation", "type": "bool"},
     }
 
     def __init__(
@@ -860,21 +790,21 @@ class Experiment(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: The identity of the experiment resource.
         :paramtype identity: ~azure.mgmt.chaos.models.ResourceIdentity
-        :keyword steps: Required. List of steps.
+        :keyword steps: List of steps. Required.
         :paramtype steps: list[~azure.mgmt.chaos.models.Step]
-        :keyword selectors: Required. List of selectors.
+        :keyword selectors: List of selectors. Required.
         :paramtype selectors: list[~azure.mgmt.chaos.models.Selector]
         :keyword start_on_creation: A boolean value that indicates if experiment should be started on
          creation or not.
         :paramtype start_on_creation: bool
         """
-        super(Experiment, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.identity = identity
         self.steps = steps
@@ -882,7 +812,7 @@ class Experiment(TrackedResource):
         self.start_on_creation = start_on_creation
 
 
-class ExperimentCancelOperationResult(msrest.serialization.Model):
+class ExperimentCancelOperationResult(_serialization.Model):
     """Model that represents the result of a cancel Experiment operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -894,27 +824,23 @@ class ExperimentCancelOperationResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'status_url': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "name": {"readonly": True},
+        "status_url": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'status_url': {'key': 'statusUrl', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "status_url": {"key": "statusUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentCancelOperationResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.status_url = None
 
 
-class ExperimentExecutionActionTargetDetailsError(msrest.serialization.Model):
+class ExperimentExecutionActionTargetDetailsError(_serialization.Model):
     """Model that represents the Experiment action target details error model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -926,27 +852,23 @@ class ExperimentExecutionActionTargetDetailsError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentExecutionActionTargetDetailsError, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class ExperimentExecutionActionTargetDetailsProperties(msrest.serialization.Model):
+class ExperimentExecutionActionTargetDetailsProperties(_serialization.Model):
     """Model that represents the Experiment action target details properties model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -964,28 +886,24 @@ class ExperimentExecutionActionTargetDetailsProperties(msrest.serialization.Mode
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'target': {'readonly': True},
-        'target_failed_time': {'readonly': True},
-        'target_completed_time': {'readonly': True},
-        'error': {'readonly': True},
+        "status": {"readonly": True},
+        "target": {"readonly": True},
+        "target_failed_time": {"readonly": True},
+        "target_completed_time": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'target_failed_time': {'key': 'targetFailedTime', 'type': 'iso-8601'},
-        'target_completed_time': {'key': 'targetCompletedTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'ExperimentExecutionActionTargetDetailsError'},
+        "status": {"key": "status", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "target_failed_time": {"key": "targetFailedTime", "type": "iso-8601"},
+        "target_completed_time": {"key": "targetCompletedTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ExperimentExecutionActionTargetDetailsError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentExecutionActionTargetDetailsProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.target = None
         self.target_failed_time = None
@@ -993,7 +911,7 @@ class ExperimentExecutionActionTargetDetailsProperties(msrest.serialization.Mode
         self.error = None
 
 
-class ExperimentExecutionDetails(msrest.serialization.Model):
+class ExperimentExecutionDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Model that represents the execution details of a Experiment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1024,40 +942,39 @@ class ExperimentExecutionDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'experiment_id': {'readonly': True},
-        'status': {'readonly': True},
-        'failure_reason': {'readonly': True},
-        'created_date_time': {'readonly': True},
-        'last_action_date_time': {'readonly': True},
-        'start_date_time': {'readonly': True},
-        'stop_date_time': {'readonly': True},
-        'run_information': {'readonly': True},
+        "type": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "experiment_id": {"readonly": True},
+        "status": {"readonly": True},
+        "failure_reason": {"readonly": True},
+        "created_date_time": {"readonly": True},
+        "last_action_date_time": {"readonly": True},
+        "start_date_time": {"readonly": True},
+        "stop_date_time": {"readonly": True},
+        "run_information": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'experiment_id': {'key': 'properties.experimentId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'failure_reason': {'key': 'properties.failureReason', 'type': 'str'},
-        'created_date_time': {'key': 'properties.createdDateTime', 'type': 'iso-8601'},
-        'last_action_date_time': {'key': 'properties.lastActionDateTime', 'type': 'iso-8601'},
-        'start_date_time': {'key': 'properties.startDateTime', 'type': 'iso-8601'},
-        'stop_date_time': {'key': 'properties.stopDateTime', 'type': 'iso-8601'},
-        'run_information': {'key': 'properties.runInformation', 'type': 'ExperimentExecutionDetailsPropertiesRunInformation'},
+        "type": {"key": "type", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "experiment_id": {"key": "properties.experimentId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "failure_reason": {"key": "properties.failureReason", "type": "str"},
+        "created_date_time": {"key": "properties.createdDateTime", "type": "iso-8601"},
+        "last_action_date_time": {"key": "properties.lastActionDateTime", "type": "iso-8601"},
+        "start_date_time": {"key": "properties.startDateTime", "type": "iso-8601"},
+        "stop_date_time": {"key": "properties.stopDateTime", "type": "iso-8601"},
+        "run_information": {
+            "key": "properties.runInformation",
+            "type": "ExperimentExecutionDetailsPropertiesRunInformation",
+        },
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentExecutionDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.id = None
         self.name = None
@@ -1071,7 +988,7 @@ class ExperimentExecutionDetails(msrest.serialization.Model):
         self.run_information = None
 
 
-class ExperimentExecutionDetailsListResult(msrest.serialization.Model):
+class ExperimentExecutionDetailsListResult(_serialization.Model):
     """Model that represents a list of Experiment execution details and a link for pagination.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1083,27 +1000,23 @@ class ExperimentExecutionDetailsListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExperimentExecutionDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExperimentExecutionDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentExecutionDetailsListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ExperimentExecutionDetailsPropertiesRunInformation(msrest.serialization.Model):
+class ExperimentExecutionDetailsPropertiesRunInformation(_serialization.Model):
     """The information of the experiment run.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1113,24 +1026,20 @@ class ExperimentExecutionDetailsPropertiesRunInformation(msrest.serialization.Mo
     """
 
     _validation = {
-        'steps': {'readonly': True},
+        "steps": {"readonly": True},
     }
 
     _attribute_map = {
-        'steps': {'key': 'steps', 'type': '[StepStatus]'},
+        "steps": {"key": "steps", "type": "[StepStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentExecutionDetailsPropertiesRunInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.steps = None
 
 
-class ExperimentListResult(msrest.serialization.Model):
+class ExperimentListResult(_serialization.Model):
     """Model that represents a list of Experiment resources and a link for pagination.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1142,27 +1051,23 @@ class ExperimentListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Experiment]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Experiment]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ExperimentStartOperationResult(msrest.serialization.Model):
+class ExperimentStartOperationResult(_serialization.Model):
     """Model that represents the result of a start Experiment operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1174,27 +1079,23 @@ class ExperimentStartOperationResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'status_url': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "name": {"readonly": True},
+        "status_url": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'status_url': {'key': 'statusUrl', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "status_url": {"key": "statusUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentStartOperationResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.status_url = None
 
 
-class ExperimentStatus(msrest.serialization.Model):
+class ExperimentStatus(_serialization.Model):
     """Model that represents the status of a Experiment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1214,30 +1115,26 @@ class ExperimentStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'status': {'readonly': True},
-        'created_date_utc': {'readonly': True},
-        'end_date_utc': {'readonly': True},
+        "type": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "status": {"readonly": True},
+        "created_date_utc": {"readonly": True},
+        "end_date_utc": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'created_date_utc': {'key': 'properties.createdDateUtc', 'type': 'iso-8601'},
-        'end_date_utc': {'key': 'properties.endDateUtc', 'type': 'iso-8601'},
+        "type": {"key": "type", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "created_date_utc": {"key": "properties.createdDateUtc", "type": "iso-8601"},
+        "end_date_utc": {"key": "properties.endDateUtc", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.id = None
         self.name = None
@@ -1246,7 +1143,7 @@ class ExperimentStatus(msrest.serialization.Model):
         self.end_date_utc = None
 
 
-class ExperimentStatusListResult(msrest.serialization.Model):
+class ExperimentStatusListResult(_serialization.Model):
     """Model that represents a list of Experiment statuses and a link for pagination.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1258,66 +1155,85 @@ class ExperimentStatusListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ExperimentStatus]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ExperimentStatus]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ExperimentStatusListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class KeyValuePair(msrest.serialization.Model):
+class Filter(_serialization.Model):
+    """Model that represents available filter types that can be applied to a targets list.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SimpleFilter
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Enum that discriminates between filter types. Currently only ``Simple`` type is
+     supported. Required. "Simple"
+    :vartype type: str or ~azure.mgmt.chaos.models.FilterType
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+    }
+
+    _subtype_map = {"type": {"Simple": "SimpleFilter"}}
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+
+
+class KeyValuePair(_serialization.Model):
     """A map to describe the settings of an action.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key: Required. The name of the setting for the action.
+    :ivar key: The name of the setting for the action. Required.
     :vartype key: str
-    :ivar value: Required. The value of the setting for the action.
+    :ivar value: The value of the setting for the action. Required.
     :vartype value: str
     """
 
     _validation = {
-        'key': {'required': True, 'min_length': 1},
-        'value': {'required': True, 'min_length': 1},
+        "key": {"required": True, "min_length": 1},
+        "value": {"required": True, "min_length": 1},
     }
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key: str,
-        value: str,
-        **kwargs
-    ):
+    def __init__(self, *, key: str, value: str, **kwargs):
         """
-        :keyword key: Required. The name of the setting for the action.
+        :keyword key: The name of the setting for the action. Required.
         :paramtype key: str
-        :keyword value: Required. The value of the setting for the action.
+        :keyword value: The value of the setting for the action. Required.
         :paramtype value: str
         """
-        super(KeyValuePair, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key = key
         self.value = value
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1332,39 +1248,34 @@ class Operation(msrest.serialization.Model):
     :vartype display: ~azure.mgmt.chaos.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
      (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     "user,system".
+     and "user,system".
     :vartype origin: str or ~azure.mgmt.chaos.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Known values are: "Internal".
+     internal only APIs. "Internal"
     :vartype action_type: str or ~azure.mgmt.chaos.models.ActionType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["_models.OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.chaos.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = None
         self.display = display
@@ -1372,7 +1283,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Localized display information for this particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1392,33 +1303,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1430,34 +1337,30 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ResourceIdentity(msrest.serialization.Model):
+class ResourceIdentity(_serialization.Model):
     """The managed identity of a resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. String of the resource identity type. Known values are: "None",
+    :ivar type: String of the resource identity type. Required. Known values are: "None" and
      "SystemAssigned".
     :vartype type: str or ~azure.mgmt.chaos.models.ResourceIdentityType
     :ivar principal_id: GUID that represents the principal ID of this resource identity.
@@ -1467,123 +1370,178 @@ class ResourceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'principal_id': {'readonly': True, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'tenant_id': {'readonly': True, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        "type": {"required": True},
+        "principal_id": {
+            "readonly": True,
+            "pattern": r"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+        },
+        "tenant_id": {
+            "readonly": True,
+            "pattern": r"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+        },
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.ResourceIdentityType"],
-        **kwargs
-    ):
+    def __init__(self, *, type: Union[str, "_models.ResourceIdentityType"], **kwargs):
         """
-        :keyword type: Required. String of the resource identity type. Known values are: "None",
+        :keyword type: String of the resource identity type. Required. Known values are: "None" and
          "SystemAssigned".
         :paramtype type: str or ~azure.mgmt.chaos.models.ResourceIdentityType
         """
-        super(ResourceIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.principal_id = None
         self.tenant_id = None
 
 
-class Selector(msrest.serialization.Model):
+class Selector(_serialization.Model):
     """Model that represents a selector in the Experiment resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. Enum of the selector type. Known values are: "Percent", "Random", "Tag",
-     "List".
+    :ivar type: Enum of the selector type. Required. Known values are: "Percent", "Random", "Tag",
+     and "List".
     :vartype type: str or ~azure.mgmt.chaos.models.SelectorType
-    :ivar id: Required. String of the selector ID.
+    :ivar id: String of the selector ID. Required.
     :vartype id: str
-    :ivar targets: Required. List of Target references.
+    :ivar targets: List of Target references. Required.
     :vartype targets: list[~azure.mgmt.chaos.models.TargetReference]
+    :ivar filter: Model that represents available filter types that can be applied to a targets
+     list.
+    :vartype filter: ~azure.mgmt.chaos.models.Filter
     """
 
     _validation = {
-        'type': {'required': True},
-        'id': {'required': True, 'min_length': 1},
-        'targets': {'required': True, 'min_items': 1},
+        "type": {"required": True},
+        "id": {"required": True, "min_length": 1},
+        "targets": {"required": True, "min_items": 1},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'targets': {'key': 'targets', 'type': '[TargetReference]'},
+        "type": {"key": "type", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "targets": {"key": "targets", "type": "[TargetReference]"},
+        "filter": {"key": "filter", "type": "Filter"},
     }
 
     def __init__(
         self,
         *,
         type: Union[str, "_models.SelectorType"],
-        id: str,
+        id: str,  # pylint: disable=redefined-builtin
         targets: List["_models.TargetReference"],
+        filter: Optional["_models.Filter"] = None,  # pylint: disable=redefined-builtin
         **kwargs
     ):
         """
-        :keyword type: Required. Enum of the selector type. Known values are: "Percent", "Random",
-         "Tag", "List".
+        :keyword type: Enum of the selector type. Required. Known values are: "Percent", "Random",
+         "Tag", and "List".
         :paramtype type: str or ~azure.mgmt.chaos.models.SelectorType
-        :keyword id: Required. String of the selector ID.
+        :keyword id: String of the selector ID. Required.
         :paramtype id: str
-        :keyword targets: Required. List of Target references.
+        :keyword targets: List of Target references. Required.
         :paramtype targets: list[~azure.mgmt.chaos.models.TargetReference]
+        :keyword filter: Model that represents available filter types that can be applied to a targets
+         list.
+        :paramtype filter: ~azure.mgmt.chaos.models.Filter
         """
-        super(Selector, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.id = id
         self.targets = targets
+        self.filter = filter
 
 
-class Step(msrest.serialization.Model):
+class SimpleFilter(Filter):
+    """Model that represents a simple target filter.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Enum that discriminates between filter types. Currently only ``Simple`` type is
+     supported. Required. "Simple"
+    :vartype type: str or ~azure.mgmt.chaos.models.FilterType
+    :ivar parameters: Model that represents the Simple filter parameters.
+    :vartype parameters: ~azure.mgmt.chaos.models.SimpleFilterParameters
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "parameters": {"key": "parameters", "type": "SimpleFilterParameters"},
+    }
+
+    def __init__(self, *, parameters: Optional["_models.SimpleFilterParameters"] = None, **kwargs):
+        """
+        :keyword parameters: Model that represents the Simple filter parameters.
+        :paramtype parameters: ~azure.mgmt.chaos.models.SimpleFilterParameters
+        """
+        super().__init__(**kwargs)
+        self.type: str = "Simple"
+        self.parameters = parameters
+
+
+class SimpleFilterParameters(_serialization.Model):
+    """Model that represents the Simple filter parameters.
+
+    :ivar zones: List of Azure availability zones to filter targets by.
+    :vartype zones: list[str]
+    """
+
+    _attribute_map = {
+        "zones": {"key": "zones", "type": "[str]"},
+    }
+
+    def __init__(self, *, zones: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword zones: List of Azure availability zones to filter targets by.
+        :paramtype zones: list[str]
+        """
+        super().__init__(**kwargs)
+        self.zones = zones
+
+
+class Step(_serialization.Model):
     """Model that represents a step in the Experiment resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. String of the step name.
+    :ivar name: String of the step name. Required.
     :vartype name: str
-    :ivar branches: Required. List of branches.
+    :ivar branches: List of branches. Required.
     :vartype branches: list[~azure.mgmt.chaos.models.Branch]
     """
 
     _validation = {
-        'name': {'required': True, 'min_length': 1},
-        'branches': {'required': True, 'min_items': 1},
+        "name": {"required": True, "min_length": 1},
+        "branches": {"required": True, "min_items": 1},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'branches': {'key': 'branches', 'type': '[Branch]'},
+        "name": {"key": "name", "type": "str"},
+        "branches": {"key": "branches", "type": "[Branch]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        branches: List["_models.Branch"],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, branches: List["_models.Branch"], **kwargs):
         """
-        :keyword name: Required. String of the step name.
+        :keyword name: String of the step name. Required.
         :paramtype name: str
-        :keyword branches: Required. List of branches.
+        :keyword branches: List of branches. Required.
         :paramtype branches: list[~azure.mgmt.chaos.models.Branch]
         """
-        super(Step, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.branches = branches
 
 
-class StepStatus(msrest.serialization.Model):
+class StepStatus(_serialization.Model):
     """Model that represents the a list of branches and branch statuses.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1599,58 +1557,54 @@ class StepStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'step_name': {'readonly': True},
-        'step_id': {'readonly': True},
-        'status': {'readonly': True},
-        'branches': {'readonly': True},
+        "step_name": {"readonly": True},
+        "step_id": {"readonly": True},
+        "status": {"readonly": True},
+        "branches": {"readonly": True},
     }
 
     _attribute_map = {
-        'step_name': {'key': 'stepName', 'type': 'str'},
-        'step_id': {'key': 'stepId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'branches': {'key': 'branches', 'type': '[BranchStatus]'},
+        "step_name": {"key": "stepName", "type": "str"},
+        "step_id": {"key": "stepId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "branches": {"key": "branches", "type": "[BranchStatus]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StepStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.step_name = None
         self.step_id = None
         self.status = None
         self.branches = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", "Key".
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.chaos.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", "Key".
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.chaos.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -1668,19 +1622,19 @@ class SystemData(msrest.serialization.Model):
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", "Key".
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.chaos.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", "Key".
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.chaos.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -1708,47 +1662,41 @@ class Target(Resource):
     :vartype system_data: ~azure.mgmt.chaos.models.SystemData
     :ivar location: Location of the target resource.
     :vartype location: str
-    :ivar properties: Required. The properties of the target resource.
+    :ivar properties: The properties of the target resource. Required.
     :vartype properties: dict[str, any]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "{object}"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Dict[str, Any],
-        location: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Dict[str, Any], location: Optional[str] = None, **kwargs):
         """
         :keyword location: Location of the target resource.
         :paramtype location: str
-        :keyword properties: Required. The properties of the target resource.
+        :keyword properties: The properties of the target resource. Required.
         :paramtype properties: dict[str, any]
         """
-        super(Target, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.location = location
         self.properties = properties
 
 
-class TargetListResult(msrest.serialization.Model):
+class TargetListResult(_serialization.Model):
     """Model that represents a list of Target resources and a link for pagination.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1760,62 +1708,56 @@ class TargetListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Target]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Target]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(TargetListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class TargetReference(msrest.serialization.Model):
+class TargetReference(_serialization.Model):
     """Model that represents a reference to a Target in the selector.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Enum of the Target reference type. Has constant value: "ChaosTarget".
+    :ivar type: Enum of the Target reference type. Required. Default value is "ChaosTarget".
     :vartype type: str
-    :ivar id: Required. String of the resource ID of a Target resource.
+    :ivar id: String of the resource ID of a Target resource. Required.
     :vartype id: str
     """
 
     _validation = {
-        'type': {'required': True, 'constant': True},
-        'id': {'required': True, 'pattern': r'^\/[Ss][Uu][Bb][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn][Ss]\/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\/[Rr][Ee][Ss][Oo][Uu][Rr][Cc][Ee][Gg][Rr][Oo][Uu][Pp][Ss]\/[a-zA-Z0-9_\-\.\(\)]*[a-zA-Z0-9_\-\(\)]\/[Pp][Rr][Oo][Vv][Ii][Dd][Ee][Rr][Ss]\/[a-zA-Z0-9]+\.[a-zA-Z0-9]+\/[a-zA-Z0-9_\-\.]+\/[a-zA-Z0-9_\-\.]+\/[Pp][Rr][Oo][Vv][Ii][Dd][Ee][Rr][Ss]\/[Mm][Ii][Cc][Rr][Oo][Ss][Oo][Ff][Tt]\.[Cc][Hh][Aa][Oo][Ss]\/[Tt][Aa][Rr][Gg][Ee][Tt][Ss]\/[a-zA-Z0-9_\-\.]+$'},
+        "type": {"required": True, "constant": True},
+        "id": {
+            "required": True,
+            "pattern": r"^\/[Ss][Uu][Bb][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn][Ss]\/[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\/[Rr][Ee][Ss][Oo][Uu][Rr][Cc][Ee][Gg][Rr][Oo][Uu][Pp][Ss]\/[a-zA-Z0-9_\-\.\(\)]*[a-zA-Z0-9_\-\(\)]\/[Pp][Rr][Oo][Vv][Ii][Dd][Ee][Rr][Ss]\/[a-zA-Z0-9]+\.[a-zA-Z0-9]+\/[a-zA-Z0-9_\-\.]+\/[a-zA-Z0-9_\-\.]+\/[Pp][Rr][Oo][Vv][Ii][Dd][Ee][Rr][Ss]\/[Mm][Ii][Cc][Rr][Oo][Ss][Oo][Ff][Tt]\.[Cc][Hh][Aa][Oo][Ss]\/[Tt][Aa][Rr][Gg][Ee][Tt][Ss]\/[a-zA-Z0-9_\-\.]+$",
+        },
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "id": {"key": "id", "type": "str"},
     }
 
     type = "ChaosTarget"
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. String of the resource ID of a Target resource.
+        :keyword id: String of the resource ID of a Target resource. Required.
         :paramtype id: str
         """
-        super(TargetReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -1847,39 +1789,34 @@ class TargetType(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'properties_schema': {'readonly': True, 'max_length': 2048, 'min_length': 0},
-        'resource_types': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "properties_schema": {"readonly": True, "max_length": 2048},
+        "resource_types": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'location': {'key': 'location', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'properties_schema': {'key': 'properties.propertiesSchema', 'type': 'str'},
-        'resource_types': {'key': 'properties.resourceTypes', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "properties_schema": {"key": "properties.propertiesSchema", "type": "str"},
+        "resource_types": {"key": "properties.resourceTypes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, **kwargs):
         """
         :keyword location: Location of the Target Type resource.
         :paramtype location: str
         """
-        super(TargetType, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.location = location
         self.display_name = None
@@ -1888,7 +1825,7 @@ class TargetType(Resource):
         self.resource_types = None
 
 
-class TargetTypeListResult(msrest.serialization.Model):
+class TargetTypeListResult(_serialization.Model):
     """Model that represents a list of Target Type resources and a link for pagination.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1900,21 +1837,17 @@ class TargetTypeListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True, 'max_length': 2048, 'min_length': 0},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True, "max_length": 2048},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TargetType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[TargetType]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(TargetTypeListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None

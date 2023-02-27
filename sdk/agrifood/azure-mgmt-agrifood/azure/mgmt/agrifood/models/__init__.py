@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import ApiProperties
 from ._models_py3 import ArmAsyncOperation
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
@@ -14,14 +15,22 @@ from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import Extension
+from ._models_py3 import ExtensionInstallationRequest
 from ._models_py3 import ExtensionListResponse
 from ._models_py3 import FarmBeats
 from ._models_py3 import FarmBeatsExtension
 from ._models_py3 import FarmBeatsExtensionListResponse
 from ._models_py3 import FarmBeatsListResponse
+from ._models_py3 import FarmBeatsSolution
+from ._models_py3 import FarmBeatsSolutionListResponse
+from ._models_py3 import FarmBeatsSolutionProperties
 from ._models_py3 import FarmBeatsUpdateProperties
 from ._models_py3 import FarmBeatsUpdateRequestModel
 from ._models_py3 import Identity
+from ._models_py3 import Insight
+from ._models_py3 import InsightAttachment
+from ._models_py3 import MarketplaceOfferDetails
+from ._models_py3 import Measure
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
@@ -33,7 +42,13 @@ from ._models_py3 import PrivateLinkResourceListResult
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
+from ._models_py3 import ResourceParameter
 from ._models_py3 import SensorIntegration
+from ._models_py3 import Solution
+from ._models_py3 import SolutionEvaluatedOutput
+from ._models_py3 import SolutionInstallationRequest
+from ._models_py3 import SolutionListResponse
+from ._models_py3 import SolutionProperties
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import UnitSystemsInfo
@@ -47,10 +62,11 @@ from ._agri_food_mgmt_client_enums import PrivateEndpointServiceConnectionStatus
 from ._agri_food_mgmt_client_enums import ProvisioningState
 from ._agri_food_mgmt_client_enums import PublicNetworkAccess
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ApiProperties",
     "ArmAsyncOperation",
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResponse",
@@ -59,14 +75,22 @@ __all__ = [
     "ErrorDetail",
     "ErrorResponse",
     "Extension",
+    "ExtensionInstallationRequest",
     "ExtensionListResponse",
     "FarmBeats",
     "FarmBeatsExtension",
     "FarmBeatsExtensionListResponse",
     "FarmBeatsListResponse",
+    "FarmBeatsSolution",
+    "FarmBeatsSolutionListResponse",
+    "FarmBeatsSolutionProperties",
     "FarmBeatsUpdateProperties",
     "FarmBeatsUpdateRequestModel",
     "Identity",
+    "Insight",
+    "InsightAttachment",
+    "MarketplaceOfferDetails",
+    "Measure",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
@@ -78,7 +102,13 @@ __all__ = [
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "Resource",
+    "ResourceParameter",
     "SensorIntegration",
+    "Solution",
+    "SolutionEvaluatedOutput",
+    "SolutionInstallationRequest",
+    "SolutionListResponse",
+    "SolutionProperties",
     "SystemData",
     "TrackedResource",
     "UnitSystemsInfo",

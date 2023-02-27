@@ -37,13 +37,13 @@ def main():
         switch_input={
             "properties": {
                 "providerSpecificDetails": {"instanceType": "A2A"},
-                "replicationProtectedItemName": "a2aSwapOsVm",
+                "replicatedProtectedItemName": "a2aSwapOsVm",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-09-10/examples/ReplicationProtectionContainers_SwitchProtection.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/ReplicationProtectionContainers_SwitchProtection.json
 if __name__ == "__main__":
     main()

@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -64,8 +65,8 @@ class Alias(_serialization.Model):
         type: Optional[Union[str, "_models.AliasType"]] = None,
         default_path: Optional[str] = None,
         default_pattern: Optional["_models.AliasPattern"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The alias name.
         :paramtype name: str
@@ -121,8 +122,8 @@ class AliasPath(_serialization.Model):
         path: Optional[str] = None,
         api_versions: Optional[List[str]] = None,
         pattern: Optional["_models.AliasPattern"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: The path of an alias.
         :paramtype path: str
@@ -161,7 +162,7 @@ class AliasPathMetadata(_serialization.Model):
         "attributes": {"key": "attributes", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -191,8 +192,8 @@ class AliasPattern(_serialization.Model):
         phrase: Optional[str] = None,
         variable: Optional[str] = None,
         type: Optional[Union[str, "_models.AliasPatternType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword phrase: The alias pattern phrase.
         :paramtype phrase: str
@@ -221,7 +222,7 @@ class DataEffect(_serialization.Model):
         "details_schema": {"key": "detailsSchema", "type": "object"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, details_schema: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, details_schema: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword name: The data effect name.
         :paramtype name: str
@@ -264,8 +265,8 @@ class DataManifestCustomResourceFunctionDefinition(_serialization.Model):
         fully_qualified_resource_type: Optional[str] = None,
         default_properties: Optional[List[str]] = None,
         allow_custom_properties: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The function name as it will appear in the policy rule. eg - 'vault'.
         :paramtype name: str
@@ -353,8 +354,8 @@ class DataPolicyManifest(_serialization.Model):  # pylint: disable=too-many-inst
         field_values: Optional[List[str]] = None,
         standard: Optional[List[str]] = None,
         custom: Optional[List["_models.DataManifestCustomResourceFunctionDefinition"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword namespaces: The list of namespaces for the data policy manifest.
         :paramtype namespaces: list[str]
@@ -405,8 +406,12 @@ class DataPolicyManifestListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DataPolicyManifest"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.DataPolicyManifest"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of data policy manifests.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.DataPolicyManifest]
@@ -439,7 +444,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -447,7 +452,8 @@ class ErrorAdditionalInfo(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -480,7 +486,7 @@ class ErrorResponse(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -491,7 +497,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class Identity(_serialization.Model):
-    """Identity for the resource.  Policy assignments support a maximum of one identity.  That is either a system assigned identity or a single user assigned identity.
+    """Identity for the resource.  Policy assignments support a maximum of one identity.  That is
+    either a system assigned identity or a single user assigned identity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -529,8 +536,8 @@ class Identity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The identity type. This is the only required field when adding a system or user
          assigned identity to a resource. Known values are: "SystemAssigned", "UserAssigned", and
@@ -550,7 +557,8 @@ class Identity(_serialization.Model):
 
 
 class NonComplianceMessage(_serialization.Model):
-    """A message that describes why a resource is non-compliant with the policy. This is shown in 'deny' error messages and on resource's non-compliant compliance results.
+    """A message that describes why a resource is non-compliant with the policy. This is shown in
+    'deny' error messages and on resource's non-compliant compliance results.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -573,7 +581,7 @@ class NonComplianceMessage(_serialization.Model):
         "policy_definition_reference_id": {"key": "policyDefinitionReferenceId", "type": "str"},
     }
 
-    def __init__(self, *, message: str, policy_definition_reference_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, message: str, policy_definition_reference_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword message: A message that describes why a resource is non-compliant with the policy.
          This is shown in 'deny' error messages and on resource's non-compliant compliance results.
@@ -619,8 +627,8 @@ class ParameterDefinitionsValue(_serialization.Model):
         allowed_values: Optional[List[JSON]] = None,
         default_value: Optional[JSON] = None,
         metadata: Optional["_models.ParameterDefinitionsValueMetadata"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The data type of the parameter. Known values are: "String", "Array", "Object",
          "Boolean", "Integer", "Float", and "DateTime".
@@ -675,8 +683,8 @@ class ParameterDefinitionsValueMetadata(_serialization.Model):
         description: Optional[str] = None,
         strong_type: Optional[str] = None,
         assign_permissions: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -712,7 +720,7 @@ class ParameterValuesValue(_serialization.Model):
         "value": {"key": "value", "type": "object"},
     }
 
-    def __init__(self, *, value: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, value: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword value: The value of the parameter.
         :paramtype value: JSON
@@ -806,8 +814,8 @@ class PolicyAssignment(_serialization.Model):  # pylint: disable=too-many-instan
         metadata: Optional[JSON] = None,
         enforcement_mode: Union[str, "_models.EnforcementMode"] = "Default",
         non_compliance_messages: Optional[List["_models.NonComplianceMessage"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the policy assignment. Only required when utilizing managed
          identity.
@@ -872,8 +880,12 @@ class PolicyAssignmentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PolicyAssignment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PolicyAssignment"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of policy assignments.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyAssignment]
@@ -900,7 +912,9 @@ class PolicyAssignmentUpdate(_serialization.Model):
         "identity": {"key": "identity", "type": "Identity"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, identity: Optional["_models.Identity"] = None, **kwargs):
+    def __init__(
+        self, *, location: Optional[str] = None, identity: Optional["_models.Identity"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the policy assignment. Only required when utilizing managed
          identity.
@@ -978,8 +992,8 @@ class PolicyDefinition(_serialization.Model):  # pylint: disable=too-many-instan
         policy_rule: Optional[JSON] = None,
         metadata: Optional[JSON] = None,
         parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
          Custom, and Static. Known values are: "NotSpecified", "BuiltIn", "Custom", and "Static".
@@ -1053,8 +1067,8 @@ class PolicyDefinitionGroup(_serialization.Model):
         category: Optional[str] = None,
         description: Optional[str] = None,
         additional_metadata_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the group. Required.
         :paramtype name: str
@@ -1091,8 +1105,12 @@ class PolicyDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PolicyDefinition"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PolicyDefinition"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of policy definitions.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyDefinition]
@@ -1140,8 +1158,8 @@ class PolicyDefinitionReference(_serialization.Model):
         parameters: Optional[Dict[str, "_models.ParameterValuesValue"]] = None,
         policy_definition_reference_id: Optional[str] = None,
         group_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_definition_id: The ID of the policy definition or policy set definition.
          Required.
@@ -1233,8 +1251,8 @@ class PolicyExemption(_serialization.Model):  # pylint: disable=too-many-instanc
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         metadata: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_assignment_id: The ID of the policy assignment that is being exempted.
          Required.
@@ -1291,7 +1309,7 @@ class PolicyExemptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PolicyExemption"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PolicyExemption"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of policy exemptions.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyExemption]
@@ -1368,8 +1386,8 @@ class PolicySetDefinition(_serialization.Model):  # pylint: disable=too-many-ins
         parameters: Optional[Dict[str, "_models.ParameterDefinitionsValue"]] = None,
         policy_definitions: Optional[List["_models.PolicyDefinitionReference"]] = None,
         policy_definition_groups: Optional[List["_models.PolicyDefinitionGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_type: The type of policy definition. Possible values are NotSpecified, BuiltIn,
          Custom, and Static. Known values are: "NotSpecified", "BuiltIn", "Custom", and "Static".
@@ -1422,8 +1440,12 @@ class PolicySetDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PolicySetDefinition"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PolicySetDefinition"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of policy set definitions.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicySetDefinition]
@@ -1452,7 +1474,7 @@ class PolicyVariableColumn(_serialization.Model):
         "column_name": {"key": "columnName", "type": "str"},
     }
 
-    def __init__(self, *, column_name: str, **kwargs):
+    def __init__(self, *, column_name: str, **kwargs: Any) -> None:
         """
         :keyword column_name: The name of this policy variable column. Required.
         :paramtype column_name: str
@@ -1483,7 +1505,7 @@ class PolicyVariableValueColumnValue(_serialization.Model):
         "column_value": {"key": "columnValue", "type": "object"},
     }
 
-    def __init__(self, *, column_name: str, column_value: JSON, **kwargs):
+    def __init__(self, *, column_name: str, column_value: JSON, **kwargs: Any) -> None:
         """
         :keyword column_name: Column name for the variable value. Required.
         :paramtype column_name: str
@@ -1511,8 +1533,8 @@ class ResourceTypeAliases(_serialization.Model):
     }
 
     def __init__(
-        self, *, resource_type: Optional[str] = None, aliases: Optional[List["_models.Alias"]] = None, **kwargs
-    ):
+        self, *, resource_type: Optional[str] = None, aliases: Optional[List["_models.Alias"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword resource_type: The resource type name.
         :paramtype resource_type: str
@@ -1562,8 +1584,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1611,7 +1633,7 @@ class UserAssignedIdentitiesValue(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -1654,7 +1676,7 @@ class Variable(_serialization.Model):
         "columns": {"key": "properties.columns", "type": "[PolicyVariableColumn]"},
     }
 
-    def __init__(self, *, columns: List["_models.PolicyVariableColumn"], **kwargs):
+    def __init__(self, *, columns: List["_models.PolicyVariableColumn"], **kwargs: Any) -> None:
         """
         :keyword columns: Variable column definitions. Required.
         :paramtype columns: list[~azure.mgmt.resource.policy.v2021_06_01.models.PolicyVariableColumn]
@@ -1687,7 +1709,7 @@ class VariableListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Variable"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Variable"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of variables.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.Variable]
@@ -1734,7 +1756,7 @@ class VariableValue(_serialization.Model):
         "values": {"key": "properties.values", "type": "[PolicyVariableValueColumnValue]"},
     }
 
-    def __init__(self, *, values: List["_models.PolicyVariableValueColumnValue"], **kwargs):
+    def __init__(self, *, values: List["_models.PolicyVariableValueColumnValue"], **kwargs: Any) -> None:
         """
         :keyword values: Variable value column value array. Required.
         :paramtype values:
@@ -1768,7 +1790,7 @@ class VariableValueListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VariableValue"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.VariableValue"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of variable values.
         :paramtype value: list[~azure.mgmt.resource.policy.v2021_06_01.models.VariableValue]

@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -56,8 +56,8 @@ class Import(BaseNode):
         self,
         *,
         component: Union[str, ImportComponent],
-        inputs: Dict[str, str] = None,
-        outputs: Dict[str, Output] = None,
+        inputs: Optional[Dict[str, str]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         **kwargs,
     ):
         # validate init params are valid type

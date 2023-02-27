@@ -10,26 +10,27 @@ from collections import OrderedDict
 from functools import wraps
 from inspect import Parameter, signature
 from pathlib import Path
-from typing import Any, Callable, Dict, TypeVar, List
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 from azure.ai.ml._utils.utils import is_private_preview_enabled
-from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings, Model
+from azure.ai.ml.entities import Data, Model, PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_group
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, _GroupAttrDict
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.exceptions import (
     MultipleValueError,
+    ParamValueNotExistsError,
     TooManyPositionalArgsError,
     UnexpectedKeywordError,
     UnsupportedParameterKindError,
     UserErrorException,
-    ParamValueNotExistsError,
 )
 
 from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
 from ._settings import _dsl_settings_stack
 from ._utils import _resolve_source_file
+from ..entities._builders import BaseNode
 
 _TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
 
@@ -53,16 +54,16 @@ module_logger = logging.getLogger(__name__)
 def pipeline(
     func=None,
     *,
-    name: str = None,
-    version: str = None,
-    display_name: str = None,
-    description: str = None,
-    experiment_name: str = None,
-    tags: Dict[str, str] = None,
+    name: Optional[str] = None,
+    version: Optional[str] = None,
+    display_name: Optional[str] = None,
+    description: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ):
     """Build a pipeline which contains all component nodes defined in this
-    function. Set AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED to enable multi layer pipeline.
+    function.
 
     .. note::
 
@@ -111,7 +112,7 @@ def pipeline(
     """
 
     def pipeline_decorator(func: _TFunc) -> _TFunc:
-        if not isinstance(func, Callable): # pylint: disable=isinstance-second-argument-not-valid-type
+        if not isinstance(func, Callable):  # pylint: disable=isinstance-second-argument-not-valid-type
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
         non_pipeline_inputs = kwargs.get("non_pipeline_inputs", []) or kwargs.get("non_pipeline_parameters", [])
@@ -166,18 +167,20 @@ def pipeline(
                 provided_positional_kwargs = _validate_args(func, args, kwargs, non_pipeline_inputs)
 
                 # When pipeline supports variable params, update pipeline component to support the inputs in **kwargs.
-                pipeline_parameters = {k: v for k, v in provided_positional_kwargs.items() if
-                                       k not in non_pipeline_inputs}
+                pipeline_parameters = {
+                    k: v for k, v in provided_positional_kwargs.items() if k not in non_pipeline_inputs
+                }
                 pipeline_builder._update_inputs(pipeline_parameters)
 
-                non_pipeline_params_dict = {k: v for k, v in provided_positional_kwargs.items()
-                                            if k in non_pipeline_inputs}
+                non_pipeline_params_dict = {
+                    k: v for k, v in provided_positional_kwargs.items() if k in non_pipeline_inputs
+                }
 
                 # TODO: cache built pipeline component
                 pipeline_component = pipeline_builder.build(
                     user_provided_kwargs=provided_positional_kwargs,
                     non_pipeline_inputs_dict=non_pipeline_params_dict,
-                    non_pipeline_inputs=non_pipeline_inputs
+                    non_pipeline_inputs=non_pipeline_inputs,
                 )
             finally:
                 # use `finally` to ensure pop operation from the stack
@@ -231,8 +234,7 @@ def pipeline(
 
 def _validate_args(func, args, kwargs, non_pipeline_inputs):
     """Validate customer function args and convert them to kwargs."""
-    if not isinstance(non_pipeline_inputs, List) or \
-            any(not isinstance(param, str) for param in non_pipeline_inputs):
+    if not isinstance(non_pipeline_inputs, List) or any(not isinstance(param, str) for param in non_pipeline_inputs):
         msg = "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string"
         raise UserErrorException(message=msg, no_personal_data_message=msg)
     # Positional arguments validate
@@ -249,7 +251,8 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
         raise ParamValueNotExistsError(func.__name__, unexpected_non_pipeline_inputs)
 
     named_parameters = [
-        param for param in all_parameters.values() if param.kind not in [param.VAR_KEYWORD, param.VAR_POSITIONAL]]
+        param for param in all_parameters.values() if param.kind not in [param.VAR_KEYWORD, param.VAR_POSITIONAL]
+    ]
     empty_parameters = {param.name: param for param in named_parameters if param.default is Parameter.empty}
     # Implicit parameter are *args and **kwargs
     if not is_support_variable_params:
@@ -271,15 +274,22 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
         provided_args[_k] = _v
 
     def _is_supported_data_type(_data):
-        return (
-                isinstance(_data, SUPPORTED_INPUT_TYPES)
-                or is_group(_data)
-        )
+        return isinstance(_data, SUPPORTED_INPUT_TYPES) or is_group(_data)
 
     for pipeline_input_name in provided_args:
         data = provided_args[pipeline_input_name]
-        if data is not None and not _is_supported_data_type(data) and \
-                pipeline_input_name not in non_pipeline_inputs:
+        # for input_key, input_value in kwargs.items():
+        if isinstance(data, BaseNode):
+            if len(data.outputs) != 1:
+                raise ValueError(
+                    "Provided input {} is not a single output node, cannot be used as a node input.".format(
+                        pipeline_input_name
+                    )
+                )
+            data = next(iter(data.outputs.values()))
+            provided_args[pipeline_input_name] = data
+
+        if data is not None and not _is_supported_data_type(data) and pipeline_input_name not in non_pipeline_inputs:
             msg = (
                 "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), "
                 "but got type {}."

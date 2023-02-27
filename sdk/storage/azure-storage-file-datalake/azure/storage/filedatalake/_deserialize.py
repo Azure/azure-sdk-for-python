@@ -15,6 +15,7 @@ from azure.core.exceptions import HttpResponseError, DecodeError, ResourceModifi
 from ._models import FileProperties, DirectoryProperties, LeaseProperties, DeletedPathProperties, StaticWebsite, \
     RetentionPolicy, Metrics, AnalyticsLogging, PathProperties  # pylint: disable=protected-access
 from ._shared.models import StorageErrorCode
+from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
     pass
@@ -107,14 +108,6 @@ def normalize_headers(headers):
     return normalized
 
 
-def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    try:
-        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
-    except AttributeError:
-        raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
-    return {k[10:]: v for k, v in raw_metadata.items()}
-
-
 def process_storage_error(storage_error):   # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
@@ -192,11 +185,11 @@ def process_storage_error(storage_error):   # pylint:disable=too-many-statements
 
     # Error message should include all the error properties
     try:
-        error_message += "\nErrorCode:{}".format(error_code.value)
+        error_message += f"\nErrorCode:{error_code.value}"
     except AttributeError:
-        error_message += "\nErrorCode:{}".format(error_code)
+        error_message += f"\nErrorCode:{error_code}"
     for name, info in additional_data.items():
-        error_message += "\n{}:{}".format(name, info)
+        error_message += f"\n{name}:{info}"
 
     # No need to create an instance if it has already been serialized by the generated layer
     if serialized:

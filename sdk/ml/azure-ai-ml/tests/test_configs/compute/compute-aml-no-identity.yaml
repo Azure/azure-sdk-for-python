@@ -3,6 +3,7 @@ type: amlcompute
 tier: dedicated
 description: some_desc_aml
 size: Standard_DS2_v2
+location: eastus
 ssh_public_access_enabled: true
 ssh_settings:
    admin_username: azureuser

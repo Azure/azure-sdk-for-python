@@ -6,9 +6,7 @@
 import logging
 import os
 
-from azure.containerregistry.aio import (
-    ContainerRegistryClient,
-)
+from azure.containerregistry.aio import ContainerRegistryClient
 
 from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential, ClientSecretCredential

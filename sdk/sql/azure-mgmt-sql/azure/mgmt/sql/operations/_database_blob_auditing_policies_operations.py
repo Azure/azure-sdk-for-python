@@ -46,9 +46,9 @@ def build_list_by_database_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
+    api_version: Literal["2021-11-01-preview"] = kwargs.pop(
         "api_version", _params.pop("api-version", "2021-11-01-preview")
-    )  # type: Literal["2021-11-01-preview"]
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -63,7 +63,7 @@ def build_list_by_database_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -80,10 +80,10 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    blob_auditing_policy_name = kwargs.pop("blob_auditing_policy_name", "default")  # type: Literal["default"]
-    api_version = kwargs.pop(
+    blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
+    api_version: Literal["2021-11-01-preview"] = kwargs.pop(
         "api_version", _params.pop("api-version", "2021-11-01-preview")
-    )  # type: Literal["2021-11-01-preview"]
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_get_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -116,11 +116,11 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    blob_auditing_policy_name = kwargs.pop("blob_auditing_policy_name", "default")  # type: Literal["default"]
-    api_version = kwargs.pop(
+    blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
+    api_version: Literal["2021-11-01-preview"] = kwargs.pop(
         "api_version", _params.pop("api-version", "2021-11-01-preview")
-    )  # type: Literal["2021-11-01-preview"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    )
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -136,7 +136,7 @@ def build_create_or_update_request(
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -190,10 +190,10 @@ class DatabaseBlobAuditingPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DatabaseBlobAuditingPolicyListResult]
+        )
+        cls: ClsType[_models.DatabaseBlobAuditingPolicyListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -217,12 +217,12 @@ class DatabaseBlobAuditingPoliciesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -230,13 +230,13 @@ class DatabaseBlobAuditingPoliciesOperations:
             deserialized = self._deserialize("DatabaseBlobAuditingPolicyListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -249,7 +249,9 @@ class DatabaseBlobAuditingPoliciesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_database.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings"}  # type: ignore
+    list_by_database.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings"
+    }
 
     @distributed_trace
     def get(
@@ -283,11 +285,11 @@ class DatabaseBlobAuditingPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        blob_auditing_policy_name = kwargs.pop("blob_auditing_policy_name", "default")  # type: Literal["default"]
-        api_version = kwargs.pop(
+        blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DatabaseBlobAuditingPolicy]
+        )
+        cls: ClsType[_models.DatabaseBlobAuditingPolicy] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -301,9 +303,9 @@ class DatabaseBlobAuditingPoliciesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -320,7 +322,9 @@ class DatabaseBlobAuditingPoliciesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/{blobAuditingPolicyName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/{blobAuditingPolicyName}"
+    }
 
     @overload
     def create_or_update(
@@ -408,8 +412,8 @@ class DatabaseBlobAuditingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The database blob auditing policy. Is either a model type or a IO type.
-         Required.
+        :param parameters: The database blob auditing policy. Is either a DatabaseBlobAuditingPolicy
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy or IO
         :keyword blob_auditing_policy_name: The name of the blob auditing policy. Default value is
          "default". Note that overriding this default value may result in unsupported behavior.
@@ -433,12 +437,12 @@ class DatabaseBlobAuditingPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        blob_auditing_policy_name = kwargs.pop("blob_auditing_policy_name", "default")  # type: Literal["default"]
-        api_version = kwargs.pop(
+        blob_auditing_policy_name: Literal["default"] = kwargs.pop("blob_auditing_policy_name", "default")
+        api_version: Literal["2021-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-11-01-preview")
-        )  # type: Literal["2021-11-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DatabaseBlobAuditingPolicy]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DatabaseBlobAuditingPolicy] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -463,9 +467,9 @@ class DatabaseBlobAuditingPoliciesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -482,8 +486,10 @@ class DatabaseBlobAuditingPoliciesOperations:
             deserialized = self._deserialize("DatabaseBlobAuditingPolicy", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/{blobAuditingPolicyName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/{blobAuditingPolicyName}"
+    }

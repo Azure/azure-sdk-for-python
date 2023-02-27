@@ -8,14 +8,20 @@ import asyncio
 import pytest
 import time
 
+try:
+    import uamqp
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
+
 from azure.eventhub import EventData, TransportType
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
+from azure.eventhub._pyamqp._message_backcompat import LegacyMessage
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_end_of_stream_async(connstr_senders):
+async def test_receive_end_of_stream_async(connstr_senders, uamqp_transport):
     async def on_event(partition_context, event):
         if partition_context.partition_id == "0":
             assert event.body_as_str() == "Receiving only a single event"
@@ -27,11 +33,15 @@ async def test_receive_end_of_stream_async(connstr_senders):
             assert ", sequence_number: " in event_str
             assert ", enqueued_time: " in event_str
             assert ", partition_key: 0" in event_str
+        if uamqp_transport:
+            assert isinstance(event.message, uamqp.Message)
+        else:
+            assert isinstance(event.message, LegacyMessage)
 
     on_event.called = False
     connection_str, senders = connstr_senders
     # test async producer client
-    producer_client = EventHubProducerClient.from_connection_string(connection_str)
+    producer_client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     partitions = await producer_client.get_partition_ids()
     senders = []
     for p in partitions:
@@ -61,7 +71,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
                           ("enqueued_time", False, "Exclusive")])
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_with_event_position_async(connstr_senders, position, inclusive, expected_result):
+async def test_receive_with_event_position_async(connstr_senders, position, inclusive, expected_result, uamqp_transport):
     async def on_event(partition_context, event):
         assert partition_context.last_enqueued_event_properties.get('sequence_number') == event.sequence_number
         assert partition_context.last_enqueued_event_properties.get('offset') == event.offset
@@ -79,7 +89,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
     on_event.event_position = None
     connection_str, senders = connstr_senders
     senders[0].send(EventData(b"Inclusive"))
-    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
     async with client:
         task = asyncio.ensure_future(client.receive(on_event,
                                                     starting_position="-1",
@@ -89,7 +99,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
         assert on_event.event_position is not None
     await task
     senders[0].send(EventData(expected_result))
-    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
     async with client2:
         task = asyncio.ensure_future(
             client2.receive(on_event,
@@ -102,7 +112,7 @@ async def test_receive_with_event_position_async(connstr_senders, position, incl
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_owner_level_async(connstr_senders):
+async def test_receive_owner_level_async(connstr_senders, uamqp_transport):
     app_prop = {"raw_prop": "raw_value"}
 
     async def on_event(partition_context, event):
@@ -112,8 +122,8 @@ async def test_receive_owner_level_async(connstr_senders):
 
     on_error.error = None
     connection_str, senders = connstr_senders
-    client1 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
-    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
+    client1 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
+    client2 = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
     async with client1, client2:
         task1 = asyncio.ensure_future(client1.receive(on_event,
                                                       partition_id="0", starting_position="-1",
@@ -136,7 +146,7 @@ async def test_receive_owner_level_async(connstr_senders):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_receive_over_websocket_async(connstr_senders):
+async def test_receive_over_websocket_async(connstr_senders, uamqp_transport):
     app_prop = {"raw_prop": "raw_value"}
     content_type = "text/plain"
     message_id_base = "mess_id_sample_"
@@ -149,7 +159,8 @@ async def test_receive_over_websocket_async(connstr_senders):
     on_event.app_prop = None
     connection_str, senders = connstr_senders
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default',
-                                                           transport_type=TransportType.AmqpOverWebsocket)
+                                                           transport_type=TransportType.AmqpOverWebsocket,
+                                                           uamqp_transport=uamqp_transport)
 
     event_list = []
     for i in range(5):

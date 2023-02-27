@@ -4,12 +4,9 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    LearningRateScheduler,
-    StochasticOptimizer,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import LearningRateScheduler, StochasticOptimizer
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.automl.image.automl_image import AutoMLImage
 from azure.ai.ml.entities._job.automl.image.image_classification_search_space import ImageClassificationSearchSpace
@@ -26,10 +23,10 @@ class AutoMLImageClassificationBase(AutoMLImage):
         self,
         *,
         task_type: str,
-        limits: ImageLimitSettings = None,
-        sweep: ImageSweepSettings = None,
-        training_parameters: ImageModelSettingsClassification = None,
-        search_space: List[ImageClassificationSearchSpace] = None,
+        limits: Optional[ImageLimitSettings] = None,
+        sweep: Optional[ImageSweepSettings] = None,
+        training_parameters: Optional[ImageModelSettingsClassification] = None,
+        search_space: Optional[List[ImageClassificationSearchSpace]] = None,
         **kwargs,
     ) -> None:
         super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
@@ -98,40 +95,40 @@ class AutoMLImageClassificationBase(AutoMLImage):
     def set_training_parameters(
         self,
         *,
-        advanced_settings: str = None,
-        ams_gradient: bool = None,
-        beta1: float = None,
-        beta2: float = None,
-        checkpoint_frequency: int = None,
-        checkpoint_run_id: str = None,
-        distributed: bool = None,
-        early_stopping: bool = None,
-        early_stopping_delay: int = None,
-        early_stopping_patience: int = None,
-        enable_onnx_normalization: bool = None,
-        evaluation_frequency: int = None,
-        gradient_accumulation_step: int = None,
-        layers_to_freeze: int = None,
-        learning_rate: float = None,
-        learning_rate_scheduler: Union[str, LearningRateScheduler] = None,
-        model_name: str = None,
-        momentum: float = None,
-        nesterov: bool = None,
-        number_of_epochs: int = None,
-        number_of_workers: int = None,
-        optimizer: Union[str, StochasticOptimizer] = None,
-        random_seed: int = None,
-        step_lr_gamma: float = None,
-        step_lr_step_size: int = None,
-        training_batch_size: int = None,
-        validation_batch_size: int = None,
-        warmup_cosine_lr_cycles: float = None,
-        warmup_cosine_lr_warmup_epochs: int = None,
-        weight_decay: float = None,
-        training_crop_size: int = None,
-        validation_crop_size: int = None,
-        validation_resize_size: int = None,
-        weighted_loss: int = None,
+        advanced_settings: Optional[str] = None,
+        ams_gradient: Optional[bool] = None,
+        beta1: Optional[float] = None,
+        beta2: Optional[float] = None,
+        checkpoint_frequency: Optional[int] = None,
+        checkpoint_run_id: Optional[str] = None,
+        distributed: Optional[bool] = None,
+        early_stopping: Optional[bool] = None,
+        early_stopping_delay: Optional[int] = None,
+        early_stopping_patience: Optional[int] = None,
+        enable_onnx_normalization: Optional[bool] = None,
+        evaluation_frequency: Optional[int] = None,
+        gradient_accumulation_step: Optional[int] = None,
+        layers_to_freeze: Optional[int] = None,
+        learning_rate: Optional[float] = None,
+        learning_rate_scheduler: Optional[Union[str, LearningRateScheduler]] = None,
+        model_name: Optional[str] = None,
+        momentum: Optional[float] = None,
+        nesterov: Optional[bool] = None,
+        number_of_epochs: Optional[int] = None,
+        number_of_workers: Optional[int] = None,
+        optimizer: Optional[Union[str, StochasticOptimizer]] = None,
+        random_seed: Optional[int] = None,
+        step_lr_gamma: Optional[float] = None,
+        step_lr_step_size: Optional[int] = None,
+        training_batch_size: Optional[int] = None,
+        validation_batch_size: Optional[int] = None,
+        warmup_cosine_lr_cycles: Optional[float] = None,
+        warmup_cosine_lr_warmup_epochs: Optional[int] = None,
+        weight_decay: Optional[float] = None,
+        training_crop_size: Optional[int] = None,
+        validation_crop_size: Optional[int] = None,
+        validation_resize_size: Optional[int] = None,
+        weighted_loss: Optional[int] = None,
     ) -> None:
         """Setting Image training parameters for AutoML Image Classification and
         Image Classification Multilabel tasks.

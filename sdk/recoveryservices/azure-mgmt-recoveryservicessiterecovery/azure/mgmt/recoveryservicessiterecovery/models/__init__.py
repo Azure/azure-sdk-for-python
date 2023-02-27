@@ -18,6 +18,7 @@ from ._models_py3 import A2ACrossClusterMigrationPolicyCreationInput
 from ._models_py3 import A2ACrossClusterMigrationReplicationDetails
 from ._models_py3 import A2AEnableProtectionInput
 from ._models_py3 import A2AEventDetails
+from ._models_py3 import A2AExtendedLocationDetails
 from ._models_py3 import A2APolicyCreationInput
 from ._models_py3 import A2APolicyDetails
 from ._models_py3 import A2AProtectedDiskDetails
@@ -585,6 +586,7 @@ __all__ = [
     "A2ACrossClusterMigrationReplicationDetails",
     "A2AEnableProtectionInput",
     "A2AEventDetails",
+    "A2AExtendedLocationDetails",
     "A2APolicyCreationInput",
     "A2APolicyDetails",
     "A2AProtectedDiskDetails",

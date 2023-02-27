@@ -17,8 +17,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
     """Base class for credentials authenticating a service principal with a certificate or secret"""
 
     @wrap_exceptions
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         app = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_silent_with_error(list(scopes), account=None, **kwargs)
@@ -27,8 +26,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
         return None
 
     @wrap_exceptions
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _request_token(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         app = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_for_client(list(scopes))

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-01-11-preview2",
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-12-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "131",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -28,26 +28,26 @@
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01",
         "Content-Length": "0",
         "Date": "sanitized",
-        "Location": "/availablePhoneNumbers/searchResults/94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b?api-version=2022-01-11-preview2",
+        "Location": "/availablePhoneNumbers/searchResults/b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
         "MS-CV": "sanitized",
-        "operation-id": "search_94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b",
-        "Operation-Location": "/phoneNumbers/operations/search_94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b?api-version=2022-01-11-preview2",
-        "search-id": "94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b",
+        "operation-id": "search_b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9",
+        "Operation-Location": "/phoneNumbers/operations/search_b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
+        "search-id": "b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "2001ms"
+        "X-Processing-Time": "1394ms"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/search_94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b?api-version=2022-01-11-preview2",
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/search_b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -59,31 +59,67 @@
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-11-15-preview, 2022-12-01",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "/availablePhoneNumbers/searchResults/94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b?api-version=2022-01-11-preview2",
+        "Location": "/availablePhoneNumbers/searchResults/b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "703ms"
+        "X-Processing-Time": "301ms"
+      },
+      "ResponseBody": {
+        "operationType": "search",
+        "status": "notStarted",
+        "resourceLocation": "/availablePhoneNumbers/searchResults/b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
+        "createdDateTime": "2022-12-20T23:27:33.2337328\u002B00:00",
+        "id": "sanitized",
+        "lastActionDateTime": "0001-01-01T00:00:00\u002B00:00"
+      }
+    },
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/search_b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "Location",
+        "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-11-15-preview, 2022-12-01",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "sanitized",
+        "Location": "/availablePhoneNumbers/searchResults/b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
+        "MS-CV": "sanitized",
+        "Strict-Transport-Security": "max-age=2592000",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "271ms"
       },
       "ResponseBody": {
         "operationType": "search",
         "status": "running",
-        "resourceLocation": "/availablePhoneNumbers/searchResults/94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b?api-version=2022-01-11-preview2",
-        "createdDateTime": "2022-12-09T00:25:14.1375714\u002B00:00",
+        "resourceLocation": "/availablePhoneNumbers/searchResults/b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
+        "createdDateTime": "2022-12-20T23:27:33.2337328\u002B00:00",
         "id": "sanitized",
         "lastActionDateTime": "0001-01-01T00:00:00\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/search_94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b?api-version=2022-01-11-preview2",
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/operations/search_b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -95,31 +131,31 @@
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-11-15-preview, 2022-12-01",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "Location": "/availablePhoneNumbers/searchResults/94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b?api-version=2022-01-11-preview2",
+        "Location": "/availablePhoneNumbers/searchResults/b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "521ms"
+        "X-Processing-Time": "264ms"
       },
       "ResponseBody": {
         "operationType": "search",
         "status": "succeeded",
-        "resourceLocation": "/availablePhoneNumbers/searchResults/94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b?api-version=2022-01-11-preview2",
-        "createdDateTime": "2022-12-09T00:25:14.1375714\u002B00:00",
+        "resourceLocation": "/availablePhoneNumbers/searchResults/b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
+        "createdDateTime": "2022-12-20T23:27:33.2337328\u002B00:00",
         "id": "sanitized",
         "lastActionDateTime": "0001-01-01T00:00:00\u002B00:00"
       }
     },
     {
-      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b?api-version=2022-01-11-preview2",
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/searchResults/b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9?api-version=2022-12-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
@@ -135,10 +171,10 @@
         "Transfer-Encoding": "chunked",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1146ms"
+        "X-Processing-Time": "614ms"
       },
       "ResponseBody": {
-        "searchId": "94af3e35-ba7a-4ad0-8bf9-13ff56a12c1b",
+        "searchId": "b30f14e4-4c9c-42ae-afea-f1eb0ffa74f9",
         "phoneNumbers": [
           "\u002Bsanitized"
         ],
@@ -153,7 +189,7 @@
           "currencyCode": "USD",
           "billingFrequency": "monthly"
         },
-        "searchExpiresBy": "2022-12-09T00:41:16.2043956\u002B00:00"
+        "searchExpiresBy": "2022-12-20T23:43:37.3558741\u002B00:00"
       }
     }
   ],

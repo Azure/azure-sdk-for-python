@@ -3,6 +3,9 @@ from tempfile import TemporaryDirectory
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from pytest_mock import MockFixture
+from test_utilities.utils import assert_job_cancel, wait_until_done
 
 from azure.ai.ml import MLClient, Output, dsl, load_component, load_job
 from azure.ai.ml.constants import JobType
@@ -11,12 +14,6 @@ from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._job.import_job import DatabaseImportSource, ImportJob
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-
-
-from devtools_testutils import AzureRecordedTestCase
-from pytest_mock import MockFixture
-
-from test_utilities.utils import assert_job_cancel, wait_until_done
 
 
 @pytest.fixture(autouse=True)
@@ -72,11 +69,7 @@ class TestImportJob(AzureRecordedTestCase):
             assert import_job_2.status in [JobStatus.COMPLETED, JobStatus.FAILED, JobStatus.RUNNING, JobStatus.STARTING]
             return True
 
-        import_job = assert_job_cancel(
-            job,
-            client,
-            check_before_cancelled=check_before_cancel
-        )
+        import_job = assert_job_cancel(job, client, check_before_cancelled=check_before_cancel)
 
         assert import_job.type == JobType.IMPORT
         assert import_job.source.type == "azuresqldb"
@@ -125,9 +118,7 @@ class TestImportJob(AzureRecordedTestCase):
         self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=True)
 
     @classmethod
-    def validate_test_import_pipepine_submit_cancel(
-        cls, pipeline: PipelineJob, client: MLClient, is_dsl: bool
-    ) -> None:
+    def validate_test_import_pipepine_submit_cancel(cls, pipeline: PipelineJob, client: MLClient, is_dsl: bool) -> None:
 
         import_pipeline: PipelineJob = assert_job_cancel(job=pipeline, client=client)
 

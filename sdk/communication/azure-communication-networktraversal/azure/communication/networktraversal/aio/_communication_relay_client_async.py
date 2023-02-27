@@ -7,6 +7,9 @@
 from typing import TYPE_CHECKING, Optional, Union
 
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials import AzureKeyCredential
+
 from .._generated.aio._communication_network_traversal_client\
     import CommunicationNetworkTraversalClient as CommunicationNetworkTraversalClientGen
 from .._shared.utils import parse_connection_str, get_authentication_policy
@@ -14,7 +17,6 @@ from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 
 if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
     from .._generated.models import CommunicationRelayConfiguration
     from azure.communication.identity import CommunicationUserIdentifier
     from azure.communication.networktraversal import RouteType
@@ -25,8 +27,8 @@ class CommunicationRelayClient:
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param AsyncTokenCredential credential:
-        The AsyncTokenCredential we use to authenticate against the service.
+    :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Network Traversal API version.
         Default value is "2022-03-01-preview".
         Note that overriding this default value may result in unsupported behavior.
@@ -41,7 +43,7 @@ class CommunicationRelayClient:
     def __init__(
         self,
         endpoint: str,
-        credential: 'AsyncTokenCredential',
+        credential: Union[AsyncTokenCredential, AzureKeyCredential],
         **kwargs
         ) -> None:
         # pylint: disable=bad-option-value, disable=raise-missing-from

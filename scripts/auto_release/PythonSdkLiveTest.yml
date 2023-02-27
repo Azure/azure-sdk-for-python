@@ -74,7 +74,7 @@ jobs:
         pip install -r $script_path/requirement.txt
 
         # import env variable
-        export AZURE_TEST_RUN_LIVE=true
+        export AZURE_TEST_RUN_LIVE=$(AZURE_TEST_RUN_LIVE)
         export TENANT_ID=$(ENV-TENANT-ID)
         export CLIENT_ID=$(ENV-CLIENT-ID)
         export CLIENT_SECRET=$(ENV-CLIENT-SECRET)

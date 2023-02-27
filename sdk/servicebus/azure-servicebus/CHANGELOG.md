@@ -1,12 +1,20 @@
 # Release History
 
-## 7.8.2 (Unreleased)
+## 7.8.3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 7.8.2 (2023-01-10)
+
+### Bugs Fixed
+
+- Fixed a bug that would cause an exception when `None` was sent to `set_state` instead of clearing session state (Issue #27582).
 
 ### Other Changes
 

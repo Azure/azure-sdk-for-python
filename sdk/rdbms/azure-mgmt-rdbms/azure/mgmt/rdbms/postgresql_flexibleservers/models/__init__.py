@@ -60,6 +60,7 @@ from ._models_py3 import VcoreCapability
 from ._models_py3 import VirtualNetworkSubnetUsageParameter
 from ._models_py3 import VirtualNetworkSubnetUsageResult
 
+from ._postgre_sql_management_client_enums import ActiveDirectoryAuthEnum
 from ._postgre_sql_management_client_enums import ArmServerKeyType
 from ._postgre_sql_management_client_enums import CheckNameAvailabilityReason
 from ._postgre_sql_management_client_enums import ConfigurationDataType
@@ -72,6 +73,7 @@ from ._postgre_sql_management_client_enums import HighAvailabilityMode
 from ._postgre_sql_management_client_enums import IdentityType
 from ._postgre_sql_management_client_enums import OperationOrigin
 from ._postgre_sql_management_client_enums import Origin
+from ._postgre_sql_management_client_enums import PasswordAuthEnum
 from ._postgre_sql_management_client_enums import PrincipalType
 from ._postgre_sql_management_client_enums import ReplicationRole
 from ._postgre_sql_management_client_enums import ServerHAState
@@ -80,7 +82,7 @@ from ._postgre_sql_management_client_enums import ServerState
 from ._postgre_sql_management_client_enums import ServerVersion
 from ._postgre_sql_management_client_enums import SkuTier
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -137,6 +139,7 @@ __all__ = [
     "VcoreCapability",
     "VirtualNetworkSubnetUsageParameter",
     "VirtualNetworkSubnetUsageResult",
+    "ActiveDirectoryAuthEnum",
     "ArmServerKeyType",
     "CheckNameAvailabilityReason",
     "ConfigurationDataType",
@@ -149,6 +152,7 @@ __all__ = [
     "IdentityType",
     "OperationOrigin",
     "Origin",
+    "PasswordAuthEnum",
     "PrincipalType",
     "ReplicationRole",
     "ServerHAState",

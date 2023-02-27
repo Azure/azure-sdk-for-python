@@ -6,10 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 VERSION = "unknown"
 
@@ -23,14 +29,14 @@ class PhoneNumbersClientConfiguration(Configuration):  # pylint: disable=too-man
     :param endpoint: The communication resource, for example
      https://resourcename.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-01-11-preview2". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-12-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
         super(PhoneNumbersClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-01-11-preview2")  # type: str
+        api_version: Literal["2022-12-01"] = kwargs.pop("api_version", "2022-12-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -40,10 +46,7 @@ class PhoneNumbersClientConfiguration(Configuration):  # pylint: disable=too-man
         kwargs.setdefault("sdk_moniker", "phonenumbersclient/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

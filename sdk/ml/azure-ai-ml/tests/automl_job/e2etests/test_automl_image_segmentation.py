@@ -7,6 +7,7 @@ import platform
 from typing import Tuple
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_final_job_status, get_automl_job_properties
 
 from azure.ai.ml import MLClient, automl
@@ -18,14 +19,12 @@ from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob,
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
-from devtools_testutils import AzureRecordedTestCase, is_live
-
 
 @pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(
     condition=not is_live() or platform.python_implementation() == "PyPy",
-    reason="Datasets downloaded by test are too large to record reliably"
+    reason="Datasets downloaded by test are too large to record reliably",
 )
 class TestAutoMLImageSegmentation(AzureRecordedTestCase):
     def _create_jsonl_segmentation(self, client, train_path, val_path):
@@ -37,6 +36,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         data_path_uri = client.data.create_or_update(fridge_data)
 
         import os
+
         train_annotations_file = os.path.join(train_path, "train_annotations.jsonl")
         validation_annotations_file = os.path.join(val_path, "validation_annotations.jsonl")
 
@@ -61,7 +61,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
                 # Update image url
                 json_line["image_url"] = remote_path + old_url[result + len(data_path) :]
                 jsonl_file_write.write(json.dumps(json_line) + "\n")
-    
+
     def test_image_segmentation_run(self, image_segmentation_dataset: Tuple[Input, Input], client: MLClient) -> None:
         # Note: this test launches two jobs in order to avoid calling the dataset fixture more than once. Ideally, it
         # would have sufficed to mark the fixture with session scope, but pytest-xdist breaks this functionality:
@@ -119,7 +119,11 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         submitted_job_automode = client.jobs.create_or_update(image_instance_segmentation_job_automode)
 
         # Assert completion of regular sweep job
-        assert_final_job_status(submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600)
+        assert_final_job_status(
+            submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+        )
 
         # Assert completion of Automode job
-        assert_final_job_status(submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600)
+        assert_final_job_status(
+            submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+        )

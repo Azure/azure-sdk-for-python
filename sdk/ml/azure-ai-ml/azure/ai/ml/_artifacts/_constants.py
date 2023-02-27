@@ -28,9 +28,9 @@ CHANGED_ASSET_PATH_MSG = (
 CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA = "The code asset is already linked to an asset."
 EMPTY_DIRECTORY_ERROR = "Directory {0} is empty. path or local_path must be a non-empty directory."
 FILE_SIZE_WARNING = (
-    "Your file exceeds 100 MB. If you experience low upload speeds or latency, "
-    "we recommend using the AzCopy tool for this file transfer. "
-    "See https://docs.microsoft.com/azure/storage/common/storage-use-azcopy-v10 for more information."
+    "Your file exceeds 100 MB. If you experience low speeds, latency, or broken connections, we recommend using "
+    "the AzCopyv10 tool for this file transfer.\n\nExample: azcopy copy '{source}' '{destination}' "  # cspell:disable-line
+    "\n\nSee https://docs.microsoft.com/azure/storage/common/storage-use-azcopy-v10 for more information."
 )
 INVALID_MLTABLE_METADATA_SCHEMA_MSG = "Invalid MLTable metadata schema"
 INVALID_MLTABLE_METADATA_SCHEMA_ERROR = (
@@ -40,4 +40,6 @@ BLOB_DATASTORE_IS_HDI_FOLDER_KEY = "hdi_isfolder"
 BLOB_STORAGE_CLIENT_NAME = "BlobStorageClient"
 GEN2_STORAGE_CLIENT_NAME = "Gen2StorageClient"
 DEFAULT_CONNECTION_TIMEOUT = 14400
-STORAGE_URI_REGEX = r"(https:\/\/([a-zA-Z0-9@:%_\\\-+~#?&=]+)[a-zA-Z0-9@:%._\\\-+~#?&=]+\.?)\/([a-zA-Z0-9@:%._\\\-+~#?&=]+)\/(.*)"
+STORAGE_URI_REGEX = (
+    r"(https:\/\/([a-zA-Z0-9@:%_\\\-+~#?&=]+)[a-zA-Z0-9@:%._\\\-+~#?&=]+\.?)\/([a-zA-Z0-9@:%._\\\-+~#?&=]+)\/(.*)"
+)

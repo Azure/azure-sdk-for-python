@@ -1,6 +1,6 @@
 import pytest
 
-from azure.ai.ml._restclient.v2021_10_01.models import (
+from azure.ai.ml._restclient.v2022_10_01.models import (
     TargetUtilizationScaleSettings as RestTargetUtilizationScaleSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake

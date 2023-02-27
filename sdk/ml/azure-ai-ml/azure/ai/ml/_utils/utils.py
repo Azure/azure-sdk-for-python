@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-lines
 import copy
 import decimal
 import hashlib
@@ -35,6 +35,8 @@ from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
+    AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
 )
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -50,7 +52,7 @@ def _get_mfe_url_override() -> Optional[str]:
     return os.getenv(DEVELOPER_URL_MFE_ENV_VAR)
 
 
-def _is_https_url(url: str) -> bool:
+def _is_https_url(url: str) -> Union[bool, str]:
     if url:
         return url.lower().startswith("https")
     return False
@@ -113,7 +115,7 @@ def float_to_str(f):
     with decimal.localcontext() as ctx:
         ctx.prec = 20  # Support up to 20 significant figures.
         float_as_dec = ctx.create_decimal(repr(f))
-        return format(float_as_dec, 'f')
+        return format(float_as_dec, "f")
 
 
 def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
@@ -151,7 +153,7 @@ def get_retry_policy(num_retry=3) -> RetryPolicy:
 def download_text_from_url(
     source_uri: str,
     requests_pipeline: HttpPipeline,
-    timeout: Union[float, Tuple[float, float]] = None,
+    timeout: Optional[Union[float, Tuple[float, float]]] = None,
 ) -> str:
     """Downloads the content from an URL
 
@@ -189,6 +191,7 @@ def load_file(file_path: str) -> str:
     :rtype: str
     """
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -217,6 +220,7 @@ def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
     :rtype: Dict
     """
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -249,6 +253,7 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     :rtype: Dict
     """
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -346,9 +351,9 @@ def dump_yaml_to_file(
         Details will be provided in the error message.
     """
     from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
-
     # Check for deprecated path input, either named or as first unnamed input
     path = kwargs.pop("path", None)
     if dest is None:
@@ -445,6 +450,7 @@ def is_url(value: Union[PathLike, str]) -> bool:
 # Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value
 def resolve_short_datastore_url(value: Union[PathLike, str], workspace: OperationScope) -> str:
     from azure.ai.ml.exceptions import ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -479,6 +485,7 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
 
 def validate_ml_flow_folder(path: str, model_type: string) -> None:
     from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+
     # These imports can't be placed in at top file level because it will cause a circular import in
     # exceptions.py via _get_mfe_url_override
 
@@ -507,7 +514,7 @@ def is_valid_uuid(test_uuid: str) -> bool:
 
 
 @singledispatch
-def from_iso_duration_format(duration: Any = None) -> int:  # pylint: disable=unused-argument
+def from_iso_duration_format(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
     return None
 
 
@@ -601,13 +608,13 @@ def hash_dict(items: dict, keys_to_omit=None):
     items = pydash.omit(items, keys_to_omit)
     # serialize dict with order so same dict will have same content
     serialized_component_interface = json.dumps(items, sort_keys=True)
-    object_hash = hashlib.md5() # nosec
+    object_hash = hashlib.md5()  # nosec
     object_hash.update(serialized_component_interface.encode("utf-8"))
     return str(UUID(object_hash.hexdigest()))
 
 
 def convert_identity_dict(
-    identity: ManagedServiceIdentity = None,
+    identity: Optional[ManagedServiceIdentity] = None,
 ) -> ManagedServiceIdentity:
     if identity:
         if identity.type.lower() in ("system_assigned", "none"):
@@ -765,6 +772,14 @@ def is_private_preview_enabled():
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
 
 
+def is_on_disk_cache_enabled():
+    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
+
+
+def is_concurrent_component_registration_enabled():
+    return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
+
+
 def is_internal_components_enabled():
     return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
 
@@ -877,7 +892,8 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
 class DockerProxy:
     def __getattribute__(self, name: str) -> Any:
         try:
-            import docker # pylint: disable=import-error
+            import docker  # pylint: disable=import-error
+
             return getattr(docker, name)
         except ModuleNotFoundError:
             raise Exception(
@@ -891,26 +907,97 @@ def get_all_enum_values_iter(enum_type):
         if not key.startswith("_"):
             yield getattr(enum_type, key)
 
-def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
-    """Determine if subscription or resource group is missing and raise exception
-    as appropriate."""
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
 
-    msg = "Both subscription id and resource group are required for this operation, missing {}"
-    sub_msg = None
-    if not subscription_id and not resource_group:
-        sub_msg = "subscription id and resource group"
-    elif not subscription_id and resource_group:
-        sub_msg = "subscription id"
-    elif subscription_id and not resource_group:
-        sub_msg = "resource group"
+def write_to_shared_file(file_path: Union[str, PathLike], content: str):
+    """Open file with specific mode and return the file object.
 
-    if sub_msg:
-        raise ValidationException(
-            message=msg.format(sub_msg),
-            no_personal_data_message=msg.format(sub_msg),
-            target=ErrorTarget.GENERAL,
-            error_category=ErrorCategory.USER_ERROR,
+    :param file_path: Path to the file.
+    :param content: Content to write to the file.
+    """
+    with open(file_path, "w") as f:
+        f.write(content)
+
+    # share_mode means read/write for owner, group and others
+    share_mode, mode_mask = 0o666, 0o777
+    if os.stat(file_path).st_mode & mode_mask != share_mode:
+        try:
+            os.chmod(file_path, share_mode)
+        except PermissionError:
+            pass
+
+
+def _get_valid_dot_keys_with_wildcard_impl(
+    left_reversed_parts, root, *, validate_func=None, cur_node=None, processed_parts=None
+):
+    if len(left_reversed_parts) == 0:
+        if validate_func is None or validate_func(root, processed_parts):
+            return [".".join(processed_parts)]
+        return []
+
+    if cur_node is None:
+        cur_node = root
+    if not isinstance(cur_node, dict):
+        return []
+    if processed_parts is None:
+        processed_parts = []
+
+    key: str = left_reversed_parts.pop()
+    result = []
+    if key == "*":
+        for next_key in cur_node:
+            if not isinstance(next_key, str):
+                continue
+            processed_parts.append(next_key)
+            result.extend(
+                _get_valid_dot_keys_with_wildcard_impl(
+                    left_reversed_parts,
+                    root,
+                    validate_func=validate_func,
+                    cur_node=cur_node[next_key],
+                    processed_parts=processed_parts,
+                )
+            )
+            processed_parts.pop()
+    elif key in cur_node:
+        processed_parts.append(key)
+        result = _get_valid_dot_keys_with_wildcard_impl(
+            left_reversed_parts,
+            root,
+            validate_func=validate_func,
+            cur_node=cur_node[key],
+            processed_parts=processed_parts,
         )
+        processed_parts.pop()
+
+    left_reversed_parts.append(key)
+    return result
+
+
+def get_valid_dot_keys_with_wildcard(
+    root: Dict[str, Any],
+    dot_key_wildcard: str,
+    *,
+    validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]] = None,
+):
+    """Get all valid dot keys with wildcard. Only "x.*.x" and "x.*" is supported for now.
+
+    A valid dot key should satisfy the following conditions:
+    1) It should be a valid dot key in the root node.
+    2) It should satisfy the validation function.
+
+    :param root: Root node.
+    :type root: Dict[str, Any]
+    :param dot_key_wildcard: Dot key with wildcard, e.g. "a.*.c".
+    :type dot_key_wildcard: str
+    :param validate_func: Validation function. It takes two parameters: the root node and the dot key parts.
+    If None, no validation will be performed.
+    :type validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]]
+    :return: List of valid dot keys.
+    """
+    left_reversed_parts = dot_key_wildcard.split(".")[::-1]
+    return _get_valid_dot_keys_with_wildcard_impl(left_reversed_parts, root, validate_func=validate_func)
+
+
+def replace_between(s: str, start: str, end: str, replace: str) -> str:
+    """Replace string between two substrings."""
+    return start + replace + s[s.find(end) - 1 + len(end) :]

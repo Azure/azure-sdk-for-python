@@ -14,13 +14,13 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._schema._sweep.search_space import (
     ChoiceSchema,
+    IntegerQNormalSchema,
+    IntegerQUniformSchema,
     NormalSchema,
     QNormalSchema,
     QUniformSchema,
     RandintSchema,
     UniformSchema,
-    IntegerQUniformSchema,
-    IntegerQNormalSchema
 )
 from azure.ai.ml._schema.core.fields import (
     DumpableIntegerField,
@@ -46,9 +46,9 @@ def get_choice_schema_of_type(cls, **kwargs):
 
 
 def get_choice_and_single_value_schema_of_type(cls, **kwargs):
-    #Reshuffling the order of fields for allowing choice of booleans.
-    #The reason is, while dumping [Bool, Choice[Bool]] is parsing even dict as True.
-    #Since all unionFields are parsed sequentially, to avoid this, we are giving the "type" field at the end.
+    # Reshuffling the order of fields for allowing choice of booleans.
+    # The reason is, while dumping [Bool, Choice[Bool]] is parsing even dict as True.
+    # Since all unionFields are parsed sequentially, to avoid this, we are giving the "type" field at the end.
     return UnionField([NestedField(get_choice_schema_of_type(cls, **kwargs)), cls(**kwargs)])
 
 
@@ -158,9 +158,7 @@ class ImageModelDistributionSettingsClassificationSchema(ImageModelDistributionS
             # explicitly for creating the autoRest Object from sdk job.
             # Hence for pipeline job, we explicitly convert Sweep Distribution dict to str after dump in this method.
             # For standalone automl job, same conversion happens in image_classification_job._to_rest_object()
-            from azure.ai.ml.entities._job.automl.search_space_utils import (
-                _convert_sweep_dist_dict_to_str_dict,
-            )
+            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 
             data = _convert_sweep_dist_dict_to_str_dict(data)
         return data
@@ -203,9 +201,7 @@ class ImageModelDistributionSettingsDetectionCommonSchema(ImageModelDistribution
             # explicitly for creating the autoRest Object from sdk job object.
             # Hence for pipeline job, we explicitly convert Sweep Distribution dict to str after dump in this method.
             # For standalone automl job, same conversion happens in image_object_detection_job._to_rest_object()
-            from azure.ai.ml.entities._job.automl.search_space_utils import (
-                _convert_sweep_dist_dict_to_str_dict,
-            )
+            from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 
             data = _convert_sweep_dist_dict_to_str_dict(data)
         return data

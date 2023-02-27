@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Union
 
 import yaml
+
 from azure.ai.ml._utils._asset_utils import IgnoreFile, traverse_directory
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
@@ -28,25 +29,22 @@ class _AdditionalIncludes:
         self,
         code_path: Union[None, str],
         yaml_path: str,
-        ignore_file: InternalComponentIgnoreFile = None,
     ):
         self.__yaml_path = yaml_path
         self.__code_path = code_path
-        self._ignore_file = ignore_file
 
         self._tmp_code_path = None
         self.__includes = None
-        self._is_artifact_includes = False
-        self._artifact_validate_result = _ValidationResultBuilder.success()
+        # artifact validation is done on loading now, so need a private variable to store the result
+        self.__artifact_validate_result = None
 
     @property
     def _includes(self):
         if not self._additional_includes_file_path.is_file():
             return []
         if self.__includes is None:
-            self._is_artifact_includes = self._is_yaml_format_additional_includes()
             if self._is_artifact_includes:
-                self.__includes = self._load_yaml_format_additional_includes()
+                self.__includes = self._load_artifact_additional_includes()
             else:
                 with open(self._additional_includes_file_path, "r") as f:
                     lines = f.readlines()
@@ -83,23 +81,21 @@ class _AdditionalIncludes:
     def code(self) -> Path:
         return self._tmp_code_path if self._tmp_code_path else self._code_path
 
-    def _copy(self, src: Path, dst: Path, ignore_file=None) -> None:
+    @staticmethod
+    def _copy(src: Path, dst: Path, *, ignore_file=None) -> None:
+        if ignore_file and ignore_file.is_file_excluded(src):
+            return
+        if not src.exists():
+            raise ValueError(f"Path {src} does not exist.")
         if src.is_file():
             _general_copy(src, dst)
-        else:
+        if src.is_dir():
+            # TODO: should we cover empty folder?
             # use os.walk to replace shutil.copytree, which may raise FileExistsError
             # for same folder, the expected behavior is merging
             # ignore will be also applied during this process
-            for root, _, files in os.walk(src):
-                dst_root = Path(dst) / Path(root).relative_to(src)
-                dst_root_mkdir_flag = dst_root.is_dir()
-                for path, _ in traverse_directory(root, files, str(src), "",
-                                                  ignore_file=ignore_file or self._ignore_file):
-                    # if there is nothing to copy under current dst_root, no need to create this folder
-                    if dst_root_mkdir_flag is False:
-                        dst_root.mkdir(parents=True)
-                        dst_root_mkdir_flag = True
-                    _general_copy(path, dst_root / Path(path).name)
+            for name in src.glob("*"):
+                _AdditionalIncludes._copy(name, dst / name.name, ignore_file=ignore_file.merge(name))
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -175,29 +171,65 @@ class _AdditionalIncludes:
         tmp_folder_path = Path(tempfile.mkdtemp())
         # code can be either file or folder, as additional includes exists, need to copy to temporary folder
         if Path(self._code_path).is_file():
-            self._copy(Path(self._code_path), tmp_folder_path / Path(self._code_path).name)
+            # use a dummy ignore file to save base path
+            root_ignore_file = InternalComponentIgnoreFile(
+                Path(self._code_path).parent,
+                additional_includes_file_name=self._additional_includes_file_path.name,
+                skip_ignore_file=True,
+            )
+            self._copy(
+                Path(self._code_path), tmp_folder_path / Path(self._code_path).name, ignore_file=root_ignore_file
+            )
         else:
-            for path in os.listdir(self._code_path):
-                src_path = (Path(self._code_path) / str(path)).resolve()
-                if src_path.suffix == ADDITIONAL_INCLUDES_SUFFIX:
-                    continue
-                dst_path = tmp_folder_path / str(path)
-                self._copy(src_path, dst_path)
+            # current implementation of ignore file is based on absolute path, so it cannot be shared
+            root_ignore_file = InternalComponentIgnoreFile(
+                self._code_path,
+                additional_includes_file_name=self._additional_includes_file_path.name,
+            )
+            self._copy(self._code_path, tmp_folder_path, ignore_file=root_ignore_file)
+
         # additional includes
         base_path = self._additional_includes_file_path.parent
+        # additional includes from artifact will be downloaded to a temp local path on calling
+        # self._includes, so no need to add specific logic for artifact
+
+        # TODO: skip ignored files defined in code when copying additional includes
+        # copy additional includes disregarding ignore files as current ignore file implementation
+        # is based on absolute path, which is not suitable for additional includes
         for additional_include in self._includes:
             src_path = Path(additional_include)
             if not src_path.is_absolute():
                 src_path = (base_path / additional_include).resolve()
+            dst_path = (tmp_folder_path / src_path.name).resolve()
+
+            root_ignore_file.rebase(src_path.parent)
             if self._is_folder_to_compress(src_path):
-                self._resolve_folder_to_compress(additional_include, Path(tmp_folder_path))
-            else:
-                dst_path = (tmp_folder_path / src_path.name).resolve()
-                self._copy(src_path, dst_path, ignore_file=IgnoreFile() if self._is_artifact_includes else None)
+                self._resolve_folder_to_compress(
+                    additional_include,
+                    Path(tmp_folder_path),
+                    # actual src path is without .zip suffix
+                    ignore_file=root_ignore_file.merge(src_path.parent / src_path.stem),
+                )
+                # early continue as the folder is compressed as a zip file
+                continue
+
+            if not src_path.exists():
+                raise ValueError(f"Unable to find additional include {additional_include} for {self._yaml_name}.")
+
+            if src_path.is_file():
+                self._copy(src_path, dst_path, ignore_file=root_ignore_file)
+            if src_path.is_dir():
+                self._copy(
+                    src_path,
+                    dst_path,
+                    # root ignore file on parent + ignore file on src_path
+                    ignore_file=root_ignore_file.merge(src_path),
+                )
+
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
         return
 
-    def _resolve_folder_to_compress(self, include: str, dst_path: Path) -> None:
+    def _resolve_folder_to_compress(self, include: str, dst_path: Path, ignore_file: IgnoreFile) -> None:
         """resolve the zip additional include, need to compress corresponding folder."""
         zip_additional_include = (self._additional_includes_file_path.parent / include).resolve()
         folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
@@ -205,7 +237,7 @@ class _AdditionalIncludes:
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
             for root, _, files in os.walk(folder_to_zip, followlinks=True):
-                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=self._ignore_file):
+                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=ignore_file):
                     zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def cleanup(self) -> None:
@@ -217,16 +249,28 @@ class _AdditionalIncludes:
             shutil.rmtree(self._tmp_code_path)
         self._tmp_code_path = None  # point code path back to real path
 
-    def _is_yaml_format_additional_includes(self):
+    @property
+    def _is_artifact_includes(self):
         try:
             with open(self._additional_includes_file_path) as f:
                 additional_includes_configs = yaml.safe_load(f)
-                return isinstance(
-                    additional_includes_configs, dict) and ADDITIONAL_INCLUDES_KEY in additional_includes_configs
+                return (
+                    isinstance(additional_includes_configs, dict)
+                    and ADDITIONAL_INCLUDES_KEY in additional_includes_configs
+                )
         except Exception:  # pylint: disable=broad-except
             return False
 
-    def _load_yaml_format_additional_includes(self):
+    @property
+    def _artifact_validate_result(self):
+        if not self._is_artifact_includes:
+            return _ValidationResultBuilder.success()
+        if self.__artifact_validate_result is None:
+            # artifact validation is done on loading now, so trigger it here
+            self._load_artifact_additional_includes()
+        return self.__artifact_validate_result
+
+    def _load_artifact_additional_includes(self):
         """
         Load the additional includes by yaml format.
 
@@ -248,7 +292,7 @@ class _AdditionalIncludes:
         :rtype additional_includes: List[str]
         """
         additional_includes, conflict_files = [], {}
-        self._artifact_validate_result = _ValidationResultBuilder.success()
+        self.__artifact_validate_result = _ValidationResultBuilder.success()
 
         def merge_local_path_to_additional_includes(local_path, config_info):
             additional_includes.append(local_path)
@@ -268,7 +312,8 @@ class _AdditionalIncludes:
                 name=artifact_config["name"],
                 version=artifact_config["version"],
                 scope=artifact_config.get("scope", "organization"),
-                resolve=True)
+                resolve=True,
+            )
             return artifact_path
 
         # Load the artifacts config from additional_includes
@@ -282,21 +327,26 @@ class _AdditionalIncludes:
                     # Get the artifacts package from devops to the local
                     artifact_path = get_artifacts_by_config(additional_include)
                     for item in os.listdir(artifact_path):
-                        config_info = f"{additional_include['name']}:{additional_include['version']} in " \
-                                      f"{additional_include['feed']}"
-                        merge_local_path_to_additional_includes(local_path=os.path.join(artifact_path, item),
-                                                                config_info=config_info)
+                        config_info = (
+                            f"{additional_include['name']}:{additional_include['version']} in "
+                            f"{additional_include['feed']}"
+                        )
+                        merge_local_path_to_additional_includes(
+                            local_path=os.path.join(artifact_path, item), config_info=config_info
+                        )
                 except Exception as e:  # pylint: disable=broad-except
                     self._artifact_validate_result.append_error(message=e.args[0])
             elif isinstance(additional_include, str):
                 merge_local_path_to_additional_includes(local_path=additional_include, config_info=additional_include)
             else:
                 self._artifact_validate_result.append_error(
-                    message=f"Unexpected format in additional_includes, {additional_include}")
+                    message=f"Unexpected format in additional_includes, {additional_include}"
+                )
 
         # Check the file conflict in local path and artifact package.
         conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}
         if conflict_files:
             self._artifact_validate_result.append_error(
-                message=f"There are conflict files in additional include: {conflict_files}")
+                message=f"There are conflict files in additional include: {conflict_files}"
+            )
         return additional_includes

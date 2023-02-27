@@ -129,10 +129,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         await self._impl.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._impl.__aexit__(*exc_details)
 
-    def _build_pipeline(self, **kwargs):  # pylint: disable=no-self-use
+    def _build_pipeline(self, **kwargs: Any):  # pylint: disable=no-self-use
         transport = kwargs.get("transport")
         policies = kwargs.get("policies")
         credential_policy = (
@@ -161,8 +161,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             transport = AioHttpTransport(**kwargs)
         return AsyncPipeline(transport, policies)
 
-    async def _get_entity_element(self, entity_name, enrich=False, **kwargs):
-        # type: (str, bool, Any) -> ElementTree
+    async def _get_entity_element(
+        self, entity_name: str, enrich: bool = False, **kwargs: Any
+    ) -> ElementTree:
         _validate_entity_name_type(entity_name)
 
         with _handle_response_error():
@@ -175,9 +176,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return element
 
     async def _get_subscription_element(
-        self, topic_name, subscription_name, enrich=False, **kwargs
-    ):
-        # type: (str, str, bool, Any) -> ElementTree
+        self,
+        topic_name: str,
+        subscription_name: str,
+        enrich: bool = False,
+        **kwargs: Any
+    ) -> ElementTree:
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
         with _handle_response_error():
@@ -194,9 +198,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return element
 
     async def _get_rule_element(
-        self, topic_name, subscription_name, rule_name, **kwargs
-    ):
-        # type: (str, str, str, Any) -> ElementTree
+        self, topic_name: str, subscription_name: str, rule_name: str, **kwargs: Any
+    ) -> ElementTree:
         _validate_topic_subscription_and_rule_types(
             topic_name, subscription_name, rule_name
         )
@@ -240,7 +243,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str, *, api_version: Union[str, ApiVersion] = DEFAULT_VERSION, **kwargs: Any
+        cls,
+        conn_str: str,
+        *,
+        api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
+        **kwargs: Any
     ) -> "ServiceBusAdministrationClient":
         """Create a client from connection string.
 
@@ -267,7 +274,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             endpoint = endpoint[endpoint.index("//") + 2 :]
         return cls(endpoint, credential, api_version=api_version, **kwargs)  # type: ignore
 
-    async def get_queue(self, queue_name: str, **kwargs) -> QueueProperties:
+    async def get_queue(self, queue_name: str, **kwargs: Any) -> QueueProperties:
         """Get the properties of a queue.
 
         :param str queue_name: The name of the queue.
@@ -283,7 +290,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return queue_description
 
     async def get_queue_runtime_properties(
-        self, queue_name: str, **kwargs
+        self, queue_name: str, **kwargs: Any
     ) -> QueueRuntimeProperties:
         """Get the runtime information of a queue.
 
@@ -446,7 +453,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     async def update_queue(
-        self, queue: Union[QueueProperties, Mapping[str, Any]], **kwargs
+        self, queue: Union[QueueProperties, Mapping[str, Any]], **kwargs: Any
     ) -> None:
         """Update a queue.
 
@@ -482,7 +489,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    async def delete_queue(self, queue_name: str, **kwargs) -> None:
+    async def delete_queue(self, queue_name: str, **kwargs: Any) -> None:
         """Delete a queue.
 
         :param str queue_name: The name of the queue or
@@ -548,7 +555,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return AsyncItemPaged(get_next, extract_data)
 
-    async def get_topic(self, topic_name: str, **kwargs) -> TopicProperties:
+    async def get_topic(self, topic_name: str, **kwargs: Any) -> TopicProperties:
         """Get the properties of a topic.
 
         :param str topic_name: The name of the topic.
@@ -585,9 +592,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         topic_name: str,
         *,
         default_message_time_to_live: Optional[Union[datetime.timedelta, str]] = None,
-        max_size_in_megabytes: Optional[
-            int
-        ] = None,
+        max_size_in_megabytes: Optional[int] = None,
         requires_duplicate_detection: Optional[bool] = None,
         duplicate_detection_history_time_window: Optional[
             Union[datetime.timedelta, str]
@@ -702,7 +707,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     async def update_topic(
-        self, topic: Union[TopicProperties, Mapping[str, Any]], **kwargs
+        self, topic: Union[TopicProperties, Mapping[str, Any]], **kwargs: Any
     ) -> None:
         """Update a topic.
 
@@ -737,7 +742,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    async def delete_topic(self, topic_name: str, **kwargs) -> None:
+    async def delete_topic(self, topic_name: str, **kwargs: Any) -> None:
         """Delete a topic.
 
         :param str topic_name: The topic to be deleted.
@@ -800,7 +805,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     async def get_subscription(
-        self, topic_name: str, subscription_name: str, **kwargs
+        self, topic_name: str, subscription_name: str, **kwargs: Any
     ) -> SubscriptionProperties:
         """Get the properties of a topic subscription.
 
@@ -824,7 +829,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return subscription
 
     async def get_subscription_runtime_properties(
-        self, topic_name: str, subscription_name: str, **kwargs
+        self, topic_name: str, subscription_name: str, **kwargs: Any
     ) -> SubscriptionRuntimeProperties:
         """Get a topic subscription runtime info.
 
@@ -970,7 +975,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self,
         topic_name: str,
         subscription: Union[SubscriptionProperties, Mapping[str, Any]],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Update a subscription.
 
@@ -1014,7 +1019,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
 
     async def delete_subscription(
-        self, topic_name: str, subscription_name: str, **kwargs
+        self, topic_name: str, subscription_name: str, **kwargs: Any
     ) -> None:
         """Delete a topic subscription.
 
@@ -1086,7 +1091,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     async def get_rule(
-        self, topic_name: str, subscription_name: str, rule_name: str, **kwargs
+        self, topic_name: str, subscription_name: str, rule_name: str, **kwargs: Any
     ) -> RuleProperties:
         """Get the properties of a topic subscription rule.
 
@@ -1122,7 +1127,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         *,
         filter: Union[  # pylint: disable=redefined-builtin
             CorrelationRuleFilter, SqlRuleFilter
-        ]=TrueRuleFilter(),
+        ] = TrueRuleFilter(),
         action: Optional[SqlRuleAction] = None,
         **kwargs: Any
     ) -> RuleProperties:
@@ -1182,7 +1187,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         topic_name: str,
         subscription_name: str,
         rule: Union[RuleProperties, Mapping[str, Any]],
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Update a rule.
 
@@ -1224,7 +1229,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
 
     async def delete_rule(
-        self, topic_name: str, subscription_name: str, rule_name: str, **kwargs
+        self, topic_name: str, subscription_name: str, rule_name: str, **kwargs: Any
     ) -> None:
         """Delete a topic subscription rule.
 
@@ -1281,7 +1286,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return AsyncItemPaged(get_next, extract_data)
 
-    async def get_namespace_properties(self, **kwargs) -> NamespaceProperties:
+    async def get_namespace_properties(self, **kwargs: Any) -> NamespaceProperties:
         """Get the namespace properties
 
         :rtype: ~azure.servicebus.management.NamespaceProperties

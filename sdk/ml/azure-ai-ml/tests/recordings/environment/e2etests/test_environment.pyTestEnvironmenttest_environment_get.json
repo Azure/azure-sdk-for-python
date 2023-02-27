@@ -1,13 +1,13 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1?api-version=2022-05-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/1?api-version=2022-05-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/0.0.139 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Linux-5.15.79.1-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -15,46 +15,48 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 16 Sep 2022 02:50:53 GMT",
+        "Date": "Thu, 23 Feb 2023 08:44:55 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "Request-Context": "appId=cid-v1:17d65b70-e9ce-4ed5-9347-1f660ec782e9",
-        "Server-Timing": "traceparent;desc=\u002200-aad322b940c78a19267d813fbe066e2b-92244e0688bd7205-01\u0022",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-7997cb658e66520c34dd2f69e16fd18b-2a27f8de2d38cf9e-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-eastus2euap-01",
+        "x-aml-cluster": "vienna-eastus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "85e11e28-d159-43ee-ba79-9828a238dc45",
-        "x-ms-ratelimit-remaining-subscription-reads": "11991",
+        "x-ms-correlation-request-id": "637d7488-cbad-485b-8467-82b50fd9cabd",
+        "x-ms-ratelimit-remaining-subscription-reads": "11998",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "CANADACENTRAL:20220916T025054Z:85e11e28-d159-43ee-ba79-9828a238dc45",
-        "x-request-time": "0.032"
+        "x-ms-routing-request-id": "CANADACENTRAL:20230223T084455Z:637d7488-cbad-485b-8467-82b50fd9cabd",
+        "x-request-time": "0.091"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/1",
         "name": "1",
         "type": "Microsoft.MachineLearningServices/workspaces/environments/versions",
         "properties": {
           "description": "An environment for tasks such as regression, clustering, and classification with Scikit-learn. Contains the Azure ML SDK and additional python packages.",
           "tags": {
-            "Scikit-learn": "0.24.1"
+            "Scikit-learn": "1.0",
+            "OS": "Ubuntu20.04",
+            "Preview": ""
           },
           "properties": {},
           "isArchived": false,
           "isAnonymous": false,
           "environmentType": "Curated",
-          "condaFile": "{\n  \u0022name\u0022: \u0022project_environment\u0022,\n  \u0022dependencies\u0022: [\n    \u0022python=3.6.2\u0022,\n    {\n      \u0022pip\u0022: [\n        \u0022azureml-defaults\u0022\n      ]\n    }\n  ],\n  \u0022channels\u0022: [\n    \u0022anaconda\u0022,\n    \u0022conda-forge\u0022\n  ]\n}",
+          "condaFile": "",
           "osType": "Linux"
         },
         "systemData": {
-          "createdAt": "2021-07-13T22:00:06.8000165\u002B00:00",
+          "createdAt": "2021-12-15T00:51:33.7431879\u002B00:00",
           "createdBy": "Microsoft",
           "createdByType": "User",
-          "lastModifiedAt": "2021-07-13T22:00:06.8000165\u002B00:00",
+          "lastModifiedAt": "2021-12-15T00:51:33.7431879\u002B00:00",
           "lastModifiedBy": "Microsoft",
           "lastModifiedByType": "User"
         }

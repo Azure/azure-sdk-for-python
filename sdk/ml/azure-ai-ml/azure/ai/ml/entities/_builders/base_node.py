@@ -99,29 +99,31 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Component,
-        inputs: Dict[
-            str,
-            Union[
-                PipelineInput,
-                NodeOutput,
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    PipelineInput,
+                    NodeOutput,
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        name: str = None,
-        display_name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        comment: str = None,
-        compute: str = None,
-        experiment_name: str = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        comment: Optional[str] = None,
+        compute: Optional[str] = None,
+        experiment_name: Optional[str] = None,
         **kwargs,
     ):
         self._init = True
@@ -235,7 +237,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 value = value._deepcopy()  # Decoupled input and output
                 io_dict[key] = value
                 value.mode = None
-            elif type(value) == dict: # pylint: disable=unidiomatic-typecheck
+            elif type(value) == dict:  # pylint: disable=unidiomatic-typecheck
                 # Use type comparison instead of is_instance to skip _GroupAttrDict
                 # when loading from yaml io will be a dict,
                 # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
@@ -363,7 +365,12 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             obj[CommonYamlFields.TYPE] = NodeType.COMMAND
 
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
-        instance: BaseNode = pipeline_node_factory.get_create_instance_func(obj[CommonYamlFields.TYPE])()
+
+        # todo: refine Hard code for now to support different task type for DataTransfer node
+        _type = obj[CommonYamlFields.TYPE]
+        if _type == NodeType.DATA_TRANSFER:
+            _type = "_".join([NodeType.DATA_TRANSFER, obj.get("task", "")])
+        instance: BaseNode = pipeline_node_factory.get_create_instance_func(_type)()
         init_kwargs = instance._from_rest_object_to_init_params(obj)
         instance.__init__(**init_kwargs)
         return instance
@@ -393,6 +400,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         # distribution, sweep won't have distribution
         if "distribution" in obj and obj["distribution"]:
             from azure.ai.ml.entities._job.distribution import DistributionConfiguration
+
             obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
 
         return obj

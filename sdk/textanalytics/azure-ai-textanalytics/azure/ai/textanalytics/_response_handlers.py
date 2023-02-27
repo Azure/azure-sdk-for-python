@@ -37,7 +37,7 @@ from ._models import (
     ClassifyDocumentResult,
     ActionPointerKind,
     ExtractSummaryResult,
-    AbstractSummaryResult,
+    AbstractiveSummaryResult,
     DynamicClassificationResult,
 )
 
@@ -137,7 +137,7 @@ def prepare_result(func):
 def abstract_summary_result(
     summary, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
-    return AbstractSummaryResult._from_generated(  # pylint: disable=protected-access
+    return AbstractiveSummaryResult._from_generated(  # pylint: disable=protected-access
         summary
     )
 
@@ -409,7 +409,10 @@ def pad_result(tasks_obj, doc_id_order):
     return [
         DocumentError(
             id=doc_id,
-            error=TextAnalyticsError(message=f"No result for document. Action returned status '{tasks_obj.status}'.")
+            error=TextAnalyticsError(
+                code=None,  # type: ignore
+                message=f"No result for document. Action returned status '{tasks_obj.status}'."
+            )
         ) for doc_id in doc_id_order
     ]
 

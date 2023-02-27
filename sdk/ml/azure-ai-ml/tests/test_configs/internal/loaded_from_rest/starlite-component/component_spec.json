@@ -10,15 +10,17 @@
   "is_deterministic": true,
   "inputs": {
     "FileList": {
-      "type": "AnyFile"
+      "type": "AnyFile",
+      "optional": false
     },
     "UploadToCosmos": {
       "type": "enum",
-      "default": "False",
+      "default": "false",
       "enum": [
-        "True",
-        "False"
-      ]
+        "true",
+        "false"
+      ],
+      "optional": false
     },
     "RunId": {
       "type": "string",
@@ -27,7 +29,8 @@
     },
     "FileListFileName": {
       "type": "string",
-      "default": "\\\\output.tsv"
+      "default": "\\\\output.tsv",
+      "optional": false
     }
   },
   "outputs": {

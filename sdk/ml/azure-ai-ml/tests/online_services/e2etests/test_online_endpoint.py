@@ -5,21 +5,19 @@ import uuid
 from pathlib import Path
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import load_online_endpoint
 from azure.ai.ml._arm_deployments.arm_deployment_executor import ArmDeploymentExecutor
 from azure.ai.ml._artifacts._constants import EMPTY_DIRECTORY_ERROR
 from azure.ai.ml._ml_client import MLClient
-from azure.ai.ml.entities import EndpointAuthToken, EndpointAuthKeys
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.constants._common import AML_TOKEN_YAML, KEY, ONLINE_ENDPOINT_TYPE
 from azure.ai.ml.constants._endpoint import EndpointKeyType
-from azure.ai.ml.entities import KubernetesOnlineEndpoint, OnlineEndpoint
+from azure.ai.ml.entities import EndpointAuthKeys, EndpointAuthToken, KubernetesOnlineEndpoint, OnlineEndpoint
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.identity import EnvironmentCredential
-
-from devtools_testutils import AzureRecordedTestCase
 
 
 @pytest.fixture

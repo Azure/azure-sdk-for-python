@@ -51,9 +51,9 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-    data_masking_policy_name = kwargs.pop("data_masking_policy_name", "Default")  # type: Literal["Default"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+    data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +70,7 @@ def build_create_or_update_request(
         "dataMaskingRuleName": _SERIALIZER.url("data_masking_rule_name", data_masking_rule_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -89,8 +89,8 @@ def build_list_by_database_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-    data_masking_policy_name = kwargs.pop("data_masking_policy_name", "Default")  # type: Literal["Default"]
+    api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+    data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -106,7 +106,7 @@ def build_list_by_database_request(
         "dataMaskingPolicyName": _SERIALIZER.url("data_masking_policy_name", data_masking_policy_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -236,7 +236,7 @@ class DataMaskingRulesOperations:
         :param data_masking_rule_name: The name of the data masking rule. Required.
         :type data_masking_rule_name: str
         :param parameters: The required parameters for creating or updating a data masking rule. Is
-         either a model type or a IO type. Required.
+         either a DataMaskingRule type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DataMaskingRule or IO
         :keyword data_masking_policy_name: The name of the database for which the data masking rule
          applies. Default value is "Default". Note that overriding this default value may result in
@@ -261,10 +261,10 @@ class DataMaskingRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-        data_masking_policy_name = kwargs.pop("data_masking_policy_name", "Default")  # type: Literal["Default"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataMaskingRule]
+        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+        data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DataMaskingRule] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -290,9 +290,9 @@ class DataMaskingRulesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -309,11 +309,13 @@ class DataMaskingRulesOperations:
             deserialized = self._deserialize("DataMaskingRule", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/dataMaskingPolicies/{dataMaskingPolicyName}/rules/{dataMaskingRuleName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/dataMaskingPolicies/{dataMaskingPolicyName}/rules/{dataMaskingRuleName}"
+    }
 
     @distributed_trace
     def list_by_database(
@@ -340,9 +342,9 @@ class DataMaskingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-        data_masking_policy_name = kwargs.pop("data_masking_policy_name", "Default")  # type: Literal["Default"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataMaskingRuleListResult]
+        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+        data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
+        cls: ClsType[_models.DataMaskingRuleListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -367,12 +369,12 @@ class DataMaskingRulesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -380,13 +382,13 @@ class DataMaskingRulesOperations:
             deserialized = self._deserialize("DataMaskingRuleListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -399,4 +401,6 @@ class DataMaskingRulesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_database.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/dataMaskingPolicies/{dataMaskingPolicyName}/rules"}  # type: ignore
+    list_by_database.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/dataMaskingPolicies/{dataMaskingPolicyName}/rules"
+    }

@@ -5,4 +5,5 @@ package_pprint_name = "Advisor"
 package_doc_id = "advisor"
 is_stable = true
 is_arm = true
-sample_link = "advisor"
+sample_link = ""
+title = "AdvisorManagementClient"

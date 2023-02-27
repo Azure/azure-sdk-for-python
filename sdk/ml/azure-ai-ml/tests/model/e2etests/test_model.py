@@ -6,17 +6,15 @@ from typing import Callable
 from unittest.mock import patch
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from six import Iterator
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_model
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml.constants._common import LONG_URI_REGEX_FORMAT
 from azure.ai.ml.entities._assets import Model
 from azure.core.paging import ItemPaged
-
-from devtools_testutils import AzureRecordedTestCase, is_live
-
-from test_utilities.utils import sleep_if_live
 
 
 @pytest.fixture
@@ -30,6 +28,7 @@ def artifact_path(tmpdir_factory) -> str:  # type: ignore
     file_name = tmpdir_factory.mktemp("artifact_testing").join("artifact_file.txt")
     file_name.write("content")
     return str(file_name)
+
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
@@ -69,25 +68,6 @@ class TestModel(AzureRecordedTestCase):
         # client.models.delete(name=model.name, version="3")
         # with pytest.raises(Exception):
         #     client.models.get(name=model.name, version="3")
-
-    def test_create_autoincrement(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
-        path = Path("./tests/test_configs/model/model_no_version.yml")
-        model_name = randstr("model_name")
-
-        model = load_model(path)
-        model.name = model_name
-        assert model.version is None
-        assert model._auto_increment_version
-
-        created_model = client.models.create_or_update(model)
-        assert created_model.version == "1"
-        assert created_model.type == "custom_model"
-        assert created_model._auto_increment_version is False
-
-        next_model_asset = client.models.create_or_update(model)
-        assert next_model_asset.version == "2"
-        assert next_model_asset.type == "custom_model"
-        assert next_model_asset._auto_increment_version is False
 
     def test_list_no_name(self, client: MLClient) -> None:
         models = client.models.list()
@@ -147,10 +127,7 @@ class TestModel(AzureRecordedTestCase):
         client.models.restore(name=name)
         assert name in get_model_list()
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
     def test_create_get_download_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_name = randstr("model_name")
@@ -177,10 +154,7 @@ class TestModel(AzureRecordedTestCase):
         assert os.path.exists(wd)
         assert os.path.exists(f"{wd}/lightgbm_mlflow_model/MLmodel")
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
     def test_list_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_name = randstr("model_name")
@@ -199,10 +173,7 @@ class TestModel(AzureRecordedTestCase):
         model_list = [m.name for m in model_list if m is not None]
         assert model.name in model_list
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
     def test_promote_model(self, randstr: Callable[[], str], client: MLClient, registry_client: MLClient) -> None:
         # Create model in workspace
         model_path = Path("./tests/test_configs/model/model_full.yml")

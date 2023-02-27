@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -55,7 +56,7 @@ class ScalingMechanism(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanism):
@@ -101,7 +102,7 @@ class AddRemoveIncrementalNamedPartitionScalingMechanism(ScalingMechanism):
         :paramtype scale_increment: int
         """
         super().__init__(**kwargs)
-        self.kind = "AddRemoveIncrementalNamedPartition"  # type: str
+        self.kind: str = "AddRemoveIncrementalNamedPartition"
         self.min_partition_count = min_partition_count
         self.max_partition_count = max_partition_count
         self.scale_increment = scale_increment
@@ -849,7 +850,7 @@ class ScalingTrigger(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class AveragePartitionLoadScalingTrigger(ScalingTrigger):
@@ -912,7 +913,7 @@ class AveragePartitionLoadScalingTrigger(ScalingTrigger):
         :paramtype scale_interval: str
         """
         super().__init__(**kwargs)
-        self.kind = "AveragePartitionLoadTrigger"  # type: str
+        self.kind: str = "AveragePartitionLoadTrigger"
         self.metric_name = metric_name
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold
@@ -992,7 +993,7 @@ class AverageServiceLoadScalingTrigger(ScalingTrigger):
         :paramtype use_only_primary_load: bool
         """
         super().__init__(**kwargs)
-        self.kind = "AverageServiceLoadTrigger"  # type: str
+        self.kind: str = "AverageServiceLoadTrigger"
         self.metric_name = metric_name
         self.lower_load_threshold = lower_load_threshold
         self.upper_load_threshold = upper_load_threshold
@@ -2152,7 +2153,7 @@ class Partition(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.partition_scheme = None  # type: Optional[str]
+        self.partition_scheme: Optional[str] = None
 
 
 class NamedPartitionScheme(Partition):
@@ -2184,7 +2185,7 @@ class NamedPartitionScheme(Partition):
         :paramtype names: list[str]
         """
         super().__init__(**kwargs)
-        self.partition_scheme = "Named"  # type: str
+        self.partition_scheme: str = "Named"
         self.names = names
 
 
@@ -3122,7 +3123,7 @@ class PartitionInstanceCountScaleMechanism(ScalingMechanism):
         :paramtype scale_increment: int
         """
         super().__init__(**kwargs)
-        self.kind = "ScalePartitionInstanceCount"  # type: str
+        self.kind: str = "ScalePartitionInstanceCount"
         self.min_instance_count = min_instance_count
         self.max_instance_count = max_instance_count
         self.scale_increment = scale_increment
@@ -3479,7 +3480,7 @@ class ServicePlacementPolicy(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class ServicePlacementInvalidDomainPolicy(ServicePlacementPolicy):
@@ -3512,7 +3513,7 @@ class ServicePlacementInvalidDomainPolicy(ServicePlacementPolicy):
         :paramtype domain_name: str
         """
         super().__init__(**kwargs)
-        self.type = "InvalidDomain"  # type: str
+        self.type: str = "InvalidDomain"
         self.domain_name = domain_name
 
 
@@ -3539,7 +3540,7 @@ class ServicePlacementNonPartiallyPlaceServicePolicy(ServicePlacementPolicy):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.type = "NonPartiallyPlaceService"  # type: str
+        self.type: str = "NonPartiallyPlaceService"
 
 
 class ServicePlacementPreferPrimaryDomainPolicy(ServicePlacementPolicy):
@@ -3581,7 +3582,7 @@ class ServicePlacementPreferPrimaryDomainPolicy(ServicePlacementPolicy):
         :paramtype domain_name: str
         """
         super().__init__(**kwargs)
-        self.type = "PreferredPrimaryDomain"  # type: str
+        self.type: str = "PreferredPrimaryDomain"
         self.domain_name = domain_name
 
 
@@ -3617,7 +3618,7 @@ class ServicePlacementRequiredDomainPolicy(ServicePlacementPolicy):
         :paramtype domain_name: str
         """
         super().__init__(**kwargs)
-        self.type = "RequiredDomain"  # type: str
+        self.type: str = "RequiredDomain"
         self.domain_name = domain_name
 
 
@@ -3661,7 +3662,7 @@ class ServicePlacementRequireDomainDistributionPolicy(ServicePlacementPolicy):
         :paramtype domain_name: str
         """
         super().__init__(**kwargs)
-        self.type = "RequiredDomainDistribution"  # type: str
+        self.type: str = "RequiredDomainDistribution"
         self.domain_name = domain_name
 
 
@@ -3965,7 +3966,7 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
             **kwargs
         )
         self.provisioning_state = None
-        self.service_kind = None  # type: Optional[str]
+        self.service_kind: Optional[str] = None
         self.service_type_name = service_type_name
         self.partition_description = partition_description
         self.service_package_activation_mode = service_package_activation_mode
@@ -4186,7 +4187,7 @@ class SingletonPartitionScheme(Partition):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.partition_scheme = "Singleton"  # type: str
+        self.partition_scheme: str = "Singleton"
 
 
 class Sku(_serialization.Model):
@@ -4395,7 +4396,7 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
             service_package_activation_mode=service_package_activation_mode,
             **kwargs
         )
-        self.service_kind = "Stateful"  # type: str
+        self.service_kind: str = "Stateful"
         self.has_persisted_state = has_persisted_state
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
@@ -4569,7 +4570,7 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
             service_package_activation_mode=service_package_activation_mode,
             **kwargs
         )
-        self.service_kind = "Stateless"  # type: str
+        self.service_kind: str = "Stateless"
         self.instance_count = instance_count
         self.min_instance_count = min_instance_count
         self.min_instance_percentage = min_instance_percentage
@@ -4769,7 +4770,7 @@ class UniformInt64RangePartitionScheme(Partition):
         :paramtype high_key: int
         """
         super().__init__(**kwargs)
-        self.partition_scheme = "UniformInt64Range"  # type: str
+        self.partition_scheme: str = "UniformInt64Range"
         self.count = count
         self.low_key = low_key
         self.high_key = high_key

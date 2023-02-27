@@ -185,10 +185,14 @@ PARAMETERS_TO_TEST = [
 ]
 
 # this is to shorten the test name
-TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
-    lambda params: Path(params[0]).name,
-    PARAMETERS_TO_TEST,
-)))
+TEST_CASE_NAME_ENUMERATE = list(
+    enumerate(
+        map(
+            lambda params: Path(params[0]).name,
+            PARAMETERS_TO_TEST,
+        )
+    )
+)
 
 
 def get_expected_runsettings_items(runsettings_dict, client=None):
@@ -208,26 +212,31 @@ def get_expected_runsettings_items(runsettings_dict, client=None):
             expected_values[dot_key] = "PT5M"
         # hack: compute_name for hdinsight will be transformed into arm str
         if dot_key == "compute_name" and client is not None:
-            expected_values[dot_key] = f"/subscriptions/{client.subscription_id}/" \
-                             f"resourceGroups/{client.resource_group_name}/" \
-                             f"providers/Microsoft.MachineLearningServices/" \
-                             f"workspaces/{client.workspace_name}/" \
-                             f"computes/{expected_values[dot_key]}"
+            expected_values[dot_key] = (
+                f"/subscriptions/{client.subscription_id}/"
+                f"resourceGroups/{client.resource_group_name}/"
+                f"providers/Microsoft.MachineLearningServices/"
+                f"workspaces/{client.workspace_name}/"
+                f"computes/{expected_values[dot_key]}"
+            )
     return expected_values.items()
 
 
 ANONYMOUS_COMPONENT_TEST_PARAMS = [
     (
         "simple-command/powershell_copy.yaml",
-        "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+        # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
+        "75c43313-4777-b2e9-fe3a-3b98cabfaa77",
     ),
     (
         "additional-includes/component_spec.yaml",
-        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
+        # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
+        "1dc8271a-9184-df03-c9a5-afac8dcdcf26",
     ),
     # TODO(2076035): skip tests related to zip additional includes for now
     # (
     #     "additional-includes-in-zip/component_spec.yaml",
+    #     # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
     #     "24f26249-94c3-19c5-effe-030a60205d88"
     # ),
 ]
@@ -280,18 +289,3 @@ def extract_non_primitive(obj):
     if isinstance(obj, (float, int, str)):
         return None
     return obj
-
-
-def unregister_internal_components():
-    from azure.ai.ml._internal._schema.component import NodeType
-    from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
-    from azure.ai.ml._internal._util import _set_registered
-    from azure.ai.ml.entities._component.component_factory import component_factory
-
-    for _type in NodeType.all_values():
-        pipeline_node_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
-        pipeline_node_factory._load_from_rest_object_funcs.pop(_type, None)  # pylint: disable=protected-access
-        component_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
-        component_factory._create_schema_funcs.pop(_type, None)  # pylint: disable=protected-access
-
-    _set_registered(False)

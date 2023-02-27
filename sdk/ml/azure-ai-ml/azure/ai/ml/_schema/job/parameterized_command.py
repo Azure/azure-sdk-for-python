@@ -4,10 +4,11 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import CodeField, NestedField, DistributionField
+from azure.ai.ml._schema.core.fields import CodeField, DistributionField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml._schema.job.input_output_entry import InputLiteralValueSchema
 
 from ..assets.environment import AnonymousEnvironmentSchema
 from ..core.fields import ArmVersionedStr, RegistryStr, UnionField
@@ -30,6 +31,12 @@ class ParameterizedCommandSchema(PathAwareSchema):
         ],
         required=True,
     )
-    environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
+    environment_variables = UnionField(
+        [
+            fields.Dict(keys=fields.Str(), values=fields.Str()),
+            # Used for binding environment variables
+            NestedField(InputLiteralValueSchema),
+        ]
+    )
     resources = NestedField(JobResourceConfigurationSchema)
     distribution = DistributionField()

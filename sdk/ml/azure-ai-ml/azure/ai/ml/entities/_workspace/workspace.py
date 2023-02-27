@@ -6,10 +6,11 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
@@ -18,6 +19,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .customer_managed_key import CustomerManagedKey
+from .networking import ManagedNetwork
 
 
 class Workspace(Resource):
@@ -25,21 +27,22 @@ class Workspace(Resource):
         self,
         *,
         name: str,
-        description: str = None,
-        tags: Dict[str, str] = None,
-        display_name: str = None,
-        location: str = None,
-        resource_group: str = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        display_name: Optional[str] = None,
+        location: Optional[str] = None,
+        resource_group: Optional[str] = None,
         hbi_workspace: bool = False,
-        storage_account: str = None,
-        container_registry: str = None,
-        key_vault: str = None,
-        application_insights: str = None,
-        customer_managed_key: CustomerManagedKey = None,
-        image_build_compute: str = None,
-        public_network_access: str = None,
-        identity: IdentityConfiguration = None,
-        primary_user_assigned_identity: str = None,
+        storage_account: Optional[str] = None,
+        container_registry: Optional[str] = None,
+        key_vault: Optional[str] = None,
+        application_insights: Optional[str] = None,
+        customer_managed_key: Optional[CustomerManagedKey] = None,
+        image_build_compute: Optional[str] = None,
+        public_network_access: Optional[str] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        primary_user_assigned_identity: Optional[str] = None,
+        managed_network: Optional[ManagedNetwork] = None,
         **kwargs,
     ):
 
@@ -86,6 +89,8 @@ class Workspace(Resource):
         :type identity: IdentityConfiguration
         :param primary_user_assigned_identity: The workspace's primary user assigned identity
         :type primary_user_assigned_identity: str
+        :param managed_network: workspace's Managed Network configuration
+        :type managed_network: ManagedNetwork
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -106,6 +111,7 @@ class Workspace(Resource):
         self.public_network_access = public_network_access
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
+        self.managed_network = managed_network
 
     @property
     def discovery_url(self) -> str:
@@ -147,9 +153,9 @@ class Workspace(Resource):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Workspace":
         data = data or {}
@@ -181,11 +187,21 @@ class Workspace(Resource):
         if hasattr(rest_obj, "ml_flow_tracking_uri"):
             mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
 
+        # TODO: remove this once it is included in API response
+        managed_network = None
+        if hasattr(rest_obj, "managed_network"):
+            if rest_obj.managed_network and isinstance(rest_obj.managed_network, RestManagedNetwork):
+                managed_network = ManagedNetwork._from_rest_object(  # pylint: disable=protected-access
+                    rest_obj.managed_network
+                )
+
         armid_parts = str(rest_obj.id).split("/")
         group = None if len(armid_parts) < 4 else armid_parts[4]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
-            identity = IdentityConfiguration._from_workspace_rest_object(rest_obj.identity) # pylint: disable=protected-access
+            identity = IdentityConfiguration._from_workspace_rest_object(  # pylint: disable=protected-access
+                rest_obj.identity
+            )
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -206,12 +222,14 @@ class Workspace(Resource):
             mlflow_tracking_uri=mlflow_tracking_uri,
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
+            managed_network=managed_network,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
         return RestWorkspace(
-            # pylint: disable=protected-access
-            identity=self.identity._to_workspace_rest_object() if self.identity else None,
+            identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
+            if self.identity
+            else None,
             location=self.location,
             tags=self.tags,
             description=self.description,
@@ -225,4 +243,7 @@ class Workspace(Resource):
             image_build_compute=self.image_build_compute,
             public_network_access=self.public_network_access,
             primary_user_assigned_identity=self.primary_user_assigned_identity,
+            managed_network=self.managed_network._to_rest_object()  # pylint: disable=protected-access
+            if self.managed_network
+            else None,  # pylint: disable=protected-access
         )

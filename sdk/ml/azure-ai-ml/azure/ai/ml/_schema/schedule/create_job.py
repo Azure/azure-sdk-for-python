@@ -7,16 +7,16 @@ import copy
 import yaml
 from marshmallow import INCLUDE, ValidationError, post_load, pre_load
 
-from azure.ai.ml._schema import CommandJobSchema, AnonymousEnvironmentSchema
+from azure.ai.ml._schema import AnonymousEnvironmentSchema, CommandJobSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
+    ArmVersionedStr,
+    ComputeField,
     FileRefField,
     NestedField,
+    RegistryStr,
     StringTransformedEnum,
     UnionField,
-    ComputeField,
-    RegistryStr,
-    ArmVersionedStr,
 )
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
@@ -36,6 +36,7 @@ class CreateJobFileRefField(FileRefField):
         This function is overwrite because we need job can be dumped inside schedule.
         """
         from azure.ai.ml.entities._builders import BaseNode
+
         if isinstance(value, BaseNode):
             # Dump as Job to avoid missing field.
             value = value._to_job()
@@ -129,6 +130,7 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
         #   /specs/job-endpoint.md#properties-in-difference-job-types
         # code and command can not be set during runtime
         exclude = ["code", "command"]
+
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),

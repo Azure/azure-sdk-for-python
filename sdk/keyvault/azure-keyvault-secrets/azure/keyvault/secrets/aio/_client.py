@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, Dict
+from typing import Optional
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -42,12 +42,14 @@ class SecretClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs: "Any") -> KeyVaultSecret:
+    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs) -> KeyVaultSecret:
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
+
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -64,20 +66,23 @@ class SecretClient(AsyncKeyVaultClientBase):
         return KeyVaultSecret._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def set_secret(self, name: str, value: str, **kwargs: "Any") -> KeyVaultSecret:
+    async def set_secret(self, name: str, value: str, **kwargs) -> KeyVaultSecret:
         """Set a secret value. If `name` is in use, create a new version of the secret. If not, create a new secret.
 
         Requires secrets/set permission.
 
         :param str name: The name of the secret
         :param str value: The value of the secret
+
         :keyword bool enabled: Whether the secret is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
+        :paramtype tags: Dict[str, str]
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
+
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -115,7 +120,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_secret_properties(
-        self, name: str, version: "Optional[str]" = None, **kwargs: "Any"
+        self, name: str, version: Optional[str] = None, **kwargs
     ) -> SecretProperties:
         """Update properties of a secret other than its value. Requires secrets/set permission.
 
@@ -124,13 +129,16 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret
         :param str version: (optional) Version of the secret to update. If unspecified, the latest version is updated.
+
         :keyword bool enabled: Whether the secret is enabled for use.
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
+        :paramtype tags: Dict[str, str]
         :keyword str content_type: An arbitrary string indicating the type of the secret, e.g. 'password'
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
+
         :rtype: ~azure.keyvault.secrets.SecretProperties
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -169,7 +177,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_properties_of_secrets(self, **kwargs: "Any") -> AsyncItemPaged[SecretProperties]:
+    def list_properties_of_secrets(self, **kwargs) -> AsyncItemPaged[SecretProperties]:
         """List identifiers and attributes of all secrets in the vault. Requires secrets/list permission.
 
         List items don't include secret values. Use :func:`get_secret` to get a secret's value.
@@ -193,12 +201,13 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_secret_versions(self, name: str, **kwargs: "Any") -> AsyncItemPaged[SecretProperties]:
+    def list_properties_of_secret_versions(self, name: str, **kwargs) -> AsyncItemPaged[SecretProperties]:
         """List properties of all versions of a secret, excluding their values. Requires secrets/list permission.
 
         List items don't include secret values. Use :func:`get_secret` to get a secret's value.
 
         :param str name: Name of the secret
+
         :returns: An iterator of secrets, excluding their values
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.secrets.SecretProperties]
 
@@ -219,11 +228,13 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def backup_secret(self, name: str, **kwargs: "Any") -> bytes:
+    async def backup_secret(self, name: str, **kwargs) -> bytes:
         """Back up a secret in a protected form useable only by Azure Key Vault. Requires secrets/backup permission.
 
-        :param str name: Name of the secret
+        :param str name: Name of the secret to back up
+
         :rtype: bytes
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -240,12 +251,14 @@ class SecretClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_secret_backup(self, backup: bytes, **kwargs: "Any") -> SecretProperties:
+    async def restore_secret_backup(self, backup: bytes, **kwargs) -> SecretProperties:
         """Restore a backed up secret. Requires the secrets/restore permission.
 
         :param bytes backup: A secret backup as returned by :func:`backup_secret`
+
         :returns: The restored secret
         :rtype: ~azure.keyvault.secrets.SecretProperties
+
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the secret's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -267,12 +280,15 @@ class SecretClient(AsyncKeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace_async
-    async def delete_secret(self, name: str, **kwargs: "Any") -> DeletedSecret:
+    async def delete_secret(self, name: str, **kwargs) -> DeletedSecret:
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         If the vault has soft-delete enabled, deletion may take several seconds to complete.
 
+        :param str name: Name of the secret to delete.
+
         :rtype: ~azure.keyvault.secrets.DeletedSecret
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -304,11 +320,13 @@ class SecretClient(AsyncKeyVaultClientBase):
         return polling_method.resource()
 
     @distributed_trace_async
-    async def get_deleted_secret(self, name: str, **kwargs: "Any") -> DeletedSecret:
+    async def get_deleted_secret(self, name: str, **kwargs) -> DeletedSecret:
         """Get a deleted secret. Possible only in vaults with soft-delete enabled. Requires secrets/get permission.
 
         :param str name: Name of the deleted secret
+
         :rtype: ~azure.keyvault.secrets.DeletedSecret
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the deleted secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -325,7 +343,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_secrets(self, **kwargs: "Any") -> AsyncItemPaged[DeletedSecret]:
+    def list_deleted_secrets(self, **kwargs) -> AsyncItemPaged[DeletedSecret]:
         """Lists all deleted secrets. Possible only in vaults with soft-delete enabled.
 
         Requires secrets/list permission.
@@ -349,19 +367,20 @@ class SecretClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def purge_deleted_secret(self, name: str, **kwargs: "Any") -> None:
+    async def purge_deleted_secret(self, name: str, **kwargs) -> None:
         """Permanently delete a deleted secret. Possible only in vaults with soft-delete enabled.
 
-        Performs an irreversible deletion of the specified secret, without
-        possibility for recovery. The operation is not available if the
-        :py:attr:`~azure.keyvault.secrets.SecretProperties.recovery_level` does not specify 'Purgeable'.
-        This method is only necessary for purging a secret before its
+        Performs an irreversible deletion of the specified secret, without possibility for recovery. The operation is
+        not available if the :py:attr:`~azure.keyvault.secrets.SecretProperties.recovery_level` does not specify
+        'Purgeable'. This method is only necessary for purging a secret before its
         :py:attr:`~azure.keyvault.secrets.DeletedSecret.scheduled_purge_date`.
 
         Requires secrets/purge permission.
 
         :param str name: Name of the deleted secret to purge
+
         :returns: None
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -375,16 +394,17 @@ class SecretClient(AsyncKeyVaultClientBase):
         await self._client.purge_deleted_secret(self.vault_url, name, error_map=_error_map, **kwargs)
 
     @distributed_trace_async
-    async def recover_deleted_secret(self, name: str, **kwargs: "Any") -> SecretProperties:
+    async def recover_deleted_secret(self, name: str, **kwargs) -> SecretProperties:
         """Recover a deleted secret to its latest version. This is possible only in vaults with soft-delete enabled.
 
-        If the vault does not have soft-delete enabled, :func:`delete_secret` is permanent, and this method will raise
-        an error. Attempting to recover a non-deleted secret will also raise an error.
-
-        Requires the secrets/recover permission.
+        Requires the secrets/recover permission. If the vault does not have soft-delete enabled, :func:`delete_secret`
+        is permanent, and this method will raise an error. Attempting to recover a non-deleted secret will also raise an
+        error.
 
         :param str name: Name of the deleted secret to recover
+
         :rtype: ~azure.keyvault.secrets.SecretProperties
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:

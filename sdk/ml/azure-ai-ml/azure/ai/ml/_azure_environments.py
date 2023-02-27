@@ -6,10 +6,14 @@
 
 import logging
 import os
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.constants._common import ArmConstants
+from azure.core.rest import HttpRequest
+from azure.mgmt.core import ARMPipelineClient
+
 
 module_logger = logging.getLogger(__name__)
 
@@ -56,6 +60,21 @@ _environments = {
     },
 }
 
+_requests_pipeline = None
+
+
+def _get_cloud(cloud: str):
+    if cloud in _environments:
+        return _environments[cloud]
+    arm_url = os.environ.get(ArmConstants.METADATA_URL_ENV_NAME, ArmConstants.DEFAULT_URL)
+    arm_clouds = _get_clouds_by_metadata_url(arm_url)
+    try:
+        new_cloud = arm_clouds[cloud]
+        _environments.update(new_cloud)
+        return new_cloud
+    except KeyError:
+        raise Exception('Unknown cloud environment "{0}".'.format(cloud))
+
 
 def _get_default_cloud_name():
     """Return AzureCloud as the default cloud."""
@@ -74,24 +93,25 @@ def _get_cloud_details(cloud: str = AzureEnvironments.ENV_DEFAULT):
             AzureEnvironments.ENV_DEFAULT,
         )
         cloud = _get_default_cloud_name()
-    try:
-        azure_environment = _environments[cloud]
-        module_logger.debug("Using the cloud configuration: '%s'.", azure_environment)
-    except KeyError:
-        raise Exception('Unknown cloud environment "{0}".'.format(cloud))
-    return azure_environment
+    return _get_cloud(cloud)
 
 
 def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
+    """Sets the current cloud
+
+    :param cloud: cloud name
+    """
     if cloud is not None:
-        if cloud not in _environments:
+        try:
+            _get_cloud(cloud)
+        except Exception:
             raise Exception('Unknown cloud environment supplied: "{0}".'.format(cloud))
     else:
         cloud = _get_default_cloud_name()
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud
 
 
-def _get_base_url_from_metadata(cloud_name: str = None, is_local_mfe: bool = False):
+def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False):
     """Retrieve the base url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -107,7 +127,7 @@ def _get_base_url_from_metadata(cloud_name: str = None, is_local_mfe: bool = Fal
     return base_url
 
 
-def _get_aml_resource_id_from_metadata(cloud_name: str = None):
+def _get_aml_resource_id_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the aml_resource_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -118,7 +138,7 @@ def _get_aml_resource_id_from_metadata(cloud_name: str = None):
     return aml_resource_id
 
 
-def _get_active_directory_url_from_metadata(cloud_name: str = None):
+def _get_active_directory_url_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the active_directory_url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -129,7 +149,7 @@ def _get_active_directory_url_from_metadata(cloud_name: str = None):
     return active_directory_url
 
 
-def _get_storage_endpoint_from_metadata(cloud_name: str = None):
+def _get_storage_endpoint_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the storage_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -140,7 +160,7 @@ def _get_storage_endpoint_from_metadata(cloud_name: str = None):
     return storage_endpoint
 
 
-def _get_azure_portal_id_from_metadata(cloud_name: str = None):
+def _get_azure_portal_id_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the azure_portal_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -151,7 +171,7 @@ def _get_azure_portal_id_from_metadata(cloud_name: str = None):
     return azure_portal_id
 
 
-def _get_cloud_information_from_metadata(cloud_name: str = None, **kwargs) -> Dict:
+def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwargs) -> Dict:
     """Retrieve the cloud information from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -167,7 +187,8 @@ def _get_cloud_information_from_metadata(cloud_name: str = None, **kwargs) -> Di
     kwargs.update(client_kwargs)
     return kwargs
 
-def _get_registry_discovery_endpoint_from_metadata(cloud_name: str = None):
+
+def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the registry_discovery_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -176,7 +197,6 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: str = None):
     cloud_details = _get_cloud_details(cloud_name)
     registry_discovery_endpoint = cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT)
     return registry_discovery_endpoint
-
 
 
 def _resource_to_scopes(resource):
@@ -189,3 +209,77 @@ def _resource_to_scopes(resource):
     """
     scope = resource + "/.default"
     return [scope]
+
+
+def _get_registry_discovery_url(cloud, cloud_suffix=""):
+    """Get or generate the registry discovery url
+
+    :param cloud: configuration of the cloud to get the registry_discovery_url from
+    :param cloud_suffix: the suffix to use for the cloud, in the case that the registry_discovery_url
+        must be generated
+    :return: string of discovery url
+    """
+    cloud_name = cloud["name"]
+    if cloud_name in _environments:
+        return _environments[cloud_name].registry_url
+
+    registry_discovery_region = os.environ.get(
+        ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME, ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
+    )
+    registry_discovery_region_default = "https://{}{}.api.azureml.{}/".format(
+        cloud_name.lower(), registry_discovery_region, cloud_suffix
+    )
+    return os.environ.get(ArmConstants.REGISTRY_ENV_URL, registry_discovery_region_default)
+
+
+def _get_clouds_by_metadata_url(metadata_url):
+    """Get all the clouds by the specified metadata url
+
+    :return: list of the clouds
+    """
+    try:
+        module_logger.debug("Start : Loading cloud metadata from the url specified by %s", metadata_url)
+        client = ARMPipelineClient(base_url=metadata_url, policies=[])
+        HttpRequest("GET", metadata_url)
+        with client.send_request(HttpRequest("GET", metadata_url)) as meta_response:
+            arm_cloud_dict = meta_response.json()
+            cli_cloud_dict = _convert_arm_to_cli(arm_cloud_dict)
+            module_logger.debug("Finish : Loading cloud metadata from the url specified by %s", metadata_url)
+            return cli_cloud_dict
+    except Exception as ex:  # pylint: disable=broad-except
+        module_logger.warning(
+            "Error: Azure ML was unable to load cloud metadata from the url specified by %s. %s. "
+            "This may be due to a misconfiguration of networking controls. Azure Machine Learning Python "
+            "SDK requires outbound access to Azure Resource Manager. Please contact your networking team "
+            "to configure outbound access to Azure Resource Manager on both Network Security Group and "
+            "Firewall. For more details on required configurations, see "
+            "https://docs.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall.",
+            metadata_url,
+            ex,
+        )
+        return {}
+
+
+def _convert_arm_to_cli(arm_cloud_metadata):
+    cli_cloud_metadata_dict = {}
+    if isinstance(arm_cloud_metadata, dict):
+        arm_cloud_metadata = [arm_cloud_metadata]
+
+    for cloud in arm_cloud_metadata:
+        try:
+            cloud_name = cloud["name"]
+            portal_endpoint = cloud["portal"]
+            cloud_suffix = ".".join(portal_endpoint.split(".")[2:]).replace("/", "")
+            registry_discovery_url = _get_registry_discovery_url(cloud, cloud_suffix)
+            cli_cloud_metadata_dict[cloud_name] = {
+                EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud["portal"],
+                EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud["resourceManager"],
+                EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud["authentication"]["loginEndpoint"],
+                EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.{}".format(cloud_suffix),
+                EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"],
+                EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: registry_discovery_url,
+            }
+        except KeyError as ex:
+            module_logger.warning("Property on cloud not found in arm cloud metadata: %s", ex)
+            continue
+    return cli_cloud_metadata_dict

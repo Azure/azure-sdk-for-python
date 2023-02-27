@@ -1,21 +1,18 @@
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 
-from azure.ai.ml import MLClient, load_batch_endpoint, load_batch_deployment
+from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.core.exceptions import ResourceNotFoundError
 
-from devtools_testutils import AzureRecordedTestCase, is_live
-
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.usefixtures("recorded_test", "mock_snapshot_hash")
 @pytest.mark.production_experiences_test
 class TestBatchEndpoint(AzureRecordedTestCase):
-    def test_batch_endpoint_create(
-        self, client: MLClient, rand_batch_name: Callable[[], str]
-    ) -> None:
+    def test_batch_endpoint_create(self, client: MLClient, rand_batch_name: Callable[[], str]) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint.yaml"
         name = rand_batch_name("name")
         # Bug in MFE that batch endpoint properties are not preserved, uncomment below after it's fixed in MFE
@@ -42,9 +39,11 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
-
+    @pytest.mark.skip(reason="TODO (2256262): NoSuchModelRegistered issue")
     @pytest.mark.usefixtures("light_gbm_model")
-    def test_mlflow_batch_endpoint_create_and_update(self, client: MLClient, rand_batch_name: Callable[[], str]) -> None:
+    def test_mlflow_batch_endpoint_create_and_update(
+        self, client: MLClient, rand_batch_name: Callable[[], str]
+    ) -> None:
         # light_gbm_model fixture is not used directly, but it makes sure the model being used by the batch endpoint exists
 
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow.yaml"
@@ -69,8 +68,14 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
+    def test_batch_invoke(
+        self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
+    ) -> None:
+        set_bodiless_matcher()
 
-    def test_batch_invoke(self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)
@@ -91,29 +96,27 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         # Invoke using inputs: Dict[str, Input]
         input_1 = Input(
             type="uri_folder",
-            path='https://pipelinedata.blob.core.windows.net/sampledata/mnist',
+            path="https://pipelinedata.blob.core.windows.net/sampledata/mnist",
         )
 
         batchjob = client.batch_endpoints.invoke(
-            endpoint_name=endpoint_name,
-            deployment_name=deployment_name,
-            inputs = {"input1": input_1}
+            endpoint_name=endpoint_name, deployment_name=deployment_name, inputs={"input1": input_1}
         )
         assert batchjob
 
         # Invoke using deprecated input: Input
         batchjob_input = client.batch_endpoints.invoke(
-            endpoint_name=endpoint_name,
-            deployment_name=deployment_name,
-            input = input_1
+            endpoint_name=endpoint_name, deployment_name=deployment_name, input=input_1
         )
         assert batchjob_input
 
     @pytest.mark.skipif(
         condition=not is_live(),
-        reason="Update operation is not valid. If we use the same endpoint/deployment this will throw an error"
+        reason="Update operation is not valid. If we use the same endpoint/deployment this will throw an error",
     )
-    def test_batch_component(self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
+    def test_batch_component(
+        self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
+    ) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_deployment_component.yaml"
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)
@@ -131,21 +134,32 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         endpoint = client.batch_endpoints.begin_create_or_update(endpoint).result()
         # create a deployment
         client.batch_deployments.begin_create_or_update(deployment).result()
-        
+
         # Batch endpoint invoke using different supported inputs
         inputs_dict = {
             "input_1": Input(path="azureml:list_data_v2_test:2", type="uri_folder"),
-            "input_2": Input(path="azureml:list_data_v2_test:2", type="uri_folder")
+            "input_2": Input(path="azureml:list_data_v2_test:2", type="uri_folder"),
         }
 
         job = client.batch_endpoints.invoke(
             endpoint_name=endpoint.name,
             deployment_name=deployment.name,
-            inputs = inputs_dict,
+            inputs=inputs_dict,
         )
         assert job
 
-    def test_batch_invoke_outputs(self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
+    def test_batch_invoke_outputs(
+        self,
+        client: MLClient,
+        rand_batch_name: Callable[[], str],
+        rand_batch_deployment_name: Callable[[], str],
+        randstr: Callable[[str], str],
+    ) -> None:
+        set_bodiless_matcher()
+
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)
@@ -166,20 +180,23 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         # Invoke using inputs: Dict[str, Input]
         input_1 = Input(
             type="uri_folder",
-            path='https://pipelinedata.blob.core.windows.net/sampledata/mnist',
+            path="https://pipelinedata.blob.core.windows.net/sampledata/mnist",
         )
 
         # Invoke using outputs: Dict[str, Output]
+        output_file_name = randstr("output_file")
         output_1 = Output(
             type="uri_file",
-            path='azureml://datastores/workspaceblobstore/paths/batchendpointinvoke/mnistOutput/output.csv',
+            path="azureml://datastores/workspaceblobstore/paths/batchendpointinvoke/mnistOutput/"
+            + output_file_name
+            + ".csv",
         )
 
         batchjob = client.batch_endpoints.invoke(
             endpoint_name=endpoint_name,
             deployment_name=deployment_name,
-            inputs = {"input1": input_1},
-            outputs = {"output": output_1}
+            inputs={"input1": input_1},
+            outputs={"output": output_1},
         )
         assert batchjob
 

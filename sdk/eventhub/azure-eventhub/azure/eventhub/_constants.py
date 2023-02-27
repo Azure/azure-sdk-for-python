@@ -34,6 +34,7 @@ EPOCH_SYMBOL = b"com.microsoft:epoch"
 TIMEOUT_SYMBOL = b"com.microsoft:timeout"
 RECEIVER_RUNTIME_METRIC_SYMBOL = b"com.microsoft:enable-receiver-runtime-metric"
 
+MAX_MESSAGE_LENGTH_BYTES = 1024 * 1024
 MAX_USER_AGENT_LENGTH = 512
 ALL_PARTITIONS = "all-partitions"
 CONTAINER_PREFIX = "eventhub.pysdk-"
@@ -43,6 +44,8 @@ MGMT_PARTITION_OPERATION = b"com.microsoft:partition"
 MGMT_STATUS_CODE = b"status-code"
 MGMT_STATUS_DESC = b"status-description"
 USER_AGENT_PREFIX = "azsdk-python-eventhubs"
+UAMQP_LIBRARY = "uamqp"
+PYAMQP_LIBRARY = "pyamqp"
 
 NO_RETRY_ERRORS = [
     b"com.microsoft:argument-out-of-range",

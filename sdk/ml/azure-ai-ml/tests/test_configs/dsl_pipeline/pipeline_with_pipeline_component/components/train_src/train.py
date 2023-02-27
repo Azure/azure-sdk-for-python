@@ -1,8 +1,8 @@
 import argparse
+import os
+from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
-from datetime import datetime
-import os
 
 parser = argparse.ArgumentParser("train")
 parser.add_argument("--training_data", type=str, help="Path to training data")

@@ -7,19 +7,17 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
-class ApiPortalProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of the API portal.
-    """
+
+class ApiPortalProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the API portal."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -27,9 +25,9 @@ class ApiPortalProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, En
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class AppResourceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the App
-    """
+
+class AppResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the App."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -37,9 +35,9 @@ class AppResourceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, 
     UPDATING = "Updating"
     DELETING = "Deleting"
 
-class BindingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Buildpack Binding Type
-    """
+
+class BindingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Buildpack Binding Type."""
 
     APPLICATION_INSIGHTS = "ApplicationInsights"
     APACHE_SKY_WALKING = "ApacheSkyWalking"
@@ -48,9 +46,9 @@ class BindingType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NEW_RELIC = "NewRelic"
     ELASTIC_APM = "ElasticAPM"
 
-class BuilderProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Builder provision status.
-    """
+
+class BuilderProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Builder provision status."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -58,9 +56,9 @@ class BuilderProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class BuildpackBindingProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of the Buildpack Binding.
-    """
+
+class BuildpackBindingProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the Buildpack Binding."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -68,9 +66,9 @@ class BuildpackBindingProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, 
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class BuildProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the KPack build result
-    """
+
+class BuildProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the KPack build result."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -78,9 +76,9 @@ class BuildProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class BuildResultProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the KPack build result
-    """
+
+class BuildResultProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the KPack build result."""
 
     QUEUING = "Queuing"
     BUILDING = "Building"
@@ -88,9 +86,9 @@ class BuildResultProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, 
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class BuildServiceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the KPack build result
-    """
+
+class BuildServiceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the KPack build result."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -98,9 +96,9 @@ class BuildServiceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str,
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class ConfigServerState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of the config server.
-    """
+
+class ConfigServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the config server."""
 
     NOT_AVAILABLE = "NotAvailable"
     DELETED = "Deleted"
@@ -108,9 +106,9 @@ class ConfigServerState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     UPDATING = "Updating"
 
-class ConfigurationServiceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of the Application Configuration Service.
-    """
+
+class ConfigurationServiceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the Application Configuration Service."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -118,34 +116,34 @@ class ConfigurationServiceProvisioningState(with_metaclass(CaseInsensitiveEnumMe
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DeploymentResourceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the Deployment
-    """
+
+class DeploymentResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Deployment."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class DeploymentResourceStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the Deployment
-    """
+
+class DeploymentResourceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the Deployment."""
 
     STOPPED = "Stopped"
     RUNNING = "Running"
 
-class GatewayProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of the Spring Cloud Gateway.
-    """
+
+class GatewayProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the Spring Cloud Gateway."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -153,52 +151,52 @@ class GatewayProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class KPackBuildStageProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of this build stage resource.
-    """
+
+class KPackBuildStageProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of this build stage resource."""
 
     NOT_STARTED = "NotStarted"
     RUNNING = "Running"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class LastModifiedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that last modified the resource.
-    """
+
+class LastModifiedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that last modified the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class ManagedIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the managed identity
-    """
+
+class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the managed identity."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
-class MonitoringSettingState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of the Monitoring Setting.
-    """
+
+class MonitoringSettingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the Monitoring Setting."""
 
     NOT_AVAILABLE = "NotAvailable"
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
     UPDATING = "Updating"
 
-class PowerState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Power state of the Service
-    """
+
+class PowerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Power state of the Service."""
 
     RUNNING = "Running"
     STOPPED = "Stopped"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the Service
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Service."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -212,24 +210,25 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MOVED = "Moved"
     MOVE_FAILED = "MoveFailed"
 
-class ResourceSkuRestrictionsReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResourceSkuRestrictionsReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the reason for restriction. Possible values include: 'QuotaId',
-    'NotAvailableForSubscription'
+    'NotAvailableForSubscription'.
     """
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class ResourceSkuRestrictionsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the type of restrictions. Possible values include: 'Location', 'Zone'
-    """
+
+class ResourceSkuRestrictionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the type of restrictions. Possible values include: 'Location', 'Zone'."""
 
     LOCATION = "Location"
     ZONE = "Zone"
 
-class ServiceRegistryProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of the Service Registry.
-    """
+
+class ServiceRegistryProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the Service Registry."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -237,52 +236,52 @@ class ServiceRegistryProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, s
     FAILED = "Failed"
     DELETING = "Deleting"
 
-class SkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the type of the scale.
-    """
+
+class SkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the type of the scale."""
 
     NONE = "None"
     MANUAL = "Manual"
     AUTOMATIC = "Automatic"
 
-class StorageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the storage.
-    """
+
+class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the storage."""
 
     STORAGE_ACCOUNT = "StorageAccount"
 
-class SupportedRuntimePlatform(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The platform of this runtime version (possible values: "Java" or ".NET").
-    """
+
+class SupportedRuntimePlatform(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The platform of this runtime version (possible values: "Java" or ".NET")."""
 
     JAVA = "Java"
     _NET_CORE = ".NET Core"
 
-class SupportedRuntimeValue(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The raw value which could be passed to deployment CRUD operations.
-    """
+
+class SupportedRuntimeValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The raw value which could be passed to deployment CRUD operations."""
 
     JAVA8 = "Java_8"
     JAVA11 = "Java_11"
     JAVA17 = "Java_17"
     NET_CORE31 = "NetCore_31"
 
-class TestKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the test key
-    """
+
+class TestKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the test key."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
-class TrafficDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The direction of required traffic
-    """
+
+class TrafficDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction of required traffic."""
 
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
 
-class Type(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the underlying resource to mount as a persistent disk.
-    """
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the underlying resource to mount as a persistent disk."""
 
     AZURE_FILE_VOLUME = "AzureFileVolume"

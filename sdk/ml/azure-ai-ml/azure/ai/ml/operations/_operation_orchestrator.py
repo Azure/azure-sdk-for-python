@@ -9,16 +9,21 @@ import re
 from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._restclient.v2021_10_01.models import UriReference
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_env_build_context,
+    _check_and_upload_path,
+    _get_snapshot_path_info,
+    _check_and_upload_snapshot,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
+    AMLLabelledArmId,
     AMLNamedArmId,
     AMLVersionedArmId,
-    AMLLabelledArmId,
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
+    is_singularity_id_for_resource,
     parse_name_label,
     parse_prefixed_name_version,
 )
@@ -28,19 +33,19 @@ from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
     CURATED_ENV_PREFIX,
+    DEFAULT_LABEL_NAME,
     FILE_PREFIX,
     FOLDER_PREFIX,
     HTTPS_PREFIX,
     JOB_URI_REGEX_FORMAT,
+    LABELLED_RESOURCE_ID_FORMAT,
+    LABELLED_RESOURCE_NAME,
     MLFLOW_URI_REGEX_FORMAT,
     NAMED_RESOURCE_ID_FORMAT,
+    REGISTRY_VERSION_PATTERN,
     VERSIONED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_NAME,
-    LABELLED_RESOURCE_NAME,
     AzureMLResourceType,
-    LABELLED_RESOURCE_ID_FORMAT,
-    DEFAULT_LABEL_NAME,
-    REGISTRY_VERSION_PATTERN
 )
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
@@ -50,7 +55,7 @@ from azure.ai.ml.exceptions import (
     EmptyDirectoryError,
     ErrorCategory,
     ErrorTarget,
-    MLException,
+    MlException,
     ModelException,
     ValidationErrorType,
     ValidationException,
@@ -125,6 +130,7 @@ class OperationOrchestrator(object):
             asset is None
             or is_ARM_id_for_resource(asset, azureml_type, sub_workspace_resource)
             or is_registry_id_for_resource(asset)
+            or is_singularity_id_for_resource(asset)
         ):
             return asset
         if isinstance(asset, str):
@@ -140,11 +146,14 @@ class OperationOrchestrator(object):
             if azureml_type in AzureMLResourceType.VERSIONED_TYPES:
                 # Short form of curated env will be expanded on the backend side.
                 # CLI strips off azureml: in the schema, appending it back as required by backend
-                if (
-                    azureml_type == "environments"
-                    and (asset.startswith(CURATED_ENV_PREFIX) or re.match(REGISTRY_VERSION_PATTERN, f"azureml:{asset}"))
-                ):
-                    return f"azureml:{asset}"
+                if azureml_type == AzureMLResourceType.ENVIRONMENT:
+                    azureml_prefix = "azureml:"
+                    # return the same value if resolved result is passed in
+                    _asset = asset[len(azureml_prefix) :] if asset.startswith(azureml_prefix) else asset
+                    if _asset.startswith(CURATED_ENV_PREFIX) or re.match(
+                        REGISTRY_VERSION_PATTERN, f"{azureml_prefix}{_asset}"
+                    ):
+                        return f"{azureml_prefix}{_asset}"
 
                 name, label = parse_name_label(asset)
                 # TODO: remove this condition after label is fully supported for all versioned resources
@@ -255,10 +264,18 @@ class OperationOrchestrator(object):
             if register_asset:
                 code_asset = self._code_assets.create_or_update(code_asset)
                 return code_asset.id
-            uploaded_code_asset, _ = _check_and_upload_path(
+            path, ignore_file, _ = _get_snapshot_path_info(code_asset)
+            workspace_info = self._datastore_operation._service_client.workspaces.get(
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._operation_scope.workspace_name,
+            )
+            uploaded_code_asset = _check_and_upload_snapshot(
                 artifact=code_asset,
+                path=path,
+                ignore_file=ignore_file,
                 asset_operations=self._code_assets,
-                artifact_type=ErrorTarget.CODE,
+                workspace=workspace_info,
+                requests_pipeline=self._code_assets._requests_pipeline,
                 show_progress=self._operation_config.show_progress,
             )
             uploaded_code_asset._id = get_arm_id_with_version(
@@ -268,7 +285,7 @@ class OperationOrchestrator(object):
                 code_asset.version,
             )
             return uploaded_code_asset
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise AssetException(
@@ -317,7 +334,7 @@ class OperationOrchestrator(object):
                 model.version,
             )
             return uploaded_model
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ModelException(
@@ -379,7 +396,7 @@ class OperationOrchestrator(object):
         )
 
     # pylint: disable=unused-argument
-    def resolve_azureml_id(self, arm_id: str = None, **kwargs) -> str:
+    def resolve_azureml_id(self, arm_id: Optional[str] = None, **kwargs) -> str:
         """This function converts ARM id to name or name:version AzureML id. It
         parses the ARM id and matches the subscription Id, resource group name
         and workspace_name.
@@ -430,15 +447,10 @@ class OperationOrchestrator(object):
             and id_.workspace_name == self._operation_scope.workspace_name
         )
 
-    def _validate_datastore_name(self, datastore_uri: Optional[Union[UriReference, str, PathLike]]) -> None:
+    def _validate_datastore_name(self, datastore_uri: Optional[Union[str, PathLike]]) -> None:
         if datastore_uri:
             try:
-                if isinstance(datastore_uri, UriReference):
-                    if datastore_uri.file:
-                        datastore_uri = datastore_uri.file
-                    else:
-                        datastore_uri = datastore_uri.folder
-                elif isinstance(datastore_uri, str):
+                if isinstance(datastore_uri, str):
                     if datastore_uri.startswith(FILE_PREFIX):
                         datastore_uri = datastore_uri[len(FILE_PREFIX) :]
                     elif datastore_uri.startswith(FOLDER_PREFIX):

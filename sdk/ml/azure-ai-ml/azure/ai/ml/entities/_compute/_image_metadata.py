@@ -8,13 +8,7 @@ from azure.ai.ml._utils._experimental import experimental
 class ImageMetadata:
     """Metadata about the operating system image for this compute instance."""
 
-    def __init__(
-        self,
-        *,
-        is_latest_os_image_version: bool,
-        current_image_version: str,
-        latest_image_version: str
-    ):
+    def __init__(self, *, is_latest_os_image_version: bool, current_image_version: str, latest_image_version: str):
         self._is_latest_os_image_version = is_latest_os_image_version
         self._current_image_version = current_image_version
         self._latest_image_version = latest_image_version

@@ -4,9 +4,11 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
 import uuid
+import asyncio
 import logging
 from collections import deque
 from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List
+from functools import partial
 
 from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
@@ -16,9 +18,24 @@ from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_S
 
 if TYPE_CHECKING:
     from typing import Deque
-    import uamqp
-    from uamqp import ReceiveClientAsync, Source, types
-    from uamqp.authentication import JWTTokenAsync
+
+    try:
+        from uamqp import (  # pylint: disable=unused-import
+            ReceiveClientAsync as uamqp_ReceiveClientAsync,
+            Message as uamqp_Message,
+        )
+        from uamqp.types import AMQPType as uamqp_AMQPType
+        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
+    except ImportError:
+        uamqp_Message = None
+        uamqp_ReceiveClientAsync = None
+        uamqp_AMQPType = None
+        uamqp_JWTTokenAsync = None
+
+    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
+    from .._pyamqp.aio._client_async import ReceiveClientAsync
+    from .._pyamqp import types
+
     from ._consumer_client_async import EventHubConsumerClient
 
 _LOGGER = logging.getLogger(__name__)
@@ -76,9 +93,9 @@ class EventHubConsumer(
         self.closed = False
 
         self._amqp_transport = kwargs.pop("amqp_transport")
-        self._on_event_received: Callable[[Union[Optional[EventData], List[EventData]]], Awaitable[None]] = kwargs[
-            "on_event_received"
-        ]
+        self._on_event_received: Callable[
+            [Union[Optional[EventData], List[EventData]]], Awaitable[None]
+        ] = kwargs["on_event_received"]
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         self._client = client
         self._source = source
@@ -88,11 +105,17 @@ class EventHubConsumer(
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = self._amqp_transport.create_retry_policy(self._client._config)
+        self._retry_policy = self._amqp_transport.create_retry_policy(
+            self._client._config
+        )
         self._reconnect_backoff = 1
         self._timeout = 0
-        self._idle_timeout = (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR) if idle_timeout else None
-        link_properties: Dict[types.AMQPType, types.AMQPType] = {}
+        self._idle_timeout = (
+            (idle_timeout * self._amqp_transport.TIMEOUT_FACTOR)
+            if idle_timeout
+            else None
+        )
+        link_properties: Dict[bytes, int] = {}
         self._partition = self._source.split("/")[-1]
         self._name = f"EHReceiver-{uuid.uuid4()}-partition{self._partition}"
         if owner_level is not None:
@@ -102,24 +125,35 @@ class EventHubConsumer(
             or self._timeout  # pylint:disable=protected-access
         ) * self._amqp_transport.TIMEOUT_FACTOR
         link_properties[TIMEOUT_SYMBOL] = int(link_property_timeout_ms)
-        self._link_properties = self._amqp_transport.create_link_properties(link_properties)
+        self._link_properties: Union[
+            Dict[uamqp_AMQPType, uamqp_AMQPType], Dict[types.AMQPTypes, types.AMQPTypes]
+        ] = self._amqp_transport.create_link_properties(link_properties)
         self._handler: Optional[ReceiveClientAsync] = None
         self._track_last_enqueued_event_properties = (
             track_last_enqueued_event_properties
         )
-        self._message_buffer: Deque[uamqp.Message] = deque()
+        self._message_buffer: Deque[uamqp_Message] = deque()
         self._last_received_event: Optional[EventData] = None
+        self._message_buffer_lock = asyncio.Lock()
+        self._last_callback_called_time = None
+        self._callback_task_run = None
 
-    def _create_handler(self, auth: JWTTokenAsync) -> None:
+    def _create_handler(
+        self, auth: Union[uamqp_JWTTokenAsync, JWTTokenAuthAsync]
+    ) -> None:
         source = self._amqp_transport.create_source(
             self._source,
             self._offset,
-            event_position_selector(self._offset, self._offset_inclusive)
+            event_position_selector(self._offset, self._offset_inclusive),
         )
-        desired_capabilities = [RECEIVER_RUNTIME_METRIC_SYMBOL] if self._track_last_enqueued_event_properties else None
+        desired_capabilities = (
+            [RECEIVER_RUNTIME_METRIC_SYMBOL]
+            if self._track_last_enqueued_event_properties
+            else None
+        )
 
         self._handler = self._amqp_transport.create_receive_client(
-            config=self._client._config,    # pylint:disable=protected-access
+            config=self._client._config,  # pylint:disable=protected-access
             source=source,
             auth=auth,
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
@@ -130,27 +164,31 @@ class EventHubConsumer(
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
             properties=create_properties(
-                self._client._config.user_agent, amqp_transport=self._amqp_transport  # pylint:disable=protected-access
+                self._client._config.user_agent,  # pylint:disable=protected-access
+                amqp_transport=self._amqp_transport,
             ),
             desired_capabilities=desired_capabilities,
             streaming_receive=True,
-            message_received_callback=self._message_received,
+            message_received_callback=partial(
+                self._amqp_transport.message_received_async, self
+            ),
         )
 
     async def _open_with_retry(self) -> None:
         await self._do_retryable_operation(self._open, operation_need_param=False)
 
-    def _message_received(self, message: uamqp.Message) -> None:
-        self._message_buffer.append(message)
-
+    # only used by _uamqp_transport_async
     def _next_message_in_buffer(self):
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
+        event_data._uamqp_message = message
         self._last_received_event = event_data
         return event_data
 
     async def receive(
         self, batch=False, max_batch_size=300, max_wait_time=None
     ) -> None:
-        await self._amqp_transport.receive_messages(self, batch, max_batch_size, max_wait_time)
+        await self._amqp_transport.receive_messages_async(
+            self, batch, max_batch_size, max_wait_time
+        )

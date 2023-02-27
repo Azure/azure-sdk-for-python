@@ -14,11 +14,15 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     LogVerbosity,
     MLTableJobInput,
 )
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import NlpFixedParameters as RestNlpFixedParameters
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
-    NlpFixedParameters as RestNlpFixedParameters,
-    NlpVerticalFeaturizationSettings as RestNlpFeaturizationSettings,
     NlpParameterSubspace as RestNlpParameterSubspace,
-    NlpSweepSettings as RestNlpSweepSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import NlpSweepSettings as RestNlpSweepSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    NlpVerticalFeaturizationSettings as RestNlpFeaturizationSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     NlpVerticalLimitSettings as RestNlpVerticalLimitSettings,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import TextClassification as RestTextClassification
@@ -33,7 +37,7 @@ from azure.ai.ml.automl import (
     NlpFixedParameters,
     NlpLimitSettings,
     NlpSearchSpace,
-    NlpSweepSettings
+    NlpSweepSettings,
 )
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities import Job
@@ -77,7 +81,7 @@ def nlp_sweep_settings_expected() -> RestNlpSweepSettings:
         early_termination=RestBanditPolicy(
             slack_amount=0.02,
             evaluation_interval=10,
-        )
+        ),
     )
 
 
@@ -95,13 +99,13 @@ def nlp_search_space_expected() -> List[RestNlpParameterSubspace]:
         RestNlpParameterSubspace(
             model_name="choice('bert-base-cased','bert-base-uncased')",
             learning_rate="uniform(0.000005,0.00005)",
-            learning_rate_scheduler="choice('linear','cosine_with_restarts')"
+            learning_rate_scheduler="choice('linear','cosine_with_restarts')",
         ),
         RestNlpParameterSubspace(
             model_name="choice('roberta-base','roberta-large')",
             learning_rate="uniform(0.000002,0.000008)",
-            gradient_accumulation_steps="choice(1,2,3)"
-        )
+            gradient_accumulation_steps="choice(1,2,3)",
+        ),
     ]
 
 
@@ -241,9 +245,8 @@ def _get_rest_automl_job(automl_task, name, compute_id):
 
 @pytest.fixture
 def loaded_text_classification_job(
-        mock_machinelearning_client: OperationScope,
-        run_type: str,
-        tmp_path: Path) -> AutoMLJob:
+    mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
+) -> AutoMLJob:
 
     return _load_automl_job_from_path(
         mock_machinelearning_client,
@@ -255,9 +258,8 @@ def loaded_text_classification_job(
 
 @pytest.fixture
 def loaded_text_classification_multilabel_job(
-        mock_machinelearning_client: OperationScope,
-        run_type: str,
-        tmp_path: Path) -> AutoMLJob:
+    mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path
+) -> AutoMLJob:
     return _load_automl_job_from_path(
         mock_machinelearning_client,
         run_type,
@@ -267,10 +269,7 @@ def loaded_text_classification_multilabel_job(
 
 
 @pytest.fixture
-def loaded_text_ner_job(
-        mock_machinelearning_client: OperationScope,
-        run_type: str,
-        tmp_path: Path) -> AutoMLJob:
+def loaded_text_ner_job(mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path) -> AutoMLJob:
     return _load_automl_job_from_path(
         mock_machinelearning_client,
         run_type,
@@ -280,10 +279,8 @@ def loaded_text_ner_job(
 
 
 def _load_automl_job_from_path(
-        mock_machinelearning_client: OperationScope,
-        run_type: str,
-        tmp_path: Path,
-        schema_path: Path) -> AutoMLJob:
+    mock_machinelearning_client: OperationScope, run_type: str, tmp_path: Path, schema_path: Path
+) -> AutoMLJob:
     test_config = load_yaml(schema_path)
     if run_type == "single":
         test_config["limits"]["max_trials"] = 1

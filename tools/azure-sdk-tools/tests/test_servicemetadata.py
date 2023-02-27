@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 import pytest
-from packaging_tools.auto_codegen import update_servicemetadata
+from packaging_tools.generate_utils import update_servicemetadata
 
 
 """
@@ -13,9 +13,9 @@ Create metadata file
 
 Update metadata file
 
-Update MANIFETS.IN
+Update MANIFEST.IN
 
-No need to update MANIFETS.IN
+No need to update MANIFEST.IN
 """
 
 MANIFEST_TEMP = """recursive-include tests *.py *.yaml

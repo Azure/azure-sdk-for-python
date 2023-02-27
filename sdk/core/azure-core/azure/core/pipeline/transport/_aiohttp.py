@@ -25,7 +25,11 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import (
-    Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
+    Any,
+    Optional,
+    AsyncIterator as AsyncIteratorType,
+    TYPE_CHECKING,
+    overload,
 )
 from collections.abc import AsyncIterator
 
@@ -36,17 +40,21 @@ import aiohttp
 from multidict import CIMultiDict
 
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError, IncompleteReadError
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError,
+    IncompleteReadError,
+)
 from azure.core.pipeline import Pipeline
 
 from ._base import HttpRequest
-from ._base_async import (
-    AsyncHttpTransport,
-    AsyncHttpResponse,
-    _ResponseStopIteration)
+from ._base_async import AsyncHttpTransport, AsyncHttpResponse, _ResponseStopIteration
 from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper
 from .._tools import is_rest as _is_rest
-from .._tools_async import handle_no_stream_rest_response as _handle_no_stream_rest_response
+from .._tools_async import (
+    handle_no_stream_rest_response as _handle_no_stream_rest_response,
+)
+
 if TYPE_CHECKING:
     from ...rest import (
         HttpRequest as RestHttpRequest,
@@ -56,6 +64,7 @@ if TYPE_CHECKING:
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
+
 
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
@@ -76,6 +85,7 @@ class AioHttpTransport(AsyncHttpTransport):
             :dedent: 4
             :caption: Asynchronous transport with aiohttp.
     """
+
     def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner=True, **kwargs):
         if loop and sys.version_info >= (3, 10):
             raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
@@ -83,7 +93,7 @@ class AioHttpTransport(AsyncHttpTransport):
         self._session_owner = session_owner
         self.session = session
         self.connection_config = ConnectionConfiguration(**kwargs)
-        self._use_env_settings = kwargs.pop('use_env_settings', True)
+        self._use_env_settings = kwargs.pop("use_env_settings", True)
 
     async def __aenter__(self):
         await self.open()
@@ -93,8 +103,7 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.close()
 
     async def open(self):
-        """Opens the connection.
-        """
+        """Opens the connection."""
         if not self.session and self._session_owner:
             jar = aiohttp.DummyCookieJar()
             clientsession_kwargs = {
@@ -109,8 +118,7 @@ class AioHttpTransport(AsyncHttpTransport):
             await self.session.__aenter__()
 
     async def close(self):
-        """Closes the connection.
-        """
+        """Closes the connection."""
         if self._session_owner and self.session:
             await self.session.close()
             self._session_owner = False
@@ -121,6 +129,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
         if cert or verify not in (True, False):
             import ssl
+
             if verify not in (True, False):
                 ssl_ctx = ssl.create_default_context(cafile=verify)
             else:
@@ -130,7 +139,7 @@ class AioHttpTransport(AsyncHttpTransport):
             return ssl_ctx
         return verify
 
-    def _get_request_data(self, request): #pylint: disable=no-self-use
+    def _get_request_data(self, request):  # pylint: disable=no-self-use
         if request.files:
             form_data = aiohttp.FormData()
             for form_file, data in request.files.items():
@@ -201,32 +210,32 @@ class AioHttpTransport(AsyncHttpTransport):
             # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
-        proxies = config.pop('proxies', None)
-        if proxies and 'proxy' not in config:
+        proxies = config.pop("proxies", None)
+        if proxies and "proxy" not in config:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
 
             # Sort by longest string first, so "http" is not used for "https" ;-)
             for protocol in sorted(proxies.keys(), reverse=True):
                 if request.url.startswith(protocol):
-                    config['proxy'] = proxies[protocol]
+                    config["proxy"] = proxies[protocol]
                     break
 
         response: Optional["HTTPResponseType"] = None
-        config['ssl'] = self._build_ssl_config(
-            cert=config.pop('connection_cert', self.connection_config.cert),
-            verify=config.pop('connection_verify', self.connection_config.verify)
+        config["ssl"] = self._build_ssl_config(
+            cert=config.pop("connection_cert", self.connection_config.cert),
+            verify=config.pop("connection_verify", self.connection_config.verify),
         )
         # If we know for sure there is not body, disable "auto content type"
         # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
         if not request.data and not request.files:
-            config['skip_auto_headers'] = ['Content-Type']
+            config["skip_auto_headers"] = ["Content-Type"]
         try:
             stream_response = config.pop("stream", False)
-            timeout = config.pop('connection_timeout', self.connection_config.timeout)
-            read_timeout = config.pop('read_timeout', self.connection_config.read_timeout)
+            timeout = config.pop("connection_timeout", self.connection_config.timeout)
+            read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
             socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
-            result = await self.session.request(    # type: ignore
+            result = await self.session.request(  # type: ignore
                 request.method,
                 request.url,
                 headers=request.headers,
@@ -237,18 +246,22 @@ class AioHttpTransport(AsyncHttpTransport):
             )
             if _is_rest(request):
                 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
+
                 response = RestAioHttpTransportResponse(
                     request=request,
                     internal_response=result,
                     block_size=self.connection_config.data_block_size,
-                    decompress=not auto_decompress
+                    decompress=not auto_decompress,
                 )
                 if not stream_response:
                     await _handle_no_stream_rest_response(response)
             else:
-                response = AioHttpTransportResponse(request, result,
-                                                    self.connection_config.data_block_size,
-                                                    decompress=not auto_decompress)
+                response = AioHttpTransportResponse(
+                    request,
+                    result,
+                    self.connection_config.data_block_size,
+                    decompress=not auto_decompress,
+                )
                 if not stream_response:
                     await response.load_body()
         except aiohttp.client_exceptions.ClientResponseError as err:
@@ -259,6 +272,7 @@ class AioHttpTransport(AsyncHttpTransport):
             raise ServiceResponseError(err, error=err) from err
         return response
 
+
 class AioHttpStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
@@ -267,6 +281,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     :param bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
+
     def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True) -> None:
         self.pipeline = pipeline
         self.request = response.request
@@ -274,7 +289,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         self.block_size = response.block_size
         self._decompress = decompress
         internal_response = response.internal_response
-        self.content_length = int(internal_response.headers.get('Content-Length', 0))
+        self.content_length = int(internal_response.headers.get("Content-Length", 0))
         self._decompressor = None
 
     def __len__(self):
@@ -288,14 +303,15 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 raise _ResponseStopIteration()
             if not self._decompress:
                 return chunk
-            enc = internal_response.headers.get('Content-Encoding')
+            enc = internal_response.headers.get("Content-Encoding")
             if not enc:
                 return chunk
             enc = enc.lower()
             if enc in ("gzip", "deflate"):
                 if not self._decompressor:
                     import zlib
-                    zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+
+                    zlib_mode = (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
                     self._decompressor = zlib.decompressobj(wbits=zlib_mode)
                 chunk = self._decompressor.decompress(chunk)
             return chunk
@@ -313,6 +329,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
             internal_response.close()
             raise
 
+
 class AioHttpTransportResponse(AsyncHttpResponse):
     """Methods for accessing response body data.
 
@@ -325,22 +342,22 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     :param bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
     """
-    def __init__(self, request: HttpRequest,
-                 aiohttp_response: aiohttp.ClientResponse,
-                 block_size=None, *, decompress=True) -> None:
+
+    def __init__(
+        self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size=None, *, decompress=True
+    ) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
         self.headers = CIMultiDict(aiohttp_response.headers)
         self.reason = aiohttp_response.reason
-        self.content_type = aiohttp_response.headers.get('content-type')
+        self.content_type = aiohttp_response.headers.get("content-type")
         self._content = None
         self._decompressed_content = False
         self._decompress = decompress
 
     def body(self) -> bytes:
-        """Return the whole body as bytes in memory.
-        """
+        """Return the whole body as bytes in memory."""
         return _aiohttp_body_helper(self)
 
     def text(self, encoding: Optional[str] = None) -> str:
@@ -366,16 +383,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             except LookupError:
                 encoding = None
         if not encoding:
-            if mimetype.type == "application" and (
-                    mimetype.subtype == "json" or mimetype.subtype == "rdap"
-            ):
+            if mimetype.type == "application" and (mimetype.subtype == "json" or mimetype.subtype == "rdap"):
                 # RFC 7159 states that the default encoding is UTF-8.
                 # RFC 7483 defines application/rdap+json
                 encoding = "utf-8"
             elif body is None:
-                raise RuntimeError(
-                    "Cannot guess the encoding of a not yet read body"
-                )
+                raise RuntimeError("Cannot guess the encoding of a not yet read body")
             else:
                 try:
                     import cchardet as chardet
@@ -415,6 +428,6 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
-        state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
+        state["internal_response"] = None  # aiohttp response are not pickable (see headers comments)
+        state["headers"] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state

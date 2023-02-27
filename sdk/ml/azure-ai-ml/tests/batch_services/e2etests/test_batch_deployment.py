@@ -3,8 +3,9 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import wait_until_done
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -12,8 +13,6 @@ from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import BatchDeployment, BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.operations._run_history_constants import JobStatus
-
-from test_utilities.utils import wait_until_done
 
 
 @contextmanager
@@ -36,7 +35,11 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_snapshot_hash",
+    "mock_asset_name",
+)
 @pytest.mark.production_experiences_test
 class TestBatchDeployment(AzureRecordedTestCase):
     @pytest.mark.skip(reason="TODO (1546262): Test failing constantly, so disabling it")
@@ -73,7 +76,16 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
-    def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str], rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+    )
+    def test_batch_deployment_dependency_label_resolution(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        rand_batch_name: Callable[[], str],
+        rand_batch_deployment_name: Callable[[], str],
+    ) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
         name = rand_batch_name("name")
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_mlflow_new.yaml"
@@ -130,7 +142,14 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
-    def test_batch_job_download(self, client: MLClient, tmp_path: Path, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> str:
+    @pytest.mark.skip(reason="TODO (2234936), Test timing out consistently - can't re-record")
+    def test_batch_job_download(
+        self,
+        client: MLClient,
+        tmp_path: Path,
+        rand_batch_name: Callable[[], str],
+        rand_batch_deployment_name: Callable[[], str],
+    ) -> str:
         endpoint_name = rand_batch_name("name")
         endpoint = load_batch_endpoint(
             "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml",

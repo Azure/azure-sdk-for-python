@@ -1,18 +1,19 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
 import hashlib
 import json
 import os
 import shutil
-from typing import Any, Dict, List, Optional, Union, Iterable
+from typing import Any, Dict, Iterable, List, Optional, Union
 from unittest import mock
 
 import msrest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType10
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -44,16 +45,17 @@ from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._schema.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components
 from azure.ai.ml.constants._common import (
+    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
+    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
     CommonYamlFields,
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
-    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
-    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
 )
+from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException, ErrorCategory
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -133,7 +135,7 @@ REF_DOC_ERROR_MESSAGE_MAP = {
 }
 
 
-def find_type_in_override(params_override: list = None) -> Optional[str]:
+def find_type_in_override(params_override: Optional[list] = None) -> Optional[str]:
     params_override = params_override or []
     for override in params_override:
         if CommonYamlFields.TYPE in override:
@@ -141,7 +143,7 @@ def find_type_in_override(params_override: list = None) -> Optional[str]:
     return None
 
 
-def is_compute_in_override(params_override: list = None) -> bool:
+def is_compute_in_override(params_override: Optional[list] = None) -> bool:
     return any([EndpointYamlFields.COMPUTE in param for param in params_override])
 
 
@@ -193,16 +195,18 @@ def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
+
 def is_empty_target(obj):
     """Determines if it's empty target"""
-    return (obj is None
-            # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
-            or (isinstance(obj, dict) and len(obj) == 0)
-        )
+    return (
+        obj is None
+        # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
+        or (isinstance(obj, dict) and len(obj) == 0)
+    )
+
 
 def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
     """Convert ordered dict to dict. Remove keys with None value.
-
     This is a workaround for rest request must be in dict instead of
     ordered dict.
     """
@@ -224,13 +228,15 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=
     return target_object
 
 
-def _general_copy(src, dst):
+def _general_copy(src, dst, make_dirs=True):
     """Wrapped `shutil.copy2` function for possible "Function not implemented"
     exception raised by it.
 
     Background: `shutil.copy2` will throw OSError when dealing with Azure File.
     See https://stackoverflow.com/questions/51616058 for more information.
     """
+    if make_dirs:
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
     if hasattr(os, "listxattr"):
         with mock.patch("shutil._copyxattr", return_value=[]):
             shutil.copy2(src, dst)
@@ -266,6 +272,7 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
         # rest object structure
         # pylint: disable=protected-access
         from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
+
         if isinstance(target_obj, _BaseIdentityConfiguration):
             return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
         return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
@@ -430,7 +437,9 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     # we should keep at least 1 place outside _internal to enable internal components
     # and this is the only place
     try_enable_internal_components()
-
+    # todo: refine Hard code for now to support different task type for DataTransfer component
+    if _type == NodeType.DATA_TRANSFER:
+        _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", " ")])
     if _type not in valid_keys:
         if (
             schema
@@ -450,3 +459,16 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
             error_category=ErrorCategory.USER_ERROR,
         )
     return extract_label(_type)[0]
+
+
+def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutput"):
+    """Copy node output setting from source to target.
+    Currently only path, name, version will be copied."""
+    # pylint: disable=protected-access
+    from azure.ai.ml.entities._job.pipeline._io import NodeOutput
+
+    if not isinstance(source, NodeOutput):
+        # Only copy when source is an output builder
+        return
+    if source._data:
+        target._data = copy.deepcopy(source._data)

@@ -1169,6 +1169,42 @@ class A2AEventDetails(EventProviderSpecificDetails):
         self.remote_fabric_location = remote_fabric_location
 
 
+class A2AExtendedLocationDetails(_serialization.Model):
+    """ExtendedLocation details data.
+
+    :ivar primary_extended_location: The primary ExtendedLocation.
+    :vartype primary_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+    :ivar recovery_extended_location: The recovery ExtendedLocation.
+    :vartype recovery_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+    """
+
+    _attribute_map = {
+        "primary_extended_location": {"key": "primaryExtendedLocation", "type": "ExtendedLocation"},
+        "recovery_extended_location": {"key": "recoveryExtendedLocation", "type": "ExtendedLocation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        primary_extended_location: Optional["_models.ExtendedLocation"] = None,
+        recovery_extended_location: Optional["_models.ExtendedLocation"] = None,
+        **kwargs
+    ):
+        """
+        :keyword primary_extended_location: The primary ExtendedLocation.
+        :paramtype primary_extended_location:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+        :keyword recovery_extended_location: The recovery ExtendedLocation.
+        :paramtype recovery_extended_location:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+        """
+        super().__init__(**kwargs)
+        self.primary_extended_location = primary_extended_location
+        self.recovery_extended_location = recovery_extended_location
+
+
 class A2APolicyCreationInput(PolicyProviderSpecificInput):
     """A2A Policy creation input.
 
@@ -4809,6 +4845,9 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
     :vartype container_ids: list[str]
     :ivar zones: The zones.
     :vartype zones: list[~azure.mgmt.recoveryservicessiterecovery.models.A2AZoneDetails]
+    :ivar extended_locations: The ExtendedLocations.
+    :vartype extended_locations:
+     list[~azure.mgmt.recoveryservicessiterecovery.models.A2AExtendedLocationDetails]
     """
 
     _validation = {
@@ -4820,6 +4859,7 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
         "location": {"key": "location", "type": "str"},
         "container_ids": {"key": "containerIds", "type": "[str]"},
         "zones": {"key": "zones", "type": "[A2AZoneDetails]"},
+        "extended_locations": {"key": "extendedLocations", "type": "[A2AExtendedLocationDetails]"},
     }
 
     def __init__(
@@ -4828,6 +4868,7 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
         location: Optional[str] = None,
         container_ids: Optional[List[str]] = None,
         zones: Optional[List["_models.A2AZoneDetails"]] = None,
+        extended_locations: Optional[List["_models.A2AExtendedLocationDetails"]] = None,
         **kwargs
     ):
         """
@@ -4837,12 +4878,16 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
         :paramtype container_ids: list[str]
         :keyword zones: The zones.
         :paramtype zones: list[~azure.mgmt.recoveryservicessiterecovery.models.A2AZoneDetails]
+        :keyword extended_locations: The ExtendedLocations.
+        :paramtype extended_locations:
+         list[~azure.mgmt.recoveryservicessiterecovery.models.A2AExtendedLocationDetails]
         """
         super().__init__(**kwargs)
         self.instance_type: str = "Azure"
         self.location = location
         self.container_ids = container_ids
         self.zones = zones
+        self.extended_locations = extended_locations
 
 
 class FabricSpecificCreateNetworkMappingInput(_serialization.Model):
@@ -20550,6 +20595,12 @@ class RecoveryPlanA2ADetails(RecoveryPlanProviderSpecificDetails):
     :vartype primary_zone: str
     :ivar recovery_zone: The recovery zone.
     :vartype recovery_zone: str
+    :ivar primary_extended_location: The primary extended location.
+    :vartype primary_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+    :ivar recovery_extended_location: The recovery extended location.
+    :vartype recovery_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
     """
 
     _validation = {
@@ -20560,19 +20611,37 @@ class RecoveryPlanA2ADetails(RecoveryPlanProviderSpecificDetails):
         "instance_type": {"key": "instanceType", "type": "str"},
         "primary_zone": {"key": "primaryZone", "type": "str"},
         "recovery_zone": {"key": "recoveryZone", "type": "str"},
+        "primary_extended_location": {"key": "primaryExtendedLocation", "type": "ExtendedLocation"},
+        "recovery_extended_location": {"key": "recoveryExtendedLocation", "type": "ExtendedLocation"},
     }
 
-    def __init__(self, *, primary_zone: Optional[str] = None, recovery_zone: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        primary_zone: Optional[str] = None,
+        recovery_zone: Optional[str] = None,
+        primary_extended_location: Optional["_models.ExtendedLocation"] = None,
+        recovery_extended_location: Optional["_models.ExtendedLocation"] = None,
+        **kwargs
+    ):
         """
         :keyword primary_zone: The primary zone.
         :paramtype primary_zone: str
         :keyword recovery_zone: The recovery zone.
         :paramtype recovery_zone: str
+        :keyword primary_extended_location: The primary extended location.
+        :paramtype primary_extended_location:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+        :keyword recovery_extended_location: The recovery extended location.
+        :paramtype recovery_extended_location:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
         """
         super().__init__(**kwargs)
         self.instance_type: str = "A2A"
         self.primary_zone = primary_zone
         self.recovery_zone = recovery_zone
+        self.primary_extended_location = primary_extended_location
+        self.recovery_extended_location = recovery_extended_location
 
 
 class RecoveryPlanProviderSpecificFailoverInput(_serialization.Model):

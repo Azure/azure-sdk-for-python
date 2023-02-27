@@ -25,7 +25,11 @@
 # --------------------------------------------------------------------------
 
 from ._base import HTTPPolicy, SansIOHTTPPolicy, RequestHistory
-from ._authentication import BearerTokenCredentialPolicy, AzureKeyCredentialPolicy, AzureSasCredentialPolicy
+from ._authentication import (
+    BearerTokenCredentialPolicy,
+    AzureKeyCredentialPolicy,
+    AzureSasCredentialPolicy,
+)
 from ._custom_hook import CustomHookPolicy
 from ._redirect import RedirectPolicy
 from ._retry import RetryPolicy, RetryMode
@@ -45,26 +49,26 @@ from ._redirect_async import AsyncRedirectPolicy
 from ._retry_async import AsyncRetryPolicy
 
 __all__ = [
-    'HTTPPolicy',
-    'SansIOHTTPPolicy',
-    'BearerTokenCredentialPolicy',
-    'AzureKeyCredentialPolicy',
-    'AzureSasCredentialPolicy',
-    'HeadersPolicy',
-    'UserAgentPolicy',
-    'NetworkTraceLoggingPolicy',
-    'ContentDecodePolicy',
-    'RetryMode',
-    'RetryPolicy',
-    'RedirectPolicy',
-    'ProxyPolicy',
-    'CustomHookPolicy',
-    'DistributedTracingPolicy',
-    'RequestHistory',
-    'HttpLoggingPolicy',
-    'RequestIdPolicy',
-    'AsyncHTTPPolicy',
-    'AsyncBearerTokenCredentialPolicy',
-    'AsyncRedirectPolicy',
-    'AsyncRetryPolicy'
+    "HTTPPolicy",
+    "SansIOHTTPPolicy",
+    "BearerTokenCredentialPolicy",
+    "AzureKeyCredentialPolicy",
+    "AzureSasCredentialPolicy",
+    "HeadersPolicy",
+    "UserAgentPolicy",
+    "NetworkTraceLoggingPolicy",
+    "ContentDecodePolicy",
+    "RetryMode",
+    "RetryPolicy",
+    "RedirectPolicy",
+    "ProxyPolicy",
+    "CustomHookPolicy",
+    "DistributedTracingPolicy",
+    "RequestHistory",
+    "HttpLoggingPolicy",
+    "RequestIdPolicy",
+    "AsyncHTTPPolicy",
+    "AsyncBearerTokenCredentialPolicy",
+    "AsyncRedirectPolicy",
+    "AsyncRetryPolicy",
 ]

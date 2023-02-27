@@ -138,7 +138,7 @@ class ChannelMapping(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FRONT_RIGHT = "FrontRight"
     #: The Center Channel.
     CENTER = "Center"
-    #: Low Frequency Effects Channel.  Sometimes referred to as the Subwoofer.
+    #: Low Frequency Effects Channel.  Sometimes referred to as the subwoofer.
     LOW_FREQUENCY_EFFECTS = "LowFrequencyEffects"
     #: The Back Left Channel.  Sometimes referred to as the Left Surround Channel.
     BACK_LEFT = "BackLeft"
@@ -286,8 +286,10 @@ class EncoderNamedPreset(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: will never exceed the input resolution. For example, if the input is 720p, output will remain
     #: 720p at best.
     ADAPTIVE_STREAMING = "AdaptiveStreaming"
-    #: Produces a single MP4 file containing only stereo audio encoded at 192 kbps.
+    #: Produces a single MP4 file containing only AAC stereo audio encoded at 192 kbps.
     AAC_GOOD_QUALITY_AUDIO = "AACGoodQualityAudio"
+    #: Produces a single MP4 file containing only DD(Digital Dolby) stereo audio encoded at 192 kbps.
+    DD_GOOD_QUALITY_AUDIO = "DDGoodQualityAudio"
     #: Exposes an experimental preset for content-aware encoding. Given any input content, the service
     #: attempts to automatically determine the optimal number of layers, appropriate bitrate and
     #: resolution settings for delivery by adaptive streaming. The underlying algorithms will continue
@@ -520,6 +522,8 @@ class JobErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONFIGURATION = "Configuration"
     #: The error is related to data in the input files.
     CONTENT = "Content"
+    #: The error is related to account information.
+    ACCOUNT = "Account"
 
 
 class JobErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -551,6 +555,9 @@ class JobErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: There was a problem with the format of the input (not valid media file, or an unsupported
     #: file/codec), check the validity of the input files.
     CONTENT_UNSUPPORTED = "ContentUnsupported"
+    #: There was an error verifying to the account identity. Check and fix the identity configurations
+    #: and retry. If unsuccessful, please contact support.
+    IDENTITY_UNSUPPORTED = "IdentityUnsupported"
 
 
 class JobRetry(str, Enum, metaclass=CaseInsensitiveEnumMeta):

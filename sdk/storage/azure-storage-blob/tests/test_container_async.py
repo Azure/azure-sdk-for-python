@@ -941,7 +941,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         await lease.break_lease(lease_break_period=5)
-        self.sleep(6)
+        self.sleep(8)
         with pytest.raises(HttpResponseError):
             await container.delete_container(lease=lease)
 

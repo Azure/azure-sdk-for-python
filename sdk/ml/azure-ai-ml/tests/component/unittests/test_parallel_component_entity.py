@@ -2,13 +2,13 @@ from pathlib import Path
 
 import pydash
 import pytest
+from test_utilities.utils import parse_local_path
 
 from azure.ai.ml import load_component
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-from test_utilities.utils import parse_local_path
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -102,7 +102,7 @@ class TestParallelComponentEntity:
                 "--output ${{outputs.scored_result}}",
                 "code": parse_local_path("../python", yaml_component_version.base_path),
                 "entry_script": "score.py",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "type": "run_function",
             },
         }

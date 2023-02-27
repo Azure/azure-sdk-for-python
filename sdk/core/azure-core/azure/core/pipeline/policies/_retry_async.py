@@ -38,6 +38,7 @@ from ._retry import RetryPolicyBase
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
     """Async flavor of the retry policy.
 
@@ -132,7 +133,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
         retry_settings = self.configure_retries(request.context.options)
         self._configure_positions(request, retry_settings)
 
-        absolute_timeout = retry_settings['timeout']
+        absolute_timeout = retry_settings["timeout"]
         is_response_error = True
 
         while retry_active:
@@ -165,7 +166,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             finally:
                 end_time = time.time()
                 if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
+                    absolute_timeout -= end_time - start_time
 
         self.update_context(response.context, retry_settings)
         return response

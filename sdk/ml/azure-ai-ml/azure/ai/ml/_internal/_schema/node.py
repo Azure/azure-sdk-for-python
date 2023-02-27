@@ -8,13 +8,14 @@ from azure.ai.ml._schema import ArmVersionedStr, NestedField, RegistryStr, Union
 from azure.ai.ml._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
 from azure.ai.ml.constants._common import AzureMLResourceType
 
-from .component import InternalComponentSchema, NodeType
 from ..._schema.core.fields import DumpableEnumField
+from .component import InternalComponentSchema, NodeType
 
 
 class InternalBaseNodeSchema(BaseNodeSchema):
     class Meta:
         unknown = INCLUDE
+
     component = UnionField(
         [
             # for registry type assets

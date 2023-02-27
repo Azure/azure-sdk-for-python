@@ -23,10 +23,10 @@ from azure.ai.ml import (
     load_workspace_connection,
 )
 from azure.ai.ml._azure_environments import AzureEnvironments
-from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
-from azure.identity import DefaultAzureCredential, ClientSecretCredential
-from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.exceptions import ValidationException
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 
 
 @pytest.mark.unittest
@@ -115,7 +115,7 @@ class TestMachineLearningClient:
 
         assert ml_client.workspaces._operation._client._base_url == mock_url
         assert ml_client.compute._operation._client._base_url == mock_url
-        assert ml_client.jobs._operation_2022_10_preview._client._base_url == mock_url
+        assert ml_client.jobs._operation_2022_12_preview._client._base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
     # @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())
@@ -421,36 +421,9 @@ class TestMachineLearningClient:
             assert ml_client._kwargs["cloud"] == "SomeInvalidCloudName"
         assert "Unknown cloud environment supplied" in str(e)
 
-
-    def test_ml_client_validation_rg_sub_missing_throws(
-        self, auth: ClientSecretCredential
-    ) -> None:
-        with pytest.raises(ValidationException) as exception:
-            MLClient(
-                credential=auth,
-            )
-        message = exception.value.args[0]
-        assert (
-            message
-            == "Both subscription id and resource group are required for this operation, missing subscription id and resource group"
-        )
-
-
-    def test_ml_client_with_no_rg_sub_for_ws_throws(
+    def test_ml_client_with_both_workspace_registry_names_throws(
         self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential
     ) -> None:
-        with pytest.raises(ValidationException) as exception:
-            MLClient(
-                credential=auth,
-                workspace_name=e2e_ws_scope.workspace_name,
-            )
-        message = exception.value.args[0]
-        assert (
-            message
-            == "Both subscription id and resource group are required for this operation, missing subscription id and resource group"
-        )
-
-    def test_ml_client_with_both_workspace_registry_names_throws(self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> None:
         with pytest.raises(ValidationException) as exception:
             MLClient(
                 credential=auth,
@@ -458,7 +431,4 @@ class TestMachineLearningClient:
                 registry_name="testfeed",
             )
         message = exception.value.args[0]
-        assert (
-            message
-            == "Both workspace_name and registry_name cannot be used together, for the ml_client."
-        )
+        assert message == "Both workspace_name and registry_name cannot be used together, for the ml_client."

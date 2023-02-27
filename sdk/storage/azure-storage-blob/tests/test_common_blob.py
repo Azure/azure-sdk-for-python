@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import os
+import tempfile
 import time
 import uuid
 from datetime import datetime, timedelta
@@ -1776,7 +1777,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
         resp = blob.upload_blob(b'hello 2', length=7, lease=lease)
-        self.sleep(17)
+        self.sleep(20)
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -2733,16 +2734,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
-        file_path = 'download_to_file_with_sas.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        download_blob_from_url(blob.url, file_path)
-
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            download_blob_from_url(blob.url, temp_file)
+            temp_file.seek(0)
+            # Assert
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2753,18 +2752,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
         source_blob = self._create_blob(data=data)
-        file_path = 'to_file_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        download_blob_from_url(
-            source_blob.url, file_path,
-            credential=storage_account_key)
-
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            temp_file.seek(0)
+            # Assert
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2775,19 +2770,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
         source_blob = self._create_blob(data=data)
-        file_path = 'download_to_stream_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        with open(file_path, 'wb') as stream:
-            download_blob_from_url(
-                source_blob.url, stream,
-                credential=storage_account_key)
-
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            temp_file.seek(0)
+            # Assert
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2798,21 +2788,21 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
         source_blob = self._create_blob(data=data)
-        file_path = 'file_with_existing_file.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        download_blob_from_url(
-            source_blob.url, file_path,
-            credential=storage_account_key)
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            download_blob_from_url(source_blob.url, temp_file.name, credential=storage_account_key, overwrite=True)
 
-        with pytest.raises(ValueError):
-            download_blob_from_url(source_blob.url, file_path)
+            with pytest.raises(ValueError):
+                download_blob_from_url(source_blob.url, temp_file.name)
 
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
+
+            temp_file.close()
+            os.unlink(temp_file.name)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2965,24 +2955,21 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        file_path = 'upload_to_url_file_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
         self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
-        with open(file_path, 'wb') as stream:
-            stream.write(data)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        with open(file_path, 'rb'):
-            uploaded = upload_blob_to_url(
-                blob.url, data, credential=storage_account_key)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            uploaded = upload_blob_to_url(blob.url, data, credential=storage_account_key)
 
-        # Assert
-        assert uploaded is not None
-        content = blob.download_blob().readall()
-        assert data == content
-        self._teardown(file_path)
+            # Assert
+            assert uploaded is not None
+            content = blob.download_blob().readall()
+            assert data == content
 
     def test_set_blob_permission_from_string(self):
         # Arrange
@@ -3270,4 +3257,30 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert blob_client.exists()
         assert blob_client.get_blob_properties().size == 0
 
-# ------------------------------------------------------------------------------
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_properties(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(blob_data)
+
+        # Assert
+        data = blob.download_blob(encoding='utf-8')
+        props = data.properties
+
+        assert data is not None
+        assert data.readall() == blob_data
+        assert props['name'] == blob_name
+        assert props['creation_time'] is not None
+        assert props['content_settings'] is not None
+        assert props['size'] == len(blob_data)
+
+    # ------------------------------------------------------------------------------

@@ -7,7 +7,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchDeploymentDetails as RestBatchDeployment
@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as Rest
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml._utils.utils import is_private_preview_enabled, camel_to_snake, snake_to_pascal
+from azure.ai.ml._utils.utils import camel_to_snake, is_private_preview_enabled, snake_to_pascal
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -25,15 +25,15 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
+from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
 
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attributes
+class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attributes
     """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
@@ -90,26 +90,28 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
         self,
         *,
         name: str,
-        endpoint_name: str = None,
-        description: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, str] = None,
-        model: Union[str, Model] = None,
-        code_configuration: CodeConfiguration = None,
-        environment: Union[str, Environment] = None,
-        compute: str = None,
-        resources: ResourceConfiguration = None,
-        output_file_name: str = None,
-        output_action: BatchDeploymentOutputAction = None,
-        error_threshold: int = None,
-        retry_settings: BatchRetrySettings = None,
-        logging_level: str = None,
-        mini_batch_size: int = None,
-        max_concurrency_per_instance: int = None,
-        environment_variables: Dict[str, str] = None,
-        code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
-        scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
-        instance_count: int = None,  # promoted property from resources.instance_count
+        endpoint_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, str]] = None,
+        model: Optional[Union[str, Model]] = None,
+        code_configuration: Optional[CodeConfiguration] = None,
+        environment: Optional[Union[str, Environment]] = None,
+        compute: Optional[str] = None,
+        resources: Optional[ResourceConfiguration] = None,
+        output_file_name: Optional[str] = None,
+        output_action: Optional[BatchDeploymentOutputAction] = None,
+        error_threshold: Optional[int] = None,
+        retry_settings: Optional[BatchRetrySettings] = None,
+        logging_level: Optional[str] = None,
+        mini_batch_size: Optional[int] = None,
+        max_concurrency_per_instance: Optional[int] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[
+            Union[str, PathLike]
+        ] = None,  # promoted property from code_configuration.scoring_script
+        instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         **kwargs,
     ) -> None:
 
@@ -289,12 +291,13 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             for k in del_key:
                 del deployment.properties[k]
         return deployment
+
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "BatchDeployment":
         data = data or {}
@@ -333,21 +336,34 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _flat_key_snake_to_pascal(self, key_str: str) -> str: # pylint: disable=no-self-use
+    def _flat_key_snake_to_pascal(self, key_str: str) -> str:  # pylint: disable=no-self-use
         key_arr = key_str.split(".")
         pascal_array = []
         for key in key_arr:
-            pascal_array.append(snake_to_pascal(key))
-        return '.'.join(pascal_array)
+            # pylint: disable=line-too-long
+            if key not in [
+                PipelineConstants.CONTINUE_ON_STEP_FAILURE,
+                PipelineConstants.DEFAULT_COMPUTE,
+                PipelineConstants.DEFAULT_DATASTORE,
+            ]:
+                pascal_array.append(snake_to_pascal(key))
+            else:
+                pascal_array.append(key)
+        return ".".join(pascal_array)
 
     @classmethod
     def _flat_key_pascal_to_snake(cls, key_str: str) -> str:
         key_arr = key_str.split(".")
         snake_array = []
         for key in key_arr:
-            if key != "continue_on_step_failure":
+            # pylint: disable=line-too-long
+            if key not in [
+                PipelineConstants.CONTINUE_ON_STEP_FAILURE,
+                PipelineConstants.DEFAULT_COMPUTE,
+                PipelineConstants.DEFAULT_DATASTORE,
+            ]:
                 snake_array.append(camel_to_snake(key))
             else:
                 snake_array.append(key)
 
-        return '.'.join(snake_array)
+        return ".".join(snake_array)

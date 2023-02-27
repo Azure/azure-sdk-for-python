@@ -37,3 +37,6 @@ class AmlComputeSchema(ComputeSchema):
     ssh_settings = NestedField(AmlComputeSshSettingsSchema)
     network_settings = NestedField(NetworkSettingsSchema)
     identity = NestedField(IdentitySchema)
+    enable_node_public_ip = fields.Bool(
+        metadata={"description": "Enable or disable node public IP address provisioning."}
+    )

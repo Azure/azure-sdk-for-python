@@ -50,8 +50,8 @@ class CertificateCredential(ClientCredentialBase):
             self,
             tenant_id: str,
             client_id: str,
-            certificate_path: str = None,
-            **kwargs
+            certificate_path: Optional[str] = None,
+            **kwargs: Any
     ) -> None:
         validate_tenant_id(tenant_id)
 
@@ -82,7 +82,7 @@ _Cert = NamedTuple("_Cert", [("pem_bytes", bytes), ("private_key", "Any"), ("fin
 
 def load_pem_certificate(
         certificate_data: bytes,
-        password: bytes = None
+        password: Optional[bytes] = None
 ) -> _Cert:
     private_key = serialization.load_pem_private_key(certificate_data, password, backend=default_backend())
     cert = x509.load_pem_x509_certificate(certificate_data, default_backend())
@@ -92,7 +92,7 @@ def load_pem_certificate(
 
 def load_pkcs12_certificate(
         certificate_data: bytes,
-        password: bytes = None
+        password: Optional[bytes] = None
 ) -> _Cert:
     from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, pkcs12, PrivateFormat
 
@@ -121,11 +121,11 @@ def load_pkcs12_certificate(
 
 
 def get_client_credential(
-        certificate_path: str = None,
-        password: Union[bytes, str] = None,
-        certificate_data: bytes = None,
+        certificate_path: Optional[str] = None,
+        password: Optional[Union[bytes, str]] = None,
+        certificate_data: Optional[bytes] = None,
         send_certificate_chain: bool = False,
-        **_
+        **_: Any
 ) -> Dict:
     """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication"""
 

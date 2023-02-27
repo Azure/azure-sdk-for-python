@@ -4,13 +4,12 @@
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_workspace_connection
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection
-
-from devtools_testutils import AzureRecordedTestCase
 
 
 @pytest.mark.xdist_group(name="workspace_connection")

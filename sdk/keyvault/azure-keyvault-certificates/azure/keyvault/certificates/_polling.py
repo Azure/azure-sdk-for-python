@@ -14,37 +14,35 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
-    from typing import Any, Callable, Union
+    from typing import Any, Callable, Optional, Union
     from azure.keyvault.certificates import KeyVaultCertificate, CertificateOperation
 
 logger = logging.getLogger(__name__)
 
 
 class CreateCertificatePoller(PollingMethod):
-    def __init__(self, get_certificate_command, interval=5):
-        self._command = None
-        self._resource = None
-        self._pending_certificate_op = None
+    def __init__(self, get_certificate_command: "Callable", interval: int = 5) -> None:
+        self._command = None  # type: Optional[Callable]
+        self._resource = None  # type: Optional[Union[CertificateOperation, KeyVaultCertificate]]
+        self._pending_certificate_op = None  # type: Optional[CertificateOperation]
         self._get_certificate_command = get_certificate_command
         self._polling_interval = interval
 
-    def _update_status(self):
-        # type: () -> None
-        self._pending_certificate_op = self._command()
+    def _update_status(self) -> None:
+        self._pending_certificate_op = self._command() if self._command else None
 
-    def initialize(self, client, initial_response, _):
-        # type: (Any, Any, Callable) -> None
+    def initialize(self, client: "Any", initial_response: "Any", _: "Callable") -> None:
         self._command = client
         self._pending_certificate_op = initial_response
 
-    def run(self):
-        # type: () -> None
+    def run(self) -> None:
         try:
             while not self.finished():
                 self._update_status()
                 if not self.finished():
                     time.sleep(self._polling_interval)
-            if self._pending_certificate_op.status.lower() == "completed":
+            operation = self._pending_certificate_op
+            if operation and operation.status and operation.status.lower() == "completed":
                 self._resource = self._get_certificate_command()
             else:
                 self._resource = self._pending_certificate_op
@@ -52,16 +50,14 @@ class CreateCertificatePoller(PollingMethod):
             logger.warning(str(e))
             raise
 
-    def finished(self):
-        # type: () -> bool
-        if self._pending_certificate_op.issuer_name.lower() == "unknown":
+    def finished(self) -> bool:
+        operation = self._pending_certificate_op
+        if operation and operation.issuer_name and operation.issuer_name.lower() == "unknown":
             return True
-        return self._pending_certificate_op.status.lower() != "inprogress"
+        return self._pending_certificate_op.status.lower() != "inprogress"  # type: ignore
 
-    def resource(self):
-        # type: () -> Union[KeyVaultCertificate, CertificateOperation]
-        return self._resource
+    def resource(self) -> "Union[KeyVaultCertificate, CertificateOperation]":
+        return self._resource  # type: ignore
 
-    def status(self):
-        # type: () -> str
-        return self._pending_certificate_op.status.lower()
+    def status(self) -> str:
+        return self._pending_certificate_op.status.lower()  # type: ignore

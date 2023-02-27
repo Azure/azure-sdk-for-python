@@ -17,14 +17,19 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
+    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
+)
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
-    _get_latest,
+    _get_latest_version_from_container,
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._data_utils import (
@@ -35,6 +40,10 @@ from azure.ai.ml._utils._data_utils import (
 )
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._utils._registry_utils import (
+    get_asset_body_for_registry_storage,
+    get_sas_uri_for_registry_asset,
+)
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes
 from azure.ai.ml.entities._assets import Data
@@ -59,7 +68,7 @@ class DataOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient052022,
+        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -69,6 +78,7 @@ class DataOperations(_ScopeDependentOperations):
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
+        self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
         # Maps a label to a function which given an asset name,
@@ -93,18 +103,72 @@ class DataOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[Data]
         """
         if name:
-            return self._operation.list(
-                name=name,
-                workspace_name=self._workspace_name,
-                cls=lambda objs: [Data._from_rest_object(obj) for obj in objs],
+            return (
+                self._operation.list(
+                    name=name,
+                    registry_name=self._registry_name,
+                    cls=lambda objs: [Data._from_rest_object(obj) for obj in objs],
+                    list_view_type=list_view_type,
+                    **self._scope_kwargs,
+                )
+                if self._registry_name
+                else self._operation.list(
+                    name=name,
+                    workspace_name=self._workspace_name,
+                    cls=lambda objs: [Data._from_rest_object(obj) for obj in objs],
+                    list_view_type=list_view_type,
+                    **self._scope_kwargs,
+                )
+            )
+        return (
+            self._container_operation.list(
+                registry_name=self._registry_name,
+                cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
-        return self._container_operation.list(
-            workspace_name=self._workspace_name,
-            cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
-            list_view_type=list_view_type,
-            **self._scope_kwargs,
+            if self._registry_name
+            else self._container_operation.list(
+                workspace_name=self._workspace_name,
+                cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
+                list_view_type=list_view_type,
+                **self._scope_kwargs,
+            )
+        )
+
+    def _get(self, name: str, version: Optional[str] = None) -> Data:
+        if version:
+            return (
+                self._operation.get(
+                    name=name,
+                    version=version,
+                    registry_name=self._registry_name,
+                    **self._scope_kwargs,
+                    **self._init_kwargs,
+                )
+                if self._registry_name
+                else self._operation.get(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    name=name,
+                    version=version,
+                    **self._init_kwargs,
+                )
+            )
+        return (
+            self._container_operation.get(
+                name=name,
+                registry_name=self._registry_name,
+                **self._scope_kwargs,
+                **self._init_kwargs,
+            )
+            if self._registry_name
+            else self._container_operation.get(
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                name=name,
+                **self._init_kwargs,
+            )
         )
 
     # @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
@@ -145,13 +209,7 @@ class DataOperations(_ScopeDependentOperations):
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.MISSING_FIELD,
                 )
-            data_version_resource = self._operation.get(
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                name=name,
-                version=version,
-                **self._init_kwargs,
-            )
+            data_version_resource = self._get(name, version)
             return Data._from_rest_object(data_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
@@ -172,14 +230,40 @@ class DataOperations(_ScopeDependentOperations):
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
         """
+
         try:
             name = data.name
+            if not data.version and self._registry_name:
+                msg = "Data asset version is required for registry"
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.DATA,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.MISSING_FIELD,
+                )
             version = data.version
 
+            sas_uri = None
+            if self._registry_name:
+                sas_uri = get_sas_uri_for_registry_asset(
+                    service_client=self._service_client,
+                    name=name,
+                    version=version,
+                    resource_group=self._resource_group_name,
+                    registry=self._registry_name,
+                    body=get_asset_body_for_registry_storage(self._registry_name, "data", name, version),
+                )
+                if not sas_uri:
+                    module_logger.debug("Getting the existing asset name: %s, version: %s", name, version)
+                    return self.get(name=name, version=version)
             referenced_uris = self._validate(data)
             if referenced_uris:
                 data._referenced_uris = referenced_uris
-            data, _ = _check_and_upload_path(artifact=data, asset_operations=self, artifact_type=ErrorTarget.DATA)
+
+            data, _ = _check_and_upload_path(
+                artifact=data, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.DATA
+            )
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
 
@@ -194,13 +278,26 @@ class DataOperations(_ScopeDependentOperations):
                     **self._init_kwargs,
                 )
             else:
-                result = self._operation.create_or_update(
-                    name=name,
-                    version=version,
-                    workspace_name=self._workspace_name,
-                    body=data_version_resource,
-                    **self._scope_kwargs,
+                result = (
+                    self._operation.begin_create_or_update(
+                        name=name,
+                        version=version,
+                        registry_name=self._registry_name,
+                        body=data_version_resource,
+                        **self._scope_kwargs,
+                    ).result()
+                    if self._registry_name
+                    else self._operation.create_or_update(
+                        name=name,
+                        version=version,
+                        workspace_name=self._workspace_name,
+                        body=data_version_resource,
+                        **self._scope_kwargs,
+                    )
                 )
+
+            if not result and self._registry_name:
+                result = self._get(name=name, version=version)
 
             return Data._from_rest_object(result)
         except Exception as ex:
@@ -244,10 +341,7 @@ class DataOperations(_ScopeDependentOperations):
                     metadata_yaml_path = None
                 except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
-                    module_logger.info(
-                        "Unable to access MLTable metadata at path %s",
-                        asset_path
-                    )
+                    module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
                     return
             else:
                 metadata_contents = read_local_mltable_metadata_contents(path=asset_path)
@@ -271,22 +365,25 @@ class DataOperations(_ScopeDependentOperations):
             abs_path = Path(base_path, asset_path).resolve()
             _assert_local_path_matches_asset_type(abs_path, asset_type)
 
-    def _try_get_mltable_metadata_jsonschema(
-        self, mltable_schema_url: str
-    ) -> Union[Dict, None]:
+    def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: str) -> Union[Dict, None]:
         if mltable_schema_url is None:
             mltable_schema_url = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
         try:
             return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
         except Exception:  # pylint: disable=broad-except
             module_logger.info(
-                'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
-                mltable_schema_url
+                'Failed to download MLTable metadata jsonschema from "%s", skipping validation', mltable_schema_url
             )
             return None
 
     # @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def archive(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Archive a data asset.
 
         :param name: Name of data asset.
@@ -309,7 +406,13 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def restore(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
         """Restore an archived data asset.
 
         :param name: Name of data asset.
@@ -337,8 +440,10 @@ class DataOperations(_ScopeDependentOperations):
         Latest is defined as the most recently created, not the most
         recently updated.
         """
-        result = _get_latest(name, self._operation, self._resource_group_name, self._workspace_name)
-        return Data._from_rest_object(result)
+        latest_version = _get_latest_version_from_container(
+            name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
+        )
+        return self.get(name, version=latest_version)
 
 
 def _assert_local_path_matches_asset_type(

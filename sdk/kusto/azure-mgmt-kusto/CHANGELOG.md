@@ -1,5 +1,23 @@
 # Release History
 
+## 3.1.0 (2023-02-15)
+
+### Features Added
+
+  - Added operation group SkusOperations
+  - Model LanguageExtension has a new parameter language_extension_image_name
+  - Model SkuLocationInfoItem has a new parameter zone_details
+  - Model TableLevelSharingProperties has a new parameter functions_to_exclude
+  - Model TableLevelSharingProperties has a new parameter functions_to_include
+
+## 3.1.0b1 (2022-12-27)
+
+### Features Added
+
+  - Added operation group SkusOperations
+  - Model LanguageExtension has a new parameter language_extension_image_name
+  - Model SkuLocationInfoItem has a new parameter zone_details
+
 ## 3.0.0 (2022-09-15)
 
 ### Features Added

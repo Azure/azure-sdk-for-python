@@ -3,8 +3,12 @@
 ## 4.8.0b3 (Unreleased)
 
 ### Features Added
+- Clients each have a `send_request` method that can be used to send custom requests using the
+  client's existing pipeline ([#25172](https://github.com/Azure/azure-sdk-for-python/issues/25172))
 
 ### Breaking Changes
+> These changes do not impact the API of stable versions such as 4.7.0. Only code written against a beta version such as 4.8.0b2 may be affected.
+- Removed support for octet key pair (OKP) keys and operations
 
 ### Bugs Fixed
 

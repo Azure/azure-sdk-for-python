@@ -5,13 +5,9 @@
 # --------------------------------------------------------------------------
 
 import logging
+import re
 from typing import List, Tuple
-
-try:
-    from urllib.parse import urlparse, unquote
-except ImportError:
-    from urlparse import urlparse # type: ignore
-    from urllib2 import unquote # type: ignore
+from urllib.parse import unquote, urlparse
 
 try:
     from yarl import URL
@@ -28,9 +24,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from . import sign_string
 
-
 logger = logging.getLogger(__name__)
-
 
 
 # wraps a given exception with the desired exception type
@@ -156,4 +150,39 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             self._get_canonicalized_resource_query(request)
 
         self._add_authorization_header(request, string_to_sign)
-        #logger.debug("String_to_sign=%s", string_to_sign)
+        # logger.debug("String_to_sign=%s", string_to_sign)
+
+
+class StorageHttpChallenge(object):
+    def __init__(self, challenge):
+        """ Parses an HTTP WWW-Authentication Bearer challenge from the Storage service. """
+        if not challenge:
+            raise ValueError("Challenge cannot be empty")
+
+        self._parameters = {}
+        self.scheme, trimmed_challenge = challenge.strip().split(" ", 1)
+
+        # name=value pairs either comma or space separated with values possibly being
+        # enclosed in quotes
+        for item in re.split('[, ]', trimmed_challenge):
+            comps = item.split("=")
+            if len(comps) == 2:
+                key = comps[0].strip(' "')
+                value = comps[1].strip(' "')
+                if key:
+                    self._parameters[key] = value
+
+        # Extract and verify required parameters
+        self.authorization_uri = self._parameters.get('authorization_uri')
+        if not self.authorization_uri:
+            raise ValueError("Authorization Uri not found")
+
+        self.resource_id = self._parameters.get('resource_id')
+        if not self.resource_id:
+            raise ValueError("Resource id not found")
+
+        uri_path = urlparse(self.authorization_uri).path.lstrip("/")
+        self.tenant_id = uri_path.split("/")[0]
+
+    def get_value(self, key):
+        return self._parameters.get(key)

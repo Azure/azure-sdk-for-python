@@ -5,3 +5,4 @@ is_stable = false
 is_arm = true
 package_pprint_name = "Management Partner Management"
 package_doc_id = ""
+title = "ACEProvisioningManagementPartnerAPI"

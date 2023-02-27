@@ -8,7 +8,7 @@ import yaml
 
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
-from azure.ai.ml.entities import PipelineComponent, PipelineJob, Component
+from azure.ai.ml.entities import Component, PipelineComponent, PipelineJob
 from azure.ai.ml.entities._inputs_outputs import GroupInput
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 
@@ -47,7 +47,7 @@ class TestPipelineComponentEntity:
                 "component_a_job": {
                     "component": {
                         "command": 'echo "hello" && echo ' '"world" > ' "${{outputs.world_output}}/world.txt",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest",
                         "is_deterministic": True,
                         "name": "azureml_anonymous",
                         "outputs": {"world_output": {"type": "uri_folder"}},
@@ -95,7 +95,7 @@ class TestPipelineComponentEntity:
                         "${{outputs.component_out_path}}/component_in_number",
                         "description": "This is the basic " "command component",
                         "display_name": "CommandComponentBasic",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "component_in_number": {
                                 "default": "10.99",
@@ -181,7 +181,7 @@ class TestPipelineComponentEntity:
                                     "${{outputs.component_out_path}}/component_in_number",
                                     "description": "This " "is " "the " "basic " "command " "component",
                                     "display_name": "CommandComponentBasic",
-                                    "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                                    "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                                     "inputs": {
                                         "component_in_number": {
                                             "default": "10.99",
@@ -401,30 +401,37 @@ class TestPipelineComponentEntity:
         test_path = "./tests/test_configs/components/pipeline_component_jobs_rest_data.json"
         with open(test_path, "r") as f:
             json_in_file = yaml.safe_load(f)
-        job_dict = copy.deepcopy(json_in_file['properties']['component_spec']['jobs'])
+        job_dict = copy.deepcopy(json_in_file["properties"]["component_spec"]["jobs"])
         jobs = PipelineComponent._resolve_sub_nodes(job_dict)
-        node_dict = {key: node._to_rest_object() for key, node in jobs.items()}['component_a_job']
-        assert node_dict['computeId'] == '${{parent.inputs.node_compute}}'
-        assert node_dict['outputs'] == {
-            'output_binding': {'type': 'literal', 'value': '${{parent.outputs.output}}'},
-            'output_binding2': {'type': 'literal', 'value': '${{parent.outputs.output}}'},
-            'output_data': {'job_output_type': 'uri_folder', 'mode': 'Upload'},
-            'output_data_legacy': {'job_output_type': 'uri_folder', 'mode': 'Upload'}}
-        assert node_dict['inputs'] == {
-            'binding_input': {'job_input_type': 'literal', 'value': '${{parent.inputs.component_in_path}}'},
-            'data_input': {'job_input_type': 'uri_file',
-                           'mode': 'Download',
-                           'uri': 'https://my-blob/path/to/data'},
-            'data_input_legacy': {'job_input_type': 'uri_file',
-                                  'mode': 'Download',
-                                  'uri': 'https://my-blob/path/to/data'},
-            'literal_input': {'job_input_type': 'literal', 'value': '11'},
-            'literal_input2': {'job_input_type': 'literal', 'value': '12'}}
-        assert node_dict['resources'] == {'instance_count': 1, 'properties': {
-            'target_selector': {'my_resource_only': 'false', 'allow_spot_vm': 'true'}}, 'shm_size': '2g'}
+        node_dict = {key: node._to_rest_object() for key, node in jobs.items()}["component_a_job"]
+        assert node_dict["computeId"] == "${{parent.inputs.node_compute}}"
+        assert node_dict["outputs"] == {
+            "output_binding": {"type": "literal", "value": "${{parent.outputs.output}}"},
+            "output_binding2": {"type": "literal", "value": "${{parent.outputs.output}}"},
+            "output_data": {"job_output_type": "uri_folder", "mode": "Upload"},
+            "output_data_legacy": {"job_output_type": "uri_folder", "mode": "Upload"},
+        }
+        assert node_dict["inputs"] == {
+            "binding_input": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
+            "data_input": {"job_input_type": "uri_file", "mode": "Download", "uri": "https://my-blob/path/to/data"},
+            "data_input_legacy": {
+                "job_input_type": "uri_file",
+                "mode": "Download",
+                "uri": "https://my-blob/path/to/data",
+            },
+            "literal_input": {"job_input_type": "literal", "value": "11"},
+            "literal_input2": {"job_input_type": "literal", "value": "12"},
+        }
+        assert node_dict["resources"] == {
+            "instance_count": 1,
+            "properties": {"target_selector": {"my_resource_only": "false", "allow_spot_vm": "true"}},
+            "shm_size": "2g",
+        }
 
         rest_obj = ComponentVersionData.from_dict(json.loads(json.dumps(json_in_file)))
         pipeline_component = Component._from_rest_object(rest_obj)
         assert pipeline_component.jobs
-        obj_node_dict = {key: node._to_rest_object() for key, node in pipeline_component.jobs.items()}['component_a_job']
+        obj_node_dict = {key: node._to_rest_object() for key, node in pipeline_component.jobs.items()}[
+            "component_a_job"
+        ]
         assert obj_node_dict == node_dict

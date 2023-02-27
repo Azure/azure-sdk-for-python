@@ -4,7 +4,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
@@ -67,8 +67,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     def __init__(
         self,
         *,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Output] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.PARALLEL
@@ -93,7 +93,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     def _load_from_rest(cls, obj: JobBaseData):
         pass
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a parallel job to component job.
 
         :param context: Context of parallel job YAML file.
@@ -122,7 +122,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             resources=self.resources if self.resources else None,
         )
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a parallel job to a pipeline node.
 
         :param context: Context of parallel job YAML file.

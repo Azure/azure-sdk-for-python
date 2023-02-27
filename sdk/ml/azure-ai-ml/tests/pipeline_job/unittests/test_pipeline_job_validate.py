@@ -1,20 +1,21 @@
-import re
 import json
+import re
+from contextlib import contextmanager
 from pathlib import Path
+from typing import List, Optional
 from unittest.mock import patch
 
 import pytest
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
-from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
+from azure.ai.ml import Input, Output, MLClient, dsl, load_component, load_job
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import ValidationException, UserErrorException
 
-from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
-from ..e2etests.test_control_flow_pipeline import update_pipeline_schema
+from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, SERVERLESS_COMPUTE_TEST_PARAMETERS
 
 
 def assert_the_same_path(actual_path, expected_path):
@@ -49,6 +50,10 @@ class TestPipelineJobValidate:
             (
                 "./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml",
                 "In order to specify an existing codes, please provide",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_referencing_component_file.yml",
+                "In order to specify an existing components, please provide the correct registry",
             ),
         ],
     )
@@ -143,7 +148,7 @@ class TestPipelineJobValidate:
                 {
                     "path": "jobs.hello_world_no_env.trial",
                     "value": None,
-                }
+                },
             ],
             "result": "Failed",
         }
@@ -243,6 +248,77 @@ class TestPipelineJobValidate:
             ],
             "result": "Failed",
         }
+
+    @pytest.mark.parametrize(
+        "pipeline_output_path, error_message",
+        [
+            (
+                "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_without_name.yaml",
+                "Output name is required when output version is specified.",
+            ),
+            (
+                "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_without_name.yaml",
+                "Output name is required when output version is specified.",
+            ),
+            (
+                "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_with_invalid_name.yaml",
+                "The output name pipeline_output@ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.",
+            ),
+        ],
+    )
+    def test_register_output_without_name_yaml(self, pipeline_output_path, error_message):
+        with pytest.raises(UserErrorException) as e:
+            pipeline = load_job(source=pipeline_output_path)
+        assert error_message in str(e.value)
+
+    @pytest.mark.parametrize("test_case,expected_error_message", SERVERLESS_COMPUTE_TEST_PARAMETERS)
+    def test_pipeline_job_with_serverless_compute(
+        self, test_case: str, expected_error_message: Optional[List[str]]
+    ) -> None:
+        yaml_path = f"./tests/test_configs/pipeline_jobs/serverless_compute/{test_case}/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        validation_result = pipeline_job._validate()
+        if expected_error_message is None:
+            assert validation_result.passed
+        else:
+            assert validation_result.error_messages == expected_error_message
+
+    @pytest.mark.parametrize(
+        "pipeline_output_path, error_message",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_invalid_output_type.yaml",
+                "Outputs field only support type mltable for database and uri_folder for file_system",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type.yaml",
+                "Inputs field only support type uri_file for database and uri_folder for file_system",
+            ),
+        ],
+    )
+    def test_data_transfer_job(self, pipeline_output_path, error_message):
+        pipeline = load_job(source=pipeline_output_path)
+        validate_result = pipeline._validate()
+        assert error_message in str(validate_result.error_messages)
+
+    @pytest.mark.parametrize(
+        "pipeline_output_path, error_message",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_with_reference_component_file."
+                "yaml",
+                "In order to specify an existing None, please provide the correct registry path prefixed with 'azureml",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_with_reference_componen_file.yaml",
+                "In order to specify an existing None, please provide the correct registry path prefixed with 'azureml",
+            ),
+        ],
+    )
+    def test_load_data_transfer_job_with_reference_component_file(self, pipeline_output_path, error_message):
+        with pytest.raises(ValidationError) as ex:
+            load_job(pipeline_output_path)
+            assert error_message in ex.__str__()
 
 
 @pytest.mark.unittest
@@ -639,19 +715,19 @@ class TestDSLPipelineJobValidate:
             node1.compute = compute_name
             sub_pipeline_with_compute_binding(compute_name)
 
-        pipeline_job = pipeline_with_compute_binding('cpu-cluster')
+        pipeline_job = pipeline_with_compute_binding("cpu-cluster")
         # Assert compute binding validate not raise error when validate
         assert pipeline_job._validate().passed
 
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
-        "update_pipeline_schema",
+        "enable_private_preview_pipeline_node_types",
         "enable_private_preview_schema_features",
     )
     def test_pipeline_with_invalid_do_while_node(self) -> None:
         with pytest.raises(ValidationError) as exception:
             load_job(
-                "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
+                "./tests/test_configs/pipeline_jobs/control_flow/do_while/invalid_pipeline.yml",
             )
         error_message_str = re.findall(r"(\{.*\})", exception.value.args[0].replace("\n", ""))[0]
         error_messages = json.loads(error_message_str)
@@ -671,3 +747,67 @@ class TestDSLPipelineJobValidate:
             "Not a valid integer.",
             error_messages["errors"],
         )
+
+    def test_arm_id_pipeline_node_compute(self) -> None:
+        job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_with_registered_pipeline_component.yml")
+        validation_result = job._validate_compute_is_set()
+        assert validation_result.passed
+
+    def test_dsl_data_transfer_import_pipeline_with_invalid_outputs(self) -> None:
+        query_source_snowflake = "select * from TPCH_SF1000.PARTSUPP limit 10"
+        connection_target_azuresql = "azureml:my_snowflake_connection"
+        outputs = {
+            "test": Output(
+                type=AssetTypes.URI_FOLDER,
+                path="azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
+            ),
+            "sink": Output(
+                type=AssetTypes.URI_FOLDER,
+                path="azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
+            ),
+        }
+
+        @dsl.pipeline(description="submit a pipeline with data transfer import database job")
+        def data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql):
+            from azure.ai.ml.data_transfer import Database, import_data
+
+            source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
+            snowflake_blob = import_data(
+                source=source_snowflake,
+                outputs=outputs,
+            )
+
+        pipeline = data_transfer_import_database_pipeline_from_builder(
+            query_source_snowflake, connection_target_azuresql
+        )
+        validate_result = pipeline._validate()
+        assert validate_result.error_messages == {
+            "jobs.snowflake_blob.compute": "Compute not set",
+            "jobs.snowflake_blob.outputs.sink": "Outputs field only support one output called sink in import task",
+            "jobs.snowflake_blob.outputs.sink.type": "Outputs field only support type mltable for database and uri_"
+            "folder for file_system",
+        }
+
+    def test_dsl_data_transfer_export_pipeline_with_invalid_inputs(self) -> None:
+        connection_target_azuresql = "azureml:my_export_azuresqldb_connection"
+        table_name = "dbo.Persons"
+        my_cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="/data/testFile_ForSqlDB.parquet")
+
+        @dsl.pipeline(description="submit a pipeline with data transfer export database job")
+        def data_transfer_export_database_pipeline_from_builder(table_name, connection_target_azuresql, cosmos_folder):
+            from azure.ai.ml.data_transfer import Database, export_data
+
+            source_snowflake = Database(table_name=table_name, connection=connection_target_azuresql)
+            blob_azuresql = export_data(
+                inputs={"source": cosmos_folder, "test": my_cosmos_folder}, sink=source_snowflake
+            )
+
+        pipeline = data_transfer_export_database_pipeline_from_builder(
+            table_name, connection_target_azuresql, my_cosmos_folder
+        )
+
+        validate_result = pipeline._validate()
+        assert validate_result.error_messages == {
+            "jobs.blob_azuresql.compute": "Compute not set",
+            "jobs.blob_azuresql.inputs.source": "Inputs field only support one input called source in export task",
+        }

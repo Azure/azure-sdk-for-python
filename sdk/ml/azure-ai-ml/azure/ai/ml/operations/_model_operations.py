@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from os import PathLike, path
-from typing import Dict, Iterable, Union
+from typing import Dict, Iterable, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -26,12 +26,13 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
-    _create_or_update_autoincrement,
     _get_latest,
     _resolve_label_to_asset,
+    _get_next_version_from_container,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
@@ -42,7 +43,7 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
-from azure.ai.ml.entities._assets import Model, WorkspaceModelReference
+from azure.ai.ml.entities._assets import Model, WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -88,7 +89,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
-        self, model: Union[Model, WorkspaceModelReference]
+        self, model: Union[Model, WorkspaceAssetReference]
     ) -> Model:  # TODO: Are we going to implement job_name?
         """Returns created or updated model asset.
 
@@ -104,22 +105,22 @@ class ModelOperations(_ScopeDependentOperations):
         """
         try:
             name = model.name
-            if not model.version and self._registry_name:
-                msg = "Model version is required for registry"
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.MODEL,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.MISSING_FIELD,
+            if not model.version and model._auto_increment_version:
+                model.version = _get_next_version_from_container(
+                    name=model.name,
+                    container_operation=self._model_container_operation,
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    workspace_name=self._workspace_name,
+                    registry_name=self._registry_name,
                 )
+
             version = model.version
 
             sas_uri = None
 
             if self._registry_name:
                 # Case of copy model to registry
-                if isinstance(model, WorkspaceModelReference):
+                if isinstance(model, WorkspaceAssetReference):
                     # verify that model is not already in registry
                     try:
                         self._model_versions_operation.get(
@@ -138,7 +139,7 @@ class ModelOperations(_ScopeDependentOperations):
                         raise ValidationException(
                             message=msg,
                             no_personal_data_message=msg,
-                            error_target=ErrorTarget.MODEL,
+                            target=ErrorTarget.MODEL,
                             error_category=ErrorCategory.USER_ERROR,
                         )
 
@@ -171,33 +172,23 @@ class ModelOperations(_ScopeDependentOperations):
             model_version_resource = model._to_rest_object()
             auto_increment_version = model._auto_increment_version
             try:
-                if auto_increment_version:
-                    result = _create_or_update_autoincrement(
-                        name=model.name,
+                result = (
+                    self._model_versions_operation.begin_create_or_update(
+                        name=name,
+                        version=version,
                         body=model_version_resource,
-                        version_operation=self._model_versions_operation,
-                        container_operation=self._model_container_operation,
+                        registry_name=self._registry_name,
+                        **self._scope_kwargs,
+                    ).result()
+                    if self._registry_name
+                    else self._model_versions_operation.create_or_update(
+                        name=name,
+                        version=version,
+                        body=model_version_resource,
                         workspace_name=self._workspace_name,
                         **self._scope_kwargs,
                     )
-                else:
-                    result = (
-                        self._model_versions_operation.begin_create_or_update(
-                            name=name,
-                            version=version,
-                            body=model_version_resource,
-                            registry_name=self._registry_name,
-                            **self._scope_kwargs,
-                        ).result()
-                        if self._registry_name
-                        else self._model_versions_operation.create_or_update(
-                            name=name,
-                            version=version,
-                            body=model_version_resource,
-                            workspace_name=self._workspace_name,
-                            **self._scope_kwargs,
-                        )
-                    )
+                )
 
                 if not result and self._registry_name:
                     result = self._get(name=model.name, version=model.version)
@@ -225,7 +216,7 @@ class ModelOperations(_ScopeDependentOperations):
             else:
                 raise ex
 
-    def _get(self, name: str, version: str = None) -> ModelVersionData:  # name:latest
+    def _get(self, name: str, version: Optional[str] = None) -> ModelVersionData:  # name:latest
         if version:
             return (
                 self._model_versions_operation.get(
@@ -252,7 +243,7 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: str = None, label: str = None) -> Model:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
         """Returns information about the specified model asset.
 
         :param name: Name of the model.
@@ -351,7 +342,9 @@ class ModelOperations(_ScopeDependentOperations):
         storage_client.download(starts_with=path_prefix, destination=path_file)
 
     # @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def archive(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Archive a model asset.
 
         :param name: Name of model asset.
@@ -372,7 +365,9 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def restore(
+        self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Restore an archived model asset.
 
         :param name: Name of model asset.
@@ -395,7 +390,7 @@ class ModelOperations(_ScopeDependentOperations):
     # @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        name: str = None,
+        name: Optional[str] = None,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> Iterable[Model]:
@@ -457,9 +452,11 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(result)
 
     # pylint: disable=no-self-use
-    def _prepare_to_copy(self, model: Model, name: str = None, version: str = None) -> WorkspaceModelReference:
+    def _prepare_to_copy(
+        self, model: Model, name: Optional[str] = None, version: Optional[str] = None
+    ) -> WorkspaceAssetReference:
 
-        """Returns WorkspaceModelReference
+        """Returns WorkspaceAssetReference
         to copy a registered model to registry given the asset id
 
         :param model: Registered model
@@ -485,7 +482,7 @@ class ModelOperations(_ScopeDependentOperations):
             model.version,
         )
 
-        return WorkspaceModelReference(
+        return WorkspaceAssetReference(
             name=name if name else model.name,
             version=version if version else model.version,
             asset_id=asset_id,

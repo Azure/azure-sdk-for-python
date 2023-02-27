@@ -37,8 +37,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AsyncPollingMethod(Generic[PollingReturnType]):
-    """ABC class for polling method.
-    """
+    """ABC class for polling method."""
+
     def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
@@ -55,24 +55,16 @@ class AsyncPollingMethod(Generic[PollingReturnType]):
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self) -> str:
-        raise TypeError(
-            "Polling method '{}' doesn't support get_continuation_token".format(
-                self.__class__.__name__
-            )
-        )
+        raise TypeError("Polling method '{}' doesn't support get_continuation_token".format(self.__class__.__name__))
 
     @classmethod
     def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
-        raise TypeError(
-            "Polling method '{}' doesn't support from_continuation_token".format(
-                cls.__name__
-            )
-        )
+        raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
 class AsyncNoPolling(_NoPolling):
-    """An empty async poller that returns the deserialized initial response.
-    """
+    """An empty async poller that returns the deserialized initial response."""
+
     async def run(self):  # pylint:disable=invalid-overridden-method
         """Empty run, no polling.
         Just override initial run to add "async"
@@ -114,26 +106,25 @@ class AsyncLROPoller(Generic[PollingReturnType], Awaitable):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: Any,
-            deserialization_callback: Callable,
-            polling_method: AsyncPollingMethod[PollingReturnType]
-        ):
+        self,
+        client: Any,
+        initial_response: Any,
+        deserialization_callback: Callable,
+        polling_method: AsyncPollingMethod[PollingReturnType],
+    ):
         self._polling_method = polling_method
         self._done = False
 
         # This implicit test avoids bringing in an explicit dependency on Model directly
         try:
-            deserialization_callback = deserialization_callback.deserialize # type: ignore
+            deserialization_callback = deserialization_callback.deserialize  # type: ignore
         except AttributeError:
             pass
 
         self._polling_method.initialize(client, initial_response, deserialization_callback)
 
     def polling_method(self) -> AsyncPollingMethod[PollingReturnType]:
-        """Return the polling method associated to this poller.
-        """
+        """Return the polling method associated to this poller."""
         return self._polling_method
 
     def continuation_token(self) -> str:
@@ -146,14 +137,13 @@ class AsyncLROPoller(Generic[PollingReturnType], Awaitable):
 
     @classmethod
     def from_continuation_token(
-            cls,
-            polling_method: AsyncPollingMethod[PollingReturnType],
-            continuation_token: str,
-            **kwargs
-        ) -> "AsyncLROPoller[PollingReturnType]":
-        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
-            continuation_token, **kwargs
-        )
+        cls, polling_method: AsyncPollingMethod[PollingReturnType], continuation_token: str, **kwargs
+    ) -> "AsyncLROPoller[PollingReturnType]":
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
         return cls(client, initial_response, deserialization_callback, polling_method)
 
     def status(self) -> str:

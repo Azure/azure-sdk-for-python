@@ -20,6 +20,7 @@ Please refer to the [troubleshooting guide][troubleshooting] if you have any iss
   - [Fetch environment variables](#fetch-environment-variables)
   - [Record test variables](#record-test-variables)
 - [Migrate management-plane tests](#migrate-management-plane-tests)
+- [Next steps](#next-steps)
 - [Advanced details](#advanced-details)
   - [What does the test proxy do?](#what-does-the-test-proxy-do)
   - [How does the test proxy know when and what to record or play back?](#how-does-the-test-proxy-know-when-and-what-to-record-or-play-back)
@@ -348,6 +349,13 @@ instead of AzureRecordedTestCase.
 The rest of the information in this guide applies to management-plane packages as well, except for possible specifics
 regarding test resource deployment.
 
+## Next steps
+
+Once your tests have been migrated to the test proxy, they can also have their recordings moved out of the
+`azure-sdk-for-python` repo. Refer to the [recording migration guide][recording_migration] for more details.
+
+After recordings are moved, you can refer to the instructions in [`tests.md`][tests_md] to manage them.
+
 ## Advanced details
 
 ### What does the test proxy do?
@@ -507,6 +515,7 @@ client to the test.
 [pytest_setup]: https://docs.pytest.org/xunit_setup.html
 [pytest_using_fixtures]: https://docs.pytest.org/latest/how-to/fixtures.html#how-to-fixtures
 
+[recording_migration]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/recording_migration_guide.md
 [rg_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py
 
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
@@ -515,6 +524,7 @@ client to the test.
 
 [tables_preparers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/preparers.py
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
+[tests_md]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#run-tests-with-out-of-repo-recordings
 [troubleshooting]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md
 
 [variables_api]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy#storing-variables

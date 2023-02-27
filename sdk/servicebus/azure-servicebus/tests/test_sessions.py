@@ -1022,15 +1022,18 @@ class ServiceBusSessionTests(AzureMgmtTestCase):
                     message = ServiceBusMessage("Handler message no. {}".format(i), session_id=session_id)
                     sender.send_messages(message)
 
-            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5) as session:
-                assert session.session.get_state(timeout=5) == None
-                session.session.set_state("first_state", timeout=5)
+            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=5) as receiver:
+                assert receiver.session.get_state(timeout=5) == None
+                receiver.session.set_state("first_state", timeout=5)
                 count = 0
-                for m in session:
+                for m in receiver:
                     assert m.session_id == session_id
                     count += 1
-                state = session.session.get_state()
+                state = receiver.session.get_state()
                 assert state == b'first_state'
+                receiver.session.set_state(None, timeout=5)
+                state = receiver.session.get_state()
+                assert not state
             assert count == 3
 
 

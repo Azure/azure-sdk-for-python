@@ -3,7 +3,7 @@
 
 $schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
 name: samples_train
-version: 0.0.5
+version: 0.0.6
 display_name: Train
 type: CommandComponent
 description: A dummy training module

@@ -147,29 +147,15 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
         print(key.key_type)
         # [END create_oct_key]
 
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_4_hsm)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_example_create_okp_key(self, key_client, **kwargs):
-        key_name = self.get_resource_name("key")
-
-        # [START create_okp_key]
-        key = key_client.create_okp_key(key_name, curve=KeyCurveName.ed25519, hardware_protected=True)
-
-        print(key.id)
-        print(key.name)
-        print(key.key_type)
-        # [END create_okp_key]
-
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_example_key_list_operations(self, key_client, **kwargs):
         for i in range(4):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             key_client.create_ec_key(key_name)
         for i in range(4):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             key_client.create_rsa_key(key_name)
 
         # [START list_keys]

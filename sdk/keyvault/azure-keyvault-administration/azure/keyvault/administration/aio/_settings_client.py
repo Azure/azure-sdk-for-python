@@ -9,6 +9,7 @@ from .._generated_models import UpdateSettingsRequest
 from .._internal import AsyncKeyVaultClientBase
 from .._models import KeyVaultSetting
 
+
 class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
     """Provides methods to update, get, and list settings for an Azure Key Vault.
 

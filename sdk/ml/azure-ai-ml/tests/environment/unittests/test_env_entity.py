@@ -1,7 +1,7 @@
+import json
 from pathlib import Path
 
 import pytest
-import json
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_component, load_environment
@@ -27,6 +27,30 @@ class TestEnvironmentEntity:
         assert environment.image == same_environment.image
         assert environment == same_environment
         assert environment != diff_environment
+
+    def test_rest_object(self) -> None:
+        # Tests serialization and deserialization of Environment object, including asset properties
+        env = Environment(
+            name="name",
+            version="16",
+            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+            properties={"key": "value"},
+        )
+        diff_env = Environment(
+            name=env.name,
+            version=env.version,
+            image=env.image,
+        )
+        rest_object = env._to_rest_object()
+        # Set id to match the one that would be returned by the service, otherwise _from_rest_object will fail
+        rest_object.id = f"azureml://registries/test/environments/{env.name}/versions/{env.version}"
+        env_from_rest_object = Environment._from_rest_object(rest_object)
+        # Exclude id from comparisons below
+        env_from_rest_object._id = None
+
+        assert env == env_from_rest_object
+        assert env.properties == env_from_rest_object.properties
+        assert env != diff_env
 
     def test_conda_file_deserialize_and_serialize(self) -> None:
         # Tests that conda file is deserialized same way if using load_environment() or Environment()
@@ -86,15 +110,15 @@ class TestEnvironmentEntity:
         inference_conf_obj = json.loads(inference_conf)
 
         env_no_inference_config = Environment(
-                    conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
-                    image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1"
-                )
+            conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
+            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
+        )
 
         env_with_inference_config = Environment(
-                    conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
-                    image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
-                    inference_config=inference_conf_obj
-                )
+            conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
+            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
+            inference_config=inference_conf_obj,
+        )
 
         assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
         assert env_no_inference_config.version != env_with_inference_config.version

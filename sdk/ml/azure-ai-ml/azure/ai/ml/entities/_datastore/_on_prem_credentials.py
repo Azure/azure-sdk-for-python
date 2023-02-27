@@ -4,9 +4,8 @@
 
 from base64 import b64encode
 
-from azure.ai.ml._restclient.v2022_02_01_preview import models as model_preview
+from azure.ai.ml._restclient.v2022_10_01_preview import models as model_preview
 from azure.ai.ml._utils._experimental import experimental
-
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 
 

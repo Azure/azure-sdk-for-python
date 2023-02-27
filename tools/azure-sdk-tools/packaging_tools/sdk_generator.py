@@ -24,7 +24,7 @@ from .generate_utils import (
 _LOGGER = logging.getLogger(__name__)
 
 
-def del_outdated_samples(readme: str):
+def del_outdated_folder(readme: str):
     python_readme = Path(readme).parent / "readme.python.md"
     if not python_readme.exists():
         _LOGGER.info(f"do not find python configuration: {python_readme}")
@@ -33,8 +33,11 @@ def del_outdated_samples(readme: str):
     with open(python_readme, "r") as file_in:
         content = file_in.readlines()
     pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
+    is_multiapi = "multiapi: true" in ("".join(content))
+    special_service = ["azure-mgmt-resource/"]
     for line in content:
         if all(p in line for p in pattern):
+            # remove generated_samples
             sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
             sample_folder = Path(f"sdk/{sdk_folder}/generated_samples") 
             if sample_folder.exists():
@@ -42,6 +45,19 @@ def del_outdated_samples(readme: str):
                 _LOGGER.info(f"remove sample folder: {sample_folder}")
             else:
                 _LOGGER.info(f"sample folder does not exist: {sample_folder}")
+            # remove old generated SDK code
+            sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+/[a-z]+/[a-z]+/[a-z]+", line)[0]
+            code_folder = Path(f"sdk/{sdk_folder}") 
+            if is_multiapi and code_folder.exists():
+                if any(item in str(sdk_folder) for item in special_service):
+                    for folder in code_folder.iterdir():
+                        if folder.is_dir():
+                            shutil.rmtree(folder)
+                else:
+                    shutil.rmtree(code_folder)
+                _LOGGER.info(f"remove code folder: {code_folder}")
+            else:
+                _LOGGER.info(f"code folder does not exist or it is not multiapi: {code_folder}")
             return
 
     _LOGGER.info(f"do not find {pattern} in {python_readme}")
@@ -76,9 +92,10 @@ def main(generate_input, generate_output):
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
+        is_cadl = False
         if "resource-manager" in input_readme:
             relative_path_readme = str(Path(spec_folder, input_readme))
-            del_outdated_samples(relative_path_readme)
+            del_outdated_folder(relative_path_readme)
             config = generate(
                 CONFIG_FILE,
                 sdk_folder,
@@ -92,6 +109,7 @@ def main(generate_input, generate_output):
             config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
         else:
             config = gen_cadl(input_readme, spec_folder)
+            is_cadl = True
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
@@ -113,7 +131,7 @@ def main(generate_input, generate_output):
                 result[package_name][spec_word].append(input_readme)
 
             # Generate some necessary file for new service
-            init_new_service(package_name, folder_name)
+            init_new_service(package_name, folder_name, is_cadl)
             format_samples(sdk_code_path)
 
             # Update metadata

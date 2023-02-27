@@ -143,8 +143,8 @@ class DataMaskingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Parameters for creating or updating a data masking policy. Is either a model
-         type or a IO type. Required.
+        :param parameters: Parameters for creating or updating a data masking policy. Is either a
+         DataMaskingPolicy type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DataMaskingPolicy or IO
         :keyword data_masking_policy_name: The name of the database for which the data masking rule
          applies. Default value is "Default". Note that overriding this default value may result in
@@ -169,10 +169,10 @@ class DataMaskingPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-        data_masking_policy_name = kwargs.pop("data_masking_policy_name", "Default")  # type: Literal["Default"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataMaskingPolicy]
+        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+        data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DataMaskingPolicy] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -197,9 +197,9 @@ class DataMaskingPoliciesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -216,7 +216,9 @@ class DataMaskingPoliciesOperations:
 
         return deserialized
 
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/dataMaskingPolicies/{dataMaskingPolicyName}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/dataMaskingPolicies/{dataMaskingPolicyName}"
+    }
 
     @distributed_trace_async
     async def get(
@@ -251,9 +253,9 @@ class DataMaskingPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-        data_masking_policy_name = kwargs.pop("data_masking_policy_name", "Default")  # type: Literal["Default"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataMaskingPolicy]
+        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+        data_masking_policy_name: Literal["Default"] = kwargs.pop("data_masking_policy_name", "Default")
+        cls: ClsType[_models.DataMaskingPolicy] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -267,9 +269,9 @@ class DataMaskingPoliciesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -286,4 +288,6 @@ class DataMaskingPoliciesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/dataMaskingPolicies/{dataMaskingPolicyName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/dataMaskingPolicies/{dataMaskingPolicyName}"
+    }

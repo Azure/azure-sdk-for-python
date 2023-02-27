@@ -18,15 +18,17 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Optional, Union
+    from datetime import datetime
+    from typing import Optional, Union
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
+    from ._enums import KeyType
+    from ._generated_models import KeyAttributes
     from ._models import JsonWebKey
-    from ._enums import KeyCurveName, KeyType
 
 
 def _get_key_id(vault_url, key_name, version=None):
-    without_version = "{}/keys/{}".format(vault_url, key_name)
+    without_version = f"{vault_url}/keys/{key_name}"
     return without_version + "/" + version if version else without_version
 
 
@@ -56,7 +58,13 @@ class KeyClient(KeyVaultClientBase):
 
     # pylint:disable=protected-access, too-many-public-methods
 
-    def _get_attributes(self, enabled, not_before, expires_on, exportable=None):
+    def _get_attributes(
+        self,
+        enabled: "Optional[bool]",
+        not_before: "Optional[datetime]",
+        expires_on: "Optional[datetime]",
+        exportable: "Optional[bool]" = None,
+    ) -> "Optional[KeyAttributes]":
         """Return a KeyAttributes object if none-None attributes are provided, or None otherwise"""
         if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
             return self._models.KeyAttributes(
@@ -64,8 +72,7 @@ class KeyClient(KeyVaultClientBase):
             )
         return None
 
-    def get_cryptography_client(self, key_name, **kwargs):
-        # type: (str, **Any) -> CryptographyClient
+    def get_cryptography_client(self, key_name: str, **kwargs) -> CryptographyClient:
         """Gets a :class:`~azure.keyvault.keys.crypto.CryptographyClient` for the given key.
 
         :param str key_name: The name of the key used to perform cryptographic operations.
@@ -84,8 +91,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def create_key(self, name, key_type, **kwargs):
-        # type: (str, Union[str, KeyType], **Any) -> KeyVaultKey
+    def create_key(self, name: str, key_type: "Union[str, KeyType]", **kwargs) -> KeyVaultKey:
         """Create a key or, if ``name`` is already in use, create a new version of the key.
 
         Requires keys/create permission.
@@ -94,25 +100,32 @@ class KeyClient(KeyVaultClientBase):
         :param key_type: The type of key to create
         :type key_type: ~azure.keyvault.keys.KeyType or str
 
-        :keyword int size: Key size in bits. Applies only to RSA and symmetric keys. Consider using
-         :func:`create_rsa_key` or :func:`create_oct_key` instead.
+        :keyword size: Key size in bits. Applies only to RSA and symmetric keys. Consider using
+            :func:`create_rsa_key` or :func:`create_oct_key` instead.
+        :paramtype size: int or None
         :keyword curve: Elliptic curve name. Applies only to elliptic curve keys. Defaults to the NIST P-256
-         elliptic curve. To create an elliptic curve key, consider using :func:`create_ec_key` instead.
-        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
-        :keyword int public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
+            elliptic curve. To create an elliptic curve key, consider using :func:`create_ec_key` instead.
+        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str or None
+        :keyword public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
+        :paramtype public_exponent: int or None
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
-        :keyword bool enabled: Whether the key is enabled for use.
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :keyword enabled: Whether the key is enabled for use.
+        :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
-        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
-        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
-        :keyword bool exportable: Whether the private key can be exported.
+        :paramtype tags: dict[str, str] or None
+        :keyword not_before: Not before date of the key in UTC
+        :paramtype not_before: ~datetime.datetime or None
+        :keyword expires_on: Expiry date of the key in UTC
+        :paramtype expires_on: ~datetime.datetime or None
+        :keyword exportable: Whether the private key can be exported.
+        :paramtype exportable: bool or None
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -153,31 +166,38 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def create_rsa_key(self, name, **kwargs):
-        # type: (str, **Any) -> KeyVaultKey
+    def create_rsa_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Create a new RSA key or, if ``name`` is already in use, create a new version of the key
 
         Requires the keys/create permission.
 
         :param str name: The name for the new key.
 
-        :keyword int size: Key size in bits, for example 2048, 3072, or 4096.
-        :keyword int public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
-        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
-         Defaults to ``False``.
+        :keyword size: Key size in bits, for example 2048, 3072, or 4096.
+        :paramtype size: int or None
+        :keyword public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
+        :paramtype public_exponent: int or None
+        :keyword hardware_protected: Whether the key should be created in a hardware security module.
+            Defaults to ``False``.
+        :paramtype hardware_protected: bool or None
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
-        :keyword bool enabled: Whether the key is enabled for use.
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :keyword enabled: Whether the key is enabled for use.
+        :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
-        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
-        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
-        :keyword bool exportable: Whether the private key can be exported.
+        :paramtype tags: dict[str, str] or None
+        :keyword not_before: Not before date of the key in UTC
+        :paramtype not_before: ~datetime.datetime or None
+        :keyword expires_on: Expiry date of the key in UTC
+        :paramtype expires_on: ~datetime.datetime or None
+        :keyword exportable: Whether the private key can be exported.
+        :paramtype exportable: bool or None
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -192,8 +212,7 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="RSA-HSM" if hsm else "RSA", **kwargs)
 
     @distributed_trace
-    def create_ec_key(self, name, **kwargs):
-        # type: (str, **Any) -> KeyVaultKey
+    def create_ec_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Create a new elliptic curve key or, if ``name`` is already in use, create a new version of the key.
 
         Requires the keys/create permission.
@@ -201,22 +220,28 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name for the new key.
 
         :keyword curve: Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
+        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str or None
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
-        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
-         Defaults to ``False``.
-        :keyword bool enabled: Whether the key is enabled for use.
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :keyword hardware_protected: Whether the key should be created in a hardware security module.
+            Defaults to ``False``.
+        :paramtype hardware_protected: bool or None
+        :keyword enabled: Whether the key is enabled for use.
+        :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
-        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
-        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
-        :keyword bool exportable: Whether the private key can be exported.
+        :paramtype tags: dict[str, str] or None
+        :keyword not_before: Not before date of the key in UTC
+        :paramtype not_before: ~datetime.datetime or None
+        :keyword expires_on: Expiry date of the key in UTC
+        :paramtype expires_on: ~datetime.datetime or None
+        :keyword exportable: Whether the private key can be exported.
+        :paramtype exportable: bool or None
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -231,27 +256,32 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
 
     @distributed_trace
-    def create_oct_key(self, name, **kwargs):
-        # type: (str, **Any) -> KeyVaultKey
+    def create_oct_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Create a new octet sequence (symmetric) key or, if ``name`` is in use, create a new version of the key.
 
         Requires the keys/create permission.
 
         :param str name: The name for the new key.
 
-        :keyword int size: Key size in bits, for example 128, 192, or 256.
+        :keyword size: Key size in bits, for example 128, 192, or 256.
+        :paramtype size: int or None
         :keyword key_operations: Allowed key operations.
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
-        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
-         Defaults to ``False``.
-        :keyword bool enabled: Whether the key is enabled for use.
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :keyword hardware_protected: Whether the key should be created in a hardware security module.
+            Defaults to ``False``.
+        :paramtype hardware_protected: bool or None
+        :keyword enabled: Whether the key is enabled for use.
+        :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
-        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
-        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
-        :keyword bool exportable: Whether the key can be exported.
+        :paramtype tags: dict[str, str] or None
+        :keyword not_before: Not before date of the key in UTC
+        :paramtype not_before: ~datetime.datetime or None
+        :keyword expires_on: Expiry date of the key in UTC
+        :paramtype expires_on: ~datetime.datetime or None
+        :keyword exportable: Whether the key can be exported.
+        :paramtype exportable: bool or None
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
 
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
@@ -269,46 +299,7 @@ class KeyClient(KeyVaultClientBase):
         return self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
 
     @distributed_trace
-    def create_okp_key(self, name: str, **kwargs: "Any") -> KeyVaultKey:
-        """Create a new octet key pair or, if ``name`` is in use, create a new version of the key.
-
-        Requires the keys/create permission.
-
-        :param str name: The name for the new key.
-
-        :keyword curve: Elliptic curve name.
-        :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str
-        :keyword key_operations: Allowed key operations.
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
-        :keyword bool hardware_protected: Whether the key should be created in a hardware security module.
-            Defaults to ``False``.
-        :keyword bool enabled: Whether the key is enabled for use.
-        :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
-        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
-        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
-        :keyword bool exportable: Whether the key can be exported.
-        :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
-
-        :returns: The created key
-        :rtype: ~azure.keyvault.keys.KeyVaultKey
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        Example:
-            .. literalinclude:: ../tests/test_samples_keys.py
-                :start-after: [START create_okp_key]
-                :end-before: [END create_okp_key]
-                :language: python
-                :caption: Create an octet key pair (OKP)
-                :dedent: 8
-        """
-        hsm = kwargs.pop("hardware_protected", False)
-        return self.create_key(name, key_type="OKP-HSM" if hsm else "OKP", **kwargs)
-
-    @distributed_trace
-    def begin_delete_key(self, name, **kwargs):
-        # type: (str, **Any) -> LROPoller
+    def begin_delete_key(self, name: str, **kwargs) -> "LROPoller[DeletedKey]":
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
@@ -318,11 +309,12 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key to delete.
 
         :returns: A poller for the delete key operation. The poller's `result` method returns the
-         :class:`~azure.keyvault.keys.DeletedKey` without waiting for deletion to complete. If the vault has
-         soft-delete enabled and you want to permanently delete the key with :func:`purge_deleted_key`, call the
-         poller's `wait` method first. It will block until the deletion is complete. The `wait` method requires
-         keys/get permission.
+            :class:`~azure.keyvault.keys.DeletedKey` without waiting for deletion to complete. If the vault has
+            soft-delete enabled and you want to permanently delete the key with :func:`purge_deleted_key`, call the
+            poller's `wait` method first. It will block until the deletion is complete. The `wait` method requires
+            keys/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.DeletedKey]
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -353,17 +345,18 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
-    def get_key(self, name, version=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> KeyVaultKey
+    def get_key(self, name: str, version: "Optional[str]" = None, **kwargs) -> KeyVaultKey:
         """Get a key's attributes and, if it's an asymmetric key, its public material.
 
         Requires keys/get permission.
 
         :param str name: The name of the key to get.
-        :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
+        :param version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
+        :type version: str or None
 
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -380,8 +373,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def get_deleted_key(self, name, **kwargs):
-        # type: (str, **Any) -> DeletedKey
+    def get_deleted_key(self, name: str, **kwargs) -> DeletedKey:
         """Get a deleted key. Possible only in a vault with soft-delete enabled.
 
         Requires keys/get permission.
@@ -390,6 +382,7 @@ class KeyClient(KeyVaultClientBase):
 
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.DeletedKey
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -406,8 +399,7 @@ class KeyClient(KeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_keys(self, **kwargs):
-        # type: (**Any) -> ItemPaged[DeletedKey]
+    def list_deleted_keys(self, **kwargs) -> "ItemPaged[DeletedKey]":
         """List all deleted keys, including the public part of each. Possible only in a vault with soft-delete enabled.
 
         Requires keys/list permission.
@@ -432,8 +424,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_keys(self, **kwargs):
-        # type: (**Any) -> ItemPaged[KeyProperties]
+    def list_properties_of_keys(self, **kwargs) -> "ItemPaged[KeyProperties]":
         """List identifiers and properties of all keys in the vault.
 
         Requires keys/list permission.
@@ -458,8 +449,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_key_versions(self, name, **kwargs):
-        # type: (str, **Any) -> ItemPaged[KeyProperties]
+    def list_properties_of_key_versions(self, name: str, **kwargs) -> "ItemPaged[KeyProperties]":
         """List the identifiers and properties of a key's versions.
 
         Requires keys/list permission.
@@ -487,13 +477,11 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def purge_deleted_key(self, name, **kwargs):
-        # type: (str, **Any) -> None
+    def purge_deleted_key(self, name: str, **kwargs) -> None:
         """Permanently deletes a deleted key. Only possible in a vault with soft-delete enabled.
 
-        Performs an irreversible deletion of the specified key, without
-        possibility for recovery. The operation is not available if the
-        :py:attr:`~azure.keyvault.keys.KeyProperties.recovery_level` does not specify 'Purgeable'.
+        Performs an irreversible deletion of the specified key, without possibility for recovery. The operation is not
+        available if the :py:attr:`~azure.keyvault.keys.KeyProperties.recovery_level` does not specify 'Purgeable'.
         This method is only necessary for purging a key before its
         :py:attr:`~azure.keyvault.keys.DeletedKey.scheduled_purge_date`.
 
@@ -502,6 +490,7 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the deleted key to purge
 
         :returns: None
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -515,8 +504,7 @@ class KeyClient(KeyVaultClientBase):
         self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, error_map=_error_map, **kwargs)
 
     @distributed_trace
-    def begin_recover_deleted_key(self, name, **kwargs):
-        # type: (str, **Any) -> LROPoller
+    def begin_recover_deleted_key(self, name: str, **kwargs) -> "LROPoller[KeyVaultKey]":
         """Recover a deleted key to its latest version. Possible only in a vault with soft-delete enabled.
 
         Requires keys/recover permission.
@@ -528,10 +516,11 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the deleted key to recover
 
         :returns: A poller for the recovery operation. The poller's `result` method returns the recovered
-         :class:`~azure.keyvault.keys.KeyVaultKey` without waiting for recovery to complete. If you want to use the
-         recovered key immediately, call the poller's `wait` method, which blocks until the key is ready to use. The
-         `wait` method requires keys/get permission.
+            :class:`~azure.keyvault.keys.KeyVaultKey` without waiting for recovery to complete. If you want to use the
+            recovered key immediately, call the poller's `wait` method, which blocks until the key is ready to use. The
+            `wait` method requires keys/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.keys.KeyVaultKey]
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -561,27 +550,31 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultOperationPoller(polling_method)
 
     @distributed_trace
-    def update_key_properties(self, name, version=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> KeyVaultKey
+    def update_key_properties(self, name: str, version: "Optional[str]" = None, **kwargs) -> KeyVaultKey:
         """Change a key's properties (not its cryptographic material).
 
         Requires keys/update permission.
 
         :param str name: The name of key to update
-        :param str version: (optional) The version of the key to update. If unspecified, the latest version is updated.
+        :param version: (optional) The version of the key to update. If unspecified, the latest version is updated.
+        :type version: str or None
 
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str]
-        :keyword bool enabled: Whether the key is enabled for use.
+        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :keyword enabled: Whether the key is enabled for use.
+        :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
-        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
-        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
+        :keyword not_before: Not before date of the key in UTC
+        :paramtype not_before: ~datetime.datetime or None
+        :keyword expires_on: Expiry date of the key in UTC
+        :paramtype expires_on: ~datetime.datetime or None
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
 
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -617,8 +610,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def backup_key(self, name, **kwargs):
-        # type: (str, **Any) -> bytes
+    def backup_key(self, name: str, **kwargs) -> bytes:
         """Back up a key in a protected form useable only by Azure Key Vault.
 
         Requires keys/backup permission.
@@ -630,6 +622,7 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key to back up
 
         :rtype: bytes
+
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -646,8 +639,7 @@ class KeyClient(KeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace
-    def restore_key_backup(self, backup, **kwargs):
-        # type: (bytes, **Any) -> KeyVaultKey
+    def restore_key_backup(self, backup: bytes, **kwargs) -> KeyVaultKey:
         """Restore a key backup to the vault.
 
         Requires keys/restore permission.
@@ -660,6 +652,7 @@ class KeyClient(KeyVaultClientBase):
 
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -681,8 +674,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def import_key(self, name, key, **kwargs):
-        # type: (str, JsonWebKey, **Any) -> KeyVaultKey
+    def import_key(self, name: str, key: "JsonWebKey", **kwargs) -> KeyVaultKey:
         """Import a key created externally.
 
         Requires keys/import permission. If ``name`` is already in use, the key will be imported as a new version.
@@ -691,18 +683,24 @@ class KeyClient(KeyVaultClientBase):
         :param key: The JSON web key to import
         :type key: ~azure.keyvault.keys.JsonWebKey
 
-        :keyword bool hardware_protected: Whether the key should be backed by a hardware security module
-        :keyword bool enabled: Whether the key is enabled for use.
+        :keyword hardware_protected: Whether the key should be backed by a hardware security module
+        :paramtype hardware_protected: bool or None
+        :keyword enabled: Whether the key is enabled for use.
+        :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
-        :keyword ~datetime.datetime not_before: Not before date of the key in UTC
-        :keyword ~datetime.datetime expires_on: Expiry date of the key in UTC
-        :keyword bool exportable: Whether the private key can be exported.
+        :paramtype tags: dict[str, str] or None
+        :keyword not_before: Not before date of the key in UTC
+        :paramtype not_before: ~datetime.datetime or None
+        :keyword expires_on: Expiry date of the key in UTC
+        :paramtype expires_on: ~datetime.datetime or None
+        :keyword exportable: Whether the private key can be exported.
+        :paramtype exportable: bool or None
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
 
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         enabled = kwargs.pop("enabled", None)
@@ -730,8 +728,7 @@ class KeyClient(KeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def release_key(self, name, target_attestation_token, **kwargs):
-        # type: (str, str, **Any) -> ReleaseKeyResult
+    def release_key(self, name: str, target_attestation_token: str, **kwargs) -> ReleaseKeyResult:
         """Releases a key.
 
         The release key operation is applicable to all key types. The target key must be marked
@@ -740,20 +737,23 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key to get.
         :param str target_attestation_token: The attestation assertion for the target of the key release.
 
-        :keyword str version: A specific version of the key to release. If unspecified, the latest version is released.
+        :keyword version: A specific version of the key to release. If unspecified, the latest version is released.
+        :paramtype version: str or None
         :keyword algorithm: The encryption algorithm to use to protect the released key material.
-        :paramtype algorithm: Union[str, ~azure.keyvault.keys.KeyExportEncryptionAlgorithm]
-        :keyword str nonce: A client-provided nonce for freshness.
+        :paramtype algorithm: str or ~azure.keyvault.keys.KeyExportEncryptionAlgorithm or None
+        :keyword nonce: A client-provided nonce for freshness.
+        :paramtype nonce: str or None
 
         :return: The result of the key release.
         :rtype: ~azure.keyvault.keys.ReleaseKeyResult
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        version = kwargs.pop("version", "")
+        version = kwargs.pop("version", None)
         result = self._client.release(
             vault_base_url=self._vault_url,
             key_name=name,
-            key_version=version,
+            key_version=version or "",
             parameters=self._models.KeyReleaseParameters(
                 target_attestation_token=target_attestation_token,
                 nonce=kwargs.pop("nonce", None),
@@ -764,14 +764,14 @@ class KeyClient(KeyVaultClientBase):
         return ReleaseKeyResult(result.value)
 
     @distributed_trace
-    def get_random_bytes(self, count, **kwargs):
-        # type: (int, **Any) -> bytes
+    def get_random_bytes(self, count: int, **kwargs) -> bytes:
         """Get the requested number of random bytes from a managed HSM.
 
         :param int count: The requested number of random bytes.
 
         :return: The random bytes.
         :rtype: bytes
+
         :raises:
             :class:`ValueError` if less than one random byte is requested,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -791,22 +791,21 @@ class KeyClient(KeyVaultClientBase):
         return result.value
 
     @distributed_trace
-    def get_key_rotation_policy(self, key_name, **kwargs):
-        # type: (str, **Any) -> KeyRotationPolicy
+    def get_key_rotation_policy(self, key_name: str, **kwargs) -> KeyRotationPolicy:
         """Get the rotation policy of a Key Vault key.
 
         :param str key_name: The name of the key.
 
         :return: The key rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
+
         :raises: :class: `~azure.core.exceptions.HttpResponseError`
         """
         policy = self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=key_name, **kwargs)
         return KeyRotationPolicy._from_generated(policy)
 
     @distributed_trace
-    def rotate_key(self, name, **kwargs):
-        # type: (str, **Any) -> KeyVaultKey
+    def rotate_key(self, name: str, **kwargs) -> KeyVaultKey:
         """Rotate the key based on the key policy by generating a new version of the key.
 
         This operation requires the keys/rotate permission.
@@ -815,14 +814,16 @@ class KeyClient(KeyVaultClientBase):
 
         :return: The new version of the rotated key.
         :rtype: ~azure.keyvault.keys.KeyVaultKey
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         bundle = self._client.rotate_key(vault_base_url=self._vault_url, key_name=name, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
-    def update_key_rotation_policy(self, key_name, policy, **kwargs):
-        # type: (str, KeyRotationPolicy, **Any) -> KeyRotationPolicy
+    def update_key_rotation_policy(
+        self, key_name: str, policy: KeyRotationPolicy, **kwargs
+    ) -> KeyRotationPolicy:
         """Updates the rotation policy of a Key Vault key.
 
         This operation requires the keys/update permission.
@@ -833,7 +834,7 @@ class KeyClient(KeyVaultClientBase):
 
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key. This will
             override the lifetime actions of the provided ``policy``.
-        :paramtype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
+        :paramtype lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
         :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
             ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H". See
             `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more information on ISO 8601 durations.
@@ -841,6 +842,7 @@ class KeyClient(KeyVaultClientBase):
 
         :return: The updated rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
+
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         lifetime_actions = kwargs.pop("lifetime_actions", policy.lifetime_actions)

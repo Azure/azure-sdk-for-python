@@ -3,24 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import Union, List, Dict, Any
 from threading import Lock
 
 from ._generated.models import IndexAction
 
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import List
 
-
-def _flatten_args(args):
-    # type (Union[List[dict], List[List[dict]]]) -> List[dict]
+def _flatten_args(args: Union[List[Dict], List[List[Dict]]]) -> List[Dict]:
     if len(args) == 1 and isinstance(args[0], (list, tuple)):
         return args[0]
     return args
 
-
-class IndexDocumentsBatch(object):
+class IndexDocumentsBatch:
     """Represent a batch of update operations for documents in an Azure
     Search index.
 
@@ -29,17 +23,14 @@ class IndexDocumentsBatch(object):
 
     """
 
-    def __init__(self):
-        # type: () -> None
-        self._actions = []  # type: List[IndexAction]
+    def __init__(self) -> None:
+        self._actions: List[IndexAction] = []
         self._lock = Lock()
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions))[:1024]
 
-    def add_upload_actions(self, *documents):
-        # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
+    def add_upload_actions(self, *documents: Union[List[Dict], List[List[Dict]]]) -> List[IndexAction]:
         """Add documents to upload to the Azure search index.
 
         An upload action is similar to an "upsert" where the document will be
@@ -48,16 +39,16 @@ class IndexDocumentsBatch(object):
 
         :param documents: Documents to upload to an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[dict]
+        :type documents: Dict or List[Dict]
         :return: the added actions
         :rtype: List[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "upload")
 
     def add_delete_actions(
-        self, *documents, **kwargs
-    ):  # pylint: disable=unused-argument
-        # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
+        self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
+    ) -> List[IndexAction]:
+        # pylint: disable=unused-argument
         """Add documents to delete to the Azure search index.
 
         Delete removes the specified document from the index. Any field you
@@ -71,16 +62,16 @@ class IndexDocumentsBatch(object):
 
         :param documents: Documents to delete from an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[dict]
+        :type documents: Dict or List[Dict]
         :return: the added actions
         :rtype: List[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "delete")
 
     def add_merge_actions(
-        self, *documents, **kwargs
-    ):  # pylint: disable=unused-argument
-        # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
+        self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
+    ) -> List[IndexAction]:
+        # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
         index.
 
@@ -91,16 +82,16 @@ class IndexDocumentsBatch(object):
 
         :param documents: Documents to merge into an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[dict]
+        :type documents: Dict or List[Dict]
         :return: the added actions
         :rtype: List[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "merge")
 
     def add_merge_or_upload_actions(
-        self, *documents, **kwargs
-    ):  # pylint: disable=unused-argument
-        # type (Union[List[dict], List[List[dict]]]) -> List[IndexAction]
+        self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
+    ) -> List[IndexAction]:
+        # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
         index, or upload if they do not yet exist.
 
@@ -111,23 +102,21 @@ class IndexDocumentsBatch(object):
         :param documents: Documents to merge or upload into an Azure search
          index. May be a single list of documents, or documents as individual
          parameters.
-        :type documents: dict or list[dict]
+        :type documents: Dict or List[Dict]
         :return: the added actions
         :rtype: List[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "mergeOrUpload")
 
     @property
-    def actions(self):
-        # type: () -> List[IndexAction]
+    def actions(self) -> List[IndexAction]:
         """The list of currently index actions to index.
 
         :rtype: List[IndexAction]
         """
         return list(self._actions)
 
-    def dequeue_actions(self, **kwargs):  # pylint: disable=unused-argument
-        # type: () -> List[IndexAction]
+    def dequeue_actions(self, **kwargs: Any) -> List[IndexAction]:  # pylint: disable=unused-argument
         """Get the list of currently configured index actions and clear it.
 
         :rtype: List[IndexAction]
@@ -137,8 +126,10 @@ class IndexDocumentsBatch(object):
             self._actions = []
         return result
 
-    def enqueue_actions(self, new_actions, **kwargs):  # pylint: disable=unused-argument
-        # type: (Union[IndexAction, List[IndexAction]]) -> None
+    def enqueue_actions(
+            self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any
+    ) -> None:
+        # pylint: disable=unused-argument
         """Enqueue a list of index actions to index."""
         if isinstance(new_actions, IndexAction):
             with self._lock:
@@ -147,8 +138,7 @@ class IndexDocumentsBatch(object):
             with self._lock:
                 self._actions.extend(new_actions)
 
-    def _extend_batch(self, documents, action_type):
-        # type: (List[dict], str) -> List[IndexAction]
+    def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
         new_actions = [
             IndexAction(additional_properties=document, action_type=action_type)
             for document in documents

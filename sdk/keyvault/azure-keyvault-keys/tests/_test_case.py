@@ -14,7 +14,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 
 def get_attestation_token(attestation_uri):
-    request = HttpRequest("GET", "{}/generate-test-token".format(attestation_uri))
+    request = HttpRequest("GET", f"{attestation_uri}/generate-test-token")
     with Pipeline(transport=RequestsTransport()) as pipeline:
         response = pipeline.run(request)
         return json.loads(response.http_response.text())["token"]

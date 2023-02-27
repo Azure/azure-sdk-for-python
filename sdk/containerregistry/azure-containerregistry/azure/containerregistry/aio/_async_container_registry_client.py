@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Optional, overload, Union
+from typing import TYPE_CHECKING, Any, Optional, overload, Union, cast
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -122,7 +122,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
-
         cls = kwargs.pop("cls", None)
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
@@ -581,12 +580,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
-        repository, properties = None, None
+        repository = str(args[0])
+        properties = None
         if len(args) == 2:
-            repository = args[0]
-            properties = args[1]
+            properties = cast(RepositoryProperties, args[1])
         else:
-            repository = args[0]
             properties = RepositoryProperties()
 
         properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
@@ -601,13 +599,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @overload
-    def update_manifest_properties(
+    async def update_manifest_properties(
         self, repository: str, tag_or_digest: str, properties: "ArtifactManifestProperties", **kwargs: Any
     ) -> "ArtifactManifestProperties":
         ...
 
     @overload
-    def update_manifest_properties(
+    async def update_manifest_properties(
         self, repository: str, tag_or_digest: str, **kwargs: Any
     ) -> "ArtifactManifestProperties":
         ...
@@ -650,11 +648,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     can_write=False,
                 )
         """
-        repository = args[0]
-        tag_or_digest = args[1]
+        repository = str(args[0])
+        tag_or_digest = str(args[1])
         properties = None
         if len(args) == 3:
-            properties = args[2]
+            properties = cast(ArtifactManifestProperties, args[2])
         else:
             properties = ArtifactManifestProperties()
 
@@ -678,13 +676,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @overload
-    def update_tag_properties(
+    async def update_tag_properties(
         self, repository: str, tag: str, properties: "ArtifactTagProperties", **kwargs: Any
     ) -> "ArtifactTagProperties":
         ...
 
     @overload
-    def update_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> "ArtifactTagProperties":
+    async def update_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> "ArtifactTagProperties":
         ...
 
     @distributed_trace_async
@@ -725,11 +723,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 can_write=False
             )
         """
-        repository = args[0]
-        tag = args[1]
+        repository = str(args[0])
+        tag = str(args[1])
         properties = None
         if len(args) == 3:
-            properties = args[2]
+            properties = cast(ArtifactTagProperties, args[2])
         else:
             properties = ArtifactTagProperties()
 
@@ -742,7 +740,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             await self._client.container_registry.update_tag_attributes(
                 repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             ),
-            repository=repository,
+            repository=repository
         )
 
     @distributed_trace_async

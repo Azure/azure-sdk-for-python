@@ -11,7 +11,11 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionableRemediationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ActionableRemediationState."""
+    """ActionableRemediation Setting.
+    None - the setting was never set.
+    Enabled - ActionableRemediation is enabled.
+    Disabled - ActionableRemediation is disabled.
+    """
 
     NONE = "None"
     DISABLED = "Disabled"

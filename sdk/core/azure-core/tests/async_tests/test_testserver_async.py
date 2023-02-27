@@ -26,7 +26,9 @@
 import pytest
 from azure.core.pipeline.transport import AioHttpTransport
 from utils import HTTP_REQUESTS
+
 """This file does a simple call to the testserver to make sure we can use the testserver"""
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

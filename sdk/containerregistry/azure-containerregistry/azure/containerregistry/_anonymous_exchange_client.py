@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Dict, Any
+from typing import Any, Union, Optional
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
@@ -11,21 +11,19 @@ from ._generated.models._container_registry_enums import TokenGrantType
 from ._helpers import _parse_challenge
 from ._user_agent import USER_AGENT
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
-
-class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
+class AnonymousACRExchangeClient(object):
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
-    :param credential: Credential which provides tokens to authenticate requests
-    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
+     may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
-        # type: (str, Dict[str, Any]) -> None
+        # type: (str, Any) -> None
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -38,21 +36,18 @@ class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-v
         )
 
     def get_acr_access_token(self, challenge, **kwargs):
-        # type: (str, Dict[str, Any]) -> str
+        # type: (str, Any) -> Optional[str]
         parsed_challenge = _parse_challenge(challenge)
-        parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return self.exchange_refresh_token_for_access_token(
-            None,
+            "",
             service=parsed_challenge["service"],
             scope=parsed_challenge["scope"],
             grant_type=TokenGrantType.PASSWORD,
             **kwargs
         )
 
-    def exchange_refresh_token_for_access_token(
-        self, refresh_token=None, service=None, scope=None, grant_type=TokenGrantType.PASSWORD, **kwargs
-    ):
-        # type: (str, str, str, str, Dict[str, Any]) -> str
+    def exchange_refresh_token_for_access_token(self, refresh_token, service, scope, grant_type, **kwargs):
+        # type: (str, str, str, Union[str, TokenGrantType], Any) -> Optional[str]
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )

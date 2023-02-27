@@ -8,15 +8,22 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, \
-    ManagedIdentityConfiguration
+from azure.ai.ml.entities import (
+    AmlCompute,
+    Compute,
+    ComputeInstance,
+    IdentityConfiguration,
+    ManagedIdentityConfiguration,
+)
 from azure.ai.ml.operations import ComputeOperations
 from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture
 def mock_compute_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01_preview: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2022_10_01_preview: Mock,
 ) -> ComputeOperations:
     yield ComputeOperations(
         operation_scope=mock_workspace_scope,
@@ -41,9 +48,7 @@ class TestComputeOperation:
         sys.version_info[1] == 11,
         reason=f"This test is not compatible with Python 3.11, skip in CI.",
     )
-    def test_create_compute_instance(
-        self, mock_compute_operation: ComputeOperations, mocker: MockFixture
-    ) -> None:
+    def test_create_compute_instance(self, mock_compute_operation: ComputeOperations, mocker: MockFixture) -> None:
         mocker.patch(
             "azure.ai.ml._restclient.v2022_10_01_preview.workspaces.get",
             return_value=funny(),
@@ -61,9 +66,7 @@ class TestComputeOperation:
         sys.version_info[1] == 11,
         reason=f"This test is not compatible with Python 3.11, skip in CI.",
     )
-    def test_create_aml_compute(
-        self, mock_compute_operation: ComputeOperations, mocker: MockFixture
-    ) -> None:
+    def test_create_aml_compute(self, mock_compute_operation: ComputeOperations, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview.workspaces.get", return_value=funny())
         compute = load_compute("./tests/test_configs/compute/compute-aml.yaml")
         mock_compute_operation.begin_create_or_update(compute=compute)
@@ -89,9 +92,7 @@ class TestComputeOperation:
         mock_compute_operation.begin_restart("randstr")
         mock_compute_operation._operation.begin_restart.assert_called_once()
 
-    def test_update_aml_compute(
-        self, mock_compute_operation: ComputeOperations, mocker: MockFixture
-    ) -> None:
+    def test_update_aml_compute(self, mock_compute_operation: ComputeOperations, mocker: MockFixture) -> None:
         compute = AmlCompute(
             name="name",
             tags={"key1": "value1", "key2": "value2"},

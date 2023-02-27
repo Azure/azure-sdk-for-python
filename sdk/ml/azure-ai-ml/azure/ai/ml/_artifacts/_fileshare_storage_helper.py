@@ -26,7 +26,7 @@ from azure.ai.ml._utils._asset_utils import (
     get_directory_size,
     traverse_directory,
 )
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 
@@ -67,7 +67,7 @@ class FileStorageClient:
         name: str,
         version: str,
         ignore_file: IgnoreFile = IgnoreFile(None),
-        asset_hash: str = None,
+        asset_hash: Optional[str] = None,
         show_progress: bool = True,
     ) -> Dict[str, str]:
         """Upload a file or directory to a path inside the file system."""
@@ -122,7 +122,7 @@ class FileStorageClient:
         msg: Optional[str] = None,
         in_directory: bool = False,
         subdirectory_client: Optional[ShareDirectoryClient] = None,
-        callback: Any = None,
+        callback: Optional[Any] = None,
     ) -> None:
         """ " Upload a single file to a path inside the file system
         directory."""
@@ -346,7 +346,7 @@ def recursive_download(
             recursive_download(sub_client, destination=destination, max_concurrency=max_concurrency)
     except Exception:
         msg = f"Saving fileshare directory with prefix {starts_with} was unsuccessful."
-        raise MLException(
+        raise MlException(
             message=msg.format(starts_with),
             no_personal_data_message=msg.format("[prefix]"),
             target=ErrorTarget.ARTIFACT,

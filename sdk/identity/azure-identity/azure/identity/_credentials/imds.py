@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 
 import six
 
@@ -29,7 +29,7 @@ PIPELINE_SETTINGS = {
 }
 
 
-def get_request(scope, identity_config):
+def _get_request(scope: str, identity_config: Dict) -> HttpRequest:
     url = (
         os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST, IMDS_AUTHORITY).strip("/")
         + IMDS_TOKEN_PATH
@@ -40,15 +40,15 @@ def get_request(scope, identity_config):
 
 
 class ImdsCredential(GetTokenMixin):
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super(ImdsCredential, self).__init__()
 
-        self._client = ManagedIdentityClient(get_request, **dict(PIPELINE_SETTINGS, **kwargs))
+        self._client = ManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **kwargs))
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
-            self._endpoint_available = True  # type: Optional[bool]
+            self._endpoint_available: Optional[bool] = True
         else:
             self._endpoint_available = None
-        self._error_message = None  # type: Optional[str]
+        self._error_message: Optional[str] = None
         self._user_assigned_identity = "client_id" in kwargs or "identity_config" in kwargs
 
     def __enter__(self):
@@ -58,14 +58,13 @@ class ImdsCredential(GetTokenMixin):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def close(self):
+    def close(self) -> None:
         self.__exit__()
 
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_token(*scopes)
 
-    def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
             # we send a request it would immediately reject (because it lacks the Metadata header),

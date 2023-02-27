@@ -3,3 +3,4 @@ package_name = "azure-mgmt-dns"
 package_pprint_name = "DNS Management"
 package_doc_id = "dns"
 is_stable = false
+title = "DnsManagementClient"

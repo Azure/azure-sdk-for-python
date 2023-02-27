@@ -4,7 +4,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -20,7 +20,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         "standard_e64s_v3",
     ]
 
-    def __init__(self, *, instance_type: str = None, runtime_version: str = None):
+    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None):
         self.instance_type = instance_type
         self.runtime_version = runtime_version
 

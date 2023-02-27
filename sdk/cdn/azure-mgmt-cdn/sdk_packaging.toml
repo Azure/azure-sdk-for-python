@@ -3,4 +3,5 @@ package_name = "azure-mgmt-cdn"
 package_pprint_name = "CDN Management"
 package_doc_id = "cdn"
 is_stable = true
-sample_link = "cdn"
+sample_link = ""
+title = "CdnManagementClient"

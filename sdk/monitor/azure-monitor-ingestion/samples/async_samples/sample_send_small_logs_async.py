@@ -1,19 +1,41 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 """
-Usage: python sample_send_small_logs_async.py
+FILE: sample_send_small_logs_async.py
+
+DESCRIPTION:
+    This sample demonstrates how to send a small number of logs to a Log Analytics workspace.
+
+    Note: This sample requires the azure-identity library.
+
+USAGE:
+    python sample_send_small_logs_async.py
+
+    Set the environment variables with your own values before running the sample:
+    1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
+    2) LOGS_DCR_RULE_ID - your data collection rule immutable ID
+    3) LOGS_DCR_STREAM_NAME - your data collection rule stream name
+
+    If using an application service principal for authentication, set the following:
+    1) AZURE_TENANT_ID - your Azure AD tenant (directory) ID
+    2) AZURE_CLIENT_ID - your Azure AD client (application) ID
+    3) AZURE_CLIENT_SECRET - your Azure AD client secret
 """
 
-import os
 import asyncio
-from azure.monitor.ingestion.aio import LogsIngestionClient
-from azure.monitor.ingestion import UploadLogsStatus
+import os
+
+from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
+from azure.monitor.ingestion.aio import LogsIngestionClient
+
 
 async def send_logs():
     endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
-    credential = DefaultAzureCredential()
-
-    client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
-
     rule_id = os.environ['LOGS_DCR_RULE_ID']
     body = [
           {
@@ -27,11 +49,15 @@ async def send_logs():
             "AdditionalContext": "sabhyrav"
           }
         ]
+    credential = DefaultAzureCredential()
 
-    response = await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-    if response.status != UploadLogsStatus.SUCCESS:
-        failed_logs = response.failed_logs_index
-        print(failed_logs)
+    client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
+    async with client:
+      try:
+          await client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+      except HttpResponseError as e:
+          print(f"Upload failed: {e}")
+    await credential.close()
 
 
 if __name__ == '__main__':

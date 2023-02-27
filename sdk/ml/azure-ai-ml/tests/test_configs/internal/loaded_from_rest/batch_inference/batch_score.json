@@ -14,12 +14,14 @@
     "model_path": {
       "type": "path",
       "description": "Trained MNIST image classification model.",
-      "datastore_mode": "Mount"
+      "datastore_mode": "Mount",
+      "optional": false
     },
     "images_to_score": {
       "type": "path",
       "description": "Images to score.",
-      "datastore_mode": "Mount"
+      "datastore_mode": "Mount",
+      "optional": false
     }
   },
   "outputs": {

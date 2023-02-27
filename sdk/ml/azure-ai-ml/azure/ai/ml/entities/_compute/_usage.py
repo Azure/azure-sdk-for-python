@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from os import PathLike
-from typing import IO, AnyStr, Dict, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Usage as RestUsage
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
@@ -14,7 +14,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class UsageName:
-    def __init__(self, *, value: str = None, localized_value: str = None):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None):
         """The Usage Names.
 
         :param value: The name of the resource.
@@ -31,13 +31,13 @@ class Usage(RestTranslatableMixin):
 
     def __init__(
         self,
-        id: str = None,  # pylint: disable=redefined-builtin
-        aml_workspace_location: str = None,
-        type: str = None,  # pylint: disable=redefined-builtin
-        unit: Union[str, UsageUnit] = None,  # enum
-        current_value: int = None,
-        limit: int = None,
-        name: UsageName = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        aml_workspace_location: Optional[str] = None,
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
+        unit: Optional[Union[str, UsageUnit]] = None,  # enum
+        current_value: Optional[int] = None,
+        limit: Optional[int] = None,
+        name: Optional[UsageName] = None,
     ):
         """Describes AML Resource Usage.
 
@@ -93,7 +93,7 @@ class Usage(RestTranslatableMixin):
     def _load(
         cls,
         path: Union[PathLike, str],
-        params_override: list = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Usage":
 

@@ -5,17 +5,20 @@
 # pylint: disable=protected-access
 
 import time
-from typing import Dict, Iterable, Tuple
+from typing import Dict, Iterable, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
 )
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork
+from azure.ai.ml.constants._workspace import IsolationMode
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
@@ -25,7 +28,17 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
 )
-from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
+from azure.ai.ml._utils._appinsights_utils import (
+    default_resource_group_for_app_insights_exists,
+    default_log_analytics_workspace_exists,
+    get_default_resource_group_deployment,
+    get_default_log_analytics_deployment,
+    get_default_log_analytics_arm_id,
+)
+from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
+from azure.ai.ml._version import VERSION
+from azure.ai.ml.constants import ManagedServiceIdentityType
+from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, Scope, WorkspaceResourceConstants
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
@@ -34,10 +47,6 @@ from azure.ai.ml.entities import (
     Workspace,
     WorkspaceKeys,
 )
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._version import VERSION
-from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants, Scope
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -59,9 +68,9 @@ class WorkspaceOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient102022Preview,
+        service_client: ServiceClient122022Preview,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         # ops_logger.update_info(kwargs)
@@ -96,7 +105,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
     @distributed_trace
-    def get(self, name: str = None, **kwargs: Dict) -> Workspace:
+    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
         """Get a workspace by name.
 
         :param name: Name of the workspace.
@@ -112,7 +121,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def get_keys(self, name: str = None) -> WorkspaceKeys:
+    def get_keys(self, name: Optional[str] = None) -> WorkspaceKeys:
         """Get keys for the workspace.
 
         :param name: Name of the workspace.
@@ -126,7 +135,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_sync_keys(self, name: str = None) -> LROPoller:
+    def begin_sync_keys(self, name: Optional[str] = None) -> LROPoller:
         """Triggers the workspace to immediately synchronize keys. If keys for
         any resource in the workspace are changed, it can take around an hour
         for them to automatically be updated. This function enables keys to be
@@ -243,19 +252,29 @@ class WorkspaceOperations:
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         identity = kwargs.get("identity", workspace.identity)
-        existing_workspace = self.get(workspace.name, **kwargs)
+        workspace_name = kwargs.get("workspace_name", workspace.name)
+        existing_workspace = self.get(workspace_name, **kwargs)
         if identity:
             identity = identity._to_workspace_rest_object()
             rest_user_assigned_identities = identity.user_assigned_identities
             # add the uai resource_id which needs to be deleted (which is not provided in the list)
-            if existing_workspace and existing_workspace.identity and \
-                existing_workspace.identity.user_assigned_identities:
+            if (
+                existing_workspace
+                and existing_workspace.identity
+                and existing_workspace.identity.user_assigned_identities
+            ):
                 if rest_user_assigned_identities is None:
                     rest_user_assigned_identities = {}
                 for uai in existing_workspace.identity.user_assigned_identities:
                     if uai.resource_id not in rest_user_assigned_identities:
                         rest_user_assigned_identities[uai.resource_id] = None
                 identity.user_assigned_identities = rest_user_assigned_identities
+
+        managed_network = kwargs.get("managed_network", workspace.managed_network)
+        if isinstance(managed_network, str):
+            managed_network = ManagedNetwork(managed_network)._to_rest_object()
+        elif isinstance(managed_network, ManagedNetwork):
+            managed_network = workspace.managed_network._to_rest_object()
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
@@ -296,7 +315,7 @@ class WorkspaceOperations:
             )
 
         update_param = WorkspaceUpdateParameters(
-            tags=workspace.tags,
+            tags=kwargs.get("tags", workspace.tags),
             description=kwargs.get("description", workspace.description),
             friendly_name=kwargs.get("display_name", workspace.display_name),
             public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
@@ -305,6 +324,7 @@ class WorkspaceOperations:
             primary_user_assigned_identity=kwargs.get(
                 "primary_user_assigned_identity", workspace.primary_user_assigned_identity
             ),
+            managed_network=managed_network,
         )
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
@@ -312,8 +332,8 @@ class WorkspaceOperations:
         # Only the key uri property of customer_managed_key can be updated.
         # Check if user is updating CMK key uri, if so, add to update_param
         if workspace.customer_managed_key is not None and workspace.customer_managed_key.key_uri is not None:
-            customer_managed_key_uri=workspace.customer_managed_key.key_uri
-            update_param.encryption=EncryptionUpdateProperties(
+            customer_managed_key_uri = workspace.customer_managed_key.key_uri
+            update_param.encryption = EncryptionUpdateProperties(
                 key_vault_properties=EncryptionKeyVaultUpdateProperties(
                     key_identifier=customer_managed_key_uri,
                 )
@@ -325,7 +345,7 @@ class WorkspaceOperations:
         def callback(_, deserialized, args):
             return Workspace._from_rest_object(deserialized)
 
-        poller = self._operation.begin_update(resource_group, workspace.name, update_param, polling=True, cls=callback)
+        poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
 
     # @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
@@ -466,6 +486,63 @@ class WorkspaceOperations:
                 group_name,
             )
         else:
+            # if workspace is located in a region where app insights is not supported, we do this swap
+            if workspace.location in ["westcentralus", "eastus2euap", "centraluseuap"]:
+                app_insights_location = "southcentralus"
+            else:
+                app_insights_location = workspace.location
+            # check if default resource group already exists
+            rg_is_existing = default_resource_group_for_app_insights_exists(
+                self._credentials, self._subscription_id, app_insights_location
+            )
+            # if default resource group does not exist yet, create rg and log analytics
+            if not rg_is_existing:
+                # add resource group and log analytics deployments to resources
+                deployment_string = get_deployment_name("")
+                app_insights_resource_group_deployment_name = f"DeployResourceGroup{deployment_string}"
+                app_insights_log_workspace_deployment_name = f"DeployLogWorkspace{deployment_string}"
+                template["resources"].append(
+                    get_default_resource_group_deployment(
+                        app_insights_resource_group_deployment_name, app_insights_location, self._subscription_id
+                    )
+                )
+                log_analytics_deployment = get_default_log_analytics_deployment(
+                    app_insights_log_workspace_deployment_name, app_insights_location, self._subscription_id
+                )
+                log_analytics_deployment["dependsOn"] = [app_insights_resource_group_deployment_name]
+                template["resources"].append(log_analytics_deployment)
+                for resource in template["resources"]:
+                    if resource["type"] == "Microsoft.Insights/components":
+                        resource["dependsOn"] = [app_insights_log_workspace_deployment_name]
+            # if default resource group exists, check default log analytics exists
+            else:
+                # check if default log analytics workspace already exists
+                la_is_existing = default_log_analytics_workspace_exists(
+                    self._credentials, self._subscription_id, app_insights_location
+                )
+                # if this does not exist yet, add the deployment needed to resources
+                if not la_is_existing:
+                    deployment_string = get_deployment_name("")
+                    app_insights_log_workspace_deployment_name = f"DeployLogWorkspace{deployment_string}"
+                    template["resources"].append(
+                        get_default_log_analytics_deployment(
+                            app_insights_log_workspace_deployment_name, app_insights_location, self._subscription_id
+                        )
+                    )
+                    for resource in template["resources"]:
+                        if resource["type"] == "Microsoft.Insights/components":
+                            resource["dependsOn"] = [app_insights_log_workspace_deployment_name]
+
+            # add WorkspaceResourceId property to app insights in template
+            for resource in template["resources"]:
+                if resource["type"] == "Microsoft.Insights/components":
+                    resource["properties"] = {
+                        "Application_Type": "web",
+                        "WorkspaceResourceId": get_default_log_analytics_arm_id(
+                            self._subscription_id, app_insights_location
+                        ),
+                    }
+
             app_insights = _generate_app_insights(workspace.name, resources_being_deployed)
             _set_val(param["applicationInsightsName"], app_insights)
             _set_val(
@@ -518,11 +595,19 @@ class WorkspaceOperations:
         else:
             # pylint: disable=protected-access
             identity = IdentityConfiguration(
-                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED))._to_workspace_rest_object()
+                type=camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
+            )._to_workspace_rest_object()
         _set_val(param["identity"], identity)
 
         if workspace.primary_user_assigned_identity:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
+
+        managed_network = None
+        if workspace.managed_network:
+            managed_network = workspace.managed_network._to_rest_object()
+        else:
+            managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
+        _set_val(param["managedNetwork"], managed_network)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

@@ -2,15 +2,14 @@ import random
 import re
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.core.paging import ItemPaged
-
-from test_utilities.utils import sleep_if_live
 
 
 @pytest.fixture
@@ -18,7 +17,9 @@ def env_name(variable_recorder) -> Callable[[str], str]:
     def generate_random_environment_name(env_name: Callable[[str], str]) -> str:
         random_env_name = f"env-test-{str(random.randint(1, 10000000))}"
         return variable_recorder.get_or_record(env_name, random_env_name)
+
     return generate_random_environment_name
+
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
@@ -88,7 +89,9 @@ class TestEnvironment(AzureRecordedTestCase):
         assert env_dump["id"] == ARM_ID_PREFIX + environment_id
         assert env_dump["image"] == environment.image
 
-    def test_environment_create_or_update_docker_context(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+    def test_environment_create_or_update_docker_context(
+        self, client: MLClient, env_name: Callable[[str], str]
+    ) -> None:
         params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_docker_context.yml",
@@ -124,7 +127,9 @@ class TestEnvironment(AzureRecordedTestCase):
         assert environment_with_context_uri.build.dockerfile_path == dockerfile_path
         assert environment_with_context_uri.build.path == context_uri
 
-    def test_environment_create_or_update_docker_context_and_image(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+    def test_environment_create_or_update_docker_context_and_image(
+        self, client: MLClient, env_name: Callable[[str], str]
+    ) -> None:
         params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_docker_context.yml",
@@ -137,29 +142,13 @@ class TestEnvironment(AzureRecordedTestCase):
 
         assert "Docker image or Dockerfile should be provided not both" in str(error.value)
 
-    def test_create_autoincrement(self, client: MLClient, env_name: Callable[[str], str]) -> None:
-        env = load_environment(source="./tests/test_configs/environment/environment_no_version.yml")
-
-        env.name = env_name("name")
-        assert env.version is None
-        assert env._auto_increment_version
-
-        created_env = client.environments.create_or_update(env)
-        assert created_env.version == "1"
-        assert created_env._auto_increment_version is False
-
-        next_env_asset = client.environments.create_or_update(env)
-        next_version_regex = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d{7}")
-        assert next_version_regex.match(next_env_asset.version)
-        assert next_env_asset._auto_increment_version is False
-
     def test_environment_list(self, client: MLClient) -> None:
         environment_list = client._environments.list()
         assert environment_list
         assert isinstance(environment_list, ItemPaged)
 
     def test_environment_get(self, client: MLClient) -> None:
-        environment_name = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu"
+        environment_name = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu"
         environment_version = "1"
         environment_id = _get_environment_arm_id(
             client=client, environment_name=environment_name, environment_version=environment_version
@@ -230,7 +219,9 @@ class TestEnvironment(AzureRecordedTestCase):
             sleep_if_live(2)
             assert client.environments.get(name, label="latest").version == version
 
-    def test_registry_environment_create_conda_and_get(self, only_registry_client: MLClient, env_name: Callable[[str], str]) -> None:
+    def test_registry_environment_create_conda_and_get(
+        self, only_registry_client: MLClient, env_name: Callable[[str], str]
+    ) -> None:
         params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_conda.yml", params_override=params_override

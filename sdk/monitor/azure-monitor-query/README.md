@@ -139,7 +139,7 @@ try:
     if response.status == LogsQueryStatus.PARTIAL:
         error = response.partial_error
         data = response.partial_data
-        print(error.message)
+        print(error)
     elif response.status == LogsQueryStatus.SUCCESS:
         data = response.tables
     for table in data:
@@ -170,6 +170,7 @@ LogsQueryPartialResult
 |---partial_error (a `LogsQueryError` object)
     |---code
     |---message
+    |---details
     |---status
 |---partial_data (list of `LogsTable` objects)
     |---name
@@ -241,7 +242,7 @@ for res in results:
         print(res.message)
     elif res.status == LogsQueryStatus.PARTIAL:
         ## this will be a LogsQueryPartialResult
-        print(res.partial_error.message)
+        print(res.partial_error)
         for table in res.partial_data:
             df = pd.DataFrame(table.rows, columns=table.columns)
             print(df)

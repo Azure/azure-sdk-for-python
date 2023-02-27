@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from typing import Any, List, Mapping, Optional, Union, TYPE_CHECKING
+from typing import Any, List, Mapping, Optional, Union
 from uuid import uuid4
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncRedirectPolicy,
@@ -34,24 +34,36 @@ from .._error import (
     RequestTooLargeError,
     TableTransactionError,
     _decode_error,
-    _validate_tablename_error
+    _validate_tablename_error,
 )
 from .._policies import StorageHosts, StorageHeadersPolicy
 from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import AsyncTablesRetryPolicy
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
+class AsyncTablesBaseClient(AccountHostsMixin):
+    """Base class for TableClient
 
-class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    :param str endpoint: A URL to an Azure Tables account.
+    :keyword credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+        AzureSasCredential (azure-core), or AsyncTokenCredential from azure-identity.
+    :paramtype credential:
+        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+        :class:`~azure.core.credentials.AzureSasCredential` or
+        :class:`~azure.core.credentials.AsyncTokenCredential`
+    :keyword api_version: Specifies the version of the operation to use for this request. Default value
+        is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__( # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
         *,
-        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, "AsyncTokenCredential"]] = None,
-        **kwargs: Any
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
+        **kwargs
     ) -> None:
         super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
         self._client = AzureTable(
@@ -59,8 +71,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accept
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
-        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access
-
+        self._client._config.version = get_api_version(kwargs, self._client._config.version) # type: ignore # pylint: disable=protected-access
 
     async def __aenter__(self):
         await self._client.__aenter__()
@@ -75,18 +86,19 @@ class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accept
         """
         await self._client.close()
 
-    def _configure_credential(self, credential):
-        # type: (Any) -> None
+    def _configure_credential(
+        self, credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]]
+    ) -> None:
         if hasattr(credential, "get_token"):
-            self._credential_policy = AsyncBearerTokenChallengePolicy(  # type: ignore
-                credential, STORAGE_OAUTH_SCOPE
+            self._credential_policy = AsyncBearerTokenChallengePolicy(
+                credential, STORAGE_OAUTH_SCOPE # type: ignore
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential  # type: ignore
         elif isinstance(credential, AzureSasCredential):
-            self._credential_policy = AzureSasCredentialPolicy(credential)  # type: ignore
+            self._credential_policy = AzureSasCredentialPolicy(credential) # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential_policy = SharedKeyCredentialPolicy(credential)  # type: ignore
+            self._credential_policy = SharedKeyCredentialPolicy(credential) # type: ignore
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
@@ -107,7 +119,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):  # pylint: disable=client-accept
             HttpLoggingPolicy(**kwargs),
         ]
 
-    async def _batch_send(self, table_name: str, *reqs: "HttpRequest", **kwargs) -> List[Mapping[str, Any]]:
+    async def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]

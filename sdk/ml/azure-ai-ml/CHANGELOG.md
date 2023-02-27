@@ -1,5 +1,60 @@
 # Release History
 
+## 1.5.0 (Unreleased)
+
+### Features Added
+
+- Added support for `tags` on Compute Resources.
+
+### Bugs Fixed
+
+- Fix experiment name wrongly set to 'Default' when schedule existing job.
+
+### Other Changes
+
+- Added dependency on `azure-mgmt-resource`
+- Added dependency on `azure-mgmt-resourcegraph`
+
+## 1.4.0 (2023-02-07)
+
+### Features Added
+- Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
+- Added Custom Applications Support to Compute Instances. 
+- Update data asset list, show and create operations to support data assets in registry.
+
+### Bugs Fixed
+- Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.
+- Fixed an issue that attributes with a value of `False` in `PipelineJobSettings` are not respected.
+- Fixed an issue where ignore files weren't considered during upload directory size calculations.
+- Fixed an issue where symlinks crashed upload directory size calculations.
+- Fixes a bug where enable_node_public_ip returned an improper value when fetching a Compute.
+
+### Other Changes
+- Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights.
+- Upgraded minimum azure-core version to 1.23.0.
+
+## 1.3.0 (2023-01-13)
+
+### Features Added
+- Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
+- Added property to enable/disable public ip addresses to Compute Instances and AML Computes.
+- `Deployment` and `ScheduleOperations` added to public interface.
+
+### Bugs Fixed
+- Fixed issue with date-time format for utc_time_created field when creating models.
+- Added stricter behavior for ArmStr schemas when parsing 'azureml:' prefix.
+- Fixed issue where AmlComputes could only be created in a workspace's default region.
+- Improved intellisense with VS Code for fields supporting local paths and datastores.
+- Added validation for token generation with aml scope when user_identity is used in job definition aka OBO flow.
+- Fixed duplicate node name error in pipeline when two node names assigned to the same node and get renamed by node.name='xx'.
+- Resolve the cross references for MLClient, Resource and OnlineDeployment.
+- Explicit use of Optional (or a Union with None), as per PEP 484.
+- Fixed print on Command objects when job id is empty
+- Fixed issue where `SasTokenConfiguration` cannot be used as credential for `WorkspaceConnection`
+
+### Other Changes
+- Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.
+
 ## 1.2.0 (2022-12-05)
 
 ### Breaking Changes
@@ -27,7 +82,7 @@
 ## 1.1.2 (2022-11-21)
 
 ### Features Added
-- Restored idle_time_before_shutdown property for Compute Instances. 
+- Restored idle_time_before_shutdown property for Compute Instances.
 - Deprecated idle_time_before_shutdown property in favor of idle_time_before_shutdown_minutes.
 
 ### Bugs Fixed

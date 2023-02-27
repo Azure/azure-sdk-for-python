@@ -43,7 +43,7 @@ class _AesKeyWrap(AsymmetricEncryptionAlgorithm):
         if not key:
             raise ValueError("key")
         if len(key) < self.key_size_in_bytes:
-            raise ValueError("key must be at least %d bits" % self.key_size)
+            raise ValueError(f"key must be at least {self.key_size} bits")
 
         return key[: self.key_size_in_bytes]
 

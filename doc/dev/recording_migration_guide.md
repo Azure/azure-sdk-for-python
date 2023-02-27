@@ -9,6 +9,7 @@ More technical documentation of the test proxy's out-of-repo recording support c
 the `azure-sdk-tools` repository.
 
 ## Table of contents
+
 - [Current recording setup](#current-recording-setup)
 - [New recording setup](#new-recording-setup)
 - [Initial recording migration](#initial-recording-migration)
@@ -49,8 +50,9 @@ migrating.
 This script -- [`generate-assets-json.ps1`][generate_assets_json] -- should be run once per package, and can be used
 either directly from an `azure-sdk-tools` repo clone or with a local download of the script. To download the script to
 your current working directory, use the following PowerShell command:
+
 ```PowerShell
-Invoke-WebRequest -OutFile "generate-assets-json.ps1" https://raw.githubusercontent.com/Azure/azure-sdk-tools/main/tools/test-proxy/scripts/transition-scripts/generate-assets-json.ps1
+Invoke-WebRequest -OutFile "generate-assets-json.ps1" https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/eng/common/testproxy/transition-scripts/generate-assets-json.ps1
 ```
 
 ### Migration script prerequisites
@@ -60,7 +62,7 @@ Invoke-WebRequest -OutFile "generate-assets-json.ps1" https://raw.githubusercont
 - [PowerShell Core][powershell] >= 7.0 is installed.
 - [Docker][docker] or [Podman][podman] is installed.
 - Global [git config settings][git_setup] are configured for `user.name` and `user.email`.
-  - These settings can be overridden with environment variables `GIT_COMMIT_EMAIL` and `GIT_COMMIT_OWNER`, respectively.
+  - These settings can be overridden with environment variables `GIT_COMMIT_OWNER` and `GIT_COMMIT_EMAIL`, respectively.
 - The environment variable `GIT_TOKEN` is set to a valid [personal access token][git_token] for your user.
   - This token is necessary for authenticating git requests made in a Docker/Podman container.
 - Membership in the `azure-sdk-write` GitHub group.
@@ -70,19 +72,24 @@ Invoke-WebRequest -OutFile "generate-assets-json.ps1" https://raw.githubusercont
 In a PowerShell window:
 
 1. Set your working directory to the root of the package you're migrating (`sdk/{service}/{package}`) -- for example:
+
 ```PowerShell
 cd C:\azure-sdk-for-python\sdk\keyvault\azure-keyvault-keys
 ```
+
 2. Run the following command:
+
 ```PowerShell
 <path-to-script>/generate-assets-json.ps1 -TestProxyExe "docker" -InitialPush
 ```
 
 If you run `git status` from within the language repo, you should see:
+
 - Deleted files for each test recording in the package
 - A new `assets.json` file under the root of your package
 
 The `assets.json` file will have the form:
+
 ```json
 {
   "AssetsRepo": "Azure/azure-sdk-assets",
@@ -105,26 +112,20 @@ The process for updating test recordings is slightly different than it was with 
 primary ways:
 
 1. When tests are run in recording mode, recording changes won't be visible in the language repo and will instead be
-tracked in a separate directory.
+   tracked in a separate directory.
 2. When updated recordings are pushed to the assets repo, the `Tag` field in your package's `assets.json` file will be
-updated to point to these new recordings. This `assets.json` change is what you'll include in a pull request to update
-recordings in the language repo.
+   updated to point to these new recordings. This `assets.json` change is what you'll include in a pull request to update
+   recordings in the language repo.
 
 For more details, refer to the documentation in [tests.md][recording_updates].
 
-
 [azure_sdk_assets]: https://github.com/Azure/azure-sdk-assets
-
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md
 [docker]: https://docs.docker.com/engine/install/
-
-[generate_assets_json]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/scripts/transition-scripts/generate-assets-json.ps1
+[generate_assets_json]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/transition-scripts/generate-assets-json.ps1
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [git_token]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
-
 [podman]: https://podman.io/getting-started/installation.html
 [powershell]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-latest
-
 [recording_updates]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#run-tests-with-out-of-repo-recordings
-
-[transition_script]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/scripts/transition-scripts
+[transition_script]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/testproxy/transition-scripts

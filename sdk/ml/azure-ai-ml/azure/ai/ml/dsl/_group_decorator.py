@@ -171,9 +171,7 @@ def group(_cls):
 
         locals = {f"_type_{key}": _get_data_type_from_annotation(val) for key, val in fields.items()}
         # Collect field defaults if val is parameter and is optional
-        defaults = {
-            f"_default_{key}": _get_default(key) for key, val in fields.items()
-        }
+        defaults = {f"_default_{key}": _get_default(key) for key, val in fields.items()}
         locals.update(defaults)
         # Ban positional init as we reordered the parameter.
         _init_param = ["self", "*"]

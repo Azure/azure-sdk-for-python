@@ -49,7 +49,7 @@ setup(
     author_email='ptvshelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 7 - Inactive',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -70,8 +70,8 @@ setup(
         'azure-common>=1.1.5',
         'requests',
     ],
-    extras_require = { 
-        'get_certificate_from_publish_settings' : ['pyopenssl'] 
+    extras_require = {
+        'get_certificate_from_publish_settings' : ['pyopenssl']
     },
     cmdclass=cmdclass
 )

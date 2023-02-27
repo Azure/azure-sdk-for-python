@@ -1892,7 +1892,7 @@ class ServerPropertiesForCreate(_serialization.Model):
         self.infrastructure_encryption = infrastructure_encryption
         self.public_network_access = public_network_access
         self.storage_profile = storage_profile
-        self.create_mode = None  # type: Optional[str]
+        self.create_mode: Optional[str] = None
 
 
 class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
@@ -1997,7 +1997,7 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
             storage_profile=storage_profile,
             **kwargs
         )
-        self.create_mode = "Default"  # type: str
+        self.create_mode: str = "Default"
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
 
@@ -2095,7 +2095,7 @@ class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
             storage_profile=storage_profile,
             **kwargs
         )
-        self.create_mode = "GeoRestore"  # type: str
+        self.create_mode: str = "GeoRestore"
         self.source_server_id = source_server_id
 
 
@@ -2192,7 +2192,7 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
             storage_profile=storage_profile,
             **kwargs
         )
-        self.create_mode = "Replica"  # type: str
+        self.create_mode: str = "Replica"
         self.source_server_id = source_server_id
 
 
@@ -2298,7 +2298,7 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
             storage_profile=storage_profile,
             **kwargs
         )
-        self.create_mode = "PointInTimeRestore"  # type: str
+        self.create_mode: str = "PointInTimeRestore"
         self.source_server_id = source_server_id
         self.restore_point_in_time = restore_point_in_time
 

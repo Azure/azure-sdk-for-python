@@ -5,3 +5,5 @@ package_pprint_name = "Subscription Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
+title = "SubscriptionClient"
+no_sub = true

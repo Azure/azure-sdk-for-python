@@ -22,7 +22,7 @@ class BaseClientPreparer(AzureRecordedTestCase):
             storage_name = os.environ.get("BLOB_STORAGE_ACCOUNT_NAME")
             storage_endpoint_suffix = os.environ.get("KEYVAULT_STORAGE_ENDPOINT_SUFFIX")
             container_name = os.environ.get("BLOB_CONTAINER_NAME")
-            self.container_uri = "https://{}.blob.{}/{}".format(storage_name, storage_endpoint_suffix, container_name)
+            self.container_uri = f"https://{storage_name}.blob.{storage_endpoint_suffix}/{container_name}"
 
             self.sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN")
             

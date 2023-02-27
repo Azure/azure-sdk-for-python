@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from typing import Optional
+
 from azure.ai.ml._restclient.v2022_10_01_preview.models import TableVerticalLimitSettings as RestTabularLimitSettings
 from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -30,13 +32,13 @@ class TabularLimitSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        enable_early_termination: bool = None,
-        exit_score: float = None,
-        max_concurrent_trials: int = None,
-        max_cores_per_trial: int = None,
-        max_trials: int = None,
-        timeout_minutes: int = None,
-        trial_timeout_minutes: int = None,
+        enable_early_termination: Optional[bool] = None,
+        exit_score: Optional[float] = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_cores_per_trial: Optional[int] = None,
+        max_trials: Optional[int] = None,
+        timeout_minutes: Optional[int] = None,
+        trial_timeout_minutes: Optional[int] = None,
     ):
         self.enable_early_termination = enable_early_termination
         self.exit_score = exit_score

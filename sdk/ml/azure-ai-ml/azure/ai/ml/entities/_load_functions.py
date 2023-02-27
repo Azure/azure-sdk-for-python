@@ -5,7 +5,7 @@
 import logging
 import warnings
 from os import PathLike
-from typing import IO, AnyStr, Type, Union
+from typing import IO, AnyStr, Optional, Type, Union
 
 from marshmallow import ValidationError
 
@@ -42,7 +42,7 @@ def load_common(
     cls: Type[Resource],
     source: Union[str, PathLike, IO[AnyStr]],
     relative_origin: str,
-    params_override: list = None,
+    params_override: Optional[list] = None,
     **kwargs,
 ) -> Resource:
     """Private function to load a yaml file to an entity object.
@@ -129,7 +129,11 @@ def _try_load_yaml_dict(source: Union[str, PathLike, IO[AnyStr]]) -> dict:
 
 
 def _load_common_raising_marshmallow_error(
-    cls: Type[Resource], yaml_dict, relative_origin: Union[PathLike, str], params_override: list = None, **kwargs
+    cls: Type[Resource],
+    yaml_dict,
+    relative_origin: Union[PathLike, str],
+    params_override: Optional[list] = None,
+    **kwargs,
 ) -> Resource:
     # pylint: disable=protected-access
     return cls._load(data=yaml_dict, yaml_path=relative_origin, params_override=params_override, **kwargs)
@@ -138,7 +142,7 @@ def _load_common_raising_marshmallow_error(
 def load_job(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Job:
     """Construct a job object from a yaml file.
@@ -169,7 +173,7 @@ def load_job(
 def load_workspace(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Workspace:
     """Load a workspace object from a yaml file.
@@ -199,7 +203,7 @@ def load_workspace(
 def load_registry(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Registry:
     """Load a registry object from a yaml file.
@@ -229,7 +233,7 @@ def load_registry(
 def load_datastore(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Datastore:
     """Construct a datastore object from a yaml file.
@@ -260,7 +264,7 @@ def load_datastore(
 def load_code(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Code:
     """Construct a code object from a yaml file.
@@ -291,7 +295,7 @@ def load_code(
 def load_compute(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Compute:
     """Construct a compute object from a yaml file.
@@ -319,9 +323,9 @@ def load_compute(
 
 
 def load_component(
-    source: Union[str, PathLike, IO[AnyStr]] = None,
+    source: Optional[Union[str, PathLike, IO[AnyStr]]] = None,
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Union[CommandComponent, ParallelComponent, PipelineComponent]:
     """Load component from local or remote to a component function.
@@ -389,7 +393,7 @@ def load_component(
 def load_model(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Model:
     """Construct a model object from yaml file.
@@ -420,7 +424,7 @@ def load_model(
 def load_data(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Data:
     """Construct a data object from yaml file.
@@ -451,7 +455,7 @@ def load_data(
 def load_environment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> Environment:
     """Construct a environment object from yaml file.
@@ -482,7 +486,7 @@ def load_environment(
 def load_online_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> OnlineDeployment:
     """Construct a online deployment object from yaml file.
@@ -513,7 +517,7 @@ def load_online_deployment(
 def load_batch_deployment(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> BatchDeployment:
     """Construct a batch deployment object from yaml file.
@@ -543,7 +547,7 @@ def load_batch_deployment(
 def load_online_endpoint(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> OnlineEndpoint:
     """Construct a online endpoint object from yaml file.
@@ -573,7 +577,7 @@ def load_online_endpoint(
 
 def load_batch_endpoint(
     source: Union[str, PathLike, IO[AnyStr]],
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> BatchEndpoint:
     """Construct a batch endpoint object from yaml file.
@@ -603,7 +607,7 @@ def load_batch_endpoint(
 def load_workspace_connection(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> WorkspaceConnection:
     """Construct a workspace connection object from yaml file.
@@ -632,7 +636,7 @@ def load_workspace_connection(
 
 def load_schedule(
     source: Union[str, PathLike, IO[AnyStr]],
-    relative_origin: str = None,
+    relative_origin: Optional[str] = None,
     **kwargs,
 ) -> JobSchedule:
     """Construct a schedule object from yaml file.

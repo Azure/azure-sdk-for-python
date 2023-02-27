@@ -16,6 +16,7 @@ from azure.ai.ml.entities._assets import Code, Model
 from azure.ai.ml.entities._assets.environment import BuildContext, Environment
 from azure.ai.ml.exceptions import CloudArtifactsNotSupportedError, RequiredLocalArtifactsNotFoundError
 
+
 @pytest.fixture
 def code_operations():
     return Mock()
@@ -51,9 +52,7 @@ class TestLocalEndpointEnvironmentValidation:
     def test_environment_contains_base_image_succeeds(self):
         environment = Environment(docker_image="ubuntu:latest")
         deployment = ManagedOnlineDeployment(name="deployment", environment=environment)
-        (base_image, dockerfile) = get_local_environment_artifacts(
-            endpoint_name="test-endpoint", deployment=deployment
-        )
+        (base_image, dockerfile) = get_local_environment_artifacts(endpoint_name="test-endpoint", deployment=deployment)
         assert "ubuntu:latest" == base_image
         assert dockerfile is None
 
@@ -63,9 +62,7 @@ class TestLocalEndpointEnvironmentValidation:
             name="deployment",
             environment=environment,
         )
-        (base_image, dockerfile) = get_local_environment_artifacts(
-            endpoint_name="test-endpoint", deployment=deployment
-        )
+        (base_image, dockerfile) = get_local_environment_artifacts(endpoint_name="test-endpoint", deployment=deployment)
         assert base_image is None
         assert "file:./Dockerfile" == dockerfile
 

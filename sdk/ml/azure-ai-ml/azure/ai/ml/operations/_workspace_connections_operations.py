@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, Iterable
+from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
@@ -35,7 +35,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: ServiceClient052022,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         super(WorkspaceConnectionsOperations, self).__init__(operation_scope, operation_config)

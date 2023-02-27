@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from enum import EnumMeta
-from typing import Iterable, Sequence, Union
+from typing import Iterable, Optional, Sequence, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -16,7 +16,7 @@ class EnumInput(Input):
     def __init__(
         self,
         *,
-        enum: Union[EnumMeta, Sequence[str]] = None,
+        enum: Optional[Union[EnumMeta, Sequence[str]]] = None,
         default=None,
         description=None,
         **kwargs,

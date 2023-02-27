@@ -310,14 +310,14 @@
                 "description": "Name of the resource group where the private end point is added to"
             }
         },
-        "imageBuildCompute":{
+        "imageBuildCompute": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "The name of the compute target to use for building environment Docker images with the container registry is behind a VNet."
             }
         },
-        "publicNetworkAccess":{
+        "publicNetworkAccess": {
             "type": "string",
             "defaultValue": "Enabled",
             "allowedValues": [
@@ -371,7 +371,7 @@
                 "description": "The Bring-Your-Own search account that customer brings to store data"
             }
         },
-        "identity":{
+        "identity": {
             "type": "object",
             "defaultValue": {
                 "type": "systemAssigned"
@@ -380,11 +380,20 @@
                 "description": "Managed identities assigned to workspace. If not specificed, SystemAssigned managed identity is the default."
             }
         },
-        "primaryUserAssignedIdentity":{
+        "primaryUserAssignedIdentity": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "ARM identifier of primary user assigned managed identity, in case multiple ones are specified. Also the default managed identity for clusterless compute."
+            }
+        },
+        "managedNetwork": {
+            "type": "object",
+            "defaultValue": {
+                "isolationMode": "Disabled"
+            },
+            "metadata": {
+                "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
         }
     },
@@ -528,22 +537,22 @@
                 "networkRuleSet": "[if(equals(parameters('containerRegistryBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
             }
         },
-      {
-        "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-        "type": "Microsoft.Insights/components",
-        "tags": "[parameters('tagValues')]",
-        "apiVersion": "2018-05-01-preview",
-        "name": "[parameters('applicationInsightsName')]",
-        "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap'), equals(toLower(parameters('applicationInsightsLocation')),'westus3')),'southcentralus', if(equals(toLower(parameters('applicationInsightsLocation')),'jioindiawest'), 'centralindia', if(equals(toLower(parameters('applicationInsightsLocation')),'canadaeast'), 'canadacentral', if(equals(toLower(parameters('applicationInsightsLocation')),'swedencentral'), 'norwayeast', parameters('applicationInsightsLocation')))))]",
-        "kind": "web",
-        "properties": {
-          "Application_Type": "web"
-        }
-      },
+        {
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
+            "type": "Microsoft.Insights/components",
+            "tags": "[parameters('tagValues')]",
+            "apiVersion": "2020-02-02-preview",
+            "name": "[parameters('applicationInsightsName')]",
+            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web"
+            }
+        },
         {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
-            "apiVersion": "2022-01-01-preview",
+            "apiVersion": "2022-12-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
             "location": "[parameters('location')]",
@@ -562,8 +571,8 @@
                 "applicationInsights": "[variables('applicationInsights')]",
                 "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
                 "hbiWorkspace": "[parameters('confidential_data')]",
-                "imageBuildCompute":"[parameters('imageBuildCompute')]",
-                "publicNetworkAccess":"[parameters('publicNetworkAccess')]",
+                "imageBuildCompute": "[parameters('imageBuildCompute')]",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "softDeleteEnabled": "[parameters('soft_delete_enabled')]",
                 "allowRecoverSoftDeletedWorkspace": "[parameters('allow_recover_softdeleted_workspace')]",
                 "encryption": {
@@ -576,7 +585,8 @@
                     "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                 },
-                "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]"
+                "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
+                "managedNetwork": "[parameters('managedNetwork')]"
             }
         },
         {

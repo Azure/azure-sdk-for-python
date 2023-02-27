@@ -104,7 +104,7 @@ class Artifact(Asset):
 
     def __eq__(self, other) -> bool:
         return (
-            type(self) == type(other) # pylint: disable = unidiomatic-typecheck
+            type(self) == type(other)  # pylint: disable = unidiomatic-typecheck
             and self.name == other.name
             and self.id == other.id
             and self.version == other.version

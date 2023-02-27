@@ -47,7 +47,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
         files: Optional[List[str]] = None,
         archives: Optional[List[str]] = None,
         conf: Optional[Dict[str, str]] = None,
-        environment: Union[str, Environment] = None,
+        environment: Optional[Union[str, Environment]] = None,
         args: Optional[str] = None,
         **kwargs,
     ):

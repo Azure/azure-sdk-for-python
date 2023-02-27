@@ -22,10 +22,9 @@ from uuid import uuid4
 
 from marshmallow import ValidationError
 
-from azure.core.exceptions import HttpResponseError
-
 from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
-from azure.ai.ml.exceptions import ErrorCategory, MLException
+from azure.ai.ml.exceptions import ErrorCategory, MlException
+from azure.core.exceptions import HttpResponseError
 
 # Get environment variable IS_IN_CI_PIPELINE to decide whether it's in CI test
 IS_IN_CI_PIPELINE = _str_to_bool(os.environ.get("IS_IN_CI_PIPELINE", "False"))
@@ -122,8 +121,8 @@ def error_preprocess(activityLogger, exception):
         activityLogger.activity_info["errorCategory"] = error_category
         if exception.inner_exception:
             activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
-    elif isinstance(exception, MLException):
-        # If exception is MLException, it will have error_category, message and target attributes and will log those
+    elif isinstance(exception, MlException):
+        # If exception is MlException, it will have error_category, message and target attributes and will log those
         # information in log_activity, no need more actions here.
         pass
     elif isinstance(exception, ValidationError):
@@ -186,14 +185,15 @@ def log_activity(
 
     try:
         yield activityLogger
-    except BaseException as e: # pylint: disable=broad-except
+    except BaseException as e:  # pylint: disable=broad-except
         exception = error_preprocess(activityLogger, e)
         completion_status = ActivityCompletionStatus.FAILURE
         # All the system and unknown errors except for NotImplementedError will be wrapped with a new exception.
         if IS_IN_CI_PIPELINE and not isinstance(e, NotImplementedError):
             if (
-                isinstance(exception, MLException)
-                and exception.error_category in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN] # pylint: disable=no-member
+                isinstance(exception, MlException)
+                and exception.error_category  # pylint: disable=no-member
+                in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
             ) or (
                 "errorCategory" in activityLogger.activity_info
                 and activityLogger.activity_info["errorCategory"] in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN]
@@ -214,18 +214,22 @@ def log_activity(
             if exception:
                 message += ", Exception={}".format(type(exception).__name__)
                 activityLogger.activity_info["exception"] = type(exception).__name__
-                if isinstance(exception, MLException):
-                    activityLogger.activity_info["errorMessage"] = exception.no_personal_data_message # pylint: disable=no-member
-                    activityLogger.activity_info["errorTarget"] = exception.target # pylint: disable=no-member
-                    activityLogger.activity_info["errorCategory"] = exception.error_category # pylint: disable=no-member
-                    if exception.inner_exception: # pylint: disable=no-member
+                if isinstance(exception, MlException):
+                    activityLogger.activity_info[
+                        "errorMessage"
+                    ] = exception.no_personal_data_message  # pylint: disable=no-member
+                    activityLogger.activity_info["errorTarget"] = exception.target  # pylint: disable=no-member
+                    activityLogger.activity_info[
+                        "errorCategory"
+                    ] = exception.error_category  # pylint: disable=no-member
+                    if exception.inner_exception:  # pylint: disable=no-member
                         # pylint: disable=no-member
                         activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
                 activityLogger.error(message)
             else:
                 activityLogger.info(message)
-        except Exception: # pylint: disable=broad-except
-            return # pylint: disable=lost-exception
+        except Exception:  # pylint: disable=broad-except
+            return  # pylint: disable=lost-exception
 
 
 def monitor_with_activity(
@@ -308,7 +312,7 @@ def monitor_with_telemetry_mixin(
                         dimensions.update(obj._get_telemetry_values())
                     elif extra_keys and key in extra_keys:
                         dimensions[key] = str(obj)
-                except Exception: # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-except
                     pass
             # add left keys with None
             if extra_keys:
@@ -322,7 +326,7 @@ def monitor_with_telemetry_mixin(
 
             try:
                 return value._get_telemetry_values() if isinstance(value, TelemetryMixin) else {}
-            except Exception: # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 return {}
 
         @functools.wraps(f)

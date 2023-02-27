@@ -30,6 +30,9 @@ from azure.ai.ml._schema.pipeline.component_job import (
     ParallelSchema,
     SparkSchema,
     SweepSchema,
+    DataTransferCopySchema,
+    DataTransferImportSchema,
+    DataTransferExportSchema,
     _resolve_inputs_outputs,
 )
 from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
@@ -38,9 +41,20 @@ from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJob
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_spark_job import PipelineSparkJobSchema
+from azure.ai.ml._schema.pipeline.pipeline_datatransfer_job import (
+    PipelineDataTransferCopyJobSchema,
+    PipelineDataTransferImportJobSchema,
+    PipelineDataTransferExportJobSchema,
+)
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
-from azure.ai.ml.constants._component import ComponentSource, ControlFlowType, NodeType
+from azure.ai.ml.constants._component import (
+    NodeType,
+    ComponentSource,
+    ControlFlowType,
+    CONTROL_FLOW_TYPES,
+    DataTransferTaskType,
+)
 
 
 class NodeNameStr(PipelineNodeNameStr):
@@ -79,6 +93,29 @@ def PipelineJobsField():
         pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
         pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [NestedField(ParallelForSchema, unknown=INCLUDE)]
 
+    # Todo: Put data_transfer logic to the last to avoid error message conflict, open a item to track:
+    #  https://msdata.visualstudio.com/Vienna/_workitems/edit/2244262/
+    pipeline_enable_job_type[NodeType.DATA_TRANSFER] = [
+        TypeSensitiveUnionField(
+            {
+                DataTransferTaskType.COPY_DATA: [
+                    NestedField(DataTransferCopySchema, unknown=INCLUDE),
+                    NestedField(PipelineDataTransferCopyJobSchema),
+                ],
+                DataTransferTaskType.IMPORT_DATA: [
+                    NestedField(DataTransferImportSchema, unknown=INCLUDE),
+                    NestedField(PipelineDataTransferImportJobSchema),
+                ],
+                DataTransferTaskType.EXPORT_DATA: [
+                    NestedField(DataTransferExportSchema, unknown=INCLUDE),
+                    NestedField(PipelineDataTransferExportJobSchema),
+                ],
+            },
+            type_field_name="task",
+            unknown=INCLUDE,
+        )
+    ]
+
     pipeline_job_field = fields.Dict(
         keys=NodeNameStr(),
         values=TypeSensitiveUnionField(pipeline_enable_job_type),
@@ -90,9 +127,10 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
     """Silently convert Job in pipeline jobs to node."""
     from azure.ai.ml.entities._builders import parse_inputs_outputs
     from azure.ai.ml.entities._builders.do_while import DoWhile
-    from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
     from azure.ai.ml.entities._builders.parallel_for import ParallelFor
+    from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
     from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+    from azure.ai.ml.entities._builders.condition_node import ConditionNode
 
     # parse inputs/outputs
     data = parse_inputs_outputs(data)
@@ -106,16 +144,25 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 job_instance = AutoMLJob._create_instance_from_schema_dict(
                     loaded_data=job_instance,
                 )
-                jobs[key] = job_instance
-            elif job_instance.get("type") == ControlFlowType.DO_WHILE:
-                # Convert to do-while node.
-                job_instance = DoWhile._create_instance_from_schema_dict(pipeline_jobs=jobs, loaded_data=job_instance)
-                jobs[key] = job_instance
-            elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
-                # Convert to do-while node.
-                job_instance = ParallelFor._create_instance_from_schema_dict(
-                    pipeline_jobs=jobs, loaded_data=job_instance)
-                jobs[key] = job_instance
+            elif job_instance.get("type") in CONTROL_FLOW_TYPES:
+                # Set source to yaml job for control flow node.
+                job_instance["_source"] = ComponentSource.YAML_JOB
+
+                job_type = job_instance.get("type")
+                if job_type == ControlFlowType.IF_ELSE:
+                    # Convert to if-else node.
+                    job_instance = ConditionNode._create_instance_from_schema_dict(loaded_data=job_instance)
+                elif job_instance.get("type") == ControlFlowType.DO_WHILE:
+                    # Convert to do-while node.
+                    job_instance = DoWhile._create_instance_from_schema_dict(
+                        pipeline_jobs=jobs, loaded_data=job_instance
+                    )
+                elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
+                    # Convert to do-while node.
+                    job_instance = ParallelFor._create_instance_from_schema_dict(
+                        pipeline_jobs=jobs, loaded_data=job_instance
+                    )
+            jobs[key] = job_instance
 
     for key, job_instance in jobs.items():
         # Translate job to node if translatable and overrides to_node.
@@ -125,8 +172,11 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 context=context,
                 pipeline_job_dict=data,
             )
-            job_instance.component._source = ComponentSource.YAML_JOB
-            job_instance._source = job_instance.component._source
+            if job_instance.type == NodeType.DATA_TRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA:
+                job_instance._source = ComponentSource.BUILTIN
+            else:
+                job_instance.component._source = ComponentSource.YAML_JOB
+                job_instance._source = job_instance.component._source
             jobs[key] = job_instance
         # update job instance name to key
         job_instance.name = key
@@ -186,6 +236,11 @@ class _AnonymousPipelineComponentSchema(AnonymousAssetSchema, PipelineComponentS
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 
+        # pipeline jobs post process is required before init of pipeline component: it converts control node dict
+        # to entity.
+        # however @post_load invocation order is not guaranteed, so we need to call it explicitly here.
+        _post_load_pipeline_jobs(self.context, data)
+
         return PipelineComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             **data,
@@ -231,7 +286,7 @@ class PipelineSchema(BaseNodeSchema):
     component = UnionField(
         [
             # for registry type assets
-            RegistryStr(),
+            RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # component file reference

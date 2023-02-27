@@ -43,7 +43,7 @@ class ContainerServiceClientConfiguration(Configuration):  # pylint: disable=too
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(ContainerServiceClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2021-05-01")  # type: Literal["2021-05-01"]
+        api_version: Literal["2021-05-01"] = kwargs.pop("api_version", "2021-05-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

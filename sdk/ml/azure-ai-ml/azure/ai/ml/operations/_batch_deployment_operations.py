@@ -4,8 +4,8 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict
 import re
+from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
@@ -14,18 +14,19 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, parse_prefixed_name_version
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, parse_prefixed_name_version
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_discovery_service,
+    is_private_preview_enabled,
     modified_operation_client,
-    is_private_preview_enabled
 )
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.core.credentials import TokenCredential
@@ -53,7 +54,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
@@ -209,7 +210,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str, *, name: str = None) -> ItemPaged[BatchJob]:
+    def list_jobs(self, endpoint_name: str, *, name: Optional[str] = None) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
@@ -256,27 +257,45 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         component = None
         if isinstance(deployment.job_definition.component, PipelineComponent):
             component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
-                name =  deployment.job_definition.component.name,
+                name=deployment.job_definition.component.name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
-                component = deployment.job_definition.component,
+                component=deployment.job_definition.component,
                 version=deployment.job_definition.component.version,
-                **self._init_kwargs
+                **self._init_kwargs,
             )
-            deployment.job_definition.component = None
-            deployment.job_definition.component_id = component.id
-            if not deployment.job_definition.name and component.name:
-                deployment.job_definition.name = component.name
             if not deployment.job_definition.description and component.description:
                 deployment.job_definition.description = component.description
             if not deployment.job_definition.tags and component.tags:
                 deployment.job_definition.tags = component.tags
         elif isinstance(deployment.job_definition.component, str):
             component_id = orchestrators.get_asset_arm_id(
-                deployment.job_definition.component,
-                azureml_type=AzureMLResourceType.COMPONENT
+                deployment.job_definition.component, azureml_type=AzureMLResourceType.COMPONENT
             )
             if not deployment.job_definition.name:
                 name, _ = parse_prefixed_name_version(deployment.job_definition.component)
                 deployment.job_definition.name = name
             deployment.job_definition.component_id = component_id
+        elif isinstance(deployment.job_definition.job, str):
+            job_component = PipelineComponent(source_job_id=deployment.job_definition.job)
+            component = self._component_operations.create_or_update(
+                name=job_component.name,
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                body=job_component._to_rest_object(),
+                version=job_component.version,
+                **self._init_kwargs,
+            )
+            if not deployment.job_definition.description and component.properties.description:
+                deployment.job_definition.description = component.properties.description
+            if not deployment.job_definition.tags and component.properties.tags:
+                deployment.job_definition.tags = component.properties.tags
+        # pylint: disable=line-too-long
+        if isinstance(deployment.job_definition.job, str) or isinstance(
+            deployment.job_definition.component, PipelineComponent
+        ):
+            deployment.job_definition.component = None
+            deployment.job_definition.job = None
+            deployment.job_definition.component_id = component.id
+            if not deployment.job_definition.name and component.name:
+                deployment.job_definition.name = component.name

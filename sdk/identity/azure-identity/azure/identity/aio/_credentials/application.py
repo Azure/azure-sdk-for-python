@@ -4,6 +4,7 @@
 # ------------------------------------
 import logging
 import os
+from typing import Optional, Any
 
 from azure.core.credentials import AccessToken
 from .chained import ChainedTokenCredential
@@ -51,18 +52,21 @@ class AzureApplicationCredential(ChainedTokenCredential):
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     """
 
-    def __init__(self, **kwargs) -> None:
-        authority = kwargs.pop("authority", None)
+    def __init__(
+            self,
+            *,
+            authority: Optional[str] = None,
+            managed_identity_client_id: Optional[str] = None,
+            **kwargs: Any
+    ) -> None:
         authority = normalize_authority(authority) if authority else get_default_authority()
-        managed_identity_client_id = kwargs.pop(
-            "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
-        )
+        managed_identity_client_id = managed_identity_client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         super().__init__(
             EnvironmentCredential(authority=authority, **kwargs),
             ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs),
         )
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

@@ -6,12 +6,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Tuple, Union, cast
+from typing import List, Optional, Tuple, Union, cast, Any
 from ._models import (
     MetadataFilter as MetadataFilterGenerated,
     AnswersFromTextOptions as AnswersFromTextOptionsGenerated,
     TextDocument,
-    JSON
+    JSON,
 )
 
 
@@ -26,8 +26,12 @@ class MetadataFilter(MetadataFilterGenerated):
     """
 
     def __init__(
-        self, *, metadata: Optional[List[Tuple[str, str]]] = None, logical_operation: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        metadata: Optional[List[Tuple[str, str]]] = None,
+        logical_operation: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metadata:
         :paramtype metadata: list[tuple[str, str]]
@@ -55,8 +59,13 @@ class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
     """
 
     def __init__(
-        self, *, question: str, text_documents: List[Union[str, TextDocument]], language: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        question: str,
+        text_documents: List[Union[str, TextDocument]],
+        language: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword question: Required. User question to query against the given text records.
         :paramtype question: str

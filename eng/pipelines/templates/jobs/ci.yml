@@ -66,7 +66,9 @@ jobs:
   - job: 'Build'
     timeoutInMinutes: 90
     variables:
-    - template: ../variables/globals.yml
+      Codeql.Enabled: true
+      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
+      Codeql.SkipTaskAutoInjection: false
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -95,9 +97,6 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-
-    variables:
-    - template: ../variables/globals.yml
 
     dependsOn:
       - 'Build'
@@ -136,8 +135,8 @@ jobs:
 
   - job: Compliance
     pool:
-      name: azsdk-pool-mms-win-2019-general
-      vmImage: MMS2019
+      name: azsdk-pool-mms-win-2022-general
+      vmImage: MMS2022
     steps:
       - template: /eng/common/pipelines/templates/steps/credscan.yml
         parameters:

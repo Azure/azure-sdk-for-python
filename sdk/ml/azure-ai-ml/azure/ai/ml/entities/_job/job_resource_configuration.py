@@ -105,11 +105,11 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
-        instance_count: int = None,
-        instance_type: str = None,
-        properties: Dict[str, Any] = None,
-        docker_args: str = None,
-        shm_size: str = None,
+        instance_count: Optional[int] = None,
+        instance_type: Optional[str] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        docker_args: Optional[str] = None,
+        shm_size: Optional[str] = None,
         **kwargs
     ):  # pylint: disable=unused-argument
         self.instance_count = instance_count
