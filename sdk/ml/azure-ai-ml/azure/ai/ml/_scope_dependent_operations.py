@@ -8,7 +8,7 @@ import logging
 import functools
 import traceback
 import pathlib
-from typing import Callable, Dict, Optional, TypeVar, cast, ParamSpec
+from typing import Callable, Dict, Optional, TypeVar, cast, Any
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.constants._common import (
@@ -80,13 +80,9 @@ class OperationScope(object):
         self._registry_name = value
 
 
-P = ParamSpec("P")
-TScopeDependentOperations = TypeVar("TScopeDependentOperations", bound="_ScopeDependentOperations")
-
-
-def workspace_registry_name_validation(func: Callable[P, T]) -> Callable[P, T]:
+def workspace_registry_name_validation(func: Callable[..., Any]) -> Callable[..., Any]:
     @functools.wraps(func)
-    def new_function(self: TScopeDependentOperations, *args: P.args, **kwargs: P.kwargs) -> T:
+    def new_function(self: Any, *args: Any, **kwargs: Any) -> Any:
         if not self._operation_scope.workspace_name and not self._operation_scope.registry_name:
             stack = traceback.extract_stack(limit=3)
             summary = stack[1]
