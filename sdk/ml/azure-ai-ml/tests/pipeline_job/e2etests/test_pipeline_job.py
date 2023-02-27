@@ -1900,6 +1900,22 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_job.jobs["compare"].outputs.best_model.name == "best_model"
         assert pipeline_job.jobs["compare"].outputs.best_model.version == random_version
 
+    @pytest.mark.skipif(condition=not is_live(), reason="Task 2177353: component version changes across tests.")
+    @pytest.mark.parametrize(
+        "yaml_path",
+        [
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/command/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/sweep/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/pipeline/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/automl/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/parallel/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/spark/pipeline.yml",
+        ],
+    )
+    def test_serverless_compute_in_pipeline(self, client: MLClient, yaml_path: str) -> None:
+        pipeline_job = load_job(yaml_path)
+        assert_job_cancel(pipeline_job, client)
+
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
