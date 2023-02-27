@@ -3,11 +3,11 @@
 # ---------------------------------------------------------
 
 # This file contains mldesigner decorator-produced components
-# that are used within node constructors. Keep imports and 
+# that are used within node constructors. Keep imports and
 # general complexity in this file to a minimum.
 
-from mldesigner import command_component, Output
-
+from mldesigner import command_component
+from azure.ai.ml import Output
 
 def save_mltable_yaml(path, mltable_paths):
     import os

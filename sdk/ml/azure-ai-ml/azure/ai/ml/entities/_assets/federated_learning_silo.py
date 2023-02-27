@@ -1,16 +1,14 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 # TODO determine where this file should live.
 
 from os import PathLike
-from pathlib import Path
-from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.entities._assets import Data
-from azure.ai.ml import Input
-from typing import Any, Dict, List
-from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._utils.utils import dump_yaml_to_file
 from typing import IO, AnyStr, Dict, List, Optional, Union
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml import Input
+from azure.ai.ml._utils.utils import load_yaml
+from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 # Entity representation of a federated learning silo.
 # Used by Federated Learning DSL nodes as inputs for creating
@@ -18,26 +16,25 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 # The functionality of this entity is limited, and it exists mostly
 # To simplify the process of loading and validating these objects from YAML.
 # TODO better/any error messaging
-class FederatedLearningSilo(): # TODO should this inherit from the Resource class despite note being a true resource? abc.ABC doesn't feel appropriate either
+ # Review TODO: should this inherit from the Resource class despite note being a true resource? abc.ABC doesn't feel appropriate either
+class FederatedLearningSilo():
 
     def __init__(
         self,
         *,
-        # TODO Determine optionality - assume all fields are required for now.
         compute: str,
         datastore: str,
         inputs: Dict[str, Input],
-        **kwargs,
     ):
         """
         A pseudo-entity that represents a federated learning silo, which is an isolated compute with its own
-        datastore and input targets. This is meant to be used in conjunction with the 
-        Federated Learning DSL node to create federated learning pipelines. This does NOT represent any specific 
+        datastore and input targets. This is meant to be used in conjunction with the
+        Federated Learning DSL node to create federated learning pipelines. This does NOT represent any specific
         AML resource, and is instead merely meant to simply client-side experiences with managing FL data distribution.
         Standard usage involves the "load_list" classmethod to load a list of these objects from YAML, which serves
         as a necessary input for FL processes.
 
-        
+
         :param compute: The resource id of a compute.
         :type compute: str
         :param datastore: The resource id of a datastore.
@@ -94,8 +91,7 @@ class FederatedLearningSilo(): # TODO should this inherit from the Resource clas
     @classmethod
     def _load(
         cls,
-        yaml_path: Optional[Union[PathLike, str]] = None,
-        **kwargs,
+        yaml_path: Optional[Union[PathLike, str]] = None,,
     ) -> "FederatedLearningSilo":
         yaml_dict = load_yaml(yaml_path)
         return FederatedLearningSilo._load_from_dict(silo_dict=yaml_dict)
@@ -106,7 +102,6 @@ class FederatedLearningSilo(): # TODO should this inherit from the Resource clas
         *,
         yaml_path: Optional[Union[PathLike, str]],
         list_arg: str,
-        **kwargs, 
     ) -> List["FederatedLearningSilo"]:
         """
         Loads a list of federated learning silos from YAML. This is the expected entry point
@@ -133,5 +128,5 @@ class FederatedLearningSilo(): # TODO should this inherit from the Resource clas
 
 
     # There are no to/from rest object functions because this object has no
-    # rest object equivalent. Any conversions should be done as part of the 
+    # rest object equivalent. Any conversions should be done as part of the
     # to/from rest object functions of OTHER entity objects.

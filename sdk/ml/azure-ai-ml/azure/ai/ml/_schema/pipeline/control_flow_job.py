@@ -140,12 +140,12 @@ class ParallelForSchema(BaseLoopSchema):
         return result
 
 class FLScatterGatherSchema(ControlFlowSchema):
-    # TODO determine serialization.
+    # TODO determine serialization, or if this is actually needed
 
     #@pre_dump
-    def serialize_items(self, data, **kwargs): 
+    def serialize_items(self, data, **kwargs):
         pass
 
     #@pre_dump
-    def resolve_outputs(self, job, **kwargs): 
+    def resolve_outputs(self, job, **kwargs):
         pass

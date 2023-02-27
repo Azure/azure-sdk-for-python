@@ -1,4 +1,7 @@
-# TODO determine where this file should live.
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+# # TODO determine where this file should live.
 from marshmallow import fields
 
 from azure.ai.ml._schema.core.resource import YamlFileSchema

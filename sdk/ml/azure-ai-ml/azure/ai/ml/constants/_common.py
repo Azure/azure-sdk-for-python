@@ -174,7 +174,6 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "Spark job will only install the packages defined in the Conda configuration. It "
     "will not create a docker container using the image defined in the environment."
 )
-FL_SILO_MERGE_OUTPUT = ("fl_output_{index}")
 
 class AzureMLResourceType(object):
     CODE = "codes"

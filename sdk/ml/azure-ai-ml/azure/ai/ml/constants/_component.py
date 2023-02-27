@@ -22,7 +22,6 @@ class NodeType(object):
     PIPELINE = "pipeline"
     IMPORT = "import"
     SPARK = "spark"
-    FLSG = "federated_learning_scatter_gather" # TODO: determine if we're allowed to do this, or if the backend'll explode.
     DATA_TRANSFER = "data_transfer"
     # Note: container is not a real component type,
     # only used to mark component from container data.

@@ -1,14 +1,12 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import json
 from typing import Dict, Union, List
 
 from azure.ai.ml import Output
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import FLScatterGatherSchema
-from azure.ai.ml.constants._common import FL_SILO_MERGE_OUTPUT
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
@@ -18,8 +16,8 @@ from azure.ai.ml.constants import JobType
 
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.entities._component.component import Component
-from .subcomponents import aggregate_output
 from azure.ai.ml.entities._validation import MutableValidationResult
+from .subcomponents import aggregate_output
 
 # TODO: Add merge component for string, int
 MERGE_COMPONENT_MAPPING = {
@@ -33,13 +31,6 @@ MERGE_COMPONENT_MAPPING = {
 FL_ITERATION_INPUT = "iteration"
 FL_SILO_INDEX_INPUT = "index"
 
-# TODO: Determine if this should inherit ControlFlowNode, LoopNode, BaseNode, or something else.
-# Argument in favor of BaseNode - this Node DOES have I/O, unlike CFNode apparently.
-# Arg against BaseNode: BaseNode does some strict processing on I/O, which this node might not want to deal with
-# Arg against ContorlFlowNode and LoopNode: No I/O, it's inherent to the inputted body (I think)
-# I ultimately chose BaseNode because I think we'll want the I/O process that BaseNode does, even
-# if it hampers us a bit at first. Also, I definitely don't consider this a subtype of a LoopNode,
-# and I'm not sure if it really counts as a subtype of ControlFlowNode.
 class FLScatterGather(ControlFlowNode, NodeIOMixin): 
     """A node which creates a federated learning scatter-gather loop as a pipeline subgraph.
     Intended for use inside a pipeline job. This is initialized when calling
@@ -58,8 +49,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         aggregation_component: Component,
         aggregation_compute = None,
         aggregation_datastore = None,
-        shared_silo_kwargs: Dict = {},
-        aggregation_kwargs: Dict = {},
+        shared_silo_kwargs: Dict = None,
+        aggregation_kwargs: Dict = None,
         silo_to_aggregation_argument_map: Dict = None,
         aggregation_to_silo_argument_map: Dict = None,
         max_iterations: int = 1,
@@ -70,7 +61,12 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     ):
 
         if create_default_mappings_if_needed:
-            silo_to_aggregation_argument_map, aggregation_to_silo_argument_map = FLScatterGather._try_create_default_mappings(silo_component, aggregation_component, silo_to_aggregation_argument_map, aggregation_to_silo_argument_map)
+            silo_to_aggregation_argument_map, aggregation_to_silo_argument_map = FLScatterGather._try_create_default_mappings(
+                silo_component,
+                aggregation_component,
+                silo_to_aggregation_argument_map,
+                aggregation_to_silo_argument_map
+            )
 
         FLScatterGather.validate_inputs(
             silo_configs=silo_configs,
@@ -106,7 +102,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         executed_aggregation_component = None
         for i in range(self.max_iterations):
             silo_inputs = {}
-            # Create inputs for silo components by merging last iteration's aggregation ouput into the standard,
+            # Create inputs for silo components by merging last iteration's aggregation output into the
             # user-provided input
             silo_inputs.update(self.shared_silo_kwargs)
             if executed_aggregation_component is not None and self.aggregation_to_silo_argument_map is not None:
@@ -115,7 +111,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
             self.subgraph.append(self.scatter_gather(silo_inputs, i))
             executed_aggregation_component = self.subgraph[-1]["aggregation"]
-        # TODO figure out final ouputs (might want another user input)
+        # TODO figure out final output (might want another user input)
         # self._outputs = self._construct_outputs(executed_aggregation_component)
         # TODO somehow annotate this node so that it's easy to ID as an fl job
         # super(FLScatterGather, self).__init__()
@@ -184,11 +180,16 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             for v, k in executed_silo_component.inputs.items():
                 if v in silo_config.inputs and k.type == "uri_folder":
                     k.mode = "ro_mount"
-            FLScatterGather._anchor_step_in_silo(pipeline_step=executed_silo_component, compute=silo_config.compute, output_datastore=silo_config.datastore)
+            FLScatterGather._anchor_step_in_silo(
+                pipeline_step=executed_silo_component,
+                compute=silo_config.compute,
+                output_datastore=silo_config.datastore
+            )
 
             sg_graph["silos"].append(executed_silo_component)
 
-            # Extract user-specified outputs from the silo component, rename them as needed, annotate them with the silo's index, then jam them all into the
+            # Extract user-specified outputs from the silo component, rename them as needed,
+            # annotate them with the silo's index, then jam them all into the
             # variable-length internal component's input list. 
             siloed_outputs.update({"{}_{}".format(k, i): v for k, v in
                                    FLScatterGather._extract_outputs(executed_silo_component.outputs,
@@ -201,8 +202,10 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         internal_merge_outputs = {self._get_aggregator_input_name(k): v.outputs.aggregated_output for k, v in merge_comp_mapping.items()}
         agg_inputs.update(internal_merge_outputs)
 
-        # big TODO: For some reason, including this file in the __init__ causes a circular import exception on the first attempted import
-        # The second import succeeds, but then causes a silent failure where the MLDEsigner component just... does work.
+        # big TODO: For some reason, including this file in the __init__ cause
+        #  a circular import exception on the first attempted import
+        # The second import succeeds, but then causes a silent failure where the
+        # MLDesigner component just... does not work.
         # The statement below will produce a ComponentExecutor object instead of the actual component.
 
 
@@ -219,8 +222,16 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             # internal merge component is also siloed to wherever the aggregation component lives.
             for _, executed_merge_component in merge_comp_mapping.items():
                 executed_merge_component.compute = self.aggregation_compute
-                #FLScatterGather._anchor_step_in_silo(pipeline_step=executed_merge_component, compute=self.aggregation_compute, output_datastore=self.aggregation_datastore)            
-            FLScatterGather._anchor_step_in_silo(pipeline_step=executed_aggregation_component, compute=self.aggregation_compute, output_datastore=self.aggregation_datastore)
+                #FLScatterGather._anchor_step_in_silo(
+                #     pipeline_step=executed_merge_component,
+                #     compute=self.aggregation_compute,
+                #     output_datastore=self.aggregation_datastore
+                # )     
+            FLScatterGather._anchor_step_in_silo(
+                pipeline_step=executed_aggregation_component,
+                compute=self.aggregation_compute,
+                output_datastore=self.aggregation_datastore
+            )
         return sg_graph
 
     @classmethod
@@ -286,7 +297,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
                 # and make sure every output data is anchored to the right datastore
                 for key in pipeline_step.outputs:
-                    # self.logger.debug(f"{_path}.outputs.{key}: has type={pipeline_step.outputs[key].type} class={type(pipeline_step.outputs[key])}, anchoring to datastore={output_datastore}")
+                    # self.logger.debug(f"{_path}.outputs.{key}: has type={pipeline_step.outputs[key].type}
+                    # class={type(pipeline_step.outputs[key])}, anchoring to datastore={output_datastore}")
                     setattr(
                         pipeline_step.outputs,
                         key,
@@ -299,7 +311,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
                 # let's anchor each outputs of the pipeline to the right datastore
                 for key in pipeline_step.outputs:
-                    # self.logger.debug(f"{_path}.outputs.{key}: has type={pipeline_step.outputs[key].type} class={type(pipeline_step.outputs[key])}, anchoring to datastore={output_datastore}")
+                    # self.logger.debug(f"{_path}.outputs.{key}: has type={pipeline_step.outputs[key].type}
+                    # class={type(pipeline_step.outputs[key])}, anchoring to datastore={output_datastore}")
                     pipeline_step.outputs[key] = cls ._custom_fl_data_output(
                         output_datastore, key
                     )
@@ -331,7 +344,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
             # then anchor each of the job's outputs to the right datastore
             for key in pipeline_step.outputs:
-                # self.logger.debug(f"{_path}.outputs.{key}: has type={pipeline_step.outputs[key].type} class={type(pipeline_step.outputs[key])}, anchoring to datastore={output_datastore}")
+                # self.logger.debug(f"{_path}.outputs.{key}: has type={pipeline_step.outputs[key].type}
+                # class={type(pipeline_step.outputs[key])}, anchoring to datastore={output_datastore}")
 
                 if pipeline_step.outputs[key]._data is None:
                     # if the output is an intermediary output
@@ -345,7 +359,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     pass
                     # if the output is an internal reference to a parent output
                     # let's trust that the parent has been anchored properly
-                    # self.logger.debug(f"{_path}.outputs.{key}: reference ouptut detected, leaving as is")
+                    # self.logger.debug(f"{_path}.outputs.{key}: reference output detected, leaving as is")
 
             # return the anchored pipeline
             return pipeline_step
@@ -413,7 +427,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         # TODO Determine if this is still needed
         pass
 
-    # Making this a class method allows for eaasier, isolated testing, and allows careful
+    # Making this a class method allows for easier, isolated testing, and allows careful
     # users to call this as a pre-init step.
     @classmethod
     def validate_inputs(cls,
@@ -442,41 +456,48 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         agg_outputs = None
         # validate silo component
         if silo_component is None:
-            validation_result.append_error(yaml_path="silo_component", message="silo_component is a required argument for the scatter gather node.")
+            validation_result.append_error(yaml_path="silo_component",
+                message="silo_component is a required argument for the scatter gather node.")
         else:
             # ensure that silo component has both inputs and outputs
             if not hasattr(silo_component, "inputs"):
-                validation_result.append_error(yaml_path="silo_component", message="silo_component is missing 'inputs' attribute;" + 
+                validation_result.append_error(yaml_path="silo_component",
+                message="silo_component is missing 'inputs' attribute;" +
                     "it does not appear to be a valid component that can be used in a scatter-gather loop.")
             else:
                 silo_inputs = silo_component.inputs
             if not hasattr(silo_component, "outputs"):
-                validation_result.append_error(yaml_path="silo_component", message="silo_component is missing 'outputs' attribute;" + 
+                validation_result.append_error(yaml_path="silo_component",
+                message="silo_component is missing 'outputs' attribute;" +
                     "it does not appear to be a valid component that can be used in a scatter-gather loop.")
             else:
                 silo_outputs = silo_component.outputs
         # validate aggregation component
         if aggregation_component is None:
-            validation_result.append_error(yaml_path="aggregation_component", message="aggregation_component is a required argument for the scatter gather node.")
+            validation_result.append_error(yaml_path="aggregation_component",
+            message="aggregation_component is a required argument for the scatter gather node.")
         else:
             # ensure that aggregation component has both inputs and outputs
             if not hasattr(aggregation_component, "inputs"):
-                validation_result.append_error(yaml_path="aggregation_component", message="aggregation_component is missing 'inputs' attribute;" + 
+                validation_result.append_error(yaml_path="aggregation_component",
+                message="aggregation_component is missing 'inputs' attribute;" +
                     "it does not appear to be a valid component that can be used in a scatter-gather loop.")
             else:
                 agg_inputs = aggregation_component.inputs
             if not hasattr(aggregation_component, "outputs"):
-                validation_result.append_error(yaml_path="aggregation_component", message="aggregation_component is missing 'outputs' attribute;" + 
-                    "it does not appear to be a valid component that can be used in a scatter-gather loop.")
+                validation_result.append_error(yaml_path="aggregation_component",
+                    message="aggregation_component is missing 'outputs' attribute;" +
+                        " it does not appear to be a valid component that can be used in a scatter-gather loop.")
             else:
                 agg_outputs = aggregation_component.outputs
-        
 
         # validate silos configs
         if silo_configs is None:
-            validation_result.append_error(yaml_path="silo_configs", message="silo_configs is a required argument for the scatter gather node.")
+            validation_result.append_error(yaml_path="silo_configs",
+            message="silo_configs is a required argument for the scatter gather node.")
         elif len(silo_configs) == 0:
-            validation_result.append_error(yaml_path="silo_configs", message="silo_configs cannot be an empty list.")
+            validation_result.append_error(yaml_path="silo_configs",
+            message="silo_configs cannot be an empty list.")
         else:
             first_silo = silo_configs[0]
             expected_inputs = []
@@ -485,22 +506,26 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             num_expected_inputs = len(expected_inputs)
             for i in range(len(silo_configs)):
                 silo = silo_configs[i]
-                # Potential todo - is it within a node's purview to make calls to determine if 
+                # Potential todo - is it within a node's purview to make calls to determine if
                 # the inputted computes/datastores exist and are within the user's permission scope?
                 if not hasattr(silo, "compute"):
-                    validation_result.append_error(yaml_path="silo_configs", message=f"Silo at index {i} in silo_configs is missing its compute value.")
+                    validation_result.append_error(yaml_path="silo_configs",
+                    message=f"Silo at index {i} in silo_configs is missing its compute value.")
                 if not hasattr(silo, "datastore"):
-                    validation_result.append_error(yaml_path="silo_configs", message=f"Silo at index {i} in silo_configs is missing its datastore value.")
+                    validation_result.append_error(yaml_path="silo_configs",
+                    message=f"Silo at index {i} in silo_configs is missing its datastore value.")
                 silo_input_len = 0
                 if hasattr(silo, "inputs"):
                     silo_input_len = len(silo.inputs)
                     # if inputs exist, make sure the inputs names are consistent across silo configs
                     for expected_input_name in expected_inputs:
                         if expected_input_name not in silo.inputs:
-                            validation_result.append_error(yaml_path="silo_configs", message=f"Silo at index {i} has is missing inputs named '{expected_input_name}'," + 
-                                f"which was listed in the first silo config. Silos must have consistent inputs names.")
+                            validation_result.append_error(yaml_path="silo_configs",
+                                message=f"Silo at index {i} has is missing inputs named '{expected_input_name}'," +
+                                    "which was listed in the first silo config. Silos must have consistent inputs names.")
                 if silo_input_len != num_expected_inputs:
-                    validation_result.append_error(yaml_path="silo_configs", message=f"Silo at index {i} has {silo_input_len} inputs, but the first silo established that" + 
+                    validation_result.append_error(yaml_path="silo_configs",
+                    message=f"Silo at index {i} has {silo_input_len} inputs, but the first silo established that" +
                         f"each silo would have {num_expected_inputs} silo-specific inputs.")
 
                 # TODO check that input names match one of the values of silo_inputs
@@ -508,60 +533,76 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         # TODO we might want to remove this if we decide to allow partial overrides
         # Make sure both aggregation overrides are set, or not
         if aggregation_datastore is None and aggregation_compute is not None:
-            validation_result.append_error(yaml_path="aggregation_datastore", message=f"aggregation_datastore cannot be unset if aggregation_compute is set.")
+            validation_result.append_error(yaml_path="aggregation_datastore",
+            message="aggregation_datastore cannot be unset if aggregation_compute is set.")
         elif aggregation_datastore is not None and aggregation_compute is None:
-            validation_result.append_error(yaml_path="aggregation_compute", message=f"aggregation_compute cannot be unset if aggregation_datastore is set.")
+            validation_result.append_error(yaml_path="aggregation_compute",
+            message="aggregation_compute cannot be unset if aggregation_datastore is set.")
 
         # validate component kwargs, ensuring that the relevant components contain the specified inputs
         if shared_silo_kwargs is None:
-            validation_result.append_error(yaml_path="shared_silo_kwargs", message=f"shared_silo_kwargs should never be None. Input an empty dictionary instead.")
+            validation_result.append_error(yaml_path="shared_silo_kwargs",
+            message="shared_silo_kwargs should never be None. Input an empty dictionary instead.")
         elif silo_inputs is not None:
             for k in shared_silo_kwargs.keys():
                 if k not in silo_inputs:
-                     validation_result.append_error(yaml_path="shared_silo_kwargs", message=f"shared_silo_kwargs keyword {k} not listed in silo_component's inputs")
+                    validation_result.append_error(yaml_path="shared_silo_kwargs",
+                    message=f"shared_silo_kwargs keyword {k} not listed in silo_component's inputs")
         if aggregation_kwargs is None:
-            validation_result.append_error(yaml_path="aggregation_kwargs", message=f"aggregation_kwargs should never be None. Input an empty dictionary instead.")
+            validation_result.append_error(yaml_path="aggregation_kwargs",
+            message="aggregation_kwargs should never be None. Input an empty dictionary instead.")
         elif silo_inputs is not None:
             for k in aggregation_kwargs.keys():
                 if k not in agg_inputs:
-                     validation_result.append_error(yaml_path="aggregation_kwargs", message=f"aggregation_kwargs keyword {k} not listed in aggregation_component's inputs")
+                    validation_result.append_error(yaml_path="aggregation_kwargs",
+                    message=f"aggregation_kwargs keyword {k} not listed in aggregation_component's inputs")
 
         # validate that argument mappings leverage inputs and outputs that actually exist 
         if aggregation_to_silo_argument_map is None:
-            validation_result.append_error(yaml_path="aggregation_to_silo_argument_map", message=f"aggregation_to_silo_argument_map should never be None. Input an empty dictionary instead.")
+            validation_result.append_error(yaml_path="aggregation_to_silo_argument_map",
+            message="aggregation_to_silo_argument_map should never be None. Input an empty dictionary instead.")
         elif silo_inputs is not None and agg_outputs is not None:
             for k, v in aggregation_to_silo_argument_map.items():
                 if k not in agg_outputs:
-                    validation_result.append_error(yaml_path="aggregation_to_silo_argument_map", message=f"aggregation_to_silo_argument_map key {k} is not a known output of the aggregation component.")
+                    validation_result.append_error(yaml_path="aggregation_to_silo_argument_map"
+                    message=f"aggregation_to_silo_argument_map key {k} is not a known output of the aggregation component.")
                 if v not in silo_inputs:
-                    validation_result.append_error(yaml_path="aggregation_to_silo_argument_map", message=f"aggregation_to_silo_argument_map value {v} is not a known input of the silo component.")
+                    validation_result.append_error(yaml_path="aggregation_to_silo_argument_map",
+                    message=f"aggregation_to_silo_argument_map value {v} is not a known input of the silo component.")
         # and check the other mapping
         if silo_to_aggregation_argument_map is None:
-            validation_result.append_error(yaml_path="silo_to_aggregation_argument_map", message=f"silo_to_aggregation_argument_map should never be None. Input an empty dictionary instead.")
+            validation_result.append_error(yaml_path="silo_to_aggregation_argument_map",
+            message="silo_to_aggregation_argument_map should never be None. Input an empty dictionary instead.")
         elif agg_inputs is not None and silo_outputs is not None:
             for k, v in silo_to_aggregation_argument_map.items():
                 if k not in silo_outputs:
-                    validation_result.append_error(yaml_path="silo_to_aggregation_argument_map", message=f"silo_to_aggregation_argument_map key {k} is not a known output of the silo component.")
+                    validation_result.append_error(yaml_path="silo_to_aggregation_argument_map",
+                    message=f"silo_to_aggregation_argument_map key {k} is not a known output of the silo component.")
                 if v not in agg_inputs:
-                    validation_result.append_error(yaml_path="silo_to_aggregation_argument_map", message=f"silo_to_aggregation_argument_map value {v} is not a known input of the aggregation component.")
+                    validation_result.append_error(yaml_path="silo_to_aggregation_argument_map",
+                    message=f"silo_to_aggregation_argument_map value {v} is not a known input of the aggregation component.")
 
         # Check that inputs created by the node itself are valid
         # inputs for the correct components
         if pass_iteration_to_components:
             if agg_inputs is not None and FL_ITERATION_INPUT not in agg_inputs:
-                validation_result.append_error(yaml_path="pass_iteration_to_components", message=f"pass_iteration_to_components is set to True, " + 
+                validation_result.append_error(yaml_path="pass_iteration_to_components",
+                message="pass_iteration_to_components is set to True, " + 
                     f"but the aggregation component does not contain the required input '{FL_ITERATION_INPUT}'.")
             if silo_inputs is not None and FL_ITERATION_INPUT not in silo_inputs:
-                validation_result.append_error(yaml_path="pass_iteration_to_components", message=f"pass_iteration_to_components is set to True, " + 
+                validation_result.append_error(yaml_path="pass_iteration_to_components",
+                message="pass_iteration_to_components is set to True, " + 
                     f"but the silo component does not contain the required input '{FL_ITERATION_INPUT}'.")
 
         if pass_index_to_silo_components:
             if silo_inputs is not None and FL_SILO_INDEX_INPUT not in silo_inputs:
-                validation_result.append_error(yaml_path="pass_index_to_silo_components", message=f"pass_index_to_silo_components is set to True, " + 
+                validation_result.append_error(yaml_path="pass_index_to_silo_components",
+                message="pass_index_to_silo_components is set to True, " + 
                     f"but the silo component does not contain the required input '{FL_SILO_INDEX_INPUT}'.")
 
         if max_iterations < 1:
-            validation_result.append_error(yaml_path="max_iterations", message=f"max_iterations must be a positive value, not '{max_iterations}'.")
+            validation_result.append_error(yaml_path="max_iterations",
+                message=f"max_iterations must be a positive value, not '{max_iterations}'.")
 
 
         return validation_result.try_raise(
@@ -596,7 +637,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     @classmethod
     def _try_create_default_mappings(cls, silo_comp: Component, agg_comp: Component, silo_agg_map: Dict, agg_silo_map: Dict):
         """
-           This function tries to produce dictionaries that link the silo and aggregation components' outputs to the other's inputs.
+        This function tries to produce dictionaries that link the silo and aggregation components' outputs to the other's inputs.
         The mapping only occurs for inputted mappings that are None, otherwise the inputted mapping is returned unchanged. 
         These auto-generated mappings are naive, and simply maps all outputs of a component that have an identically-named input in the other component.
 
