@@ -22,7 +22,7 @@ from azure.ai.ml import (
     load_workspace,
     load_workspace_connection,
 )
-from azure.ai.ml._azure_environments import _get_default_cloud_name, AzureEnvironments 
+from azure.ai.ml._azure_environments import _get_default_cloud_name, AzureEnvironments
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml.exceptions import ValidationException
@@ -50,7 +50,9 @@ class TestMachineLearningClient:
     def test_get_batch_endpoints(self, mock_machinelearning_client: MLClient) -> None:
         assert mock_machinelearning_client.batch_endpoints is not None
 
-    def test_get_online_deployments(self, mock_machinelearning_client: MLClient) -> None:
+    def test_get_online_deployments(
+        self, mock_machinelearning_client: MLClient
+    ) -> None:
         assert mock_machinelearning_client.online_deployments is not None
 
     def test_get_batch_deployments(self, mock_machinelearning_client: MLClient) -> None:
@@ -65,7 +67,9 @@ class TestMachineLearningClient:
     def test_get_code(self, mock_machinelearning_client: MLClient) -> None:
         assert mock_machinelearning_client._code is not None
 
-    def test_default_workspace_name_match(self, mock_machinelearning_client: MLClient) -> None:
+    def test_default_workspace_name_match(
+        self, mock_machinelearning_client: MLClient
+    ) -> None:
         assert mock_machinelearning_client.workspace_name is not None
 
     def test_set_workspace_name(self, mock_machinelearning_client: MLClient) -> None:
@@ -78,7 +82,9 @@ class TestMachineLearningClient:
 
     def test_get_sub_and_rg(self) -> None:
         client = MLClient(
-            credential=DefaultAzureCredential(), subscription_id="fake-sub-id", resource_group_name="fake-rg-name"
+            credential=DefaultAzureCredential(),
+            subscription_id="fake-sub-id",
+            resource_group_name="fake-rg-name",
         )
 
         assert "fake-sub-id" == client.subscription_id
@@ -86,7 +92,9 @@ class TestMachineLearningClient:
 
     def test_show_progress(self) -> None:
         client = MLClient(
-            credential=DefaultAzureCredential(), subscription_id="fake-sub-id", resource_group_name="fake-rg-name"
+            credential=DefaultAzureCredential(),
+            subscription_id="fake-sub-id",
+            resource_group_name="fake-rg-name",
         )
 
         assert client.jobs._show_progress  # By default show_progress is True
@@ -110,7 +118,9 @@ class TestMachineLearningClient:
         mock_get_mfe_url_override.return_value = mock_url
 
         ml_client = MLClient(
-            credential=mock_credential, subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group
+            credential=mock_credential,
+            subscription_id=Test_Subscription,
+            resource_group_name=Test_Resource_Group,
         )
 
         assert ml_client.workspaces._operation._client._base_url == mock_url
@@ -150,23 +160,46 @@ class TestMachineLearningClient:
                 "create_or_update",
             ),
             (
-                [load_job("tests/test_configs/pipeline_jobs/helloworld_pipeline_job.yml")],
+                [
+                    load_job(
+                        "tests/test_configs/pipeline_jobs/helloworld_pipeline_job.yml"
+                    )
+                ],
                 {},
                 "jobs",
                 3,
                 "create_or_update",
             ),
-            ([load_model("tests/test_configs/model/model_full.yml")], {}, "models", 1, "create_or_update"),
             (
-                [load_environment("tests/test_configs/environment/environment_conda.yml")],
+                [load_model("tests/test_configs/model/model_full.yml")],
+                {},
+                "models",
+                1,
+                "create_or_update",
+            ),
+            (
+                [
+                    load_environment(
+                        "tests/test_configs/environment/environment_conda.yml"
+                    )
+                ],
                 {},
                 "environments",
                 1,
                 "create_or_update",
             ),
-            ([load_datastore("tests/test_configs/datastore/blob_store.yml")], {}, "datastores", 1, "create_or_update"),
             (
-                [load_job("tests/test_configs/command_job/simple_train_test.yml"), "soemthing_else"],
+                [load_datastore("tests/test_configs/datastore/blob_store.yml")],
+                {},
+                "datastores",
+                1,
+                "create_or_update",
+            ),
+            (
+                [
+                    load_job("tests/test_configs/command_job/simple_train_test.yml"),
+                    "soemthing_else",
+                ],
                 {},
                 "takes 2 positional arguments but 3 were given",
                 -1,
@@ -192,12 +225,14 @@ class TestMachineLearningClient:
             assert ops_name in str(e.value)
         elif call_times == 1:
             ml_client.create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_once_with(
-                *args, **kwargs
-            )
+            ml_client.__getattribute__(ops_name).__getattr__(
+                create_method_name
+            ).assert_called_once_with(*args, **kwargs)
         else:
             ml_client.create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(*args, **kwargs)
+            ml_client.__getattribute__(ops_name).__getattr__(
+                create_method_name
+            ).assert_called_with(*args, **kwargs)
         # trying to change this whole file to use assertRaises caused half the existing test to fail
         no_second_impl = False
         try:
@@ -224,8 +259,20 @@ class TestMachineLearningClient:
     @pytest.mark.parametrize(
         "args, kwargs, ops_name, call_times, create_method_name",
         [
-            ([load_compute("tests/test_configs/compute/compute-ci.yaml")], {}, "compute", 1, "begin_create_or_update"),
-            ([load_workspace("tests/test_configs/workspace/workspace_full.yaml")], {}, "workspaces", 1, "begin_create"),
+            (
+                [load_compute("tests/test_configs/compute/compute-ci.yaml")],
+                {},
+                "compute",
+                1,
+                "begin_create_or_update",
+            ),
+            (
+                [load_workspace("tests/test_configs/workspace/workspace_full.yaml")],
+                {},
+                "workspaces",
+                1,
+                "begin_create",
+            ),
             (
                 [load_registry("tests/test_configs/registry/registry_valid.yaml")],
                 {},
@@ -234,42 +281,66 @@ class TestMachineLearningClient:
                 "begin_create_or_update",
             ),
             (
-                [load_online_endpoint("tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml")],
+                [
+                    load_online_endpoint(
+                        "tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml"
+                    )
+                ],
                 {},
                 "online_endpoints",
                 1,
                 "begin_create_or_update",
             ),
             (
-                [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
+                [
+                    load_online_deployment(
+                        "tests/test_configs/deployments/online/online_deployment_blue.yaml"
+                    )
+                ],
                 {},
                 "online_deployments",
                 1,
                 "begin_create_or_update",
             ),
             (
-                [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
+                [
+                    load_online_deployment(
+                        "tests/test_configs/deployments/online/online_deployment_blue.yaml"
+                    )
+                ],
                 {"local": True, "vscode_debug": True, "no_wait": True},
                 "online_deployments",
                 2,
                 "begin_create_or_update",
             ),
             (
-                [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
+                [
+                    load_online_deployment(
+                        "tests/test_configs/deployments/online/online_deployment_blue.yaml"
+                    )
+                ],
                 {"local": True, "no_wait": True},
                 "online_deployments",
                 2,
                 "begin_create_or_update",
             ),
             (
-                [load_batch_endpoint("tests/test_configs/endpoints/batch/batch_endpoint_mlflow.yaml")],
+                [
+                    load_batch_endpoint(
+                        "tests/test_configs/endpoints/batch/batch_endpoint_mlflow.yaml"
+                    )
+                ],
                 {},
                 "batch_endpoints",
                 1,
                 "begin_create_or_update",
             ),
             (
-                [load_batch_deployment("tests/test_configs/deployments/batch/batch_deployment_1.yaml")],
+                [
+                    load_batch_deployment(
+                        "tests/test_configs/deployments/batch/batch_deployment_1.yaml"
+                    )
+                ],
                 {},
                 "batch_deployments",
                 1,
@@ -295,12 +366,14 @@ class TestMachineLearningClient:
             assert ops_name in str(e.value)
         elif call_times == 1:
             ml_client.begin_create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_once_with(
-                *args, **kwargs
-            )
+            ml_client.__getattribute__(ops_name).__getattr__(
+                create_method_name
+            ).assert_called_once_with(*args, **kwargs)
         else:
             ml_client.begin_create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_with(*args, **kwargs)
+            ml_client.__getattribute__(ops_name).__getattr__(
+                create_method_name
+            ).assert_called_with(*args, **kwargs)
         # trying to change this whole file to use assertRaises caused half the existing test to fail
         no_second_impl = False
         try:
@@ -394,7 +467,9 @@ class TestMachineLearningClient:
         kwargs = {}
         # Remove the keys from the variables
         key_to_remove = {AZUREML_CLOUD_ENV_NAME}
-        modified_environment = {k: v for k, v in os.environ.items() if k not in key_to_remove}
+        modified_environment = {
+            k: v for k, v in os.environ.items() if k not in key_to_remove
+        }
         with mock.patch.dict(os.environ, modified_environment, clear=True):
             ml_client = MLClient(
                 credential=mock_credential,
@@ -437,7 +512,7 @@ class TestMachineLearningClient:
         )
 
     def test_ml_client_with_cli_config(self, mock_credential):
-        # This cloud config should not work and it should NOT overwrite the hardcoded AzureCloud 
+        # This cloud config should not work and it should NOT overwrite the hardcoded AzureCloud
         kwargs = {
             "cloud": "AzureCloud",
             "cloud_metadata": {
@@ -446,8 +521,8 @@ class TestMachineLearningClient:
                 "active_directory": "https://test.login.microsoftonline.com/",
                 "aml_resource_id": "https://test.ml.azure.com/",
                 "storage_endpoint": "test.core.windows.net",
-                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/"
-            }
+                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/",
+            },
         }
         ml_client = MLClient(
             credential=mock_credential,
@@ -459,7 +534,7 @@ class TestMachineLearningClient:
         assert ml_client._cloud == "AzureCloud"
         assert ml_client._base_url != "https://test.management.azure.com"
         assert _get_default_cloud_name() == "AzureCloud"
-        
+
         # This full cloud config should be added fine
         kwargs = {
             "cloud": "test_cloud",
@@ -469,8 +544,8 @@ class TestMachineLearningClient:
                 "active_directory": "https://test.login.microsoftonline.com/",
                 "aml_resource_id": "https://test.ml.azure.com/",
                 "storage_endpoint": "test.core.windows.net",
-                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/"
-            }
+                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/",
+            },
         }
         ml_client = MLClient(
             credential=mock_credential,
@@ -492,7 +567,7 @@ class TestMachineLearningClient:
             workspace_name="test-ws1",
             **kwargs,
         )
-        
+
         assert ml_client._cloud == "test_cloud"
         assert ml_client._base_url == "https://test.management.azure.com"
         assert _get_default_cloud_name() == "test_cloud"
