@@ -1904,7 +1904,8 @@ class TestPipelineJob(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         "yaml_path",
         [
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/command/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/command/pipeline_serverless_compute.yml",
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/command/node_serverless_compute.yml",
             "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/sweep/pipeline.yml",
             "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/pipeline/pipeline.yml",
             "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/automl/pipeline.yml",
