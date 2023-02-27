@@ -210,7 +210,7 @@ class Workspace(Resource):
             )
         feature_store_settings = None
         if rest_obj.feature_store_settings and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings):
-            feature_store_settings = FeatureStoreSettings._from_rest_object(
+            feature_store_settings = FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
                 rest_obj.feature_store_settings
             )
         return Workspace(
@@ -241,7 +241,7 @@ class Workspace(Resource):
     def _to_rest_object(self) -> RestWorkspace:
         feature_store_Settings = None
         if self.feature_store_settings:
-            feature_store_Settings = self.feature_store_settings._to_rest_object()
+            feature_store_Settings = self.feature_store_settings._to_rest_object()  # pylint: disable=protected-access
 
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
