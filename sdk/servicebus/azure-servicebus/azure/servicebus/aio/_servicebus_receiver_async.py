@@ -365,7 +365,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else SenderSettleMode.Unsettled,
-            timeout=self._max_wait_time * 1 if self._max_wait_time else 0, # TODO: This is not working
+            timeout=self._max_wait_time * 1 if self._max_wait_time else 0,
             link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive
