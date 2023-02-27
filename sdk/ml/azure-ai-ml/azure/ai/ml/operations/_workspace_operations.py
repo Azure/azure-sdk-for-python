@@ -201,7 +201,7 @@ class WorkspaceOperations:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
+        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace)
 
         arm_submit = ArmDeploymentExecutor(
             credentials=self._credentials,
@@ -435,11 +435,7 @@ class WorkspaceOperations:
         return poller
 
     # pylint: disable=too-many-statements,too-many-branches,too-many-locals
-    def _populate_arm_paramaters(
-            self,
-            workspace: Workspace,
-            **kwargs: Dict,
-        ) -> Tuple[dict, dict, dict]:
+    def _populate_arm_paramaters(self, workspace: Workspace) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
