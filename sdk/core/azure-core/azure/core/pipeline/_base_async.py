@@ -50,9 +50,7 @@ class _SansIOAsyncHTTPPolicyRunner(
     :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
-    def __init__(
-        self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-    ) -> None:
+    def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
         self._policy = policy
 
@@ -88,9 +86,7 @@ class _AsyncTransportRunner(
     :param sender: The async Http Transport instance.
     """
 
-    def __init__(
-        self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
-    ) -> None:
+    def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_AsyncTransportRunner, self).__init__()
         self._sender = sender
 
@@ -135,9 +131,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
         policies: Optional[AsyncPoliciesType] = None,
     ) -> None:
-        self._impl_policies: List[
-            AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-        ] = []
+        self._impl_policies: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] = []
         self._transport = transport
 
         for policy in policies or []:

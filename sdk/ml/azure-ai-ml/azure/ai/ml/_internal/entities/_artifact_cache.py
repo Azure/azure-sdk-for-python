@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import tempfile
 import zipfile
+from collections import defaultdict
 from io import BytesIO
 from pathlib import Path
 from threading import Lock
@@ -48,17 +49,21 @@ class ArtifactCache:
     def __init__(self, cache_directory=None):
         self._cache_directory = cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY
         Path(self._cache_directory).mkdir(exist_ok=True, parents=True)
-        # check az extension azure-devops installed
+        # check az extension azure-devops installed. Install it if not installed.
         process = subprocess.Popen(
-            "az artifacts --help",
+            "az artifacts --help --yes",
             shell=True,  # nosec B602
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
         process.communicate()
         if process.returncode != 0:
-            subprocess.check_call("az extension add --name azure-devops", shell=True)
+            raise RuntimeError(
+                "Auto-installation failed. Please install azure-devops "
+                "extension by 'az extension add --name azure-devops'."
+            )
         self._artifacts_tool_path = None
+        self._download_locks = defaultdict(Lock)
 
     @property
     def cache_directory(self):
@@ -253,27 +258,29 @@ class ArtifactCache:
             / name
             / version
         )
-        if self._check_artifacts(artifact_package_path):
-            # When the cache folder of artifact package exists, it's sure that the package has been downloaded.
-            return artifact_package_path.absolute().resolve()
-        if resolve:
-            check_sum_path = self._get_checksum_path(artifact_package_path)
-            if Path(check_sum_path).exists():
-                os.unlink(check_sum_path)
-            if artifact_package_path.exists():
-                # Remove invalid artifact package to avoid affecting download artifact.
-                temp_folder = tempfile.mktemp()  # nosec B306
-                os.rename(artifact_package_path, temp_folder)
-                shutil.rmtree(temp_folder)
-            # Download artifact
-            return self.set(
-                feed=feed,
-                name=name,
-                version=version,
-                organization=organization,
-                project=project,
-                scope=scope,
-            )
+        # Use lock to avoid downloading the same package at the same time.
+        with self._download_locks[artifact_package_path]:
+            if self._check_artifacts(artifact_package_path):
+                # When the cache folder of artifact package exists, it's sure that the package has been downloaded.
+                return artifact_package_path.absolute().resolve()
+            if resolve:
+                check_sum_path = self._get_checksum_path(artifact_package_path)
+                if Path(check_sum_path).exists():
+                    os.unlink(check_sum_path)
+                if artifact_package_path.exists():
+                    # Remove invalid artifact package to avoid affecting download artifact.
+                    temp_folder = tempfile.mktemp()  # nosec B306
+                    os.rename(artifact_package_path, temp_folder)
+                    shutil.rmtree(temp_folder)
+                # Download artifact
+                return self.set(
+                    feed=feed,
+                    name=name,
+                    version=version,
+                    organization=organization,
+                    project=project,
+                    scope=scope,
+                )
         return None
 
     def set(self, feed, name, version, scope, organization=None, project=None):

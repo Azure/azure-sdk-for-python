@@ -150,7 +150,7 @@ class FormTrainingClient(FormRecognizerClientBaseAsync):
                     deserialization_callback=deserialization_callback,
                 )
 
-            response = await self._client.train_custom_model_async(
+            response = await self._client.train_custom_model_async(  # type: ignore
                 train_request=self._generated_models.TrainRequest(
                     source=training_files_url,
                     use_label_file=use_training_labels,

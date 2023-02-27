@@ -161,7 +161,7 @@ result = poller.result()
 
 Email operations will throw an exception if the request to the server fails. The Email client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).
 
-```Python
+```python
 from azure.core.exceptions import HttpResponseError
 
 try:

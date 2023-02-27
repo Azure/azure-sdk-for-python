@@ -111,38 +111,40 @@ The following sections provide several code snippets covering some of the most c
 
 Get the partition ids of an Event Hub.
 
+<!-- SNIPPET:connection_string_authentication.connection_string_authentication -->
 ```python
+import os
 from azure.eventhub import EventHubConsumerClient
 
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-consumer_group = '<< CONSUMER GROUP >>'
-eventhub_name = '<< NAME OF THE EVENT HUB >>'
-client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group, eventhub_name=eventhub_name)
-partition_ids = client.get_partition_ids()
+CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+
+consumer_client = EventHubConsumerClient.from_connection_string(
+    conn_str=CONNECTION_STR,
+    consumer_group='$Default',
+    eventhub_name=EVENTHUB_NAME,
+)
+
+with consumer_client:
+    pass # consumer_client is now ready to be used.
 ```
+<!-- END SNIPPET -->
 
 ### Publish events to an Event Hub
 
 Use the `create_batch` method on `EventHubProducerClient` to create an `EventDataBatch` object which can then be sent using the `send_batch` method.
 Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
+
+<!-- SNIPPET:send.send_event_data_batch -->
 ```python
-from azure.eventhub import EventHubProducerClient, EventData
-
-connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
-eventhub_name = '<< NAME OF THE EVENT HUB >>'
-client = EventHubProducerClient.from_connection_string(connection_str, eventhub_name=eventhub_name)
-
-event_data_batch = client.create_batch()
-can_add = True
-while can_add:
-    try:
-        event_data_batch.add(EventData('Message inside EventBatchData'))
-    except ValueError:
-        can_add = False  # EventDataBatch object reaches max_size.
-
-with client:
-    client.send_batch(event_data_batch)
+def send_event_data_batch(producer):
+    # Without specifying partition_id or partition_key
+    # the events will be distributed to available partitions via round-robin.
+    event_data_batch = producer.create_batch()
+    event_data_batch.add(EventData('Single message'))
+    producer.send_batch(event_data_batch)
 ```
+<!-- END SNIPPET -->
 
 ### Consume events from an Event Hub
 
