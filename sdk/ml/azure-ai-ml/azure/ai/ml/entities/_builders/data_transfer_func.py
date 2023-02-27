@@ -235,39 +235,30 @@ def import_data(
     # job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
     _, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
     component = kwargs.pop("component", None)
+    update_source = False
     if component is None:
         if source and source.type == ExternalDataType.DATABASE:
             component = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
             component = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
-        data_transfer_import_obj = DataTransferImport(
-            component=component,
-            name=name,
-            description=description,
-            tags=tags,
-            display_name=display_name,
-            experiment_name=experiment_name,
-            compute=compute,
-            source=source,
-            outputs=job_outputs,
-            task=task,
-            **kwargs,
-        )
+        update_source = True
+
+    data_transfer_import_obj = DataTransferImport(
+        component=component,
+        name=name,
+        description=description,
+        tags=tags,
+        display_name=display_name,
+        experiment_name=experiment_name,
+        compute=compute,
+        source=source,
+        outputs=job_outputs,
+        task=task,
+        **kwargs,
+    )
+    if update_source:
         data_transfer_import_obj._source = ComponentSource.BUILTIN
-    else:
-        data_transfer_import_obj = DataTransferImport(
-            component=component,
-            name=name,
-            description=description,
-            tags=tags,
-            display_name=display_name,
-            experiment_name=experiment_name,
-            compute=compute,
-            source=source,
-            outputs=job_outputs,
-            task=task,
-            **kwargs,
-        )
+
     return data_transfer_import_obj
 
 
@@ -311,7 +302,7 @@ def export_data(
     # job inputs can not be None
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
     component = kwargs.pop("component", None)
-
+    update_source = False
     if component is None:
         if sink and sink.type == ExternalDataType.DATABASE:
             component = DataTransferBuiltinComponentUri.EXPORT_DATABASE
@@ -323,32 +314,22 @@ def export_data(
                 target=ErrorTarget.JOB,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-        data_transfer_export_obj = DataTransferExport(
-            component=component,
-            name=name,
-            description=description,
-            tags=tags,
-            display_name=display_name,
-            experiment_name=experiment_name,
-            compute=compute,
-            sink=sink,
-            inputs=job_inputs,
-            task=task,
-            **kwargs,
-        )
+        update_source = True
+
+    data_transfer_export_obj = DataTransferExport(
+        component=component,
+        name=name,
+        description=description,
+        tags=tags,
+        display_name=display_name,
+        experiment_name=experiment_name,
+        compute=compute,
+        sink=sink,
+        inputs=job_inputs,
+        task=task,
+        **kwargs,
+    )
+    if update_source:
         data_transfer_export_obj._source = ComponentSource.BUILTIN
-    else:
-        data_transfer_export_obj = DataTransferExport(
-            component=component,
-            name=name,
-            description=description,
-            tags=tags,
-            display_name=display_name,
-            experiment_name=experiment_name,
-            compute=compute,
-            sink=sink,
-            inputs=job_inputs,
-            task=task,
-            **kwargs,
-        )
+
     return data_transfer_export_obj
