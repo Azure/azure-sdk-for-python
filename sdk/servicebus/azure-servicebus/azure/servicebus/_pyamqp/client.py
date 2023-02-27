@@ -168,7 +168,7 @@ class AMQPClient(
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
         self._keep_alive_interval = int(kwargs.get("keep_alive_interval", 0))
         self._keep_alive_thread = None
-        
+
         # Connection settings
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
         self._channel_max = kwargs.pop("channel_max", MAX_CHANNELS)
@@ -210,7 +210,6 @@ class AMQPClient(
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
 
-
     def __enter__(self):
         """Run Client in a context manager."""
         self.open()
@@ -228,7 +227,6 @@ class AMQPClient(
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
                     _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
-
                     self._connection.listen(wait=self._socket_timeout, batch=self._link.current_link_credit)
                     start_time = current_time
                 time.sleep(1)
@@ -648,7 +646,6 @@ class SendClient(AMQPClient):
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
         self.open()
-
         message_delivery = _MessageDelivery(
             message, MessageDeliveryState.WaitingToBeSent, expire_time
         )
@@ -796,7 +793,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._timeout = kwargs.pop("timeout", 0)
         self._timeout_reached = False
         self._last_activity_timestamp = time.time()
-        self._running_iter = False
+
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):

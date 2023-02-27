@@ -223,7 +223,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                     yield message
             except StopAsyncIteration:
                 break
-    
+  
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 
@@ -406,7 +406,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self._open()
 
             amqp_receive_client = self._handler
-            received_messages_queue = amqp_receive_client._received_messages # type: ignore[attr-defined]
+            received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
                 timeout or self._max_wait_time

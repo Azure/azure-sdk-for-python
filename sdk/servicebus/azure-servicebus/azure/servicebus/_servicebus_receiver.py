@@ -245,19 +245,6 @@ class ServiceBusReceiver(
                 self._message_iter = None
                 raise
 
-    def __next__(self):
-        # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
-        try:
-            self._receive_context.set()
-            message = self._inner_next()
-            links = get_receive_links(message)
-            with receive_trace_context_manager(self, links=links):
-                return message
-        finally:
-            self._receive_context.clear()
-
-    next = __next__  # for python2.7
-
     def _iter_next(self, wait_time=None):
         try:
             self._receive_context.set()
@@ -404,7 +391,7 @@ class ServiceBusReceiver(
             self._open()
 
             amqp_receive_client = self._handler
-            received_messages_queue = amqp_receive_client._received_messages # type: ignore[attr-defined]
+            received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
                 timeout or self._max_wait_time

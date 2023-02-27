@@ -236,7 +236,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         timeout: Optional[Union[int, float]] = None
         if wait is False:
-            timeout = .2  # TODO: What should this default be?, are the other if statements are used 
+            timeout = .2
         elif wait is True:
             timeout = None
         else:

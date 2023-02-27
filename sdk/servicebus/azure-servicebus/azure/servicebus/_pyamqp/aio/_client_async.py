@@ -153,7 +153,8 @@ class AMQPClientAsync(AMQPClientSync):
                         self.__class__.__name__,
                         extra=self._network_trace_params
                     )
-                    await asyncio.shield(self._connection.listen(wait=self._socket_timeout, batch=self._link.current_link_credit))
+                    await asyncio.shield(self._connection.listen(wait=self._socket_timeout,
+                        batch=self._link.current_link_credit))
                     start_time = current_time
                 await asyncio.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
