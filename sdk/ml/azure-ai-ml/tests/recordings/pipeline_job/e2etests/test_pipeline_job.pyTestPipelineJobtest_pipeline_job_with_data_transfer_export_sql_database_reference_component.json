@@ -101,7 +101,7 @@
       }
     },
     {
-      "RequestUri": "https://wse2etesstoragee3596509f.blob.core.windows.net/azureml-blobstore-80eaba04-c6ec-4775-8ddc-d538e9642c2d/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet",
+      "RequestUri": "https://wse2etesstoragee3596509f.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -267,7 +267,7 @@
       }
     },
     {
-      "RequestUri": "https://wse2etesstoragee3596509f.blob.core.windows.net/azureml-blobstore-80eaba04-c6ec-4775-8ddc-d538e9642c2d/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet",
+      "RequestUri": "https://wse2etesstoragee3596509f.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/00000000000000000000000000000000/testFile_ForSqlDB.parquet",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
