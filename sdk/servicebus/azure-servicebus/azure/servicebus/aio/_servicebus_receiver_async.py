@@ -251,7 +251,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         try:
             self._receive_context.set()
             await self._open()
-            # TODO: Add in Recieve Message Iterator
             if not self._message_iter:
                 self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
             elif wait_time:
