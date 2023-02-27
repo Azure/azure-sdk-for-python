@@ -87,9 +87,14 @@ class CommunicationUserIdentifier(object):
         # type: (str, Any) -> None
         self.raw_id = kwargs.get('raw_id', id)
         self.properties = CommunicationUserProperties(id=id)
+        if self.raw_id is None:
+            self.raw_id = _communication_user_raw_id(self)
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
+
+def _communication_user_raw_id(identifier: CommunicationUserIdentifier) -> str:
+    return identifier.properties['id']
 
 
 PhoneNumberProperties = TypedDict(
@@ -118,6 +123,9 @@ class PhoneNumberIdentifier(object):
         self.properties = PhoneNumberProperties(value=value)
         if self.raw_id is None:
             self.raw_id = _phone_number_raw_id(self)
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
 
 def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
@@ -190,6 +198,9 @@ class MicrosoftTeamsUserIdentifier(object):
         if self.raw_id is None:
             self.raw_id = _microsoft_teams_user_raw_id(self)
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
 
 def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
     user_id = identifier.properties['user_id']
@@ -243,6 +254,9 @@ class MicrosoftBotIdentifier(object):
         if self.raw_id is None:
             self.raw_id = _microsoft_bot_raw_id(self)
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
 
 def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:
     bot_id = identifier.properties['bot_id']
@@ -275,7 +289,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
         )
 
     segments = raw_id.split(':', maxsplit=2)
-    if len(segments) < 3:
+    if len(segments) < 3 or len(segments) > 3:
         if len(segments) == 2 and segments[0] == '28':
             return MicrosoftBotIdentifier(
                 bot_id=segments[1],
