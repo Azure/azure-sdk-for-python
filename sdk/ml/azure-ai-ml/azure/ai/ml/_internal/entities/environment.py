@@ -30,7 +30,6 @@ class InternalEnvironment:
         python: Optional[Dict] = None,
     ):
         self.docker = docker
-        print("Init: ", self.docker)
         self.conda = conda
         self.os = os if os else "Linux"
         self.name = name
