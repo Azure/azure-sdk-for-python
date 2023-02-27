@@ -364,7 +364,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 delay_seconds = self._reconnect_retry_policy.next_retry_delay(attempt)
                 if not delay_seconds:
                     break
-                _LOGGER.debug("Delay time for reconnect attempt %d: %d", attempt, delay_seconds)
+                _LOGGER.debug("Delay time for reconnect attempt %d: %ds", attempt, delay_seconds)
                 delay(delay_seconds)
         if not success:
             self._handle_connection_stopped()
@@ -502,7 +502,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             elif parsed_message.kind == "serverData":
                 handle_server_data_message(parsed_message)
             else:
-                _LOGGER.warning("unknown message type: {}", parsed_message.kind)
+                _LOGGER.warning("unknown message type: %s", parsed_message.kind)
 
         def on_close(_: Any, close_status_code: int, close_msg: str):
             if self._state == WebPubSubClientState.CONNECTED:
