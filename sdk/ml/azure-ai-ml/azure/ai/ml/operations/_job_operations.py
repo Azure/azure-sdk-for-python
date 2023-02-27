@@ -57,6 +57,7 @@ from azure.ai.ml.constants._common import (
     GIT_PATH_PREFIX,
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
     LOCAL_COMPUTE_TARGET,
+    SERVERLESS_COMPUTE,
     SHORT_URI_FORMAT,
     SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
     TID_FMT,
@@ -378,6 +379,8 @@ class JobOperations(_ScopeDependentOperations):
                 )
 
             if is_data_binding_expression(compute_name):
+                return compute_name
+            if compute_name == SERVERLESS_COMPUTE:
                 return compute_name
 
             try:
