@@ -336,6 +336,7 @@ class AMQPClientAsync(AMQPClientSync):
         :rtype: bool
         :raises: TimeoutError if CBS authentication timeout reached.
         """
+
         if self._shutdown:
             return False
         if not await self.client_ready_async():

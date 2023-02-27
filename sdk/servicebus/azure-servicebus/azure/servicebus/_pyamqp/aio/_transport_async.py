@@ -59,7 +59,6 @@ from .._transport import (
     set_cloexec,
     AMQP_PORT,
     TIMEOUT_INTERVAL,
-    READ_TIMEOUT_INTERVAL,
 )
 from ..error import AuthenticationException, ErrorCondition
 
@@ -233,7 +232,6 @@ class AsyncTransport(
         *,
         port=AMQP_PORT,
         connect_timeout=None,
-        read_timeout=None,
         ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
@@ -248,7 +246,6 @@ class AsyncTransport(
         self.host, self.port = to_host_port(host, port)
 
         self.connect_timeout = connect_timeout
-        self.read_timeout = read_timeout or READ_TIMEOUT_INTERVAL #TODO: read timeout like sync transport
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
@@ -260,7 +257,7 @@ class AsyncTransport(
             if self.connected:
                 return
             await self._connect(self.host, self.port, self.connect_timeout)
-            self._init_socket(self.socket_settings, self.read_timeout)
+            self._init_socket(self.socket_settings)
             self.reader, self.writer = await asyncio.open_connection(
                 sock=self.sock,
                 ssl=self.sslopts,
@@ -344,7 +341,7 @@ class AsyncTransport(
             # For uamqp exception parity. Remove later when resolving issue #27128.
             exc.filename = self.sslopts
             raise exc
-        self.sock.settimeout(read_timeout)  # set socket back to non-blocking mode
+        self.sock.settimeout(.2)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
         tcp_opts = {}
