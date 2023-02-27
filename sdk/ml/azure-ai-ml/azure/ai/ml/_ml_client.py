@@ -76,6 +76,7 @@ from azure.ai.ml.operations import (
     VirtualClusterOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    WorkspaceOutboundRuleOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -223,7 +224,7 @@ class MLClient:
             **kwargs,
         )
 
-        self._rp_service_client = ServiceClient102022Preview(
+        self._rp_service_client = ServiceClient122022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,
@@ -296,6 +297,14 @@ class MLClient:
             **app_insights_handler_kwargs,
         )
 
+        self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
+            self._operation_scope,
+            self._rp_service_client,
+            self._operation_container,
+            self._credential,
+            **kwargs,
+        )
+
         # TODO make sure that at least one reviewer who understands operation initialization details reviews this
         self._registries = RegistryOperations(
             self._operation_scope,
@@ -341,6 +350,7 @@ class MLClient:
             self._operation_config,
             self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
             self._datastores,
+            requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.CODE, self._code)
@@ -769,7 +779,7 @@ class MLClient:
 
     # T = valid inputs/outputs for create_or_update
     # Each entry here requires a registered _create_or_update function below
-    T = TypeVar("T", Job, Model, Environment, Component, Datastore, WorkspaceAssetReference)
+    T = TypeVar("T", Job, Model, Environment, Component, Datastore)
 
     def create_or_update(
         self,
@@ -781,7 +791,7 @@ class MLClient:
         :param entity: The resource to create or update.
         :type entity: typing.Union[~azure.ai.ml.entities.Job
             , ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component
-            , ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceAssetReference]
+            , ~azure.ai.ml.entities.Datastore]
         :return: The created or updated resource.
         :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
             , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]

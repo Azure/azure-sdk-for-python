@@ -1189,7 +1189,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo " "${{inputs.literal_input}}",
                         "description": "Train a model on the Iris " "dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "literal_input": {"default": "7", "type": "integer"},
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
@@ -1204,7 +1204,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "echo Hello World",
                         "description": "Train a model on the Iris dataset-2.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
                             "test2": {"type": "uri_file"},
@@ -1218,7 +1218,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo ${{inputs.test1}}",
                         "description": "Train a model on the Iris dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_folder"}},
@@ -1234,7 +1234,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo " "${{inputs.literal_input}}",
                         "description": "Train a model on the Iris " "dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "literal_input": {"default": "7", "type": "integer"},
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
@@ -1249,7 +1249,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "echo Hello World",
                         "description": "Train a model on the Iris dataset-2.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
                             "test2": {"type": "uri_file"},
@@ -1263,7 +1263,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo ${{inputs.test1}}",
                         "description": "Train a model on the Iris dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_folder", "mode": "mount"}},
@@ -1297,7 +1297,7 @@ class TestPipelineJobSchema:
             "hello_world_inline_commandjob_1": {
                 "_source": "YAML.JOB",
                 "command": "pip freeze && echo ${{inputs.literal_input}}",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "inputs": {
                     "literal_input": {"type": "integer"},
                     "test1": {"type": "uri_file", "mode": "ro_mount"},
@@ -1311,7 +1311,7 @@ class TestPipelineJobSchema:
             "hello_world_inline_commandjob_2": {
                 "_source": "YAML.JOB",
                 "command": "pip freeze && echo ${{inputs.test1}}",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "inputs": {
                     "test1": {"mode": "ro_mount", "type": "uri_file"},
                     "test2": {"type": "uri_folder"},
@@ -1324,7 +1324,7 @@ class TestPipelineJobSchema:
             "hello_world_inline_commandjob_3": {
                 "_source": "YAML.JOB",
                 "command": "pip freeze && echo ${{inputs.test1}}",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "inputs": {
                     "test1": {"mode": "ro_mount", "type": "uri_file"},
                     "test2": {"type": "uri_file"},

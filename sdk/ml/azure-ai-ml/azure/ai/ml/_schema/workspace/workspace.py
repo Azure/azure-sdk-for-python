@@ -11,6 +11,9 @@ from azure.ai.ml._schema.workspace.customer_managed_key import CustomerManagedKe
 from azure.ai.ml._schema.workspace.identity import IdentitySchema
 from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
+from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
+
+from azure.ai.ml._schema import ExperimentalField
 
 
 class WorkspaceSchema(PathAwareSchema):
@@ -36,3 +39,4 @@ class WorkspaceSchema(PathAwareSchema):
     )
     identity = NestedField(IdentitySchema)
     primary_user_assigned_identity = fields.Str()
+    managed_network = ExperimentalField(NestedField(ManagedNetworkSchema))
