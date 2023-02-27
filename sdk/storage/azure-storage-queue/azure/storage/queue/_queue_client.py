@@ -168,7 +168,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             queue_name: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-     ) -> Self:
+        ) -> Self:
         """Create QueueClient from a Connection String.
 
         :param str conn_str:
@@ -204,7 +204,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def create_queue(
-            self, metadata: Optional[Dict[str, Any]] = None,
+            self, metadata: Optional[Dict[str, str]] = None,
             **kwargs: Any
         ) -> None:
         """Creates a new queue in the storage account.
@@ -316,8 +316,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def set_queue_metadata(
-            self,
-            metadata: Optional[Dict[str, Any]] = None,
+            self, metadata: Optional[Dict[str, str]] = None,
             **kwargs: Any
         ) -> None:
         """Sets user-defined metadata on the specified queue.
@@ -447,7 +446,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             content: Any,
             *,
             visibility_timeout: Optional[int] = None,
-            time_to_live: Optional[int] = 7,
+            time_to_live: Optional[int] = None,
             **kwargs: Any
         ) -> "QueueMessage":
         """Adds a new message to the back of the message queue.
@@ -499,8 +498,6 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Send messages.
         """
-        visibility_timeout = kwargs.pop('visibility_timeout', None)
-        time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
         try:
             self._config.message_encode_policy.configure(
@@ -583,7 +580,6 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Receive one message from the queue.
         """
-        visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
