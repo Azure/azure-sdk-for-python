@@ -165,3 +165,6 @@ class TestDSLPipeline:
         silo_configs[1] = FederatedLearningSilo(compute="com1", datastore="ds1", inputs={"input1" : Input(type=AssetTypes.MLTABLE)})
         validation_result = try_validate()
         assert validation_result.passed
+    
+    def test_fl_node_anchoring(self) -> None:
+        pass

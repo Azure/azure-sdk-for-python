@@ -20,5 +20,3 @@ class FederatedLearningSiloSchema(YamlFileSchema):
     compute = fields.Str()
     datastore = fields.Str()
     inputs = InputsField()
-
-

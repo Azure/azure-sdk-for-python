@@ -34,6 +34,5 @@ def save_mltable_yaml(path, mltable_paths):
 def aggregate_output(aggregated_output: Output(type="mltable"), **kwargs):
     print("Aggregated Output {}".format(aggregated_output))
     # keys are inputs names (ex: silo_output_silo_1)
-    # values are uri_folder paths 
-    path_list = [v for v in kwargs.values()] 
-    save_mltable_yaml(aggregated_output, path_list)
+    # values are uri_folder paths
+    save_mltable_yaml(aggregated_output, kwargs.values())

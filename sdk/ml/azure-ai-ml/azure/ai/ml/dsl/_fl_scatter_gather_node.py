@@ -41,8 +41,9 @@ from azure.ai.ml._utils._experimental import experimental
 # https://github.com/Azure/DesignerPrivatePreviewFeatures/blob/d8732de8f3f201aebeac2f079f8f89e3592be2ba/azure-ai-ml/samples/control-flow/federated-learning/native/main.py#L87
 #  Changes include:
 #  - Expand inputs to match spec
-#  - Possibly encapsulate entire scatter/gather loop with a do-while loop (individual scatters will be managed by a parallel-for loop).
-#     - See https://github.com/Azure/DesignerPrivatePreviewFeatures/blob/d8732de8f3f201aebeac2f079f8f89e3592be2ba/azure-ai-ml/samples/control-flow/federated-learning/native/main.py#L151
+#  - Possibly encapsulate entire scatter/gather loop with a do-while loop
+#    (individual scatters will be managed by a parallel-for loop). See:
+# https://github.com/Azure/DesignerPrivatePreviewFeatures/blob/d8732de8f3f201aebeac2f079f8f89e3592be2ba/azure-ai-ml/samples/control-flow/federated-learning/native/main.py#L151
 #     - And for p-for: https://azureml-pipelines-doc-1p.azurewebsites.net/features/control_flow/parallel_for.html
 #  - change output to be... whatever the standard output of a model training step is.
 #
@@ -68,7 +69,7 @@ def fl_scatter_gather(
     """
     param silo_component: A component which contains the steps that will be run multiple
         times across different silos, as specified by the silo_configs input. In a typical
-        horizonal federated learning context, this component is what will perform actual model
+        horizontal federated learning context, this component is what will perform actual model
         training.
     type silo_component: Component
     param aggregation_component: A component which receives inputs from the myriad executed silo components,

@@ -91,7 +91,7 @@ class FederatedLearningSilo():
     @classmethod
     def _load(
         cls,
-        yaml_path: Optional[Union[PathLike, str]] = None,,
+        yaml_path: Optional[Union[PathLike, str]] = None,
     ) -> "FederatedLearningSilo":
         yaml_dict = load_yaml(yaml_path)
         return FederatedLearningSilo._load_from_dict(silo_dict=yaml_dict)
