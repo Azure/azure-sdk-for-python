@@ -57,6 +57,7 @@ from azure.ai.ml.constants._common import (
     GIT_PATH_PREFIX,
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
     LOCAL_COMPUTE_TARGET,
+    SERVERLESS_COMPUTE,
     SHORT_URI_FORMAT,
     SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
     TID_FMT,
@@ -88,6 +89,7 @@ from azure.ai.ml.exceptions import (
     PipelineChildJobError,
     ValidationErrorType,
     ValidationException,
+    UserErrorException,
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
@@ -277,6 +279,8 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: Job
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
+        if not isinstance(name, str):
+            raise UserErrorException(f"{name} is a invalid input for client.jobs.get().")
         job_object = self._get_job(name)
 
         if not _is_pipeline_child_job(job_object):
