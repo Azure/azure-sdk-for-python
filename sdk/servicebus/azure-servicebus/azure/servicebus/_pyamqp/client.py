@@ -795,7 +795,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         # Iterator 
         self._timeout = kwargs.pop("timeout", 0)
         self._timeout_reached = False
-        self._last_activity_stamp = time.time()
+        self._last_activity_timestamp = time.time()
         self._running_iter = False
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
@@ -852,7 +852,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         """
-        self._last_activity_stamp = time.time()
+        self._last_activity_timestamp = time.time()
         if self._message_received_callback:
             self._message_received_callback(message)
         if not self._streaming_receive:
@@ -952,12 +952,12 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._timeout_reached = False
         receiving = True
         message = None
-        self._last_activity_stamp = time.time()
+        self._last_activity_timestamp = time.time()
         self._timeout = timeout if timeout else self._timeout
         try:
             while receiving and not self._timeout_reached:
                 if self._timeout > 0:
-                    if time.time() - self._last_activity_stamp >= self._timeout:
+                    if time.time() - self._last_activity_timestamp >= self._timeout:
                         self._timeout_reached = True
 
                 if not self._timeout_reached:
@@ -965,7 +965,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
                 while not self._received_messages.empty():
                     message = self._received_messages.get()
-                    self._last_activity_stamp = time.time()
+                    self._last_activity_timestamp = time.time()
                     self._received_messages.task_done()
                     yield message
 
