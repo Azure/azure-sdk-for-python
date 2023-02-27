@@ -17,7 +17,7 @@ from azure.ai.ml.entities._util import load_from_dict
 
 @experimental
 class DataImport(Data):
-    """Data import job to create the data asset.
+    """Data asset with a creating data import job.
 
     :param name: Name of the asset.
     :type name: str

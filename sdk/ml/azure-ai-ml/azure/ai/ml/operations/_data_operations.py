@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Union, Iterable
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.entities import Job, PipelineJob
+from azure.ai.ml.entities import Job, PipelineJob, PipelineJobSettings
 from azure.ai.ml.data_transfer import import_data
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
@@ -339,7 +339,6 @@ class DataOperations(_ScopeDependentOperations):
             data_import.path = data_import.path.rstrip("/") + "/{name}"
         import_job = import_data(
             description=data_import.description or experiment_name,
-            tags=data_import.tags,
             display_name=experiment_name,
             experiment_name=experiment_name,
             compute="serverless",
@@ -349,14 +348,15 @@ class DataOperations(_ScopeDependentOperations):
                     type=data_import.type, path=data_import.path, name=data_import.name, version=data_import.version
                 )
             },
-            is_deterministic=False,
             component="azureml://registries/azureml-dev/components/" + component_name + "/versions/1",
         )
         import_pipeline = PipelineJob(
             description=data_import.description or experiment_name,
+            tags=data_import.tags,
             display_name=experiment_name,
             experiment_name=experiment_name,
             properties=data_import.properties or {},
+            settings=PipelineJobSettings(force_rerun=True),
             jobs={experiment_name: import_job},
         )
         import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
