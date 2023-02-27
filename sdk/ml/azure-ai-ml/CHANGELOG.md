@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added support for `tags` on Compute Resources.
+- Added support for promoting data asset from a workspace to a registry
 
 ### Bugs Fixed
 
