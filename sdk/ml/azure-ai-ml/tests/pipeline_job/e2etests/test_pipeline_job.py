@@ -1626,8 +1626,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.name == "convert_data_node_output"
         assert node_output.version == "1"
 
-    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_data_transfer_copy_urifolder(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -1648,8 +1646,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_data_transfer_copy_urifile(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -1670,8 +1666,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_data_transfer_copy_2urifolder(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -1695,8 +1689,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_inline_data_transfer_copy_2urifolder(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1722,8 +1714,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_inline_data_transfer_copy_mixtype_file(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1750,7 +1740,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     def test_pipeline_job_with_data_transfer_import_filesystem(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -1762,8 +1751,10 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["s3_blob"], fields_to_omit)
 
+        # load from rest will get source from component, which will be REMOTE.REGISTRY since component now is
+        # registry component
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "REMOTE.REGISTRY",
             "outputs": {
                 "sink": {
                     "job_output_type": "uri_folder",
@@ -1779,7 +1770,38 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
+    def test_pipeline_job_with_data_transfer_import_filesystem_reference_component(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/" "import_file_system_to_blob_reference_component.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["s3_blob"], fields_to_omit)
+
+        # load from rest will get source from component, which will be REMOTE.REGISTRY since component now is
+        # registry component
+        assert actual_dict == {
+            "_source": "REMOTE.REGISTRY",
+            "outputs": {
+                "sink": {
+                    "job_output_type": "uri_folder",
+                    "uri": "azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//",
+                }
+            },
+            "source": {
+                "connection": "${{parent.inputs.connection_target}}",
+                "path": "${{parent.inputs.path_source_s3}}",
+                "type": "file_system",
+            },
+            "task": "import_data",
+            "type": "data_transfer",
+        }
+
     def test_pipeline_job_with_data_transfer_import_sql_database(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -1792,8 +1814,8 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
-            "computeId": "adftest",
+            "_source": "REMOTE.REGISTRY",
+            "computeId": "serverless",
             "outputs": {"sink": {"job_output_type": "mltable"}},
             "source": {
                 "connection": "azureml:my_azuresqldb_connection",
@@ -1804,7 +1826,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     def test_pipeline_job_with_data_transfer_import_snowflake_database(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1819,8 +1840,8 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
-            "computeId": "adftest",
+            "_source": "REMOTE.REGISTRY",
+            "computeId": "serverless",
             "outputs": {
                 "sink": {
                     "job_output_type": "mltable",
@@ -1836,7 +1857,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     def test_pipeline_job_with_data_transfer_export_sql_database(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -1849,7 +1869,30 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["blob_azuresql"], fields_to_omit)
 
         assert actual_dict == {
-            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "_source": "REMOTE.REGISTRY",
+            "inputs": {"source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
+            "sink": {
+                "connection": "${{parent.inputs.connection_target_azuresql}}",
+                "table_name": "${{parent.inputs.table_name}}",
+                "type": "database",
+            },
+            "task": "export_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_data_transfer_export_sql_database_reference_component(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob_reference_component.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["blob_azuresql"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.REGISTRY",
             "inputs": {"source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
             "sink": {
                 "connection": "${{parent.inputs.connection_target_azuresql}}",

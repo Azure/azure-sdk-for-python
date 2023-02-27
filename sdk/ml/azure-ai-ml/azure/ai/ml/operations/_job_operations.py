@@ -57,12 +57,12 @@ from azure.ai.ml.constants._common import (
     GIT_PATH_PREFIX,
     LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
     LOCAL_COMPUTE_TARGET,
-    SERVERLESS_COMPUTE,
     SHORT_URI_FORMAT,
     SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME,
     TID_FMT,
     AssetTypes,
     AzureMLResourceType,
+    SERVERLESS_COMPUTE,
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -382,7 +382,6 @@ class JobOperations(_ScopeDependentOperations):
                 return compute_name
             if compute_name == SERVERLESS_COMPUTE:
                 return compute_name
-
             try:
                 return self._compute_operations.get(compute_name).id
             except ResourceNotFoundError as e:
