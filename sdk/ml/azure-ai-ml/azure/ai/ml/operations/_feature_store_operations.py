@@ -284,7 +284,7 @@ class FeatureStoreOperations():
         ):
             raise ValidationError(
                 "{0} is not a feature store".format(name))
-        
+
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_delete(
             name=name,
             delete_dependent_resources=delete_dependent_resources,
