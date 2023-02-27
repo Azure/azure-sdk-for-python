@@ -133,10 +133,12 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RecordingStorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Recording storage mode. ``External`` enables bring your own storage."""
+    """Recording storage mode. When set to 'BlobStorage', specify required parameter
+    'ExternalStorageLocation', to export recording to your own blob container.
+    """
 
     ACS = "acs"
-    AZURE_BLOB = "azureBlob"
+    BLOB_STORAGE = "blobStorage"
 
 
 class Tone(str, Enum, metaclass=CaseInsensitiveEnumMeta):

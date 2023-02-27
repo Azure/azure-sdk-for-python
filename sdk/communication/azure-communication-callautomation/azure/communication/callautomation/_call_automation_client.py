@@ -14,6 +14,10 @@ from ._call_connection import CallConnection
 from ._call_recording import CallRecording
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.utils import get_authentication_policy, parse_connection_str
+from ._generated.models import (CreateCallRequest)
+from ._communication_identifier_serializer import *
+from ._models import CallInvite
+
 
 class CallAutomationClient(object):
     def __init__(
@@ -42,9 +46,10 @@ class CallAutomationClient(object):
 
         self._client = AzureCommunicationCallAutomationService(
             self._endpoint,
-            api_version = self._api_version,
-            authentication_policy=get_authentication_policy(endpoint, credential),
-            sdk_moniker = SDK_MONIKER,
+            api_version=self._api_version,
+            authentication_policy=get_authentication_policy(
+                endpoint, credential),
+            sdk_moniker=SDK_MONIKER,
             **kwargs)
 
         self._call_connection_client = self._client.call_connection
@@ -75,7 +80,7 @@ class CallAutomationClient(object):
             self._call_connection_client,
             self._call_media,
             **kwargs
-            )
+        )
 
     def get_call_recording(
         self,
@@ -85,4 +90,28 @@ class CallAutomationClient(object):
         return CallRecording(
             self._call_recording_client,
             **kwargs
-            )
+        )
+
+    def create_call(
+        self,
+        call_invite: CallInvite,
+        callback_url: str,
+        **kwargs
+    ):
+        """
+        Create a call connection request from a source identity to a target identity.
+
+        :param call_invite: Required. Call invitee's information.
+        :type call_invite: CallInvite
+        :param callback_url: Required. The call back url for receiving events.
+        :type callback_url: str
+
+        """
+
+        if not call_invite:
+            raise ValueError('call_invite cannot be None.')
+        if not callback_url:
+            raise ValueError('callback_url cannot be None.')
+
+        create_call_request = CreateCallRequest(
+            targets=[serialize_identifier(call_invite.target)])

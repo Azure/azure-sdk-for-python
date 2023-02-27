@@ -6,17 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AcsCallParticipant
-from ._models import AddParticipantsFailed
-from ._models import AddParticipantsRequest
-from ._models import AddParticipantsResponse
-from ._models import AddParticipantsSucceeded
+from ._models import AddParticipantFailed
+from ._models import AddParticipantRequest
+from ._models import AddParticipantResponse
+from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
 from ._models import CallLocator
-from ._models import CallSource
+from ._models import CallParticipant
 from ._models import CallTransferAccepted
 from ._models import CallTransferFailed
 from ._models import Choice
@@ -27,11 +26,14 @@ from ._models import CommunicationErrorResponse
 from ._models import CommunicationIdentifierModel
 from ._models import CommunicationUserIdentifierModel
 from ._models import CreateCallRequest
+from ._models import CustomContext
 from ._models import DtmfOptions
 from ._models import FileSource
 from ._models import GetParticipantsResponse
 from ._models import MediaStreamingConfiguration
 from ._models import MicrosoftTeamsUserIdentifierModel
+from ._models import MuteParticipantsRequest
+from ._models import MuteParticipantsResponse
 from ._models import ParticipantsUpdated
 from ._models import PhoneNumberIdentifierModel
 from ._models import PlayCanceled
@@ -49,13 +51,15 @@ from ._models import RecordingStateChanged
 from ._models import RecordingStateResponse
 from ._models import RedirectCallRequest
 from ._models import RejectCallRequest
-from ._models import RemoveParticipantsRequest
-from ._models import RemoveParticipantsResponse
+from ._models import RemoveParticipantRequest
+from ._models import RemoveParticipantResponse
 from ._models import ResultInformation
 from ._models import StartCallRecordingRequest
 from ._models import TextSource
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
+from ._models import UnmuteParticipantsRequest
+from ._models import UnmuteParticipantsResponse
 
 from ._enums import CallConnectionStateModel
 from ._enums import CallLocatorKind
@@ -80,17 +84,16 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AcsCallParticipant",
-    "AddParticipantsFailed",
-    "AddParticipantsRequest",
-    "AddParticipantsResponse",
-    "AddParticipantsSucceeded",
+    "AddParticipantFailed",
+    "AddParticipantRequest",
+    "AddParticipantResponse",
+    "AddParticipantSucceeded",
     "AnswerCallRequest",
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",
     "CallLocator",
-    "CallSource",
+    "CallParticipant",
     "CallTransferAccepted",
     "CallTransferFailed",
     "Choice",
@@ -101,11 +104,14 @@ __all__ = [
     "CommunicationIdentifierModel",
     "CommunicationUserIdentifierModel",
     "CreateCallRequest",
+    "CustomContext",
     "DtmfOptions",
     "FileSource",
     "GetParticipantsResponse",
     "MediaStreamingConfiguration",
     "MicrosoftTeamsUserIdentifierModel",
+    "MuteParticipantsRequest",
+    "MuteParticipantsResponse",
     "ParticipantsUpdated",
     "PhoneNumberIdentifierModel",
     "PlayCanceled",
@@ -123,13 +129,15 @@ __all__ = [
     "RecordingStateResponse",
     "RedirectCallRequest",
     "RejectCallRequest",
-    "RemoveParticipantsRequest",
-    "RemoveParticipantsResponse",
+    "RemoveParticipantRequest",
+    "RemoveParticipantResponse",
     "ResultInformation",
     "StartCallRecordingRequest",
     "TextSource",
     "TransferCallResponse",
     "TransferToParticipantRequest",
+    "UnmuteParticipantsRequest",
+    "UnmuteParticipantsResponse",
     "CallConnectionStateModel",
     "CallLocatorKind",
     "CallRejectReason",

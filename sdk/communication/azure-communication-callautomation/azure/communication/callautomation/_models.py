@@ -16,13 +16,14 @@ except ImportError:
 from azure.core import CaseInsensitiveEnumMeta
 
 from ._generated.models import (
-CallLocator,
-StartCallRecordingRequest as StartCallRecordingRequestRest,
-RecordingContentType, RecordingChannelType, RecordingFormatType,
-CommunicationIdentifierModel,
-RecordingStorageType,
-RecognizeInputType
+    CallLocator,
+    StartCallRecordingRequest as StartCallRecordingRequestRest,
+    RecordingContentType, RecordingChannelType, RecordingFormatType,
+    CommunicationIdentifierModel,
+    RecordingStorageType,
+    RecognizeInputType
 )
+
 
 class ServerCallLocator(object):
     def __init__(
@@ -38,9 +39,10 @@ class ServerCallLocator(object):
 
     def _to_generated(self):
 
-        return CallLocator( kind=self.kind,
-        server_call_id=self.id
-        )
+        return CallLocator(kind=self.kind,
+                           server_call_id=self.id
+                           )
+
 
 class GroupCallLocator(object):
     def __init__(
@@ -56,21 +58,26 @@ class GroupCallLocator(object):
 
     def _to_generated(self):
 
-        return CallLocator( kind=self.kind,
-        group_call_id=self.id
-        )
+        return CallLocator(kind=self.kind,
+                           group_call_id=self.id
+                           )
+
 
 class StartCallRecordingRequest(object):
     def __init__(
         self,
         *,
-        call_locator: ServerCallLocator|GroupCallLocator,
+        call_locator: ServerCallLocator | GroupCallLocator,
         recording_state_callback_uri: Optional[str] = None,
-        recording_content_type: Optional[Union[str, "RecordingContentType"]] = None,
-        recording_channel_type: Optional[Union[str, "RecordingChannelType"]] = None,
-        recording_format_type: Optional[Union[str, "RecordingFormatType"]] = None,
+        recording_content_type: Optional[Union[str,
+                                               "RecordingContentType"]] = None,
+        recording_channel_type: Optional[Union[str,
+                                               "RecordingChannelType"]] = None,
+        recording_format_type: Optional[Union[str,
+                                              "RecordingFormatType"]] = None,
         audio_channel_participant_ordering: Optional[List["CommunicationIdentifierModel"]] = None,
-        recording_storage_type: Optional[Union[str, "RecordingStorageType"]] = None,
+        recording_storage_type: Optional[Union[str,
+                                               "RecordingStorageType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -114,17 +121,16 @@ class StartCallRecordingRequest(object):
         self.audio_channel_participant_ordering = audio_channel_participant_ordering
         self.recording_storage_type = recording_storage_type
 
-
     def _to_generated(self):
 
-        return StartCallRecordingRequestRest( call_locator=self.call_locator._to_generated(),
-        recording_state_callback_uri=self.recording_state_callback_uri,
-        recording_content_type=self.recording_content_type,
-        recording_channel_type=self.recording_channel_type,
-        recording_format_type=self.recording_format_type,
-        audio_channel_participant_ordering=self.audio_channel_participant_ordering,
-        recording_storage_type=self.recording_storage_type
-        )
+        return StartCallRecordingRequestRest(call_locator=self.call_locator._to_generated(),
+                                             recording_state_callback_uri=self.recording_state_callback_uri,
+                                             recording_content_type=self.recording_content_type,
+                                             recording_channel_type=self.recording_channel_type,
+                                             recording_format_type=self.recording_format_type,
+                                             audio_channel_participant_ordering=self.audio_channel_participant_ordering,
+                                             recording_storage_type=self.recording_storage_type
+                                             )
 
 
 class RecordingStateResponse(object):
@@ -140,7 +146,7 @@ class RecordingStateResponse(object):
 
     def __init__(
         self,
-        **kwargs # type: Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         self.recording_id = kwargs['recording_id']
@@ -162,6 +168,7 @@ class PlaySource(object):
     :ivar play_source_id: Defines the identifier to be used for caching related media.
     :vartype play_source_id: str
     """
+
     def __init__(
             self,
             **kwargs
@@ -176,6 +183,7 @@ class FileSource(PlaySource):
     :ivar uri: Uri for the audio file to be played.
     :vartype uri: str
     """
+
     def __init__(
             self,
             **kwargs
@@ -197,6 +205,7 @@ class TextSource(PlaySource):
     :ivar voice_name: Voice name to be played.
     :vartype voice_name: str
     """
+
     def __init__(
             self,
             **kwargs
@@ -390,7 +399,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     """
     if raw_id.startswith('4:'):
         return PhoneNumberIdentifier(
-            value = raw_id[len('4:'):]
+            value=raw_id[len('4:'):]
         )
 
     segments = raw_id.split(':', maxsplit=2)
@@ -457,17 +466,19 @@ class CallMediaRecognizeOptions(object):
     :ivar interrupt_prompt: Determines if we interrupt the prompt and start recognizing.
     :vartype interrupt_prompt: bool
     """
+
     def __init__(
-            self, 
-            input_type, 
-            target_participant, 
+            self,
+            input_type,
+            target_participant,
             **kwargs
     ):
         self.input_type = input_type
         self.target_participant = target_participant
         self.initial_silence_timeout = 5
         self.play_prompt = kwargs.get('play_prompt')
-        self.interrupt_call_media_operation = kwargs.get('interrupt_call_media_operation')
+        self.interrupt_call_media_operation = kwargs.get(
+            'interrupt_call_media_operation')
         self.stop_current_operations = kwargs.get('stop_current_operations')
         self.operation_context = kwargs.get('operation_context')
         self.interrupt_prompt = kwargs.get('interrupt_prompt')
@@ -484,10 +495,11 @@ class CallMediaRecognizeDtmfOptions(CallMediaRecognizeOptions):
     :ivar stop_dtmf_tones: List of tones that will stop recognizing.
     :vartype stop_dtmf_tones: list[~azure.communication.callautomation.models.Tone]
     """
+
     def __init__(
-            self, 
-            target_participant, 
-            max_tones_to_collect, 
+            self,
+            target_participant,
+            max_tones_to_collect,
             **kwargs
     ):
         self.max_tones_to_collect = max_tones_to_collect
@@ -503,10 +515,11 @@ class CallMediaRecognizeChoiceOptions(CallMediaRecognizeOptions):
     :ivar recognize_choices: List of recognize choices
     :vartype recognize_choices: list[~azure.communication.callautomation.models.Choice]
     """
+
     def __init__(
-            self, 
-            target_participant, 
-            recognize_choices, 
+            self,
+            target_participant,
+            recognize_choices,
             **kwargs
     ):
         self.recognize_choices = recognize_choices
@@ -533,7 +546,6 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POUND = "pound"
     ASTERISK = "asterisk"
 
-
     class RecognizeCanceled(object):
         """RecognizeCanceled.
 
@@ -548,6 +560,7 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         request to the response event.
         :vartype operation_context: str
         """
+
     def __init__(
         self,
         **kwargs: Any
@@ -652,6 +665,7 @@ class RecognizeFailed(object):
      services.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
     """
+
     def __init__(
         self,
         **kwargs: Any
@@ -677,3 +691,34 @@ class RecognizeFailed(object):
         self.correlation_id = kwargs.get('correlation_id')
         self.operation_context = kwargs.get('operation_context')
         self.result_information = kwargs.get('result_information')
+
+
+class CallInvite(object):
+    def __init__(
+        self,
+        *,
+        target: CommunicationIdentifier,
+        sourceCallIdNumber: Optional[PhoneNumberIdentifier] = None,
+        sourceDisplayName: Optional[str] = None,
+        sipHeaders: Optional[dict[str, str]] = None,
+        voipHeaders: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target: Target's identity. Required.
+        :paramtype target: CommunicationIdentifier
+        :keyword sourceCallIdNumber: Caller's phone number identifier
+        :paramtype sourceCallIdNumber: PhoneNumberIdentifier
+        :keyword sourceDisplayName: Set display name for caller
+        :paramtype sourceDisplayName: str
+        :keyword sipHeaders: Custom context for PSTN
+        :paramtype sipHeaders: str
+        :keyword voipHeaders: Custom context for VOIP
+        :paramtype voipHeaders: str
+        """
+        super().__init__(**kwargs)
+        self.target = target
+        self.sourceCallIdNumber = sourceCallIdNumber
+        self.sourceDisplayName = sourceDisplayName
+        self.sipHeaders = sipHeaders
+        self.voipHeaders = voipHeaders
