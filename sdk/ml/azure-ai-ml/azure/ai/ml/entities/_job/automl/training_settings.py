@@ -6,19 +6,22 @@
 
 from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationModels
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ClassificationModels
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     ClassificationTrainingSettings as RestClassificationTrainingSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ForecastingModels
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ForecastingModels
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     ForecastingTrainingSettings as RestForecastingTrainingSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RegressionModels
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import RegressionModels
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TrainingSettings as RestTrainingSettings
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TrainingSettings as RestTrainingSettings
+from azure.ai.ml._restclient.v2023_02_01_preview.models._azure_machine_learning_workspaces_enums import (
+    TrainingMode,
+)
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -39,6 +42,7 @@ class TrainingSettings(RestTranslatableMixin):
         ensemble_model_download_timeout: Optional[int] = None,
         allowed_training_algorithms: Optional[List[str]] = None,
         blocked_training_algorithms: Optional[List[str]] = None,
+        training_mode: Optional[TrainingMode] = None,
     ):
         """TrainingSettings class for Azure Machine Learning.
 
@@ -61,6 +65,7 @@ class TrainingSettings(RestTranslatableMixin):
         self.ensemble_model_download_timeout = ensemble_model_download_timeout
         self.allowed_training_algorithms = allowed_training_algorithms
         self.blocked_training_algorithms = blocked_training_algorithms
+        self.training_mode = training_mode
 
     @property
     def allowed_training_algorithms(self):
@@ -81,6 +86,7 @@ class TrainingSettings(RestTranslatableMixin):
             if self.stack_ensemble_settings
             else None,
             ensemble_model_download_timeout=to_iso_duration_format_mins(self.ensemble_model_download_timeout),
+            training_mode=self.training_mode,
         )
 
     @classmethod
@@ -97,6 +103,7 @@ class TrainingSettings(RestTranslatableMixin):
                 if obj.stack_ensemble_settings
                 else None
             ),
+            training_mode=obj.training_mode,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -112,6 +119,7 @@ class TrainingSettings(RestTranslatableMixin):
             and self.stack_ensemble_settings == other.stack_ensemble_settings
             and self.allowed_training_algorithms == other.allowed_training_algorithms
             and self.blocked_training_algorithms == other.blocked_training_algorithms
+            and self.training_mode == other.training_mode
         )
 
     def __ne__(self, other: object) -> bool:
