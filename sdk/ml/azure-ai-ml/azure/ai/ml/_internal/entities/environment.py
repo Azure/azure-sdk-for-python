@@ -77,7 +77,7 @@ class InternalEnvironment:
         dockerfile_file = self.docker[self.BUILD][self.DOCKERFILE]
         dockerfile_file = self._parse_file_path(dockerfile_file)
         if (
-            not self._docker_file_resolve
+            not self._docker_file_resolved
             and not skip_path_validation
             and not (Path(base_path) / dockerfile_file).is_file()
         ):
