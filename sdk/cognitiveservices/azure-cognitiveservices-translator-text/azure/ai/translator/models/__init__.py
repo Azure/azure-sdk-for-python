@@ -11,8 +11,6 @@ from ._models import BackTranslation
 from ._models import BreakSentenceElement
 from ._models import CommonScriptModel
 from ._models import DetectedLanguage
-from ._models import DetectedLanguageElement
-from ._models import DetectedLanguageWithAlternatives
 from ._models import DictionaryExampleElement
 from ._models import DictionaryExampleTextElement
 from ._models import DictionaryLookupElement
@@ -47,8 +45,6 @@ __all__ = [
     "BreakSentenceElement",
     "CommonScriptModel",
     "DetectedLanguage",
-    "DetectedLanguageElement",
-    "DetectedLanguageWithAlternatives",
     "DictionaryExampleElement",
     "DictionaryExampleTextElement",
     "DictionaryLookupElement",

@@ -141,20 +141,23 @@ class BreakSentenceElement(_model_base.Model):
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
     :vartype detected_language: ~azure.ai.translator.models.DetectedLanguage
-    :ivar sent_len: Sentence boundaries in the input and output texts. Required.
-    :vartype sent_len: ~azure.ai.translator.models.SentenceLength
+    :ivar sent_len: An integer array representing the lengths of the sentences in the input text.
+     The length of the array is the number of sentences, and the values are the length of each
+     sentence. Required.
+    :vartype sent_len: list[int]
     """
 
     detected_language: Optional["_models.DetectedLanguage"] = rest_field(name="detectedLanguage")
     """The detectedLanguage property is only present in the result object when language auto-detection is requested. """
-    sent_len: "_models.SentenceLength" = rest_field(name="sentLen")
-    """Sentence boundaries in the input and output texts. Required. """
+    sent_len: List[int] = rest_field(name="sentLen")
+    """An integer array representing the lengths of the sentences in the input text.
+The length of the array is the number of sentences, and the values are the length of each sentence. Required. """
 
     @overload
     def __init__(
         self,
         *,
-        sent_len: "_models.SentenceLength",
+        sent_len: List[int],
         detected_language: Optional["_models.DetectedLanguage"] = None,
     ):
         ...
@@ -243,104 +246,6 @@ The score is between zero and one and a low score indicates a low confidence. Re
         *,
         language: str,
         score: float,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class DetectedLanguageElement(_model_base.Model):
-    """Detected language.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar language: Code of the detected language. Required.
-    :vartype language: str
-    :ivar score: A float value indicating the confidence in the result. The score is between zero
-     and one
-     and a low score indicates a low confidence. Required.
-    :vartype score: float
-    :ivar is_translation_supported: A boolean value which is true if the detected language is one
-     of the languages supported for text translation. Required.
-    :vartype is_translation_supported: bool
-    :ivar is_transliteration_supported: A boolean value which is true if the detected language is
-     one of the languages supported for transliteration. Required.
-    :vartype is_transliteration_supported: bool
-    """
-
-    language: str = rest_field()
-    """Code of the detected language. Required. """
-    score: float = rest_field()
-    """A float value indicating the confidence in the result. The score is between zero and one 
-and a low score indicates a low confidence. Required. """
-    is_translation_supported: bool = rest_field(name="isTranslationSupported")
-    """A boolean value which is true if the detected language is one of the languages supported for text translation. Required. """
-    is_transliteration_supported: bool = rest_field(name="isTransliterationSupported")
-    """A boolean value which is true if the detected language is one of the languages supported for transliteration. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        language: str,
-        score: float,
-        is_translation_supported: bool,
-        is_transliteration_supported: bool,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class DetectedLanguageWithAlternatives(DetectedLanguageElement):
-    """Detected Language with alternatives.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar language: Code of the detected language. Required.
-    :vartype language: str
-    :ivar score: A float value indicating the confidence in the result. The score is between zero
-     and one
-     and a low score indicates a low confidence. Required.
-    :vartype score: float
-    :ivar is_translation_supported: A boolean value which is true if the detected language is one
-     of the languages supported for text translation. Required.
-    :vartype is_translation_supported: bool
-    :ivar is_transliteration_supported: A boolean value which is true if the detected language is
-     one of the languages supported for transliteration. Required.
-    :vartype is_transliteration_supported: bool
-    :ivar alternatives: An array of other possible languages. Required.
-    :vartype alternatives: list[~azure.ai.translator.models.DetectedLanguage]
-    """
-
-    alternatives: List["_models.DetectedLanguage"] = rest_field()
-    """An array of other possible languages. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        language: str,
-        score: float,
-        is_translation_supported: bool,
-        is_transliteration_supported: bool,
-        alternatives: List["_models.DetectedLanguage"],
     ):
         ...
 
