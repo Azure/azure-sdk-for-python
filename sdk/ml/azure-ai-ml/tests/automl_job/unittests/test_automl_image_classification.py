@@ -5,7 +5,7 @@
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     ClassificationPrimaryMetrics,
     LearningRateScheduler,
     MLTableJobInput,
