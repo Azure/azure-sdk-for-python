@@ -322,7 +322,7 @@ reviews = [
 
 result = text_analytics_client.recognize_entities(reviews)
 result = [review for review in result if not review.is_error]
-organization_to_reviews: typing.Dict[str, list[str]] = {}
+organization_to_reviews: typing.Dict[str, typing.List[str]] = {}
 
 for idx, review in enumerate(result):
     for entity in review.entities:

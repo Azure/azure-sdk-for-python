@@ -5,7 +5,7 @@
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobInput
 from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import RegressionModels, RegressionPrimaryMetrics, regression
 from azure.ai.ml.constants._common import AssetTypes

@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     InstanceSegmentationPrimaryMetrics,
     ObjectDetectionPrimaryMetrics,
     TaskType,

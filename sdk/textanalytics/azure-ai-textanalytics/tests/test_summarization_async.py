@@ -173,7 +173,7 @@ class TestSummarization(TextAnalyticsTest):
 
         response = await (await client.begin_abstractive_summary(
             docs,
-            max_sentence_count=5,
+            sentence_count=5,
             show_stats=True,
             polling_interval=self._interval(),
         )).result()

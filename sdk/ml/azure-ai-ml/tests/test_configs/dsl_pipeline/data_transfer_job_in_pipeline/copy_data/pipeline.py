@@ -2,7 +2,7 @@ from pathlib import Path
 
 from azure.ai.ml import Input, Output, dsl, load_component
 from azure.ai.ml.data_transfer import copy_data
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.constants._common import AssetTypes, SERVERLESS_COMPUTE
 from azure.ai.ml.constants._component import DataTransferTaskType, DataCopyMode
 from azure.ai.ml.entities import PipelineJob
 
@@ -29,7 +29,7 @@ def generate_dsl_pipeline_from_yaml() -> PipelineJob:
         ),
     )
 
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline
 
 
@@ -65,7 +65,7 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     pipeline = data_transfer_copy_pipeline_from_builder(
         cosmos_folder=cosmos_folder, cosmos_folder_dup=cosmos_folder_dup
     )
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline
 
 
@@ -92,7 +92,7 @@ def generate_dsl_pipeline_copy_mixtype_from_yaml() -> PipelineJob:
         ),
     )
 
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline
 
 
@@ -112,7 +112,7 @@ def generate_dsl_pipeline_copy_urifile_from_yaml() -> PipelineJob:
     )
 
     # pipeline.outputs.merged_blob.path will convert type to uri_folder, has a bug to track this: 2104275
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline
 
 
@@ -130,5 +130,5 @@ def generate_dsl_pipeline_copy_urifolder_from_yaml() -> PipelineJob:
             type=AssetTypes.URI_FOLDER,
         ),
     )
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline
