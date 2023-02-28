@@ -8,7 +8,19 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import (
+    Any,
+    AsyncIterable,
+    AsyncIterator,
+    Callable,
+    Dict,
+    IO,
+    Optional,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -63,10 +75,14 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
+]
 
 
-class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: disable=too-many-public-methods
+class PersonalizerClientOperationsMixin(
+    PersonalizerClientMixinABC
+):  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def get_service_configuration(self, **kwargs: Any) -> JSON:
         """Service Configuration.
@@ -153,7 +169,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -164,7 +182,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -382,7 +402,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         """
 
     @distributed_trace_async
-    async def update_service_configuration(self, config: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def update_service_configuration(
+        self, config: Union[JSON, IO], **kwargs: Any
+    ) -> JSON:
         """Update Service Configuration.
 
         Update the Personalizer service configuration.
@@ -465,7 +487,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
@@ -485,7 +509,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -496,7 +522,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -547,7 +575,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -558,7 +588,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -572,7 +604,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         return cast(JSON, deserialized)
 
     @overload
-    async def update_policy(self, policy: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def update_policy(
+        self, policy: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Update Policy.
 
         Update the Learning Settings that the Personalizer service will use to train models.
@@ -603,7 +637,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         """
 
     @overload
-    async def update_policy(self, policy: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def update_policy(
+        self, policy: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Update Policy.
 
         Update the Learning Settings that the Personalizer service will use to train models.
@@ -662,7 +698,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
@@ -682,7 +720,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -693,7 +733,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -744,7 +786,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -755,7 +799,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -889,7 +935,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -900,7 +948,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -947,7 +997,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -958,7 +1010,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -966,7 +1020,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     async def create_evaluation(  # pylint: disable=inconsistent-return-statements
-        self, evaluation_id: str, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation_id: str,
+        evaluation: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Create Offline Evaluation.
 
@@ -1007,7 +1066,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     async def create_evaluation(  # pylint: disable=inconsistent-return-statements
-        self, evaluation_id: str, evaluation: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation_id: str,
+        evaluation: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Create Offline Evaluation.
 
@@ -1056,7 +1120,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -1077,7 +1143,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1088,7 +1156,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1096,7 +1166,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @distributed_trace
     def list_evaluations(
-        self, *, filter_expression: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
+        self,
+        *,
+        filter_expression: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: int = 0,
+        **kwargs: Any
     ) -> AsyncIterable[JSON]:
         """All Offline Evaluations.
 
@@ -1162,7 +1237,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1173,16 +1251,23 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1205,7 +1290,11 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -1214,7 +1303,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     async def reward_single_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, reward: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        reward: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Reward.
 
@@ -1246,7 +1340,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     async def reward_single_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, reward: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        reward: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Reward.
 
@@ -1298,7 +1397,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -1319,7 +1420,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1330,7 +1433,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1371,7 +1476,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1382,7 +1489,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1465,7 +1574,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -1485,7 +1596,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1496,7 +1609,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1536,7 +1651,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1547,14 +1664,18 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def get_feature_importance(self, feature_importance_id: str, **kwargs: Any) -> JSON:
+    async def get_feature_importance(
+        self, feature_importance_id: str, **kwargs: Any
+    ) -> JSON:
         """Feature Importance.
 
         Get the Feature Importance associated with the Id.
@@ -1611,7 +1732,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1622,7 +1745,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1699,7 +1824,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @distributed_trace_async
     async def create_feature_importance(  # pylint: disable=inconsistent-return-statements
-        self, feature_importance_id: str, feature_importance: Union[JSON, IO], **kwargs: Any
+        self,
+        feature_importance_id: str,
+        feature_importance: Union[JSON, IO],
+        **kwargs: Any
     ) -> None:
         """Create Feature Importance.
 
@@ -1728,7 +1856,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -1749,7 +1879,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1760,7 +1892,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1824,7 +1958,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1835,16 +1972,23 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1867,7 +2011,11 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -1875,7 +2023,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete_log(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def delete_log(
+        self, **kwargs: Any
+    ) -> None:  # pylint: disable=inconsistent-return-statements
         """Logs.
 
         Delete all logs of Rank and Reward calls stored by Personalizer.
@@ -1903,7 +2053,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1914,7 +2066,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1960,7 +2114,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1971,7 +2127,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1985,7 +2143,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def get_model(self, *, signed: bool = False, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def get_model(
+        self, *, signed: bool = False, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
         """Model.
 
         Get the model file generated by Personalizer service.
@@ -2017,7 +2177,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2028,7 +2190,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         deserialized = response.iter_bytes()
@@ -2039,7 +2203,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         return cast(AsyncIterator[bytes], deserialized)
 
     @distributed_trace_async
-    async def import_model(self, body: IO, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def import_model(
+        self, body: IO, **kwargs: Any
+    ) -> None:  # pylint: disable=inconsistent-return-statements
         """Model File.
 
         Replace the existing model file for the Personalizer service.
@@ -2061,7 +2227,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _content = body
@@ -2074,7 +2242,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2085,14 +2255,18 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def reset_model(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    async def reset_model(
+        self, **kwargs: Any
+    ) -> None:  # pylint: disable=inconsistent-return-statements
         """Reset Model.
 
         Resets the model file generated by Personalizer service.
@@ -2120,7 +2294,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2131,7 +2307,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2177,7 +2355,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2188,7 +2368,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -2203,7 +2385,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     async def reward_multi_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Reward (MultiSlot).
 
@@ -2239,7 +2426,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     async def reward_multi_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """Reward (MultiSlot).
 
@@ -2289,7 +2481,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -2310,7 +2504,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2321,7 +2517,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2362,7 +2560,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2373,14 +2573,18 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @overload
-    async def rank_multi_slot(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def rank_multi_slot(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Rank (MultiSlot).
 
         Submit a Personalizer multi-slot rank request. Receives a context, a list of actions, and a
@@ -2465,7 +2669,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         """
 
     @overload
-    async def rank_multi_slot(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def rank_multi_slot(
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Rank (MultiSlot).
 
         Submit a Personalizer multi-slot rank request. Receives a context, a list of actions, and a
@@ -2543,7 +2749,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
@@ -2563,7 +2771,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2574,7 +2784,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -2589,7 +2801,11 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     async def rank_single_slot(
-        self, rank_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        rank_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> JSON:
         """Rank.
 
@@ -2700,7 +2916,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         """
 
     @distributed_trace_async
-    async def rank_single_slot(self, rank_request: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def rank_single_slot(
+        self, rank_request: Union[JSON, IO], **kwargs: Any
+    ) -> JSON:
         """Rank.
 
         Submit a Personalizer rank request. Receives a context and a list of actions. Returns which of
@@ -2745,7 +2963,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
@@ -2765,7 +2985,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2776,7 +2998,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:

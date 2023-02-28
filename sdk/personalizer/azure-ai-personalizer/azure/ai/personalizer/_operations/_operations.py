@@ -8,7 +8,19 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    IO,
+    Iterable,
+    Iterator,
+    Optional,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -39,7 +51,9 @@ else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
+]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -63,14 +77,20 @@ def build_personalizer_get_service_configuration_request(**kwargs: Any) -> HttpR
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_update_service_configuration_request(**kwargs: Any) -> HttpRequest:
+def build_personalizer_update_service_configuration_request(
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -84,10 +104,14 @@ def build_personalizer_update_service_configuration_request(**kwargs: Any) -> Ht
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PUT", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_get_policy_request(**kwargs: Any) -> HttpRequest:
@@ -108,14 +132,18 @@ def build_personalizer_get_policy_request(**kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_update_policy_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -129,10 +157,14 @@ def build_personalizer_update_policy_request(**kwargs: Any) -> HttpRequest:
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PUT", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_reset_policy_request(**kwargs: Any) -> HttpRequest:
@@ -153,7 +185,9 @@ def build_personalizer_reset_policy_request(**kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_get_evaluation_request(
@@ -163,7 +197,7 @@ def build_personalizer_get_evaluation_request(
     end_time: datetime.datetime,
     interval_in_minutes: Optional[int] = None,
     window: Optional[str] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -176,7 +210,9 @@ def build_personalizer_get_evaluation_request(
     # Construct URL
     _url = "/evaluations/{evaluationId}"
     path_format_arguments = {
-        "evaluationId": _SERIALIZER.url("evaluation_id", evaluation_id, "str", max_length=256),
+        "evaluationId": _SERIALIZER.url(
+            "evaluation_id", evaluation_id, "str", max_length=256
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -184,7 +220,9 @@ def build_personalizer_get_evaluation_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if interval_in_minutes is not None:
-        _params["intervalInMinutes"] = _SERIALIZER.query("interval_in_minutes", interval_in_minutes, "int")
+        _params["intervalInMinutes"] = _SERIALIZER.query(
+            "interval_in_minutes", interval_in_minutes, "int"
+        )
     _params["startTime"] = _SERIALIZER.query("start_time", start_time, "iso-8601")
     _params["endTime"] = _SERIALIZER.query("end_time", end_time, "iso-8601")
     if window is not None:
@@ -193,10 +231,14 @@ def build_personalizer_get_evaluation_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_delete_evaluation_request(evaluation_id: str, **kwargs: Any) -> HttpRequest:
+def build_personalizer_delete_evaluation_request(
+    evaluation_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -208,7 +250,9 @@ def build_personalizer_delete_evaluation_request(evaluation_id: str, **kwargs: A
     # Construct URL
     _url = "/evaluations/{evaluationId}"
     path_format_arguments = {
-        "evaluationId": _SERIALIZER.url("evaluation_id", evaluation_id, "str", max_length=256),
+        "evaluationId": _SERIALIZER.url(
+            "evaluation_id", evaluation_id, "str", max_length=256
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -219,14 +263,20 @@ def build_personalizer_delete_evaluation_request(evaluation_id: str, **kwargs: A
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_create_evaluation_request(evaluation_id: str, **kwargs: Any) -> HttpRequest:
+def build_personalizer_create_evaluation_request(
+    evaluation_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -235,7 +285,9 @@ def build_personalizer_create_evaluation_request(evaluation_id: str, **kwargs: A
     # Construct URL
     _url = "/evaluations/{evaluationId}"
     path_format_arguments = {
-        "evaluationId": _SERIALIZER.url("evaluation_id", evaluation_id, "str", max_length=256),
+        "evaluationId": _SERIALIZER.url(
+            "evaluation_id", evaluation_id, "str", max_length=256
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -245,14 +297,22 @@ def build_personalizer_create_evaluation_request(evaluation_id: str, **kwargs: A
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PUT", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_list_evaluations_request(
-    *, filter_expression: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
+    *,
+    filter_expression: Optional[str] = None,
+    top: Optional[int] = None,
+    skip: int = 0,
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -268,7 +328,9 @@ def build_personalizer_list_evaluations_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter_expression is not None:
-        _params["filter"] = _SERIALIZER.query("filter_expression", filter_expression, "str")
+        _params["filter"] = _SERIALIZER.query(
+            "filter_expression", filter_expression, "str"
+        )
     if top is not None:
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
@@ -277,14 +339,20 @@ def build_personalizer_list_evaluations_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_reward_single_slot_event_request(event_id: str, **kwargs: Any) -> HttpRequest:
+def build_personalizer_reward_single_slot_event_request(
+    event_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -303,13 +371,19 @@ def build_personalizer_reward_single_slot_event_request(event_id: str, **kwargs:
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_activate_single_slot_event_request(event_id: str, **kwargs: Any) -> HttpRequest:
+def build_personalizer_activate_single_slot_event_request(
+    event_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -332,14 +406,18 @@ def build_personalizer_activate_single_slot_event_request(event_id: str, **kwarg
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_apply_from_evaluation_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -353,13 +431,19 @@ def build_personalizer_apply_from_evaluation_request(**kwargs: Any) -> HttpReque
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_delete_feature_importance_request(feature_importance_id: str, **kwargs: Any) -> HttpRequest:
+def build_personalizer_delete_feature_importance_request(
+    feature_importance_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -371,7 +455,9 @@ def build_personalizer_delete_feature_importance_request(feature_importance_id: 
     # Construct URL
     _url = "/featureImportances/{featureImportanceId}"
     path_format_arguments = {
-        "featureImportanceId": _SERIALIZER.url("feature_importance_id", feature_importance_id, "str", max_length=256),
+        "featureImportanceId": _SERIALIZER.url(
+            "feature_importance_id", feature_importance_id, "str", max_length=256
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -382,10 +468,14 @@ def build_personalizer_delete_feature_importance_request(feature_importance_id: 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_get_feature_importance_request(feature_importance_id: str, **kwargs: Any) -> HttpRequest:
+def build_personalizer_get_feature_importance_request(
+    feature_importance_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -397,7 +487,9 @@ def build_personalizer_get_feature_importance_request(feature_importance_id: str
     # Construct URL
     _url = "/featureImportances/{featureImportanceId}"
     path_format_arguments = {
-        "featureImportanceId": _SERIALIZER.url("feature_importance_id", feature_importance_id, "str", max_length=256),
+        "featureImportanceId": _SERIALIZER.url(
+            "feature_importance_id", feature_importance_id, "str", max_length=256
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -408,14 +500,20 @@ def build_personalizer_get_feature_importance_request(feature_importance_id: str
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_create_feature_importance_request(feature_importance_id: str, **kwargs: Any) -> HttpRequest:
+def build_personalizer_create_feature_importance_request(
+    feature_importance_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -424,7 +522,9 @@ def build_personalizer_create_feature_importance_request(feature_importance_id: 
     # Construct URL
     _url = "/featureImportances/{featureImportanceId}"
     path_format_arguments = {
-        "featureImportanceId": _SERIALIZER.url("feature_importance_id", feature_importance_id, "str", max_length=256),
+        "featureImportanceId": _SERIALIZER.url(
+            "feature_importance_id", feature_importance_id, "str", max_length=256
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -434,10 +534,14 @@ def build_personalizer_create_feature_importance_request(feature_importance_id: 
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="PUT", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_list_feature_importances_request(
@@ -464,7 +568,9 @@ def build_personalizer_list_feature_importances_request(
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_delete_log_request(**kwargs: Any) -> HttpRequest:
@@ -485,7 +591,9 @@ def build_personalizer_delete_log_request(**kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_get_log_properties_request(**kwargs: Any) -> HttpRequest:
@@ -506,10 +614,14 @@ def build_personalizer_get_log_properties_request(**kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_get_model_request(*, signed: bool = False, **kwargs: Any) -> HttpRequest:
+def build_personalizer_get_model_request(
+    *, signed: bool = False, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -529,14 +641,20 @@ def build_personalizer_get_model_request(*, signed: bool = False, **kwargs: Any)
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_import_model_request(*, content: IO, **kwargs: Any) -> HttpRequest:
+def build_personalizer_import_model_request(
+    *, content: IO, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -550,10 +668,19 @@ def build_personalizer_import_model_request(*, content: IO, **kwargs: Any) -> Ht
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        content=content,
+        **kwargs,
+    )
 
 
 def build_personalizer_reset_model_request(**kwargs: Any) -> HttpRequest:
@@ -574,7 +701,9 @@ def build_personalizer_reset_model_request(**kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_get_model_properties_request(**kwargs: Any) -> HttpRequest:
@@ -595,14 +724,20 @@ def build_personalizer_get_model_properties_request(**kwargs: Any) -> HttpReques
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_reward_multi_slot_event_request(event_id: str, **kwargs: Any) -> HttpRequest:
+def build_personalizer_reward_multi_slot_event_request(
+    event_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -621,13 +756,19 @@ def build_personalizer_reward_multi_slot_event_request(event_id: str, **kwargs: 
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_personalizer_activate_multi_slot_event_request(event_id: str, **kwargs: Any) -> HttpRequest:
+def build_personalizer_activate_multi_slot_event_request(
+    event_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -650,14 +791,18 @@ def build_personalizer_activate_multi_slot_event_request(event_id: str, **kwargs
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_rank_multi_slot_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -671,17 +816,23 @@ def build_personalizer_rank_multi_slot_request(**kwargs: Any) -> HttpRequest:
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_personalizer_rank_single_slot_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )  # type: Optional[str]
     api_version = kwargs.pop(
         "api_version", _params.pop("api-version", "2022-09-01-preview")
     )  # type: Literal["2022-09-01-preview"]
@@ -695,13 +846,19 @@ def build_personalizer_rank_single_slot_request(**kwargs: Any) -> HttpRequest:
 
     # Construct headers
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: disable=too-many-public-methods
+class PersonalizerClientOperationsMixin(
+    PersonalizerClientMixinABC
+):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_service_configuration(self, **kwargs: Any) -> JSON:
         """Service Configuration.
@@ -788,7 +945,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -799,7 +958,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1017,7 +1178,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         """
 
     @distributed_trace
-    def update_service_configuration(self, config: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def update_service_configuration(
+        self, config: Union[JSON, IO], **kwargs: Any
+    ) -> JSON:
         """Update Service Configuration.
 
         Update the Personalizer service configuration.
@@ -1100,7 +1263,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
@@ -1120,7 +1285,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1131,7 +1298,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1182,7 +1351,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1193,7 +1364,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1207,7 +1380,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         return cast(JSON, deserialized)
 
     @overload
-    def update_policy(self, policy: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def update_policy(
+        self, policy: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Update Policy.
 
         Update the Learning Settings that the Personalizer service will use to train models.
@@ -1238,7 +1413,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         """
 
     @overload
-    def update_policy(self, policy: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def update_policy(
+        self, policy: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Update Policy.
 
         Update the Learning Settings that the Personalizer service will use to train models.
@@ -1297,7 +1474,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
@@ -1317,7 +1496,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1328,7 +1509,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1379,7 +1562,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1390,7 +1575,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1412,7 +1599,7 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         end_time: datetime.datetime,
         interval_in_minutes: Optional[int] = None,
         window: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> JSON:
         """Offline Evaluation.
 
@@ -1524,7 +1711,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1535,7 +1724,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -1582,7 +1773,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1593,7 +1786,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1601,7 +1796,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def create_evaluation(  # pylint: disable=inconsistent-return-statements
-        self, evaluation_id: str, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation_id: str,
+        evaluation: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Create Offline Evaluation.
 
@@ -1642,7 +1842,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def create_evaluation(  # pylint: disable=inconsistent-return-statements
-        self, evaluation_id: str, evaluation: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation_id: str,
+        evaluation: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Create Offline Evaluation.
 
@@ -1691,7 +1896,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -1712,7 +1919,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1723,7 +1932,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -1731,7 +1942,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @distributed_trace
     def list_evaluations(
-        self, *, filter_expression: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
+        self,
+        *,
+        filter_expression: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: int = 0,
+        **kwargs: Any,
     ) -> Iterable[JSON]:
         """All Offline Evaluations.
 
@@ -1797,7 +2013,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1808,16 +2027,23 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1840,7 +2066,11 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -1849,7 +2079,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def reward_single_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, reward: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        reward: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Reward.
 
@@ -1881,7 +2116,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def reward_single_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, reward: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        reward: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Reward.
 
@@ -1933,7 +2173,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -1954,7 +2196,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1965,7 +2209,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2006,7 +2252,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2017,7 +2265,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2100,7 +2350,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -2120,7 +2372,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2131,7 +2385,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2171,7 +2427,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2182,7 +2440,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2246,7 +2506,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2257,7 +2519,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -2277,7 +2541,7 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         feature_importance: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Create Feature Importance.
 
@@ -2314,7 +2578,7 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         feature_importance: IO,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Create Feature Importance.
 
@@ -2334,7 +2598,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @distributed_trace
     def create_feature_importance(  # pylint: disable=inconsistent-return-statements
-        self, feature_importance_id: str, feature_importance: Union[JSON, IO], **kwargs: Any
+        self,
+        feature_importance_id: str,
+        feature_importance: Union[JSON, IO],
+        **kwargs: Any,
     ) -> None:
         """Create Feature Importance.
 
@@ -2363,7 +2630,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -2384,7 +2653,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2395,14 +2666,18 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_feature_importances(self, *, top: Optional[int] = None, skip: int = 0, **kwargs: Any) -> Iterable[JSON]:
+    def list_feature_importances(
+        self, *, top: Optional[int] = None, skip: int = 0, **kwargs: Any
+    ) -> Iterable[JSON]:
         """All Feature Importances.
 
         List of all Feature Importances.
@@ -2457,7 +2732,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -2468,16 +2746,23 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -2500,7 +2785,11 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -2508,7 +2797,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_log(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def delete_log(
+        self, **kwargs: Any
+    ) -> None:  # pylint: disable=inconsistent-return-statements
         """Logs.
 
         Delete all logs of Rank and Reward calls stored by Personalizer.
@@ -2536,7 +2827,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2547,7 +2840,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2593,7 +2888,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2604,7 +2901,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -2650,7 +2949,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2661,7 +2962,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         deserialized = response.iter_bytes()
@@ -2672,7 +2975,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         return cast(Iterator[bytes], deserialized)
 
     @distributed_trace
-    def import_model(self, body: IO, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def import_model(
+        self, body: IO, **kwargs: Any
+    ) -> None:  # pylint: disable=inconsistent-return-statements
         """Model File.
 
         Replace the existing model file for the Personalizer service.
@@ -2694,7 +2999,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _content = body
@@ -2707,7 +3014,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2718,14 +3027,18 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def reset_model(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def reset_model(
+        self, **kwargs: Any
+    ) -> None:  # pylint: disable=inconsistent-return-statements
         """Reset Model.
 
         Resets the model file generated by Personalizer service.
@@ -2753,7 +3066,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2764,7 +3079,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2810,7 +3127,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2821,7 +3140,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -2836,7 +3157,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def reward_multi_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Reward (MultiSlot).
 
@@ -2872,7 +3198,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def reward_multi_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Reward (MultiSlot).
 
@@ -2922,7 +3253,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         content_type = content_type or "application/json"
@@ -2943,7 +3276,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -2954,7 +3289,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
@@ -2995,7 +3332,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -3006,14 +3345,18 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})
 
     @overload
-    def rank_multi_slot(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def rank_multi_slot(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Rank (MultiSlot).
 
         Submit a Personalizer multi-slot rank request. Receives a context, a list of actions, and a
@@ -3098,7 +3441,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         """
 
     @overload
-    def rank_multi_slot(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def rank_multi_slot(
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Rank (MultiSlot).
 
         Submit a Personalizer multi-slot rank request. Receives a context, a list of actions, and a
@@ -3176,7 +3521,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
@@ -3196,7 +3543,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -3207,7 +3556,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
@@ -3221,7 +3572,13 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         return cast(JSON, deserialized)
 
     @overload
-    def rank_single_slot(self, rank_request: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def rank_single_slot(
+        self,
+        rank_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> JSON:
         """Rank.
 
         Submit a Personalizer rank request. Receives a context and a list of actions. Returns which of
@@ -3294,7 +3651,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         """
 
     @overload
-    def rank_single_slot(self, rank_request: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def rank_single_slot(
+        self, rank_request: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Rank.
 
         Submit a Personalizer rank request. Receives a context and a list of actions. Returns which of
@@ -3374,7 +3733,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/json"
@@ -3394,7 +3755,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "Endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -3405,7 +3768,9 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             raise HttpResponseError(response=response)
 
         if response.content:
