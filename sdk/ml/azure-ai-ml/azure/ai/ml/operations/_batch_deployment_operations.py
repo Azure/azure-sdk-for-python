@@ -16,7 +16,7 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, parse_prefixed_name_version
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -37,7 +37,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class BatchDeploymentOperations(_ScopeDependentOperations):
@@ -58,7 +58,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(BatchDeploymentOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._batch_deployment = service_client_05_2022.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
         self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
@@ -70,7 +70,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: BatchDeployment,
@@ -133,7 +133,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             raise ex
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchDeployment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str) -> BatchDeployment:
         """Get a deployment resource.
 
@@ -158,7 +158,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         return deployment
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchDeployment.BeginDelete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchDeployment.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, endpoint_name: str) -> LROPoller[None]:
         """Delete a batch deployment.
 
@@ -191,7 +191,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         return delete_poller
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchDeployment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str) -> ItemPaged[BatchDeployment]:
         """List a deployment resource.
 
@@ -209,7 +209,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str, *, name: Optional[str] = None) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
