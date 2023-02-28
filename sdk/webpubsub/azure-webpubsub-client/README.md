@@ -46,7 +46,8 @@ from azure.webpubsub.client import WebPubSubClient
 
 client = WebPubSubClient("<<client-access-url>>")
 
-client.start()
+with client:
+    ...
 ```
 
 #### Use negotiation server to generate Client Access URL
@@ -62,7 +63,7 @@ The code snippet below is an example of negotiation server. The server exposes a
 The client can only receive messages from groups that it has joined and you need to add a callback to specify the logic when receiving messages.
 
 ```python
-client.on("group-message", lambda e: print(f"Received message: {e.message.data}"));
+client.on("group-message", lambda e: print(f"Received message: {e.data}"));
 
 group_name = "group1";
 
@@ -70,7 +71,7 @@ group_name = "group1";
 client.join_group(group_name);
 
 # send a message to group
-await client.send_to_group(group_name, "hello world", "text");
+client.send_to_group(group_name, "hello world", "text");
 ```
 
 ## Key concepts
@@ -124,8 +125,8 @@ client = WebPubSubClient("<client-access-url>", WebPubSubClientOptions(WebPubSub
 Client can add callbacks to consume messages from server and from groups. Please note, client can only receive group messages that it has joined.
 
 ```python
-client.on("server-message", lambda e: print(f"Received message {e.message.data}"))
-client.on("server-message", lambda e: print(f"Received messagefrom {e.message.group}: {e.message.data}"))
+client.on("server-message", lambda e: print(f"Received message {e.data}"))
+client.on("server-message", lambda e: print(f"Received messagefrom {e.group}: {e.data}"))
 ```
 
 ### Add callbacks for connected, disconnected and stopped events
@@ -140,12 +141,6 @@ When a client connection is disconnected and fails to recover, the disconnected 
 
 ```python
 client.on("disconnected", lambda e: print(f"Connection disconnected: {e.message}"))
-```
-
-When a client is stopped, which means the client connection is disconnected and the client stops try to reconnect, the stopped event will be triggered. This usually happens after the `client.stop()` is called, or disabled `auto_reconnect` or specify a limited reconnect retry count and the limit has reached. If you want to restart the client, you can call `client.start()` in the stopped event.
-
-```python
-client.on("stopped", lambda : print("Client has stopped"))
 ```
 
 ### Auto rejoin group and handle rejoin failure
