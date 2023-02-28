@@ -12,17 +12,12 @@ from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransf
 @pytest.mark.data_import_test
 class TestDataImport:
     def test_data_import_database(self):
-        data_import1 = load_data_import(
-            source="./tests/test_configs/data_import/data_import_database.yaml"
-        )
+        data_import1 = load_data_import(source="./tests/test_configs/data_import/data_import_database.yaml")
         data_import2 = DataImport(
             name="my_azuresqldb_asset",
             type="mltable",
             path="azureml://datastores/workspaceblobstore/paths/{name}",
-            source=Database(
-                query="select * from region",
-                connection="azureml:my_azuresqldb_connection"
-            )
+            source=Database(query="select * from region", connection="azureml:my_azuresqldb_connection"),
         )
 
         assert isinstance(data_import1, DataImport)
@@ -38,18 +33,13 @@ class TestDataImport:
         assert data_import1.source.connection == data_import2.source.connection
 
     def test_data_import_file_system(self):
-        data_import = load_data_import(
-            source="./tests/test_configs/data_import/data_import_file_system.yaml"
-        )
+        data_import = load_data_import(source="./tests/test_configs/data_import/data_import_file_system.yaml")
         import_job = import_data(
-            source=FileSystem(
-                path="test1/*",
-                connection="azureml:my_s3_connection"
-            ),
-            outputs={"sink": Output(
-                type="uri_folder",
-                path="azureml://datastores/workspaceblobstore/paths/{name}",
-                name="my_s3_asset")
+            source=FileSystem(path="test1/*", connection="azureml:my_s3_connection"),
+            outputs={
+                "sink": Output(
+                    type="uri_folder", path="azureml://datastores/workspaceblobstore/paths/{name}", name="my_s3_asset"
+                )
             },
         )
 

@@ -452,6 +452,7 @@ def load_data(
     """
     return load_common(Data, source, relative_origin, **kwargs)
 
+
 def load_data_import(
     source: Union[str, PathLike, IO[AnyStr]],
     *,

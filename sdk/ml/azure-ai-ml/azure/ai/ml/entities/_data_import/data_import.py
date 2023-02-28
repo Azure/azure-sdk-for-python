@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 from azure.ai.ml._schema import DataImportSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._util import load_from_dict
@@ -17,8 +17,12 @@ from azure.ai.ml.entities._util import load_from_dict
 class DataImport(Data):
     """Data import job to create the data asset.
 
-    :param name: Name of the resource.
+    :param name: Name of the asset.
     :type name: str
+    :param path: The path to the asset being created by data import job.
+    :type path: str
+    :param source: The source of the asset data being copied from.
+    :type source: Union[Database, FileSystem]
     :param version: Version of the resource.
     :type version: str
     :param description: Description of the resource.
@@ -27,10 +31,6 @@ class DataImport(Data):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
-    :param path: The path to the asset being created by data import job.
-    :type path: str
-    :param type: The type of the asset. Valid values are uri_file, uri_folder, mltable. Defaults to uri_folder.
-    :type type: Literal[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTABLE]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -38,14 +38,13 @@ class DataImport(Data):
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
+        name: str,
+        path: str,
+        source: Union[Database, FileSystem],
         version: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        path: Optional[str] = None,  # if type is mltable, the path has to be a folder.
-        type: str = AssetTypes.URI_FOLDER,  # pylint: disable=redefined-builtin
-        source: Optional[Union[Dict, Database, FileSystem]] = None,
         **kwargs,
     ):
         super().__init__(
@@ -55,7 +54,6 @@ class DataImport(Data):
             tags=tags,
             properties=properties,
             path=path,
-            type=type,
             **kwargs,
         )
         self.source = source
