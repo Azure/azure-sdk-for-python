@@ -18,9 +18,10 @@ import zipfile
 import certifi
 import pytest
 import subprocess
-
 from urllib3 import PoolManager, Retry
 from urllib3.exceptions import SSLError
+
+from ci_tools.variables import in_ci
 
 from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
@@ -281,9 +282,18 @@ def start_test_proxy(request: pytest.FixtureRequest) -> None:
         if check_availability() == 200:
             _LOGGER.debug("Tool is responding, exiting...")
         else:
-            envname = os.getenv("TOX_ENV_NAME", "default")
             root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
-            log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
+            _LOGGER.info("{} is calculated repo root".format(root))
+
+            # If we're in CI, allow for tox environment parallelization and write proxy output to a log file
+            log = None
+            if in_ci():
+                envname = os.getenv("TOX_ENV_NAME", "default")
+                log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
+
+                os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, "l", envname)
+                if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
+                    os.makedirs(os.environ["PROXY_ASSETS_FOLDER"])
 
             if os.getenv("TF_BUILD"):
                 _LOGGER.info("Starting the test proxy tool from dotnet tool cache...")
@@ -292,26 +302,20 @@ def start_test_proxy(request: pytest.FixtureRequest) -> None:
                 _LOGGER.info("Downloading and starting standalone proxy executable...")
                 tool_name = prepare_local_tool(root)
 
-            _LOGGER.info("{} is calculated repo root".format(root))
-
-            os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, "l", envname)
-            if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
-                os.makedirs(os.environ["PROXY_ASSETS_FOLDER"])
-
-            # always start the proxy with these two defaults set
+            # Always start the proxy with these two defaults set to allow SSL connection
             passenv = {
                 "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(
                     root, "eng", "common", "testproxy", "dotnet-devcert.pfx"
                 ),
                 "ASPNETCORE_Kestrel__Certificates__Default__Password": "password",
             }
-            # if they are already set, override with what is in os.environ
+            # If they are already set, override what we give the proxy with what is in os.environ
             passenv.update(os.environ)
 
             proc = subprocess.Popen(
                 shlex.split(f'{tool_name} start --storage-location="{root}" -- --urls "{PROXY_URL}"'),
-                stdout=log,
-                stderr=log,
+                stdout=log or subprocess.DEVNULL,
+                stderr=log or subprocess.STDOUT,
                 env=passenv,
             )
             os.environ[TOOL_ENV_VAR] = str(proc.pid)
