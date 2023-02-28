@@ -396,9 +396,9 @@ class IdentifierRawIdTest(unittest.TestCase):
 
         # CommunicationUserIdentifiers are not equal.
         assert CommunicationUserIdentifier(
-            id='8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130'
+            id='8:acs:6666e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130'
         ) != CommunicationUserIdentifier(
-            id='8:acs:rrrcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130'
+            id='8:acs:555e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130'
         )
 
         # MicrosoftTeamsUserIdentifiers are equal.
