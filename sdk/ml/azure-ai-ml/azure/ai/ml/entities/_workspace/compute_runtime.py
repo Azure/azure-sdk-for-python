@@ -21,14 +21,10 @@ class ComputeRuntime(RestTranslatableMixin):
         self.spark_runtime_version = spark_runtime_version
 
     def _to_rest_object(self) -> RestComputeRuntimeDto:
-        return RestComputeRuntimeDto(
-            spark_runtime_version=self.spark_runtime_version
-        )
+        return RestComputeRuntimeDto(spark_runtime_version=self.spark_runtime_version)
 
     @classmethod
     def _from_rest_object(cls, obj: RestComputeRuntimeDto) -> "ComputeRuntime":
         if not obj:
             return None
-        return ComputeRuntime(
-            spark_runtime_version=obj.spark_runtime_version
-        )
+        return ComputeRuntime(spark_runtime_version=obj.spark_runtime_version)

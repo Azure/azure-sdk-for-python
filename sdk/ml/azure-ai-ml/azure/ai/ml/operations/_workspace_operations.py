@@ -187,8 +187,9 @@ class WorkspaceOperations:
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
             )
-            workspace.feature_store_settings = (workspace.feature_store_settings or
-                                                existing_workspace.feature_store_settings)
+            workspace.feature_store_settings = (
+                workspace.feature_store_settings or existing_workspace.feature_store_settings
+            )
             return self.begin_update(
                 workspace,
                 update_dependent_resources=update_dependent_resources,
@@ -331,7 +332,7 @@ class WorkspaceOperations:
                 "primary_user_assigned_identity", workspace.primary_user_assigned_identity
             ),
             managed_network=managed_network,
-            feature_store_settings=feature_store_settings
+            feature_store_settings=feature_store_settings,
         )
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
@@ -615,12 +616,16 @@ class WorkspaceOperations:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
 
         if workspace.feature_store_settings:
-            _set_val(param["spark_runtime_version"],
-                    workspace.feature_store_settings.compute_runtime.spark_runtime_version)
-            _set_val(param["offline_store_connection_name"],
-                     workspace.feature_store_settings.offline_store_connection_name
-                     if workspace.feature_store_settings.offline_store_connection_name else '')
-            _set_val(param["online_store_connection_name"], '')
+            _set_val(
+                param["spark_runtime_version"], workspace.feature_store_settings.compute_runtime.spark_runtime_version
+            )
+            _set_val(
+                param["offline_store_connection_name"],
+                workspace.feature_store_settings.offline_store_connection_name
+                if workspace.feature_store_settings.offline_store_connection_name
+                else "",
+            )
+            _set_val(param["online_store_connection_name"], "")
 
         _set_val(param["setup_materialization_store"], "false")
 
