@@ -9,7 +9,6 @@
 import logging
 
 import platform
-from os import getenv
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
@@ -81,13 +80,13 @@ def in_jupyter_notebook() -> bool:
 
 
 def get_appinsights_log_handler(
-     user_agent,
-     instrumentation_key=None,
-     component_name=None,
-     enable_telemetry=True,
-     *args, # pylint: disable=unused-argument
-     **kwargs
- ):
+    user_agent,
+    *args,  # pylint: disable=unused-argument
+    instrumentation_key=None,
+    component_name=None,
+    enable_telemetry=True,
+    **kwargs,
+):
     """Enable the OpenCensus logging handler for specified logger and instrumentation key to send info to AppInsights.
 
     :param user_agent: Information about the user's browser.
@@ -128,11 +127,15 @@ def get_appinsights_log_handler(
         custom_properties.update({"user_agent": user_agent})
         if "properties" in kwargs:
             custom_properties.update(kwargs.pop("properties"))
-        handler = AzureMLSDKLogHandler(connection_string=f'InstrumentationKey={instrumentation_key}', custom_properties=custom_properties, enable_telemetry=enable_telemetry)
+        handler = AzureMLSDKLogHandler(
+            connection_string=f"InstrumentationKey={instrumentation_key}",
+            custom_properties=custom_properties,
+            enable_telemetry=enable_telemetry,
+        )
         current_logger.addHandler(handler)
 
         return handler
-    except Exception: # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-except
         # ignore exceptions, telemetry should not block
         return logging.NullHandler()
 
@@ -142,7 +145,7 @@ class AzureMLSDKLogHandler(AzureLogHandler):
     """Customized AzureLogHandler for AzureML SDK"""
 
     def __init__(self, custom_properties, enable_telemetry, *args, **kwargs):
-        super(AzureLogHandler, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._is_telemetry_collection_disabled = not enable_telemetry
         self._custom_properties = custom_properties
@@ -172,6 +175,6 @@ class AzureMLSDKLogHandler(AzureLogHandler):
                 return
             # otherwise, send the trace
             self._queue.put(formatted_message, block=False)
-        except Exception: # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             # ignore any exceptions, telemetry collection errors shouldn't block an operation
             return

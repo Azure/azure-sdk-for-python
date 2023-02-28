@@ -28,17 +28,11 @@ class TestLoggerUtils:
 @pytest.mark.unittest
 class TestLoggingHandler:
     def test_logging_enabled(self) -> None:
-        with patch(
-            "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook",
-            return_value=False
-        ):
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
             handler = get_appinsights_log_handler(user_agent=USER_AGENT)
             assert isinstance(handler, logging.NullHandler)
 
-        with patch(
-            "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook",
-            return_value=True
-        ):
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
             handler = get_appinsights_log_handler(user_agent=USER_AGENT)
             assert isinstance(handler, AzureLogHandler)
             assert isinstance(handler, AzureMLSDKLogHandler)

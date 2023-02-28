@@ -114,6 +114,7 @@ class _ScopeDependentOperations(object):
     def _enable_telemetry(self) -> bool:
         return self._operation_config.enable_telemetry
 
+
 class OperationsContainer(object):
     def __init__(self):
         self._all_operations = {}
