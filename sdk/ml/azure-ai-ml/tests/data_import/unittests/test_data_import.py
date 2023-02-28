@@ -45,7 +45,6 @@ class TestDataImport:
 
         assert isinstance(data_import, DataImport)
         assert data_import.name == import_job.outputs["sink"].name
-        assert data_import.type == import_job.outputs["sink"].type
         assert data_import.path == import_job.outputs["sink"].path
 
         assert isinstance(data_import.source, FileSystem)

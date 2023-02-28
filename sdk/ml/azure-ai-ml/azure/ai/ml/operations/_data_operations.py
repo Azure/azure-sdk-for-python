@@ -10,8 +10,9 @@ from typing import Dict, List, Optional, Union, Iterable
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml.entities import Job, PipelineJob
-from azure.ai.ml.data_transfer import import_data
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities import Job, PipelineJob, PipelineJobSettings
+from azure.ai.ml.data_transfer import import_data as import_data_func
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
@@ -49,7 +50,6 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
 )
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.constants._common import (
     MLTABLE_METADATA_SCHEMA_URL_FALLBACK,
     AssetTypes,
@@ -57,6 +57,7 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
 )
 from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
+from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -352,6 +353,7 @@ class DataOperations(_ScopeDependentOperations):
                     )
             raise ex
 
+    @experimental
     def import_data(self, data_import: DataImport) -> Job:
         """Returns the data import job that is creating the data asset.
 
@@ -362,15 +364,11 @@ class DataOperations(_ScopeDependentOperations):
         """
 
         experiment_name = "data_import_" + data_import.name
-        component_name = (
-            "import_data_database" if isinstance(data_import.source, Database) else "import_data_file_system"
-        )
         data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
         if "{name}" not in data_import.path:
             data_import.path = data_import.path.rstrip("/") + "/{name}"
-        import_job = import_data(
+        import_job = import_data_func(
             description=data_import.description or experiment_name,
-            tags=data_import.tags,
             display_name=experiment_name,
             experiment_name=experiment_name,
             compute="serverless",
@@ -380,19 +378,20 @@ class DataOperations(_ScopeDependentOperations):
                     type=data_import.type, path=data_import.path, name=data_import.name, version=data_import.version
                 )
             },
-            is_deterministic=False,
-            component="azureml://registries/azureml-dev/components/" + component_name + "/versions/1",
         )
         import_pipeline = PipelineJob(
             description=data_import.description or experiment_name,
+            tags=data_import.tags,
             display_name=experiment_name,
             experiment_name=experiment_name,
             properties=data_import.properties or {},
+            settings=PipelineJobSettings(force_rerun=True),
             jobs={experiment_name: import_job},
         )
         import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
         return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True)
 
+    @experimental
     def show_materialization_status(
         self,
         name: str,

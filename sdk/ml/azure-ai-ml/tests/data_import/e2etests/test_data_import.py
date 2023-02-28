@@ -21,12 +21,14 @@ class TestDataImport(AzureRecordedTestCase):
 
         key = "data_import_" + data_import.name
         assert key in pipeline_job.jobs
+
+        job = pipeline_job.jobs[key]
         assert isinstance(data_import, DataImport)
-        assert data_import.name == pipeline_job.jobs[key].outputs["sink"].name
-        assert data_import.path == pipeline_job.jobs[key].outputs["sink"].path
+        assert data_import.name == job.outputs["sink"].name
+        assert data_import.path == job.outputs["sink"].path
 
         assert isinstance(data_import.source, Database)
-        assert isinstance(pipeline_job.jobs[key].source, Database)
-        assert data_import.source.type == pipeline_job.jobs[key].source.type
-        assert data_import.source.query == pipeline_job.jobs[key].source.query
-        assert data_import.source.connection == pipeline_job.jobs[key].source.connection
+        assert isinstance(job.source, Database)
+        assert data_import.source.type == job.source.type
+        assert data_import.source.query == job.source.query
+        assert data_import.source.connection == job.source.connection
