@@ -11,8 +11,8 @@ from ._models import (
     GroupCallLocator
 )
 from ._events import (
-    AddParticipantsSucceeded,
-    AddParticipantsFailed,
+    AddParticipantSucceeded,
+    AddParticipantFailed,
     CallConnected,
     CallDisconnected,
     CallTransferAccepted,
@@ -37,8 +37,8 @@ __all__ = [
     "ServerCallLocator",
     "GroupCallLocator",
     "CallAutomationEventParser",
-    "AddParticipantsSucceeded",
-    "AddParticipantsFailed",
+    "AddParticipantSucceeded",
+    "AddParticipantFailed",
     "CallConnected",
     "CallDisconnected",
     "CallTransferAccepted",

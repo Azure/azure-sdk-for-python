@@ -4,8 +4,8 @@
 # ------------------------------------
 
 from ._generated.models import (
-    AddParticipantsSucceeded as AddParticipantsSucceededRest,
-    AddParticipantsFailed as AddParticipantsFailedRest,
+    AddParticipantSucceeded as AddParticipantSucceededRest,
+    AddParticipantFailed as AddParticipantFailedRest,
     CallConnected as CallConnectedRest,
     CallDisconnected as CallDisconnectedRest,
     CallTransferAccepted as CallTransferAcceptedRest,
@@ -17,130 +17,148 @@ from ._generated.models import (
     PlayCanceled as PlayCanceledRest,
     RecognizeCompleted as RecognizeCompletedRest,
     RecognizeCanceled as RecognizeCanceledRest,
-    RecognizeFailed as RecognizeFailedRest
+    RecognizeFailed as RecognizeFailedRest,
+    CallParticipant
 )
 
-from ._communication_identifier_serializer import (
-    CommunicationIdentifier,
-    deserialize_identifier_from_dict
-)
+from ._communication_identifier_serializer import deserialize_identifier
 
-from typing import (
-    Dict,
-    Any,
-    cast,
-    Optional,
-    Union,
-    AnyStr,
-    IO,
-    Mapping,
-    Callable,
-    TypeVar,
-    MutableMapping,
-    Type,
-    List,
-    Mapping,
-)
-
-class AddParticipantsSucceeded(AddParticipantsSucceededRest):
-    def __init__(self, *args, **kwargs):
+class AddParticipantSucceeded(AddParticipantSucceededRest):
+    def __init__(self, parent : AddParticipantSucceededRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.kind = "AddParticipantsSucceeded"
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
+        self.participant = deserialize_identifier(parent.participant)
+        self.kind = "AddParticipantSucceeded"
 
-class AddParticipantsFailed(AddParticipantsFailedRest):
-    def __init__(self, *args, **kwargs):
+class AddParticipantFailed(AddParticipantFailedRest):
+    def __init__(self, parent : AddParticipantFailedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.kind = "AddParticipantsFailed"
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
+        self.participant = deserialize_identifier(parent.participant)
+        self.kind = "AddParticipantFailed"
 
 class CallConnected(CallConnectedRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : CallConnectedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
         self.kind = "CallConnected"
 
 class CallDisconnected(CallDisconnectedRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : CallDisconnectedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
         self.kind = "CallDisconnected"
 
 class CallTransferAccepted(CallTransferAcceptedRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : CallTransferAcceptedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
         self.kind = "CallTransferAccepted"
 
 class CallTransferFailed(CallTransferFailedRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : CallTransferFailedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
         self.kind = "CallTransferFailed"
 
 class ParticipantsUpdated(ParticipantsUpdatedRest):
-    def __init__(
-        self,
-        *,
-        call_connection_id: Optional[str] = None,
-        server_call_id: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        participants: Optional[List["CommunicationIdentifier"]] = None,
-        **kwargs: Any
-    ) -> None:
-        super().__init__(**kwargs)
-        self.call_connection_id = call_connection_id
-        self.server_call_id = server_call_id
-        self.correlation_id = correlation_id
-        self.participants = participants
+    def __init__(self, parent : ParticipantsUpdatedRest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.participants = [CallParticipant(identifier=deserialize_identifier(participant.identifier), is_muted=participant.is_muted) for participant in parent.participants]
         self.kind = "ParticipantsUpdated"
 
-    _attribute_map = {
-        "call_connection_id": {"key": "callConnectionId", "type": "str"},
-        "server_call_id": {"key": "serverCallId", "type": "str"},
-        "correlation_id": {"key": "correlationId", "type": "str"},
-        "participants": {"key": "participants", "type": "object"},
-    }
-
-    @classmethod
-    def deserialize(cls: "ParticipantsUpdated", data: Any, content_type: Optional[str] = None) -> "ParticipantsUpdated":
-        """Parse a str using the RestAPI syntax and return a model.
-
-        :param str data: A str using RestAPI structure. JSON by default.
-        :param str content_type: JSON by default, set application/xml if XML.
-        :returns: An instance of this model
-        :raises: DeserializationError if something went wrong
-        """
-        event_with_obj = super(ParticipantsUpdatedRest, cls).deserialize(data, content_type)
-        event_with_obj.participants = [deserialize_identifier_from_dict(participant) for participant in event_with_obj.participants]
-
-        return event_with_obj
-
 class RecordingStateChanged(RecordingStateChangedRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : RecordingStateChangedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.recording_id = parent.recording_id
+        self.state = parent.state
+        self.start_date_time = parent.start_date_time
         self.kind = "RecordingStateChanged"
 
 class PlayCompleted(PlayCompletedRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : PlayCompletedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
         self.kind = "PlayCompleted"
 
 class PlayFailed(PlayFailedRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : PlayFailedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
         self.kind = "PlayFailed"
 
 class PlayCanceled(PlayCanceledRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : PlayCanceledRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
         self.kind = "PlayCanceled"
 
 class RecognizeCompleted(RecognizeCompletedRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : RecognizeCompletedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.result_information = parent.result_information
+        self.recognition_type = parent.recognition_type
+        self.collect_tones_result = parent.collect_tones_result
+        self.choice_result = parent.choice_result
         self.kind = "RecognizeCompleted"
 
-class RecognizeCanceled(RecognizeCanceledRest):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.kind = "RecognizeCanceled"
-
 class RecognizeFailed(RecognizeFailedRest):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, parent : RecognizeFailedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
         self.kind = "RecognizeFailed"
+
+class RecognizeCanceled(RecognizeCanceledRest):
+    def __init__(self, parent : RecognizeCanceledRest, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.call_connection_id = parent.call_connection_id
+        self.server_call_id = parent.server_call_id
+        self.correlation_id = parent.correlation_id
+        self.operation_context = parent.operation_context
+        self.kind = "RecognizeCanceled"

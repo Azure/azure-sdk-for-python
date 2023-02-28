@@ -4,8 +4,8 @@
 # ------------------------------------
 
 from ._events import (
-    AddParticipantsSucceeded,
-    AddParticipantsFailed,
+    AddParticipantSucceeded,
+    AddParticipantFailed,
     CallConnected,
     CallDisconnected,
     CallTransferAccepted,
@@ -21,20 +21,20 @@ from ._events import (
 )
 
 _call_automation_event_mapping = {
-    "Microsoft.Communication.AddParticipantsSucceeded": AddParticipantsSucceeded,
-    "Microsoft.Communication.AddParticipantsFailed": AddParticipantsFailed,
-    "Microsoft.Communication.CallConnected": CallConnected,
-    "Microsoft.Communication.CallDisconnected": CallDisconnected,
-    "Microsoft.Communication.CallTransferAccepted": CallTransferAccepted,
-    "Microsoft.Communication.CallTransferFailed": CallTransferFailed,
-    "Microsoft.Communication.ParticipantsUpdated": ParticipantsUpdated,
-    "Microsoft.Communication.RecordingStateChanged": RecordingStateChanged,
-    "Microsoft.Communication.PlayCompleted": PlayCompleted,
-    "Microsoft.Communication.PlayFailed": PlayFailed,
-    "Microsoft.Communication.PlayCanceled": PlayCanceled,
-    "Microsoft.Communication.RecognizeCompleted": RecognizeCompleted,
-    "Microsoft.Communication.RecognizeCanceled": RecognizeCanceled,
-    "Microsoft.Communication.RecognizeFailed": RecognizeFailed
+    "AddParticipantSucceeded": AddParticipantSucceeded,
+    "AddParticipantFailed": AddParticipantFailed,
+    "CallConnected": CallConnected,
+    "CallDisconnected": CallDisconnected,
+    "CallTransferAccepted": CallTransferAccepted,
+    "CallTransferFailed": CallTransferFailed,
+    "ParticipantsUpdated": ParticipantsUpdated,
+    "RecordingStateChanged": RecordingStateChanged,
+    "PlayCompleted": PlayCompleted,
+    "PlayFailed": PlayFailed,
+    "PlayCanceled": PlayCanceled,
+    "RecognizeCompleted": RecognizeCompleted,
+    "RecognizeCanceled": RecognizeCanceled,
+    "RecognizeFailed": RecognizeFailed
 }
 
 def get_mapping():

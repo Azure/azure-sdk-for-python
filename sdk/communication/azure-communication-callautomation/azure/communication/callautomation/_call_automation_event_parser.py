@@ -3,13 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import cast
 import json
-from ._events_mapping import (
-    get_mapping
-)
+from typing import cast
+from azure.communication.callautomation._generated._serialization import Deserializer
+from azure.communication.callautomation._generated import models as _models
+from ._events_mapping import get_mapping
 
 class CallAutomationEventParser(object):
+
+    _client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
+    _deserializer = Deserializer(_client_models)
+
     def __init__(
         self
     ): # type: (...) -> None
@@ -18,13 +22,21 @@ class CallAutomationEventParser(object):
     @classmethod
     def parse(cls, input):
         parsed = cls._convert_to_nonarray_json(input)
-        event_data = parsed['data']
-        event_type = parsed['type']
+        event_type = ""
+        if parsed['type']:
+            event_type = parsed['type'].split(".")[-1]
+
         event_mapping = get_mapping()
 
         if event_type in event_mapping:
+            event_data = parsed['data']
             event_class = event_mapping[event_type]
-            return cast(event_class, event_class.deserialize(event_data))
+
+            # deserialize event
+            deserialized = cls._deserializer(event_type, event_data)
+
+            # create public event class with given AutoRest deserialized event
+            return event_class(deserialized)
         else:
             raise ValueError('Unknown event type:', event_type)
 

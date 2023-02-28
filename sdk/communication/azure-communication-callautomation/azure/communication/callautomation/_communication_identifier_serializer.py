@@ -76,27 +76,3 @@ def deserialize_phone_identifier(identifier_model):
     if identifier_model.phone_number:
         return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
     return None
-
-def deserialize_identifier_from_dict(dict_model):
-    # type: (Dict[str, Any]) -> CommunicationIdentifier
-    """
-    Deserialize the Dictionary into Communication Identifier
-
-    :param dict_model: Dict
-    :type dict_model: Dict
-    :return: CommunicationIdentifier
-    """
-    raw_id = dict_model["rawId"]
-
-    if dict_model["communicationUser"]:
-        return CommunicationUserIdentifier(raw_id, raw_id=raw_id)
-    if dict_model["phoneNumber"]:
-        return PhoneNumberIdentifier(dict_model["phoneNumber"]["value"], raw_id=raw_id)
-    if dict_model["microsoftTeamsUser"]:
-        return MicrosoftTeamsUserIdentifier(
-            raw_id=raw_id,
-            user_id=dict_model["microsoftTeamsUser"]["userId"],
-            is_anonymous=dict_model["microsoftTeamsUser"]["isAnonymous"],
-            cloud=dict_model["microsoftTeamsUser"]["cloud"]
-        )
-    return UnknownIdentifier(raw_id)
