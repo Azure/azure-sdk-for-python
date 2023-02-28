@@ -2,7 +2,7 @@ from pathlib import Path
 
 from azure.ai.ml import Output, dsl
 from azure.ai.ml.data_transfer import import_data
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.constants._common import AssetTypes, SERVERLESS_COMPUTE
 from azure.ai.ml.entities import PipelineJob
 
 
@@ -28,17 +28,15 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
             source=Database(**source),
             outputs=outputs,
         )
-        # snowflake_blob_node_input.compute = "adftest"
 
         source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
         snowflake_blob = import_data(
             source=source_snowflake,
             outputs=outputs,
         )
-        # snowflake_blob.compute = "adftest"
 
     pipeline = data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql)
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline
 
 
@@ -64,5 +62,5 @@ def generate_dsl_pipeline_from_builder_sql() -> PipelineJob:
         )
 
     pipeline = data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql)
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline

@@ -49,9 +49,14 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
 )
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes
-from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._data_import.data_import import DataImport
+from azure.ai.ml.constants._common import (
+    MLTABLE_METADATA_SCHEMA_URL_FALLBACK,
+    AssetTypes,
+    ASSET_ID_FORMAT,
+    AzureMLResourceType,
+)
+from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -63,6 +68,7 @@ from azure.ai.ml.exceptions import (
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -235,7 +241,6 @@ class DataOperations(_ScopeDependentOperations):
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
         """
-
         try:
             name = data.name
             if not data.version and self._registry_name:
@@ -251,6 +256,34 @@ class DataOperations(_ScopeDependentOperations):
 
             sas_uri = None
             if self._registry_name:
+                # If the data asset is a workspace asset, promote to registry
+                if isinstance(data, WorkspaceAssetReference):
+                    try:
+                        self._operation.get(
+                            name=data.name,
+                            version=data.version,
+                            resource_group_name=self._resource_group_name,
+                            registry_name=self._registry_name,
+                        )
+                    except Exception as err:  # pylint: disable=broad-except
+                        if isinstance(err, ResourceNotFoundError):
+                            pass
+                        else:
+                            raise err
+                    else:
+                        msg = "An data asset with this name and version already exists in registry"
+                        raise ValidationException(
+                            message=msg,
+                            no_personal_data_message=msg,
+                            target=ErrorTarget.DATA,
+                            error_category=ErrorCategory.USER_ERROR,
+                        )
+                    data = data._to_rest_object()
+                    result = self._service_client.resource_management_asset_reference.begin_import_method(
+                        resource_group_name=self._resource_group_name, registry_name=self._registry_name, body=data
+                    )
+                    return result
+
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
                     name=name,
@@ -508,6 +541,43 @@ class DataOperations(_ScopeDependentOperations):
             name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
         )
         return self.get(name, version=latest_version)
+
+    # pylint: disable=no-self-use
+    def _prepare_to_copy(
+        self, data: Data, name: Optional[str] = None, version: Optional[str] = None
+    ) -> WorkspaceAssetReference:
+
+        """Returns WorkspaceAssetReference
+        to copy a registered data to registry given the asset id
+
+        :param data: Registered data
+        :type data: Data
+        :param name: Destination name
+        :type name: str
+        :param version: Destination version
+        :type version: str
+        """
+        #  Get workspace info to get workspace GUID
+        workspace = self._service_client.workspaces.get(
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+        )
+        workspace_guid = workspace.workspace_id
+        workspace_location = workspace.location
+
+        # Get data asset ID
+        asset_id = ASSET_ID_FORMAT.format(
+            workspace_location,
+            workspace_guid,
+            AzureMLResourceType.DATA,
+            data.name,
+            data.version,
+        )
+
+        return WorkspaceAssetReference(
+            name=name if name else data.name,
+            version=version if version else data.version,
+            asset_id=asset_id,
+        )
 
 
 def _assert_local_path_matches_asset_type(
