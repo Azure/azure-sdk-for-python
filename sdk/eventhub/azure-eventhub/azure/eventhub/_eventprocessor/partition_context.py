@@ -30,7 +30,7 @@ class PartitionContext(object):
         eventhub_name: str,
         consumer_group: str,
         partition_id: str,
-        checkpoint_store: Optional[CheckpointStore]=None,
+        checkpoint_store: Optional[CheckpointStore] = None,
     ) -> None:
         self.fully_qualified_namespace = fully_qualified_namespace
         self.partition_id = partition_id
