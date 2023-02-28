@@ -275,20 +275,85 @@ class AmqpAnnotatedMessage(object):
                 if self.properties.absolute_expiry_time:
                     absolute_expiry_time = int(self.properties.absolute_expiry_time)
 
+            try: 
+                message_id = self.properties.message_id.decode() 
+            except: 
+                message_id = self.properties.message_id
+
+            try:
+                user_id = self.properties.user_id.decode()
+            except:
+                user_id = self.properties.user_id
+
+            try:
+                to = self.properties.to.decode()
+            except:
+                to = self.properties.to
+
+            try:
+                subject=self.properties.subject.decode()
+            except:
+                subject=self.properties.subject
+
+            try:
+                reply_to=self.properties.reply_to.decode()
+            except:
+                reply_to=self.properties.reply_to
+
+            try:
+                correlation_id=self.properties.correlation_id.decode()
+            except:
+                correlation_id=self.properties.correlation_id
+                
+            try:
+                content_type=self.properties.content_type.decode()
+            except:
+                content_type=self.properties.content_type
+
+            try:
+                content_encoding=self.properties.content_encoding.decode()
+            except:
+                content_encoding=self.properties.content_encoding
+            
+            try:
+                creation_time=creation_time.decode()
+            except:
+                pass
+            
+            try:
+                absolute_expiry_time=absolute_expiry_time.decode()
+            except:
+                pass
+                
+            try:
+                group_id=self.properties.group_id.decode()
+            except:
+                group_id=self.properties.group_id
+            
+            try:
+                group_sequence=self.properties.group_sequence.decode()
+            except:
+                group_sequence=self.properties.group_sequence
+            
+            try:
+                reply_to_group_id=self.properties.reply_to_group_id.decode()
+            except:
+                reply_to_group_id=self.properties.reply_to_group_id
+
             message_properties = Properties(
-                message_id=self.properties.message_id,
-                user_id=self.properties.user_id,
-                to=self.properties.to,
-                subject=self.properties.subject,
-                reply_to=self.properties.reply_to,
-                correlation_id=self.properties.correlation_id,
-                content_type=self.properties.content_type,
-                content_encoding=self.properties.content_encoding,
+                message_id=message_id,
+                user_id=user_id,
+                to=to,
+                subject=subject,
+                reply_to=reply_to,
+                correlation_id=correlation_id,
+                content_type=content_type,
+                content_encoding=content_encoding,
                 creation_time=creation_time,
                 absolute_expiry_time=absolute_expiry_time,
-                group_id=self.properties.group_id,
-                group_sequence=self.properties.group_sequence,
-                reply_to_group_id=self.properties.reply_to_group_id
+                group_id=group_id,
+                group_sequence=group_sequence,
+                reply_to_group_id=reply_to_group_id
             )
         elif ttl_set:
             message_properties = Properties(
@@ -302,12 +367,19 @@ class AmqpAnnotatedMessage(object):
             for key in _LONG_ANNOTATIONS:
                 if key in self.annotations:
                     annotations[key] = amqp_long_value(self.annotations[key])
+        try:
+            application_properties = {}
+            for key, value in self.application_properties.items():
+                application_properties[key.decode()] = value.decode()
+        except:
+            application_properties=self.application_properties
+
         return Message(
             header=message_header,
             delivery_annotations=self.delivery_annotations,
             message_annotations=annotations,
             properties=message_properties,
-            application_properties=self.application_properties,
+            application_properties=application_properties,
             data=self._data_body,
             sequence=self._sequence_body,
             value=self._value_body,
