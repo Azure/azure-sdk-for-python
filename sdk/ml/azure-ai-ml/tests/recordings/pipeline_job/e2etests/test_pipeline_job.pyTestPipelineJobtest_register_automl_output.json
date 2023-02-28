@@ -933,7 +933,7 @@
           "properties": {},
           "tags": {
             "tag": "tagvalue",
-            "owner": "00000team"
+            "owner": "sdkteam"
           },
           "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
           "displayName": "test_787172966168",
@@ -1070,7 +1070,7 @@
           "description": "The hello world pipeline job",
           "tags": {
             "tag": "tagvalue",
-            "owner": "00000team"
+            "owner": "sdkteam"
           },
           "properties": {
             "azureml.DevPlatv2": "true",
