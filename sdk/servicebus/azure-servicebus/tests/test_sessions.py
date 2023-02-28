@@ -47,7 +47,7 @@ _logger = get_logger(logging.DEBUG)
 
 
 class ServiceBusSessionTests(AzureMgmtTestCase):
-    @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
+    # @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
