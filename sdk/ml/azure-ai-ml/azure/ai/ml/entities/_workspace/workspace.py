@@ -54,6 +54,8 @@ class Workspace(Resource):
 
         :param name: Name of the workspace.
         :type name: str
+        :param kind: Kind of the workspace. Default value is 'Default'
+        :type kind: str
         :param description: Description of the workspace.
         :type description: str
         :param tags: Tags of the workspace.

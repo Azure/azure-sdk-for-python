@@ -6,8 +6,10 @@ from typing import Optional
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import ComputeRuntimeDto as RestComputeRuntimeDto
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class ComputeRuntime(RestTranslatableMixin):
     def __init__(
         self,
