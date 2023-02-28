@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2023-03-01)
 
 ### Features Added
 - Adding support for AAD token authentication
