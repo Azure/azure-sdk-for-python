@@ -41,16 +41,15 @@ In order to interact with the Azure Key Vault service, you will need an instance
 See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
 
 #### Create a client
-After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a key client (replacing the value of `vault_url` with your vault's URL):
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a key client (replacing the value of `VAULT_URL` with your vault's URL):
 
+<!-- SNIPPET:hello_world.create_a_key_client -->
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.keys import KeyClient
-
+VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
-
-key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+client = KeyClient(vault_url=VAULT_URL, credential=credential)
 ```
+<!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.keys.aio`'s `KeyClient` instead.
 
@@ -204,7 +203,7 @@ for key in keys:
 [CryptographyClient](https://aka.ms/azsdk/python/keyvault-keys/crypto/docs#azure.keyvault.keys.crypto.CryptographyClient)
 enables cryptographic operations (encrypt/decrypt, wrap/unwrap, sign/verify) using a particular key.
 
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys.crypto import CryptographyClient, EncryptionAlgorithm
@@ -235,7 +234,7 @@ Async clients and credentials should be closed when they're no longer needed. Th
 objects are async context managers and define async `close` methods. For
 example:
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.keys.aio import KeyClient
 
@@ -327,7 +326,7 @@ level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument:
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 import sys
@@ -349,7 +348,7 @@ client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential
 
 Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
-```py
+```python
 client.get_key("my-key", logging_enable=True)
 ```
 

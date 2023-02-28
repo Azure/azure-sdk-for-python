@@ -12,7 +12,7 @@ command: >-
   mkdir -p ${{outputs.component_out_path_2}} &&
   cp -r ${{inputs.component_in_path_1}} ${{outputs.component_out_path_1}} &&
   cp -r ${{inputs.component_in_path_2}} ${{outputs.component_out_path_2}}
-environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
 
 inputs:
   component_in_number:
