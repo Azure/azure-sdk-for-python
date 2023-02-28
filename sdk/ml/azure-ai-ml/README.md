@@ -98,7 +98,7 @@ The Azure ML Python SDK includes a telemetry feature that collects usage and fai
 <u>Telemetry will **not** be collected for any use of the Python SDK outside of a Jupyter Notebook.</u>
 
 Telemetry data helps the SDK team understand how the SDK is used so it can be improved and the information about failures helps the team resolve problems and fix bugs.
-The SDK telemetry feature is enabled by default for Jupyter Notebook usage and cannot be enabled for non-Juptyter scenarios. To opt out of the telemetry feature in a Jupyter scenario, pass in `enable_telemetry=False` when constructing your MLClient object.
+The SDK telemetry feature is enabled by default for Jupyter Notebook usage and cannot be enabled for non-Jupyter scenarios. To opt out of the telemetry feature in a Jupyter scenario, pass in `enable_telemetry=False` when constructing your MLClient object.
 
 ## Next steps
 
