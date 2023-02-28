@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -546,21 +545,21 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POUND = "pound"
     ASTERISK = "asterisk"
 
-    class RecognizeCanceled(object):
-        """RecognizeCanceled.
 
-        :ivar call_connection_id: Call connection ID.
-        :vartype call_connection_id: str
-        :ivar server_call_id: Server call ID.
-        :vartype server_call_id: str
-        :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-        skype chain ID.
-        :vartype correlation_id: str
-        :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-        request to the response event.
-        :vartype operation_context: str
-        """
+class RecognizeCanceled(object):
+    """RecognizeCanceled.
 
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+    skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    """
     def __init__(
         self,
         **kwargs: Any
@@ -571,10 +570,10 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+            skype chain ID.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
+            request to the response event.
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
