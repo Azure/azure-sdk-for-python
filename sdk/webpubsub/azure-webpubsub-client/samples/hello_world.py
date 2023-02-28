@@ -29,16 +29,6 @@ def on_group_message(msg: OnGroupDataMessageArgs):
         print(f"Received message from {msg.group}: {msg.data}")
 
 
-def run(client: WebPubSubClient):
-    group_name = "test"
-    client.join_group(group_name)
-    client.send_to_group(group_name, "hello text", "text", no_echo=False, fire_and_forget=False)
-    client.send_to_group(group_name, {"hello": "json"}, "json")
-    client.send_to_group(group_name, "hello json", "json")
-    content = memoryview("hello binary".encode())
-    client.send_to_group(group_name, content, "binary")
-
-
 def main():
     service_client = WebPubSubServiceClient.from_connection_string(
         connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING"), hub="hub"
@@ -51,18 +41,18 @@ def main():
         ),
         auto_reconnect=False,
     )
-    client.on("connected", on_connected)
-    client.on("disconnected", on_disconnected)
-    client.on("group-message", on_group_message)
 
-    # usage 1: start/stop client manullay
-    client.start()
-    run(client)
-    client.stop()
-
-    # usage 2: with context managner, you don't need to start/stop the client manually
     with client:
-        run(client)
+        client.on("connected", on_connected)
+        client.on("disconnected", on_disconnected)
+        client.on("group-message", on_group_message)
+        group_name = "test"
+        client.join_group(group_name)
+        client.send_to_group(group_name, "hello text", "text", no_echo=False, fire_and_forget=False)
+        client.send_to_group(group_name, {"hello": "json"}, "json")
+        client.send_to_group(group_name, "hello json", "json")
+        content = memoryview("hello binary".encode())
+        client.send_to_group(group_name, content, "binary")
 
 
 if __name__ == "__main__":

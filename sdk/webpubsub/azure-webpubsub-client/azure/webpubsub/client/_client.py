@@ -604,7 +604,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._connect(self._url)
 
     @distributed_trace
-    def start(self) -> None:
+    def _start(self) -> None:
         """start the client and connect to service"""
 
         if self._is_stopping:
@@ -620,7 +620,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             raise e
 
     @distributed_trace
-    def stop(self) -> None:
+    def _stop(self) -> None:
         """stop the client"""
 
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
@@ -779,7 +779,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             _LOGGER.error("wrong event type: %s", event)
 
     def __enter__(self):
-        self.start()
+        self._start()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.stop()
+        self._stop()
