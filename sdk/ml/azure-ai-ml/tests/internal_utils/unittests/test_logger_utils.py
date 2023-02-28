@@ -58,15 +58,23 @@ class TestOpsLogger:
             assert isinstance(handler, logging.NullHandler)
 
         with patch(
+            "azure.ai.ml._telemetry.logging_handler.is_telemetry_collection_disabled",
+            return_value=False
+        ):
+            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
+            assert isinstance(handler, AzureLogHandler)
+            assert isinstance(handler, AzureMLSDKLogHandler)
+
+        with patch(
             "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook",
-            return_value=True
+            return_value=False
         ):
             handler = get_appinsights_log_handler(user_agent=USER_AGENT)
             assert isinstance(handler, logging.NullHandler)
 
         with patch(
-            "azure.ai.ml._telemetry.logging_handler.is_telemetry_collection_disabled",
-            return_value=False
+            "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook",
+            return_value=True
         ):
             handler = get_appinsights_log_handler(user_agent=USER_AGENT)
             assert isinstance(handler, AzureLogHandler)
