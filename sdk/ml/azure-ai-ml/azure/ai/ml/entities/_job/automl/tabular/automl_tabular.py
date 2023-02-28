@@ -25,7 +25,7 @@ from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2023_02_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models._azure_machine_learning_workspaces_enums import (
     TrainingMode,
 )
 
