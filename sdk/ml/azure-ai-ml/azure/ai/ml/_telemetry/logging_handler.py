@@ -143,6 +143,7 @@ def get_appinsights_log_handler(
         return logging.NullHandler()
 
 
+# cspell:ignore AzureMLSDKLogHandler
 class AzureMLSDKLogHandler(AzureLogHandler):
     """Customized AzureLogHandler for AzureML SDK"""
 
