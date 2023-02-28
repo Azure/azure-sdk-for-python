@@ -2695,7 +2695,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert node_output.name == "a_output"
         assert node_output.version == "1"
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_dsl_pipeline_with_data_transfer_copy_2urifolder(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
             generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
@@ -2729,7 +2728,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 }
             },
             "outputs": {"merged_blob": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"}},
-            "settings": {"default_compute": "adftest"},
+            "settings": {"default_compute": "serverless"},
             "tags": {},
         }
         assert expected_job == actual_job
