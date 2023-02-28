@@ -765,14 +765,14 @@ class AzureAppConfigurationClient:
         except HttpResponseError as error:
             raise error
 
-    def update_sync_token(self, token: str) -> None:
+    async def update_sync_token(self, token: str) -> None:
 
         """Add a sync token to the internal list of tokens.
 
         :param str token: The sync token to be added to the internal list of tokens
         """
 
-        self._sync_token_policy.add_token(token)
+        await self._sync_token_policy.add_token(token)
 
     async def close(self) -> None:
 

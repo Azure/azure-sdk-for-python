@@ -11,6 +11,7 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
+from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
 from azure.ai.ml._schema.job.data_transfer_job import (
     DataTransferCopyJobSchema,
     DataTransferImportJobSchema,
@@ -23,7 +24,7 @@ module_logger = logging.getLogger(__name__)
 class PipelineDataTransferCopyJobSchema(DataTransferCopyJobSchema):
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=UnionField([NestedField(OutputSchema), fields.Str()], allow_none=True),
+        values=UnionField([NestedField(OutputSchema), OutputBindingStr], allow_none=True),
     )
 
     @post_load
@@ -36,7 +37,7 @@ class PipelineDataTransferCopyJobSchema(DataTransferCopyJobSchema):
 class PipelineDataTransferImportJobSchema(DataTransferImportJobSchema):
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=UnionField([NestedField(OutputSchema)], allow_none=True),
+        values=UnionField([NestedField(OutputSchema), OutputBindingStr], allow_none=True),
     )
 
     @post_load

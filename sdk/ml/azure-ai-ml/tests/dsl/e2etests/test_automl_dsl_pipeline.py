@@ -5,7 +5,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from test_utilities.utils import cancel_job
 
-from azure.ai.ml import Input, MLClient, automl, dsl
+from azure.ai.ml import Input, MLClient, automl, dsl, Output
 from azure.ai.ml.automl import (
     classification,
     forecasting,
@@ -89,6 +89,89 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
             "training": {"enable_stack_ensemble": False, "enable_vote_ensemble": False},
             "task": "classification",
             "primary_metric": "accuracy",
+        }
+
+    def test_register_output_for_automl_classification(self, client: MLClient):
+        @dsl.pipeline(name="train_automl_classification_in_pipeline")
+        def train_automl_classification_in_pipeline(
+            class_train_data,
+            class_valid_data,
+        ):
+            classification_node = classification(
+                training_data=class_train_data,
+                validation_data=class_valid_data,
+                test_data=class_valid_data,
+                target_column_name="y",
+                primary_metric="accuracy",
+                featurization=TabularFeaturizationSettings(mode="Auto"),
+                outputs={"best_model": Output(type="mlflow_model")},
+            )
+            classification_node.set_limits(max_trials=1)
+            classification_node.set_training(enable_stack_ensemble=False, enable_vote_ensemble=False)
+            classification_node.outputs["best_model"].name = "classification_output_name"
+            classification_node.outputs["best_model"].version = "1"
+
+            classification_node_2 = classification(  # binding to pipeline output
+                training_data=class_train_data,
+                validation_data=class_valid_data,
+                test_data=class_valid_data,
+                target_column_name="y",
+                primary_metric="accuracy",
+                featurization=TabularFeaturizationSettings(mode="Auto"),
+                outputs={"best_model": Output(type="mlflow_model")},
+            )
+            classification_node_2.set_limits(max_trials=1)
+            classification_node_2.set_training(enable_stack_ensemble=False, enable_vote_ensemble=False)
+            classification_node_2.outputs["best_model"].name = "classification_output_name"
+            classification_node_2.outputs["best_model"].version = "2"
+
+            return {"classification_2_output": classification_node_2.outputs.best_model}
+
+        class_train = Input(
+            type=AssetTypes.MLTABLE,
+            path=tests_root_dir / "test_configs/automl_job/test_datasets/bank_marketing/train",
+        )
+        class_valid = Input(
+            type=AssetTypes.MLTABLE,
+            path=tests_root_dir / "test_configs/automl_job/test_datasets/bank_marketing/valid",
+        )
+
+        pipeline_job: PipelineJob = train_automl_classification_in_pipeline(class_train, class_valid)
+        pipeline_job.settings.default_compute = CPU_CLUSTER
+
+        from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
+        cancel_job(client, from_rest_pipeline_job)
+
+        actual_dict = from_rest_pipeline_job._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties"]
+
+        classification_dict = pydash.omit(actual_dict["properties"]["jobs"]["classification_node"], fields_to_omit)
+        assert classification_dict == {
+            "test_data": "${{parent.inputs.class_valid_data}}",
+            "validation_data": "${{parent.inputs.class_valid_data}}",
+            "training_data": "${{parent.inputs.class_train_data}}",
+            "target_column_name": "y",
+            "tags": {},
+            "type": "automl",
+            "outputs": {
+                "best_model": {"job_output_type": "mlflow_model", "name": "classification_output_name", "version": "1"}
+            },
+            "log_verbosity": "info",
+            "limits": {"max_trials": 1},
+            "featurization": {"mode": "auto"},
+            "training": {"enable_stack_ensemble": False, "enable_vote_ensemble": False},
+            "task": "classification",
+            "primary_metric": "accuracy",
+        }
+
+        classification_dict = pydash.omit(
+            actual_dict["properties"]["outputs"]["classification_2_output"], fields_to_omit
+        )
+        assert classification_dict == {
+            "asset_name": "classification_output_name",
+            "asset_version": "2",
+            "job_output_type": "mlflow_model",
+            "mode": "ReadWriteMount",
         }
 
     def test_automl_regression_in_pipeline(self, client: MLClient):

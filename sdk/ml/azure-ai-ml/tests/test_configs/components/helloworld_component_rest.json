@@ -41,7 +41,7 @@
                 }
             },
             "command": "echo Hello World & echo $[[${{inputs.component_in_number}}]] & echo ${{inputs.component_in_path}} & echo ${{outputs.component_out_path}} > ${{outputs.component_out_path}}/component_in_number",
-            "environment": "azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/environments/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu/versions/1",
+            "environment": "azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/1",
             "code": "azureml:/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/DesignerTestRG/providers/Microsoft.MachineLearningServices/workspaces/DesignerTest-centraluseuap/codes/221061b5-a6de-4d60-81fd-3a852cdfe1db/versions/1"
         }
     },

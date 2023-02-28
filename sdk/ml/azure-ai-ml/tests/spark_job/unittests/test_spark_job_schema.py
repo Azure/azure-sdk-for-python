@@ -4,7 +4,7 @@ import pytest
 import yaml
 
 from azure.ai.ml import Input, load_job
-from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode, JobOutputType, OutputDeliveryMode
+from azure.ai.ml._restclient.v2022_12_01_preview.models import InputDeliveryMode, JobOutputType, OutputDeliveryMode
 from azure.ai.ml._schema import SparkJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities import SparkJob
@@ -77,7 +77,7 @@ class TestSparkJobSchema:
                 )
             },
             compute="douglassynapse",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             resources={
                 "instance_type": "Standard_E8S_V3",
                 "runtime_version": "3.1.0",
