@@ -1969,8 +1969,6 @@ class RecognizeOptions(_serialization.Model):
     :ivar target_participant: Target participant of DTMF tone recognition. Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar speech_language: Speech language to be recognized, If not set default is en-US.
-    :vartype speech_language: str
     :ivar dtmf_options: Defines configurations for DTMF.
     :vartype dtmf_options: ~azure.communication.callautomation.models.DtmfOptions
     :ivar choices: Defines Ivr choices for recognize.
@@ -1986,7 +1984,6 @@ class RecognizeOptions(_serialization.Model):
         "interrupt_prompt": {"key": "interruptPrompt", "type": "bool"},
         "initial_silence_timeout_in_seconds": {"key": "initialSilenceTimeoutInSeconds", "type": "int"},
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
-        "speech_language": {"key": "speechLanguage", "type": "str"},
         "dtmf_options": {"key": "dtmfOptions", "type": "DtmfOptions"},
         "choices": {"key": "choices", "type": "[Choice]"},
     }
@@ -1997,7 +1994,6 @@ class RecognizeOptions(_serialization.Model):
         target_participant: "_models.CommunicationIdentifierModel",
         interrupt_prompt: Optional[bool] = None,
         initial_silence_timeout_in_seconds: Optional[int] = None,
-        speech_language: Optional[str] = None,
         dtmf_options: Optional["_models.DtmfOptions"] = None,
         choices: Optional[List["_models.Choice"]] = None,
         **kwargs: Any
@@ -2011,8 +2007,6 @@ class RecognizeOptions(_serialization.Model):
         :keyword target_participant: Target participant of DTMF tone recognition. Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword speech_language: Speech language to be recognized, If not set default is en-US.
-        :paramtype speech_language: str
         :keyword dtmf_options: Defines configurations for DTMF.
         :paramtype dtmf_options: ~azure.communication.callautomation.models.DtmfOptions
         :keyword choices: Defines Ivr choices for recognize.
@@ -2022,7 +2016,6 @@ class RecognizeOptions(_serialization.Model):
         self.interrupt_prompt = interrupt_prompt
         self.initial_silence_timeout_in_seconds = initial_silence_timeout_in_seconds
         self.target_participant = target_participant
-        self.speech_language = speech_language
         self.dtmf_options = dtmf_options
         self.choices = choices
 
@@ -2577,6 +2570,9 @@ class TransferToParticipantRequest(_serialization.Model):
      Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar transferee_caller_id: The caller ID of the transferee when transferring to PSTN.
+    :vartype transferee_caller_id:
+     ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
     :ivar custom_context: Used by customer to send custom context to targets.
     :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
@@ -2590,6 +2586,7 @@ class TransferToParticipantRequest(_serialization.Model):
 
     _attribute_map = {
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
+        "transferee_caller_id": {"key": "transfereeCallerId", "type": "PhoneNumberIdentifierModel"},
         "custom_context": {"key": "customContext", "type": "CustomContext"},
         "operation_context": {"key": "operationContext", "type": "str"},
     }
@@ -2598,6 +2595,7 @@ class TransferToParticipantRequest(_serialization.Model):
         self,
         *,
         target_participant: "_models.CommunicationIdentifierModel",
+        transferee_caller_id: Optional["_models.PhoneNumberIdentifierModel"] = None,
         custom_context: Optional["_models.CustomContext"] = None,
         operation_context: Optional[str] = None,
         **kwargs: Any
@@ -2607,6 +2605,9 @@ class TransferToParticipantRequest(_serialization.Model):
          Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword transferee_caller_id: The caller ID of the transferee when transferring to PSTN.
+        :paramtype transferee_caller_id:
+         ~azure.communication.callautomation.models.PhoneNumberIdentifierModel
         :keyword custom_context: Used by customer to send custom context to targets.
         :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
@@ -2615,6 +2616,7 @@ class TransferToParticipantRequest(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
+        self.transferee_caller_id = transferee_caller_id
         self.custom_context = custom_context
         self.operation_context = operation_context
 
