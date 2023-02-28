@@ -703,8 +703,6 @@ class AzureAppConfigurationClient:
         self,
         name: str,
         *,
-        etag: Optional[str] = "*",
-        match_condition: MatchConditions = MatchConditions.Unconditionally,
         fields: Optional[List[str]] = None,
         **kwargs
     ) -> Snapshot:
@@ -712,31 +710,18 @@ class AzureAppConfigurationClient:
 
         :param name: The name of the configuration setting snapshot to retrieve
         :type name: str
-        :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag
-        :keyword match_condition: The match condition to use upon the etag
-        :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields
         :return: The Snapshot returned from the service
         :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
         :class:`ResourceModifiedError`
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
-        if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
         try:
             return self._impl.get_snapshot(
                 name=name,
-                if_match=prep_if_match(etag, match_condition),
-                if_none_match=prep_if_none_match(etag, match_condition),
+                if_match=None,
+                if_none_match=None,
                 select=fields,
-                error_map=error_map,
                 **kwargs
             )
         except HttpResponseError as error:
