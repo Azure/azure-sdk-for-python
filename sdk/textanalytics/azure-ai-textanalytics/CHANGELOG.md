@@ -12,7 +12,6 @@ This version of the client library defaults to the service API version `2022-10-
 ### Breaking Changes
 
 - Removed models `BaseResolution` and `BooleanResolution`.
-- Renamed property `date_time_sub_kind` to `datetime_subkind` on `DateTimeResolution`.
 - Renamed model `AbstractSummaryAction` to `AbstractiveSummaryAction`.
 - Renamed model `AbstractSummaryResult` to `AbstractiveSummaryResult`.
 - Changed automatic language detection, it is now controlled by the boolean keyword argument `auto_detect_language`.
