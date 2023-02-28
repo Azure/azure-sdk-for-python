@@ -81,10 +81,7 @@ def in_jupyter_notebook() -> bool:
 
 
 def is_telemetry_collection_disabled():
-    telemetry_disabled = getenv(AZUREML_SDKV2_TELEMETRY_OPTOUT_ENV_VAR)
-    if telemetry_disabled and (telemetry_disabled.lower() == "true" or telemetry_disabled == "1"):
-        return True
-    if not in_jupyter_notebook:
+    if not in_jupyter_notebook():
         return True
     return False
 
@@ -93,6 +90,7 @@ def get_appinsights_log_handler(
      user_agent,
      instrumentation_key=None,
      component_name=None,
+     enable_telemetry=False,
      *args, # pylint: disable=unused-argument
      **kwargs
  ):
@@ -115,7 +113,7 @@ def get_appinsights_log_handler(
         if instrumentation_key is None:
             instrumentation_key = INSTRUMENTATION_KEY
 
-        if is_telemetry_collection_disabled():
+        if is_telemetry_collection_disabled() or not enable_telemetry:
             return logging.NullHandler()
 
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():

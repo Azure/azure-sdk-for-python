@@ -186,7 +186,8 @@ class MLClient:
         self._credential = credential
 
         show_progress = kwargs.pop("show_progress", True)
-        self._operation_config = OperationConfig(show_progress=show_progress)
+        enable_telemetry = kwargs.pop("enable_telemetry", True)
+        self._operation_config = OperationConfig(show_progress=show_progress, enable_telemetry=enable_telemetry)
 
         if "cloud" in kwargs:
             cloud_name = kwargs["cloud"]
@@ -251,7 +252,7 @@ class MLClient:
         if "user_agent" in kwargs:
             user_agent = kwargs.get("user_agent")
 
-        app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
+        app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties}, enable_telemetry=self._operation_config.enable_telemetry)
         app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
