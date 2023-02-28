@@ -91,7 +91,7 @@ class CommunicationUserIdentifier(object):
             self.raw_id = _communication_user_raw_id(self)
 
     def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+        return self.raw_id == _communication_user_raw_id(other)
 
 def _communication_user_raw_id(identifier: CommunicationUserIdentifier) -> str:
     return identifier.properties['id']
@@ -125,7 +125,7 @@ class PhoneNumberIdentifier(object):
             self.raw_id = _phone_number_raw_id(self)
 
     def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+        return self.raw_id == _phone_number_raw_id(other)
 
 
 def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
@@ -199,7 +199,7 @@ class MicrosoftTeamsUserIdentifier(object):
             self.raw_id = _microsoft_teams_user_raw_id(self)
 
     def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+        return self.raw_id == _microsoft_teams_user_raw_id(other)
 
 
 def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
@@ -255,7 +255,7 @@ class MicrosoftBotIdentifier(object):
             self.raw_id = _microsoft_bot_raw_id(self)
 
     def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+        return self.raw_id == _microsoft_bot_raw_id(other)
 
 
 def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:
