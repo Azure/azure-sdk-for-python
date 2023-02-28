@@ -62,8 +62,6 @@ def deserialize_identifier(identifier_model):
         )
     return UnknownIdentifier(raw_id)
 
-<<<<<<< HEAD
-
 def deserialize_phone_identifier(identifier_model):
     # type: (PhoneNumberIdentifierModel) -> PhoneNumberIdentifier
     """
@@ -78,7 +76,7 @@ def deserialize_phone_identifier(identifier_model):
     if identifier_model.phone_number:
         return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
     return None
-=======
+
 def deserialize_identifier_from_dict(dict_model):
     # type: (Dict[str, Any]) -> CommunicationIdentifier
     """
@@ -102,4 +100,3 @@ def deserialize_identifier_from_dict(dict_model):
             cloud=dict_model["microsoftTeamsUser"]["cloud"]
         )
     return UnknownIdentifier(raw_id)
->>>>>>> 66b0daccf5 (initial commit)
