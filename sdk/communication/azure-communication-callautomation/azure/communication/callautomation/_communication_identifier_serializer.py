@@ -62,6 +62,7 @@ def deserialize_identifier(identifier_model):
         )
     return UnknownIdentifier(raw_id)
 
+
 def deserialize_phone_identifier(identifier_model):
     # type: (PhoneNumberIdentifierModel) -> PhoneNumberIdentifier
     """
