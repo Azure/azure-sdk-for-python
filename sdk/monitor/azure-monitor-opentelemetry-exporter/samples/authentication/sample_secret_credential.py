@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """
-An example to show an application using Opentelemetry tracing api and sdk. Custom dependencies are
+An example to show an application using Opentelemetry tracing api and sdk with a Azure Client Secret
+Credential. Credentials are used for Azure Active Directory Authentication. Custom dependencies are
 tracked via spans and telemetry is exported to application insights with the AzureMonitorTraceExporter.
 """
 import os

@@ -101,15 +101,13 @@ class BaseExporter:
             # Handle redirects in exporter, set new endpoint if redirected
             RedirectPolicy(permit_redirects=False),
             config.retry_policy,
-            config.authentication_policy,
+            _get_auth_policy(self._credential, config.authentication_policy),
             config.custom_hook_policy,
             config.logging_policy,
             # Explicitly disabling to avoid infinite loop of Span creation when data is exported
             # DistributedTracingPolicy(**kwargs),
             config.http_logging_policy or HttpLoggingPolicy(**kwargs)
         ]
-        if self._credential:
-            _add_credential_policy(policies, self._credential)
 
         self.client = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
@@ -320,15 +318,19 @@ class BaseExporter:
         return self.__class__.__name__ == "_StatsBeatExporter"
 
 
-def _add_credential_policy(policies, credential):
-    if not hasattr(credential, 'get_token'):
-        raise ValueError(
-            'Must pass in valid TokenCredential.'
-        )
-    policies.append(BearerTokenCredentialPolicy(
-        credential,
-        _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
-    ))
+def _get_auth_policy(credential, default_auth_policy):
+    if credential:
+        if hasattr(credential, 'get_token'):
+            return BearerTokenCredentialPolicy(
+                credential,
+                _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
+            )
+        else:
+            raise ValueError(
+                'Must pass in valid TokenCredential.'
+            )
+    else:
+        return default_auth_policy
 
 
 def _is_redirect_code(response_code: int) -> bool:
