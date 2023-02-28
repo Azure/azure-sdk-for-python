@@ -2816,7 +2816,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.jobs["node_3"].outputs.component_out_path.name == "n3_output"
         check_name_and_version(pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1")
 
-    @pytest.mark.skip("https://msdata.visualstudio.com/Vienna/_workitems/edit/2245690")
     @pytest.mark.disable_mock_code_hash
     def test_register_output_for_pipeline_component(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -2851,6 +2850,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
 
     @pytest.mark.disable_mock_code_hash
+    # without this mark, the code would be passed with different id even when we upload the same component,
+    # add this mark to reuse node and further reuse pipeline
     def test_register_with_output_format(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
