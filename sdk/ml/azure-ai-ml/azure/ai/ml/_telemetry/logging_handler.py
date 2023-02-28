@@ -80,17 +80,11 @@ def in_jupyter_notebook() -> bool:
     return True
 
 
-def is_telemetry_collection_disabled():
-    if not in_jupyter_notebook():
-        return True
-    return False
-
-
 def get_appinsights_log_handler(
      user_agent,
      instrumentation_key=None,
      component_name=None,
-     enable_telemetry=False,
+     enable_telemetry=True,
      *args, # pylint: disable=unused-argument
      **kwargs
  ):
@@ -102,6 +96,8 @@ def get_appinsights_log_handler(
     :type instrumentation_key: str
     :param component_name: The component name.
     :type component_name: str
+    :param enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
+    :type enable_telemetry: bool
     :param args: Optional arguments for formatting messages.
     :type args: list
     :param kwargs: Optional keyword arguments for adding additional information to messages.
@@ -113,7 +109,7 @@ def get_appinsights_log_handler(
         if instrumentation_key is None:
             instrumentation_key = INSTRUMENTATION_KEY
 
-        if is_telemetry_collection_disabled() or not enable_telemetry:
+        if not in_jupyter_notebook() or not enable_telemetry:
             return logging.NullHandler()
 
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():
@@ -132,7 +128,7 @@ def get_appinsights_log_handler(
         custom_properties.update({"user_agent": user_agent})
         if "properties" in kwargs:
             custom_properties.update(kwargs.pop("properties"))
-        handler = AzureMLSDKLogHandler(connection_string=f'InstrumentationKey={instrumentation_key}', custom_properties=custom_properties)
+        handler = AzureMLSDKLogHandler(connection_string=f'InstrumentationKey={instrumentation_key}', custom_properties=custom_properties, enable_telemetry=enable_telemetry)
         current_logger.addHandler(handler)
 
         return handler
@@ -145,13 +141,15 @@ def get_appinsights_log_handler(
 class AzureMLSDKLogHandler(AzureLogHandler):
     """Customized AzureLogHandler for AzureML SDK"""
 
-    def __init__(self, custom_properties, *args, **kwargs):
+    def __init__(self, custom_properties, enable_telemetry, *args, **kwargs):
         super(AzureLogHandler, self).__init__(*args, **kwargs)
+
+        self._is_telemetry_collection_disabled = not enable_telemetry
         self._custom_properties = custom_properties
         self.addFilter(CustomDimensionsFilter(self._custom_properties))
 
     def emit(self, record):
-        if is_telemetry_collection_disabled():
+        if self._is_telemetry_collection_disabled:
             return
 
         try:

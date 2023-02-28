@@ -26,6 +26,25 @@ class TestLoggerUtils:
 
 
 @pytest.mark.unittest
+class TestLoggingHandler:
+    def test_logging_enabled(self) -> None:
+        with patch(
+            "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook",
+            return_value=False
+        ):
+            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
+            assert isinstance(handler, logging.NullHandler)
+
+        with patch(
+            "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook",
+            return_value=True
+        ):
+            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
+            assert isinstance(handler, AzureLogHandler)
+            assert isinstance(handler, AzureMLSDKLogHandler)
+
+
+@pytest.mark.unittest
 class TestOpsLogger:
     def test_init(self) -> None:
         test_name = "test"
@@ -48,34 +67,3 @@ class TestOpsLogger:
         assert len(test_data) == 0
         assert test_logger.package_logger.hasHandlers()
         assert test_logger.package_logger.handlers[0] == test_handler
-
-    def test_disabled_logging(self) -> None:
-        with patch(
-            "azure.ai.ml._telemetry.logging_handler.is_telemetry_collection_disabled",
-            return_value=True
-        ):
-            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
-            assert isinstance(handler, logging.NullHandler)
-
-        with patch(
-            "azure.ai.ml._telemetry.logging_handler.is_telemetry_collection_disabled",
-            return_value=False
-        ):
-            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
-            assert isinstance(handler, AzureLogHandler)
-            assert isinstance(handler, AzureMLSDKLogHandler)
-
-        with patch(
-            "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook",
-            return_value=False
-        ):
-            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
-            assert isinstance(handler, logging.NullHandler)
-
-        with patch(
-            "azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook",
-            return_value=True
-        ):
-            handler = get_appinsights_log_handler(user_agent=USER_AGENT)
-            assert isinstance(handler, AzureLogHandler)
-            assert isinstance(handler, AzureMLSDKLogHandler)
