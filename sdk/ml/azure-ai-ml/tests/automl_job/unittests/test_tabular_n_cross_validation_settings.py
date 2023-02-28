@@ -2,7 +2,7 @@ from typing import Union
 
 import pytest
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoNCrossValidations, CustomNCrossValidations, JobBase
+from azure.ai.ml._restclient.v2022_12_01_preview.models import AutoNCrossValidations, CustomNCrossValidations, JobBase
 from azure.ai.ml.automl import classification, forecasting, regression
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
