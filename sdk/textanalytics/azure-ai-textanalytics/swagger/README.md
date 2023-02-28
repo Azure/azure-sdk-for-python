@@ -191,12 +191,3 @@ directive:
     where: $.definitions.JobState
     transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
 ```
-
-### Rename DateTimeResolution.date_time_sub_kind property to datetime_subkind
-
-```yaml
-directive:
-  - from: swagger-document
-    where: $.definitions.DateTimeResolution
-    transform: $.properties.dateTimeSubKind["x-ms-client-name"] = "datetimeSubkind";
-```
