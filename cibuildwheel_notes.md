@@ -2,13 +2,15 @@ TODO:
 
 - [ ] Recognize c-extensions, call `cibuildwheel` instead of `python -m build` against package root in `sdk_build` call
 - [ ] Update `azure-extensions-prototype` `pyproject.toml` with necessary additions for cibuildwheel tool config
+- [ ] Figure out how to run appropriate tests, what needs to install? How do the relative paths work?
 - [x] Figure out how to define the targeted matrix from within `pyproject.toml`, set up the targeting matrix there
   - Just need to set skip [as defined in this reference](https://cibuildwheel.readthedocs.io/en/stable/options/#configuration-file)
-  - 
+  - Currently have this setting added to the `pyproject.toml` for azure-storage-extensions
 - [ ] If we can't put the output matrix under `pyproject.toml`, define in `artifact` list with set of platforms
+  - Need to run `build` on multiple platforms.
 - [ ] Update `create_and_install` to install the appropriate wheel from the wheel output dir
 - [ ] Ensure the correct wheel is selected/installed across all tox environments, not just when called in `create_wheel_and_install`.
-
+- [ ] We don't have a way to identify what is a new SDK because the storage extension doesn't take a dep on azure-core.
 
 
 Reference below for existing configuration that's working for azure-uamqp-python.

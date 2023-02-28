@@ -2,6 +2,7 @@ import os
 import ast
 import textwrap
 import re
+from setuptools import Extension
 
 try:
     # py 311 adds this library natively
@@ -45,6 +46,8 @@ class ParsedSetup:
         package_data: Dict[str, Any],
         include_package_data: bool,
         classifiers: List[str],
+        ext_package: str,
+        ext_modules: List[Extension]
     ):
         self.name: str = name
         self.version: str = version
@@ -56,6 +59,8 @@ class ParsedSetup:
         self.package_data: Dict[str, Any] = package_data
         self.include_package_data: bool = include_package_data
         self.classifiers: List[str] = classifiers
+        self.ext_package = ext_package
+        self.ext_modules = ext_modules
 
         self.folder = os.path.dirname(self.setup_filename)
 
@@ -72,6 +77,8 @@ class ParsedSetup:
             package_data,
             include_package_data,
             classifiers,
+            ext_package,
+            ext_modules
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -85,6 +92,8 @@ class ParsedSetup:
             package_data,
             include_package_data,
             classifiers,
+            ext_package,
+            ext_modules
         )
 
     def get_build_config(self) -> Dict[str, Any]:
@@ -117,7 +126,7 @@ def read_setup_py_content(setup_filename: str) -> str:
         return content
 
 
-def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str]]:
+def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -130,7 +139,9 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, st
         <namespace>,
         <package_data dict>,
         <include_package_data bool>,
-        <classifiers>
+        <classifiers>,
+        <ext_package>,
+        <ext_modules>
     )
     """
     if not setup_filename.endswith("setup.py"):
@@ -205,6 +216,14 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, st
 
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
 
+    ext_package = None
+    if "ext_package" in kwargs:
+        ext_package = kwargs["ext_package"]
+
+    ext_modules = []
+    if "ext_modules" in kwargs:
+        ext_modules = kwargs["ext_modules"]
+
     return (
         name,
         version,
@@ -215,7 +234,9 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, st
         name_space,
         package_data,
         include_package_data,
-        classifiers
+        classifiers,
+        ext_package,
+        ext_modules
     )
 
 
