@@ -97,6 +97,8 @@ class Workspace(Resource):
         :type primary_user_assigned_identity: str
         :param managed_network: workspace's Managed Network configuration
         :type managed_network: ManagedNetwork
+        :param feature_store_settings: Settings for feature store type workspace.
+        :type feature_store_settings: FeatureStoreSettings
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
