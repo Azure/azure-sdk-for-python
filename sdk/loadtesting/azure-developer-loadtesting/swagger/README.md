@@ -34,6 +34,14 @@ directive:
     transform: >
       $["parameters"][3]["x-ms-client-name"] = "metricName";
   - from: swagger-document
+    where: $["paths"]["/test-runs/{testRunId}/metrics"].post
+    transform: >
+      $["parameters"][5]["x-ms-client-name"] = "timeInterval";
+  - from: swagger-document
+    where: $["paths"]["/test-runs/{testRunId}/metrics"].post
+    transform: >
+      $["parameters"][3]["x-ms-client-name"] = "metricName";
+  - from: swagger-document
     where: '$.paths.*[?(@.tags=="Test")]'
     transform: >
      $["operationId"] = $["operationId"].replace("LoadTestAdministration_", "Administration_");

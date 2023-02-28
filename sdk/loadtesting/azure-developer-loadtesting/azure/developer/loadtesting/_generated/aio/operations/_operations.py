@@ -5312,9 +5312,9 @@ class TestRunOperations:
         test_run_id: str,
         body: Optional[JSON] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
-        timespan: str,
+        time_interval: str,
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
         content_type: str = "application/json",
@@ -5329,13 +5329,13 @@ class TestRunOperations:
         :type test_run_id: str
         :param body: Metric dimension filter. Default value is None.
         :type body: JSON
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :keyword time_interval: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
-        :paramtype timespan: str
+        :paramtype time_interval: str
         :keyword aggregation: The aggregation. Default value is None.
         :paramtype aggregation: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
@@ -5388,9 +5388,9 @@ class TestRunOperations:
         test_run_id: str,
         body: Optional[IO] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
-        timespan: str,
+        time_interval: str,
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
         content_type: str = "application/json",
@@ -5405,13 +5405,13 @@ class TestRunOperations:
         :type test_run_id: str
         :param body: Metric dimension filter. Default value is None.
         :type body: IO
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :keyword time_interval: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
-        :paramtype timespan: str
+        :paramtype time_interval: str
         :keyword aggregation: The aggregation. Default value is None.
         :paramtype aggregation: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
@@ -5451,9 +5451,9 @@ class TestRunOperations:
         test_run_id: str,
         body: Optional[Union[JSON, IO]] = None,
         *,
-        metricname: str,
+        metric_name: str,
         metric_namespace: str,
-        timespan: str,
+        time_interval: str,
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
         **kwargs: Any
@@ -5468,13 +5468,13 @@ class TestRunOperations:
         :param body: Metric dimension filter. Is either a JSON type or a IO type. Default value is
          None.
         :type body: JSON or IO
-        :keyword metricname: Metric name. Required.
-        :paramtype metricname: str
+        :keyword metric_name: Metric name. Required.
+        :paramtype metric_name: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword timespan: The timespan of the query. It is a string with the following format
+        :keyword time_interval: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
-        :paramtype timespan: str
+        :paramtype time_interval: str
         :keyword aggregation: The aggregation. Default value is None.
         :paramtype aggregation: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
@@ -5549,9 +5549,9 @@ class TestRunOperations:
 
                 request = build_test_run_list_metrics_request(
                     test_run_id=test_run_id,
-                    metricname=metricname,
+                    metric_name=metric_name,
                     metric_namespace=metric_namespace,
-                    timespan=timespan,
+                    time_interval=time_interval,
                     aggregation=aggregation,
                     interval=interval,
                     content_type=content_type,
