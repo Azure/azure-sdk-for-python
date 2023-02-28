@@ -294,11 +294,11 @@ class IdentifierRawIdTest(unittest.TestCase):
             )
         )
         _assert_communication_identifier(
-            '4:+112345556789', 
+            '4:+112345556789',
             PhoneNumberIdentifier(
                 value='+112345556789'
-                )
             )
+        )
         _assert_communication_identifier(
             '4:112345556789',
             PhoneNumberIdentifier(
@@ -373,6 +373,167 @@ class IdentifierRawIdTest(unittest.TestCase):
         _assert_roundtrip('28:dod:01234567-89ab-cdef-0123-456789abcdef')
         _assert_roundtrip('28:dod:01234567-89ab-cdef-0123-456789abcdef')
         _assert_roundtrip('')
+
+    def test_equality_based_on_raw_id(self):
+        # CommunicationUserIdentifiers are equal.
+        assert CommunicationUserIdentifier(
+            id='8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130'
+        ) == CommunicationUserIdentifier(
+            id='8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130'
+        )
+
+        # CommunicationUserIdentifiers are not equal.
+        assert CommunicationUserIdentifier(
+            id='8:acs:bbbcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130'
+        ) != CommunicationUserIdentifier(
+            id='8:acs:rrrcbc1e-9f06-482a-b5d8-20e3f26ef0cd_45ab2481-1c1c-4005-be24-0ffb879b1130'
+        )
+
+        # MicrosoftTeamsUserIdentifiers are equal.
+        assert MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130'
+        ) == MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130'
+        )
+        assert MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='PUBLIC'
+        ) == MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='PUBLIC'
+        )
+        assert MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='DOD'
+        ) == MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='DOD'
+        )
+        assert MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='GCCH'
+        ) == MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='GCCH'
+        )
+        assert MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='GCCH',
+            is_anonymous=False
+        ) == MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='GCCH',
+            is_anonymous=False
+        )
+        assert MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='GCCH',
+            is_anonymous=True
+        ) == MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='GCCH',
+            is_anonymous=True
+        )
+
+        # MicrosoftTeamsUserIdentifiers are not equal.
+        assert MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130'
+        ) != MicrosoftTeamsUserIdentifier(
+            user_id='55ab2481-1c1c-4005-be24-0ffb879b1130'
+        )
+        assert MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='GCCH'
+        ) != MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='DOD'
+        )
+        assert MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='GCCH',
+            is_anonymous=False
+        ) != MicrosoftTeamsUserIdentifier(
+            user_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            cloud='GCCH',
+            is_anonymous=True
+        )
+
+        # PhoneNumberIdentifiers are equal.
+        assert PhoneNumberIdentifier(
+            value='+112345556789'
+        ) == PhoneNumberIdentifier(
+            value='+112345556789'
+        )
+
+        # PhoneNumberIdentifiers are not equal.
+        assert PhoneNumberIdentifier(
+            value='+112345556789'
+        ) != PhoneNumberIdentifier(
+            value='+512345556789'
+        )
+
+        # MicrosoftBotIdentifiers are equal.
+        assert MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.PUBLIC
+        ) == MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.PUBLIC
+        )
+        assert MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.GCCH
+        ) == MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.GCCH
+        )
+
+        # MicrosoftBotIdentifiers are not equal.
+        assert MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.DOD
+        ) != MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.GCCH
+        )
+        assert MicrosoftBotIdentifier(
+            bot_id='55666-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.DOD
+        ) != MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.DOD
+        )
+        assert MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=False,
+            cloud=CommunicationCloudEnvironment.GCCH
+        ) != MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.GCCH
+        )
+
+        # MicrosoftBotIdentifiers are equal.
+        assert UnknownIdentifier(
+            identifier='28:ag08-global:01234567-89ab-cdef-0123-456789abcdef'
+        ) == UnknownIdentifier(
+            identifier='28:ag08-global:01234567-89ab-cdef-0123-456789abcdef'
+        )
+
+        # MicrosoftBotIdentifiers are not equal.
+        assert UnknownIdentifier(
+            identifier='48:8888-global:01234567-89ab-cdef-0123-456789abcdef'
+        ) != UnknownIdentifier(
+            identifier='48:ag08-global:01234567-89ab-cdef-0123-456789abcdef'
+        )
 
 
 def _assert_raw_id(identifier, want):
