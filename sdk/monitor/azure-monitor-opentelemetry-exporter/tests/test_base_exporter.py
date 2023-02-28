@@ -7,9 +7,6 @@ import unittest
 from unittest import mock
 from datetime import datetime
 
-import requests
-from opentelemetry.sdk.trace.export import SpanExportResult
-
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
@@ -642,6 +639,13 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmission_empty(self):
         status = self._base._transmit([])
         self.assertEqual(status, ExportResult.SUCCESS)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._add_credential_policy")
+    def test_exporter_credential(self, mock_add_credential_policy):
+        TEST_CREDENTIAL = "TEST_CREDENTIAL"
+        base = BaseExporter(credential=TEST_CREDENTIAL)
+        self.assertEqual(base._credential, TEST_CREDENTIAL)
+        mock_add_credential_policy.assert_called_once()
 
     def test_add_credential_policy(self):
         class TestCredential():
