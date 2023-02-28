@@ -221,7 +221,7 @@ class Workspace(Resource):
             name=rest_obj.name,
             id=rest_obj.id,
             description=rest_obj.description,
-            kind=rest_obj.kind,
+            kind=rest_obj.kind.lower() if rest_obj.kind else None,
             tags=rest_obj.tags,
             location=rest_obj.location,
             resource_group=group,
