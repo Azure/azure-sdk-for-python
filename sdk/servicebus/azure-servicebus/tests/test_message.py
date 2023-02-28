@@ -475,14 +475,17 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             assert incoming_message.message.annotations[b'x-opt-enqueued-time'] > 0
             assert incoming_message.message.annotations[b'x-opt-sequence-number'] > 0
             assert incoming_message.message.annotations[b'x-opt-partition-key'] == b'id_session'
-            # TODO: bug - pyamqp.message.Header is setting durable/first_acquirer/priority to None
-            # assert ", 'time_to_live': 30000, 'first_acquirer': True, 'durable': True, 'priority': 4}" in str(incoming_message.message.header)
             if uamqp_transport:
-                # bug in uamqp.get_header_obj():
-                # delivery_count should be 0, but b/c header obj is not mutable, value is not replaced.
+                # uamqp bugs:
+                # 1) in uamqp.get_header_obj():
+                #   delivery_count should be 0, but b/c header obj is not mutable, value is not replaced.
+                # 2) MessageHeader.durable/first_acquirer are being set to True always on received message
+                #   These properties should not be modified by uamqp.
+                assert ", 'time_to_live': 30000" in str(incoming_message.message.header)
                 pass
             else:
                 assert incoming_message.message.header.get_header_obj().delivery_count == 0
+                assert ", 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None}" in str(incoming_message.message.header)
             assert incoming_message.message.properties.message_id == b'id_message'
             assert incoming_message.message.properties.user_id is None
             assert incoming_message.message.properties.to == b'forward to'
@@ -501,8 +504,6 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             assert not incoming_message.message.release()
             assert not incoming_message.message.reject()
             assert not incoming_message.message.modify(True, True)
-
-            # TODO: Test updating message and resending
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -527,10 +528,6 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             reply_to="reply to",
             reply_to_session_id="reply to session"
         )
-
-        # TODO: Attribute shouldn't exist until after message has been sent.
-        # with pytest.raises(AttributeError):
-        #     outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
         servicebus_namespace_connection_string, logging_enable=True, uamqp_transport=uamqp_transport)
@@ -615,13 +612,17 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             assert incoming_message.message.annotations[b'x-opt-sequence-number'] > 0
             assert incoming_message.message.annotations[b'x-opt-partition-key'] == b'id_session'
             assert incoming_message.message.annotations[b'x-opt-locked-until']
-            # TODO: bug - Pyamqp has header {'delivery_count': 0, 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None}
-            # assert str(incoming_message.message.header) == str({'delivery_count': 0, 'time_to_live': 30000, 'first_acquirer': True, 'durable': True, 'priority': 4})
             if uamqp_transport:
-                # uamqp bug in get_header_obj - delivery_count should be 0, but b/c header obj is not mutable, value is not replaced.
+                # uamqp bugs:
+                # 1) in uamqp.get_header_obj():
+                #   delivery_count should be 0, but b/c header obj is not mutable, value is not replaced.
+                # 2) MessageHeader.durable/first_acquirer are always being set to True on received message
+                #   These properties should not be modified by uamqp. By default, should be None when not set.
+                assert ", 'time_to_live': 30000" in str(incoming_message.message.header)
                 pass
             else:
                 assert incoming_message.message.header.get_header_obj().delivery_count == 0
+                assert str(incoming_message.message.header) == str({'delivery_count': 0, 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None})
             assert incoming_message.message.properties.message_id == b'id_message'
             assert incoming_message.message.properties.user_id is None
             assert incoming_message.message.properties.to == b'forward to'
