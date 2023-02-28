@@ -8,12 +8,13 @@
 
 import logging
 
-# import platform
+import platform
 from os import getenv
 
-# from opencensus.ext.azure.log_exporter import AzureLogHandler
+from opencensus.ext.azure.log_exporter import AzureLogHandler
 
-# from azure.ai.ml._user_agent import USER_AGENT
+from azure.ai.ml._user_agent import USER_AGENT
+from azure.ai.ml._telemetry._customtraceback import format_exc
 
 
 AML_INTERNAL_LOGGER_NAMESPACE = "azure.ai.ml._telemetry"
@@ -88,56 +89,92 @@ def is_telemetry_collection_disabled():
     return False
 
 
-# def get_appinsights_log_handler(
-#      user_agent,
-#      *args, # pylint: disable=unused-argument
-#      instrumentation_key=None,
-#      component_name=None,
-#      **kwargs
-#  ):
-#     """Enable the OpenCensus logging handler for specified logger and instrumentation key to send info to AppInsights.
+def get_appinsights_log_handler(
+     user_agent,
+     instrumentation_key=None,
+     component_name=None,
+     *args, # pylint: disable=unused-argument
+     **kwargs
+ ):
+    """Enable the OpenCensus logging handler for specified logger and instrumentation key to send info to AppInsights.
 
-#     :param user_agent: Information about the user's browser.
-#     :type user_agent: Dict[str, str]
-#     :param instrumentation_key: The Application Insights instrumentation key.
-#     :type instrumentation_key: str
-#     :param component_name: The component name.
-#     :type component_name: str
-#     :param args: Optional arguments for formatting messages.
-#     :type args: list
-#     :param kwargs: Optional keyword arguments for adding additional information to messages.
-#     :type kwargs: dict
-#     :return: The logging handler.
-#     :rtype: opencensus.ext.azure.log_exporter.AzureLogHandler
-#     """
-#     try:
-#         if instrumentation_key is None:
-#             instrumentation_key = INSTRUMENTATION_KEY
+    :param user_agent: Information about the user's browser.
+    :type user_agent: Dict[str, str]
+    :param instrumentation_key: The Application Insights instrumentation key.
+    :type instrumentation_key: str
+    :param component_name: The component name.
+    :type component_name: str
+    :param args: Optional arguments for formatting messages.
+    :type args: list
+    :param kwargs: Optional keyword arguments for adding additional information to messages.
+    :type kwargs: dict
+    :return: The logging handler.
+    :rtype: opencensus.ext.azure.log_exporter.AzureLogHandler
+    """
+    try:
+        if instrumentation_key is None:
+            instrumentation_key = INSTRUMENTATION_KEY
 
-#     if is_telemetry_collection_disabled():
-#         return logging.NullHandler()
+        if is_telemetry_collection_disabled():
+            return logging.NullHandler()
 
-#     if not user_agent or not user_agent.lower() == USER_AGENT.lower():
-#         return logging.NullHandler()
+        if not user_agent or not user_agent.lower() == USER_AGENT.lower():
+            return logging.NullHandler()
 
-#     if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):
-#         if kwargs.get("properties")["subscription_id"] in test_subscriptions:
-#             return logging.NullHandler()
+        if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):
+            if kwargs.get("properties")["subscription_id"] in test_subscriptions:
+                return logging.NullHandler()
 
-#     child_namespace = component_name or __name__
-#     current_logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
-#     current_logger.propagate = False
-#     current_logger.setLevel(logging.CRITICAL)
+        child_namespace = component_name or __name__
+        current_logger = logging.getLogger(AML_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
+        current_logger.propagate = False
+        current_logger.setLevel(logging.CRITICAL)
 
-#     custom_properties = {"PythonVersion": platform.python_version()}
-#     custom_properties.update({"user_agent": user_agent})
-#     if "properties" in kwargs:
-#         custom_properties.update(kwargs.pop("properties"))
-#     handler = AzureLogHandler(connection_string=f'InstrumentationKey={instrumentation_key}')
-#     current_logger.addHandler(handler)
-#     handler.addFilter(CustomDimensionsFilter(custom_properties))
+        custom_properties = {"PythonVersion": platform.python_version()}
+        custom_properties.update({"user_agent": user_agent})
+        if "properties" in kwargs:
+            custom_properties.update(kwargs.pop("properties"))
+        handler = AzureMLSDKLogHandler(connection_string=f'InstrumentationKey={instrumentation_key}', custom_properties=custom_properties)
+        current_logger.addHandler(handler)
 
-#     return handler
-# except Exception: # pylint: disable=broad-except
-#     # ignore exceptions, telemetry should not block
-#     return logging.NullHandler()
+        return handler
+    except Exception: # pylint: disable=broad-except
+        # ignore exceptions, telemetry should not block
+        return logging.NullHandler()
+
+
+class AzureMLSDKLogHandler(AzureLogHandler):
+    """Customized AzureLogHandler for AzureML SDK"""
+
+    def __init__(self, custom_properties, *args, **kwargs):
+        super(AzureLogHandler, self).__init__(*args, **kwargs)
+        self._custom_properties = custom_properties
+        self.addFilter(CustomDimensionsFilter(self._custom_properties))
+
+    def emit(self, record):
+        if is_telemetry_collection_disabled():
+            return
+
+        try:
+            if (
+                reformat_traceback
+                and record.levelno >= logging.WARNING
+                and hasattr(record, "message")
+                and record.message.find(TRACEBACK_LOOKUP_STR) != -1
+            ):
+                record.message = format_exc()
+                record.msg = record.message
+
+            formatted_message = self.format(record)
+
+            # if we have exec_info, send it as an exception
+            if record.exc_info and not all(item is None for item in record.exc_info):
+                # for compliance we not allowed to collect trace with file path
+                self._queue.put(format_exc(), block=False)
+                self._queue.flush()
+                return
+            # otherwise, send the trace
+            self._queue.put(formatted_message, block=False)
+        except Exception: # pylint: disable=broad-except
+            # ignore any exceptions, telemetry collection errors shouldn't block an operation
+            return
