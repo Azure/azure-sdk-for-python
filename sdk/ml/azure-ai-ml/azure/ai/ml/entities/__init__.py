@@ -138,6 +138,15 @@ from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.feature_store_settings import FeatureStoreSettings
 from ._feature_store.feature_store import FeatureStore
 from ._feature_store.materialization_store import MaterializationStore
+from ._featurestore_entity.featurestore_entity import FeaturestoreEntity
+from ._featurestore_entity.data_column import DataColumn
+from ._featurestore_entity.data_column_type import DataColumnType
+from ._featureset.featureset_specification import FeaturesetSpecification
+from ._notification.notification_configuration import NotificationConfiguration
+from ._featureset.materialization_compute_resource import MaterializationComputeResource
+from ._featureset.materialization_settings import MaterializationSettings
+from ._featureset.featureset_materialization_job import FeaturesetMaterializationJob
+from ._featureset.materialization_type import MaterializationType
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -200,6 +209,15 @@ __all__ = [
     "FeatureStoreSettings",
     "FeatureStore",
     "MaterializationStore",
+    "MaterializationComputeResource",
+    "MaterializationSettings",
+    "MaterializationType",
+    "FeaturesetMaterializationJob",
+    "FeaturestoreEntity",
+    "FeaturesetSpecification",
+    "DataColumn",
+    "DataColumnType",
+    "NotificationConfiguration",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
