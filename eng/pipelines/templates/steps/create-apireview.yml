@@ -4,16 +4,17 @@ parameters:
   ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
   Language: 'Python'
   APIViewUri: 'https://apiview.dev/AutoReview/CreateApiReview'
-  SkipScheduledApiReviewGen: false
+  GenerateApiReviewForManualOnly: false
 
 steps:
   # ideally this should be done as initial step of a job in caller template
   # We can remove this step later once it is added in caller
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
  
-  # Run Automatic API review step only for manually running pipeline if a pipeline has paramter to disable API review gen from scheduled run
-  # Otherwise generate API review for all type of pipeline run and this is the default case.
-  - ${{ if or(eq(variables['Build.Reason'], 'Manual'), eq(parameters.SkipScheduledApiReviewGen, false)) }}:
+  # Automatic API review is generated for a package when pipeline runs irrespective of how pipeline gets triggered.
+  # One excpetion to this case is Python Azure ML package. Azure ML does not want API reviews to be created by scheduled and individual CI runs.
+  # Below condition ensures that API review is generated only for manual pipeline runs when flag GenerateApiReviewForManualOnly is set to true. 
+  - ${{ if or(ne(parameters.GenerateApiReviewForManualOnly, true), eq(variables['Build.Reason'], 'Manual')) }}:
     - task: Powershell@2
       inputs:
         filePath: $(Build.SourcesDirectory)/eng/scripts/Create-ApiReview.ps1

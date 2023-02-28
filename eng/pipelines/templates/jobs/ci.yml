@@ -61,7 +61,7 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
-  - name: SkipScheduledApiReviewGen
+  - name: GenerateApiReviewForManualOnly
     type: boolean
     default: false
 
@@ -135,7 +135,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
-        SkipScheduledApiReviewGen: ${{ parameters.SkipScheduledApiReviewGen }}
+        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   - job: Compliance
     pool:

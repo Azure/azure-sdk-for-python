@@ -30,7 +30,9 @@ extends:
     ServiceDirectory: ml
     ValidateFormatting: true
     TestProxy: true
-    SkipScheduledApiReviewGen: true
+    # This is a short term solution to create API review for python azure-ml package only when running pipeline manually
+    # Long term solution should be to have different versions on main branch and release branch for python package so APIView can have different revisions for each version.
+    GenerateApiReviewForManualOnly: true
     Artifacts:
     - name: azure-ai-ml
       safeName: azureaiml
