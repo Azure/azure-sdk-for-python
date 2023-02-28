@@ -430,7 +430,6 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         """Receive input version,
         assign the version to NodeOutput/PipelineOutput and build data according to the version"""
         self._build_default_data()
-        self._data.type = self.type
         self._version = version
         if isinstance(self._data, (Input, Output)):
             self._data.version = version
