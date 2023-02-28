@@ -19,7 +19,7 @@ class FeatureStoreSettings(RestTranslatableMixin):
     ):
         """
         :keyword compute_runtime:
-        :paramtype compute_runtime: ~azure.mgmt.machinelearningservices.models.ComputeRuntimeDto
+        :paramtype compute_runtime: ~azure.ai.ml.entities.ComputeRuntime
         :keyword offline_store_connection_name:
         :paramtype offline_store_connection_name: str
         """
