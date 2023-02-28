@@ -12,12 +12,7 @@ from .compute_runtime import ComputeRuntime
 
 
 class FeatureStoreSettings(RestTranslatableMixin):
-    def __init__(
-        self,
-        *,
-        compute_runtime: ComputeRuntime,
-        offline_store_connection_name: Optional[str] = None
-    ):
+    def __init__(self, *, compute_runtime: ComputeRuntime, offline_store_connection_name: Optional[str] = None):
         """
         :keyword compute_runtime:
         :paramtype compute_runtime: ~azure.mgmt.machinelearningservices.models.ComputeRuntimeDto
@@ -31,7 +26,7 @@ class FeatureStoreSettings(RestTranslatableMixin):
         return RestFeatureStoreSettings(
             compute_runtime=ComputeRuntime._to_rest_object(self.compute_runtime),
             offline_store_connection_name=self.offline_store_connection_name,
-            online_store_connection_name=None
+            online_store_connection_name=None,
         )
 
     @classmethod
@@ -40,5 +35,5 @@ class FeatureStoreSettings(RestTranslatableMixin):
             return None
         return FeatureStoreSettings(
             compute_runtime=ComputeRuntime._from_rest_object(obj.compute_runtime),
-            offline_store_connection_name=obj.offline_store_connection_name
+            offline_store_connection_name=obj.offline_store_connection_name,
         )

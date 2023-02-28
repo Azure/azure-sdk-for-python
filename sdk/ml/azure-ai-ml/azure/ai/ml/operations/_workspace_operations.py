@@ -46,7 +46,7 @@ from azure.ai.ml.entities import (
     DiagnoseWorkspaceParameters,
     Workspace,
     WorkspaceKeys,
-    FeatureStore
+    FeatureStore,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -189,8 +189,9 @@ class WorkspaceOperations:
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
             )
-            workspace.feature_store_settings = (workspace.feature_store_settings or
-                                                existing_workspace.feature_store_settings)
+            workspace.feature_store_settings = (
+                workspace.feature_store_settings or existing_workspace.feature_store_settings
+            )
             return self.begin_update(
                 workspace,
                 update_dependent_resources=update_dependent_resources,
@@ -224,7 +225,8 @@ class WorkspaceOperations:
             setup_feature_store = kwargs.get("setup_feature_store", False)
             if setup_feature_store:
                 return self._all_operations.all_operations[AzureMLResourceType.FEATURE_STORE].get(
-                    workspace.name, resource_group=resource_group)
+                    workspace.name, resource_group=resource_group
+                )
             return self.get(workspace.name, resource_group=resource_group)
 
         return LROPoller(
@@ -337,7 +339,7 @@ class WorkspaceOperations:
                 "primary_user_assigned_identity", workspace.primary_user_assigned_identity
             ),
             managed_network=managed_network,
-            feature_store_settings=feature_store_settings
+            feature_store_settings=feature_store_settings,
         )
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
@@ -445,10 +447,10 @@ class WorkspaceOperations:
 
     # pylint: disable=too-many-statements,too-many-branches,too-many-locals
     def _populate_arm_paramaters(
-            self,
-            workspace: Workspace,
-            **kwargs: Dict,
-        ) -> Tuple[dict, dict, dict]:
+        self,
+        workspace: Workspace,
+        **kwargs: Dict,
+    ) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
@@ -628,12 +630,16 @@ class WorkspaceOperations:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
 
         if workspace.feature_store_settings:
-            _set_val(param["spark_runtime_version"],
-                    workspace.feature_store_settings.compute_runtime.spark_runtime_version)
-            _set_val(param["offline_store_connection_name"],
-                     workspace.feature_store_settings.offline_store_connection_name
-                     if workspace.feature_store_settings.offline_store_connection_name else '')
-            _set_val(param["online_store_connection_name"], '')
+            _set_val(
+                param["spark_runtime_version"], workspace.feature_store_settings.compute_runtime.spark_runtime_version
+            )
+            _set_val(
+                param["offline_store_connection_name"],
+                workspace.feature_store_settings.offline_store_connection_name
+                if workspace.feature_store_settings.offline_store_connection_name
+                else "",
+            )
+            _set_val(param["online_store_connection_name"], "")
 
         setup_feature_store = kwargs.get("setup_feature_store", False)
         materialization_identity = kwargs.get("materialization_identity", None)
@@ -644,10 +650,8 @@ class WorkspaceOperations:
 
         if setup_materialization_store:
             _set_val(param["offline_store_connection_target"], offline_store_target)
-            _set_val(param["materialization_identity_client_id"],
-                     materialization_identity.client_id)
-            _set_val(param["materialization_identity_resource_id"],
-                     materialization_identity.resource_id)
+            _set_val(param["materialization_identity_client_id"], materialization_identity.client_id)
+            _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
 
         managed_network = None
         if workspace.managed_network:

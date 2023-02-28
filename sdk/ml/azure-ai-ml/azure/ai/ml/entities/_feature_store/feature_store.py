@@ -7,23 +7,10 @@
 from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml.entities import (
-    Workspace,
-    CustomerManagedKey,
-    FeatureStoreSettings,
-    ComputeRuntime,
-    ManagedNetwork
-)
-from azure.ai.ml.entities._credentials import (
-    IdentityConfiguration,
-    ManagedIdentityConfiguration
-)
+from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntime, ManagedNetwork
+from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from .materialization_store import MaterializationStore
-from ._constants import (
-    OFFLINE_STORE_CONNECTION_NAME,
-    DEFAULT_SPARK_RUNTIME_VERSION,
-    FEATURE_STORE_KIND
-)
+from ._constants import OFFLINE_STORE_CONNECTION_NAME, DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
 
 
 class FeatureStore(Workspace):
@@ -52,11 +39,12 @@ class FeatureStore(Workspace):
         **kwargs,
     ):
         feature_store_settings = FeatureStoreSettings(
-            compute_runtime=compute_runtime if compute_runtime else ComputeRuntime(
-                spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
-            offline_store_connection_name=(OFFLINE_STORE_CONNECTION_NAME
-                                           if materialization_identity and offline_store
-                                           else None)
+            compute_runtime=compute_runtime
+            if compute_runtime
+            else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
+            offline_store_connection_name=(
+                OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
+            ),
         )
         super().__init__(
             name=name,
@@ -77,7 +65,7 @@ class FeatureStore(Workspace):
             identity=identity,
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
-            ** kwargs
+            **kwargs,
         )
         self.offline_store = offline_store
         self.materialization_identity = materialization_identity

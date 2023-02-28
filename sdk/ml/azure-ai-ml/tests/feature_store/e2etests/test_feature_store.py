@@ -29,11 +29,8 @@ class TestFeatureStore:
         fs_display_name = f"{fs_name} display name"
 
         fs = FeatureStore(
-            name=fs_name,
-            description=fs_description,
-            display_name=fs_display_name,
-            location="centraluseuap"
-            )
+            name=fs_name, description=fs_description, display_name=fs_display_name, location="centraluseuap"
+        )
         fs_poller = client.featurestores.begin_create(feature_store=fs)
         assert isinstance(fs_poller, LROPoller)
 

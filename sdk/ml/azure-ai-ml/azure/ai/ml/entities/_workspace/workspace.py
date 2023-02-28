@@ -210,9 +210,7 @@ class Workspace(Resource):
             )
         feature_store_settings = None
         if rest_obj.feature_store_settings and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings):
-            feature_store_settings = FeatureStoreSettings._from_rest_object(
-                rest_obj.feature_store_settings
-            )
+            feature_store_settings = FeatureStoreSettings._from_rest_object(rest_obj.feature_store_settings)
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,

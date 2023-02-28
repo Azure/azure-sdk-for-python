@@ -17,7 +17,7 @@ from azure.ai.ml.entities import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     Workspace,
-    WorkspaceConnection
+    WorkspaceConnection,
 )
 from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.polling import LROPoller
@@ -264,9 +264,8 @@ class TestWorkspaceOperation:
         mock_workspace_operation._populate_arm_paramaters(workspace=ws)
 
     def test_populate_arm_paramaters_feature_store(
-            self, 
-            mock_workspace_operation: WorkspaceOperations,
-            mocker: MockFixture) -> None:
+        self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
+    ) -> None:
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations.get_resource_group_location", return_value="random_name"
         )
@@ -277,14 +276,15 @@ class TestWorkspaceOperation:
         setup_feature_store = True
         offline_store_connection = WorkspaceConnection(
             name="offline_connecttion",
-            target="target", 
+            target="target",
             type="azure_data_lake_gen2",
-            credentials=ManagedIdentityConfiguration(client_id="clientid", resource_id="resourceid"))
+            credentials=ManagedIdentityConfiguration(client_id="clientid", resource_id="resourceid"),
+        )
         mock_workspace_operation._populate_arm_paramaters(
             workspace=Workspace(name="name"),
             setup_feature_store=setup_feature_store,
-            offline_store_connection=offline_store_connection
-            )
+            offline_store_connection=offline_store_connection,
+        )
 
     def test_check_workspace_name(self, mock_workspace_operation: WorkspaceOperations):
         mock_workspace_operation._default_workspace_name = None
