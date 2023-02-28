@@ -247,6 +247,10 @@ class MLClient:
         if registry_name:
             properties.update({"registry_name": registry_name})
 
+        user_agent = None
+        if "user_agent" in kwargs:
+            user_agent = kwargs.get("user_agent")
+
         app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
         app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
