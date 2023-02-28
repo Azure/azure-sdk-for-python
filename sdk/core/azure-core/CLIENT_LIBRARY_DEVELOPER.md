@@ -620,13 +620,14 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
  3) [Poller API - LROPoller/AsyncLROPoller](#poller-api---lropollerasynclropoller)
     - You need to customize the public interface of the poller
 
-The poller API is what the user uses to interact with the LRO. Internally, the poller uses the polling method to run the polling
+The "poller API" is what the user uses to interact with the LRO. Internally, the poller uses the "polling method" to run the polling
 loop which makes calls to the status monitor, controls delay, and determines when the LRO has reached a terminal state.
-The polling method is supplied a polling strategy which defines where and how to the get the status from the status monitor.
+The "polling method" uses a "polling strategy" to determine how to extract the status information from the responses 
+returned by the status monitoring.
 
 ### Polling strategy - OperationResourcePolling, LocationPolling, StatusCheckPolling
 
-`azure.core.polling` provides three built-in strategies for polling -[OperationResourcePolling][operation_resource_polling],
+The `azure.core.polling` module provides three built-in strategies for polling -[OperationResourcePolling][operation_resource_polling],
 [LocationPolling][location_polling], and [StatusCheckPolling][status_check_polling]. The type of polling needed will be 
 determined automatically using the response structure, unless otherwise specified by the client library developer. If 
 the LRO is determined not to fit either `OperationResourcePolling` or `LocationPolling`, `StatusCheckPolling` serves as 
@@ -636,7 +637,7 @@ If you need to customize the polling strategy, choose a polling algorithm that c
 or create your own that inherits from [azure.core.polling.base_polling.LongRunningOperation][long_running_operation] 
 and implements the necessary methods.
 
-For our purposes, let's say that `OperationResourcePolling` closely resembles what the service does, but we
+For our example, let's say that `OperationResourcePolling` closely resembles what the service does, but we
 need to account for a non-standard status.
 
 #### Example: Raise exception for a non-standard status that is returned via the initial POST call - "ValidationFailed".
@@ -733,6 +734,73 @@ If significant customization is necessary, use [azure.core.polling.PollingMethod
 
 #### Example: Create an LRO method which will poll for when a file gets uploaded successfully (greatly simplified)
 
+For this example, the customization necessary requires defining our own polling strategy and polling method.
+First, we'll define a simple polling strategy that the polling method will use to get the status information from the response.
+
+```python
+from typing import Optional, MutableMapping, Any
+from azure.core.polling.base_polling import LongRunningOperation, OperationFailed
+from azure.core.pipeline import PipelineResponse
+JSON = MutableMapping[str, Any]
+
+
+class CustomPollingStrategy(LongRunningOperation):
+    """CustomPollingStrategy which provides default logic
+    for interpreting operation responses and status updates.
+    """
+
+    def can_poll(self, pipeline_response: PipelineResponse) -> bool:
+        """Determine from the initial response that we can poll.
+        In this example, we need a file_id present to proceed with polling.
+
+        :param PipelineResponse pipeline_response: initial REST call response.
+        """
+        response = pipeline_response.http_response.json()
+        if response.get("file_id", None) is None:
+            return False
+        return True
+
+    def get_polling_url(self) -> str:
+        """Return the polling URL. This is the URL for the status monitor
+        and where the GET requests will be made during polling.
+        
+        For this example, we don't need to extract the URL
+        from the initial response so it is not implemented.
+        """
+        raise NotImplementedError("The polling strategy does not need to extract a polling URL.")
+
+    def set_initial_status(self, pipeline_response: PipelineResponse) -> str:
+        """Process first response after initiating long running operation and set initial status.
+
+        :param PipelineResponse pipeline_response: initial REST call response.
+        """
+
+        response = pipeline_response.http_response
+        if response.status_code == 200:
+            return "InProgress"
+        raise OperationFailed("Operation failed or canceled")
+
+    def get_status(self, response: JSON) -> str:
+        """Return the status based on this response.
+
+        Typically, this method extracts a status string from the 
+        response. In this example, we determine status based on whether our
+        result is populated or not. 
+        """
+        if response is None:
+            return "InProgress"
+        return "Succeeded"
+
+    def get_final_get_url(self, pipeline_response: PipelineResponse) -> Optional[str]:
+        """If a final GET is needed when the LRO is complete, returns the URL.
+
+        :rtype: str
+        """
+        return None
+```
+
+Next, we'll define the custom polling method:
+
 
 ```python
 import functools
@@ -746,10 +814,10 @@ from azure.core.exceptions import ResourceNotFoundError
 JSON = MutableMapping[str, Any]
 
 
-class CustomLROPolling(PollingMethod):
+class CustomPollingMethod(PollingMethod):
     def __init__(self, polling_interval: float = 30, **kwargs: Any) -> None:
         """Creates a custom polling method which polls until a file is uploaded.
-        The operation is considered to have reached a terminal state once a successful GET
+        For our example, the operation is considered to have reached a terminal state once a successful GET
         is done on the file (e.g. no ResourceNotFoundError is raised).
 
         :param polling_interval: The amount of time to wait between polls. This fictitious service does not
@@ -765,13 +833,14 @@ class CustomLROPolling(PollingMethod):
 
         :param client: An instance of a client. In this example, the generated client.
         :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the caller.
+        :param deserialization_callback: A callable to transform the final result before returning to the end user.
         """
-        
+
         # verify we have the information to poll
-        response = initial_response.http_response.json()
-        if response.get("file_id", None) is None:
+        if self._operation.can_poll(initial_response) is False:
             raise BadResponse("No file_id in response.")
+        
+        response = initial_response.http_response.json()
 
         # initialize
         self.client = client
@@ -781,20 +850,26 @@ class CustomLROPolling(PollingMethod):
         self._resource = None
         self._finished = False
         
+        # sets our strategy
+        self._operation = CustomPollingStrategy()
+    
         # create the command which will be polled against as the status monitor
         self._command = functools.partial(self.client.get_upload_file, file_id=self.file_id, **self._kwargs)
         
         # set initial status
-        self._status = "InProgress"
+        self._status = self._operation.set_initial_status(initial_response)
 
         
     def status(self) -> str:
-        """Should return the current status as a string.
+        """Should return the current status as a string. The initial status is set by
+        the polling strategy with set_initial_status() and then subsequently set by
+        each call to get_status().
+
         This is what is returned to the user when status() is called on the LROPoller.
 
         :rtype: str
         """
-        return "Succeeded" if self._finished else "InProgress"
+        return self._status
 
     def finished(self) -> bool:
         """Is this polling finished?
@@ -804,7 +879,7 @@ class CustomLROPolling(PollingMethod):
             or False if polling should continue.
         :rtype: bool
         """
-        return self._finished
+        return True if self.status() == "Succeeded" else False
 
     def resource(self) -> JSON:
         """Return the built resource.
@@ -822,27 +897,31 @@ class CustomLROPolling(PollingMethod):
         insert delay between polls, and continue polling until a terminal state is reached.
         """
         while not self.finished():
-            try:
-                # calls the status monitor
-                self._resource = self._command()
-                # sets status
-                self._finished = True
-            except ResourceNotFoundError:
-                pass
+            self.update_status()
             if not self.finished():
                 # inserts delay if not done
                 time.sleep(self._polling_interval)
 
+    def update_status(self):
+        """Update the current status of the LRO by calling the status monitor 
+        and then using the polling strategy's get_status() to set the status."""
+        try:
+            self._resource = self._command()
+        except ResourceNotFoundError:
+            pass
+        
+        self._status = self._operation.get_status(self._resource)
+                
     def get_continuation_token(self) -> str:
         """Returns an opaque token which can be used by the user to rehydrate/restart the LRO.
         Saves the initial state of the LRO so that polling can be resumed from that context.
 
         .. code-block:: python
 
-            initial_poller = begin_upload(data)
+            initial_poller = client.begin_upload(data)
             continuation_token = initial_poller.continuation_token()
 
-            poller: LROPoller = begin_upload(None, continuation_token=continuation_token)
+            poller: LROPoller = client.begin_upload(None, continuation_token=continuation_token)
             poller.result()
 
         In standard LROs, the PipelineResponse is serialized here, however, there may be a need to
@@ -889,10 +968,10 @@ class ServiceOperations:
 
     def begin_upload(self, data: AnyStr, **kwargs) -> LROPoller[JSON]:
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_method = CustomLROPolling(**kwargs)
+        polling_method = CustomPollingMethod(**kwargs)
         
         # if continuation_token is provided, we should rehydrate the LRO using the from_continuation_token method
-        # which calls our implementation on the CustomLROPolling method
+        # which calls our implementation on the CustomPollingMethod method
         if continuation_token is not None:
             return LROPoller.from_continuation_token(
                 continuation_token=continuation_token,
@@ -935,7 +1014,7 @@ class ServiceOperations:
 
     def begin_upload(self, *args, **kwargs) -> LROPoller[JSON]:
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_method = CustomLROPolling(**kwargs)
+        polling_method = CustomPollingMethod(**kwargs)
         if continuation_token is not None:
             return LROPoller.from_continuation_token(
                 continuation_token=continuation_token,
@@ -1010,7 +1089,7 @@ class ServiceOperations:
 
     def begin_upload(self, data: AnyStr, **kwargs) -> CustomLROPoller[JSON]:
         continuation_token = kwargs.pop("continuation_token", None)
-        polling_method = CustomLROPolling(**kwargs)
+        polling_method = CustomPollingMethod(**kwargs)
         if continuation_token is not None:
             return CustomLROPoller.from_continuation_token(
                 continuation_token=continuation_token,
