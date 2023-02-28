@@ -7,6 +7,7 @@
 import argparse
 import os
 import shlex
+import subprocess
 import sys
 
 from devtools_testutils.config import PROXY_URL
@@ -16,8 +17,6 @@ from devtools_testutils.proxy_startup import (
     prepare_local_tool,
     stop_test_proxy,
 )
-
-import subprocess
 
 
 TOOL_ENV_VAR = "PROXY_PID"
@@ -30,12 +29,17 @@ TOOL_ENV_VAR = "PROXY_PID"
 # - Set your working directory to be inside your local copy of the azure-sdk-for-python repository.
 # - Run the following command:
 #
-#     `python {path to script}/manage_recordings.py {verb} -p {relative path to package's assets.json file}`
+#     `python {path to script}/manage_recordings.py {verb} [-p {relative path to package's assets.json file}]`
 #
 #   For example, with the root of the azure-sdk-for-python repo as the working directory, you can push modified
 #   azure-keyvault-keys recordings to the assets repo with:
 #
 #     `python scripts/manage_recordings.py push -p sdk/keyvault/azure-keyvault-keys/assets.json`
+#
+#   If this script is run from the directory containing an assets.json file, no path needs to be provided. For example,
+#   with a working directory at the azure-keyvault-keys package root:
+#
+#     `python ../../../scripts/manage_recordings.py push`
 #
 # - In addition to "push", you can also use the "restore" or "reset" verbs in the same command format.
 #
@@ -64,6 +68,8 @@ def start_test_proxy() -> str:
 
     proc = subprocess.Popen(
         shlex.split(f'{tool_name} start --storage-location="{repo_root}" -- --urls "{PROXY_URL}"'),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT,
         env=passenv,
     )
     os.environ[TOOL_ENV_VAR] = str(proc.pid)
