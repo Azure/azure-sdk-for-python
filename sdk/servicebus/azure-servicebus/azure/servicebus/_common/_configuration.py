@@ -5,8 +5,12 @@
 from typing import Optional, Dict, Any
 from urllib.parse import urlparse
 
-from uamqp.constants import TransportType, DEFAULT_AMQP_WSS_PORT, DEFAULT_AMQPS_PORT
 from azure.core.pipeline.policies import RetryMode
+from .._pyamqp.constants import TransportType
+
+
+DEFAULT_AMQPS_PORT = 1571
+DEFAULT_AMQP_WSS_PORT = 443
 
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes

@@ -4,29 +4,16 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
-import functools
-from typing import Optional, Callable
-
-from uamqp import Source
-
+import time
+from .._pyamqp.endpoints import Source
 from .message import ServiceBusReceivedMessage
+from ..exceptions import _ServiceBusErrorPolicy, MessageAlreadySettled
 from .constants import (
     NEXT_AVAILABLE_SESSION,
     SESSION_FILTER,
-    SESSION_LOCKED_UNTIL,
-    DATETIMEOFFSET_EPOCH,
     MGMT_REQUEST_SESSION_ID,
     ServiceBusReceiveMode,
-    DEADLETTERNAME,
-    RECEIVER_LINK_DEAD_LETTER_REASON,
-    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
-    MESSAGE_COMPLETE,
-    MESSAGE_DEAD_LETTER,
-    MESSAGE_ABANDON,
-    MESSAGE_DEFER,
 )
-from ..exceptions import _ServiceBusErrorPolicy, MessageAlreadySettled
-from .utils import utc_from_timestamp, utc_now
 
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
@@ -51,8 +38,14 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         )
 
         self._session_id = kwargs.get("session_id")
+
+        # TODO: What's the retry overlap between servicebus and pyamqp?
         self._error_policy = _ServiceBusErrorPolicy(
-            max_retries=self._config.retry_total, is_session=bool(self._session_id)
+            is_session=bool(self._session_id),
+            retry_total=self._config.retry_total,
+            retry_mode = self._config.retry_mode,
+            retry_backoff_factor = self._config.retry_backoff_factor,
+            retry_backoff_max = self._config.retry_backoff_max
         )
 
         self._name = kwargs.get("client_identifier", "SBReceiver-{}".format(uuid.uuid4()))
@@ -68,7 +61,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         # The relationship between the amount can be received and the time interval is linear: amount ~= perf * interval
         # In large max_message_count case, like 5000, the pull receive would always return hundreds of messages limited
         # by the perf and time.
-        self._further_pull_receive_timeout_ms = 200
+        self._further_pull_receive_timeout = 0.2
         max_wait_time = kwargs.get("max_wait_time", None)
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
@@ -87,7 +80,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _build_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(
-            message=received, receive_mode=self._receive_mode, receiver=self
+            message=received[1], receive_mode=self._receive_mode, receiver=self, frame=received[0]
         )
         self._last_received_sequenced_number = message.sequence_number
         return message
@@ -95,11 +88,12 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _get_source(self):
         # pylint: disable=protected-access
         if self._session:
-            source = Source(self._entity_uri)
-            session_filter = (
-                None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
+            session_filter = None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
+            filter_map = {SESSION_FILTER: session_filter}
+            source = Source(
+                address=self._entity_uri,
+                filters=filter_map
             )
-            source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
             return source
         return self._entity_uri
 
@@ -129,58 +123,22 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
                 "Please use ServiceBusClient to create a new instance.".format(action)
             )
 
-    def _settle_message_via_receiver_link(
-        self,
-        message,
-        settle_operation,
-        dead_letter_reason=None,
-        dead_letter_error_description=None,
-    ):
-        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> Callable
-        # pylint: disable=no-self-use
-        if settle_operation == MESSAGE_COMPLETE:
-            return functools.partial(message.message.accept)
-        if settle_operation == MESSAGE_ABANDON:
-            return functools.partial(message.message.modify, True, False)
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return functools.partial(
-                message.message.reject,
-                condition=DEADLETTERNAME,
-                description=dead_letter_error_description,
-                info={
-                    RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                },
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return functools.partial(message.message.modify, True, True)
-        raise ValueError(
-            "Unsupported settle operation type: {}".format(settle_operation)
-        )
-
-    def _on_attach(self, source, target, properties, error):
-        # pylint: disable=protected-access, unused-argument
-        if self._session and str(source) == self._entity_uri:
-            # This has to live on the session object so that autorenew has access to it.
-            self._session._session_start = utc_now()
-            expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
-            if expiry_in_seconds:
-                expiry_in_seconds = (
-                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
-                ) / 10000000
-                self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
-            session_filter = source.get_filter(name=SESSION_FILTER)
-            self._session_id = session_filter.decode(self._config.encoding)
-            self._session._session_id = self._session_id
-
     def _populate_message_properties(self, message):
         if self._session:
             message[MGMT_REQUEST_SESSION_ID] = self._session_id
 
-    def _enhanced_message_received(self, message):
+    def _enhanced_message_received(self, frame, message):
         # pylint: disable=protected-access
-        self._handler._was_message_received = True
+        self._handler._last_activity_timestamp = time.time()
         if self._receive_context.is_set():
-            self._handler._received_messages.put(message)
+            self._handler._received_messages.put((frame, message))
         else:
-            message.release()
+            self._handler.settle_messages(frame[1], 'released')
+
+    async def _enhanced_message_received_async(self, frame, message):
+        # pylint: disable=protected-access
+        self._handler._last_activity_timestamp = time.time()
+        if self._receive_context.is_set():
+            self._handler._received_messages.put((frame, message))
+        else:
+            await self._handler.settle_messages_async(frame[1], 'released')

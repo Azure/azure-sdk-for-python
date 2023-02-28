@@ -6,29 +6,16 @@ import logging
 import asyncio
 import uuid
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
+from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union, cast
 
-import uamqp
-from uamqp import compat
-from uamqp.message import MessageProperties
+from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
-from azure.core.credentials import (
-    AccessToken,
-    AzureSasCredential,
-    AzureNamedKeyCredential,
-)
-
-from .._base_handler import (
-    _generate_sas_token,
-    BaseHandler as BaseHandlerSync,
-    _get_backoff_time,
-)
+from .._pyamqp.utils import amqp_string_value
+from .._pyamqp.message import Message, Properties
+from .._pyamqp.aio._client_async import AMQPClientAsync
+from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
 from .._common._configuration import Configuration
-from .._common.utils import (
-    create_properties,
-    strip_protocol_from_uri,
-    parse_sas_credential,
-)
+from .._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
 from .._common.constants import (
     TOKEN_TYPE_SASTOKEN,
     MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
@@ -117,14 +104,11 @@ class ServiceBusAzureSasTokenCredentialAsync(object):
     :param azure_sas_credential: The credential to be used for authentication.
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
-
     def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
         self._credential = azure_sas_credential
         self.token_type = TOKEN_TYPE_SASTOKEN
 
-    async def get_token(
-        self, *scopes: str, **kwargs: Any  # pylint:disable=unused-argument
-    ) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
         """
@@ -137,9 +121,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self,
         fully_qualified_namespace: str,
         entity_name: str,
-        credential: Union[
-            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
-        ],
+        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         **kwargs: Any
     ) -> None:
         # If the user provided http:// or sb://, let's be polite and strip that.
@@ -156,19 +138,19 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasTokenCredentialAsync(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
-            self._credential = ServiceBusAzureNamedKeyTokenCredentialAsync(credential)  # type: ignore
+            self._credential = ServiceBusAzureNamedKeyTokenCredentialAsync(credential) # type: ignore
         else:
-            self._credential = credential  # type: ignore
+            self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = None  # type: uamqp.AMQPClientAsync
+        self._handler = cast(AMQPClientAsync, None)  # type: AMQPClientAsync
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
         self._shutdown = asyncio.Event()
 
     @classmethod
-    def _convert_connection_string_to_kwargs(cls, conn_str: str, **kwargs: Any):
+    def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
         # pylint:disable=protected-access
         return BaseHandlerSync._convert_connection_string_to_kwargs(
             conn_str,
@@ -186,7 +168,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         await self._open_with_retry()
         return self
 
-    async def __aexit__(self, *args: Any):
+    async def __aexit__(self, *args):
         await self.close()
 
     async def _handle_exception(self, exception):
@@ -242,12 +224,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             pass
 
-    async def _do_retryable_operation(
-        self,
-        operation: Callable[..., Any],
-        timeout: Optional[float] = None,
-        **kwargs: Any
-    ):
+    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # type: (Callable, Optional[float], Any) -> Any
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
@@ -314,13 +292,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     async def _mgmt_request_response(
         self,
-        mgmt_operation: bytes,
-        message: uamqp.Message,
-        callback: Callable[..., Any],
-        keep_alive_associated_link: bool = True,
-        timeout: Optional[float] = None,
-        **kwargs: Any
-    ) -> uamqp.Message:
+        mgmt_operation,
+        message,
+        callback,
+        keep_alive_associated_link=True,
+        timeout=None,
+        **kwargs
+    ):
+        # type: (bytes, Message, Callable, bool, Optional[float], Any) -> Message
         """
         Execute an amqp management operation.
 
@@ -343,43 +322,36 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if keep_alive_associated_link:
             try:
                 application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._handler.message_handler.name
+                    ASSOCIATEDLINKPROPERTYNAME: self._handler._link.name  # pylint: disable=protected-access
                 }
             except AttributeError:
                 pass
-
-        mgmt_msg = uamqp.Message(
-            body=message,
-            properties=MessageProperties(
-                reply_to=self._mgmt_target, encoding=self._config.encoding, **kwargs
-            ),
+        mgmt_msg = Message( # type: ignore  # TODO: fix mypy
+            value=message,
+            properties=Properties(reply_to=self._mgmt_target, **kwargs),
             application_properties=application_properties,
         )
         try:
-            return await self._handler.mgmt_request_async(
+            status, description, response = await self._handler.mgmt_request_async(
                 mgmt_msg,
-                mgmt_operation,
-                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
+                operation=amqp_string_value(mgmt_operation),
+                operation_type=amqp_string_value(MGMT_REQUEST_OP_TYPE_ENTITY_MGMT),
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout * 1000 if timeout else None,
-                callback=callback,
+                timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
             )
+            return callback(status, response, description)
         except Exception as exp:  # pylint: disable=broad-except
-            if isinstance(exp, compat.TimeoutException):
+            if isinstance(exp, TimeoutError): #TODO: was compat.TimeoutException
                 raise OperationTimeoutError(error=exp)
             raise
 
     async def _mgmt_request_response_with_retry(
-        self,
-        mgmt_operation: bytes,
-        message: Dict[str, Any],
-        callback: Callable[..., Any],
-        timeout: Optional[float] = None,
-        **kwargs: Any
-    ) -> Any:
+        self, mgmt_operation, message, callback, timeout=None, **kwargs
+    ):
+        # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return await self._do_retryable_operation(
             self._mgmt_request_response,
-            mgmt_operation=mgmt_operation,
+            mgmt_operation=mgmt_operation.decode("UTF-8"),
             message=message,
             callback=callback,
             timeout=timeout,
