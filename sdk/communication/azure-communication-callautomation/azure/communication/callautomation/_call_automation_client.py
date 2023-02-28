@@ -14,7 +14,8 @@ from ._call_connection import CallConnection
 from ._call_recording import CallRecording
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.utils import get_authentication_policy, parse_connection_str
-from ._generated.models import (CreateCallRequest, AnswerCallRequest)
+from ._generated.models import (
+    CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest)
 from ._communication_identifier_serializer import *
 from ._models import CallInvite
 
@@ -133,7 +134,8 @@ class CallAutomationClient(object):
             source_caller_id_number=serialize_identifier(
                 call_invite.sourceCallIdNumber),
             source_display_name=call_invite.sourceDisplayName,
-            source_identity=self.source_identity,
+            source_identity=serialize_identifier(
+                self.source_identity) if self.source_identity else None,
             operation_context=kwargs.pop("operation_context", None),
             media_streaming_configuration=kwargs.pop(
                 "media_streaming_configuration", None),
@@ -188,7 +190,8 @@ class CallAutomationClient(object):
             source_caller_id_number=serialize_identifier(
                 kwargs.pop("source_caller_id_number", None)),
             source_display_name=kwargs.pop("source_display_name", None),
-            source_identity=self.source_identity,
+            source_identity=serialize_identifier(
+                self.source_identity) if self.source_identity else None,
             operation_context=kwargs.pop("operation_context", None),
             media_streaming_configuration=kwargs.pop(
                 "media_streaming_configuration", None),
@@ -216,7 +219,13 @@ class CallAutomationClient(object):
         :type incoming_call_context: str
         :param callback_url: Required. The call back url for receiving events.
         :type callback_url: str
-
+        :param media_streaming_configuration: Media Streaming Configuration.
+        :type media_streaming_configuration: MediaStreamingConfiguration
+        :param azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive Services
+        resource attached.
+        :type azure_cognitive_services_endpoint_url: str
+        :param answered_by_identifier: The identifier of the contoso app which answers the call.
+        :type answered_by_identifier: CommunicationIdentifierModel
         """
 
         if not incoming_call_context:
@@ -231,12 +240,75 @@ class CallAutomationClient(object):
                 "media_streaming_configuration", None),
             azure_cognitive_services_endpoint_url=kwargs.pop(
                 "azure_cognitive_services_endpoint_url", None),
-            answered_by_identifier=self.source_identity
+            answered_by_identifier=serialize_identifier(
+                self.source_identity) if self.source_identity else None
         )
 
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
         self._client.answer_call(answer_call_request == answer_call_request, repeatability_first_sent=repeatability_first_sent,
+                                 repeatability_request_id=repeatability_request_id,
+                                 **kwargs)
+
+    def redirect_call(
+        self,
+        incoming_call_context: str,
+        target: CallInvite,
+        **kwargs
+    ):
+        """
+        Create a call connection request from a source identity to a list of target identities.
+
+        :param incoming_call_context: Required. The incoming call context.
+        :type incoming_call_context: str
+        :param target: The target identity to redirect the call to. Required.
+        :type target: CallInvite
+        """
+
+        if not incoming_call_context:
+            raise ValueError('incoming_call_context cannot be None.')
+        if not target:
+            raise ValueError('target cannot be None.')
+
+        redirect_call_request = RedirectCallRequest(
+            incoming_call_context=incoming_call_context,
+            target=serialize_identifier(target.target)
+        )
+
+        repeatability_request_id = kwargs.pop("repeatability_request_id", None)
+        repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
+
+        self._client.redirect_call(redirect_call_request=redirect_call_request, repeatability_first_sent=repeatability_first_sent,
+                                   repeatability_request_id=repeatability_request_id,
+                                   **kwargs)
+
+    def reject_call(
+        self,
+        incoming_call_context: str,
+        **kwargs
+    ):
+        """
+        Reject the call.
+
+        :param incoming_call_context: Required. The incoming call context.
+        :type incoming_call_context: str
+        :param call_reject_reason: The rejection reason. Known values are: "none", "busy", and
+        "forbidden".
+        :type call_reject_reason: str or ~azure.communication.callautomation.models.CallRejectReason
+        """
+
+        if not incoming_call_context:
+            raise ValueError('incoming_call_context cannot be None.')
+
+        reject_call_request = RejectCallRequest(
+            incoming_call_context=incoming_call_context,
+            call_reject_reason=kwargs.pop("call_reject_reason", None)
+        )
+
+        repeatability_request_id = kwargs.pop("repeatability_request_id", None)
+        repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
+
+        self._client.reject_call(reject_call_request=reject_call_request, repeatability_first_sent=repeatability_first_sent,
                                  repeatability_request_id=repeatability_request_id,
                                  **kwargs)
