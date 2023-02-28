@@ -42,7 +42,7 @@ class MicrosoftLogzConfiguration(Configuration):  # pylint: disable=too-many-ins
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(MicrosoftLogzConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2020-10-01")  # type: Literal["2020-10-01"]
+        api_version: Literal["2020-10-01"] = kwargs.pop("api_version", "2020-10-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

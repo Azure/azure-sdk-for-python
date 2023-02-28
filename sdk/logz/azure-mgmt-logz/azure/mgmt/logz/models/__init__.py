@@ -51,7 +51,7 @@ from ._microsoft_logz_enums import TagAction
 from ._microsoft_logz_enums import UserRole
 from ._microsoft_logz_enums import VMHostUpdateStates
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

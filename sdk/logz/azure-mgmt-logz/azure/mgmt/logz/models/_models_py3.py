@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -38,7 +38,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -78,7 +78,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -89,7 +89,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.logz.models.ErrorDetail
@@ -99,7 +100,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.logz.models.ErrorDetail
@@ -109,7 +110,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class FilteringTag(_serialization.Model):
-    """The definition of a filtering tag. Filtering tags are used for capturing resources and include/exclude them from being monitored.
+    """The definition of a filtering tag. Filtering tags are used for capturing resources and
+    include/exclude them from being monitored.
 
     :ivar name: The name (also known as the key) of the tag.
     :vartype name: str
@@ -132,8 +134,8 @@ class FilteringTag(_serialization.Model):
         name: Optional[str] = None,
         value: Optional[str] = None,
         action: Optional[Union[str, "_models.TagAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name (also known as the key) of the tag.
         :paramtype name: str
@@ -173,7 +175,7 @@ class IdentityProperties(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.ManagedIdentityTypes"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.ManagedIdentityTypes"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: Known values are: "SystemAssigned" and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.logz.models.ManagedIdentityTypes
@@ -216,8 +218,8 @@ class LogRules(_serialization.Model):
         send_subscription_logs: Optional[bool] = None,
         send_activity_logs: Optional[bool] = None,
         filtering_tags: Optional[List["_models.FilteringTag"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
         :paramtype send_aad_logs: bool
@@ -291,8 +293,8 @@ class LogzMonitorResource(_serialization.Model):
         properties: Optional["_models.MonitorProperties"] = None,
         identity: Optional["_models.IdentityProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Properties specific to the monitor resource.
         :paramtype properties: ~azure.mgmt.logz.models.MonitorProperties
@@ -329,8 +331,12 @@ class LogzMonitorResourceListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LogzMonitorResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.LogzMonitorResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of a list operation.
         :paramtype value: list[~azure.mgmt.logz.models.LogzMonitorResource]
@@ -362,8 +368,8 @@ class LogzMonitorResourceUpdateParameters(_serialization.Model):
         *,
         properties: Optional["_models.MonitorUpdateProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The set of properties that can be update in a PATCH request to a monitor
          resource.
@@ -408,8 +414,8 @@ class LogzOrganizationProperties(_serialization.Model):
         company_name: Optional[str] = None,
         enterprise_app_id: Optional[str] = None,
         single_sign_on_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword company_name: Name of the Logz organization.
         :paramtype company_name: str
@@ -460,8 +466,8 @@ class LogzSingleSignOnProperties(_serialization.Model):
         single_sign_on_state: Optional[Union[str, "_models.SingleSignOnStates"]] = None,
         enterprise_app_id: Optional[str] = None,
         single_sign_on_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword single_sign_on_state: Various states of the SSO resource. Known values are: "Initial",
          "Enable", "Disable", and "Existing".
@@ -510,7 +516,7 @@ class LogzSingleSignOnResource(_serialization.Model):
         "properties": {"key": "properties", "type": "LogzSingleSignOnProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.LogzSingleSignOnProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.LogzSingleSignOnProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.logz.models.LogzSingleSignOnProperties
@@ -542,8 +548,8 @@ class LogzSingleSignOnResourceListResponse(_serialization.Model):
         *,
         value: Optional[List["_models.LogzSingleSignOnResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of a list operation.
         :paramtype value: list[~azure.mgmt.logz.models.LogzSingleSignOnResource]
@@ -597,8 +603,8 @@ class MonitoredResource(_serialization.Model):
         reason_for_metrics_status: Optional[str] = None,
         sending_logs: Optional[bool] = None,
         reason_for_logs_status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The ARM id of the resource.
         :paramtype id: str
@@ -637,8 +643,12 @@ class MonitoredResourceListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.MonitoredResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.MonitoredResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of a list operation.
         :paramtype value: list[~azure.mgmt.logz.models.MonitoredResource]
@@ -682,7 +692,7 @@ class MonitoringTagRules(_serialization.Model):
         "properties": {"key": "properties", "type": "MonitoringTagRulesProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.MonitoringTagRulesProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.MonitoringTagRulesProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Definition of the properties for a TagRules resource.
         :paramtype properties: ~azure.mgmt.logz.models.MonitoringTagRulesProperties
@@ -710,8 +720,12 @@ class MonitoringTagRulesListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.MonitoringTagRules"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.MonitoringTagRules"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Results of a list operation.
         :paramtype value: list[~azure.mgmt.logz.models.MonitoringTagRules]
@@ -749,7 +763,7 @@ class MonitoringTagRulesProperties(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, log_rules: Optional["_models.LogRules"] = None, **kwargs):
+    def __init__(self, *, log_rules: Optional["_models.LogRules"] = None, **kwargs: Any) -> None:
         """
         :keyword log_rules: Set of rules for sending logs for the Monitor resource.
         :paramtype log_rules: ~azure.mgmt.logz.models.LogRules
@@ -814,8 +828,8 @@ class MonitorProperties(_serialization.Model):
         logz_organization_properties: Optional["_models.LogzOrganizationProperties"] = None,
         user_info: Optional["_models.UserInfo"] = None,
         plan_data: Optional["_models.PlanData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
          Known values are: "Enabled" and "Disabled".
@@ -855,7 +869,7 @@ class MonitorUpdateProperties(_serialization.Model):
         "monitoring_status": {"key": "monitoringStatus", "type": "str"},
     }
 
-    def __init__(self, *, monitoring_status: Union[str, "_models.MonitoringStatus"] = "Enabled", **kwargs):
+    def __init__(self, *, monitoring_status: Union[str, "_models.MonitoringStatus"] = "Enabled", **kwargs: Any) -> None:
         """
         :keyword monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
          Known values are: "Enabled" and "Disabled".
@@ -892,8 +906,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider, i.e., Microsoft.Logz.
         :paramtype provider: str
@@ -926,8 +940,8 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OperationResult"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.OperationResult"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of operations supported by the Microsoft.Logz provider.
         :paramtype value: list[~azure.mgmt.logz.models.OperationResult]
@@ -966,8 +980,8 @@ class OperationResult(_serialization.Model):
         is_data_action: Optional[bool] = None,
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name, i.e., {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -1018,8 +1032,8 @@ class PlanData(_serialization.Model):
         billing_cycle: Optional[str] = None,
         plan_details: Optional[str] = None,
         effective_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword usage_type: different usage type like PAYG/COMMITTED. this could be enum.
         :paramtype usage_type: str
@@ -1074,8 +1088,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1135,8 +1149,8 @@ class UserInfo(_serialization.Model):
         last_name: Optional[str] = None,
         email_address: Optional[str] = None,
         phone_number: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword first_name: First Name of the user.
         :paramtype first_name: str
@@ -1169,8 +1183,12 @@ class UserRoleListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.UserRoleResponse"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.UserRoleResponse"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of user roles for Logz.io account.
         :paramtype value: list[~azure.mgmt.logz.models.UserRoleResponse]
@@ -1197,7 +1215,7 @@ class UserRoleRequest(_serialization.Model):
         "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(self, *, email_address: Optional[str] = None, **kwargs):
+    def __init__(self, *, email_address: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword email_address: Email of the user used by Logz for contacting them if needed.
         :paramtype email_address: str
@@ -1218,7 +1236,7 @@ class UserRoleResponse(_serialization.Model):
         "role": {"key": "role", "type": "str"},
     }
 
-    def __init__(self, *, role: Optional[Union[str, "_models.UserRole"]] = None, **kwargs):
+    def __init__(self, *, role: Optional[Union[str, "_models.UserRole"]] = None, **kwargs: Any) -> None:
         """
         :keyword role: User roles on configured in Logz.io account. Known values are: "None", "User",
          and "Admin".
@@ -1242,7 +1260,7 @@ class VMExtensionPayload(_serialization.Model):
         "region": {"key": "region", "type": "str"},
     }
 
-    def __init__(self, *, api_key: Optional[str] = None, region: Optional[str] = None, **kwargs):
+    def __init__(self, *, api_key: Optional[str] = None, region: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword api_key: API Key corresponding to the resource.
         :paramtype api_key: str
@@ -1274,8 +1292,8 @@ class VMHostUpdateRequest(_serialization.Model):
         *,
         vm_resource_ids: Optional[List["_models.VMResources"]] = None,
         state: Optional[Union[str, "_models.VMHostUpdateStates"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vm_resource_ids: Request of a list vm host update operation.
         :paramtype vm_resource_ids: list[~azure.mgmt.logz.models.VMResources]
@@ -1307,8 +1325,8 @@ class VMResources(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         agent_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Request of a list vm host update operation.
         :paramtype id: str
@@ -1335,8 +1353,8 @@ class VMResourcesListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.VMResources"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.VMResources"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Response of a list vm host update operation.
         :paramtype value: list[~azure.mgmt.logz.models.VMResources]
