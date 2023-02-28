@@ -12,7 +12,7 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities import Job, PipelineJob, PipelineJobSettings
-from azure.ai.ml.data_transfer import import_data
+from azure.ai.ml.data_transfer import import_data as import_data_func
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
@@ -337,7 +337,7 @@ class DataOperations(_ScopeDependentOperations):
         data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
         if "{name}" not in data_import.path:
             data_import.path = data_import.path.rstrip("/") + "/{name}"
-        import_job = import_data(
+        import_job = import_data_func(
             description=data_import.description or experiment_name,
             display_name=experiment_name,
             experiment_name=experiment_name,
@@ -348,7 +348,6 @@ class DataOperations(_ScopeDependentOperations):
                     type=data_import.type, path=data_import.path, name=data_import.name, version=data_import.version
                 )
             },
-            component="azureml://registries/azureml-dev/components/" + component_name + "/versions/1",
         )
         import_pipeline = PipelineJob(
             description=data_import.description or experiment_name,
