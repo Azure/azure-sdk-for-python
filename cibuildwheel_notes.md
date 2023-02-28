@@ -2,11 +2,13 @@ TODO:
 
 - [ ] Recognize c-extensions, call `cibuildwheel` instead of `python -m build` against package root in `sdk_build` call
 - [ ] Update `azure-extensions-prototype` `pyproject.toml` with necessary additions for cibuildwheel tool config
-- [ ] Figure out how to define the targeted matrix from within `pyproject.toml`, set up the targeting matrix there
+- [x] Figure out how to define the targeted matrix from within `pyproject.toml`, set up the targeting matrix there
+  - Just need to set skip [as defined in this reference](https://cibuildwheel.readthedocs.io/en/stable/options/#configuration-file)
+  - 
 - [ ] If we can't put the output matrix under `pyproject.toml`, define in `artifact` list with set of platforms
 - [ ] Update `create_and_install` to install the appropriate wheel from the wheel output dir
 - [ ] Ensure the correct wheel is selected/installed across all tox environments, not just when called in `create_wheel_and_install`.
-- [ ] 
+
 
 
 Reference below for existing configuration that's working for azure-uamqp-python.
