@@ -8,7 +8,7 @@ from typing import Dict, List, Optional
 
 
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
-from azure.ai.ml._restclient.v2023_02_01_preview.models import FeaturesetVersion
+from azure.ai.ml._restclient.v2023_02_01_preview.models import FeaturesetVersion, FeaturesetVersionProperties
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities import FeaturestoreEntity, FeaturesetSpecification, MaterializationSettings
 
@@ -43,7 +43,7 @@ class Featureset(Artifact):
         materialization_settings: Optional[MaterializationSettings] = None,
         stage: Optional[str],
         tags: Optional[Dict] = None,
-        properties: Optional[Dict] = None,
+        properties: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
         super().__init__(
@@ -61,14 +61,14 @@ class Featureset(Artifact):
 
     @classmethod
     def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> "Featureset":
-        featureset_rest_object_details: FeaturesetVersion = featureset_rest_object.properties
+        featureset_rest_object_details: FeaturesetVersionProperties = featureset_rest_object.properties
         arm_id_object = get_arm_id_object_from_id(featureset_rest_object.id)
-        data = Featureset(
+        featureset = Featureset(
             id=featureset_rest_object.id,
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
-            entities=featureset_rest_object_details.properties.entities,
-            stage=featureset_rest_object_details.properties.stage,
+            entities=featureset_rest_object_details.entities,
+            stage=featureset_rest_object_details.stage,
             properties=featureset_rest_object_details.properties,
         )
-        return data
+        return featureset

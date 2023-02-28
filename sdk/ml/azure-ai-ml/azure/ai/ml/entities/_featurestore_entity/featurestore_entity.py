@@ -7,7 +7,10 @@
 from typing import Dict, List, Optional
 
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
-from azure.ai.ml._restclient.v2023_02_01_preview.models import FeaturesetVersion
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    FeaturestoreEntityVersion,
+    FeaturestoreEntityVersionProperties,
+)
 from azure.ai.ml._utils._experimental import experimental
 
 from azure.ai.ml.entities._assets.asset import Asset
@@ -54,3 +57,16 @@ class FeaturestoreEntity(Asset):
             **kwargs,
         )
         self.index_columns = index_columns
+
+    @classmethod
+    def _from_rest_object(cls, rest_obj: FeaturestoreEntityVersion) -> "FeaturestoreEntity":
+        rest_object_details: FeaturestoreEntityVersionProperties = rest_obj.properties
+        arm_id_object = get_arm_id_object_from_id(rest_obj.id)
+        featurestoreEntity = FeaturestoreEntity(
+            name=arm_id_object.asset_name,
+            version=arm_id_object.asset_version,
+            description=rest_object_details.description,
+            tags=rest_object_details.tags,
+            properties=rest_object_details.properties,
+        )
+        return featurestoreEntity
