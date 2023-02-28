@@ -231,7 +231,7 @@
         "properties": {
           "hash_sha256": "d3c05b496c685e7e5a204e3cebc689086bd0f622c2975d8090c18968739a464a",
           "hash_version": "202208",
-          "azureml.codeUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/000000000000000000000000000000000000"
+          "azureml.codeUri": "https://00000eastus7716106788.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/000000000000000000000000000000000000"
         },
         "description": null,
         "name": "f07f6e24-fc63-4bd8-9518-981eb433a3c8",
@@ -259,7 +259,7 @@
         },
         "modifiedTime": "2023-02-13T09:22:05.8135633\u002B00:00",
         "gitRepositoryCommit": null,
-        "uri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/000000000000000000000000000000000000",
+        "uri": "https://00000eastus7716106788.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/000000000000000000000000000000000000",
         "contentHash": "d3c05b496c685e7e5a204e3cebc689086bd0f622c2975d8090c18968739a464a",
         "hashVersion": "202208",
         "provisioningState": "Succeeded"
@@ -312,7 +312,7 @@
           },
           "isArchived": false,
           "isAnonymous": false,
-          "codeUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/000000000000000000000000000000000000"
+          "codeUri": "https://00000eastus7716106788.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/000000000000000000000000000000000000"
         },
         "systemData": {
           "createdAt": "2023-02-13T09:22:05.8135633\u002B00:00",
@@ -466,7 +466,7 @@
           },
           "datastoreType": "AzureBlob",
           "accountName": "00000eastus7716106788",
-          "containerName": "azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7",
+          "containerName": "000000000000000000000000000000000000",
           "endpoint": "core.windows.net",
           "protocol": "https",
           "serviceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
@@ -519,7 +519,7 @@
       }
     },
     {
-      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/00000000000000000000000000000000/train/MLTable",
+      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/00000000000000000000000000000000/train/MLTable",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -559,7 +559,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/az-ml-artifacts/00000000000000000000000000000000/train/MLTable",
+      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/000000000000000000000000000000000000/az-ml-artifacts/00000000000000000000000000000000/train/MLTable",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -632,7 +632,7 @@
           },
           "datastoreType": "AzureBlob",
           "accountName": "00000eastus7716106788",
-          "containerName": "azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7",
+          "containerName": "000000000000000000000000000000000000",
           "endpoint": "core.windows.net",
           "protocol": "https",
           "serviceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
@@ -685,7 +685,7 @@
       }
     },
     {
-      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/00000000000000000000000000000000/valid/MLTable",
+      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/00000000000000000000000000000000/valid/MLTable",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -725,7 +725,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/az-ml-artifacts/00000000000000000000000000000000/valid/MLTable",
+      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/000000000000000000000000000000000000/az-ml-artifacts/00000000000000000000000000000000/valid/MLTable",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -798,7 +798,7 @@
           },
           "datastoreType": "AzureBlob",
           "accountName": "00000eastus7716106788",
-          "containerName": "azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7",
+          "containerName": "000000000000000000000000000000000000",
           "endpoint": "core.windows.net",
           "protocol": "https",
           "serviceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
@@ -851,7 +851,7 @@
       }
     },
     {
-      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/00000000000000000000000000000000/test/MLTable",
+      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/000000000000000000000000000000000000/LocalUpload/00000000000000000000000000000000/test/MLTable",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -891,7 +891,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/az-ml-artifacts/00000000000000000000000000000000/test/MLTable",
+      "RequestUri": "https://00000eastus7716106788.blob.core.windows.net/000000000000000000000000000000000000/az-ml-artifacts/00000000000000000000000000000000/test/MLTable",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
