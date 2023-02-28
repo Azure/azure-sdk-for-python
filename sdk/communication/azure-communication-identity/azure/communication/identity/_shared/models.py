@@ -52,21 +52,21 @@ CommunicationUserProperties = TypedDict(
     id=str
 )
 
-PHONE_NUMBER = "4:"
-BOT = "28:"
-BOT_PUBLIC_CLOUD = "28:orgid:"
-BOT_DOD_CLOUD = "28:dod:"
-BOT_DOD_CLOUD_GLOBAL = "28:dod-global:"
-BOT_GCCH_CLOUD = "28:gcch:"
-BOT_GCCH_CLOUD_GLOBAL = "28:gcch-global:"
-TEAMS_USER_ANONYMOUS = "8:teamsvisitor:"
-TEAMS_USER_PUBLIC_CLOUD = "8:orgid:"
-TEAMS_USER_DOD_CLOUD = "8:dod:"
-TEAMS_USER_GCCH_CLOUD = "8:gcch:"
-ACS_USER = "8:acs:"
-ACS_USER_DOD_CLOUD = "8:dod-acs:"
-ACS_USER_GCCH_CLOUD = "8:gcch-acs:"
-SPOOL_USER = "8:spool:"
+PHONE_NUMBER_PREFIX = "4:"
+BOT_PREFIX = "28:"
+BOT_PUBLIC_CLOUD_PREFIX = "28:orgid:"
+BOT_DOD_CLOUD_PREFIX = "28:dod:"
+BOT_DOD_CLOUD_GLOBAL_PREFIX = "28:dod-global:"
+BOT_GCCH_CLOUD_PREFIX = "28:gcch:"
+BOT_GCCH_CLOUD_GLOBAL_PREFIX = "28:gcch-global:"
+TEAMS_USER_ANONYMOUS_PREFIX = "8:teamsvisitor:"
+TEAMS_USER_PUBLIC_CLOUD_PREFIX = "8:orgid:"
+TEAMS_USER_DOD_CLOUD_PREFIX = "8:dod:"
+TEAMS_USER_GCCH_CLOUD_PREFIX = "8:gcch:"
+ACS_USER_PREFIX = "8:acs:"
+ACS_USER_DOD_CLOUD_PREFIX = "8:dod-acs:"
+ACS_USER_GCCH_CLOUD_PREFIX = "8:gcch-acs:"
+SPOOL_USER_PREFIX = "8:spool:"
 
 
 class CommunicationUserIdentifier(object):
@@ -132,7 +132,7 @@ def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
     value = identifier.properties['value']
     # We just assume correct E.164 format here because
     # validation should only happen server-side, not client-side.
-    return f'{PHONE_NUMBER}{value}'
+    return f'{PHONE_NUMBER_PREFIX}{value}'
 
 
 class UnknownIdentifier(object):
@@ -205,15 +205,15 @@ class MicrosoftTeamsUserIdentifier(object):
 def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
     user_id = identifier.properties['user_id']
     if identifier.properties['is_anonymous']:
-        return f'{TEAMS_USER_ANONYMOUS}{user_id}'
+        return f'{TEAMS_USER_ANONYMOUS_PREFIX}{user_id}'
     cloud = identifier.properties['cloud']
     if cloud == CommunicationCloudEnvironment.DOD:
-        return f'{TEAMS_USER_DOD_CLOUD}{user_id}'
+        return f'{TEAMS_USER_DOD_CLOUD_PREFIX}{user_id}'
     elif cloud == CommunicationCloudEnvironment.GCCH:
-        return f'{TEAMS_USER_GCCH_CLOUD}{user_id}'
+        return f'{TEAMS_USER_GCCH_CLOUD_PREFIX}{user_id}'
     elif cloud == CommunicationCloudEnvironment.PUBLIC:
-        return f'{TEAMS_USER_PUBLIC_CLOUD}{user_id}'
-    return f'{TEAMS_USER_PUBLIC_CLOUD}{user_id}'
+        return f'{TEAMS_USER_PUBLIC_CLOUD_PREFIX}{user_id}'
+    return f'{TEAMS_USER_PUBLIC_CLOUD_PREFIX}{user_id}'
 
 
 MicrosoftBotProperties = TypedDict(
@@ -263,16 +263,16 @@ def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:
     cloud = identifier.properties['cloud']
     if identifier.properties['is_global']:
         if cloud == CommunicationCloudEnvironment.DOD:
-            return f'{BOT_DOD_CLOUD_GLOBAL}{bot_id}'
+            return f'{BOT_DOD_CLOUD_GLOBAL_PREFIX}{bot_id}'
         elif cloud == CommunicationCloudEnvironment.GCCH:
-            return f'{BOT_GCCH_CLOUD_GLOBAL}{bot_id}'
-        return f'{BOT}{bot_id}'
+            return f'{BOT_GCCH_CLOUD_GLOBAL_PREFIX}{bot_id}'
+        return f'{BOT_PREFIX}{bot_id}'
 
     if cloud == CommunicationCloudEnvironment.DOD:
-        return f'{BOT_DOD_CLOUD}{bot_id}'
+        return f'{BOT_DOD_CLOUD_PREFIX}{bot_id}'
     elif cloud == CommunicationCloudEnvironment.GCCH:
-        return f'{BOT_GCCH_CLOUD}{bot_id}'
-    return f'{BOT_PUBLIC_CLOUD}{bot_id}'
+        return f'{BOT_GCCH_CLOUD_PREFIX}{bot_id}'
+    return f'{BOT_PUBLIC_CLOUD_PREFIX}{bot_id}'
 
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
@@ -283,14 +283,14 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
 
     :param str raw_id: A raw ID to construct the CommunicationIdentifier from.
     """
-    if raw_id.startswith(PHONE_NUMBER):
+    if raw_id.startswith(PHONE_NUMBER_PREFIX):
         return PhoneNumberIdentifier(
-            value=raw_id[len(PHONE_NUMBER):]
+            value=raw_id[len(PHONE_NUMBER_PREFIX):]
         )
 
     segments = raw_id.split(':', maxsplit=2)
-    if len(segments) < 3 or len(segments) > 3:
-        if len(segments) == 2 and segments[0] == '28':
+    if len(segments) != 3:
+        if len(segments) == 2 and raw_id.startswith(BOT_PREFIX):
             return MicrosoftBotIdentifier(
                 bot_id=segments[1],
                 is_global=True,
@@ -300,58 +300,58 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
 
     prefix = f'{segments[0]}:{segments[1]}:'
     suffix = segments[2]
-    if prefix == TEAMS_USER_ANONYMOUS:
+    if prefix == TEAMS_USER_ANONYMOUS_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=True
         )
-    elif prefix == TEAMS_USER_PUBLIC_CLOUD:
+    elif prefix == TEAMS_USER_PUBLIC_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.PUBLIC
         )
-    elif prefix == TEAMS_USER_DOD_CLOUD:
+    elif prefix == TEAMS_USER_DOD_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.DOD
         )
-    elif prefix == TEAMS_USER_GCCH_CLOUD:
+    elif prefix == TEAMS_USER_GCCH_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.GCCH
         )
-    elif prefix in [ACS_USER, ACS_USER_DOD_CLOUD, ACS_USER_GCCH_CLOUD, SPOOL_USER]:
+    elif prefix in [ACS_USER_PREFIX, ACS_USER_DOD_CLOUD_PREFIX, ACS_USER_GCCH_CLOUD_PREFIX, SPOOL_USER_PREFIX]:
         return CommunicationUserIdentifier(
             id=raw_id
         )
-    elif prefix == BOT_GCCH_CLOUD_GLOBAL:
+    elif prefix == BOT_GCCH_CLOUD_GLOBAL_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=True,
             cloud=CommunicationCloudEnvironment.GCCH
         )
-    elif prefix == BOT_PUBLIC_CLOUD:
+    elif prefix == BOT_PUBLIC_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=False,
             cloud=CommunicationCloudEnvironment.PUBLIC
         )
-    elif prefix == BOT_DOD_CLOUD_GLOBAL:
+    elif prefix == BOT_DOD_CLOUD_GLOBAL_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=True,
             cloud=CommunicationCloudEnvironment.DOD
         )
-    elif prefix == BOT_GCCH_CLOUD:
+    elif prefix == BOT_GCCH_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=False,
             cloud=CommunicationCloudEnvironment.GCCH
         )
-    elif prefix == BOT_DOD_CLOUD:
+    elif prefix == BOT_DOD_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_global=False,
