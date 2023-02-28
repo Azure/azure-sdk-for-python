@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields
+from marshmallow import fields, pre_load
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.core.fields import DumpableEnumField
@@ -19,3 +19,9 @@ class InternalEnvironmentSchema(PathAwareSchema):
     name = fields.Str()
     version = fields.Str()
     python = fields.Dict()
+
+    @pre_load
+    def convert_version_to_str(self, data, **kwargs):
+        if "version" in data and data["version"] is not None:
+            data["version"] = str(data["version"])
+        return data
