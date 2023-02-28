@@ -121,6 +121,12 @@ class IdentifierRawIdTest(unittest.TestCase):
         )
         _assert_raw_id(
             MicrosoftBotIdentifier(
+                bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130'
+            ),
+            '28:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130'
+        )
+        _assert_raw_id(
+            MicrosoftBotIdentifier(
                 bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
                 is_global=True,
                 cloud=CommunicationCloudEnvironment.PUBLIC
@@ -204,6 +210,12 @@ class IdentifierRawIdTest(unittest.TestCase):
             '8:acs:something',
             CommunicationUserIdentifier(
                 id='8:acs:something'
+            )
+        )
+        _assert_communication_identifier(
+            '8:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130',
+            MicrosoftTeamsUserIdentifier(
+                user_id='45ab2481-1c1c-4005-be24-0ffb879b1130'
             )
         )
         _assert_communication_identifier(
@@ -473,6 +485,11 @@ class IdentifierRawIdTest(unittest.TestCase):
         )
 
         # MicrosoftBotIdentifiers are equal.
+        assert MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130'
+        ) == MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130'
+        )
         assert MicrosoftBotIdentifier(
             bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
             is_global=True,
