@@ -8,10 +8,13 @@ from typing import Dict, List, Optional
 
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._restclient.v2023_02_01_preview.models import FeaturesetVersion
-from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml._utils._experimental import experimental
 
+from azure.ai.ml.entities._assets.asset import Asset
 from .data_column import DataColumn
 
+
+@experimental
 class FeaturestoreEntity(Asset):
     """FeaturestoreEntity
 
@@ -51,4 +54,3 @@ class FeaturestoreEntity(Asset):
             **kwargs,
         )
         self.index_columns = index_columns
-

@@ -1,7 +1,9 @@
-
 from enum import Enum
 
+from azure.ai.ml._utils._experimental import experimental
 
+
+@experimental
 class DataColumnType(Enum):
     string = 1
     integer = 2

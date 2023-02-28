@@ -5,23 +5,14 @@
 from typing import List, Optional
 
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
-    NotificationSetting as RestNotificationSetting
-)
+from azure.ai.ml._restclient.v2023_02_01_preview.models import NotificationSetting as RestNotificationSetting
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class NotificationConfiguration(RestTranslatableMixin):
-    """Configuration for notification.
-    """
+    """Configuration for notification."""
 
-    def __init__(
-        self,
-        *,
-        email_on: Optional[List[str]] = None,
-        emails: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None, **kwargs):
         """
         :keyword email_on: Send email notification to user on specified notification type.
         :paramtype email_on: list[Literal]. Values can be [jobcompleted, jobfailed, jobcanceled]
