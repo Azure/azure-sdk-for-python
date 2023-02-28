@@ -74,6 +74,8 @@ class WebPubSubClientCredential:
 _RETRY_TOTAL = 3
 _RETRY_BACKOFF_FACTOR = 1.0
 _RETRY_BACKOFF_MAX = 120.0
+_RECOVERY_RETRY_TOTAL = 30
+_RECOVERY_RETRY_INTERVAL = 1.0
 
 
 class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
@@ -536,14 +538,15 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     return
 
                 self._state = WebPubSubClientState.RECOVERING
-                i = 0
-                while i < 30 or self._is_stopping:
+                for i in range(_RECOVERY_RETRY_TOTAL):
+                    if self._is_stopping:
+                        break
                     try:
                         self._connect(recovery_url)
                         return
                     except:  # pylint: disable=bare-except
-                        delay(1.0)
-                    i = i + 1
+                        _LOGGER.debug("Try %dth times to recover after %d seconds", i, _RECOVERY_RETRY_INTERVAL)
+                        delay(_RECOVERY_RETRY_INTERVAL)
 
                 _LOGGER.warning("Recovery attempts failed more than 30 times or the client is stopping")
                 self._handle_connection_close_and_no_recovery()

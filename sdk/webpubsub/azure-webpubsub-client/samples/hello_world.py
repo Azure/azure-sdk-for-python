@@ -39,7 +39,6 @@ def main():
                 roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"]
             )["url"]
         ),
-        auto_reconnect=False,
     )
 
     with client:

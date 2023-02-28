@@ -17,10 +17,12 @@ class WebpubsubClientTest(AzureRecordedTestCase):
         connection_string,
         hub: str = "Hub",
         roles: List[str] = ["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"],
+        **kwargs,
     ):
         service_client = WebPubSubServiceClient.from_connection_string(connection_string, hub)
         return WebPubSubClient(
-            credential=WebPubSubClientCredential(lambda: service_client.get_client_access_token(roles=roles)["url"])
+            credential=WebPubSubClientCredential(lambda: service_client.get_client_access_token(roles=roles)["url"]),
+            **kwargs,
         )
 
 
