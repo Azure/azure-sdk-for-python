@@ -458,7 +458,7 @@ class WorkspaceOperations:
         _set_val(param["location"], workspace.location)
 
         if not workspace.kind:
-            _set_val(param["kind"], "Default")
+            _set_val(param["kind"], "default")
         else:
             _set_val(param["kind"], workspace.kind)
 

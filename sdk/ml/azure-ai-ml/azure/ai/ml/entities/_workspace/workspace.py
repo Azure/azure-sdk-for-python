@@ -29,7 +29,7 @@ class Workspace(Resource):
         self,
         *,
         name: str,
-        kind: Optional[str] = "Default",
+        kind: Optional[str] = "default",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -54,7 +54,7 @@ class Workspace(Resource):
 
         :param name: Name of the workspace.
         :type name: str
-        :param kind: Kind of the workspace. Default value is 'Default'
+        :param kind: Kind of the workspace. Default value is 'default'
         :type kind: str
         :param description: Description of the workspace.
         :type description: str
