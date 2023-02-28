@@ -33,9 +33,11 @@ from ...operations._operations import (
     build_call_connection_get_participant_request,
     build_call_connection_get_participants_request,
     build_call_connection_hangup_call_request,
-    build_call_connection_remove_participants_request,
+    build_call_connection_mute_request,
+    build_call_connection_remove_participant_request,
     build_call_connection_terminate_call_request,
     build_call_connection_transfer_to_participant_request,
+    build_call_connection_unmute_request,
     build_call_media_cancel_all_media_operations_request,
     build_call_media_play_request,
     build_call_media_recognize_request,
@@ -137,8 +139,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         Create an outbound call.
 
-        :param create_call_request: The create call request. Is either a model type or a IO type.
-         Required.
+        :param create_call_request: The create call request. Is either a CreateCallRequest type or a IO
+         type. Required.
         :type create_call_request: ~azure.communication.callautomation.models.CreateCallRequest or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
@@ -299,8 +301,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         Answer a call using the IncomingCallContext from Event Grid.
 
-        :param answer_call_request: The answer call request. Is either a model type or a IO type.
-         Required.
+        :param answer_call_request: The answer call request. Is either a AnswerCallRequest type or a IO
+         type. Required.
         :type answer_call_request: ~azure.communication.callautomation.models.AnswerCallRequest or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
@@ -461,8 +463,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         Redirect a call.
 
-        :param redirect_call_request: The redirect call request. Is either a model type or a IO type.
-         Required.
+        :param redirect_call_request: The redirect call request. Is either a RedirectCallRequest type
+         or a IO type. Required.
         :type redirect_call_request: ~azure.communication.callautomation.models.RedirectCallRequest or
          IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
@@ -620,8 +622,8 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(AzureCommunicationC
 
         Reject the call.
 
-        :param reject_call_request: The reject call request. Is either a model type or a IO type.
-         Required.
+        :param reject_call_request: The reject call request. Is either a RejectCallRequest type or a IO
+         type. Required.
         :type reject_call_request: ~azure.communication.callautomation.models.RejectCallRequest or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
@@ -985,8 +987,8 @@ class CallConnectionOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param transfer_to_participant_request: The transfer to participant request. Is either a model
-         type or a IO type. Required.
+        :param transfer_to_participant_request: The transfer to participant request. Is either a
+         TransferToParticipantRequest type or a IO type. Required.
         :type transfer_to_participant_request:
          ~azure.communication.callautomation.models.TransferToParticipantRequest or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
@@ -1122,22 +1124,21 @@ class CallConnectionOperations:
     async def add_participant(
         self,
         call_connection_id: str,
-        add_participants_request: _models.AddParticipantsRequest,
+        add_participant_request: _models.AddParticipantRequest,
         *,
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AddParticipantsResponse:
+    ) -> _models.AddParticipantResponse:
         """Add participants to the call.
 
         Add participants to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param add_participants_request: The add participants request. Required.
-        :type add_participants_request:
-         ~azure.communication.callautomation.models.AddParticipantsRequest
+        :param add_participant_request: Required.
+        :type add_participant_request: ~azure.communication.callautomation.models.AddParticipantRequest
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -1153,8 +1154,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AddParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.AddParticipantsResponse
+        :return: AddParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.AddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1162,21 +1163,21 @@ class CallConnectionOperations:
     async def add_participant(
         self,
         call_connection_id: str,
-        add_participants_request: IO,
+        add_participant_request: IO,
         *,
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AddParticipantsResponse:
+    ) -> _models.AddParticipantResponse:
         """Add participants to the call.
 
         Add participants to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param add_participants_request: The add participants request. Required.
-        :type add_participants_request: IO
+        :param add_participant_request: Required.
+        :type add_participant_request: IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -1192,8 +1193,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AddParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.AddParticipantsResponse
+        :return: AddParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.AddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1201,22 +1202,21 @@ class CallConnectionOperations:
     async def add_participant(
         self,
         call_connection_id: str,
-        add_participants_request: Union[_models.AddParticipantsRequest, IO],
+        add_participant_request: Union[_models.AddParticipantRequest, IO],
         *,
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AddParticipantsResponse:
+    ) -> _models.AddParticipantResponse:
         """Add participants to the call.
 
         Add participants to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param add_participants_request: The add participants request. Is either a model type or a IO
-         type. Required.
-        :type add_participants_request:
-         ~azure.communication.callautomation.models.AddParticipantsRequest or IO
+        :param add_participant_request: Is either a AddParticipantRequest type or a IO type. Required.
+        :type add_participant_request: ~azure.communication.callautomation.models.AddParticipantRequest
+         or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -1232,8 +1232,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: AddParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.AddParticipantsResponse
+        :return: AddParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.AddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1248,15 +1248,15 @@ class CallConnectionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AddParticipantsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AddParticipantResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(add_participants_request, (IO, bytes)):
-            _content = add_participants_request
+        if isinstance(add_participant_request, (IO, bytes)):
+            _content = add_participant_request
         else:
-            _json = self._serialize.body(add_participants_request, "AddParticipantsRequest")
+            _json = self._serialize.body(add_participant_request, "AddParticipantRequest")
 
         request = build_call_connection_add_participant_request(
             call_connection_id=call_connection_id,
@@ -1285,7 +1285,7 @@ class CallConnectionOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("AddParticipantsResponse", pipeline_response)
+        deserialized = self._deserialize("AddParticipantResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1293,25 +1293,25 @@ class CallConnectionOperations:
         return deserialized
 
     @overload
-    async def remove_participants(
+    async def remove_participant(
         self,
         call_connection_id: str,
-        remove_participants_request: _models.RemoveParticipantsRequest,
+        remove_participant_request: _models.RemoveParticipantRequest,
         *,
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RemoveParticipantsResponse:
+    ) -> _models.RemoveParticipantResponse:
         """Remove participant from the call using identifier.
 
         Remove participant from the call using identifier.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param remove_participants_request: The participants to be removed from the call. Required.
-        :type remove_participants_request:
-         ~azure.communication.callautomation.models.RemoveParticipantsRequest
+        :param remove_participant_request: The participant to be removed from the call. Required.
+        :type remove_participant_request:
+         ~azure.communication.callautomation.models.RemoveParticipantRequest
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -1327,30 +1327,30 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RemoveParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.RemoveParticipantsResponse
+        :return: RemoveParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.RemoveParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def remove_participants(
+    async def remove_participant(
         self,
         call_connection_id: str,
-        remove_participants_request: IO,
+        remove_participant_request: IO,
         *,
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.RemoveParticipantsResponse:
+    ) -> _models.RemoveParticipantResponse:
         """Remove participant from the call using identifier.
 
         Remove participant from the call using identifier.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param remove_participants_request: The participants to be removed from the call. Required.
-        :type remove_participants_request: IO
+        :param remove_participant_request: The participant to be removed from the call. Required.
+        :type remove_participant_request: IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -1366,31 +1366,31 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RemoveParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.RemoveParticipantsResponse
+        :return: RemoveParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.RemoveParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def remove_participants(
+    async def remove_participant(
         self,
         call_connection_id: str,
-        remove_participants_request: Union[_models.RemoveParticipantsRequest, IO],
+        remove_participant_request: Union[_models.RemoveParticipantRequest, IO],
         *,
         repeatability_request_id: Optional[str] = None,
         repeatability_first_sent: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.RemoveParticipantsResponse:
+    ) -> _models.RemoveParticipantResponse:
         """Remove participant from the call using identifier.
 
         Remove participant from the call using identifier.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param remove_participants_request: The participants to be removed from the call. Is either a
-         model type or a IO type. Required.
-        :type remove_participants_request:
-         ~azure.communication.callautomation.models.RemoveParticipantsRequest or IO
+        :param remove_participant_request: The participant to be removed from the call. Is either a
+         RemoveParticipantRequest type or a IO type. Required.
+        :type remove_participant_request:
+         ~azure.communication.callautomation.models.RemoveParticipantRequest or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -1406,8 +1406,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: RemoveParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.RemoveParticipantsResponse
+        :return: RemoveParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.RemoveParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1422,17 +1422,17 @@ class CallConnectionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RemoveParticipantsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RemoveParticipantResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(remove_participants_request, (IO, bytes)):
-            _content = remove_participants_request
+        if isinstance(remove_participant_request, (IO, bytes)):
+            _content = remove_participant_request
         else:
-            _json = self._serialize.body(remove_participants_request, "RemoveParticipantsRequest")
+            _json = self._serialize.body(remove_participant_request, "RemoveParticipantRequest")
 
-        request = build_call_connection_remove_participants_request(
+        request = build_call_connection_remove_participant_request(
             call_connection_id=call_connection_id,
             repeatability_request_id=repeatability_request_id,
             repeatability_first_sent=repeatability_first_sent,
@@ -1459,7 +1459,355 @@ class CallConnectionOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RemoveParticipantsResponse", pipeline_response)
+        deserialized = self._deserialize("RemoveParticipantResponse", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    @overload
+    async def mute(
+        self,
+        call_connection_id: str,
+        mute_participants_request: _models.MuteParticipantsRequest,
+        *,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MuteParticipantsResponse:
+        """Mute participants from the call using identifier.
+
+        Mute participants from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param mute_participants_request: The participants to be muted from the call. Required.
+        :type mute_participants_request:
+         ~azure.communication.callautomation.models.MuteParticipantsRequest
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MuteParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def mute(
+        self,
+        call_connection_id: str,
+        mute_participants_request: IO,
+        *,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MuteParticipantsResponse:
+        """Mute participants from the call using identifier.
+
+        Mute participants from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param mute_participants_request: The participants to be muted from the call. Required.
+        :type mute_participants_request: IO
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MuteParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def mute(
+        self,
+        call_connection_id: str,
+        mute_participants_request: Union[_models.MuteParticipantsRequest, IO],
+        *,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.MuteParticipantsResponse:
+        """Mute participants from the call using identifier.
+
+        Mute participants from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param mute_participants_request: The participants to be muted from the call. Is either a
+         MuteParticipantsRequest type or a IO type. Required.
+        :type mute_participants_request:
+         ~azure.communication.callautomation.models.MuteParticipantsRequest or IO
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: MuteParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MuteParticipantsResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(mute_participants_request, (IO, bytes)):
+            _content = mute_participants_request
+        else:
+            _json = self._serialize.body(mute_participants_request, "MuteParticipantsRequest")
+
+        request = build_call_connection_mute_request(
+            call_connection_id=call_connection_id,
+            repeatability_request_id=repeatability_request_id,
+            repeatability_first_sent=repeatability_first_sent,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("MuteParticipantsResponse", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    @overload
+    async def unmute(
+        self,
+        call_connection_id: str,
+        unmute_participants_request: _models.UnmuteParticipantsRequest,
+        *,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.UnmuteParticipantsResponse:
+        """Unmute participants from the call using identifier.
+
+        Unmute participants from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param unmute_participants_request: The participants to be unmuted from the call. Required.
+        :type unmute_participants_request:
+         ~azure.communication.callautomation.models.UnmuteParticipantsRequest
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UnmuteParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.UnmuteParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def unmute(
+        self,
+        call_connection_id: str,
+        unmute_participants_request: IO,
+        *,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.UnmuteParticipantsResponse:
+        """Unmute participants from the call using identifier.
+
+        Unmute participants from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param unmute_participants_request: The participants to be unmuted from the call. Required.
+        :type unmute_participants_request: IO
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UnmuteParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.UnmuteParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def unmute(
+        self,
+        call_connection_id: str,
+        unmute_participants_request: Union[_models.UnmuteParticipantsRequest, IO],
+        *,
+        repeatability_request_id: Optional[str] = None,
+        repeatability_first_sent: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.UnmuteParticipantsResponse:
+        """Unmute participants from the call using identifier.
+
+        Unmute participants from the call using identifier.
+
+        :param call_connection_id: The call connection id. Required.
+        :type call_connection_id: str
+        :param unmute_participants_request: The participants to be unmuted from the call. Is either a
+         UnmuteParticipantsRequest type or a IO type. Required.
+        :type unmute_participants_request:
+         ~azure.communication.callautomation.models.UnmuteParticipantsRequest or IO
+        :keyword repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :paramtype repeatability_request_id: str
+        :keyword repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :paramtype repeatability_first_sent: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: UnmuteParticipantsResponse
+        :rtype: ~azure.communication.callautomation.models.UnmuteParticipantsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.UnmuteParticipantsResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(unmute_participants_request, (IO, bytes)):
+            _content = unmute_participants_request
+        else:
+            _json = self._serialize.body(unmute_participants_request, "UnmuteParticipantsRequest")
+
+        request = build_call_connection_unmute_request(
+            call_connection_id=call_connection_id,
+            repeatability_request_id=repeatability_request_id,
+            repeatability_first_sent=repeatability_first_sent,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("UnmuteParticipantsResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1468,18 +1816,18 @@ class CallConnectionOperations:
 
     @distributed_trace_async
     async def get_participant(
-        self, call_connection_id: str, participant_mri: str, **kwargs: Any
-    ) -> _models.AcsCallParticipant:
+        self, call_connection_id: str, participant_raw_id: str, **kwargs: Any
+    ) -> _models.CallParticipant:
         """Get participant from a call.
 
         Get participant from a call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param participant_mri: MRI of the participant to retrieve. Required.
-        :type participant_mri: str
-        :return: AcsCallParticipant
-        :rtype: ~azure.communication.callautomation.models.AcsCallParticipant
+        :param participant_raw_id: Raw id of the participant to retrieve. Required.
+        :type participant_raw_id: str
+        :return: CallParticipant
+        :rtype: ~azure.communication.callautomation.models.CallParticipant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1493,11 +1841,11 @@ class CallConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AcsCallParticipant] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CallParticipant] = kwargs.pop("cls", None)
 
         request = build_call_connection_get_participant_request(
             call_connection_id=call_connection_id,
-            participant_mri=participant_mri,
+            participant_raw_id=participant_raw_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1518,7 +1866,7 @@ class CallConnectionOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("AcsCallParticipant", pipeline_response)
+        deserialized = self._deserialize("CallParticipant", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -1600,7 +1948,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param play_request: play request payload. Is either a model type or a IO type. Required.
+        :param play_request: play request payload. Is either a PlayRequest type or a IO type. Required.
         :type play_request: ~azure.communication.callautomation.models.PlayRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1766,8 +2114,8 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param recognize_request: The media recognize request. Is either a model type or a IO type.
-         Required.
+        :param recognize_request: The media recognize request. Is either a RecognizeRequest type or a
+         IO type. Required.
         :type recognize_request: ~azure.communication.callautomation.models.RecognizeRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1933,7 +2281,7 @@ class CallRecordingOperations:
         Start recording the call.
 
         :param start_call_recording: The request body of start call recording request. Is either a
-         model type or a IO type. Required.
+         StartCallRecordingRequest type or a IO type. Required.
         :type start_call_recording:
          ~azure.communication.callautomation.models.StartCallRecordingRequest or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is

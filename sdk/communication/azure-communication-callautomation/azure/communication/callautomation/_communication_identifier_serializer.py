@@ -15,7 +15,8 @@ from ._models import (
 )
 
 if TYPE_CHECKING:
-    from ._generated.models import CommunicationIdentifierModel
+    from ._generated.models import (
+        CommunicationIdentifierModel, PhoneNumberIdentifierModel)
 
 
 def serialize_identifier(identifier):
@@ -33,7 +34,8 @@ def serialize_identifier(identifier):
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
     except AttributeError:
-        raise TypeError("Unsupported identifier type " + identifier.__class__.__name__)
+        raise TypeError("Unsupported identifier type " +
+                        identifier.__class__.__name__)
 
 
 def deserialize_identifier(identifier_model):
@@ -59,3 +61,19 @@ def deserialize_identifier(identifier_model):
             cloud=identifier_model.microsoft_teams_user.cloud
         )
     return UnknownIdentifier(raw_id)
+
+
+def deserialize_phone_identifier(identifier_model):
+    # type: (PhoneNumberIdentifierModel) -> PhoneNumberIdentifier
+    """
+    Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
+
+    :param identifier_model: PhoneNumberIdentifierModel
+    :type identifier_model: PhoneNumberIdentifierModel
+    :return: PhoneNumberIdentifier
+    """
+    raw_id = identifier_model.raw_id
+
+    if identifier_model.phone_number:
+        return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
+    return None
