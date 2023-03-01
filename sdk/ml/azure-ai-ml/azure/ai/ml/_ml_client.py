@@ -744,6 +744,25 @@ class MLClient:
         return self._schedules
 
     @property
+    @experimental
+    def featuresets(self) -> FeaturesetOperations:
+        """A collection of featureset related operations.
+
+        :return: Featureset operations
+        :rtype: FeaturesetOperations
+        """
+        return self._featuresets
+
+    @property
+    def featurestoreEntities(self) -> FeaturestoreEntityOperations:
+        """A collection of featurestore_entity related operations.
+
+        :return: FeaturestoreEntity operations
+        :rtype: FeaturestoreEntityOperations
+        """
+        return self._featurestoreEntities
+
+    @property
     def subscription_id(self) -> str:
         """Get the subscription Id of a MLClient object.
 
