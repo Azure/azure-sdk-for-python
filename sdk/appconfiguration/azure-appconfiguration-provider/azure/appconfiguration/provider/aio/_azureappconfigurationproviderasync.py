@@ -175,16 +175,19 @@ async def _resolve_keyvault_reference(
 
     key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
-    #pylint:disable=protected-access
-    referenced_client = provider._secret_clients.get(key_vault_identifier.vault_url, None)
+    vault_url = key_vault_identifier.vault_url + "/"
 
-    if referenced_client is None:
-        keyvault_credential = key_vault_options.client_configs.pop(key_vault_identifier.vault_url, key_vault_options.credential)
+    #pylint:disable=protected-access
+    referenced_client = provider._secret_clients.get(vault_url, None)
+
+    vault_config = key_vault_options.client_configs.get(vault_url, {})
+    credential = vault_config.pop("credential", key_vault_options.credential)
+
+    if referenced_client is None and credential is not None:
         referenced_client = SecretClient(
-            vault_url=key_vault_identifier.vault_url, credential=keyvault_credential, 
-             **key_vault_options.client_configs.get(key_vault_identifier.vault_url, {})
+            vault_url=vault_url, credential=credential, **vault_config
         )
-        provider._secret_clients[key_vault_identifier.vault_url] = referenced_client
+        provider._secret_clients[vault_url] = referenced_client
 
     if referenced_client:
         return (
@@ -201,9 +204,8 @@ async def _resolve_keyvault_reference(
             return resolved
 
     raise ValueError(
-        "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
+        "No Secret Client found for Key Vault reference %s" % (vault_url)
     )
-
 
 class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     """

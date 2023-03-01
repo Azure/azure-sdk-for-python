@@ -205,17 +205,20 @@ def _resolve_keyvault_reference(
 
     key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
+    vault_url = key_vault_identifier.vault_url + "/"
+
     #pylint:disable=protected-access
-    referenced_client = provider._secret_clients.get(key_vault_identifier.vault_url, None)
+    referenced_client = provider._secret_clients.get(vault_url, None)
 
-    if referenced_client is None:
-        keyvault_credential = key_vault_options.client_configs.pop(key_vault_identifier.vault_url, key_vault_options.credential)
+    vault_config = key_vault_options.client_configs.get(vault_url, {})
+    credential = vault_config.pop("credential", key_vault_options.credential)
+
+    if referenced_client is None and credential is not None:
         referenced_client = SecretClient(
-            vault_url=key_vault_identifier.vault_url, credential=keyvault_credential, 
-             **key_vault_options.client_configs.get(key_vault_identifier.vault_url, {})
+            vault_url=vault_url, credential=credential, **vault_config
         )
-        provider._secret_clients[key_vault_identifier.vault_url] = referenced_client
-
+        provider._secret_clients[vault_url] = referenced_client
+    
     if referenced_client:
         return referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version).value
 
@@ -223,7 +226,7 @@ def _resolve_keyvault_reference(
         return key_vault_options.secret_resolver(config.secret_id)
 
     raise ValueError(
-        "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
+        "No Secret Client found for Key Vault reference %s" % (vault_url)
     )
 
 
