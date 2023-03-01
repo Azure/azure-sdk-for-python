@@ -2083,8 +2083,8 @@ class TestAnalyze(TextAnalyticsTest):
         poller = client.begin_analyze_actions(
             docs,
             actions,
-            auto_detect_language=True,
-            language="es",
+            language="auto",
+            autodetect_default_language="es",
             polling_interval=self._interval(),
         )
 
