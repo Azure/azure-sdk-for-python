@@ -54,9 +54,9 @@ print(metric_definitions)
 # fetch metrics for a test run using metric definition and namespace
 metrics = client.list_metrics(
     TEST_RUN_ID,
-    metricname=metric_definitions["value"][0]["name"],
+    metric_name=metric_definitions["value"][0]["name"],
     metric_namespace=metric_namespaces["value"][0]["name"],
-    timespan=test_run_response["startDateTime"]+"/"+test_run_response["endDateTime"]
+    time_interval=test_run_response["startDateTime"]+"/"+test_run_response["endDateTime"]
 )
 
 for page in metrics.by_page():
