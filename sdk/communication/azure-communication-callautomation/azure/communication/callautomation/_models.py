@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -29,12 +28,12 @@ class ServerCallLocator(object):
     def __init__(
         self,
         *,
-        locatorid: str,
+        locator_id: str,
         **kwargs: Any
     ) -> None:
 
         super().__init__(**kwargs)
-        self.id = locatorid
+        self.id = locator_id
         self.kind = "serverCallLocator"
 
     def _to_generated(self):
@@ -48,12 +47,12 @@ class GroupCallLocator(object):
     def __init__(
         self,
         *,
-        locatorid: str,
+        locator_id: str,
         **kwargs: Any
     ) -> None:
 
         super().__init__(**kwargs)
-        self.id = locatorid
+        self.id = locator_id
         self.kind = "groupCallLocator"
 
     def _to_generated(self):
@@ -503,6 +502,7 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POUND = "pound"
     ASTERISK = "asterisk"
 
+
 class RecognizeCanceled(object):
     """RecognizeCanceled.
 
@@ -517,7 +517,6 @@ class RecognizeCanceled(object):
     request to the response event.
     :vartype operation_context: str
     """
-
     def __init__(
         self,
         **kwargs: Any
@@ -528,10 +527,10 @@ class RecognizeCanceled(object):
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+            skype chain ID.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
+            request to the response event.
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
