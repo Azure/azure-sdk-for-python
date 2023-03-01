@@ -123,26 +123,26 @@ class ModelOperations(_ScopeDependentOperations):
                 # Case of copy model to registry
                 if isinstance(model, WorkspaceAssetReference):
                     # verify that model is not already in registry
-                    try:
-                        self._model_versions_operation.get(
-                            name=model.name,
-                            version=model.version,
-                            resource_group_name=self._resource_group_name,
-                            registry_name=self._registry_name,
-                        )
-                    except Exception as err:  # pylint: disable=broad-except
-                        if isinstance(err, ResourceNotFoundError):
-                            pass
-                        else:
-                            raise err
-                    else:
-                        msg = "A model with this name and version already exists in registry"
-                        raise ValidationException(
-                            message=msg,
-                            no_personal_data_message=msg,
-                            target=ErrorTarget.MODEL,
-                            error_category=ErrorCategory.USER_ERROR,
-                        )
+                    # try:
+                    #     self._model_versions_operation.get(
+                    #         name=model.name,
+                    #         version=model.version,
+                    #         resource_group_name=self._resource_group_name,
+                    #         registry_name=self._registry_name,
+                    #     )
+                    # except Exception as err:  # pylint: disable=broad-except
+                    #     if isinstance(err, ResourceNotFoundError):
+                    #         pass
+                    #     else:
+                    #         raise err
+                    # else:
+                    #     msg = "A model with this name and version already exists in registry"
+                    #     raise ValidationException(
+                    #         message=msg,
+                    #         no_personal_data_message=msg,
+                    #         target=ErrorTarget.MODEL,
+                    #         error_category=ErrorCategory.USER_ERROR,
+                    #     )
 
                     model = model._to_rest_object()
                     result = self._service_client.resource_management_asset_reference.begin_import_method(
@@ -477,8 +477,8 @@ class ModelOperations(_ScopeDependentOperations):
             asset_id=asset_id,
         )
 
-        with self._set_registry_client(registry_name):
-            return self.create_or_update(model_ref)
+        self._set_registry_client(registry_name)
+        return self.create_or_update(model_ref)
 
     def _get_latest_version(self, name: str) -> Model:
         """Returns the latest version of the asset with the given name.
@@ -504,4 +504,5 @@ class ModelOperations(_ScopeDependentOperations):
         self._operation_scope.registry_name = registry_name
         self._operation_scope._resource_group_name = rg
         self._operation_scope._subscription_id = sub
+        self._service_client = _client
         self._model_versions_operation = _client.model_versions
