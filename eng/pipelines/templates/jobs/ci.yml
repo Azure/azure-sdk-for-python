@@ -217,7 +217,7 @@ jobs:
         Cloud: Public
       DependsOn:
         - 'Build Linux'
-        ${{ if parameters.AdvancedBuild }}:
+        - ${{ if parameters.AdvancedBuild }}:
           - 'Build Mac'
           - 'Build Windows'
       AdditionalParameters:
