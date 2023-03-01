@@ -7,8 +7,8 @@
 import logging
 from typing import Dict, Optional, Union
 from typing_extensions import Literal
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AllNodes
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
+from azure.ai.ml._restclient.v2022_12_01_preview.models import AllNodes
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobService as RestJobService
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._job.job import JobServiceTypeNames
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -19,7 +19,7 @@ module_logger = logging.getLogger(__name__)
 
 @experimental
 class JobServiceBase(RestTranslatableMixin):
-    """JobService configuration.
+    """Base class for job service configuration.
 
     :param endpoint: Url for endpoint.
     :type endpoint: str
@@ -35,6 +35,8 @@ class JobServiceBase(RestTranslatableMixin):
     :type properties: dict[str, str]
     :param status: Status of endpoint.
     :type status: str
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
     """
 
     def __init__(
@@ -148,6 +150,27 @@ class JobServiceBase(RestTranslatableMixin):
 
 @experimental
 class JobService(JobServiceBase):
+    """Basic job service configuration for backward compatibility.
+        Use JupyterLabJobService, SshJobService, TensorBoardJobService or VsCodeJobService
+        specific to your job type instead of JobService.
+
+    :param endpoint: Url for endpoint.
+    :type endpoint: str
+    :param job_service_type: Endpoint type.
+        Accepts "jupyter_lab", "ssh", "tensor_board", "vs_code"
+    :type job_service_type: str
+    :param port: Port for endpoint.
+    :type nodes: str
+    :param nodes: Indicates whether the service has to run in all nodes.
+    :type port: int
+    :param properties: Additional properties to set on the endpoint.
+    :type properties: dict[str, str]
+    :param status: Status of endpoint.
+    :type status: str
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    """
+
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JobService":
         return cls._from_rest_job_service_object(obj)
@@ -158,6 +181,26 @@ class JobService(JobServiceBase):
 
 @experimental
 class SshJobService(JobServiceBase):
+    """SSH job service configuration.
+
+    :param endpoint: Url for endpoint.
+    :type endpoint: str
+    :param port: Port for endpoint.
+    :type nodes: str
+    :param nodes: Indicates whether the service has to run in all nodes.
+    :type port: int
+    :param properties: Additional properties to set on the endpoint.
+    :type properties: dict[str, str]
+    :param status: Status of endpoint.
+    :type status: str
+    :param ssh_public_keys: SSH Public Key to access job container via SSH.
+    :type ssh_public_keys: str
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    :ivar job_service_type: Specifies the type of job service. Set automatically to "ssh" for this class.
+    :vartype type: str
+    """
+
     def __init__(
         self,
         *,
@@ -193,6 +236,26 @@ class SshJobService(JobServiceBase):
 
 @experimental
 class TensorBoardJobService(JobServiceBase):
+    """TensorBoard job service configuration.
+
+    :param endpoint: Url for endpoint.
+    :type endpoint: str
+    :param port: Port for endpoint.
+    :type nodes: str
+    :param nodes: Indicates whether the service has to run in all nodes.
+    :type port: int
+    :param properties: Additional properties to set on the endpoint.
+    :type properties: dict[str, str]
+    :param status: Status of endpoint.
+    :type status: str
+    :param log_dir: Log directory path.
+    :type log_dir: str
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    :ivar job_service_type: Specifies the type of job service. Set automatically to "tensor_board" for this class.
+    :vartype type: str
+    """
+
     def __init__(
         self,
         *,
@@ -228,6 +291,24 @@ class TensorBoardJobService(JobServiceBase):
 
 @experimental
 class JupyterLabJobService(JobServiceBase):
+    """JupyterLab job service configuration.
+
+    :param endpoint: Url for endpoint.
+    :type endpoint: str
+    :param port: Port for endpoint.
+    :type nodes: str
+    :param nodes: Indicates whether the service has to run in all nodes.
+    :type port: int
+    :param properties: Additional properties to set on the endpoint.
+    :type properties: dict[str, str]
+    :param status: Status of endpoint.
+    :type status: str
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    :ivar job_service_type: Specifies the type of job service. Set automatically to "jupyter_lab" for this class.
+    :vartype type: str
+    """
+
     def __init__(
         self,
         *,
@@ -258,6 +339,24 @@ class JupyterLabJobService(JobServiceBase):
 
 @experimental
 class VsCodeJobService(JobServiceBase):
+    """VS Code job service configuration.
+
+    :param endpoint: Url for endpoint.
+    :type endpoint: str
+    :param port: Port for endpoint.
+    :type nodes: str
+    :param nodes: Indicates whether the service has to run in all nodes.
+    :type port: int
+    :param properties: Additional properties to set on the endpoint.
+    :type properties: dict[str, str]
+    :param status: Status of endpoint.
+    :type status: str
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    :ivar job_service_type: Specifies the type of job service. Set automatically to "vs_code" for this class.
+    :vartype type: str
+    """
+
     def __init__(
         self,
         *,

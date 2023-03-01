@@ -1,0 +1,81 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+name: simplepipelinejob
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+experiment_name: my_first_experiment
+
+compute: azureml:cpu-cluster
+
+settings:
+  continue_on_step_failure: false
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  automl_train_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/house_pricing/train
+  automl_valid_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/house_pricing/valid
+  automl_test_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/house_pricing/test
+
+outputs:
+  regression_node_2:
+
+jobs:
+  regression_node:
+    type: automl
+    task: regression
+    primary_metric: r2_score
+    limits:
+      max_trials: 1
+      max_concurrent_trials: 1
+    target_column_name: SalePrice
+    training_data: ${{parent.inputs.automl_train_data}}
+    validation_data: ${{parent.inputs.automl_valid_data}}
+    test_data: ${{parent.inputs.automl_test_data}}
+    featurization:
+      mode: "off" # In YAML 1.1, literal off equals boolean false, ref: https://yaml.org/type/bool.html
+    training:
+      enable_stack_ensemble: false
+      enable_vote_ensemble: false
+    outputs:
+      best_model:
+        type: mlflow_model
+        name: 'regression_name'
+        version: '1'
+  regression_node_2:
+    type: automl
+    task: regression
+    primary_metric: r2_score
+    limits:
+      max_trials: 1
+      max_concurrent_trials: 1
+    target_column_name: SalePrice
+    training_data: ${{parent.inputs.automl_train_data}}
+    validation_data: ${{parent.inputs.automl_valid_data}}
+    test_data: ${{parent.inputs.automl_test_data}}
+    featurization:
+      mode: "off" # In YAML 1.1, literal off equals boolean false, ref: https://yaml.org/type/bool.html
+    training:
+      enable_stack_ensemble: false
+      enable_vote_ensemble: false
+    outputs:
+      best_model:
+        path: ${{parent.outputs.regression_node_2}}
+        type: mlflow_model
+        name: 'regression_name'
+        version: '2'
+  command_node:
+    type: command
+    inputs:
+      mltable_output: ${{parent.jobs.regression_node.outputs.best_model}}
+    command: ls ${{inputs.mltable_output}}
+    environment: azureml:AzureML-Minimal:1

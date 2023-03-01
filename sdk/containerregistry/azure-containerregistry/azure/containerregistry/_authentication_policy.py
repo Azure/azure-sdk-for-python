@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union, Optional
 from io import SEEK_SET, UnsupportedOperation
 
 from azure.core.pipeline.policies import HTTPPolicy
@@ -22,11 +22,11 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
     def __init__(self, credential, endpoint, **kwargs):
-        # type: (TokenCredential, str, **Any) -> None
+        # type: (Optional[TokenCredential], str, **Any) -> None
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
         if self._credential is None:
-            self._exchange_client = AnonymousACRExchangeClient(endpoint, **kwargs)
+            self._exchange_client = AnonymousACRExchangeClient(endpoint, **kwargs) # type: Union[AnonymousACRExchangeClient, ACRExchangeClient] # pylint: disable=line-too-long
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 
@@ -77,7 +77,8 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         # pylint:disable=unused-argument,no-self-use
 
         access_token = self._exchange_client.get_acr_access_token(challenge)
-        request.http_request.headers["Authorization"] = "Bearer " + access_token
+        if access_token is not None:
+            request.http_request.headers["Authorization"] = "Bearer " + access_token
         return access_token is not None
 
     def __enter__(self):

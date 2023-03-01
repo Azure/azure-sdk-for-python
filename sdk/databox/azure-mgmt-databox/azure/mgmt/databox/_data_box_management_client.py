@@ -9,12 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.mgmt.core import ARMPipelineClient
-from msrest import Serializer, Deserializer
+from typing import Any, Optional, TYPE_CHECKING
 
+from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
+
 from ._configuration import DataBoxManagementClientConfiguration
+from ._operations_mixin import DataBoxManagementClientOperationsMixin
+from ._serialization import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -23,7 +30,7 @@ class _SDKClient(object):
         """
         pass
 
-class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
+class DataBoxManagementClient(DataBoxManagementClientOperationsMixin, MultiApiClientMixin, _SDKClient):
     """The DataBox Client.
 
     This ready contains multiple API versions, to help you deal with all of the Azure clouds
@@ -34,19 +41,20 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Subscription Id.
+    :param subscription_id: The Subscription Id. Required.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
-    :param str base_url: Service URL
+    :param api_version: API version to use if no profile is provided, or if missing in profile.
+    :type api_version: str
+    :param base_url: Service URL
+    :type base_url: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2020-11-01'
+    DEFAULT_API_VERSION = '2022-12-01'
     _PROFILE_TAG = "azure.mgmt.databox.DataBoxManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -57,15 +65,13 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        api_version=None,
-        base_url=None,
-        profile=KnownProfiles.default,
-        **kwargs  # type: Any
+        credential: "TokenCredential",
+        subscription_id: str,
+        api_version: Optional[str]=None,
+        base_url: str = "https://management.azure.com",
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = DataBoxManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(DataBoxManagementClient, self).__init__(
@@ -85,6 +91,14 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-09-01: :mod:`v2019_09_01.models<azure.mgmt.databox.v2019_09_01.models>`
            * 2020-04-01: :mod:`v2020_04_01.models<azure.mgmt.databox.v2020_04_01.models>`
            * 2020-11-01: :mod:`v2020_11_01.models<azure.mgmt.databox.v2020_11_01.models>`
+           * 2021-03-01: :mod:`v2021_03_01.models<azure.mgmt.databox.v2021_03_01.models>`
+           * 2021-05-01: :mod:`v2021_05_01.models<azure.mgmt.databox.v2021_05_01.models>`
+           * 2021-08-01-preview: :mod:`v2021_08_01_preview.models<azure.mgmt.databox.v2021_08_01_preview.models>`
+           * 2021-12-01: :mod:`v2021_12_01.models<azure.mgmt.databox.v2021_12_01.models>`
+           * 2022-02-01: :mod:`v2022_02_01.models<azure.mgmt.databox.v2022_02_01.models>`
+           * 2022-09-01: :mod:`v2022_09_01.models<azure.mgmt.databox.v2022_09_01.models>`
+           * 2022-10-01: :mod:`v2022_10_01.models<azure.mgmt.databox.v2022_10_01.models>`
+           * 2022-12-01: :mod:`v2022_12_01.models<azure.mgmt.databox.v2022_12_01.models>`
         """
         if api_version == '2018-01-01':
             from .v2018_01_01 import models
@@ -98,6 +112,30 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-11-01':
             from .v2020_11_01 import models
             return models
+        elif api_version == '2021-03-01':
+            from .v2021_03_01 import models
+            return models
+        elif api_version == '2021-05-01':
+            from .v2021_05_01 import models
+            return models
+        elif api_version == '2021-08-01-preview':
+            from .v2021_08_01_preview import models
+            return models
+        elif api_version == '2021-12-01':
+            from .v2021_12_01 import models
+            return models
+        elif api_version == '2022-02-01':
+            from .v2022_02_01 import models
+            return models
+        elif api_version == '2022-09-01':
+            from .v2022_09_01 import models
+            return models
+        elif api_version == '2022-10-01':
+            from .v2022_10_01 import models
+            return models
+        elif api_version == '2022-12-01':
+            from .v2022_12_01 import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -108,6 +146,14 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-09-01: :class:`JobsOperations<azure.mgmt.databox.v2019_09_01.operations.JobsOperations>`
            * 2020-04-01: :class:`JobsOperations<azure.mgmt.databox.v2020_04_01.operations.JobsOperations>`
            * 2020-11-01: :class:`JobsOperations<azure.mgmt.databox.v2020_11_01.operations.JobsOperations>`
+           * 2021-03-01: :class:`JobsOperations<azure.mgmt.databox.v2021_03_01.operations.JobsOperations>`
+           * 2021-05-01: :class:`JobsOperations<azure.mgmt.databox.v2021_05_01.operations.JobsOperations>`
+           * 2021-08-01-preview: :class:`JobsOperations<azure.mgmt.databox.v2021_08_01_preview.operations.JobsOperations>`
+           * 2021-12-01: :class:`JobsOperations<azure.mgmt.databox.v2021_12_01.operations.JobsOperations>`
+           * 2022-02-01: :class:`JobsOperations<azure.mgmt.databox.v2022_02_01.operations.JobsOperations>`
+           * 2022-09-01: :class:`JobsOperations<azure.mgmt.databox.v2022_09_01.operations.JobsOperations>`
+           * 2022-10-01: :class:`JobsOperations<azure.mgmt.databox.v2022_10_01.operations.JobsOperations>`
+           * 2022-12-01: :class:`JobsOperations<azure.mgmt.databox.v2022_12_01.operations.JobsOperations>`
         """
         api_version = self._get_api_version('jobs')
         if api_version == '2018-01-01':
@@ -118,8 +164,25 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2020_04_01.operations import JobsOperations as OperationClass
         elif api_version == '2020-11-01':
             from .v2020_11_01.operations import JobsOperations as OperationClass
+        elif api_version == '2021-03-01':
+            from .v2021_03_01.operations import JobsOperations as OperationClass
+        elif api_version == '2021-05-01':
+            from .v2021_05_01.operations import JobsOperations as OperationClass
+        elif api_version == '2021-08-01-preview':
+            from .v2021_08_01_preview.operations import JobsOperations as OperationClass
+        elif api_version == '2021-12-01':
+            from .v2021_12_01.operations import JobsOperations as OperationClass
+        elif api_version == '2022-02-01':
+            from .v2022_02_01.operations import JobsOperations as OperationClass
+        elif api_version == '2022-09-01':
+            from .v2022_09_01.operations import JobsOperations as OperationClass
+        elif api_version == '2022-10-01':
+            from .v2022_10_01.operations import JobsOperations as OperationClass
+        elif api_version == '2022-12-01':
+            from .v2022_12_01.operations import JobsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'jobs'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -130,6 +193,14 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-09-01: :class:`Operations<azure.mgmt.databox.v2019_09_01.operations.Operations>`
            * 2020-04-01: :class:`Operations<azure.mgmt.databox.v2020_04_01.operations.Operations>`
            * 2020-11-01: :class:`Operations<azure.mgmt.databox.v2020_11_01.operations.Operations>`
+           * 2021-03-01: :class:`Operations<azure.mgmt.databox.v2021_03_01.operations.Operations>`
+           * 2021-05-01: :class:`Operations<azure.mgmt.databox.v2021_05_01.operations.Operations>`
+           * 2021-08-01-preview: :class:`Operations<azure.mgmt.databox.v2021_08_01_preview.operations.Operations>`
+           * 2021-12-01: :class:`Operations<azure.mgmt.databox.v2021_12_01.operations.Operations>`
+           * 2022-02-01: :class:`Operations<azure.mgmt.databox.v2022_02_01.operations.Operations>`
+           * 2022-09-01: :class:`Operations<azure.mgmt.databox.v2022_09_01.operations.Operations>`
+           * 2022-10-01: :class:`Operations<azure.mgmt.databox.v2022_10_01.operations.Operations>`
+           * 2022-12-01: :class:`Operations<azure.mgmt.databox.v2022_12_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2018-01-01':
@@ -140,8 +211,25 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2020_04_01.operations import Operations as OperationClass
         elif api_version == '2020-11-01':
             from .v2020_11_01.operations import Operations as OperationClass
+        elif api_version == '2021-03-01':
+            from .v2021_03_01.operations import Operations as OperationClass
+        elif api_version == '2021-05-01':
+            from .v2021_05_01.operations import Operations as OperationClass
+        elif api_version == '2021-08-01-preview':
+            from .v2021_08_01_preview.operations import Operations as OperationClass
+        elif api_version == '2021-12-01':
+            from .v2021_12_01.operations import Operations as OperationClass
+        elif api_version == '2022-02-01':
+            from .v2022_02_01.operations import Operations as OperationClass
+        elif api_version == '2022-09-01':
+            from .v2022_09_01.operations import Operations as OperationClass
+        elif api_version == '2022-10-01':
+            from .v2022_10_01.operations import Operations as OperationClass
+        elif api_version == '2022-12-01':
+            from .v2022_12_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -152,6 +240,14 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
            * 2019-09-01: :class:`ServiceOperations<azure.mgmt.databox.v2019_09_01.operations.ServiceOperations>`
            * 2020-04-01: :class:`ServiceOperations<azure.mgmt.databox.v2020_04_01.operations.ServiceOperations>`
            * 2020-11-01: :class:`ServiceOperations<azure.mgmt.databox.v2020_11_01.operations.ServiceOperations>`
+           * 2021-03-01: :class:`ServiceOperations<azure.mgmt.databox.v2021_03_01.operations.ServiceOperations>`
+           * 2021-05-01: :class:`ServiceOperations<azure.mgmt.databox.v2021_05_01.operations.ServiceOperations>`
+           * 2021-08-01-preview: :class:`ServiceOperations<azure.mgmt.databox.v2021_08_01_preview.operations.ServiceOperations>`
+           * 2021-12-01: :class:`ServiceOperations<azure.mgmt.databox.v2021_12_01.operations.ServiceOperations>`
+           * 2022-02-01: :class:`ServiceOperations<azure.mgmt.databox.v2022_02_01.operations.ServiceOperations>`
+           * 2022-09-01: :class:`ServiceOperations<azure.mgmt.databox.v2022_09_01.operations.ServiceOperations>`
+           * 2022-10-01: :class:`ServiceOperations<azure.mgmt.databox.v2022_10_01.operations.ServiceOperations>`
+           * 2022-12-01: :class:`ServiceOperations<azure.mgmt.databox.v2022_12_01.operations.ServiceOperations>`
         """
         api_version = self._get_api_version('service')
         if api_version == '2018-01-01':
@@ -162,8 +258,25 @@ class DataBoxManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2020_04_01.operations import ServiceOperations as OperationClass
         elif api_version == '2020-11-01':
             from .v2020_11_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2021-03-01':
+            from .v2021_03_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2021-05-01':
+            from .v2021_05_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2021-08-01-preview':
+            from .v2021_08_01_preview.operations import ServiceOperations as OperationClass
+        elif api_version == '2021-12-01':
+            from .v2021_12_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2022-02-01':
+            from .v2022_02_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2022-09-01':
+            from .v2022_09_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2022-10-01':
+            from .v2022_10_01.operations import ServiceOperations as OperationClass
+        elif api_version == '2022-12-01':
+            from .v2022_12_01.operations import ServiceOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'service'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

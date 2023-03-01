@@ -238,8 +238,8 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cloud_service_name: Name of the cloud service. Required.
         :type cloud_service_name: str
-        :param parameters: The cloud service object. Is either a model type or a IO type. Default value
-         is None.
+        :param parameters: The cloud service object. Is either a CloudService type or a IO type.
+         Default value is None.
         :type parameters: ~azure.mgmt.compute.v2020_10_01_preview.models.CloudService or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -465,8 +465,8 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cloud_service_name: Name of the cloud service. Required.
         :type cloud_service_name: str
-        :param parameters: The cloud service object. Is either a model type or a IO type. Default value
-         is None.
+        :param parameters: The cloud service object. Is either a CloudServiceUpdate type or a IO type.
+         Default value is None.
         :type parameters: ~azure.mgmt.compute.v2020_10_01_preview.models.CloudServiceUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1329,8 +1329,8 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cloud_service_name: Name of the cloud service. Required.
         :type cloud_service_name: str
-        :param parameters: List of cloud service role instance names. Is either a model type or a IO
-         type. Default value is None.
+        :param parameters: List of cloud service role instance names. Is either a RoleInstances type or
+         a IO type. Default value is None.
         :type parameters: ~azure.mgmt.compute.v2020_10_01_preview.models.RoleInstances or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1547,8 +1547,8 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cloud_service_name: Name of the cloud service. Required.
         :type cloud_service_name: str
-        :param parameters: List of cloud service role instance names. Is either a model type or a IO
-         type. Default value is None.
+        :param parameters: List of cloud service role instance names. Is either a RoleInstances type or
+         a IO type. Default value is None.
         :type parameters: ~azure.mgmt.compute.v2020_10_01_preview.models.RoleInstances or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1768,8 +1768,8 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cloud_service_name: Name of the cloud service. Required.
         :type cloud_service_name: str
-        :param parameters: List of cloud service role instance names. Is either a model type or a IO
-         type. Default value is None.
+        :param parameters: List of cloud service role instance names. Is either a RoleInstances type or
+         a IO type. Default value is None.
         :type parameters: ~azure.mgmt.compute.v2020_10_01_preview.models.RoleInstances or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1983,8 +1983,8 @@ class CloudServicesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cloud_service_name: Name of the cloud service. Required.
         :type cloud_service_name: str
-        :param parameters: List of cloud service role instance names. Is either a model type or a IO
-         type. Default value is None.
+        :param parameters: List of cloud service role instance names. Is either a RoleInstances type or
+         a IO type. Default value is None.
         :type parameters: ~azure.mgmt.compute.v2020_10_01_preview.models.RoleInstances or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

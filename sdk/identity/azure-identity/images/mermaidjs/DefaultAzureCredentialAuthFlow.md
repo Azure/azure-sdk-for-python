@@ -2,6 +2,7 @@
 %% STEPS TO GENERATE IMAGE
 %% =======================
 %% 1. Install mermaid CLI (see https://github.com/mermaid-js/mermaid-cli/blob/master/README.md)
+%%    v8.14.0 is known good for our process. npm install -g @mermaid-js/mermaid-cli@8.14.0
 %% 2. Run command: mmdc -i DefaultAzureCredentialAuthFlow.md -o DefaultAzureCredentialAuthFlow.svg
 
 flowchart LR;

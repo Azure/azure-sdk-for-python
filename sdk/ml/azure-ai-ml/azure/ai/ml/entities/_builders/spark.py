@@ -12,11 +12,11 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as JobBaseData
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJobEntry as RestSparkJobEntry
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import IdentityConfiguration
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase as JobBaseData
+from azure.ai.ml._restclient.v2022_12_01_preview.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.v2022_12_01_preview.models import SparkJobEntry as RestSparkJobEntry
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema

@@ -10,8 +10,14 @@ from ._record_sets_operations import RecordSetsOperations
 from ._zones_operations import ZonesOperations
 from ._dns_resource_reference_operations import DnsResourceReferenceOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'RecordSetsOperations',
-    'ZonesOperations',
-    'DnsResourceReferenceOperations',
+    "RecordSetsOperations",
+    "ZonesOperations",
+    "DnsResourceReferenceOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

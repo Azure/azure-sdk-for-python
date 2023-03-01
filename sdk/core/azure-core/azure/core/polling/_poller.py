@@ -41,9 +41,7 @@ _LOGGER = logging.getLogger(__name__)
 class PollingMethod(Generic[PollingReturnType]):
     """ABC class for polling method."""
 
-    def initialize(
-        self, client: Any, initial_response: Any, deserialization_callback: Any
-    ) -> None:
+    def initialize(self, client: Any, initial_response: Any, deserialization_callback: Any) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
     def run(self) -> None:
@@ -59,21 +57,11 @@ class PollingMethod(Generic[PollingReturnType]):
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self) -> str:
-        raise TypeError(
-            "Polling method '{}' doesn't support get_continuation_token".format(
-                self.__class__.__name__
-            )
-        )
+        raise TypeError("Polling method '{}' doesn't support get_continuation_token".format(self.__class__.__name__))
 
     @classmethod
-    def from_continuation_token(
-        cls, continuation_token: str, **kwargs
-    ) -> Tuple[Any, Any, Callable]:
-        raise TypeError(
-            "Polling method '{}' doesn't support from_continuation_token".format(
-                cls.__name__
-            )
-        )
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
+        raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
 class NoPolling(PollingMethod):
@@ -83,9 +71,7 @@ class NoPolling(PollingMethod):
         self._initial_response = None
         self._deserialization_callback = None
 
-    def initialize(
-        self, _: Any, initial_response: Any, deserialization_callback: Callable
-    ) -> None:
+    def initialize(self, _: Any, initial_response: Any, deserialization_callback: Callable) -> None:
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
 
@@ -115,15 +101,11 @@ class NoPolling(PollingMethod):
         return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
 
     @classmethod
-    def from_continuation_token(
-        cls, continuation_token: str, **kwargs
-    ) -> Tuple[Any, Any, Callable]:
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
-            raise ValueError(
-                "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
-            )
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
         import pickle
 
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
@@ -161,9 +143,7 @@ class LROPoller(Generic[PollingReturnType]):
             pass
 
         # Might raise a CloudError
-        self._polling_method.initialize(
-            client, initial_response, deserialization_callback
-        )
+        self._polling_method.initialize(client, initial_response, deserialization_callback)
 
         # Prepare thread execution
         self._thread = None
@@ -222,10 +202,7 @@ class LROPoller(Generic[PollingReturnType]):
 
     @classmethod
     def from_continuation_token(
-        cls,
-        polling_method: PollingMethod[PollingReturnType],
-        continuation_token: str,
-        **kwargs
+        cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs
     ) -> "LROPoller[PollingReturnType]":
         (
             client,

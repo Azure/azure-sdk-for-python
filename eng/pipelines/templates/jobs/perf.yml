@@ -1,8 +1,11 @@
 parameters:
-- name: ServiceDirectory
+- name: TimeoutInMinutes
+  type: number
+  default: '360'
+- name: LanguageVersion
   type: string
-  default: ''
-- name: Services
+  default: '3.11'
+- name: ServiceDirectory
   type: string
   default: ''
 - name: PackageVersions
@@ -27,18 +30,19 @@ parameters:
 extends:
   template: /eng/common/pipelines/templates/jobs/perf.yml
   parameters:
+    TimeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
+    Language: Python
+    LanguageVersion: ${{ parameters.LanguageVersion }}
     Variables:
     - template: /eng/pipelines/templates/variables/globals.yml
     - name: PythonVersion
-      value: '3.11'
-    Language: Python
+      value: ${{ parameters.LanguageVersion }}
     InstallLanguageSteps:
     - task: UsePythonVersion@0
       displayName: "Use Python $(PythonVersion)"
       inputs:
         versionSpec: $(PythonVersion)
     ServiceDirectory: ${{ parameters.ServiceDirectory }}
-    Services: ${{ parameters.Services }}
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
     Arguments: ${{ parameters.Arguments }}

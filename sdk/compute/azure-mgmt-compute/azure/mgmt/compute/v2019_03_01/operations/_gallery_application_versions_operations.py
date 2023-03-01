@@ -421,7 +421,8 @@ class GalleryApplicationVersionsOperations:
          :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`. Required.
         :type gallery_application_version_name: str
         :param gallery_application_version: Parameters supplied to the create or update gallery
-         Application Version operation. Is either a model type or a IO type. Required.
+         Application Version operation. Is either a GalleryApplicationVersion type or a IO type.
+         Required.
         :type gallery_application_version:
          ~azure.mgmt.compute.v2019_03_01.models.GalleryApplicationVersion or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

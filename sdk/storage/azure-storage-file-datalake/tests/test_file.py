@@ -1393,7 +1393,7 @@ class TestFile(StorageRecordedTestCase):
         file_client.append_data(b"abc", 0, 3, flush=True)
 
         # Create another filesystem to rename to
-        new_file_system = self.dsc.get_file_system_client('newfs')
+        new_file_system = self.dsc.get_file_system_client(self.file_system_name + '2')
         new_file_system.create_file_system()
 
         # Get different SAS to new file system
@@ -1412,6 +1412,8 @@ class TestFile(StorageRecordedTestCase):
         new_props = new_client.get_file_properties()
 
         assert new_props.name == 'new?file'
+
+        new_file_system.delete_file_system()
 
     @DataLakePreparer()
     @recorded_by_proxy

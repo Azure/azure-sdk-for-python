@@ -18,8 +18,6 @@ from .operations import DevBoxesOperations, DevCenterOperations, EnvironmentsOpe
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
-
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -32,38 +30,20 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype dev_boxes: azure.developer.devcenter.aio.operations.DevBoxesOperations
     :ivar environments: EnvironmentsOperations operations
     :vartype environments: azure.developer.devcenter.aio.operations.EnvironmentsOperations
-    :param tenant_id: The tenant to operate on. Required.
-    :type tenant_id: str
-    :param dev_center: The DevCenter to operate on. Required.
-    :type dev_center: str
+    :param endpoint: The DevCenter-specific URI to operate on. Required.
+    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param dev_center_dns_suffix: The DNS suffix used as the base for all devcenter requests.
-     Default value is "devcenter.azure.com".
-    :type dev_center_dns_suffix: str
-    :keyword api_version: Api Version. Default value is "2022-03-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-11-11-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        tenant_id: str,
-        dev_center: str,
-        credential: "AsyncTokenCredential",
-        dev_center_dns_suffix: str = "devcenter.azure.com",
-        **kwargs: Any
-    ) -> None:
-        _endpoint = "https://{tenantId}-{devCenter}.{devCenterDnsSuffix}"
-        self._config = DevCenterClientConfiguration(
-            tenant_id=tenant_id,
-            dev_center=dev_center,
-            credential=credential,
-            dev_center_dns_suffix=dev_center_dns_suffix,
-            **kwargs
-        )
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
+        self._config = DevCenterClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -93,13 +73,7 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "tenantId": self._serialize.url("self._config.tenant_id", self._config.tenant_id, "str", skip_quote=True),
-            "devCenter": self._serialize.url(
-                "self._config.dev_center", self._config.dev_center, "str", skip_quote=True
-            ),
-            "devCenterDnsSuffix": self._serialize.url(
-                "self._config.dev_center_dns_suffix", self._config.dev_center_dns_suffix, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

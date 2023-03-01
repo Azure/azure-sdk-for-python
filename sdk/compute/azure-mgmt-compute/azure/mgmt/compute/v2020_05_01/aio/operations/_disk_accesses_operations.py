@@ -223,7 +223,7 @@ class DiskAccessesOperations:
          are a-z, A-Z, 0-9 and _. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
         :param disk_access: disk access object supplied in the body of the Put disk access operation.
-         Is either a model type or a IO type. Required.
+         Is either a DiskAccess type or a IO type. Required.
         :type disk_access: ~azure.mgmt.compute.v2020_05_01.models.DiskAccess or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -452,7 +452,7 @@ class DiskAccessesOperations:
          are a-z, A-Z, 0-9 and _. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
         :param disk_access: disk access object supplied in the body of the Patch disk access operation.
-         Is either a model type or a IO type. Required.
+         Is either a DiskAccessUpdate type or a IO type. Required.
         :type disk_access: ~azure.mgmt.compute.v2020_05_01.models.DiskAccessUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -131,7 +131,7 @@ class DateTimeResolution(GeneratedDateTimeResolution, DictMixin):
     """An extended ISO 8601 date/time representation as described in
      (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
      Required."""
-    datetime_subkind: str
+    date_time_sub_kind: str
     """The DateTime SubKind. Required. Known values are: "Time", "Date",
      "DateTime", "Duration", and "Set". Described in ~azure.ai.textanalytics.DateTimeSubKind."""
     value: str
@@ -146,12 +146,12 @@ class DateTimeResolution(GeneratedDateTimeResolution, DictMixin):
         self,
         *,
         timex: str,
-        datetime_subkind: str,
+        date_time_sub_kind: str,
         value: str,
         modifier: Optional[str] = None,
         **kwargs
     ):
-        super().__init__(timex=timex, datetime_subkind=datetime_subkind, value=value, modifier=modifier, **kwargs)
+        super().__init__(timex=timex, date_time_sub_kind=date_time_sub_kind, value=value, modifier=modifier, **kwargs)
 
 
 class InformationResolution(GeneratedInformationResolution, DictMixin):

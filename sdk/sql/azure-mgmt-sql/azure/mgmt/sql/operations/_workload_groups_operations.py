@@ -465,8 +465,8 @@ class WorkloadGroupsOperations:
         :type database_name: str
         :param workload_group_name: The name of the workload group. Required.
         :type workload_group_name: str
-        :param parameters: The requested workload group state. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested workload group state. Is either a WorkloadGroup type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.sql.models.WorkloadGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

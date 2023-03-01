@@ -19,6 +19,7 @@ from azure.ai.ml.constants._common import (
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     REGISTRY_URI_REGEX_FORMAT,
     REGISTRY_VERSION_PATTERN,
+    SINGULARITY_ID_FORMAT,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -212,13 +213,22 @@ class AzureResourceId:
     """
 
     REGEX_PATTERN = "^/?subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft.([^/]+)/([^/]+)/([^/]+)"
+    RESOURCEGROUP_PATTERN = "^/?subscriptions/([^/]+)/providers/Microsoft.([^/]+)/([^/]+)/([^/]+)"
 
     def __init__(self, arm_id=None):
         if arm_id:
             match = re.match(AzureResourceId.REGEX_PATTERN, arm_id)
+            rg_match = re.match(AzureResourceId.RESOURCEGROUP_PATTERN, arm_id)
             if match:
-                self.asset_name = match.group(5)
+                self.subscription_id = match.group(1)
+                self.resource_group_name = match.group(2)
                 self.asset_type = match.group(4)
+                self.asset_name = match.group(5)
+            elif rg_match:
+                self.subscription_id = rg_match.group(1)
+                self.resource_group_name = None
+                self.asset_name = rg_match.group(4)
+                self.asset_type = rg_match.group(3)
             else:
                 msg = "Invalid ARM Id {}"
                 raise ValidationException(
@@ -228,9 +238,6 @@ class AzureResourceId:
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.ARM_RESOURCE,
                 )
-
-            self.subscription_id = match.group(1)
-            self.resource_group_name = match.group(2)
 
 
 def _parse_endpoint_name_from_deployment_id(deployment_id: str) -> str:
@@ -321,6 +328,12 @@ def is_ARM_id_for_resource(name: Any, resource_type: str = ".*", sub_workspace_r
 
 def is_registry_id_for_resource(name: Any) -> bool:
     if isinstance(name, str) and re.match(REGISTRY_URI_REGEX_FORMAT, name, re.IGNORECASE):
+        return True
+    return False
+
+
+def is_singularity_id_for_resource(name: Any) -> bool:
+    if isinstance(name, str) and re.match(SINGULARITY_ID_FORMAT, name, re.IGNORECASE):
         return True
     return False
 

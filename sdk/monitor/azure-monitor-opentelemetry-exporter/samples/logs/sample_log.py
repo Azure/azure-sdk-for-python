@@ -7,11 +7,13 @@ logging library are tracked and telemetry is exported to application insights wi
 import os
 import logging
 
+from opentelemetry._logs import (
+    get_logger_provider,
+    set_logger_provider,
+)
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    get_logger_provider,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 

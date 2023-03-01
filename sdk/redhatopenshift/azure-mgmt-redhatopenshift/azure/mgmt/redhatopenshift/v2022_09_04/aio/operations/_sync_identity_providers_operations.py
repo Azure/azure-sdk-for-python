@@ -315,8 +315,8 @@ class SyncIdentityProvidersOperations:
         :type resource_name: str
         :param child_resource_name: The name of the SyncIdentityProvider resource. Required.
         :type child_resource_name: str
-        :param parameters: The SyncIdentityProvider resource. Is either a model type or a IO type.
-         Required.
+        :param parameters: The SyncIdentityProvider resource. Is either a SyncIdentityProvider type or
+         a IO type. Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.SyncIdentityProvider or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -544,8 +544,8 @@ class SyncIdentityProvidersOperations:
         :type resource_name: str
         :param child_resource_name: The name of the SyncIdentityProvider resource. Required.
         :type child_resource_name: str
-        :param parameters: The SyncIdentityProvider resource. Is either a model type or a IO type.
-         Required.
+        :param parameters: The SyncIdentityProvider resource. Is either a SyncIdentityProviderUpdate
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.SyncIdentityProviderUpdate or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

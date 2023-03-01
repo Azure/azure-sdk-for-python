@@ -540,8 +540,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def receive_message(self, **kwargs):
-        # type: (Any) -> QueueMessage
+    def receive_message(self, **kwargs: Any) -> Optional[QueueMessage]:
         """Removes one message from the front of the queue.
 
         When the message is retrieved from the queue, the response includes the message
@@ -567,8 +566,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
         :return:
-            Returns a message from the Queue.
-        :rtype: ~azure.storage.queue.QueueMessage
+            Returns a message from the Queue or None if the Queue is empty.
+        :rtype: ~azure.storage.queue.QueueMessage or None
 
         .. admonition:: Example:
 

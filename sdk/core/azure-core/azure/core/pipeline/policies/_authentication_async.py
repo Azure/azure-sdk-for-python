@@ -28,9 +28,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
     :param str scopes: Lets you specify the type of access needed.
     """
 
-    def __init__(
-        self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any) -> None:
         # pylint:disable=unused-argument
         super().__init__()
         self._credential = credential
@@ -38,18 +36,14 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         self._scopes = scopes
         self._token: Optional["AccessToken"] = None
 
-    async def on_request(
-        self, request: "PipelineRequest"
-    ) -> None:  # pylint:disable=invalid-overridden-method
+    async def on_request(self, request: "PipelineRequest") -> None:  # pylint:disable=invalid-overridden-method
         """Adds a bearer token Authorization header to request and sends request to next policy.
 
         :param request: The pipeline request object to be modified.
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
-        _BearerTokenCredentialPolicyBase._enforce_https(  # pylint:disable=protected-access
-            request
-        )
+        _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 
         if self._token is None or self._need_new_token():
             async with self._lock:
@@ -58,9 +52,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
                     self._token = await self._credential.get_token(*self._scopes)
         request.http_request.headers["Authorization"] = "Bearer " + self._token.token
 
-    async def authorize_request(
-        self, request: "PipelineRequest", *scopes: str, **kwargs: Any
-    ) -> None:
+    async def authorize_request(self, request: "PipelineRequest", *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -103,9 +95,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
         return response
 
-    async def on_challenge(
-        self, request: "PipelineRequest", response: "PipelineResponse"
-    ) -> bool:
+    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
@@ -117,9 +107,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         # pylint:disable=unused-argument,no-self-use
         return False
 
-    def on_response(
-        self, request: "PipelineRequest", response: "PipelineResponse"
-    ) -> Optional[Awaitable[None]]:
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> Optional[Awaitable[None]]:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
