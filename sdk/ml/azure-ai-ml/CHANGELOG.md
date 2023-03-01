@@ -3,15 +3,18 @@
 ## 1.5.0 (Unreleased)
 
 ### Features Added
-
 - Added support for `tags` on Compute Resources.
+- Added support for promoting data asset from a workspace to a registry
 
 ### Bugs Fixed
+
+- Fix experiment name wrongly set to 'Default' when schedule existing job.
 
 ### Other Changes
 
 - Added dependency on `azure-mgmt-resource`
 - Added dependency on `azure-mgmt-resourcegraph`
+- Update job types to use MFE Dec preview rest objects.
 
 ## 1.4.0 (2023-02-07)
 

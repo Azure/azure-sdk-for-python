@@ -124,9 +124,18 @@ from ._workspace.diagnose import (
     DiagnoseResult,
     DiagnoseWorkspaceParameters,
 )
+from ._workspace.networking import (
+    OutboundRule,
+    ManagedNetwork,
+    FqdnDestination,
+    ServiceTagDestination,
+    PrivateEndpointDestination,
+)
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+from ._workspace.compute_runtime import ComputeRuntime
+from ._workspace.feature_store_settings import FeatureStoreSettings
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -185,12 +194,19 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
+    "ComputeRuntime",
+    "FeatureStoreSettings",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
     "DiagnoseResponseResultValue",
     "DiagnoseWorkspaceParameters",
     "PrivateEndpoint",
+    "OutboundRule",
+    "ManagedNetwork",
+    "FqdnDestination",
+    "ServiceTagDestination",
+    "PrivateEndpointDestination",
     "EndpointConnection",
     "CustomerManagedKey",
     "Datastore",

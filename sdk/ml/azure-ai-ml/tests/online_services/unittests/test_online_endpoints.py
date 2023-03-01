@@ -140,12 +140,14 @@ def mock_code_assets_operations(
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_datastore_operations: DatastoreOperations,
+    mock_machinelearning_client: Mock,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operations,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 

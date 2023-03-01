@@ -4,8 +4,8 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpSweepSettings as RestNlpSweepSettings
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2022_12_01_preview.models import NlpSweepSettings as RestNlpSweepSettings
+from azure.ai.ml._restclient.v2022_12_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
