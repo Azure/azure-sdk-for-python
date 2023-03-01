@@ -6497,7 +6497,6 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         'errors': {'readonly': True},
         'state': {'readonly': True},
         'last_operation': {'readonly': True},
-        'schedules': {'readonly': True},
         'containers': {'readonly': True},
         'data_disks': {'readonly': True},
         'data_mounts': {'readonly': True},
@@ -6544,6 +6543,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         personal_compute_instance_settings: Optional["PersonalComputeInstanceSettings"] = None,
         setup_scripts: Optional["SetupScripts"] = None,
         idle_time_before_shutdown: Optional[str] = None,
+        schedules: Optional["ComputeSchedules"] = None,
         enable_node_public_ip: Optional[bool] = None,
         enable_batch_private_link: Optional[bool] = None,
         **kwargs
@@ -6606,7 +6606,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         self.personal_compute_instance_settings = personal_compute_instance_settings
         self.setup_scripts = setup_scripts
         self.last_operation = None
-        self.schedules = None
+        self.schedules = schedules
         self.idle_time_before_shutdown = idle_time_before_shutdown
         self.enable_node_public_ip = enable_node_public_ip
         self.enable_batch_private_link = enable_batch_private_link
