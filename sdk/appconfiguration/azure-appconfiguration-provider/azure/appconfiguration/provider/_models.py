@@ -25,8 +25,9 @@ class AzureAppConfigurationKeyVaultOptions:
         :keyword credential: A credential for authenticating with the key vault. This is optional if secret_clients is
          provided.
         :paramtype credential: ~azure.core.credentials.TokenCredential
-        :keyword client_configs: A Mapping of SecretClient endpoints to client configurations from azure-keyvault-secrets. 
-         This is optional if credential is provided. If a credential isn't provided a credential will need to be in each set for each.
+        :keyword client_configs: A Mapping of SecretClient endpoints to client configurations from
+         azure-keyvault-secrets. This is optional if credential is provided. If a credential isn't provided a
+         credential will need to be in each set for each.
         :paramtype client_configs: Mapping[Url, Mapping]
         :keyword secret_resolver: A function that takes a URI and returns a value.
         :paramtype secret_resolver: Callable[[str], str]
@@ -44,11 +45,11 @@ class SettingSelector:
 
     :keyword key_filter: A filter to select configuration settings based on their keys.
     :type key_filter: str
-    :keyword label_filter: A filter to select configuration settings based on their labels. Default is value is EMPTY_LABEL 
-     i.e. (No Label) as seen in the portal.
+    :keyword label_filter: A filter to select configuration settings based on their labels. Default is value is
+     EMPTY_LABEL i.e. (No Label) as seen in the portal.
     :type label_filter: Optional[str]
     """
 
-    def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, **kwargs):
+    def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL):
         self.key_filter = key_filter
         self.label_filter = label_filter

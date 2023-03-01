@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import os
 import json
-from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union, MutableMapping
+from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
@@ -218,7 +218,7 @@ def _resolve_keyvault_reference(
             vault_url=vault_url, credential=credential, **vault_config
         )
         provider._secret_clients[vault_url] = referenced_client
-    
+
     if referenced_client:
         return referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version).value
 

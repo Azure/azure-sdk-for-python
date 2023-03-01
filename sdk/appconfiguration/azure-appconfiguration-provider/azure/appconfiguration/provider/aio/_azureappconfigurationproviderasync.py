@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
-from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union, MutableMapping
+from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
 
 from azure.appconfiguration import FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient

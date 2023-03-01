@@ -25,7 +25,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
             assert client["my_json"]["key"] == "value"
             assert client["FeatureManagementFeatureFlags"]["Alpha"] == '{\"enabled\": false, \"conditions\": {\"client_filters\": []}}'
 
-    # method: provider_ttrim_prefixes
+    # method: provider_trim_prefixes
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_provider_trim_prefixes(self, appconfiguration_endpoint_string):
