@@ -1449,7 +1449,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.name == "convert_data_node_output"
         assert node_output.version == "1"
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_data_transfer_copy_urifolder(self, client: MLClient, randstr: Callable[[str], str]):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1468,7 +1467,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_data_transfer_copy_urifile(self, client: MLClient, randstr: Callable[[str], str]):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_uri_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1487,7 +1485,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_data_transfer_copy_2urifolder(self, client: MLClient, randstr: Callable[[str], str]):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1509,7 +1506,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_inline_data_transfer_copy_2urifolder(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1533,7 +1529,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_inline_data_transfer_copy_mixtype_file(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
