@@ -1,7 +1,9 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-display_name: AutoML with VM size - pipeline serverless compute with no default
+display_name: AutoML without instance type - pipeline serverless compute
 experiment_name: Serverless in Pipeline
+settings:
+  default_compute: azureml:serverless
 inputs:
   text_ner_training_data:
     type: mltable
@@ -21,7 +23,6 @@ jobs:
         type: mltable
       preprocessed_validation_data:
         type: mltable
-    compute: azureml:cpu-cluster
   text_ner_node:
     type: automl
     task: text_ner
@@ -36,12 +37,9 @@ jobs:
     outputs:
       best_model:
         type: mlflow_model
-    resources:
-      instance_type: Standard_NC6
   register_model_node:
     type: command
     component: file:./components/component_register_model.yaml
     inputs:
       model_input_path: ${{parent.jobs.text_ner_node.outputs.best_model}}
       model_base_name: paper_categorization_model
-    compute: azureml:cpu-cluster

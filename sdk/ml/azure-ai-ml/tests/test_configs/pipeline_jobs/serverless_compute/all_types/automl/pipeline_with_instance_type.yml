@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-display_name: AutoML without VM size - pipeline serverless compute
+display_name: AutoML with instance type - pipeline serverless compute
 experiment_name: Serverless in Pipeline
 settings:
   default_compute: azureml:serverless
@@ -37,6 +37,8 @@ jobs:
     outputs:
       best_model:
         type: mlflow_model
+    resources:
+      instance_type: Standard_NC6
   register_model_node:
     type: command
     component: file:./components/component_register_model.yaml
