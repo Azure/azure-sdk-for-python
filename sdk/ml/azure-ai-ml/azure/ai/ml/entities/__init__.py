@@ -136,6 +136,8 @@ from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
 from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.feature_store_settings import FeatureStoreSettings
+from ._feature_store.feature_store import FeatureStore
+from ._feature_store.materialization_store import MaterializationStore
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -196,6 +198,8 @@ __all__ = [
     "WorkspaceConnection",
     "ComputeRuntime",
     "FeatureStoreSettings",
+    "FeatureStore",
+    "MaterializationStore",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
