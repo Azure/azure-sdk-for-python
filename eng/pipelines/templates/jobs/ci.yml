@@ -109,7 +109,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: $(artifactName)
-        IncludeAdditional: $[eq(variables.artifactName, 'linux')]
+        IncludeAdditional: ${{eq(variables.artifactName, 'linux')}}
 
     - template: ../steps/build-conda-artifacts.yml
       parameters:
