@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed async `update_sync_token` to use async/await keywords
 
 ### Other Changes
 
