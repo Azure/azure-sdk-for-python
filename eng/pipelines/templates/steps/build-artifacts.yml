@@ -17,9 +17,9 @@ parameters:
   - name: DevFeedName
     type: string
     default: 'public/azure-sdk-for-python'
-  - name: ArtifactName
+  - name: ArtifactSuffix
     type: string
-    default: 'packages'
+    default: ''
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -85,15 +85,16 @@ steps:
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
 
-  - task: PythonScript@0
-    displayName: 'Generate Docs'
-    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
-    inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: >-
-        "$(TargetingString)" 
-        --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv=sphinx
+  - ${{ if eq(parameters.ArtifactSuffix, 'linux') }}:
+    - task: PythonScript@0
+      displayName: 'Generate Docs'
+      condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
+      inputs:
+        scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+        arguments: >-
+          "$(TargetingString)" 
+          --service="${{ parameters.ServiceDirectory }}" 
+          --toxenv=sphinx
 
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL]https://pypi.python.org/simple"
@@ -108,18 +109,18 @@ steps:
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: '${{ parameters.ArtifactName }}'
+      ArtifactName: 'packages_${{ parameters.ArtifactSuffix }}'
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
       CustomCondition: ${{ parameters.BuildDocs }}
-      ArtifactName: 'documentation'
+      ArtifactName: 'documentation_${{ parameters.ArtifactSuffix }}'
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/.logs'
-      ArtifactName: 'build_logs'
+      ArtifactName: 'build_logs_${{ parameters.ArtifactSuffix }}'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
@@ -131,4 +132,4 @@ steps:
     - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
-        ArtifactName: 'manifest'
+        ArtifactName: 'manifest_${{ parameters.ArtifactSuffix }}'

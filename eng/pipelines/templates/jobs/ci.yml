@@ -105,13 +105,14 @@ jobs:
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
-        ArtifactName: packages_$(artifactName)
+        ArtifactSuffix: $(artifactName)
 
     - template: ../steps/build-conda-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestPipeline: ${{ parameters.TestPipeline }}
         CondaArtifacts: ${{ parameters.CondaArtifacts }}
+        ArtifactSuffix: $(artifactName)
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))

@@ -8,6 +8,9 @@ parameters:
   - name: CondaArtifacts
     type: object
     default: []
+  - name: ArtifactSuffix
+    type: string
+    default: ''
 
 steps:
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -82,8 +85,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Agent.BuildDirectory)/conda/output'
-      ArtifactName: 'conda'
-
+      ArtifactName: 'conda_${{ parameters.ArtifactSuffix }}'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
@@ -95,4 +97,4 @@ steps:
     - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
       parameters:
         ArtifactPath: '$(Agent.BuildDirectory)/conda/manifest/_manifest'
-        ArtifactName: 'conda_manifest'
+        ArtifactName: 'conda_manifest_${{ parameters.ArtifactSuffix }}'
