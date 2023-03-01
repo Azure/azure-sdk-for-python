@@ -167,7 +167,7 @@ jobs:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       DependsOn:
         - 'Build Linux'
-        ${{ if parameters.AdvancedBuild }}:
+        - ${{ if parameters.AdvancedBuild }}:
           - 'Build Mac'
           - 'Build Windows'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
