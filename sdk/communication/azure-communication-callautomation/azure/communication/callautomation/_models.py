@@ -28,12 +28,12 @@ class ServerCallLocator(object):
     def __init__(
         self,
         *,
-        locatorid: str,
+        locator_id: str,
         **kwargs: Any
     ) -> None:
 
         super().__init__(**kwargs)
-        self.id = locatorid
+        self.id = locator_id
         self.kind = "serverCallLocator"
 
     def _to_generated(self):
@@ -47,12 +47,12 @@ class GroupCallLocator(object):
     def __init__(
         self,
         *,
-        locatorid: str,
+        locator_id: str,
         **kwargs: Any
     ) -> None:
 
         super().__init__(**kwargs)
-        self.id = locatorid
+        self.id = locator_id
         self.kind = "groupCallLocator"
 
     def _to_generated(self):
