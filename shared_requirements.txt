@@ -495,6 +495,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-cognitiveservices-formrecognizer azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-knowledge-qnamaker azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-language-luis azure-mgmt-core>=1.2.0,<2.0.0
+#override azure-mgmt-hybridcontainerservice msrest>=0.7.1
 #override azure-cognitiveservices-language-spellcheck azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-mgmt-recoveryservicesbackup typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-networkfunction azure-mgmt-core>=1.3.2,<2.0.0
@@ -725,10 +726,12 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-authorization msrest>=0.7.1
 #override azure-mgmt-authorization azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-iothub azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-hybridcontainerservice azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-servicebus typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-devtestlabs msrest>=0.7.1
 #override azure-mgmt-devtestlabs azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-quantum typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-hybridcontainerservice typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-serialconsole typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-databox typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-databoxedge azure-mgmt-core>=1.3.2,<2.0.0
