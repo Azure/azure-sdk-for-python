@@ -325,12 +325,10 @@ def _get_auth_policy(credential, default_auth_policy):
                 credential,
                 _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
             )
-        else:
-            raise ValueError(
-                'Must pass in valid TokenCredential.'
-            )
-    else:
-        return default_auth_policy
+        raise ValueError(
+            'Must pass in valid TokenCredential.'
+        )
+    return default_auth_policy
 
 
 def _is_redirect_code(response_code: int) -> bool:
