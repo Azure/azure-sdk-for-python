@@ -1945,7 +1945,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     @pytest.mark.skipif(condition=not is_live(), reason="Task 2177353: component version changes across tests.")
     @pytest.mark.parametrize(
-        "yaml_path",
+        "test_path",
         [
             "command/pipeline_serverless_compute.yml",
             "command/node_serverless_compute.yml",
