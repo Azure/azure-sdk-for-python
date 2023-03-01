@@ -3022,7 +3022,7 @@ class AbstractiveSummaryAction(DictMixin):
     .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
         https://aka.ms/applyforgatedsummarizationfeatures
 
-    :keyword Optional[int] max_sentence_count: It controls the approximate number of sentences in the output summaries.
+    :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
     :keyword Optional[str] model_version: The model version to use for the analysis.
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -3041,7 +3041,7 @@ class AbstractiveSummaryAction(DictMixin):
         The *AbstractiveSummaryAction* model.
     """
 
-    max_sentence_count: Optional[int] = None
+    sentence_count: Optional[int] = None
     """It controls the approximate number of sentences in the output summaries."""
     model_version: Optional[str] = None
     """The model version to use for the analysis."""
@@ -3063,13 +3063,13 @@ class AbstractiveSummaryAction(DictMixin):
     def __init__(
         self,
         *,
-        max_sentence_count: Optional[int] = None,
+        sentence_count: Optional[int] = None,
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
-        self.max_sentence_count = max_sentence_count
+        self.sentence_count = sentence_count
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
@@ -3078,7 +3078,7 @@ class AbstractiveSummaryAction(DictMixin):
         return (
             f"AbstractiveSummaryAction(model_version={self.model_version}, "
             f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
-            f"max_sentence_count={self.max_sentence_count})"[:1024]
+            f"sentence_count={self.sentence_count})"[:1024]
         )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
@@ -3088,7 +3088,7 @@ class AbstractiveSummaryAction(DictMixin):
                 model_version=self.model_version,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
-                sentence_count=self.max_sentence_count,
+                sentence_count=self.sentence_count,
             )
         )
 

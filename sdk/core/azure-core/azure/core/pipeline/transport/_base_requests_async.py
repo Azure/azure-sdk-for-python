@@ -28,7 +28,7 @@ from ._requests_basic import RequestsTransport
 from ._base_async import AsyncHttpTransport
 
 
-class RequestsAsyncTransportBase(RequestsTransport, AsyncHttpTransport):
+class RequestsAsyncTransportBase(RequestsTransport, AsyncHttpTransport):  # type: ignore
     async def _retrieve_request_data(self, request):
         if hasattr(request.data, "__aiter__"):
             # Need to consume that async generator, since requests can't do anything with it

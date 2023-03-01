@@ -42,7 +42,7 @@ class OperationStatusResourceGroupContextOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dataprotection.aio.DataProtectionClient`'s
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
         :attr:`operation_status_resource_group_context` attribute.
     """
 
@@ -61,7 +61,7 @@ class OperationStatusResourceGroupContextOperations:
 
         Gets the operation status for an operation over a ResourceGroup's context.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param operation_id: Required.
@@ -82,7 +82,7 @@ class OperationStatusResourceGroupContextOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.OperationResource] = kwargs.pop("cls", None)

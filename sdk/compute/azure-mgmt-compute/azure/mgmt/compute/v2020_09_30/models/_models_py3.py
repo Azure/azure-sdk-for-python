@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -34,7 +34,7 @@ class AccessUri(_serialization.Model):
         "access_sas": {"key": "accessSAS", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.access_sas = None
@@ -71,8 +71,8 @@ class ApiError(_serialization.Model):
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword details: The Api error details.
         :paramtype details: list[~azure.mgmt.compute.v2020_09_30.models.ApiErrorBase]
@@ -111,8 +111,8 @@ class ApiErrorBase(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
-    ):
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -192,8 +192,8 @@ class CreationData(_serialization.Model):
         source_resource_id: Optional[str] = None,
         upload_size_bytes: Optional[int] = None,
         logical_sector_size: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword create_option: This enumerates the possible sources of a disk's creation. Required.
          Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", and "Upload".
@@ -245,7 +245,7 @@ class DiskImageEncryption(_serialization.Model):
         "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
     }
 
-    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
@@ -278,7 +278,7 @@ class DataDiskImageEncryption(DiskImageEncryption):
         "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(self, *, lun: int, disk_encryption_set_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, lun: int, disk_encryption_set_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
@@ -303,7 +303,7 @@ class Disallowed(_serialization.Model):
         "disk_types": {"key": "diskTypes", "type": "[str]"},
     }
 
-    def __init__(self, *, disk_types: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, disk_types: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword disk_types: A list of disk types.
         :paramtype disk_types: list[str]
@@ -346,7 +346,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -539,8 +539,8 @@ class Disk(Resource):  # pylint: disable=too-many-instance-attributes
         disk_access_id: Optional[str] = None,
         tier: Optional[str] = None,
         bursting_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -691,7 +691,7 @@ class DiskAccess(Resource):
         "time_created": {"key": "properties.timeCreated", "type": "iso-8601"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -725,7 +725,7 @@ class DiskAccessList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DiskAccess"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.DiskAccess"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of disk access resources. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.DiskAccess]
@@ -749,7 +749,7 @@ class DiskAccessUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -821,8 +821,8 @@ class DiskEncryptionSet(Resource):
         identity: Optional["_models.EncryptionSetIdentity"] = None,
         encryption_type: Optional[Union[str, "_models.DiskEncryptionSetType"]] = None,
         active_key: Optional["_models.KeyForDiskEncryptionSet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -866,7 +866,9 @@ class DiskEncryptionSetList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DiskEncryptionSet"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.DiskEncryptionSet"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of disk encryption sets. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSet]
@@ -904,8 +906,8 @@ class DiskEncryptionSetUpdate(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         encryption_type: Optional[Union[str, "_models.DiskEncryptionSetType"]] = None,
         active_key: Optional["_models.KeyForDiskEncryptionSet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -943,7 +945,7 @@ class DiskList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Disk"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Disk"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of disks. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.Disk]
@@ -981,7 +983,7 @@ class ProxyOnlyResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1052,8 +1054,8 @@ class DiskRestorePoint(ProxyOnlyResource):  # pylint: disable=too-many-instance-
         *,
         hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
         purchase_plan: Optional["_models.PurchasePlan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hyper_v_generation: The hypervisor generation of the Virtual Machine. Applicable to OS
          disks only. Known values are: "V1" and "V2".
@@ -1094,7 +1096,9 @@ class DiskRestorePointList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DiskRestorePoint"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.DiskRestorePoint"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of disk restore points. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.DiskRestorePoint]
@@ -1128,7 +1132,7 @@ class DiskSku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None, **kwargs):
+    def __init__(self, *, name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS",
          "StandardSSD_LRS", and "UltraSSD_LRS".
@@ -1236,8 +1240,8 @@ class DiskUpdate(_serialization.Model):  # pylint: disable=too-many-instance-att
         tier: Optional[str] = None,
         bursting_enabled: Optional[bool] = None,
         purchase_plan: Optional["_models.PurchasePlan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1333,8 +1337,8 @@ class Encryption(_serialization.Model):
         *,
         disk_encryption_set_id: Optional[str] = None,
         type: Optional[Union[str, "_models.EncryptionType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_encryption_set_id: ResourceId of the disk encryption set to use for enabling
          encryption at rest.
@@ -1350,7 +1354,8 @@ class Encryption(_serialization.Model):
 
 
 class EncryptionImages(_serialization.Model):
-    """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in the gallery artifact.
+    """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in
+    the gallery artifact.
 
     :ivar os_disk_image: Contains encryption settings for an OS disk image.
     :vartype os_disk_image: ~azure.mgmt.compute.v2020_09_30.models.OSDiskImageEncryption
@@ -1368,8 +1373,8 @@ class EncryptionImages(_serialization.Model):
         *,
         os_disk_image: Optional["_models.OSDiskImageEncryption"] = None,
         data_disk_images: Optional[List["_models.DataDiskImageEncryption"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_disk_image: Contains encryption settings for an OS disk image.
         :paramtype os_disk_image: ~azure.mgmt.compute.v2020_09_30.models.OSDiskImageEncryption
@@ -1383,7 +1388,8 @@ class EncryptionImages(_serialization.Model):
 
 
 class EncryptionSetIdentity(_serialization.Model):
-    """The managed identity for the disk encryption set. It should be given permission on the key vault before it can be used to encrypt disks.
+    """The managed identity for the disk encryption set. It should be given permission on the key
+    vault before it can be used to encrypt disks.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1413,7 +1419,9 @@ class EncryptionSetIdentity(_serialization.Model):
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.DiskEncryptionSetIdentityType"]] = None, **kwargs):
+    def __init__(
+        self, *, type: Optional[Union[str, "_models.DiskEncryptionSetIdentityType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned
          is supported for new creations. Disk Encryption Sets can be updated with Identity type None
@@ -1462,8 +1470,8 @@ class EncryptionSettingsCollection(_serialization.Model):
         enabled: bool,
         encryption_settings: Optional[List["_models.EncryptionSettingsElement"]] = None,
         encryption_settings_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Set this flag to true and provide DiskEncryptionKey and optional
          KeyEncryptionKey to enable encryption. Set this flag to false and remove DiskEncryptionKey and
@@ -1504,8 +1512,8 @@ class EncryptionSettingsElement(_serialization.Model):
         *,
         disk_encryption_key: Optional["_models.KeyVaultAndSecretReference"] = None,
         key_encryption_key: Optional["_models.KeyVaultAndKeyReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_encryption_key: Key Vault Secret Url and vault id of the disk encryption key.
         :paramtype disk_encryption_key:
@@ -1538,8 +1546,8 @@ class ExtendedLocation(_serialization.Model):
         *,
         name: Optional[str] = None,
         type: Optional[Union[str, "_models.ExtendedLocationTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the extended location.
         :paramtype name: str
@@ -1609,8 +1617,8 @@ class Gallery(Resource):
         description: Optional[str] = None,
         identifier: Optional["_models.GalleryIdentifier"] = None,
         sharing_profile: Optional["_models.SharingProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1632,7 +1640,8 @@ class Gallery(Resource):
 
 
 class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attributes
-    """Specifies information about the gallery Application Definition that you want to create or update.
+    """Specifies information about the gallery Application Definition that you want to create or
+    update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1699,8 +1708,8 @@ class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attribu
         release_note_uri: Optional[str] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1755,7 +1764,9 @@ class GalleryApplicationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryApplication"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GalleryApplication"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of Gallery Applications. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryApplication]
@@ -1797,7 +1808,7 @@ class UpdateResourceDefinition(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1870,8 +1881,8 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
         release_note_uri: Optional[str] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1960,8 +1971,8 @@ class GalleryApplicationVersion(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryApplicationVersionPublishingProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1998,7 +2009,9 @@ class GalleryApplicationVersionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryApplicationVersion"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GalleryApplicationVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of gallery Application Versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryApplicationVersion]
@@ -2058,8 +2071,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_regions: The target regions where the Image Version is going to be replicated
          to. This property is updatable.
@@ -2151,8 +2164,8 @@ class GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfil
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         manage_actions: Optional["_models.UserArtifactManage"] = None,
         enable_health_check: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_regions: The target regions where the Image Version is going to be replicated
          to. This property is updatable.
@@ -2243,8 +2256,8 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
         *,
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryApplicationVersionPublishingProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2275,7 +2288,7 @@ class GalleryArtifactSource(_serialization.Model):
         "managed_image": {"key": "managedImage", "type": "ManagedArtifact"},
     }
 
-    def __init__(self, *, managed_image: "_models.ManagedArtifact", **kwargs):
+    def __init__(self, *, managed_image: "_models.ManagedArtifact", **kwargs: Any) -> None:
         """
         :keyword managed_image: The managed artifact. Required.
         :paramtype managed_image: ~azure.mgmt.compute.v2020_09_30.models.ManagedArtifact
@@ -2301,8 +2314,8 @@ class GalleryArtifactVersionSource(_serialization.Model):
     }
 
     def __init__(
-        self, *, id: Optional[str] = None, uri: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self, *, id: Optional[str] = None, uri: Optional[str] = None, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
         """
         :keyword id: The id of the gallery artifact version source. Can specify a disk uri, snapshot
          uri, user image or storage account resource.
@@ -2345,8 +2358,8 @@ class GalleryDiskImage(_serialization.Model):
         *,
         host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
         source: Optional["_models.GalleryArtifactVersionSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
          'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
@@ -2398,8 +2411,8 @@ class GalleryDataDiskImage(GalleryDiskImage):
         lun: int,
         host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
         source: Optional["_models.GalleryArtifactVersionSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
          'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
@@ -2433,7 +2446,7 @@ class GalleryIdentifier(_serialization.Model):
         "unique_name": {"key": "uniqueName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.unique_name = None
@@ -2546,8 +2559,8 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
         recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
         disallowed: Optional["_models.Disallowed"] = None,
         purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -2621,7 +2634,7 @@ class GalleryImageFeature(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the gallery image feature.
         :paramtype name: str
@@ -2658,7 +2671,7 @@ class GalleryImageIdentifier(_serialization.Model):
         "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs):
+    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs: Any) -> None:
         """
         :keyword publisher: The name of the gallery image definition publisher. Required.
         :paramtype publisher: str
@@ -2694,7 +2707,7 @@ class GalleryImageList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryImage"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.GalleryImage"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of Shared Image Gallery images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImage]
@@ -2807,8 +2820,8 @@ class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=too-many-
         recommended: Optional["_models.RecommendedMachineConfiguration"] = None,
         disallowed: Optional["_models.Disallowed"] = None,
         purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2925,8 +2938,8 @@ class GalleryImageVersion(Resource):
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = None,
         storage_profile: Optional["_models.GalleryImageVersionStorageProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -2967,7 +2980,9 @@ class GalleryImageVersionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryImageVersion"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GalleryImageVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of gallery image versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.GalleryImageVersion]
@@ -3027,8 +3042,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
         exclude_from_latest: Optional[bool] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_regions: The target regions where the Image Version is going to be replicated
          to. This property is updatable.
@@ -3082,8 +3097,8 @@ class GalleryImageVersionStorageProfile(_serialization.Model):
         source: Optional["_models.GalleryArtifactVersionSource"] = None,
         os_disk_image: Optional["_models.GalleryOSDiskImage"] = None,
         data_disk_images: Optional[List["_models.GalleryDataDiskImage"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2020_09_30.models.GalleryArtifactVersionSource
@@ -3150,8 +3165,8 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = None,
         storage_profile: Optional["_models.GalleryImageVersionStorageProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3190,7 +3205,7 @@ class GalleryList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Gallery"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Gallery"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of galleries. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.Gallery]
@@ -3232,8 +3247,8 @@ class GalleryOSDiskImage(GalleryDiskImage):
         *,
         host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
         source: Optional["_models.GalleryArtifactVersionSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
          'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
@@ -3295,8 +3310,8 @@ class GalleryUpdate(UpdateResourceDefinition):
         description: Optional[str] = None,
         identifier: Optional["_models.GalleryIdentifier"] = None,
         sharing_profile: Optional["_models.SharingProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3336,7 +3351,7 @@ class GrantAccessData(_serialization.Model):
         "duration_in_seconds": {"key": "durationInSeconds", "type": "int"},
     }
 
-    def __init__(self, *, access: Union[str, "_models.AccessLevel"], duration_in_seconds: int, **kwargs):
+    def __init__(self, *, access: Union[str, "_models.AccessLevel"], duration_in_seconds: int, **kwargs: Any) -> None:
         """
         :keyword access: Required. Known values are: "None", "Read", and "Write".
         :paramtype access: str or ~azure.mgmt.compute.v2020_09_30.models.AccessLevel
@@ -3370,7 +3385,9 @@ class ImageDiskReference(_serialization.Model):
         "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(self, *, id: str, lun: Optional[int] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(
+        self, *, id: str, lun: Optional[int] = None, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
         """
         :keyword id: A relative uri containing either a Platform Image Repository or user image
          reference. Required.
@@ -3402,8 +3419,13 @@ class ImagePurchasePlan(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, publisher: Optional[str] = None, product: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[str] = None,
+        publisher: Optional[str] = None,
+        product: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The plan ID.
         :paramtype name: str
@@ -3432,7 +3454,9 @@ class InnerError(_serialization.Model):
         "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword exceptiontype: The exception type.
         :paramtype exceptiontype: str
@@ -3466,7 +3490,7 @@ class KeyForDiskEncryptionSet(_serialization.Model):
         "key_url": {"key": "keyUrl", "type": "str"},
     }
 
-    def __init__(self, *, key_url: str, source_vault: Optional["_models.SourceVault"] = None, **kwargs):
+    def __init__(self, *, key_url: str, source_vault: Optional["_models.SourceVault"] = None, **kwargs: Any) -> None:
         """
         :keyword source_vault: Resource id of the KeyVault containing the key or secret. This property
          is optional and cannot be used if the KeyVault subscription is not the same as the Disk
@@ -3481,7 +3505,8 @@ class KeyForDiskEncryptionSet(_serialization.Model):
 
 
 class KeyVaultAndKeyReference(_serialization.Model):
-    """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey.
+    """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the
+    encryptionKey.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3501,7 +3526,7 @@ class KeyVaultAndKeyReference(_serialization.Model):
         "key_url": {"key": "keyUrl", "type": "str"},
     }
 
-    def __init__(self, *, source_vault: "_models.SourceVault", key_url: str, **kwargs):
+    def __init__(self, *, source_vault: "_models.SourceVault", key_url: str, **kwargs: Any) -> None:
         """
         :keyword source_vault: Resource id of the KeyVault containing the key or secret. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2020_09_30.models.SourceVault
@@ -3534,7 +3559,7 @@ class KeyVaultAndSecretReference(_serialization.Model):
         "secret_url": {"key": "secretUrl", "type": "str"},
     }
 
-    def __init__(self, *, source_vault: "_models.SourceVault", secret_url: str, **kwargs):
+    def __init__(self, *, source_vault: "_models.SourceVault", secret_url: str, **kwargs: Any) -> None:
         """
         :keyword source_vault: Resource id of the KeyVault containing the key or secret. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2020_09_30.models.SourceVault
@@ -3563,7 +3588,7 @@ class ManagedArtifact(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The managed artifact id. Required.
         :paramtype id: str
@@ -3584,7 +3609,7 @@ class OSDiskImageEncryption(DiskImageEncryption):
         "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
     }
 
-    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
@@ -3614,7 +3639,7 @@ class PirResource(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -3645,7 +3670,7 @@ class PirSharedGalleryResource(PirResource):
         "unique_id": {"key": "identifier.uniqueId", "type": "str"},
     }
 
-    def __init__(self, *, unique_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, unique_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
@@ -3671,7 +3696,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -3724,8 +3749,8 @@ class PrivateEndpointConnection(_serialization.Model):
         *,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The resource of private end point.
         :paramtype private_endpoint: ~azure.mgmt.compute.v2020_09_30.models.PrivateEndpoint
@@ -3763,8 +3788,8 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         *,
         value: Optional[List["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.PrivateEndpointConnection]
@@ -3813,7 +3838,7 @@ class PrivateLinkResource(_serialization.Model):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource DNS zone name.
         :paramtype required_zone_names: list[str]
@@ -3838,7 +3863,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.PrivateLinkResource]
@@ -3848,7 +3873,8 @@ class PrivateLinkResourceListResult(_serialization.Model):
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
-    """A collection of information about the state of the connection between service consumer and provider.
+    """A collection of information about the state of the connection between service consumer and
+    provider.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
      of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -3873,8 +3899,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -3921,7 +3947,9 @@ class PurchasePlan(_serialization.Model):
         "promotion_code": {"key": "promotionCode", "type": "str"},
     }
 
-    def __init__(self, *, name: str, publisher: str, product: str, promotion_code: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, name: str, publisher: str, product: str, promotion_code: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The plan ID. Required.
         :paramtype name: str
@@ -3941,7 +3969,8 @@ class PurchasePlan(_serialization.Model):
 
 
 class RecommendedMachineConfiguration(_serialization.Model):
-    """The properties describe the recommended machine configuration for this Image Definition. These properties are updatable.
+    """The properties describe the recommended machine configuration for this Image Definition. These
+    properties are updatable.
 
     :ivar v_cp_us: Describes the resource range.
     :vartype v_cp_us: ~azure.mgmt.compute.v2020_09_30.models.ResourceRange
@@ -3959,8 +3988,8 @@ class RecommendedMachineConfiguration(_serialization.Model):
         *,
         v_cp_us: Optional["_models.ResourceRange"] = None,
         memory: Optional["_models.ResourceRange"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword v_cp_us: Describes the resource range.
         :paramtype v_cp_us: ~azure.mgmt.compute.v2020_09_30.models.ResourceRange
@@ -4002,7 +4031,7 @@ class RegionalReplicationStatus(_serialization.Model):
         "progress": {"key": "progress", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.region = None
@@ -4034,7 +4063,7 @@ class ReplicationStatus(_serialization.Model):
         "summary": {"key": "summary", "type": "[RegionalReplicationStatus]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.aggregated_state = None
@@ -4060,8 +4089,8 @@ class ResourceRange(_serialization.Model):
         *,
         min: Optional[int] = None,  # pylint: disable=redefined-builtin
         max: Optional[int] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword min: The minimum number of the resource.
         :paramtype min: int
@@ -4095,7 +4124,7 @@ class ResourceUriList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List[str], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List[str], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of IDs or Owner IDs of resources which are encrypted with the disk
          encryption set. Required.
@@ -4133,7 +4162,7 @@ class SharedGallery(PirSharedGalleryResource):
         "unique_id": {"key": "identifier.uniqueId", "type": "str"},
     }
 
-    def __init__(self, *, unique_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, unique_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
@@ -4214,8 +4243,8 @@ class SharedGalleryImage(PirSharedGalleryResource):  # pylint: disable=too-many-
         hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
         features: Optional[List["_models.GalleryImageFeature"]] = None,
         purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
@@ -4280,7 +4309,9 @@ class SharedGalleryImageList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SharedGalleryImage"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.SharedGalleryImage"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of shared gallery images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGalleryImage]
@@ -4331,8 +4362,8 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
         unique_id: Optional[str] = None,
         published_date: Optional[datetime.datetime] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unique_id: The unique id of this shared gallery.
         :paramtype unique_id: str
@@ -4369,7 +4400,9 @@ class SharedGalleryImageVersionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SharedGalleryImageVersion"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.SharedGalleryImageVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of shared gallery images versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGalleryImageVersion]
@@ -4403,7 +4436,7 @@ class SharedGalleryList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SharedGallery"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.SharedGallery"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of shared galleries. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.SharedGallery]
@@ -4433,7 +4466,7 @@ class ShareInfoElement(_serialization.Model):
         "vm_uri": {"key": "vmUri", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.vm_uri = None
@@ -4462,7 +4495,9 @@ class SharingProfile(_serialization.Model):
         "groups": {"key": "groups", "type": "[SharingProfileGroup]"},
     }
 
-    def __init__(self, *, permissions: Optional[Union[str, "_models.GallerySharingPermissionTypes"]] = None, **kwargs):
+    def __init__(
+        self, *, permissions: Optional[Union[str, "_models.GallerySharingPermissionTypes"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword permissions: This property allows you to specify the permission of sharing gallery.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
@@ -4496,8 +4531,8 @@ class SharingProfileGroup(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.SharingProfileGroupTypes"]] = None,
         ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: This property allows you to specify the type of sharing group.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
@@ -4540,8 +4575,8 @@ class SharingUpdate(_serialization.Model):
         *,
         operation_type: Union[str, "_models.SharingUpdateOperationTypes"],
         groups: Optional[List["_models.SharingProfileGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword operation_type: This property allows you to specify the operation type of gallery
          sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
@@ -4687,8 +4722,8 @@ class Snapshot(Resource):  # pylint: disable=too-many-instance-attributes
         encryption: Optional["_models.Encryption"] = None,
         network_access_policy: Optional[Union[str, "_models.NetworkAccessPolicy"]] = None,
         disk_access_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -4777,7 +4812,7 @@ class SnapshotList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Snapshot"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Snapshot"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of snapshots. Required.
         :paramtype value: list[~azure.mgmt.compute.v2020_09_30.models.Snapshot]
@@ -4791,7 +4826,9 @@ class SnapshotList(_serialization.Model):
 
 
 class SnapshotSku(_serialization.Model):
-    """The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS. This is an optional parameter for incremental snapshot and the default behavior is the SKU will be set to the same sku as the previous snapshot.
+    """The snapshots sku name. Can be Standard_LRS, Premium_LRS, or Standard_ZRS. This is an optional
+    parameter for incremental snapshot and the default behavior is the SKU will be set to the same
+    sku as the previous snapshot.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4810,7 +4847,9 @@ class SnapshotSku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", and
          "Standard_ZRS".
@@ -4877,8 +4916,8 @@ class SnapshotUpdate(_serialization.Model):
         encryption: Optional["_models.Encryption"] = None,
         network_access_policy: Optional[Union[str, "_models.NetworkAccessPolicy"]] = None,
         disk_access_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -4920,7 +4959,8 @@ class SnapshotUpdate(_serialization.Model):
 
 
 class SourceVault(_serialization.Model):
-    """The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
+    """The vault id is an Azure Resource Manager Resource id in the form
+    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -4930,7 +4970,7 @@ class SourceVault(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
@@ -4976,8 +5016,8 @@ class TargetRegion(_serialization.Model):
         regional_replica_count: Optional[int] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         encryption: Optional["_models.EncryptionImages"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the region. Required.
         :paramtype name: str
@@ -5028,7 +5068,7 @@ class UserArtifactManage(_serialization.Model):
         "update": {"key": "update", "type": "str"},
     }
 
-    def __init__(self, *, install: str, remove: str, update: Optional[str] = None, **kwargs):
+    def __init__(self, *, install: str, remove: str, update: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword install: Required. The path and arguments to install the gallery application. This is
          limited to 4096 characters. Required.
@@ -5069,7 +5109,7 @@ class UserArtifactSource(_serialization.Model):
         "default_configuration_link": {"key": "defaultConfigurationLink", "type": "str"},
     }
 
-    def __init__(self, *, media_link: str, default_configuration_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, media_link: str, default_configuration_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword media_link: Required. The mediaLink of the artifact, must be a readable storage page
          blob. Required.

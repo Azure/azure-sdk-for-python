@@ -115,7 +115,7 @@ synchronous_transport = RequestsTransport()
 
 For example if you would like to alter connection pool you can initialise `RequestsTransport` with an instance of `requests.Session`.
 
- ```Python
+ ```python
  import requests
  from azure.core.pipeline.transport import RequestsTransport
  session = requests.Session()
