@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import sys
-from typing import cast, List, Any
+from typing import cast, List, Any, Optional
 from azure.core.credentials import AccessToken
 
 from .._internal import AsyncContextManager
@@ -31,7 +31,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: Optional[List[str]] = None):
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []

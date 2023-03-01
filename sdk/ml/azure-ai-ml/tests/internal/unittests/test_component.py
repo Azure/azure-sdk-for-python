@@ -334,6 +334,9 @@ class TestComponent:
         component.environment.resolve(component._base_path)
         rest_obj = component._to_rest_object()
         assert rest_obj.properties.component_spec["environment"] == expected_dict
+        assert component.environment._validate_docker_section(
+            base_path=component.base_path, skip_path_validation=False
+        ).passed
 
     @pytest.mark.parametrize(
         "yaml_path,invalid_field",

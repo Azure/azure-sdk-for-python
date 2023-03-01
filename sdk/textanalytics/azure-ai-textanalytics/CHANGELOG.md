@@ -15,7 +15,6 @@ This version of the client library defaults to the service API version `2022-10-
 - Renamed property `date_time_sub_kind` to `datetime_subkind` on `DateTimeResolution`.
 - Renamed model `AbstractSummaryAction` to `AbstractiveSummaryAction`.
 - Renamed model `AbstractSummaryResult` to `AbstractiveSummaryResult`.
-- Renamed keyword argument `sentence_count` to `max_sentence_count` on `AbstractiveSummaryAction`.
 - Changed automatic language detection, it is now controlled by the boolean keyword argument `auto_detect_language`.
   Pass `True` to enable automatic language detection for text documents analyzed by long-running operation APIs.
 - Removed keyword argument `autodetect_default_language` - use `language` to provide a default/fallback language.
