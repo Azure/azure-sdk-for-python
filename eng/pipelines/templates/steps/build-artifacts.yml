@@ -20,9 +20,6 @@ parameters:
   - name: ArtifactSuffix
     type: string
     default: ''
-  - name: IncludeAdditional
-    type: boolean
-    default: true
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -90,7 +87,7 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
-    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}}, ${{ parameters.IncludeAdditional }})
+    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}}, ${{ eq(parameters.ArtifactSuffix,'linux') }})
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
