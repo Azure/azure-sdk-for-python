@@ -535,7 +535,7 @@
           "inputs": {},
           "jobs": {
             "node": {
-              "custom_job_name_suffix": "component_00000_test",
+              "custom_job_name_suffix": "component_sdk_test",
               "scope_param": "-tokens 50",
               "adla_account_name": "adla_account_name",
               "priority": 800,
@@ -648,7 +648,7 @@
           },
           "jobs": {
             "node": {
-              "custom_job_name_suffix": "component_00000_test",
+              "custom_job_name_suffix": "component_sdk_test",
               "scope_param": "-tokens 50",
               "adla_account_name": "adla_account_name",
               "priority": 800,
