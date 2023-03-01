@@ -198,8 +198,8 @@ class TdeCertificatesOperations:
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
-        :param parameters: The requested TDE certificate to be created or updated. Is either a model
-         type or a IO type. Required.
+        :param parameters: The requested TDE certificate to be created or updated. Is either a
+         TdeCertificate type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.TdeCertificate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

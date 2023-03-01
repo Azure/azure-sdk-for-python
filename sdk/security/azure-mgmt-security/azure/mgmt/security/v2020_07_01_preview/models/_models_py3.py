@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -36,8 +36,8 @@ class Baseline(_serialization.Model):
         *,
         expected_results: Optional[List[List[str]]] = None,
         updated_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword expected_results: Expected results.
         :paramtype expected_results: list[list[str]]
@@ -77,8 +77,8 @@ class BaselineAdjustedResult(_serialization.Model):
         status: Optional[Union[str, "_models.RuleStatus"]] = None,
         results_not_in_baseline: Optional[List[List[str]]] = None,
         results_only_in_baseline: Optional[List[List[str]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword baseline: Baseline details.
         :paramtype baseline: ~azure.mgmt.security.v2020_07_01_preview.models.Baseline
@@ -111,7 +111,7 @@ class BenchmarkReference(_serialization.Model):
         "reference": {"key": "reference", "type": "str"},
     }
 
-    def __init__(self, *, benchmark: Optional[str] = None, reference: Optional[str] = None, **kwargs):
+    def __init__(self, *, benchmark: Optional[str] = None, reference: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword benchmark: The benchmark name.
         :paramtype benchmark: str
@@ -157,7 +157,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -188,7 +188,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -218,8 +218,8 @@ class QueryCheck(_serialization.Model):
         query: Optional[str] = None,
         expected_result: Optional[List[List[str]]] = None,
         column_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword query: The rule query.
         :paramtype query: str
@@ -261,8 +261,8 @@ class Remediation(_serialization.Model):
         scripts: Optional[List[str]] = None,
         automated: Optional[bool] = None,
         portal_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: Remediation description.
         :paramtype description: str
@@ -305,7 +305,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -341,7 +341,7 @@ class RuleResults(Resource):
         "properties": {"key": "properties", "type": "RuleResultsProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.RuleResultsProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.RuleResultsProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Rule results properties.
         :paramtype properties: ~azure.mgmt.security.v2020_07_01_preview.models.RuleResultsProperties
@@ -365,7 +365,9 @@ class RuleResultsInput(_serialization.Model):
         "results": {"key": "results", "type": "[[str]]"},
     }
 
-    def __init__(self, *, latest_scan: Optional[bool] = None, results: Optional[List[List[str]]] = None, **kwargs):
+    def __init__(
+        self, *, latest_scan: Optional[bool] = None, results: Optional[List[List[str]]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword latest_scan: Take results from latest scan.
         :paramtype latest_scan: bool
@@ -389,7 +391,7 @@ class RuleResultsProperties(_serialization.Model):
         "results": {"key": "results", "type": "[[str]]"},
     }
 
-    def __init__(self, *, results: Optional[List[List[str]]] = None, **kwargs):
+    def __init__(self, *, results: Optional[List[List[str]]] = None, **kwargs: Any) -> None:
         """
         :keyword results: Expected results in the baseline.
         :paramtype results: list[list[str]]
@@ -409,7 +411,7 @@ class RulesResults(_serialization.Model):
         "value": {"key": "value", "type": "[RuleResults]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RuleResults"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.RuleResults"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of rule results.
         :paramtype value: list[~azure.mgmt.security.v2020_07_01_preview.models.RuleResults]
@@ -434,8 +436,8 @@ class RulesResultsInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, latest_scan: Optional[bool] = None, results: Optional[Dict[str, List[List[str]]]] = None, **kwargs
-    ):
+        self, *, latest_scan: Optional[bool] = None, results: Optional[Dict[str, List[List[str]]]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword latest_scan: Take results from latest scan.
         :paramtype latest_scan: bool
@@ -476,7 +478,7 @@ class Scan(Resource):
         "properties": {"key": "properties", "type": "ScanProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ScanProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ScanProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: A vulnerability assessment scan record properties.
         :paramtype properties: ~azure.mgmt.security.v2020_07_01_preview.models.ScanProperties
@@ -553,8 +555,8 @@ class ScanProperties(_serialization.Model):  # pylint: disable=too-many-instance
         total_failed_rules_count: Optional[int] = None,
         total_rules_count: Optional[int] = None,
         is_baseline_applied: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword trigger_type: The scan trigger type. Known values are: "OnDemand" and "Recurring".
         :paramtype trigger_type: str or ~azure.mgmt.security.v2020_07_01_preview.models.ScanTriggerType
@@ -631,7 +633,7 @@ class ScanResult(Resource):
         "properties": {"key": "properties", "type": "ScanResultProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ScanResultProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ScanResultProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: A vulnerability assessment scan result properties for a single rule.
         :paramtype properties: ~azure.mgmt.security.v2020_07_01_preview.models.ScanResultProperties
@@ -681,8 +683,8 @@ class ScanResultProperties(_serialization.Model):
         remediation: Optional["_models.Remediation"] = None,
         baseline_adjusted_result: Optional["_models.BaselineAdjustedResult"] = None,
         rule_metadata: Optional["_models.VaRule"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_id: The rule Id.
         :paramtype rule_id: str
@@ -722,7 +724,7 @@ class ScanResults(_serialization.Model):
         "value": {"key": "value", "type": "[ScanResult]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ScanResult"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ScanResult"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of vulnerability assessment scan results.
         :paramtype value: list[~azure.mgmt.security.v2020_07_01_preview.models.ScanResult]
@@ -742,7 +744,7 @@ class Scans(_serialization.Model):
         "value": {"key": "value", "type": "[Scan]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Scan"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Scan"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of vulnerability assessment scan records.
         :paramtype value: list[~azure.mgmt.security.v2020_07_01_preview.models.Scan]
@@ -801,8 +803,8 @@ class VaRule(_serialization.Model):
         rationale: Optional[str] = None,
         query_check: Optional["_models.QueryCheck"] = None,
         benchmark_references: Optional[List["_models.BenchmarkReference"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_id: The rule Id.
         :paramtype rule_id: str

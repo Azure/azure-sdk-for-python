@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
 import hashlib
 import json
 import os
@@ -12,7 +13,7 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType10
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -51,6 +52,7 @@ from azure.ai.ml.constants._common import (
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
 )
+from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -205,7 +207,6 @@ def is_empty_target(obj):
 
 def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
     """Convert ordered dict to dict. Remove keys with None value.
-
     This is a workaround for rest request must be in dict instead of
     ordered dict.
     """
@@ -436,7 +437,9 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     # we should keep at least 1 place outside _internal to enable internal components
     # and this is the only place
     try_enable_internal_components()
-
+    # todo: refine Hard code for now to support different task type for DataTransfer component
+    if _type == NodeType.DATA_TRANSFER:
+        _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", " ")])
     if _type not in valid_keys:
         if (
             schema
@@ -456,3 +459,16 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
             error_category=ErrorCategory.USER_ERROR,
         )
     return extract_label(_type)[0]
+
+
+def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutput"):
+    """Copy node output setting from source to target.
+    Currently only path, name, version will be copied."""
+    # pylint: disable=protected-access
+    from azure.ai.ml.entities._job.pipeline._io import NodeOutput
+
+    if not isinstance(source, NodeOutput):
+        # Only copy when source is an output builder
+        return
+    if source._data:
+        target._data = copy.deepcopy(source._data)

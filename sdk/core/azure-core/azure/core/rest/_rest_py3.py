@@ -122,9 +122,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
 
         if kwargs:
             raise TypeError(
-                "You have passed in kwargs '{}' that are not valid kwargs.".format(
-                    "', '".join(list(kwargs.keys()))
-                )
+                "You have passed in kwargs '{}' that are not valid kwargs.".format("', '".join(list(kwargs.keys())))
             )
 
     def _set_body(
@@ -148,9 +146,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         if files:
             default_headers, self._files = set_multipart_body(files)
         if data:
-            default_headers, self._data = set_urlencoded_body(
-                data, has_files=bool(files)
-            )
+            default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
         return default_headers
 
     @property
@@ -371,12 +367,8 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<HttpResponse: {} {}{}>".format(
-            self.status_code, self.reason, content_type_str
-        )
+        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        return "<HttpResponse: {} {}{}>".format(self.status_code, self.reason, content_type_str)
 
 
 class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpResponse"]):

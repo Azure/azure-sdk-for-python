@@ -6,7 +6,7 @@
 ################
 # As of 1/26/2023 these paths have no owners:
 
-# /
+# /**
 # /.devcontainer/
 # /.vscode/
 # /conda-releaselogs/
@@ -14,19 +14,12 @@
 # /scripts/
 # /tools/
 
-###########
-# Eng Sys
-###########
-/eng/                                                                @scbedd @weshaggard @benbp
-/**/tests.yml                                                        @scbedd @benbp
-/**/ci.yml                                                           @scbedd @benbp
-
 ################
 # Automation
 ################
 
 # Git Hub integration and bot rules
-/.github/                                       @jsquire @ronniegeraghty
+/.github/                                                            @jsquire @ronniegeraghty
 
 ###########
 # SDK
@@ -96,7 +89,7 @@
 /sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @RoyHerrod @danielav7
 
 # PRLabel: %Communication - Rooms
-/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft
+/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft @minnieliu @paolamvhz @alexokun @Mrayyan @shwali-msft @allchiang-msft @mikehang-msft
 
 # PRLabel: %Communication - SMS
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
@@ -144,10 +137,10 @@
 /sdk/containerservice/                                               @zqingqing1
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @JericHunter
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @bambriz
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy @bambriz
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -920,6 +913,12 @@
 
 # Management Plane
 /**/*mgmt*/                                                          @Wzb123456789 @msyyc
+
+
+###########
+# Eng Sys
+###########
+/eng/                                                                @scbedd @weshaggard @benbp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp

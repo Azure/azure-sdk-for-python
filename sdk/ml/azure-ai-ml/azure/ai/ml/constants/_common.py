@@ -21,7 +21,7 @@ CURATED_ENV_PREFIX = "AzureML-"
 FILE_PREFIX = "file:"
 FOLDER_PREFIX = "folder:"
 HTTP_PREFIX = "http"
-HTTPS_PREFIX = "https"
+HTTPS_PREFIX = "https://"
 ARM_ID_FULL_PREFIX = "/subscriptions/"
 AZUREML_RESOURCE_PROVIDER = "Microsoft.MachineLearningServices"
 RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}"
@@ -34,6 +34,9 @@ DATASTORE_RESOURCE_ID = (
 )
 PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
+)
+SINGULARITY_ID_FORMAT = (
+    "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
 )
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
@@ -64,12 +67,14 @@ LIMITED_RESULTSET_WARNING_FORMAT = "Displaying top {} results from the list comm
 MAX_LIST_CLI_RESULTS = 50
 LOCAL_COMPUTE_TARGET = "local"
 LOCAL_COMPUTE_PROPERTY = "IsLocal"
+SERVERLESS_COMPUTE = "serverless"
 CONDA_FILE = "conda_file"
 DOCKER_FILE_NAME = "Dockerfile"
 COMPUTE_UPDATE_ERROR = (
     "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
+MAX_ASSET_STORE_API_CALL_RETRIES = 3
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"
@@ -97,6 +102,7 @@ ASSET_ID_REGEX_FORMAT = (
 )
 ASSET_ID_RESOURCE_REGEX_FORMAT = "azureml://resource[gG]roups/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 MODEL_ID_REGEX_FORMAT = "azureml://models/([^/]+)/versions/(.+)"
+DATA_ID_REGEX_FORMAT = "azureml://data/([^/]+)/versions/(.+)"
 ASSET_ID_URI_REGEX_FORMAT = "azureml://locations/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 AZUREML_CLI_SYSTEM_EXECUTED_ENV_VAR = "AZUREML_CLI_SYSTEM_EXECUTED"
 DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
@@ -191,6 +197,7 @@ class AzureMLResourceType(object):
     COMPONENT = "components"
     SCHEDULE = "schedules"
     REGISTRY = "registries"
+    CONNECTIONS = "connections"
 
     NAMED_TYPES = {
         JOB,
@@ -272,6 +279,12 @@ class ArmConstants(object):
     AZURE_MGMT_APPINSIGHT_API_VERSION = "2015-05-01"
     AZURE_MGMT_KEYVAULT_API_VERSION = "2019-09-01"
     AZURE_MGMT_CONTAINER_REG_API_VERSION = "2019-05-01"
+
+    DEFAULT_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+    METADATA_URL_ENV_NAME = "ARM_CLOUD_METADATA_URL"
+    REGISTRY_DISCOVERY_DEFAULT_REGION = "west"
+    REGISTRY_DISCOVERY_REGION_ENV_NAME = "REGISTRY_DISCOVERY_ENDPOINT_REGION"
+    REGISTRY_ENV_URL = "REGISTRY_DISCOVERY_ENDPOINT_URL"
 
 
 class HttpResponseStatusCode(object):
@@ -572,8 +585,6 @@ class ModelType:
 
 
 class RollingRate:
-    YEAR = "year"
-    MONTH = "month"
     DAY = "day"
     HOUR = "hour"
     MINUTE = "minute"
@@ -588,3 +599,8 @@ class IdentityType:
     AML_TOKEN = "aml_token"
     USER_IDENTITY = "user_identity"
     MANAGED_IDENTITY = "managed_identity"
+
+
+class Boolean:
+    TRUE = "true"
+    FALSE = "false"

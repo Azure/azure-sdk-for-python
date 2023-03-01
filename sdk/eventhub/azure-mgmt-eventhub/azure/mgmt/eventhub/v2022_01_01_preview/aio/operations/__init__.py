@@ -20,18 +20,24 @@ from ._operations import Operations
 from ._schema_registry_operations import SchemaRegistryOperations
 from ._application_group_operations import ApplicationGroupOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ClustersOperations',
-    'NamespacesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'NetworkSecurityPerimeterConfigurationOperations',
-    'NetworkSecurityPerimeterConfigurationsOperations',
-    'ConfigurationOperations',
-    'DisasterRecoveryConfigsOperations',
-    'EventHubsOperations',
-    'ConsumerGroupsOperations',
-    'Operations',
-    'SchemaRegistryOperations',
-    'ApplicationGroupOperations',
+    "ClustersOperations",
+    "NamespacesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "NetworkSecurityPerimeterConfigurationOperations",
+    "NetworkSecurityPerimeterConfigurationsOperations",
+    "ConfigurationOperations",
+    "DisasterRecoveryConfigsOperations",
+    "EventHubsOperations",
+    "ConsumerGroupsOperations",
+    "Operations",
+    "SchemaRegistryOperations",
+    "ApplicationGroupOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

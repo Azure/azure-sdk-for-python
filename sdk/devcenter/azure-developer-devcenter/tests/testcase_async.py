@@ -9,10 +9,6 @@ from azure.developer.devcenter.aio import DevCenterClient
 
 
 class DevcenterAsyncTest(AzureTestCase):
-    def create_client(self, tenant_id, dev_center):
+    def create_client(self, endpoint):
         credential = self.get_credential(DevCenterClient)
-        return DevCenterClient(
-            dev_center=dev_center,
-            tenant_id=tenant_id,
-            credential=credential
-        )
+        return DevCenterClient(endpoint=endpoint, credential=credential)

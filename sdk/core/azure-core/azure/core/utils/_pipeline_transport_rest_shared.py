@@ -80,9 +80,7 @@ def _format_parameters_helper(http_request, params):
     query = urlparse(http_request.url).query
     if query:
         http_request.url = http_request.url.partition("?")[0]
-        existing_params = {
-            p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]
-        }
+        existing_params = {p[0]: p[-1] for p in [p.partition("=") for p in query.split("&")]}
         params.update(existing_params)
     query_params = []
     for k, v in params.items():
@@ -112,9 +110,7 @@ def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
     return "_{}".format(attr) if attr in backcompat_attrs else attr
 
 
-def _prepare_multipart_body_helper(
-    http_request: "HTTPRequestType", content_index: int = 0
-) -> int:
+def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_index: int = 0) -> int:
     """Helper for prepare_multipart_body.
 
     Will prepare the body of this request according to the multipart information.
@@ -162,9 +158,7 @@ def _prepare_multipart_body_helper(
     eol = b"\r\n"
     _, _, body = full_message.split(eol, 2)
     http_request.set_bytes_body(body)
-    http_request.headers["Content-Type"] = (
-        "multipart/mixed; boundary=" + main_message.get_boundary()
-    )
+    http_request.headers["Content-Type"] = "multipart/mixed; boundary=" + main_message.get_boundary()
     return content_index
 
 
@@ -231,16 +225,12 @@ def _decode_parts_helper(
         elif content_type == "multipart/mixed" and requests[index].multipart_mixed_info:
             # The message batch contains one or more change sets
             changeset_requests = requests[index].multipart_mixed_info[0]  # type: ignore
-            changeset_responses = (
-                response._decode_parts(  # pylint: disable=protected-access
-                    raw_response, http_response_type, changeset_requests
-                )
+            changeset_responses = response._decode_parts(  # pylint: disable=protected-access
+                raw_response, http_response_type, changeset_requests
             )
             responses.extend(changeset_responses)
         else:
-            raise ValueError(
-                "Multipart doesn't support part other than application/http for now"
-            )
+            raise ValueError("Multipart doesn't support part other than application/http for now")
     return responses
 
 
@@ -254,17 +244,10 @@ def _get_raw_parts_helper(response, http_response_type):
     """
     body_as_bytes = response.body()
     # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
-    http_body = (
-        b"Content-Type: "
-        + response.content_type.encode("ascii")
-        + b"\r\n\r\n"
-        + body_as_bytes
-    )
+    http_body = b"Content-Type: " + response.content_type.encode("ascii") + b"\r\n\r\n" + body_as_bytes
     message: Message = message_parser(http_body)
     requests = response.request.multipart_mixed_info[0]
-    return response._decode_parts(  # pylint: disable=protected-access
-        message, http_response_type, requests
-    )
+    return response._decode_parts(message, http_response_type, requests)  # pylint: disable=protected-access
 
 
 def _parts_helper(
@@ -275,9 +258,7 @@ def _parts_helper(
     :rtype: iterator[HttpResponse]
     :raises ValueError: If the content is not multipart/mixed
     """
-    if not response.content_type or not response.content_type.startswith(
-        "multipart/mixed"
-    ):
+    if not response.content_type or not response.content_type.startswith("multipart/mixed"):
         raise ValueError("You can't get parts if the response is not multipart/mixed")
 
     responses = response._get_raw_parts()  # pylint: disable=protected-access
@@ -291,9 +272,7 @@ def _parts_helper(
             http_request = response.request
             context = PipelineContext(None)
             pipeline_request = PipelineRequest(http_request, context)
-            pipeline_response = PipelineResponse(
-                http_request, response, context=context
-            )
+            pipeline_response = PipelineResponse(http_request, response, context=context)
 
             for policy in policies:
                 _await_result(policy.on_response, pipeline_request, pipeline_response)
@@ -307,9 +286,7 @@ def _parts_helper(
     return responses
 
 
-def _format_data_helper(
-    data: Union[str, IO]
-) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
+def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
     """Helper for _format_data.
 
     Format field data according to whether it is a stream or
@@ -343,9 +320,7 @@ def _aiohttp_body_helper(
     :rtype: bytes
     """
     if response._content is None:
-        raise ValueError(
-            "Body is not available. Call async method load_body, or do your call with stream=False."
-        )
+        raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
     if not response._decompress:
         return response._content
     if response._decompressed_content:

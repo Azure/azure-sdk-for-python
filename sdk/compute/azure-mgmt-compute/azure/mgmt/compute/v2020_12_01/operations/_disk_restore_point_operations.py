@@ -591,7 +591,7 @@ class DiskRestorePointOperations:
          Required.
         :type disk_restore_point_name: str
         :param grant_access_data: Access data object supplied in the body of the get disk access
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a GrantAccessData type or a IO type. Required.
         :type grant_access_data: ~azure.mgmt.compute.v2020_12_01.models.GrantAccessData or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

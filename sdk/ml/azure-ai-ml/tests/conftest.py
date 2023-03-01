@@ -36,7 +36,7 @@ from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, ANONYMOUS_COMPONENT_NAME
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -81,6 +81,14 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
+    add_body_key_sanitizer(
+        json_path="$.properties.sdkTelemetryAppInsightsKey", value="0000000-0000-0000-0000-000000000000"
+    )
+    add_body_key_sanitizer(
+        json_path="$.properties.notebookInfo.resourceId", value="0000000-0000-0000-0000-000000000000"
+    )
+    add_body_key_sanitizer(json_path="$.identity.principalId", value="0000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(value="0000000-0000-0000-0000-000000000000", regex=os.environ.get("ML_TENANT_ID"))
     add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
     add_general_regex_sanitizer(
@@ -98,10 +106,67 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
     )
+    # masks signature in SAS uri
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='sig=([^/\\s"]{46,52})',
+        group_for_replace="1",
+    )
+
+    identity_json_paths = [
+        ".systemData.createdBy",
+        ".systemData.lastModifiedBy",
+        ".createdBy.userName",
+        ".lastModifiedBy.userName",
+        ".runMetadata.createdBy.userName",
+        ".runMetadata.lastModifiedBy.userName",
+    ]
+    identity_replacements = [("Firstname Lastname", r".+\s.+"), ("alias@contoso.com", r".+@.+")]
+
+    for path in identity_json_paths:
+        for replacement, regexp in identity_replacements:
+            add_body_key_sanitizer(json_path=path, value=replacement, regex=regexp)
+            # Try to match in arrays too
+            add_body_key_sanitizer(json_path=f".value[*]{path}", value=replacement, regex=regexp)
 
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
+
+
+@pytest.fixture
+def storage_account_guid_sanitizer(test_proxy):
+    # masks blob storage account info in SAS uris
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='.blob.core.windows.net:443\\/([^/\\s"]{46,52})',
+        group_for_replace="1",
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='.blob.core.windows.net\\/([^/\\s"]{47,54})',
+        group_for_replace="1",
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000",
+        regex='skt=([^/\\s"]{24})',
+        group_for_replace="1",
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000",
+        regex='ske=([^/\\s"]{24})',
+        group_for_replace="1",
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='st=([^/\\s"]{25})',
+        group_for_replace="1",
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='se=([^/\\s"]{25})',
+        group_for_replace="1",
+    )
 
 
 @pytest.fixture
@@ -191,6 +256,26 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
 
 
 @pytest.fixture
+def mock_snapshot_hash(mocker: MockFixture) -> None:
+    fake_uuid = "000000000000000000000"
+
+    def generate_uuid(*args, **kwargs):
+        real_uuid = str(uuid.uuid4())
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        return real_uuid
+
+    if is_live():
+        mocker.patch(
+            "azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id",
+            side_effect=generate_uuid,
+        )
+    else:
+        mocker.patch(
+            "azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id", return_value=fake_uuid
+        )
+
+
+@pytest.fixture
 def mock_aml_services_2022_10_01(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_10_01")
 
@@ -218,6 +303,11 @@ def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
 
 
 @pytest.fixture
@@ -338,6 +428,18 @@ def registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) 
         resource_group_name=e2e_ws_scope.resource_group_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="testFeed",
+    )
+
+
+@pytest.fixture
+def data_asset_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using default e2e testing workspace"""
+    return MLClient(
+        credential=auth,
+        subscription_id=e2e_ws_scope.subscription_id,
+        resource_group_name=e2e_ws_scope.resource_group_name,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="UnsecureTest-testFeed",
     )
 
 
@@ -503,6 +605,31 @@ def mock_asset_name(mocker: MockFixture):
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", side_effect=generate_uuid)
     else:
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
+
+
+@pytest.fixture
+def mock_anon_component_version(mocker: MockFixture):
+
+    fake_uuid = "000000000000000000000"
+
+    def generate_name_version(*args, **kwargs):
+        real_uuid = str(uuid.uuid4())
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        return ANONYMOUS_COMPONENT_NAME, real_uuid
+
+    def fake_name_version(*args, **kwargs):
+        return ANONYMOUS_COMPONENT_NAME, fake_uuid
+
+    if is_live():
+        mocker.patch(
+            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
+            side_effect=generate_name_version,
+        )
+    else:
+        mocker.patch(
+            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
+            side_effect=fake_name_version,
+        )
 
 
 def normalized_arm_id_in_object(items):
@@ -834,6 +961,7 @@ def pytest_configure(config):
         ("data_experiences_test", "marks tests as data experience tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
         ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
+        ("virtual_cluster_test", "marks tests as virtual cluster tests"),
     ]:
         config.addinivalue_line("markers", f"{marker}: {description}")
 
@@ -853,7 +981,7 @@ def disable_internal_components():
     and enable_private_preview_features, as the execution order of fixtures is not guaranteed.
     """
     from azure.ai.ml._internal._schema.component import NodeType
-    from azure.ai.ml._internal._util import _set_registered
+    from azure.ai.ml._internal._setup import _set_registered
     from azure.ai.ml.entities._component.component_factory import component_factory
     from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 

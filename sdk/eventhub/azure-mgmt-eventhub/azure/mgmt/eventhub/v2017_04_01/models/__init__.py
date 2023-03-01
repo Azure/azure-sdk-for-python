@@ -39,63 +39,65 @@ from ._models_py3 import Sku
 from ._models_py3 import Subnet
 from ._models_py3 import TrackedResource
 
-
-from ._event_hub_management_client_enums import (
-    AccessRights,
-    DefaultAction,
-    EncodingCaptureDescription,
-    EntityStatus,
-    KeyType,
-    NetworkRuleIPAction,
-    ProvisioningStateDR,
-    RoleDisasterRecovery,
-    SkuName,
-    SkuTier,
-    UnavailableReason,
-)
+from ._event_hub_management_client_enums import AccessRights
+from ._event_hub_management_client_enums import DefaultAction
+from ._event_hub_management_client_enums import EncodingCaptureDescription
+from ._event_hub_management_client_enums import EntityStatus
+from ._event_hub_management_client_enums import KeyType
+from ._event_hub_management_client_enums import NetworkRuleIPAction
+from ._event_hub_management_client_enums import ProvisioningStateDR
+from ._event_hub_management_client_enums import RoleDisasterRecovery
+from ._event_hub_management_client_enums import SkuName
+from ._event_hub_management_client_enums import SkuTier
+from ._event_hub_management_client_enums import UnavailableReason
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AccessKeys',
-    'ArmDisasterRecovery',
-    'ArmDisasterRecoveryListResult',
-    'AuthorizationRule',
-    'AuthorizationRuleListResult',
-    'CaptureDescription',
-    'CheckNameAvailabilityParameter',
-    'CheckNameAvailabilityResult',
-    'ConsumerGroup',
-    'ConsumerGroupListResult',
-    'Destination',
-    'EHNamespace',
-    'EHNamespaceListResult',
-    'ErrorResponse',
-    'EventHubListResult',
-    'Eventhub',
-    'MessagingPlan',
-    'MessagingRegions',
-    'MessagingRegionsListResult',
-    'MessagingRegionsProperties',
-    'NWRuleSetIpRules',
-    'NWRuleSetVirtualNetworkRules',
-    'NetworkRuleSet',
-    'NetworkRuleSetListResult',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'RegenerateAccessKeyParameters',
-    'Resource',
-    'Sku',
-    'Subnet',
-    'TrackedResource',
-    'AccessRights',
-    'DefaultAction',
-    'EncodingCaptureDescription',
-    'EntityStatus',
-    'KeyType',
-    'NetworkRuleIPAction',
-    'ProvisioningStateDR',
-    'RoleDisasterRecovery',
-    'SkuName',
-    'SkuTier',
-    'UnavailableReason',
+    "AccessKeys",
+    "ArmDisasterRecovery",
+    "ArmDisasterRecoveryListResult",
+    "AuthorizationRule",
+    "AuthorizationRuleListResult",
+    "CaptureDescription",
+    "CheckNameAvailabilityParameter",
+    "CheckNameAvailabilityResult",
+    "ConsumerGroup",
+    "ConsumerGroupListResult",
+    "Destination",
+    "EHNamespace",
+    "EHNamespaceListResult",
+    "ErrorResponse",
+    "EventHubListResult",
+    "Eventhub",
+    "MessagingPlan",
+    "MessagingRegions",
+    "MessagingRegionsListResult",
+    "MessagingRegionsProperties",
+    "NWRuleSetIpRules",
+    "NWRuleSetVirtualNetworkRules",
+    "NetworkRuleSet",
+    "NetworkRuleSetListResult",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "RegenerateAccessKeyParameters",
+    "Resource",
+    "Sku",
+    "Subnet",
+    "TrackedResource",
+    "AccessRights",
+    "DefaultAction",
+    "EncodingCaptureDescription",
+    "EntityStatus",
+    "KeyType",
+    "NetworkRuleIPAction",
+    "ProvisioningStateDR",
+    "RoleDisasterRecovery",
+    "SkuName",
+    "SkuTier",
+    "UnavailableReason",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

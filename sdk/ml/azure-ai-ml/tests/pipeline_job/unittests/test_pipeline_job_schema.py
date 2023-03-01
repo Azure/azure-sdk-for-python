@@ -12,11 +12,11 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import MLTableJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFolderJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models._azure_machine_learning_workspaces_enums import (
     LearningRateScheduler,
     StochasticOptimizer,
 )
@@ -27,13 +27,20 @@ from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, SparkComponent
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
     validate_pipeline_input_key_contains_allowed_characters,
 )
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
-from azure.ai.ml.entities._job.job_service import JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService
+from azure.ai.ml.entities._job.job_service import (
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
 
@@ -585,7 +592,9 @@ class TestPipelineJobSchema:
             assert from_rest_output.mode == rest_output_data.mode
 
     def assert_inline_component(self, component_job, component_dict):
-        assert isinstance(component_job.component, (CommandComponent, ParallelComponent, SparkComponent))
+        assert isinstance(
+            component_job.component, (CommandComponent, ParallelComponent, SparkComponent, DataTransferComponent)
+        )
         component = component_job.component or component_job.trial
         assert component._is_anonymous
         # hash will be generated before create_or_update, so can't check it in unit tests
@@ -615,6 +624,20 @@ class TestPipelineJobSchema:
         component_dict = load_yaml(
             "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         )
+        self.assert_inline_component(spark_component, component_dict)
+
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
+        job = load_job(test_path)
+        # make sure inline component is parsed into component entity
+        spark_component = job.jobs["merge_files_job"]
+        component_dict = load_yaml("./tests/test_configs/components/data_transfer/merge_files.yaml")
+        self.assert_inline_component(spark_component, component_dict)
+
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
+        job = load_job(test_path)
+        # make sure inline component is parsed into component entity
+        spark_component = job.jobs["copy_files"]
+        component_dict = load_yaml("./tests/test_configs/components/data_transfer/copy_files.yaml")
         self.assert_inline_component(spark_component, component_dict)
 
     def test_pipeline_job_inline_component_file_with_complex_path(self):
@@ -1129,9 +1152,13 @@ class TestPipelineJobSchema:
         # msrest has been removed from public interface
         distribution_obj = TensorFlowDistribution(**distribution_dict)
 
-        with pytest.raises(ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"):
+        with pytest.raises(
+            ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"
+        ):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_dict)
-        with pytest.raises(ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"):
+        with pytest.raises(
+            ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"
+        ):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
 
         after_dump_correct = TensorFlowDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
@@ -1162,7 +1189,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo " "${{inputs.literal_input}}",
                         "description": "Train a model on the Iris " "dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "literal_input": {"default": "7", "type": "integer"},
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
@@ -1177,7 +1204,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "echo Hello World",
                         "description": "Train a model on the Iris dataset-2.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
                             "test2": {"type": "uri_file"},
@@ -1191,7 +1218,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo ${{inputs.test1}}",
                         "description": "Train a model on the Iris dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_folder"}},
@@ -1207,7 +1234,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo " "${{inputs.literal_input}}",
                         "description": "Train a model on the Iris " "dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "literal_input": {"default": "7", "type": "integer"},
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
@@ -1222,7 +1249,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "echo Hello World",
                         "description": "Train a model on the Iris dataset-2.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {
                             "test1": {"mode": "ro_mount", "type": "uri_file"},
                             "test2": {"type": "uri_file"},
@@ -1236,7 +1263,7 @@ class TestPipelineJobSchema:
                         "_source": "YAML.JOB",
                         "command": "pip freeze && echo ${{inputs.test1}}",
                         "description": "Train a model on the Iris dataset-1.",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_folder", "mode": "mount"}},
@@ -1270,7 +1297,7 @@ class TestPipelineJobSchema:
             "hello_world_inline_commandjob_1": {
                 "_source": "YAML.JOB",
                 "command": "pip freeze && echo ${{inputs.literal_input}}",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "inputs": {
                     "literal_input": {"type": "integer"},
                     "test1": {"type": "uri_file", "mode": "ro_mount"},
@@ -1284,7 +1311,7 @@ class TestPipelineJobSchema:
             "hello_world_inline_commandjob_2": {
                 "_source": "YAML.JOB",
                 "command": "pip freeze && echo ${{inputs.test1}}",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "inputs": {
                     "test1": {"mode": "ro_mount", "type": "uri_file"},
                     "test2": {"type": "uri_folder"},
@@ -1297,7 +1324,7 @@ class TestPipelineJobSchema:
             "hello_world_inline_commandjob_3": {
                 "_source": "YAML.JOB",
                 "command": "pip freeze && echo ${{inputs.test1}}",
-                "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 "inputs": {
                     "test1": {"mode": "ro_mount", "type": "uri_file"},
                     "test2": {"type": "uri_file"},

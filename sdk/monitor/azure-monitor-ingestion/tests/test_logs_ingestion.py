@@ -6,6 +6,7 @@
 import gzip
 import json
 import os
+from unittest import mock
 import uuid
 
 import pytest
@@ -42,6 +43,12 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
         with client:
             client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=LOGS_BODY)
+
+    def test_send_logs_large(self, recorded_test, monitor_info, large_data):
+        client = self.create_client_from_credential(
+            LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
+        with client:
+            client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=large_data)
 
     def test_send_logs_error(self, recorded_test, monitor_info):
         client = self.create_client_from_credential(
@@ -92,3 +99,44 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
         with open(temp_file, 'rb') as f:
             client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=f)
         os.remove(temp_file)
+
+
+    def test_abort_error_handler(self, monitor_info):
+        client = self.create_client_from_credential(
+            LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
+
+        class TestException(Exception):
+            pass
+
+        def on_error(e):
+            on_error.called = True
+            if isinstance(e.error, RuntimeError):
+                raise TestException("Abort")
+            return
+
+        on_error.called = False
+
+        with client:
+            # No exception should be raised
+            with mock.patch("azure.monitor.ingestion._operations._patch.GeneratedOps.upload",
+                            side_effect=ConnectionError):
+                client.upload(
+                    rule_id=monitor_info['dcr_id'],
+                    stream_name=monitor_info['stream_name'],
+                    logs=LOGS_BODY,
+                    on_error=on_error)
+
+            assert on_error.called
+
+            on_error.called = False
+            # Exception should now be raised since error handler checked for RuntimeError.
+            with mock.patch("azure.monitor.ingestion._operations._patch.GeneratedOps.upload",
+                            side_effect=RuntimeError):
+                with pytest.raises(TestException):
+                    client.upload(
+                        rule_id=monitor_info['dcr_id'],
+                        stream_name=monitor_info['stream_name'],
+                        logs=LOGS_BODY,
+                        on_error=on_error)
+
+        assert on_error.called

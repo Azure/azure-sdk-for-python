@@ -16,12 +16,12 @@ from ._generated._serialization import Deserializer
 from ._helpers import construct_iso8601, process_row
 
 if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
+    from collections.abc import Mapping
 else:
-    from typing import MutableMapping  # pylint: disable=ungrouped-imports
+    from typing import Mapping  # pylint: disable=ungrouped-imports
 
 
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class LogsTableRow:
@@ -74,15 +74,15 @@ class LogsTable:
     """Required. The name of the table."""
     rows: List[LogsTableRow]
     """Required. The resulting rows from this query."""
-    columns: Optional[List[str]] = None
-    """The labels of columns in this table."""
-    columns_types: Optional[List[Any]] = None
-    """The types of columns in this table."""
+    columns: List[str]
+    """Required. The labels of columns in this table."""
+    columns_types: List[str]
+    """Required. The types of columns in this table."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.pop("name", "")
-        self.columns = kwargs.pop("columns", None)
-        self.columns_types = kwargs.pop("column_types", None)
+        self.columns = kwargs.pop("columns", [])
+        self.columns_types = kwargs.pop("column_types", [])
         _rows = kwargs.pop("rows", [])
         self.rows: List[LogsTableRow] = [
             LogsTableRow(
@@ -135,7 +135,7 @@ class MetricValue:
         if not generated:
             return cls()
         return cls(
-            timestamp=Deserializer.deserialize_iso(generated.get("time_stamp")),
+            timestamp=Deserializer.deserialize_iso(generated.get("timeStamp")),
             average=generated.get("average"),
             minimum=generated.get("minimum"),
             maximum=generated.get("maximum"),
@@ -184,7 +184,7 @@ class Metric:
     """The unit of the metric. To access these values, use the MetricUnit enum.
     Possible values include "Count", "Bytes", "Seconds", "CountPerSecond", "BytesPerSecond", "Percent",
     "MilliSeconds", "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond"."""
-    timeseries: TimeSeriesElement
+    timeseries: List[TimeSeriesElement]
     """The time series returned when a data query is performed."""
     display_description: str
     """Detailed description of this metric."""
@@ -288,43 +288,38 @@ class MetricsList(list):
 class LogsBatchQuery:
     """A single request in a batch. The batch query API accepts a list of these objects.
 
-    :param workspace_id: Workspace Id to be included in the query.
+    :param workspace_id: Workspace ID to be included in the query.
     :type workspace_id: str
     :param query: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
     :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
-     a timedelta and a start datetime, or a start datetime/end datetime.
+     a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+     the query to a timespan.
     :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
-     or tuple[~datetime.datetime, ~datetime.datetime]
+     or tuple[~datetime.datetime, ~datetime.datetime] or None
     :keyword additional_workspaces: A list of workspaces that are included in the query.
-     These can be qualified workspace names, workspace Ids, or Azure resource Ids.
-    :paramtype additional_workspaces: list[str]
-    :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
+     These can be qualified workspace names, workspace IDs, or Azure resource IDs.
+    :paramtype additional_workspaces: Optional[list[str]]
+    :keyword server_timeout: the server timeout. The default timeout is 3 minutes,
      and the maximum timeout is 10 minutes.
-    :keyword bool include_statistics: To get information about query statistics.
-    :keyword bool include_visualization: In the query language, it is possible to specify different
+    :paramtype server_timeout: Optional[int]
+    :keyword include_statistics: To get information about query statistics.
+    :paramtype include_statistics: Optional[bool]
+    :keyword include_visualization: In the query language, it is possible to specify different
      visualization options. By default, the API does not return information regarding the type of
      visualization to show.
+    :paramtype include_visualization: Optional[bool]
     """
-
-    id: str
-    """The id of the query."""
-    body: Dict[str, Any]
-    """The body of the query."""
-    headers: Dict[str, str]
-    """The headers of the query."""
-    workspace: str
-    """The workspace ID to be included in the query."""
 
     def __init__(
         self,
         workspace_id: str,
         query: str,
         *,
-        timespan: Union[
+        timespan: Optional[Union[
             timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
-        ],
+        ]],
         **kwargs: Any
     ) -> None:  # pylint: disable=super-init-not-called
         include_statistics = kwargs.pop("include_statistics", False)

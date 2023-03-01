@@ -55,8 +55,8 @@ from .._models import (
     AnalyzeHealthcareEntitiesAction,
     ExtractSummaryAction,
     ExtractSummaryResult,
-    AbstractSummaryAction,
-    AbstractSummaryResult,
+    AbstractiveSummaryAction,
+    AbstractiveSummaryResult,
     DynamicClassificationResult,
     PiiEntityDomain,
     PiiEntityCategory,
@@ -85,7 +85,7 @@ AsyncAnalyzeActionsResponse = AsyncTextAnalysisLROPoller[
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
                 ExtractSummaryResult,
-                AbstractSummaryResult,
+                AbstractiveSummaryResult,
                 DocumentError,
             ]
         ]
@@ -1115,7 +1115,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
                 ExtractSummaryAction,
-                AbstractSummaryAction,
+                AbstractiveSummaryAction,
             ]
         ],
         *,
@@ -1139,7 +1139,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
                     ExtractSummaryResult,
-                    AbstractSummaryResult,
+                    AbstractiveSummaryResult,
                     DocumentError,
                 ]
             ]
@@ -1172,7 +1172,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
             MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or
-            AbstractSummaryAction or ExtractSummaryAction]
+            AbstractiveSummaryAction or ExtractSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1206,7 +1206,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
             or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult
-            or AbstractSummaryResult or DocumentError]]]
+            or AbstractiveSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1217,8 +1217,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
         .. versionadded:: 2022-10-01-preview
-            The *ExtractSummaryAction* and *AbstractSummaryAction* input options and the corresponding
-            *ExtractSummaryResult* and *AbstractSummaryResult* result objects.
+            The *ExtractSummaryAction* and *AbstractiveSummaryAction* input options and the corresponding
+            *ExtractSummaryResult* and *AbstractiveSummaryResult* result objects.
             The *auto_detect_language* keyword argument.
 
         .. admonition:: Example:
@@ -2008,7 +2008,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="2022-10-01-preview"
     )
-    async def begin_abstract_summary(
+    async def begin_abstractive_summary(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -2021,9 +2021,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         show_stats: Optional[bool] = None,
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
-        max_sentence_count: Optional[int] = None,
+        sentence_count: Optional[int] = None,
         **kwargs: Any,
-    ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[AbstractSummaryResult, DocumentError]]]:
+    ) -> AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[AbstractiveSummaryResult, DocumentError]]]:
         """Start a long-running abstractive summarization operation.
 
         For a conceptual discussion of abstractive summarization, see the service documentation:
@@ -2049,7 +2049,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Optionally use the `language` keyword argument to provide a default/fallback language
             to use for the batch in the event that the service is unable to detect the language.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
+        :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
         :keyword Optional[str] model_version: The model version to use for the analysis.
         :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
@@ -2069,21 +2069,21 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword str display_name: An optional display name to set for the requested analysis.
         :return: An instance of an AsyncTextAnalysisLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
-            :class:`~azure.ai.textanalytics.AbstractSummaryResult` and
+            :class:`~azure.ai.textanalytics.AbstractiveSummaryResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
             ~azure.ai.textanalytics.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
-            ~azure.ai.textanalytics.AbstractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
+            ~azure.ai.textanalytics.AbstractiveSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2022-10-01-preview
-            The *begin_abstract_summary* client method.
+            The *begin_abstractive_summary* client method.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_abstract_summary_async.py
-                :start-after: [START abstract_summary_async]
-                :end-before: [END abstract_summary_async]
+            .. literalinclude:: ../samples/async_samples/sample_abstractive_summary_async.py
+                :start-after: [START abstractive_summary_async]
+                :end-before: [END abstractive_summary_async]
                 :language: python
                 :dedent: 4
                 :caption: Perform abstractive summarization on a batch of documents.
@@ -2094,7 +2094,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         if continuation_token:
             return cast(
-                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[AbstractSummaryResult, DocumentError]]],
+                AsyncTextAnalysisLROPoller[AsyncItemPaged[Union[AbstractiveSummaryResult, DocumentError]]],
                 _get_result_from_continuation_token(
                     self._client._client,  # pylint: disable=protected-access
                     continuation_token,
@@ -2112,15 +2112,15 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         try:
             return cast(
                 AsyncTextAnalysisLROPoller[
-                    AsyncItemPaged[Union[AbstractSummaryResult, DocumentError]]
+                    AsyncItemPaged[Union[AbstractiveSummaryResult, DocumentError]]
                 ],
                 await self.begin_analyze_actions(
                     documents,
                     actions=[
-                        AbstractSummaryAction(
+                        AbstractiveSummaryAction(
                             model_version=model_version,
                             string_index_type=string_index_type_arg,
-                            max_sentence_count=max_sentence_count,
+                            sentence_count=sentence_count,
                             disable_service_logs=disable_service_logs,
                         )
                     ],

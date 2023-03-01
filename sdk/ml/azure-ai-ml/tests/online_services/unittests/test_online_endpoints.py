@@ -140,12 +140,14 @@ def mock_code_assets_operations(
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_datastore_operations: DatastoreOperations,
+    mock_machinelearning_client: Mock,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operations,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -393,20 +395,16 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
 
-    def test_create_no_file_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
-    ) -> None:
+    def test_create_no_file_throw_exception(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None)
 
-    def test_create_no_type_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
-    ) -> None:
+    def test_create_no_type_throw_exception(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None)
 
     def test_create_no_type_in_file_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations,  create_yaml_no_type
+        self, mock_online_endpoint_operations: OnlineEndpointOperations, create_yaml_no_type
     ) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None)
@@ -430,9 +428,7 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations._online_operation.begin_regenerate_keys.assert_called_once()
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
 
-    def test_regenerate_invalid_key_type(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
-    ) -> None:
+    def test_regenerate_invalid_key_type(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_regenerate_keys(name="random_name", key_type="invalid key type")
 
@@ -445,6 +441,7 @@ class TestOnlineEndpointsOperations:
         pytest.param({"blue": "100", "green": "0"}, {"blue": "100"}),
         pytest.param({"green": "0"}, {}),
         pytest.param({}, {}),
+        pytest.param({"blue": "10", "GREEN": "90"}, {"blue": "10", "green": "90"}),
     ],
 )
 def test_strip_traffic_from_traffic_map(traffic, expected_traffic) -> None:

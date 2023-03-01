@@ -45,9 +45,7 @@ def build_list_request(resource_group_name: str, vault_name: str, subscription_i
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -57,7 +55,9 @@ def build_list_request(resource_group_name: str, vault_name: str, subscription_i
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
     }
 
@@ -78,9 +78,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -90,7 +88,9 @@ def build_get_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
         "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
     }
@@ -112,9 +112,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -125,7 +123,9 @@ def build_create_or_update_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
         "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
     }
@@ -149,9 +149,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-11-01-preview")
-    )
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +159,9 @@ def build_delete_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
         "backupPolicyName": _SERIALIZER.url("backup_policy_name", backup_policy_name, "str"),
     }
@@ -183,7 +183,7 @@ class BackupPoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.dataprotection.DataProtectionClient`'s
+        :class:`~azure.mgmt.dataprotection.DataProtectionMgmtClient`'s
         :attr:`backup_policies` attribute.
     """
 
@@ -202,7 +202,7 @@ class BackupPoliciesOperations:
     ) -> Iterable["_models.BaseBackupPolicyResource"]:
         """Returns list of backup policies belonging to a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -217,7 +217,7 @@ class BackupPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BaseBackupPolicyResourceList] = kwargs.pop("cls", None)
@@ -298,7 +298,7 @@ class BackupPoliciesOperations:
 
         Gets a backup policy belonging to a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -321,7 +321,7 @@ class BackupPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BaseBackupPolicyResource] = kwargs.pop("cls", None)
@@ -375,7 +375,7 @@ class BackupPoliciesOperations:
 
         Creates or Updates a backup policy belonging to a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -408,7 +408,7 @@ class BackupPoliciesOperations:
 
         Creates or Updates a backup policy belonging to a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -439,14 +439,15 @@ class BackupPoliciesOperations:
 
         Creates or Updates a backup policy belonging to a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
         :param backup_policy_name: Name of the policy. Required.
         :type backup_policy_name: str
-        :param parameters: Request body for operation. Is either a model type or a IO type. Required.
+        :param parameters: Request body for operation. Is either a BaseBackupPolicyResource type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.BaseBackupPolicyResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -467,7 +468,7 @@ class BackupPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -526,7 +527,7 @@ class BackupPoliciesOperations:
 
         Deletes a backup policy belonging to a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -549,7 +550,7 @@ class BackupPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)

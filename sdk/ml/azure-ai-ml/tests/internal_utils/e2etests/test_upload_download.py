@@ -90,10 +90,7 @@ except FileExistsError:
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.skipif(
-    condition=not is_live(),
-    reason="test are flaky in playback"
-)
+@pytest.mark.skipif(condition=not is_live(), reason="test are flaky in playback")
 @pytest.mark.core_sdk_test
 class TestUpload(AzureRecordedTestCase):
     def test_upload_file_blob(

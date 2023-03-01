@@ -72,17 +72,9 @@ ContentType = Union[str, bytes, Iterable[bytes], AsyncIterable[bytes]]
 
 def _verify_data_object(name, value):
     if not isinstance(name, str):
-        raise TypeError(
-            "Invalid type for data name. Expected str, got {}: {}".format(
-                type(name), name
-            )
-        )
+        raise TypeError("Invalid type for data name. Expected str, got {}: {}".format(type(name), name))
     if value is not None and not isinstance(value, (str, bytes, int, float)):
-        raise TypeError(
-            "Invalid type for data value. Expected primitive type, got {}: {}".format(
-                type(name), name
-            )
-        )
+        raise TypeError("Invalid type for data value. Expected primitive type, got {}: {}".format(type(name), name))
 
 
 def set_urlencoded_body(data, has_files):
@@ -105,9 +97,7 @@ def set_urlencoded_body(data, has_files):
 
 
 def set_multipart_body(files):
-    formatted_files = {
-        f: _format_data_helper(d) for f, d in files.items() if d is not None
-    }
+    formatted_files = {f: _format_data_helper(d) for f, d in files.items() if d is not None}
     return {}, formatted_files
 
 
@@ -277,9 +267,7 @@ class HttpRequestBackcompatMixin:
         if not isinstance(data, binary_type) and not any(
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
         ):
-            raise TypeError(
-                "A streamable data source must be an open file-like object or iterable."
-            )
+            raise TypeError("A streamable data source must be an open file-like object or iterable.")
         headers = self._set_body(content=data)
         self._files = None
         self.headers.update(headers)
@@ -367,6 +355,6 @@ class HttpRequestBackcompatMixin:
 
     def _add_backcompat_properties(self, request, memo):
         """While deepcopying, we also need to add the private backcompat attrs"""
-        request._multipart_mixed_info = (  # pylint: disable=protected-access
-            copy.deepcopy(self._multipart_mixed_info, memo)
+        request._multipart_mixed_info = copy.deepcopy(  # pylint: disable=protected-access
+            self._multipart_mixed_info, memo
         )

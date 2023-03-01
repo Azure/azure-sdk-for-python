@@ -4,7 +4,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin

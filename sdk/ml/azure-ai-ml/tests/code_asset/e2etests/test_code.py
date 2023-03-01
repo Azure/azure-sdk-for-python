@@ -19,7 +19,7 @@ def code_asset_path(tmp_path: Path) -> str:
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
+@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_snapshot_hash")
 @pytest.mark.core_sdk_test
 class TestCode(AzureRecordedTestCase):
     def test_create_and_get(self, client: MLClient, code_asset_path: str, randstr: Callable[[], str]) -> None:
@@ -56,10 +56,7 @@ class TestCode(AzureRecordedTestCase):
             code_entity.path = code_asset_path
             client._code.create_or_update(code_entity)
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="registry tests do not record properly. Investigate later."
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="registry tests do not record properly. Investigate later.")
     def test_create_and_get_from_registry(
         self,
         registry_client: MLClient,

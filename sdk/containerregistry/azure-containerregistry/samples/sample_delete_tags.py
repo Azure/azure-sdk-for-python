@@ -18,12 +18,20 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes your registry has at least one repository with more than three tags.
+    This sample assumes your registry has at least one repository with more than three tags,
+    run load_registry() if you don't have.
+    Set the environment variables with your own values before running load_registry():
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
+    3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
+    4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
+    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
+    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient, ArtifactTagOrder
-from sample_utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class DeleteTags(object):
@@ -32,9 +40,7 @@ class DeleteTags(object):
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(
-            self.authority, exclude_environment_credential=True
-        )
+        self.credential = get_credential(self.authority)
 
     def delete_tags(self):
         load_registry()

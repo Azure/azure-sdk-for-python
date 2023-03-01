@@ -67,7 +67,7 @@ def sample_translation_with_glossaries():
             print(f"Source document location: {document.source_document_url}")
             print(f"Translated document location: {document.translated_document_url}")
             print(f"Translated to language: {document.translated_to}\n")
-        else:
+        elif document.error:
             print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
 

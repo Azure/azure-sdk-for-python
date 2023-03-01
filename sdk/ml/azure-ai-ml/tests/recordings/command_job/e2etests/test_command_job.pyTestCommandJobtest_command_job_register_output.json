@@ -1,0 +1,166 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_159047359492?api-version=2022-12-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "783",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "properties": {},
+          "tags": {},
+          "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/testCompute",
+          "displayName": "test_159047359492",
+          "experimentName": "mfe-test1",
+          "isArchived": false,
+          "jobType": "Command",
+          "command": "echo \u0022inputs dont need to be used in command\u0022",
+          "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+          "environmentVariables": {},
+          "inputs": {},
+          "outputs": {
+            "test1": {
+              "jobOutputType": "uri_folder"
+            },
+            "test2": {
+              "assetName": "test2_output",
+              "assetVersion": "2",
+              "mode": "Upload",
+              "jobOutputType": "uri_folder"
+            },
+            "test3": {
+              "assetName": "test3_output",
+              "assetVersion": "3",
+              "mode": "ReadWriteMount",
+              "jobOutputType": "uri_folder"
+            }
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "3071",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 23 Feb 2023 18:57:37 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_159047359492?api-version=2022-12-01-preview",
+        "Pragma": "no-cache",
+        "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
+        "Server-Timing": "traceparent;desc=\u002200-fbaa2f13f690ef308175ab04db3e1442-b0a4d053abe27cb0-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-eastus2-02",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "46337aca-52e0-47c5-a5f6-baa7ba1b668f",
+        "x-ms-ratelimit-remaining-subscription-writes": "1190",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTUS2:20230223T185738Z:46337aca-52e0-47c5-a5f6-baa7ba1b668f",
+        "x-request-time": "0.914"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_159047359492",
+        "name": "test_159047359492",
+        "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+        "properties": {
+          "description": null,
+          "tags": {},
+          "properties": {
+            "_azureml.ComputeTargetType": "amlctrain"
+          },
+          "displayName": "test_159047359492",
+          "status": "Starting",
+          "experimentName": "mfe-test1",
+          "services": {
+            "Tracking": {
+              "jobServiceType": "Tracking",
+              "port": null,
+              "endpoint": "azureml://eastus2.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            },
+            "Studio": {
+              "jobServiceType": "Studio",
+              "port": null,
+              "endpoint": "https://ml.azure.com/runs/test_159047359492?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            }
+          },
+          "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/testCompute",
+          "isArchived": false,
+          "identity": null,
+          "componentId": null,
+          "jobType": "Command",
+          "resources": {
+            "instanceCount": 1,
+            "instanceType": null,
+            "properties": null,
+            "shmSize": "2g",
+            "dockerArgs": null
+          },
+          "codeId": null,
+          "command": "echo \u0022inputs dont need to be used in command\u0022",
+          "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+          "inputs": {},
+          "outputs": {
+            "test1": {
+              "description": null,
+              "uri": null,
+              "assetName": null,
+              "assetVersion": null,
+              "mode": "ReadWriteMount",
+              "jobOutputType": "uri_folder"
+            },
+            "test2": {
+              "description": null,
+              "uri": null,
+              "assetName": "test2_output",
+              "assetVersion": "2",
+              "mode": "Upload",
+              "jobOutputType": "uri_folder"
+            },
+            "test3": {
+              "description": null,
+              "uri": null,
+              "assetName": "test3_output",
+              "assetVersion": "3",
+              "mode": "ReadWriteMount",
+              "jobOutputType": "uri_folder"
+            },
+            "default": {
+              "description": null,
+              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_159047359492",
+              "assetName": null,
+              "assetVersion": null,
+              "mode": "ReadWriteMount",
+              "jobOutputType": "uri_folder"
+            }
+          },
+          "distribution": null,
+          "autologgerSettings": null,
+          "limits": null,
+          "environmentVariables": {},
+          "parameters": {}
+        },
+        "systemData": {
+          "createdAt": "2023-02-23T18:57:38.4174205\u002B00:00",
+          "createdBy": "Diondra Peck",
+          "createdByType": "User"
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "job_name": "test_159047359492"
+  }
+}

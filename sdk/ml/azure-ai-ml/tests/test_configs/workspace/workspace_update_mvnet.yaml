@@ -1,0 +1,19 @@
+name: e2etest_test_mvnet
+managed_network:
+  isolation_mode: allow_only_approved_outbound
+  outbound_rules:
+    added-servicetagrule:
+      destination:
+        port_ranges: 80, 8080-8089
+        protocol: TCP
+        service_tag: DataFactory
+      type: service_tag
+    added-perule:
+      destination:
+        service_resource_id: /subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount
+        spark_enabled: true
+        subresource_target: blob
+      type: private_endpoint
+    added-fqdnrule:
+      destination: 'test.com'
+      type: fqdn

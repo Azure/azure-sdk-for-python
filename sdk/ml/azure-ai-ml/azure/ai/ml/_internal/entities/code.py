@@ -29,7 +29,7 @@ class InternalComponentIgnoreFile(ComponentIgnoreFile):
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Override to add custom ignores for internal component."""
-        if self._get_rel_path(file_path) == self._additional_includes_file_name:
+        if self._additional_includes_file_name and self._get_rel_path(file_path) == self._additional_includes_file_name:
             return True
         for ignore_file in self._extra_ignore_list:
             if ignore_file.is_file_excluded(file_path):

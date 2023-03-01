@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,15 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._application_insights_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ComponentsResource(msrest.serialization.Model):
+class ComponentsResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27,41 +29,35 @@ class ComponentsResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(ComponentsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -69,7 +65,7 @@ class ComponentsResource(msrest.serialization.Model):
         self.tags = tags
 
 
-class ApplicationInsightsComponent(ComponentsResource):
+class ApplicationInsightsComponent(ComponentsResource):  # pylint: disable=too-many-instance-attributes
     """An Application Insights component definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -82,13 +78,13 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar kind: Required. The kind of application that this component refers to, used to customize
-     UI. This value is a freeform string, values should typically be one of the following: web, ios,
-     other, store, java, phone.
+    :ivar kind: The kind of application that this component refers to, used to customize UI. This
+     value is a freeform string, values should typically be one of the following: web, ios, other,
+     store, java, phone. Required.
     :vartype kind: str
     :ivar etag: Resource etag.
     :vartype etag: str
@@ -99,17 +95,16 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype app_id: str
     :ivar name_properties_name: Application name.
     :vartype name_properties_name: str
-    :ivar application_type: Type of application being monitored. Possible values include: "web",
-     "other". Default value: "web".
+    :ivar application_type: Type of application being monitored. Known values are: "web" and
+     "other".
     :vartype application_type: str or
      ~azure.mgmt.applicationinsights.v2020_02_02.models.ApplicationType
     :ivar flow_type: Used by the Application Insights system to determine what kind of flow this
      component was created by. This is to be set to 'Bluefield' when creating/updating a component
-     via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
+     via the REST API. "Bluefield"
     :vartype flow_type: str or ~azure.mgmt.applicationinsights.v2020_02_02.models.FlowType
     :ivar request_source: Describes what tool created this Application Insights component.
-     Customers using this API should set this to the default 'rest'. Possible values include:
-     "rest". Default value: "rest".
+     Customers using this API should set this to the default 'rest'. "rest"
     :vartype request_source: str or
      ~azure.mgmt.applicationinsights.v2020_02_02.models.RequestSource
     :ivar instrumentation_key: Application Insights Instrumentation key. A read-only value that
@@ -152,16 +147,15 @@ class ApplicationInsightsComponent(ComponentsResource):
     :vartype private_link_scoped_resources:
      list[~azure.mgmt.applicationinsights.v2020_02_02.models.PrivateLinkScopedResource]
     :ivar public_network_access_for_ingestion: The network access type for accessing Application
-     Insights ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+     Insights ingestion. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access_for_ingestion: str or
      ~azure.mgmt.applicationinsights.v2020_02_02.models.PublicNetworkAccessType
     :ivar public_network_access_for_query: The network access type for accessing Application
-     Insights query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+     Insights query. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access_for_query: str or
      ~azure.mgmt.applicationinsights.v2020_02_02.models.PublicNetworkAccessType
-    :ivar ingestion_mode: Indicates the flow of the ingestion. Possible values include:
-     "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
-     value: "LogAnalytics".
+    :ivar ingestion_mode: Indicates the flow of the ingestion. Known values are:
+     "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", and "LogAnalytics".
     :vartype ingestion_mode: str or
      ~azure.mgmt.applicationinsights.v2020_02_02.models.IngestionMode
     :ivar disable_local_auth: Disable Non-AAD based Auth.
@@ -172,104 +166,106 @@ class ApplicationInsightsComponent(ComponentsResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'kind': {'required': True},
-        'application_id': {'readonly': True},
-        'app_id': {'readonly': True},
-        'name_properties_name': {'readonly': True},
-        'instrumentation_key': {'readonly': True},
-        'creation_date': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'hockey_app_token': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'connection_string': {'readonly': True},
-        'la_migration_date': {'readonly': True},
-        'private_link_scoped_resources': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "kind": {"required": True},
+        "application_id": {"readonly": True},
+        "app_id": {"readonly": True},
+        "name_properties_name": {"readonly": True},
+        "instrumentation_key": {"readonly": True},
+        "creation_date": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "hockey_app_token": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "connection_string": {"readonly": True},
+        "la_migration_date": {"readonly": True},
+        "private_link_scoped_resources": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'application_id': {'key': 'properties.ApplicationId', 'type': 'str'},
-        'app_id': {'key': 'properties.AppId', 'type': 'str'},
-        'name_properties_name': {'key': 'properties.Name', 'type': 'str'},
-        'application_type': {'key': 'properties.Application_Type', 'type': 'str'},
-        'flow_type': {'key': 'properties.Flow_Type', 'type': 'str'},
-        'request_source': {'key': 'properties.Request_Source', 'type': 'str'},
-        'instrumentation_key': {'key': 'properties.InstrumentationKey', 'type': 'str'},
-        'creation_date': {'key': 'properties.CreationDate', 'type': 'iso-8601'},
-        'tenant_id': {'key': 'properties.TenantId', 'type': 'str'},
-        'hockey_app_id': {'key': 'properties.HockeyAppId', 'type': 'str'},
-        'hockey_app_token': {'key': 'properties.HockeyAppToken', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'sampling_percentage': {'key': 'properties.SamplingPercentage', 'type': 'float'},
-        'connection_string': {'key': 'properties.ConnectionString', 'type': 'str'},
-        'retention_in_days': {'key': 'properties.RetentionInDays', 'type': 'int'},
-        'disable_ip_masking': {'key': 'properties.DisableIpMasking', 'type': 'bool'},
-        'immediate_purge_data_on30_days': {'key': 'properties.ImmediatePurgeDataOn30Days', 'type': 'bool'},
-        'workspace_resource_id': {'key': 'properties.WorkspaceResourceId', 'type': 'str'},
-        'la_migration_date': {'key': 'properties.LaMigrationDate', 'type': 'iso-8601'},
-        'private_link_scoped_resources': {'key': 'properties.PrivateLinkScopedResources', 'type': '[PrivateLinkScopedResource]'},
-        'public_network_access_for_ingestion': {'key': 'properties.publicNetworkAccessForIngestion', 'type': 'str'},
-        'public_network_access_for_query': {'key': 'properties.publicNetworkAccessForQuery', 'type': 'str'},
-        'ingestion_mode': {'key': 'properties.IngestionMode', 'type': 'str'},
-        'disable_local_auth': {'key': 'properties.DisableLocalAuth', 'type': 'bool'},
-        'force_customer_storage_for_profiler': {'key': 'properties.ForceCustomerStorageForProfiler', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kind": {"key": "kind", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "application_id": {"key": "properties.ApplicationId", "type": "str"},
+        "app_id": {"key": "properties.AppId", "type": "str"},
+        "name_properties_name": {"key": "properties.Name", "type": "str"},
+        "application_type": {"key": "properties.Application_Type", "type": "str"},
+        "flow_type": {"key": "properties.Flow_Type", "type": "str"},
+        "request_source": {"key": "properties.Request_Source", "type": "str"},
+        "instrumentation_key": {"key": "properties.InstrumentationKey", "type": "str"},
+        "creation_date": {"key": "properties.CreationDate", "type": "iso-8601"},
+        "tenant_id": {"key": "properties.TenantId", "type": "str"},
+        "hockey_app_id": {"key": "properties.HockeyAppId", "type": "str"},
+        "hockey_app_token": {"key": "properties.HockeyAppToken", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "sampling_percentage": {"key": "properties.SamplingPercentage", "type": "float"},
+        "connection_string": {"key": "properties.ConnectionString", "type": "str"},
+        "retention_in_days": {"key": "properties.RetentionInDays", "type": "int"},
+        "disable_ip_masking": {"key": "properties.DisableIpMasking", "type": "bool"},
+        "immediate_purge_data_on30_days": {"key": "properties.ImmediatePurgeDataOn30Days", "type": "bool"},
+        "workspace_resource_id": {"key": "properties.WorkspaceResourceId", "type": "str"},
+        "la_migration_date": {"key": "properties.LaMigrationDate", "type": "iso-8601"},
+        "private_link_scoped_resources": {
+            "key": "properties.PrivateLinkScopedResources",
+            "type": "[PrivateLinkScopedResource]",
+        },
+        "public_network_access_for_ingestion": {"key": "properties.publicNetworkAccessForIngestion", "type": "str"},
+        "public_network_access_for_query": {"key": "properties.publicNetworkAccessForQuery", "type": "str"},
+        "ingestion_mode": {"key": "properties.IngestionMode", "type": "str"},
+        "disable_local_auth": {"key": "properties.DisableLocalAuth", "type": "bool"},
+        "force_customer_storage_for_profiler": {"key": "properties.ForceCustomerStorageForProfiler", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
         kind: str,
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        application_type: Optional[Union[str, "ApplicationType"]] = "web",
-        flow_type: Optional[Union[str, "FlowType"]] = "Bluefield",
-        request_source: Optional[Union[str, "RequestSource"]] = "rest",
+        application_type: Union[str, "_models.ApplicationType"] = "web",
+        flow_type: Union[str, "_models.FlowType"] = "Bluefield",
+        request_source: Union[str, "_models.RequestSource"] = "rest",
         hockey_app_id: Optional[str] = None,
         sampling_percentage: Optional[float] = None,
         retention_in_days: Optional[int] = None,
         disable_ip_masking: Optional[bool] = None,
         immediate_purge_data_on30_days: Optional[bool] = None,
         workspace_resource_id: Optional[str] = None,
-        public_network_access_for_ingestion: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
-        public_network_access_for_query: Optional[Union[str, "PublicNetworkAccessType"]] = "Enabled",
-        ingestion_mode: Optional[Union[str, "IngestionMode"]] = "LogAnalytics",
+        public_network_access_for_ingestion: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
+        public_network_access_for_query: Union[str, "_models.PublicNetworkAccessType"] = "Enabled",
+        ingestion_mode: Union[str, "_models.IngestionMode"] = "LogAnalytics",
         disable_local_auth: Optional[bool] = None,
         force_customer_storage_for_profiler: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword kind: Required. The kind of application that this component refers to, used to
-         customize UI. This value is a freeform string, values should typically be one of the following:
-         web, ios, other, store, java, phone.
+        :keyword kind: The kind of application that this component refers to, used to customize UI.
+         This value is a freeform string, values should typically be one of the following: web, ios,
+         other, store, java, phone. Required.
         :paramtype kind: str
         :keyword etag: Resource etag.
         :paramtype etag: str
-        :keyword application_type: Type of application being monitored. Possible values include: "web",
-         "other". Default value: "web".
+        :keyword application_type: Type of application being monitored. Known values are: "web" and
+         "other".
         :paramtype application_type: str or
          ~azure.mgmt.applicationinsights.v2020_02_02.models.ApplicationType
         :keyword flow_type: Used by the Application Insights system to determine what kind of flow this
          component was created by. This is to be set to 'Bluefield' when creating/updating a component
-         via the REST API. Possible values include: "Bluefield". Default value: "Bluefield".
+         via the REST API. "Bluefield"
         :paramtype flow_type: str or ~azure.mgmt.applicationinsights.v2020_02_02.models.FlowType
         :keyword request_source: Describes what tool created this Application Insights component.
-         Customers using this API should set this to the default 'rest'. Possible values include:
-         "rest". Default value: "rest".
+         Customers using this API should set this to the default 'rest'. "rest"
         :paramtype request_source: str or
          ~azure.mgmt.applicationinsights.v2020_02_02.models.RequestSource
         :keyword hockey_app_id: The unique application ID created when a new application is added to
@@ -289,16 +285,15 @@ class ApplicationInsightsComponent(ComponentsResource):
          Applications from older versions will not have this property.
         :paramtype workspace_resource_id: str
         :keyword public_network_access_for_ingestion: The network access type for accessing Application
-         Insights ingestion. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+         Insights ingestion. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access_for_ingestion: str or
          ~azure.mgmt.applicationinsights.v2020_02_02.models.PublicNetworkAccessType
         :keyword public_network_access_for_query: The network access type for accessing Application
-         Insights query. Possible values include: "Enabled", "Disabled". Default value: "Enabled".
+         Insights query. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access_for_query: str or
          ~azure.mgmt.applicationinsights.v2020_02_02.models.PublicNetworkAccessType
-        :keyword ingestion_mode: Indicates the flow of the ingestion. Possible values include:
-         "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", "LogAnalytics". Default
-         value: "LogAnalytics".
+        :keyword ingestion_mode: Indicates the flow of the ingestion. Known values are:
+         "ApplicationInsights", "ApplicationInsightsWithDiagnosticSettings", and "LogAnalytics".
         :paramtype ingestion_mode: str or
          ~azure.mgmt.applicationinsights.v2020_02_02.models.IngestionMode
         :keyword disable_local_auth: Disable Non-AAD based Auth.
@@ -307,7 +302,7 @@ class ApplicationInsightsComponent(ComponentsResource):
          for profiler and debugger.
         :paramtype force_customer_storage_for_profiler: bool
         """
-        super(ApplicationInsightsComponent, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.etag = etag
         self.application_id = None
@@ -337,12 +332,12 @@ class ApplicationInsightsComponent(ComponentsResource):
         self.force_customer_storage_for_profiler = force_customer_storage_for_profiler
 
 
-class ApplicationInsightsComponentListResult(msrest.serialization.Model):
+class ApplicationInsightsComponentListResult(_serialization.Model):
     """Describes the list of Application Insights Resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. List of Application Insights component definitions.
+    :ivar value: List of Application Insights component definitions. Required.
     :vartype value:
      list[~azure.mgmt.applicationinsights.v2020_02_02.models.ApplicationInsightsComponent]
     :ivar next_link: The URI to get the next set of Application Insights component definitions if
@@ -351,78 +346,68 @@ class ApplicationInsightsComponentListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationInsightsComponent]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationInsightsComponent]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["ApplicationInsightsComponent"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: List["_models.ApplicationInsightsComponent"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: Required. List of Application Insights component definitions.
+        :keyword value: List of Application Insights component definitions. Required.
         :paramtype value:
          list[~azure.mgmt.applicationinsights.v2020_02_02.models.ApplicationInsightsComponent]
         :keyword next_link: The URI to get the next set of Application Insights component definitions
          if too many components where returned in the result set.
         :paramtype next_link: str
         """
-        super(ApplicationInsightsComponentListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ComponentPurgeBody(msrest.serialization.Model):
+class ComponentPurgeBody(_serialization.Model):
     """Describes the body of a purge request for an App Insights component.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar table: Required. Table from which to purge data.
+    :ivar table: Table from which to purge data. Required.
     :vartype table: str
-    :ivar filters: Required. The set of columns and filters (queries) to run over them to purge the
-     resulting data.
+    :ivar filters: The set of columns and filters (queries) to run over them to purge the resulting
+     data. Required.
     :vartype filters:
      list[~azure.mgmt.applicationinsights.v2020_02_02.models.ComponentPurgeBodyFilters]
     """
 
     _validation = {
-        'table': {'required': True},
-        'filters': {'required': True},
+        "table": {"required": True},
+        "filters": {"required": True},
     }
 
     _attribute_map = {
-        'table': {'key': 'table', 'type': 'str'},
-        'filters': {'key': 'filters', 'type': '[ComponentPurgeBodyFilters]'},
+        "table": {"key": "table", "type": "str"},
+        "filters": {"key": "filters", "type": "[ComponentPurgeBodyFilters]"},
     }
 
-    def __init__(
-        self,
-        *,
-        table: str,
-        filters: List["ComponentPurgeBodyFilters"],
-        **kwargs
-    ):
+    def __init__(self, *, table: str, filters: List["_models.ComponentPurgeBodyFilters"], **kwargs: Any) -> None:
         """
-        :keyword table: Required. Table from which to purge data.
+        :keyword table: Table from which to purge data. Required.
         :paramtype table: str
-        :keyword filters: Required. The set of columns and filters (queries) to run over them to purge
-         the resulting data.
+        :keyword filters: The set of columns and filters (queries) to run over them to purge the
+         resulting data. Required.
         :paramtype filters:
          list[~azure.mgmt.applicationinsights.v2020_02_02.models.ComponentPurgeBodyFilters]
         """
-        super(ComponentPurgeBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.table = table
         self.filters = filters
 
 
-class ComponentPurgeBodyFilters(msrest.serialization.Model):
+class ComponentPurgeBodyFilters(_serialization.Model):
     """User-defined filters to return data which will be purged from the table.
 
     :ivar column: The column of the table over which the given query should run.
@@ -440,10 +425,10 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'column': {'key': 'column', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
-        'key': {'key': 'key', 'type': 'str'},
+        "column": {"key": "column", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "value": {"key": "value", "type": "object"},
+        "key": {"key": "key", "type": "str"},
     }
 
     def __init__(
@@ -453,8 +438,8 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
         operator: Optional[str] = None,
         value: Optional[Any] = None,
         key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword column: The column of the table over which the given query should run.
         :paramtype column: str
@@ -469,80 +454,70 @@ class ComponentPurgeBodyFilters(msrest.serialization.Model):
          custom dimension.
         :paramtype key: str
         """
-        super(ComponentPurgeBodyFilters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.column = column
         self.operator = operator
         self.value = value
         self.key = key
 
 
-class ComponentPurgeResponse(msrest.serialization.Model):
+class ComponentPurgeResponse(_serialization.Model):
     """Response containing operationId for a specific purge action.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operation_id: Required. Id to use when querying for status for a particular purge
-     operation.
+    :ivar operation_id: Id to use when querying for status for a particular purge operation.
+     Required.
     :vartype operation_id: str
     """
 
     _validation = {
-        'operation_id': {'required': True},
+        "operation_id": {"required": True},
     }
 
     _attribute_map = {
-        'operation_id': {'key': 'operationId', 'type': 'str'},
+        "operation_id": {"key": "operationId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        operation_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, operation_id: str, **kwargs: Any) -> None:
         """
-        :keyword operation_id: Required. Id to use when querying for status for a particular purge
-         operation.
+        :keyword operation_id: Id to use when querying for status for a particular purge operation.
+         Required.
         :paramtype operation_id: str
         """
-        super(ComponentPurgeResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operation_id = operation_id
 
 
-class ComponentPurgeStatusResponse(msrest.serialization.Model):
+class ComponentPurgeStatusResponse(_serialization.Model):
     """Response containing status for a specific purge operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. Status of the operation represented by the requested Id. Possible
-     values include: "pending", "completed".
+    :ivar status: Status of the operation represented by the requested Id. Required. Known values
+     are: "pending" and "completed".
     :vartype status: str or ~azure.mgmt.applicationinsights.v2020_02_02.models.PurgeState
     """
 
     _validation = {
-        'status': {'required': True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: Union[str, "PurgeState"],
-        **kwargs
-    ):
+    def __init__(self, *, status: Union[str, "_models.PurgeState"], **kwargs: Any) -> None:
         """
-        :keyword status: Required. Status of the operation represented by the requested Id. Possible
-         values include: "pending", "completed".
+        :keyword status: Status of the operation represented by the requested Id. Required. Known
+         values are: "pending" and "completed".
         :paramtype status: str or ~azure.mgmt.applicationinsights.v2020_02_02.models.PurgeState
         """
-        super(ComponentPurgeStatusResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
 
 
-class ErrorResponseComponents(msrest.serialization.Model):
+class ErrorResponseComponents(_serialization.Model):
     """ErrorResponseComponents.
 
     :ivar error: Error response indicates Insights service is not able to process the incoming
@@ -551,27 +526,23 @@ class ErrorResponseComponents(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseComponentsError'},
+        "error": {"key": "error", "type": "ErrorResponseComponentsError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponseComponentsError"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorResponseComponentsError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error response indicates Insights service is not able to process the incoming
          request. The reason is provided in the error message.
         :paramtype error:
          ~azure.mgmt.applicationinsights.v2020_02_02.models.ErrorResponseComponentsError
         """
-        super(ErrorResponseComponents, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ErrorResponseComponentsError(msrest.serialization.Model):
-    """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
+class ErrorResponseComponentsError(_serialization.Model):
+    """Error response indicates Insights service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -582,27 +553,23 @@ class ErrorResponseComponentsError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorResponseComponentsError, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class PrivateLinkScopedResource(msrest.serialization.Model):
+class PrivateLinkScopedResource(_serialization.Model):
     """The private link scope resource reference.
 
     :ivar resource_id: The full resource Id of the private link scope resource.
@@ -612,48 +579,38 @@ class PrivateLinkScopedResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'ResourceId', 'type': 'str'},
-        'scope_id': {'key': 'ScopeId', 'type': 'str'},
+        "resource_id": {"key": "ResourceId", "type": "str"},
+        "scope_id": {"key": "ScopeId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        scope_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, scope_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource_id: The full resource Id of the private link scope resource.
         :paramtype resource_id: str
         :keyword scope_id: The private link scope unique Identifier.
         :paramtype scope_id: str
         """
-        super(PrivateLinkScopedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.scope_id = scope_id
 
 
-class TagsResource(msrest.serialization.Model):
-    """A container holding only the Tags for a resource, allowing the user to update the tags on a WebTest instance.
+class TagsResource(_serialization.Model):
+    """A container holding only the Tags for a resource, allowing the user to update the tags on a
+    WebTest instance.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(TagsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
