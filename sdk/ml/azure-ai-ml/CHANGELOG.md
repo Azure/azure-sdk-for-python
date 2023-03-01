@@ -5,6 +5,7 @@
 ### Features Added
 - Added support for `tags` on Compute Resources.
 - Added support for promoting data asset from a workspace to a registry
+- Added support for private link access to Azure Batch on Compute Instances and Aml Computes.
 
 ### Bugs Fixed
 
@@ -20,7 +21,7 @@
 
 ### Features Added
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
-- Added Custom Applications Support to Compute Instances. 
+- Added Custom Applications Support to Compute Instances.
 - Update data asset list, show and create operations to support data assets in registry.
 
 ### Bugs Fixed

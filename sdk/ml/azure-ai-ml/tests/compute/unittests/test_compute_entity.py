@@ -251,7 +251,7 @@ class TestComputeEntity:
 
     def test_compute_private_link_from_yaml(self):
         compute_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-private-link.yaml")
-        aml_compute: AmlCompute = load_compute("tests/test_configs/compute/compute-aml-no-private-link.yaml")
+        aml_compute: AmlCompute = load_compute("tests/test_configs/compute/compute-aml-private-link.yaml")
 
         def validate_private_link(compute: Compute):
             assert compute.enable_node_public_ip == False

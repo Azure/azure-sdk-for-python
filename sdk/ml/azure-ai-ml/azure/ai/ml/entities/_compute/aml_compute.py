@@ -107,6 +107,12 @@ class AmlCompute(Compute):
      True - Indicates that the compute nodes will have public IPs provisioned.
      False - Indicates that the compute nodes will have a private endpoint and no public IPs.
      Default Value: True.
+    :param enable_batch_private_link: Whether to enable private link access to Azure Batch.
+        Requires `enable_node_public_ip` to be `False`. Possible values are:
+        True - Indicates the compute nodes will have access to Azure Batch.
+        False - Indicates that the compute nodes will not have access to Azure Batch.
+        Default value: False.
+    :type enable_batch_private_link: Optional[bool], optional
     :type enable_node_public_ip: Optional[bool], optional
     """
 
@@ -125,8 +131,8 @@ class AmlCompute(Compute):
         idle_time_before_scale_down: Optional[int] = None,
         identity: Optional[IdentityConfiguration] = None,
         tier: Optional[str] = None,
-        enable_node_public_ip: bool = True,
-        enable_batch_private_link: bool = False, 
+        enable_node_public_ip: Optional[bool] = True,
+        enable_batch_private_link: Optional[bool] = False,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.AMLCOMPUTE
@@ -165,7 +171,6 @@ class AmlCompute(Compute):
             if prop.properties.user_account_credentials
             else None
         )
-        # TODO: Modify _load_from_rest for enable_batch_private_link here
 
         response = AmlCompute(
             name=rest_obj.name,
@@ -192,6 +197,9 @@ class AmlCompute(Compute):
             enable_node_public_ip=prop.properties.enable_node_public_ip
             if prop.properties.enable_node_public_ip is not None
             else True,
+            enable_batch_private_link=prop.properties.enable_batch_private_link
+            if prop.properties.enable_batch_private_link is not None
+            else False,
         )
         return response
 
@@ -241,6 +249,7 @@ class AmlCompute(Compute):
             subnet=subnet_resource,
             remote_login_port_public_access=remote_login_public_access,
             enable_node_public_ip=self.enable_node_public_ip,
+            enable_batch_private_link=self.enable_batch_private_link,
         )
 
         aml_comp = AmlComputeRest(description=self.description, compute_type=self.type, properties=aml_prop)

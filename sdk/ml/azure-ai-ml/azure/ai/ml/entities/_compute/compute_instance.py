@@ -146,6 +146,12 @@ class ComputeInstance(Compute):
         False - Indicates that the compute nodes will have a private endpoint and no public IPs.
         Default Value: True.
     :type enable_node_public_ip: Optional[bool], optional
+    :param enable_batch_private_link: Whether to enable private link access to Azure Batch.
+        Requires `enable_node_public_ip` to be `False`. Possible values are:
+        True - Indicates the compute instance will have access to Azure Batch.
+        False - Indicates that the compute instance will not have access to Azure Batch.
+        Default value: False.
+    :type enable_batch_private_link: Optional[bool], optional
     :param setup_scripts: Experimental. Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[SetupScripts], optional
     :param custom_applications: Experimental. List of custom applications and their endpoints
@@ -169,8 +175,8 @@ class ComputeInstance(Compute):
         idle_time_before_shutdown: Optional[str] = None,
         idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,
-        enable_node_public_ip: bool = True,
-        enable_batch_private_link: bool = False, 
+        enable_node_public_ip: Optional[bool] = True,
+        enable_batch_private_link: Optional[bool] = False,
         custom_applications: Optional[List[CustomApplications]] = None,
         **kwargs,
     ):
@@ -289,6 +295,7 @@ class ComputeInstance(Compute):
             personal_compute_instance_settings=personal_compute_instance_settings,
             idle_time_before_shutdown=idle_time_before_shutdown,
             enable_node_public_ip=self.enable_node_public_ip,
+            enable_batch_private_link=self.enable_batch_private_link,
         )
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
@@ -297,7 +304,6 @@ class ComputeInstance(Compute):
             compute_instance_prop.custom_services = []
             for app in self.custom_applications:
                 compute_instance_prop.custom_services.append(app._to_rest_object())
-        # TODO: Modify _to_rest_object for enable_batch_private_link
         compute_instance = CIRest(
             description=self.description,
             compute_type=self.type,
@@ -425,6 +431,9 @@ class ComputeInstance(Compute):
             os_image_metadata=os_image_metadata,
             enable_node_public_ip=prop.properties.enable_node_public_ip
             if (prop.properties and prop.properties.enable_node_public_ip is not None)
+            else True,
+            enable_batch_private_link=prop.properties.enable_batch_private_link
+            if (prop.properties and prop.properties.enable_batch_private_link is not None)
             else True,
             # TODO: Modify _from_rest_object for enable_batch_private_link here
             custom_applications=custom_applications,
