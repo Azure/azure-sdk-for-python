@@ -86,7 +86,9 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
 
 
-class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpResponse):  # pylint: disable=abstract-method
+class AsyncHttpClientTransportResponse(  # pylint: disable=abstract-method
+    _HttpClientTransportResponse, AsyncHttpResponse
+):
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
