@@ -101,13 +101,21 @@ stages:
                         inputs:
                           artifactFeeds: ${{parameters.DevFeedName}}
 
+                      - pwsh: |
+                          $esrpDirectory = $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
+                          New-Item -ItemType Directory -Path $esrpDirectory
+                          Get-ChildItem .\packages\azure-template\ `
+                            | Where-Object { ($_.Name -like "*.zip" -or $_.Name -like "*.whl") } `
+                            | Copy-Item -Destination $esrpDirectory
+                        displayName: Isolate files for ESRP Publish
+
                       - task: EsrpRelease@2
                         displayName: 'Publish to ESRP'
                         inputs:
                           ConnectedServiceName: 'ESRP Release Service'
                           Intent: 'PackageDistribution'
                           ContentType: 'PyPI'
-                          PackageLocation: $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}
+                          PackageLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
                           Owners: $(Build.RequestedForEmail)
                           Approvers: 'wesh@microsoft.com'
                           ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
