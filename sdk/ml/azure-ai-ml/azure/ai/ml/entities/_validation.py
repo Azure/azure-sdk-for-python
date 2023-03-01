@@ -525,9 +525,16 @@ class _ValidationResultBuilder:
                 if field in ["key", "value"]:
                     cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
                 else:
-                    path_stack.append(field)
-                    cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
-                    path_stack.pop()
+                    # Todo: Add hack logic here to deal with error message in nested TypeSensitiveUnionField in
+                    #  DataTransfer: will be a nested dict with None field as dictionary key.
+                    #  open a item to track: https://msdata.visualstudio.com/Vienna/_workitems/edit/2244262/
+                    if field is None:
+                        cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
+                    else:
+                        path_stack.append(field)
+                        cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
+                        path_stack.pop()
+
         # detailed error message
         elif isinstance(errors, list) and all(isinstance(msg, str) for msg in errors):
             if cls.UNKNOWN_MESSAGE in errors and not error_on_unknown_field:
