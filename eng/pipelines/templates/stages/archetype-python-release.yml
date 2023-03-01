@@ -103,9 +103,9 @@ stages:
 
                       - pwsh: |
                           $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
-                          New-Item -ItemType Directory -Path $esrpDirectory
+                          New-Item -ItemType Directory -Force -Path $esrpDirectory
 
-                          Get-ChildItem .\packages\azure-template\ `
+                          Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
                             | Where-Object { ($_.Name -like "*.zip" -or $_.Name -like "*.whl") } `
                             | Copy-Item -Destination $esrpDirectory
 
