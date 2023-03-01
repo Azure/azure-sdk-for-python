@@ -15,6 +15,7 @@
 - Added dependency on `azure-mgmt-resource`
 - Added dependency on `azure-mgmt-resourcegraph`
 - Update job types to use MFE Dec preview rest objects.
+- Added classifiers for Python version 3.11.
 
 ## 1.4.0 (2023-02-07)
 
