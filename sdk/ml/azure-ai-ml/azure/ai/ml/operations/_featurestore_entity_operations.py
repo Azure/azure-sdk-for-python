@@ -16,9 +16,14 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._asset_utils import (
+    _archive_or_restore,
+    _get_latest_version_from_container,
+)
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._assets import FeaturestoreEntity
+from azure.ai.ml.entities import FeaturestoreEntity
+from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 
 ops_logger = OpsLogger(__name__)
@@ -40,10 +45,42 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         self._container_operation = service_client.featurestore_entity_containers
         self._service_client = service_client
         self._init_kwargs = kwargs
-        # self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
-        # self._managed_label_resolver = {"latest": self._get_latest_version}
+        self._managed_label_resolver = {"latest": self._get_latest_version}
+
+    # @monitor_with_activity(logger, "FeaturestoreEntity.List", ActivityType.PUBLICAPI)
+    def list(
+        self,
+        *,
+        name: Optional[str] = None,
+        list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
+    ) -> ItemPaged[FeaturestoreEntity]:
+        """List the featurestore_entity assets of the workspace.
+
+        :param name: Name of a specific featurestore_entity asset, optional.
+        :type name: Optional[str]
+        :param list_view_type: View type for including/excluding (for example) archived featurestore_entity assets.
+        Default: ACTIVE_ONLY.
+        :type list_view_type: Optional[ListViewType]
+        :return: An iterator like instance of FeaturestoreEntity objects
+        :rtype: ~azure.core.paging.ItemPaged[FeaturestoreEntity]
+        """
+        if name:
+            return self._operation.list(
+                name=name,
+                workspace_name=self._workspace_name,
+                cls=lambda objs: [FeaturestoreEntity._from_rest_object(obj) for obj in objs],
+                list_view_type=list_view_type,
+                **self._scope_kwargs,
+            )
+        return self._container_operation.list(
+            workspace_name=self._workspace_name,
+            cls=lambda objs: [FeaturestoreEntity._from_container_rest_object(obj) for obj in objs],
+            list_view_type=list_view_type,
+            **self._scope_kwargs,
+        )
 
     def _get(self, name: str, version: str = None) -> FeaturestoreEntityVersion:
         return (
@@ -106,3 +143,93 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
             return FeaturestoreEntity._from_rest_object(featureset_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
+
+    # @monitor_with_activity(logger, "FeaturestoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    def begin_create_or_update(self, featurestore_entity: FeaturestoreEntity) -> LROPoller[FeaturestoreEntity]:
+        """Create or update FeaturestoreEntity
+
+        :param featurestore_entity: FeaturestoreEntity definition.
+        :type featurestore_entity: FeaturestoreEntity
+        :return: An instance of LROPoller that returns a FeaturestoreEntity.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeaturestoreEntity]
+        """
+        featurestore_entity_resource = FeaturestoreEntity._to_rest_object(featurestore_entity)
+
+        return self._operation.begin_create_or_update(
+            name=featurestore_entity.name,
+            version=featurestore_entity.version,
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            body=featurestore_entity_resource,
+        )
+
+    # @monitor_with_activity(logger, "FeaturestoreEntity.Archive", ActivityType.PUBLICAPI)
+    def archive(
+        self,
+        *,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
+        """Archive a FeaturestoreEntity asset.
+
+        :param name: Name of FeaturestoreEntity asset.
+        :type name: str
+        :param version: Version of FeaturestoreEntity asset.
+        :type version: str
+        :param label: Label of the FeaturestoreEntity asset. (mutually exclusive with version)
+        :type label: str
+        :return: None
+        """
+
+        _archive_or_restore(
+            asset_operations=self,
+            version_operation=self._operation,
+            container_operation=self._container_operation,
+            is_archived=True,
+            name=name,
+            version=version,
+            label=label,
+        )
+
+    # @monitor_with_activity(logger, "FeaturestoreEntity.Restore", ActivityType.PUBLICAPI)
+    def restore(
+        self,
+        *,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
+    ) -> None:
+        """Restore an archived FeaturestoreEntity asset.
+
+        :param name: Name of FeaturestoreEntity asset.
+        :type name: str
+        :param version: Version of FeaturestoreEntity asset.
+        :type version: str
+        :param label: Label of the FeaturestoreEntity asset. (mutually exclusive with version)
+        :type label: str
+        :return: None
+        """
+
+        _archive_or_restore(
+            asset_operations=self,
+            version_operation=self._operation,
+            container_operation=self._container_operation,
+            is_archived=False,
+            name=name,
+            version=version,
+            label=label,
+        )
+
+    def _get_latest_version(self, name: str) -> FeaturestoreEntity:
+        """Returns the latest version of the asset with the given name.
+
+        Latest is defined as the most recently created, not the most
+        recently updated.
+        """
+        latest_version = _get_latest_version_from_container(
+            name, self._container_operation, self._resource_group_name, self._workspace_name
+        )
+        return self.get(name, version=latest_version)

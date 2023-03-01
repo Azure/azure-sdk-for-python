@@ -10,6 +10,8 @@ from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturestoreEntityVersion,
     FeaturestoreEntityVersionProperties,
+    FeaturestoreEntityContainer,
+    FeaturestoreEntityContainerProperties,
 )
 from azure.ai.ml._utils._experimental import experimental
 
@@ -57,6 +59,14 @@ class FeaturestoreEntity(Asset):
             **kwargs,
         )
         self.index_columns = index_columns
+        self.version = version
+        self.latest_version = None
+
+    def _to_rest_object(self) -> FeaturestoreEntityVersion:
+        feature_store_entity_version_properties = FeaturestoreEntityVersionProperties(
+            description=self.description, index_columns=self.index_columns, tags=self.tags, properties=self.properties
+        )
+        return FeaturestoreEntityVersion(properties=feature_store_entity_version_properties)
 
     @classmethod
     def _from_rest_object(cls, rest_obj: FeaturestoreEntityVersion) -> "FeaturestoreEntity":
@@ -65,8 +75,23 @@ class FeaturestoreEntity(Asset):
         featurestoreEntity = FeaturestoreEntity(
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
+            index_columns=rest_object_details.index_columns,
             description=rest_object_details.description,
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,
         )
+        return featurestoreEntity
+
+    @classmethod
+    def _from_container_rest_object(cls, rest_obj: FeaturestoreEntityContainer) -> "FeaturestoreEntity":
+        rest_object_details: FeaturestoreEntityContainerProperties = rest_obj.properties
+        arm_id_object = get_arm_id_object_from_id(rest_obj.id)
+        featurestoreEntity = FeaturestoreEntity(
+            name=arm_id_object.asset_name,
+            version=arm_id_object.asset_version,
+            description=rest_object_details.description,
+            tags=rest_object_details.tags,
+            properties=rest_object_details.properties,
+        )
+        featurestoreEntity.latest_version = rest_object_details.latest_version
         return featurestoreEntity
