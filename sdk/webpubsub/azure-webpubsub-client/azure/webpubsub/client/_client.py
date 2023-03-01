@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, overload, Callable, Union, Optional, Dict, List
+import time
 import sys
 import logging
 import threading
@@ -74,7 +75,7 @@ class WebPubSubClientCredential:
 _RETRY_TOTAL = 3
 _RETRY_BACKOFF_FACTOR = 1.0
 _RETRY_BACKOFF_MAX = 120.0
-_RECOVERY_RETRY_TOTAL = 30
+_RECOVERY_TIMEOUT = 30.0
 _RECOVERY_RETRY_INTERVAL = 1.0
 
 
@@ -539,17 +540,16 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     return
 
                 self._state = WebPubSubClientState.RECOVERING
-                for i in range(_RECOVERY_RETRY_TOTAL):
-                    if self._is_stopping:
-                        break
+                recovery_start = time.time()
+                while (time.time() - recovery_start < _RECOVERY_TIMEOUT) and not self._is_stopping:
                     try:
                         self._connect(recovery_url)
                         return
                     except:  # pylint: disable=bare-except
-                        _LOGGER.debug("Try %dth times to recover after %d seconds", i, _RECOVERY_RETRY_INTERVAL)
+                        _LOGGER.debug("Try to recover after %d seconds", _RECOVERY_RETRY_INTERVAL)
                         delay(_RECOVERY_RETRY_INTERVAL)
 
-                _LOGGER.warning("Recovery attempts failed more than 30 times or the client is stopping")
+                _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
                 self._handle_connection_close_and_no_recovery()
             else:
                 _LOGGER.debug("WebSocket closed before open")
