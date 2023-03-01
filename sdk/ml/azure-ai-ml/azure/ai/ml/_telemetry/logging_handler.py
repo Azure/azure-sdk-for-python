@@ -79,6 +79,7 @@ def in_jupyter_notebook() -> bool:
     return True
 
 
+# cspell:ignore overriden
 def get_appinsights_log_handler(
     user_agent,
     *args,  # pylint: disable=unused-argument
