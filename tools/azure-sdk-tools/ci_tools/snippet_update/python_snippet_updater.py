@@ -21,7 +21,7 @@ def check_not_up_to_date() -> bool:
 
 def get_snippet(file: str) -> None:
     file_obj = Path(file)
-    with open(file_obj, 'r') as f:
+    with open(file_obj, 'r', encoding='utf8') as f:
         content = f.read()
     pattern = "# \\[START(?P<name>[A-Z a-z0-9_]+)\\](?P<body>[\\s\\S]+?)# \\[END[A-Z a-z0-9_]+\\]"
     matches = re.findall(pattern, content)
@@ -70,7 +70,7 @@ def get_snippet(file: str) -> None:
 
 def update_snippet(file: str) -> None:
     file_obj = Path(file)
-    with open(file_obj, 'r') as f:
+    with open(file_obj, 'r', encoding='utf8') as f:
         content = f.read()
     pattern = "(?P<content>(?P<header><!-- SNIPPET:(?P<name>[A-Z a-z0-9_.]+)-->)\\n```python\\n[\\s\\S]*?\\n<!-- END SNIPPET -->)"
     matches = re.findall(pattern, content)
@@ -81,7 +81,7 @@ def update_snippet(file: str) -> None:
         name = s[2].strip()
         _LOGGER.debug(f"Found name: {name}")
         if name not in snippets.keys():
-            _LOGGER.error(f'In {file}, failed to found snippet name "{name}".')
+            _LOGGER.error(f'In {file}, failed to find snippet name "{name}".')
             exit(1)
         target_code = "".join([header, "\n```python\n", snippets[name], "\n```\n", "<!-- END SNIPPET -->"])
         if body != target_code:
@@ -89,7 +89,7 @@ def update_snippet(file: str) -> None:
             global not_up_to_date
             not_up_to_date = True
             content = content.replace(body, target_code)
-    with open(file_obj, 'w') as f:
+    with open(file_obj, 'w', encoding='utf8') as f:
         f.write(content)
 
 
