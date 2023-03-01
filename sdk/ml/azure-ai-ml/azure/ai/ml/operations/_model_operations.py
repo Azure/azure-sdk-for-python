@@ -281,7 +281,7 @@ class ModelOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
         # TODO: We should consider adding an exception trigger for internal_model=None
-        model_version_resource = self._get(name, version, registry_name="bani-reg")
+        model_version_resource = self._get(name, version)
 
         return Model._from_rest_object(model_version_resource)
 
