@@ -84,10 +84,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :rtype: Workspace
         """
 
-        workspace_name = self._check_workspace_name(name)
-        resource_group = kwargs.get("resource_group") or self._resource_group_name
-        obj = self._operation.get(resource_group, workspace_name)
-        return Workspace._from_rest_object(obj)
+        return super().get(name=name, **kwargs)
 
     # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace

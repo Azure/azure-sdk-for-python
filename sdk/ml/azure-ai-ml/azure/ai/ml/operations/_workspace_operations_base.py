@@ -72,6 +72,12 @@ class WorkspaceOperationsBase:
         self._init_kwargs = kwargs
         self.containerRegistry = "none"
 
+    def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
+        workspace_name = self._check_workspace_name(name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+        obj = self._operation.get(resource_group, workspace_name)
+        return Workspace._from_rest_object(obj)
+
     def begin_create(
         self,
         workspace: Workspace,
