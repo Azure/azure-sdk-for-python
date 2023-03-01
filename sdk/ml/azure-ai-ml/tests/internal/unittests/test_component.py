@@ -363,6 +363,17 @@ class TestComponent:
         )
         assert str(validation_result._warnings[0]) == expected_warning_message
 
+    def test_load_environment_with_version(self):
+        yaml_path = (
+            r"tests/test_configs/internal/command-component/command-linux/"
+            r"component_with_bool_and_data_input/component.yaml"
+        )
+        yaml_dict = load_yaml(yaml_path)
+        component = load_component(source=yaml_path)
+        assert component.environment.name == yaml_dict["environment"]["name"]
+        assert component.environment.version == str(yaml_dict["environment"]["version"])
+        assert component.environment.os == yaml_dict["environment"]["os"]
+
     def test_resolve_local_code(self) -> None:
         # internal component code (snapshot) default includes items in base directory when code is None,
         # rather than COMPONENT_PLACEHOLDER in v2, this test targets to this case.
