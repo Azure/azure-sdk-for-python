@@ -5,7 +5,7 @@ setuptools==46.4.0; python_version >= '3.5'
 virtualenv==20.13.2
 wheel==0.37.0
 Jinja2==2.11.2
-packaging==20.4
+packaging==23.0
 tox==3.25.1
 tox-monorepo==0.1.2
 twine==3.1.1; python_version >= '3.6'
