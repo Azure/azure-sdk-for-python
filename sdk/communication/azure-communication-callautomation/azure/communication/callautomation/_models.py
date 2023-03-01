@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -528,10 +527,10 @@ class RecognizeCanceled(object):
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+            skype chain ID.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
+            request to the response event.
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
