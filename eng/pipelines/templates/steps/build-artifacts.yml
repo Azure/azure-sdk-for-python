@@ -113,7 +113,7 @@ steps:
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
-      CustomCondition: ${{ parameters.BuildDocs }}
+      CustomCondition: and(${{ parameters.BuildDocs }}, eq(variables.artifactName, 'linux'))
       ArtifactName: 'documentation_${{ parameters.ArtifactSuffix }}'
 
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
