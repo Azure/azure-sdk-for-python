@@ -16,7 +16,7 @@ For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all
 
 ### Prerequisites
 
-- Python 3.7 or later is required to use this package.
+- Python 3.7 or later is required to use this package. (Ending Python 3.7 support starting December 2023).
 - You must have an [Azure subscription][azure_subscription].
 - An [Azure Machine Learning Workspace][workspace].
 
