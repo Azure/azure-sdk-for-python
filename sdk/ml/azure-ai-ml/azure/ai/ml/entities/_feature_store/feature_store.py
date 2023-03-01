@@ -38,6 +38,7 @@ class FeatureStore(Workspace):
         image_build_compute: Optional[str] = None,
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
+        primary_user_assigned_identity: Optional[str] = None,
         **kwargs,
     ):
 
@@ -88,6 +89,8 @@ class FeatureStore(Workspace):
         :type public_network_access: str
         :param identity: workspace's Managed Identity (user assigned, or system assigned)
         :type identity: IdentityConfiguration
+        :param primary_user_assigned_identity: The workspace's primary user assigned identity
+        :type primary_user_assigned_identity: str
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -117,6 +120,7 @@ class FeatureStore(Workspace):
             image_build_compute=image_build_compute,
             public_network_access=public_network_access,
             identity=identity,
+            primary_user_assigned_identity=primary_user_assigned_identity,
             feature_store_settings=feature_store_settings,
             **kwargs,
         )
@@ -152,4 +156,5 @@ class FeatureStore(Workspace):
             image_build_compute=workspace_object.image_build_compute,
             public_network_access=workspace_object.public_network_access,
             identity=workspace_object.identity,
+            primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
         )
