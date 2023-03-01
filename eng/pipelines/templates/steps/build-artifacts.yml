@@ -87,7 +87,7 @@ steps:
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
-    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}}, ${{ eq(parameters.ArtifactSuffix,'linux') }})
+    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}}, eq('${{ parameters.ArtifactSuffix }}','linux'))
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
