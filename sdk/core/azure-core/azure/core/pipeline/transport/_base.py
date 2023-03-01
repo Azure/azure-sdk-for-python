@@ -463,7 +463,7 @@ class _HttpClientTransportResponse(_HttpResponseBase):
         return self.data
 
 
-class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):
+class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):  # pylint: disable=abstract-method
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
