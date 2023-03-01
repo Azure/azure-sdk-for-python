@@ -151,7 +151,7 @@ class WorkspaceOperationsBase:
         workspace: Workspace,
         *,
         update_dependent_resources: bool = False,
-        deserialize_callback: Callable[[], Workspace] = None,
+        deserialize_callback: Optional[Callable[[], Workspace]] = None,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
         identity = kwargs.get("identity", workspace.identity)
