@@ -46,7 +46,7 @@ class SettingSelector:
     :type key_filter: str
     :keyword label_filter: A filter to select configuration settings based on their labels. Default is value is EMPTY_LABEL 
      i.e. (No Label) as seen in the portal.
-    :type label_filter: str
+    :type label_filter: Optional[str]
     """
 
     def __init__(self, *, key_filter, **kwargs):
