@@ -46,6 +46,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             group_name = "test"
             client.join_group(group_name)
             client.send_to_group(group_name, "test_context_manager", "text")
+            assert client._sequence_id.sequence_id > 0
 
     # auto_connect will be triggered if connection is dropped by accident
     @WebpubsubClientPowerShellPreparer()

@@ -1,4 +1,4 @@
-# Web PubSub client library for JavaScript
+# Web PubSub client library for Python
 
 [Azure Web PubSub](https://aka.ms/awps/doc) is a cloud service that helps developers easily build real-time features in web applications with publish-subscribe patterns at scale. 
 

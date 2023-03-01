@@ -608,7 +608,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._connect(self._url)
 
     @distributed_trace
-    def _start(self) -> None:
+    def start(self) -> None:
         """start the client and connect to service"""
 
         if self._is_stopping:
