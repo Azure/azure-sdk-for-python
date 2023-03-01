@@ -19,6 +19,7 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
+from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -280,7 +281,7 @@ class ModelOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
         # TODO: We should consider adding an exception trigger for internal_model=None
-        model_version_resource = self._get(name, version)
+        model_version_resource = self._get(name, version, registry_name="bani-reg")
 
         return Model._from_rest_object(model_version_resource)
 
@@ -437,6 +438,48 @@ class ModelOperations(_ScopeDependentOperations):
             )
         )
 
+    def share(self, name, version, share_with_name, share_with_version, registry_name) -> Model:
+        """Share a model asset.
+
+        :param name: Name of model asset.
+        :type name: str
+        :param version: Version of model asset.
+        :type version: str
+        :param share_with_name: Name of model asset to share with.
+        :type share_with_name: str
+        :param share_with_version: Version of model asset to share with.
+        :type share_with_version: str
+        :param registry_name: Name of the destination registry.
+        :type registry_name: str
+        :return: Model asset object.
+        :rtype: ~azure.ai.ml.entities.Model
+        """
+
+        #  Get workspace info to get workspace GUID
+        workspace = self._service_client.workspaces.get(
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+        )
+        workspace_guid = workspace.workspace_id
+        workspace_location = workspace.location
+
+        # Get model asset ID
+        asset_id = ASSET_ID_FORMAT.format(
+            workspace_location,
+            workspace_guid,
+            AzureMLResourceType.MODEL,
+            name,
+            version,
+        )
+
+        model_ref = WorkspaceAssetReference(
+            name=share_with_name if share_with_name else name,
+            version=share_with_version if share_with_version else version,
+            asset_id=asset_id,
+        )
+
+        with self._set_registry_client(registry_name):
+            return self.create_or_update(model_ref)
+
     def _get_latest_version(self, name: str) -> Model:
         """Returns the latest version of the asset with the given name.
 
@@ -451,39 +494,14 @@ class ModelOperations(_ScopeDependentOperations):
         )
         return Model._from_rest_object(result)
 
-    # pylint: disable=no-self-use
-    def _prepare_to_copy(
-        self, model: Model, name: Optional[str] = None, version: Optional[str] = None
-    ) -> WorkspaceAssetReference:
+    def _set_registry_client(self, registry_name: str) -> None:
+        """Sets the registry client for the model operations.
 
-        """Returns WorkspaceAssetReference
-        to copy a registered model to registry given the asset id
-
-        :param model: Registered model
-        :type model: Model
-        :param name: Destination name
-        :type name: str
-        :param version: Destination version
-        :type version: str
+        :param registry_name: Name of the registry.
+        :type registry_name: str
         """
-        #  Get workspace info to get workspace GUID
-        workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
-        )
-        workspace_guid = workspace.workspace_id
-        workspace_location = workspace.location
-
-        # Get model asset ID
-        asset_id = ASSET_ID_FORMAT.format(
-            workspace_location,
-            workspace_guid,
-            AzureMLResourceType.MODEL,
-            model.name,
-            model.version,
-        )
-
-        return WorkspaceAssetReference(
-            name=name if name else model.name,
-            version=version if version else model.version,
-            asset_id=asset_id,
-        )
+        _client, rg, sub = get_registry_client(self._service_client._config.credential, registry_name)
+        self._operation_scope.registry_name = registry_name
+        self._operation_scope._resource_group_name = rg
+        self._operation_scope._subscription_id = sub
+        self._model_versions_operation = _client.model_versions
