@@ -24,7 +24,7 @@ async def main():
     print(config["message"])
 
     # Connection to Azure App Configuration using SettingSelector
-    selects = {SettingSelector("message*", "\0")}
+    selects = {SettingSelector(key_filter="message*")}
     config = await load_provider(connection_string=connection_string, selects=selects)
 
     print("message found: " + str("message" in config))

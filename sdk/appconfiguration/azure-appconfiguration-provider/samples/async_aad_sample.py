@@ -19,14 +19,14 @@ async def main():
     config = await load_provider(endpoint=endpoint, credential=credential)
     print(config["message"])
 
-    # Connecting to Azure App Configuration using AAD and trimmed key prefixes
+    # Connecting to Azure App Configuration using AAD and trim key prefixes
     trimmed = {"test."}
-    config = await load_provider(endpoint=endpoint, credential=credential, trimmed_key_prefixes=trimmed)
+    config = await load_provider(endpoint=endpoint, credential=credential, trim_prefixes=trimmed)
 
     print(config["message"])
 
     # Connection to Azure App Configuration using SettingSelector
-    selects = {SettingSelector("message*", "\0")}
+    selects = {SettingSelector(key_filter="message*")}
     config = await load_provider(endpoint=endpoint, credential=credential, selects=selects)
 
     print("message found: " + str("message" in config))

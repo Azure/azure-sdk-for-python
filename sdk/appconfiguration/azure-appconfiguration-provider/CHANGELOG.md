@@ -5,10 +5,14 @@
 ### Features Added
 
 ### Breaking Changes
+* Added `AzureAppConfigurationKeyVaultOptions` to take in a `client_configs` a Mapping of endpoints to client kwargs instead of taking in the whole client.
+* Removed `AzureAppConfigurationKeyVaultOptions` `secret_clients`, `client_configs` should be used instead.
+* Made key_filter and label_filter kwargs for Setting Selector
 
 ### Bugs Fixed
 
 ### Other Changes
+* Made EMPTY_LABEL a constant. i.e. "\0"
 
 ## 1.0.0b2 (2023-02-15)
 

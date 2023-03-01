@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import os
 import json
-from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING
+from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union, MutableMapping
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
@@ -20,7 +20,8 @@ from ._constants import (
     AzureFunctionEnvironmentVariable,
     AzureWebAppEnvironmentVariable,
     ContainerAppEnvironmentVariable,
-    KubernetesEnvironmentVariable
+    KubernetesEnvironmentVariable,
+    EMPTY_LABEL
 )
 
 from ._user_agent import USER_AGENT
@@ -28,6 +29,7 @@ from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 @overload
 def load_provider(
@@ -84,8 +86,8 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
     credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
-    selects: List[SettingSelector] = kwargs.pop("selects", [SettingSelector("*", "\0")])
-    trim_prefixes : List[str] = kwargs.pop("trimmed_key_prefixes", [])
+    selects: List[SettingSelector] = kwargs.pop("selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)])
+    trim_prefixes : List[str] = kwargs.pop("trim_prefixes", [])
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -107,10 +109,6 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     provider = _buildprovider(connection_string, endpoint, credential, key_vault_options, **kwargs)
     provider._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
-
-    if key_vault_options is not None and len(key_vault_options.secret_clients) > 0:
-        for secret_client in key_vault_options.secret_clients:
-            provider._secret_clients[secret_client.vault_url] = secret_client
 
     for select in selects:
         configurations = provider._client.list_configuration_settings(
@@ -151,7 +149,7 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
 def _get_correlation_context(key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions]) -> str:
     correlation_context = "RequestType=Startup"
     if key_vault_options and (
-        key_vault_options.credential or key_vault_options.secret_clients or key_vault_options.secret_resolver
+        key_vault_options.credential or key_vault_options.client_configs or key_vault_options.secret_resolver
     ):
         correlation_context += ",UsesKeyVault"
     host_type = ""
@@ -212,7 +210,15 @@ def _resolve_keyvault_reference(
 
     if referenced_client is None and key_vault_options.credential is not None:
         referenced_client = SecretClient(
-            vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential
+            vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential, 
+             **key_vault_options.client_configs.get(key_vault_identifier.vault_url, {})
+        )
+        provider._secret_clients[key_vault_identifier.vault_url] = referenced_client
+    elif referenced_client is None:
+        options = key_vault_options.client_configs[key_vault_identifier.vault_url]
+        referenced_client = SecretClient(
+            vault_url=key_vault_identifier.vault_url, credential=options.pop("credential"), 
+             **options
         )
         provider._secret_clients[key_vault_identifier.vault_url] = referenced_client
 
@@ -249,7 +255,7 @@ def _is_json_content_type(content_type: str) -> bool:
     return False
 
 
-class AzureAppConfigurationProvider(Mapping[str, str]):
+class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
     settings from Azure App Configuration into a Python application. Enables trimming of prefixes from configuration
