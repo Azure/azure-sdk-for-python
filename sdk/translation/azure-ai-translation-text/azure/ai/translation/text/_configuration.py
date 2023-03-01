@@ -43,7 +43,7 @@ class TranslatorClientConfiguration(Configuration):  # pylint: disable=too-many-
 
         self.endpoint = endpoint
         self.api_version = api_version
-        kwargs.setdefault("sdk_moniker", "ai-translator/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "ai-translation-text/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:

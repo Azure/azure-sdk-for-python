@@ -1,8 +1,0 @@
-[packaging]
-package_name = "azure-cognitiveservices-anomalydetector"
-package_nspkg = "azure-cognitiveservices-nspkg"
-package_pprint_name = "Cognitive Services Anomaly Detector"
-package_doc_id = "cognitive-services"
-is_stable = false
-is_arm = false
-need_msrestazure = false

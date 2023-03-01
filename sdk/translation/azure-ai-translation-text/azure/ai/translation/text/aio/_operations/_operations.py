@@ -81,7 +81,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          response body. Default value is None.
         :paramtype if_none_match: str
         :return: GetLanguagesResult. The GetLanguagesResult is compatible with MutableMapping
-        :rtype: ~azure.ai.translator.models.GetLanguagesResult
+        :rtype: ~azure.ai.translation.text.models.GetLanguagesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -159,7 +159,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         Translate Text.
 
         :param content: Array of the text to be translated. Required.
-        :type content: list[~azure.ai.translator.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextElement]
         :keyword to: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -184,7 +184,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          HTML needs to be a well-formed,
          complete element. Possible values are: plain (default) or html. Known values are: "plain" and
          "html". Default value is None.
-        :paramtype text_type: str or ~azure.ai.translator.models.TextTypes
+        :paramtype text_type: str or ~azure.ai.translation.text.models.TextTypes
         :keyword category: A string specifying the category (domain) of the translation. This parameter
          is used to get translations
          from a customized system built with Custom Translator. Add the Category ID from your Custom
@@ -195,11 +195,11 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword profanity_action: Specifies how profanities should be treated in translations.
          Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
          "Marked", and "Deleted". Default value is None.
-        :paramtype profanity_action: str or ~azure.ai.translator.models.ProfanityActions
+        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityActions
         :keyword profanity_marker: Specifies how profanities should be marked in translations.
          Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
          Default value is None.
-        :paramtype profanity_marker: str or ~azure.ai.translator.models.ProfanityMarkers
+        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarkers
         :keyword include_alignment: Specifies whether to include alignment projection from source text
          to translated text.
          Possible values are: true or false (default). Default value is None.
@@ -236,7 +236,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of TranslatedTextElement
-        :rtype: list[~azure.ai.translator.models.TranslatedTextElement]
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -291,7 +291,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          HTML needs to be a well-formed,
          complete element. Possible values are: plain (default) or html. Known values are: "plain" and
          "html". Default value is None.
-        :paramtype text_type: str or ~azure.ai.translator.models.TextTypes
+        :paramtype text_type: str or ~azure.ai.translation.text.models.TextTypes
         :keyword category: A string specifying the category (domain) of the translation. This parameter
          is used to get translations
          from a customized system built with Custom Translator. Add the Category ID from your Custom
@@ -302,11 +302,11 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword profanity_action: Specifies how profanities should be treated in translations.
          Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
          "Marked", and "Deleted". Default value is None.
-        :paramtype profanity_action: str or ~azure.ai.translator.models.ProfanityActions
+        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityActions
         :keyword profanity_marker: Specifies how profanities should be marked in translations.
          Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
          Default value is None.
-        :paramtype profanity_marker: str or ~azure.ai.translator.models.ProfanityMarkers
+        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarkers
         :keyword include_alignment: Specifies whether to include alignment projection from source text
          to translated text.
          Possible values are: true or false (default). Default value is None.
@@ -343,7 +343,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of TranslatedTextElement
-        :rtype: list[~azure.ai.translator.models.TranslatedTextElement]
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -373,7 +373,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
 
         :param content: Array of the text to be translated. Is either a [InputTextElement] type or a IO
          type. Required.
-        :type content: list[~azure.ai.translator.models.InputTextElement] or IO
+        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
         :keyword to: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -398,7 +398,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          HTML needs to be a well-formed,
          complete element. Possible values are: plain (default) or html. Known values are: "plain" and
          "html". Default value is None.
-        :paramtype text_type: str or ~azure.ai.translator.models.TextTypes
+        :paramtype text_type: str or ~azure.ai.translation.text.models.TextTypes
         :keyword category: A string specifying the category (domain) of the translation. This parameter
          is used to get translations
          from a customized system built with Custom Translator. Add the Category ID from your Custom
@@ -409,11 +409,11 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword profanity_action: Specifies how profanities should be treated in translations.
          Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
          "Marked", and "Deleted". Default value is None.
-        :paramtype profanity_action: str or ~azure.ai.translator.models.ProfanityActions
+        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityActions
         :keyword profanity_marker: Specifies how profanities should be marked in translations.
          Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
          Default value is None.
-        :paramtype profanity_marker: str or ~azure.ai.translator.models.ProfanityMarkers
+        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarkers
         :keyword include_alignment: Specifies whether to include alignment projection from source text
          to translated text.
          Possible values are: true or false (default). Default value is None.
@@ -450,7 +450,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          value is None.
         :paramtype content_type: str
         :return: list of TranslatedTextElement
-        :rtype: list[~azure.ai.translator.models.TranslatedTextElement]
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -539,7 +539,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         Transliterate Text.
 
         :param content: Array of the text to be transliterated. Required.
-        :type content: list[~azure.ai.translator.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextElement]
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -559,7 +559,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of TransliteratedText
-        :rtype: list[~azure.ai.translator.models.TransliteratedText]
+        :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -600,7 +600,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of TransliteratedText
-        :rtype: list[~azure.ai.translator.models.TransliteratedText]
+        :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -621,7 +621,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
 
         :param content: Array of the text to be transliterated. Is either a [InputTextElement] type or
          a IO type. Required.
-        :type content: list[~azure.ai.translator.models.InputTextElement] or IO
+        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -641,7 +641,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          value is None.
         :paramtype content_type: str
         :return: list of TransliteratedText
-        :rtype: list[~azure.ai.translator.models.TransliteratedText]
+        :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -719,7 +719,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
 
         :param content: Array of the text for which values the sentence boundaries will be calculated.
          Required.
-        :type content: list[~azure.ai.translator.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextElement]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -735,7 +735,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of BreakSentenceElement
-        :rtype: list[~azure.ai.translator.models.BreakSentenceElement]
+        :rtype: list[~azure.ai.translation.text.models.BreakSentenceElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -772,7 +772,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of BreakSentenceElement
-        :rtype: list[~azure.ai.translator.models.BreakSentenceElement]
+        :rtype: list[~azure.ai.translation.text.models.BreakSentenceElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -792,7 +792,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
 
         :param content: Array of the text for which values the sentence boundaries will be calculated.
          Is either a [InputTextElement] type or a IO type. Required.
-        :type content: list[~azure.ai.translator.models.InputTextElement] or IO
+        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -808,7 +808,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          value is None.
         :paramtype content_type: str
         :return: list of BreakSentenceElement
-        :rtype: list[~azure.ai.translator.models.BreakSentenceElement]
+        :rtype: list[~azure.ai.translation.text.models.BreakSentenceElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -884,7 +884,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         Dictionary Lookup.
 
         :param content: Array of the text to be sent to dictionary. Required.
-        :type content: list[~azure.ai.translator.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextElement]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -900,7 +900,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of DictionaryLookupElement
-        :rtype: list[~azure.ai.translator.models.DictionaryLookupElement]
+        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -936,7 +936,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of DictionaryLookupElement
-        :rtype: list[~azure.ai.translator.models.DictionaryLookupElement]
+        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -956,7 +956,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
 
         :param content: Array of the text to be sent to dictionary. Is either a [InputTextElement] type
          or a IO type. Required.
-        :type content: list[~azure.ai.translator.models.InputTextElement] or IO
+        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -972,7 +972,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          value is None.
         :paramtype content_type: str
         :return: list of DictionaryLookupElement
-        :rtype: list[~azure.ai.translator.models.DictionaryLookupElement]
+        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1048,7 +1048,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         Dictionary Examples.
 
         :param content: Array of the text to be sent to dictionary. Required.
-        :type content: list[~azure.ai.translator.models.DictionaryExampleTextElement]
+        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextElement]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1064,7 +1064,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of DictionaryExampleElement
-        :rtype: list[~azure.ai.translator.models.DictionaryExampleElement]
+        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1100,7 +1100,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: list of DictionaryExampleElement
-        :rtype: list[~azure.ai.translator.models.DictionaryExampleElement]
+        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1120,7 +1120,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
 
         :param content: Array of the text to be sent to dictionary. Is either a
          [DictionaryExampleTextElement] type or a IO type. Required.
-        :type content: list[~azure.ai.translator.models.DictionaryExampleTextElement] or IO
+        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextElement] or IO
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1136,7 +1136,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          value is None.
         :paramtype content_type: str
         :return: list of DictionaryExampleElement
-        :rtype: list[~azure.ai.translator.models.DictionaryExampleElement]
+        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleElement]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {

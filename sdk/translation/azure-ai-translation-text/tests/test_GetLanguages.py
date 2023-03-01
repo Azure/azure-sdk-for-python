@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.translator import TranslatorClient
-from azure.ai.translator.models import InputTextElement
+from azure.ai.translation.text import TranslatorClient
+from azure.ai.translation.text.models import InputTextElement
 
 from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest
 

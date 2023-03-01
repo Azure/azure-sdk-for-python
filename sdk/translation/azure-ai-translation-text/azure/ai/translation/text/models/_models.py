@@ -140,7 +140,7 @@ class BreakSentenceElement(_model_base.Model):
 
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
-    :vartype detected_language: ~azure.ai.translator.models.DetectedLanguage
+    :vartype detected_language: ~azure.ai.translation.text.models.DetectedLanguage
     :ivar sent_len: An integer array representing the lengths of the sentences in the input text.
      The length of the array is the number of sentences, and the values are the length of each
      sentence. Required.
@@ -276,7 +276,7 @@ class DictionaryExampleElement(_model_base.Model):
      Required.
     :vartype normalized_target: str
     :ivar examples: A list of examples for the (source term, target term) pair. Required.
-    :vartype examples: list[~azure.ai.translator.models.Example]
+    :vartype examples: list[~azure.ai.translation.text.models.Example]
     """
 
     normalized_source: str = rest_field(name="normalizedSource")
@@ -396,7 +396,7 @@ class DictionaryLookupElement(_model_base.Model):
      spelling of the name: "John". Required.
     :vartype display_source: str
     :ivar translations: A list of translations for the source term. Required.
-    :vartype translations: list[~azure.ai.translator.models.DictionaryTranslation]
+    :vartype translations: list[~azure.ai.translation.text.models.DictionaryTranslation]
     """
 
     normalized_source: str = rest_field(name="normalizedSource")
@@ -465,7 +465,7 @@ class DictionaryTranslation(_model_base.Model):
      being
      looked up is "fly", then it is guaranteed that "fly" will be in the backTranslations list).
      However, it is not guaranteed to be in the first position, and often will not be. Required.
-    :vartype back_translations: list[~azure.ai.translator.models.BackTranslation]
+    :vartype back_translations: list[~azure.ai.translation.text.models.BackTranslation]
     """
 
     normalized_target: str = rest_field(name="normalizedTarget")
@@ -628,30 +628,28 @@ This value may be an empty string. Required. """
 class GetLanguagesResult(_model_base.Model):
     """Response for the languages API.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar translation: Languages that support translate API. Required.
-    :vartype translation: dict[str, ~azure.ai.translator.models.TranslationLanguage]
-    :ivar transliteration: Languages that support transliteration API. Required.
-    :vartype transliteration: dict[str, ~azure.ai.translator.models.TransliterationLanguage]
-    :ivar dictionary: Languages that support dictionary API. Required.
-    :vartype dictionary: dict[str, ~azure.ai.translator.models.SourceDictionaryLanguage]
+    :ivar translation: Languages that support translate API.
+    :vartype translation: dict[str, ~azure.ai.translation.text.models.TranslationLanguage]
+    :ivar transliteration: Languages that support transliteration API.
+    :vartype transliteration: dict[str, ~azure.ai.translation.text.models.TransliterationLanguage]
+    :ivar dictionary: Languages that support dictionary API.
+    :vartype dictionary: dict[str, ~azure.ai.translation.text.models.SourceDictionaryLanguage]
     """
 
-    translation: Dict[str, "_models.TranslationLanguage"] = rest_field()
-    """Languages that support translate API. Required. """
-    transliteration: Dict[str, "_models.TransliterationLanguage"] = rest_field()
-    """Languages that support transliteration API. Required. """
-    dictionary: Dict[str, "_models.SourceDictionaryLanguage"] = rest_field()
-    """Languages that support dictionary API. Required. """
+    translation: Optional[Dict[str, "_models.TranslationLanguage"]] = rest_field()
+    """Languages that support translate API. """
+    transliteration: Optional[Dict[str, "_models.TransliterationLanguage"]] = rest_field()
+    """Languages that support transliteration API. """
+    dictionary: Optional[Dict[str, "_models.SourceDictionaryLanguage"]] = rest_field()
+    """Languages that support dictionary API. """
 
     @overload
     def __init__(
         self,
         *,
-        translation: Dict[str, "_models.TranslationLanguage"],
-        transliteration: Dict[str, "_models.TransliterationLanguage"],
-        dictionary: Dict[str, "_models.SourceDictionaryLanguage"],
+        translation: Optional[Dict[str, "_models.TranslationLanguage"]] = None,
+        transliteration: Optional[Dict[str, "_models.TransliterationLanguage"]] = None,
+        dictionary: Optional[Dict[str, "_models.SourceDictionaryLanguage"]] = None,
     ):
         ...
 
@@ -672,7 +670,7 @@ class MtErrorResponse(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar error: Error details. Required.
-    :vartype error: ~azure.ai.translator.models.ErrorDetails
+    :vartype error: ~azure.ai.translation.text.models.ErrorDetails
     """
 
     error: "_models.ErrorDetails" = rest_field()
@@ -757,7 +755,7 @@ class SourceDictionaryLanguage(_model_base.Model):
     :vartype dir: str
     :ivar translations: List of languages with alterative translations and examples for the query
      expressed in the source language. Required.
-    :vartype translations: list[~azure.ai.translator.models.TargetDictionaryLanguage]
+    :vartype translations: list[~azure.ai.translation.text.models.TargetDictionaryLanguage]
     """
 
     name: str = rest_field()
@@ -878,18 +876,18 @@ class TranslatedTextElement(_model_base.Model):
 
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
-    :vartype detected_language: ~azure.ai.translator.models.DetectedLanguage
+    :vartype detected_language: ~azure.ai.translation.text.models.DetectedLanguage
     :ivar translations: An array of translation results. The size of the array matches the number
      of target
      languages specified through the to query parameter. Required.
-    :vartype translations: list[~azure.ai.translator.models.Translation]
+    :vartype translations: list[~azure.ai.translation.text.models.Translation]
     :ivar source_text: Input text in the default script of the source language. sourceText property
      is present only when
      the input is expressed in a script that's not the usual script for the language. For example,
      if the input were Arabic written in Latin script, then sourceText.text would be the same
      Arabic text
      converted into Arab script.
-    :vartype source_text: ~azure.ai.translator.models.SourceText
+    :vartype source_text: ~azure.ai.translation.text.models.SourceText
     """
 
     detected_language: Optional["_models.DetectedLanguage"] = rest_field(name="detectedLanguage")
@@ -935,11 +933,11 @@ class Translation(_model_base.Model):
     :vartype text: str
     :ivar transliteration: An object giving the translated text in the script specified by the
      toScript parameter.
-    :vartype transliteration: ~azure.ai.translator.models.Transliteration
+    :vartype transliteration: ~azure.ai.translation.text.models.Transliteration
     :ivar alignment: Alignment information.
-    :vartype alignment: ~azure.ai.translator.models.Alignment
+    :vartype alignment: ~azure.ai.translation.text.models.Alignment
     :ivar sent_len: Sentence boundaries in the input and output texts.
-    :vartype sent_len: ~azure.ai.translator.models.SentenceLength
+    :vartype sent_len: ~azure.ai.translation.text.models.SentenceLength
     """
 
     to: str = rest_field()
@@ -1039,7 +1037,7 @@ class TransliterableScript(CommonScriptModel):
      languages. Required.
     :vartype dir: str
     :ivar to_scripts: List of scripts available to convert text to. Required.
-    :vartype to_scripts: list[~azure.ai.translator.models.CommonScriptModel]
+    :vartype to_scripts: list[~azure.ai.translation.text.models.CommonScriptModel]
     """
 
     to_scripts: List["_models.CommonScriptModel"] = rest_field(name="toScripts")
@@ -1156,7 +1154,7 @@ class TransliterationLanguage(_model_base.Model):
      Required.
     :vartype native_name: str
     :ivar scripts: List of scripts to convert from. Required.
-    :vartype scripts: list[~azure.ai.translator.models.TransliterableScript]
+    :vartype scripts: list[~azure.ai.translation.text.models.TransliterableScript]
     """
 
     name: str = rest_field()
