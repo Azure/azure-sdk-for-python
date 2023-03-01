@@ -11,7 +11,7 @@ parameters:
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - script: |
-      pip install -r eng/ci_tools.txt
+      python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: and(succeededOrFailed(), ne(variables['Skip.BreakingChanges'],'true'))
 
