@@ -83,7 +83,11 @@ class FeatureStore(Workspace):
             name=workspace_object.name,
             description=workspace_object.description,
             tags=workspace_object.tags,
-            compute_runtime=workspace_object.feature_store_settings.compute_runtime,
+            compute_runtime=ComputeRuntime._from_rest_object(
+                workspace_object.feature_store_settings.compute_runtime
+                if workspace_object.feature_store_settings
+                else None
+            ),
             display_name=workspace_object.display_name,
             location=workspace_object.location,
             resource_group=workspace_object.resource_group,

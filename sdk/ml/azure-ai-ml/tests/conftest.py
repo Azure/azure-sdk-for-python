@@ -768,7 +768,7 @@ def mock_workspace_arm_template_deployment_name(mocker: MockFixture, variable_re
         return variable_recorder.get_or_record("deployment_name", deployment_name)
 
     mocker.patch(
-        "azure.ai.ml.operations._workspace_operations.get_deployment_name",
+        "azure.ai.ml.operations._workspace_operations_base.get_deployment_name",
         side_effect=generate_mock_workspace_deployment_name,
     )
 
@@ -780,7 +780,7 @@ def mock_workspace_dependent_resource_name_generator(mocker: MockFixture, variab
         return variable_recorder.get_or_record(f"{resource_type}_name", deployment_name)
 
     mocker.patch(
-        "azure.ai.ml.operations._workspace_operations.get_name_for_dependent_resource",
+        "azure.ai.ml.operations._workspace_operations_base.get_name_for_dependent_resource",
         side_effect=generate_mock_workspace_dependent_resource_name,
     )
 
