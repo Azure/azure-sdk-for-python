@@ -29,7 +29,7 @@ from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 @overload
 def load_provider(
@@ -208,17 +208,11 @@ def _resolve_keyvault_reference(
     #pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(key_vault_identifier.vault_url, None)
 
-    if referenced_client is None and key_vault_options.credential is not None:
+    if referenced_client is None:
+        keyvault_credential = key_vault_options.client_configs.pop(key_vault_identifier.vault_url, key_vault_options.credential)
         referenced_client = SecretClient(
-            vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential, 
+            vault_url=key_vault_identifier.vault_url, credential=keyvault_credential, 
              **key_vault_options.client_configs.get(key_vault_identifier.vault_url, {})
-        )
-        provider._secret_clients[key_vault_identifier.vault_url] = referenced_client
-    elif referenced_client is None:
-        options = key_vault_options.client_configs[key_vault_identifier.vault_url]
-        referenced_client = SecretClient(
-            vault_url=key_vault_identifier.vault_url, credential=options.pop("credential"), 
-             **options
         )
         provider._secret_clients[key_vault_identifier.vault_url] = referenced_client
 

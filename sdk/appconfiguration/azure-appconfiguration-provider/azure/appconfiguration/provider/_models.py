@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping
+from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any
 from ._constants import EMPTY_LABEL
 
 if TYPE_CHECKING:
@@ -16,7 +16,7 @@ class AzureAppConfigurationKeyVaultOptions:
             self,
             *,
             credential: Optional[Union["TokenCredential", "AsyncTokenCredential"]] = None,
-            client_configs: Optional[Mapping[str, Mapping]] = None,
+            client_configs: Optional[Mapping[str, Mapping[str, Any]]] = None,
             secret_resolver: Optional[Union[Callable[[str], str], Callable[[str], Awaitable[str]]]] = None
         ):
         """
@@ -49,6 +49,6 @@ class SettingSelector:
     :type label_filter: Optional[str]
     """
 
-    def __init__(self, *, key_filter, **kwargs):
+    def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL, **kwargs):
         self.key_filter = key_filter
-        self.label_filter = kwargs.pop("label_filter", EMPTY_LABEL)
+        self.label_filter = label_filter

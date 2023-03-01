@@ -12,7 +12,7 @@ from async_preparers import app_config_decorator_async
 
 class TestAppConfigurationProvider(AzureRecordedTestCase):
 
-    async def build_provider_aad(self, endpoint, trim_prefixes=[], selects={SettingSelector("*", "\0")}):
+    async def build_provider_aad(self, endpoint, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
         return await load_provider(credential=cred, endpoint=endpoint, trim_prefixes=trim_prefixes, selects=selects)
 

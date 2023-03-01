@@ -11,7 +11,7 @@ from async_preparers import app_config_decorator_async
 
 class TestAppConfigurationProvider(AzureRecordedTestCase):
 
-    async def build_provider(self, connection_string, trim_prefixes=[], selects={SettingSelector("*", "\0")}):
+    async def build_provider(self, connection_string, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}):
         return await load_provider(connection_string=connection_string, trim_prefixes=trim_prefixes, selects=selects)
 
     # method: provider_creation

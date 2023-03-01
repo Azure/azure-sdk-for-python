@@ -15,7 +15,7 @@ from preparers import app_config_decorator
 
 class TestAppConfigurationProvider(AzureRecordedTestCase):
 
-    def build_provider(self, connection_string, trim_prefixes=[], selects={SettingSelector("*", "\0")}):
+    def build_provider(self, connection_string, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}):
         return load_provider(connection_string=connection_string, trim_prefixes=trim_prefixes, selects=selects)
 
     # method: provider_creation
@@ -43,7 +43,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     @recorded_by_proxy
     @app_config_decorator
     def test_provider_selectors(self, appconfiguration_connection_string):
-        selects = {SettingSelector(key_filter="message*",label_filter="dev")}
+        selects = {SettingSelector(key_filter="message*", label_filter="dev")}
         client = self.build_provider(appconfiguration_connection_string, selects=selects)
         assert client["message"] == "test"
         assert "test.trimmed" not in client
