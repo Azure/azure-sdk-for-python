@@ -21,7 +21,7 @@ CURATED_ENV_PREFIX = "AzureML-"
 FILE_PREFIX = "file:"
 FOLDER_PREFIX = "folder:"
 HTTP_PREFIX = "http"
-HTTPS_PREFIX = "https://"
+HTTPS_PREFIX = "https"
 ARM_ID_FULL_PREFIX = "/subscriptions/"
 AZUREML_RESOURCE_PROVIDER = "Microsoft.MachineLearningServices"
 RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}"
@@ -74,7 +74,6 @@ COMPUTE_UPDATE_ERROR = (
     "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
-MAX_ASSET_STORE_API_CALL_RETRIES = 3
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"
