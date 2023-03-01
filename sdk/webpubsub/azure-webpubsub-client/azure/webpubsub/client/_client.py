@@ -102,6 +102,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
      retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 1.0.
     :keyword float message_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
     :keyword RetryMode message_retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword bool auto_rejoin_groups: auto_rejoin_groups, default is True
     """
 
     def __init__(
@@ -623,7 +624,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             raise e
 
     @distributed_trace
-    def _stop(self) -> None:
+    def stop(self) -> None:
         """stop the client"""
 
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
@@ -636,8 +637,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._ws.sock.close()
 
         if self._thread_seq_ack and self._thread_seq_ack.is_alive():
+            _LOGGER.debug("wait for seq thread stop")
             self._thread_seq_ack.join()
         if self._thread and self._thread.is_alive():
+            _LOGGER.debug("wait for listener thread stop")
             self._thread.join()
         self._thread_seq_ack = None
         self._thread = None
@@ -782,7 +785,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             _LOGGER.error("wrong event type: %s", event)
 
     def __enter__(self):
-        self._start()
+        self.start()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._stop()
+        self.stop()

@@ -4,11 +4,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from typing import List, Any
 import time
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer
-from azure.webpubsub.client.models import OnGroupDataMessageArgs
+from azure.webpubsub.client.models import OnGroupDataMessageArgs, WebPubSubProtocolType
+
+TEST_RESULT = set()
+
+
+def on_group_message(msg: OnGroupDataMessageArgs):
+    TEST_RESULT.add(msg.data)
 
 
 @pytest.mark.live_test_only
@@ -38,4 +45,55 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         with client:
             group_name = "test"
             client.join_group(group_name)
-            client.send_to_group(group_name, "hello test_context_manager", "text")
+            client.send_to_group(group_name, "test_context_manager", "text")
+
+    # auto_connect will be triggered if connection is dropped by accident
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_auto_connect(self, webpubsubclient_connection_string):
+        client = self.create_client(connection_string=webpubsubclient_connection_string)
+        name = "test_auto_connect"
+        with client:
+            group_name = "test"
+            client.on("group-message", on_group_message)
+            client.join_group(group_name)
+            client._ws.sock.close()
+            time.sleep(0.001)
+            client.send_to_group(group_name, name, "text")
+        assert name in TEST_RESULT
+
+    # recovery will be triggered if connection is dropped by accident and disable auto reconnect
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_recovery(self, webpubsubclient_connection_string):
+        client = self.create_client(connection_string=webpubsubclient_connection_string, reconnect_retry_total=0)
+        name = "test_recovery"
+        with client:
+            group_name = "test"
+            client.on("group-message", on_group_message)
+            client.join_group(group_name)
+            # close connection with abnormal code
+            client._ws.sock.close(1001)
+            time.sleep(0.001)
+            client.send_to_group(group_name, name, "text")
+        assert name in TEST_RESULT
+
+    # disable recovery and auto reconnect
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_disable_recovery_autoconnect(self, webpubsubclient_connection_string):
+        client = self.create_client(
+            connection_string=webpubsubclient_connection_string,
+            reconnect_retry_total=0,
+            protocol_type=WebPubSubProtocolType.JSON,
+        )
+        name = "test_disable_recovery_autoconnect"
+        with client:
+            group_name = "test"
+            client.on("group-message", on_group_message)
+            client.join_group(group_name)
+            # close connection with abnormal code
+            client._ws.sock.close(1001)
+            time.sleep(0.001)
+            client.send_to_group(group_name, name, "text")
+        assert name not in TEST_RESULT
