@@ -17,5 +17,5 @@ class InternalEnvironmentSchema(PathAwareSchema):
         required=False,
     )
     name = fields.Str()
-    version =  VersionField()
+    version = VersionField()
     python = fields.Dict()
