@@ -7,7 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.5.0 az00000-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -44,9 +44,9 @@
         "properties": {
           "friendlyName": "00000",
           "description": "",
-          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/00000eastus7716106788",
-          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/00000eastus2730680861",
-          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/00000eastus0961234901",
+          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/sdkeastus7716106788",
+          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/sdkeastus2730680861",
+          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/sdkeastus0961234901",
           "hbiWorkspace": false,
           "tenantId": "0000000-0000-0000-0000-000000000000",
           "imageBuildCompute": null,
@@ -57,7 +57,7 @@
           "creationTime": "2022-08-03T09:04:09.0982598Z",
           "notebookInfo": {
             "resourceId": "0000000-0000-0000-0000-000000000000",
-            "fqdn": "ml-00000-eastus-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7.eastus.notebooks.azure.net",
+            "fqdn": "ml-sdk-eastus-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7.eastus.notebooks.azure.net",
             "isPrivateLinkEnabled": false,
             "notebookPreparationError": null
           },
@@ -68,7 +68,7 @@
           "publicNetworkAccess": "Enabled",
           "discoveryUrl": "https://eastus.api.azureml.ms/discovery",
           "mlFlowTrackingUri": "azureml://eastus.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000",
-          "00000TelemetryAppInsightsKey": "0000000-0000-0000-0000-000000000000",
+          "sdkTelemetryAppInsightsKey": "0000000-0000-0000-0000-000000000000",
           "sasGetterUri": "",
           "enableDataIsolation": false
         },
@@ -100,7 +100,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=UTF-8",
-        "User-Agent": "azure-ai-ml/1.5.0 az00000-python-core/1.26.4 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-core/1.26.4 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -148,7 +148,7 @@
         "properties": {
           "hash_sha256": "00b05eba3481b695209eefd42eccfab14785ac530539323563d8bd14bb97709c",
           "hash_version": "202208",
-          "azureml.codeUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/000000000000000000000000000000000000/hemera-component"
+          "azureml.codeUri": "https://sdkeastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/000000000000000000000000000000000000/hemera-component"
         },
         "description": null,
         "name": "1f43a999-6005-a167-6bde-90cc09ac7298",
@@ -176,7 +176,7 @@
         },
         "modifiedTime": "2023-02-14T10:08:25.8030673\u002B00:00",
         "gitRepositoryCommit": null,
-        "uri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/000000000000000000000000000000000000/hemera-component",
+        "uri": "https://sdkeastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/000000000000000000000000000000000000/hemera-component",
         "contentHash": "00b05eba3481b695209eefd42eccfab14785ac530539323563d8bd14bb97709c",
         "hashVersion": "202208",
         "provisioningState": "Succeeded"
@@ -189,7 +189,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.5.0 az00000-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -229,7 +229,7 @@
           },
           "isArchived": false,
           "isAnonymous": false,
-          "codeUri": "https://00000eastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/000000000000000000000000000000000000/hemera-component"
+          "codeUri": "https://sdkeastus7716106788.blob.core.windows.net/azureml-blobstore-5e9d5b64-b65b-4c60-b07e-0cdea249d7d7/LocalUpload/000000000000000000000000000000000000/hemera-component"
         },
         "systemData": {
           "createdAt": "2023-02-14T10:00:02.3664278\u002B00:00",
@@ -250,7 +250,7 @@
         "Connection": "keep-alive",
         "Content-Length": "2401",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.5.0 az00000-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "properties": {
@@ -473,7 +473,7 @@
         "Connection": "keep-alive",
         "Content-Length": "994",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.5.0 az00000-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "properties": {
@@ -611,7 +611,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azure-ai-ml/1.5.0 az00000-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 400,
