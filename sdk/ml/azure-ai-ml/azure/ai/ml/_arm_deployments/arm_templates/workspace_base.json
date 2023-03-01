@@ -402,6 +402,58 @@
             "metadata": {
                 "description": "Managed network settings to be used for the workspace. If not specified, isolation mode Disabled is the default"
             }
+        },
+        "spark_runtime_version": {
+            "type": "string",
+            "metadata": {
+                "description": "spark version to be used by all feature sets"
+            }
+        },
+        "offline_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store config"
+            }
+        },
+        "online_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store config"
+            }
+        },
+        "offline_store_connection_target": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store connection target"
+            }
+        },
+        "materialization_identity_client_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store connection credential client id"
+            }
+        },
+        "materialization_identity_resource_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store connection credential resource id"
+            }
+        },
+        "setup_materialization_store": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "Whether to set up materialization store"
+            }
         }
     },
     "variables": {
@@ -432,7 +484,8 @@
             }
         },
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
-        "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]"
+        "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
+        "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]"
     },
     "resources": [
         {
