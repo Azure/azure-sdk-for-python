@@ -56,7 +56,7 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ):
         mocker.patch("azure.ai.ml.operations.FeatureStoreOperations.get", return_value=None)
-        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
+        mocker.patch("azure.ai.ml.operations.FeatureStoreOperations._populate_arm_paramaters", return_value=({}, {}, {}))
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))
 
@@ -91,10 +91,13 @@ class TestWorkspaceOperation:
         mock_feature_store_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_feature_store_operation._operation.begin_delete.assert_called_once()
 
-    def test_delete_not_feature_store(
+    def test_delete_non_feature_store_kind(
         self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture
     ) -> None:
+        def outgoing_call(rg, name):
+            return Workspace(name=name)._to_rest_object()
+
+        mock_feature_store_operation._operation.get.side_effect = outgoing_call
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
         with pytest.raises(Exception):
             mock_feature_store_operation.begin_delete("randstr", delete_dependent_resources=True)
-        # mock_feature_store_operation._operation.begin_delete.assert_called()
