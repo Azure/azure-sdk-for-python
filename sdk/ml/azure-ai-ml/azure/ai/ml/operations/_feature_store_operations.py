@@ -94,6 +94,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     @distributed_trace
+    # pylint: disable=arguments-differ
     def get(self, name: str, **kwargs: Dict) -> FeatureStore:
         """Get a feature store by name.
 
@@ -140,6 +141,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "FeatureStore.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
+    # pylint: disable=arguments-differ
     def begin_create(
         self,
         feature_store: FeatureStore,
@@ -175,6 +177,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
+    # pylint: disable=arguments-renamed
     def begin_update(
         self,
         feature_store: FeatureStore,

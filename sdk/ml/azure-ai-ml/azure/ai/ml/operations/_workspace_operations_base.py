@@ -82,7 +82,7 @@ class WorkspaceOperationsBase:
         self,
         workspace: Workspace,
         update_dependent_resources: bool = False,
-        get_callback: Callable[[], Workspace] = None,
+        get_callback: Optional[Callable[[], Workspace]] = None,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
         existing_workspace = None

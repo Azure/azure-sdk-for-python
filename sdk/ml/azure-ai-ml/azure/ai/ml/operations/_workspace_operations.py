@@ -119,6 +119,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
+    # pylint: disable=arguments-differ
     def begin_create(
         self,
         workspace: Workspace,

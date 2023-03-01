@@ -129,13 +129,13 @@ class FeatureStore(Workspace):
         if not rest_obj:
             return None
 
-        workspace_object = Workspace._from_rest_object(rest_obj)
+        workspace_object = Workspace._from_rest_object(rest_obj)  # pylint: disable=protected-access
 
         return FeatureStore(
             name=workspace_object.name,
             description=workspace_object.description,
             tags=workspace_object.tags,
-            compute_runtime=ComputeRuntime._from_rest_object(
+            compute_runtime=ComputeRuntime._from_rest_object(  # pylint: disable=protected-access
                 workspace_object.feature_store_settings.compute_runtime
                 if workspace_object.feature_store_settings
                 else None
