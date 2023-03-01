@@ -444,7 +444,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         max_iterations: int,
         pass_iteration_to_components: bool,
         pass_index_to_silo_components: bool,
-        raise_error=True,
+        raise_error=False,
         **kwargs) -> MutableValidationResult:
 
         validation_result = cls._create_empty_validation_result()
