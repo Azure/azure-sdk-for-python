@@ -2025,7 +2025,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         show_stats: Optional[bool] = None,
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
-        max_sentence_count: Optional[int] = None,
+        sentence_count: Optional[int] = None,
         **kwargs: Any,
     ) -> TextAnalysisLROPoller[ItemPaged[Union[AbstractiveSummaryResult, DocumentError]]]:
         """Start a long-running abstractive summarization operation.
@@ -2053,7 +2053,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             Optionally use the `language` keyword argument to provide a default/fallback language
             to use for the batch in the event that the service is unable to detect the language.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
-        :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
+        :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
         :keyword Optional[str] model_version: The model version to use for the analysis.
         :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
@@ -2124,7 +2124,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                         AbstractiveSummaryAction(
                             model_version=model_version,
                             string_index_type=string_index_type_arg,
-                            max_sentence_count=max_sentence_count,
+                            sentence_count=sentence_count,
                             disable_service_logs=disable_service_logs,
                         )
                     ],

@@ -89,7 +89,7 @@
 /sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @RoyHerrod @danielav7
 
 # PRLabel: %Communication - Rooms
-/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft
+/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft @minnieliu @paolamvhz @alexokun @Mrayyan @shwali-msft @allchiang-msft @mikehang-msft
 
 # PRLabel: %Communication - SMS
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
@@ -137,10 +137,10 @@
 /sdk/containerservice/                                               @zqingqing1
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @JericHunter
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @bambriz
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy @bambriz
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis

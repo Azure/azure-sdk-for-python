@@ -37,6 +37,7 @@ def analyze_receipts():
         )
     )
 
+    # [START analyze_receipts]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
 
@@ -118,6 +119,7 @@ def analyze_receipts():
         if total:
             print("Total: {} has confidence: {}".format(total.value, total.confidence))
         print("--------------------------------------")
+    # [END analyze_receipts]
 
 
 if __name__ == "__main__":
