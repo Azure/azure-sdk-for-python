@@ -163,13 +163,20 @@ def create_package(
     if not os.path.isdir(setup_directory_or_file):
         setup_directory_or_file = os.path.dirname(setup_directory_or_file)
 
-    if enable_wheel:
+    setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
+    
+    if len(setup_parsed.ext_modules) > 0:
         run_logged(
-            [sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_directory_or_file
+            [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
         )
-    if enable_sdist:
-        run_logged(
-            [sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist],
-            prefix="create_sdist",
-            cwd=setup_directory_or_file,
-        )
+    else:
+        if enable_wheel:
+            run_logged(
+                [sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_directory_or_file
+            )
+        if enable_sdist:
+            run_logged(
+                [sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist],
+                prefix="create_sdist",
+                cwd=setup_directory_or_file,
+            )

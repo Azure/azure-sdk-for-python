@@ -57,6 +57,9 @@ extends:
       safeName: azuremgmtstoragesync
     - name: azure-mgmt-storageimportexport
       safeName: azuremgmtstorageimportexport
+    - name: azure-storage-extensions
+      safeName: azure-storage-extensions
+    AdvancedBuild: true
     CondaArtifacts:
     - name: azure-storage
       meta_source: conda-recipe/meta.yaml
