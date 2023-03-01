@@ -20,6 +20,9 @@ parameters:
   - name: ArtifactSuffix
     type: string
     default: ''
+  - name: IncludeAdditional
+    type: boolean
+    default: true
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -85,16 +88,15 @@ steps:
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
 
-  - ${{ if eq(parameters.ArtifactSuffix, 'linux') }}:
-    - task: PythonScript@0
-      displayName: 'Generate Docs'
-      condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
-      inputs:
-        scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-        arguments: >-
-          "$(TargetingString)" 
-          --service="${{ parameters.ServiceDirectory }}" 
-          --toxenv=sphinx
+  - task: PythonScript@0
+    displayName: 'Generate Docs'
+    condition: and(succeededOrFailed(), ${{parameters.BuildDocs}}, ${{ parameters.IncludeAdditional }})
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "$(TargetingString)" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv=sphinx
 
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL]https://pypi.python.org/simple"

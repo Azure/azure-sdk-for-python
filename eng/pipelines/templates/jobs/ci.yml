@@ -98,6 +98,9 @@ jobs:
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
+    - pwsh: |
+        Write Host "$[eq(variables.artifactName, 'linux')]"
+
     - template: ../steps/build-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -106,6 +109,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: $(artifactName)
+        IncludeAdditional: $[eq(variables.artifactName, 'linux')]
 
     - template: ../steps/build-conda-artifacts.yml
       parameters:
