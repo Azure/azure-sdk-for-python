@@ -182,7 +182,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[FeatureStore]:
-        """Update friendly name, description, managed identities or tags of a feature store.
+        """Update friendly name, description, materialization identities or tags of a feature store.
 
         :param feature store: FeatureStore resource.
         :param update_dependent_resources: gives your consent to update the feature store dependent resources.
@@ -224,7 +224,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     not existing_offline_Store_connection.properties
                     or existing_offline_Store_connection.properties.target != offline_store.target
                 ):
-                    raise ValidationError("Cannot update the offline store")
+                    raise ValidationError("Cannot update the offline store target")
             else:
                 if not materialization_identity:
                     raise ValidationError("Materialization identity is required to setup offline store connection")

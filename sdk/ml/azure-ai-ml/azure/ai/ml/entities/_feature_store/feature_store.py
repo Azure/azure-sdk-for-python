@@ -40,6 +40,58 @@ class FeatureStore(Workspace):
         identity: Optional[IdentityConfiguration] = None,
         **kwargs,
     ):
+
+        """FeatureStore.
+
+        :param name: Name of the feature store.
+        :type name: str
+        :param compute_runtime: Compute runtime of the feature store.
+        :type compute_runtime: ~azure.ai.ml.entities.ComputeRuntime
+        :param offline_store: Offline store for feature store.
+        :type offline_store: ~azure.ai.ml.entities.MaterializationStore
+        :param materialization_identity: Identity used for materialization.
+        :type materialization_identity: ~azure.ai.ml.entities.ManagedIdentityConfiguration
+        :param description: Description of the feature store.
+        :type description: str
+        :param tags: Tags of the feature store.
+        :type tags: dict
+        :param display_name: Display name for the feature store. This is non-unique within the resource group.
+        :type display_name: str
+        :param location: The location to create the feature store in.
+            If not specified, the same location as the resource group will be used.
+        :type location: str
+        :param resource_group: Name of resource group to create the feature store in.
+        :type resource_group: str
+        :param hbi_workspace: Whether the customer data is of high business impact (HBI),
+            containing sensitive business information.
+            For more information, see
+            https://docs.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
+        :type hbi_workspace: bool
+        :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
+        :type storage_account: str
+        :param container_registry: The resource ID of an existing container registry
+            to use instead of creating a new one.
+        :type container_registry: str
+        :param key_vault: The resource ID of an existing key vault to use instead of creating a new one.
+        :type key_vault: str
+        :param application_insights: The resource ID of an existing application insights
+            to use instead of creating a new one.
+        :type application_insights: str
+        :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
+            If not specified, Microsoft-managed keys will be used by default.
+        :type customer_managed_key: CustomerManagedKey
+        :param image_build_compute: The name of the compute target to use for building environment
+            Docker images with the container registry is behind a VNet.
+        :type image_build_compute: str
+        :param public_network_access: Whether to allow public endpoint connectivity
+            when a workspace is private link enabled.
+        :type public_network_access: str
+        :param identity: workspace's Managed Identity (user assigned, or system assigned)
+        :type identity: IdentityConfiguration
+        :param kwargs: A dictionary of additional configuration parameters.
+        :type kwargs: dict
+        """
+
         feature_store_settings = FeatureStoreSettings(
             compute_runtime=compute_runtime
             if compute_runtime

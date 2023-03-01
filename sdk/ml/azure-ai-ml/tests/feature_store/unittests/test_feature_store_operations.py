@@ -53,7 +53,9 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ):
         mocker.patch("azure.ai.ml.operations.FeatureStoreOperations.get", return_value=None)
-        mocker.patch("azure.ai.ml.operations.FeatureStoreOperations._populate_arm_paramaters", return_value=({}, {}, {}))
+        mocker.patch(
+            "azure.ai.ml.operations.FeatureStoreOperations._populate_arm_paramaters", return_value=({}, {}, {})
+        )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))
 
