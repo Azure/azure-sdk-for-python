@@ -446,11 +446,7 @@ class WorkspaceOperations:
         return poller
 
     # pylint: disable=too-many-statements,too-many-branches,too-many-locals
-    def _populate_arm_paramaters(
-        self,
-        workspace: Workspace,
-        **kwargs: Dict,
-    ) -> Tuple[dict, dict, dict]:
+    def _populate_arm_paramaters(self, workspace: Workspace) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
@@ -472,7 +468,7 @@ class WorkspaceOperations:
         _set_val(param["location"], workspace.location)
 
         if not workspace.kind:
-            _set_val(param["kind"], "Default")
+            _set_val(param["kind"], "default")
         else:
             _set_val(param["kind"], workspace.kind)
 
@@ -641,17 +637,7 @@ class WorkspaceOperations:
             )
             _set_val(param["online_store_connection_name"], "")
 
-        setup_feature_store = kwargs.get("setup_feature_store", False)
-        materialization_identity = kwargs.get("materialization_identity", None)
-        offline_store_target = kwargs.get("offline_store_target", None)
-
-        setup_materialization_store = setup_feature_store and offline_store_target and materialization_identity
-        _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")
-
-        if setup_materialization_store:
-            _set_val(param["offline_store_connection_target"], offline_store_target)
-            _set_val(param["materialization_identity_client_id"], materialization_identity.client_id)
-            _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
+        _set_val(param["setup_materialization_store"], "false")
 
         managed_network = None
         if workspace.managed_network:
