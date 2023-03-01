@@ -245,7 +245,11 @@ class WorkspaceOperationsBase:
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            return deserialize_callback(deserialized) if deserialize_callback else Workspace._from_rest_object(deserialized)
+            return (
+                deserialize_callback(deserialized)
+                if deserialize_callback
+                else Workspace._from_rest_object(deserialized)
+            )
 
         poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
