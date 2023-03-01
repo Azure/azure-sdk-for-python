@@ -34,7 +34,7 @@ def mock_feature_store_operation(
 
 @pytest.mark.unittest
 @pytest.mark.data_experiences_test
-class TestWorkspaceOperation:
+class TestFeatureStoreOperation:
     @pytest.mark.parametrize("arg", ["resource_group", "subscription", "other_rand_str"])
     def test_list(self, arg: str, mock_feature_store_operation: FeatureStoreOperations) -> None:
         mock_feature_store_operation.list(scope=arg)
