@@ -58,11 +58,11 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> ItemPaged[FeaturestoreEntity]:
-        """List the featurestore_entity assets of the workspace.
+        """List the FeaturestoreEntity assets of the workspace.
 
-        :param name: Name of a specific featurestore_entity asset, optional.
+        :param name: Name of a specific FeaturestoreEntity asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived featurestore_entity assets.
+        :param list_view_type: View type for including/excluding (for example) archived FeaturestoreEntity assets.
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeaturestoreEntity objects
@@ -106,13 +106,13 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "FeaturestoreEntity.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> FeaturestoreEntity:
-        """Get the specified featurestoreEntity asset.
+        """Get the specified FeaturestoreEntity asset.
 
-        :param name: Name of featurestoreEntity asset.
+        :param name: Name of FeaturestoreEntity asset.
         :type name: str
-        :param version: Version of featurestoreEntity asset.
+        :param version: Version of FeaturestoreEntity asset.
         :type version: str
-        :param label: Label of the featurestoreEntity asset. (mutually exclusive with version)
+        :param label: Label of the FeaturestoreEntity asset. (mutually exclusive with version)
         :type label: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeaturestoreEntity cannot be successfully
             identified and retrieved. Details will be provided in the error message.
