@@ -9,7 +9,9 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     MaterializationStoreType,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities import JobSchedule, NotificationConfiguration, MaterializationComputeResource
+from azure.ai.ml.entities._schedule.schedule import JobSchedule
+from azure.ai.ml.entities._notification.notification_configuration import NotificationConfiguration
+from azure.ai.ml.entities._featureset.materialization_compute_resource import MaterializationComputeResource
 from azure.ai.ml._utils._experimental import experimental
 
 

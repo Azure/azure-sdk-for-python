@@ -15,7 +15,8 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturesetContainerProperties,
 )
 from azure.ai.ml.entities._assets import Artifact
-from azure.ai.ml.entities import FeaturestoreEntity, FeaturesetSpecification, MaterializationSettings
+from azure.ai.ml.entities._featureset.featureset_specification import FeaturesetSpecification
+from azure.ai.ml.entities._featureset.materialization_settings import MaterializationSettings
 
 
 class Featureset(Artifact):
