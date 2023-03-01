@@ -42,6 +42,7 @@ deployment_message_mapping = {
     ArmConstants.CONTAINER_REGISTRY_PARAMETER_NAME: "Creating Container Registry: ({0})",
     ArmConstants.STORAGE_ACCOUNT_PARAMETER_NAME: "Creating Storage Account: ({0})",
     AzureMLResourceType.WORKSPACE: "Creating workspace: ({0})",
+    AzureMLResourceType.CONNECTIONS: "Creating connection: ({0})",
 }
 
 

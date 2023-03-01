@@ -33,6 +33,10 @@ class EndpointURLS:  # pylint: disable=too-few-public-methods,no-init
     REGISTRY_DISCOVERY_ENDPOINT = "registry_discovery_endpoint"
 
 
+class CloudArgumentKeys:
+    CLOUD_METADATA = "cloud_metadata"
+
+
 _environments = {
     AzureEnvironments.ENV_DEFAULT: {
         EndpointURLS.AZURE_PORTAL_ENDPOINT: "https://portal.azure.com/",
@@ -59,8 +63,6 @@ _environments = {
         EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: "https://usgovarizona.api.ml.azure.us/",
     },
 }
-
-_requests_pipeline = None
 
 
 def _get_cloud(cloud: str):
@@ -120,7 +122,6 @@ def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: 
     base_url = None
     if is_local_mfe:
         base_url = _get_mfe_url_override()
-
     if base_url is None:
         cloud_details = _get_cloud_details(cloud_name)
         base_url = cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/")
@@ -224,7 +225,8 @@ def _get_registry_discovery_url(cloud, cloud_suffix=""):
         return _environments[cloud_name].registry_url
 
     registry_discovery_region = os.environ.get(
-        ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME, ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
+        ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
+        ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION,
     )
     registry_discovery_region_default = "https://{}{}.api.azureml.{}/".format(
         cloud_name.lower(), registry_discovery_region, cloud_suffix
@@ -244,7 +246,10 @@ def _get_clouds_by_metadata_url(metadata_url):
         with client.send_request(HttpRequest("GET", metadata_url)) as meta_response:
             arm_cloud_dict = meta_response.json()
             cli_cloud_dict = _convert_arm_to_cli(arm_cloud_dict)
-            module_logger.debug("Finish : Loading cloud metadata from the url specified by %s", metadata_url)
+            module_logger.debug(
+                "Finish : Loading cloud metadata from the url specified by %s",
+                metadata_url,
+            )
             return cli_cloud_dict
     except Exception as ex:  # pylint: disable=broad-except
         module_logger.warning(
@@ -283,3 +288,20 @@ def _convert_arm_to_cli(arm_cloud_metadata):
             module_logger.warning("Property on cloud not found in arm cloud metadata: %s", ex)
             continue
     return cli_cloud_metadata_dict
+
+
+def _add_cloud_to_environments(kwargs):
+    cloud_name = kwargs["cloud"]
+    if cloud_name in _environments:
+        raise AttributeError(f"Cannot overwrite existing cloud: {cloud_name}")
+    cloud_metadata = kwargs[CloudArgumentKeys.CLOUD_METADATA]
+    if cloud_metadata is None:
+        raise LookupError(f"{CloudArgumentKeys.CLOUD_METADATA} not present in kwargs, no environment to add!")
+    _environments[kwargs["cloud"]] = {
+        EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud_metadata[EndpointURLS.AZURE_PORTAL_ENDPOINT],
+        EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud_metadata[EndpointURLS.RESOURCE_MANAGER_ENDPOINT],
+        EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud_metadata[EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT],
+        EndpointURLS.AML_RESOURCE_ID: cloud_metadata[EndpointURLS.AML_RESOURCE_ID],
+        EndpointURLS.STORAGE_ENDPOINT: cloud_metadata[EndpointURLS.STORAGE_ENDPOINT],
+        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: cloud_metadata[EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT],
+    }

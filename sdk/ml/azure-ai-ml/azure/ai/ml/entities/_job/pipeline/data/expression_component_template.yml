@@ -10,7 +10,7 @@ outputs:
 
 code: ./src
 
-environment: azureml:AzureML-MLDesigner@latest
+environment: azureml://registries/azureml/environments/mldesigner/labels/latest
 
 command: >-
   {command_placeholder}
