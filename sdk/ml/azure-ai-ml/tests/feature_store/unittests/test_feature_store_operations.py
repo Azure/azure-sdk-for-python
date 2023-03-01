@@ -3,11 +3,8 @@ from unittest.mock import DEFAULT, Mock
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml import load_workspace
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
-    IdentityConfiguration,
-    ManagedIdentityConfiguration,
     FeatureStore,
     Workspace,
 )
