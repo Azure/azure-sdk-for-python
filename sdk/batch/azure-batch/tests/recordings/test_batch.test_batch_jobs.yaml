@@ -1,28 +1,24 @@
 interactions:
 - request:
-    body: '{"id": "batch_job1_8dcc0a7e", "maxParallelTasks": -1, "jobPreparationTask":
-      {"commandLine": "cmd /c \"echo hello world\""}, "jobReleaseTask": {"commandLine":
-      "cmd /c \"echo goodbye world\""}, "poolInfo": {"autoPoolSpecification": {"poolLifetimeOption":
-      "job", "pool": {"vmSize": "standard_d2_v2", "cloudServiceConfiguration": {"osFamily":
-      "5"}}}}}'
+    body: '{"maxParallelTasks": -1, "id": "batch_job1_8dcc0a7e", "poolInfo": {"autoPoolSpecification":
+      {"poolLifetimeOption": "job", "pool": {"vmSize": "standard_d2_v2", "cloudServiceConfiguration":
+      {"osFamily": "5"}}}}, "jobPreparationTask": {"commandLine": "cmd /c \"echo hello
+      world\""}, "jobReleaseTask": {"commandLine": "cmd /c \"echo goodbye world\""}}'
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '347'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:11 GMT
+      - Sat, 25 Feb 2023 09:04:32 GMT
     method: POST
     uri: https://batch.eastus.batch.azure.com/jobs?api-version=2022-10-01.16.0
   response:
@@ -34,15 +30,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:10 GMT
+      - Sat, 25 Feb 2023 09:04:32 GMT
       etag:
-      - '0x8DABB976FEE088D'
+      - '0x8DB170F4FC338E8'
       last-modified:
-      - Mon, 31 Oct 2022 23:27:11 GMT
+      - Sat, 25 Feb 2023 09:04:33 GMT
       location:
       - https://batch.eastus.batch.azure.com/jobs/job-1
       request-id:
-      - 9f19d00f-507d-4772-babd-01a964414907
+      - 1f44ea85-0ddd-4516-ae9a-e9541073e5f3
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -55,27 +51,24 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: '{"priority": 500, "maxParallelTasks": -1, "constraints": {"maxTaskRetryCount":
+    body: '{"maxParallelTasks": -1, "priority": 500, "constraints": {"maxTaskRetryCount":
       3}, "poolInfo": {"autoPoolSpecification": {"poolLifetimeOption": "job", "pool":
       {"vmSize": "standard_d2_v2", "cloudServiceConfiguration": {"osFamily": "5"}}}}}'
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '238'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:33 GMT
     method: PUT
     uri: https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e?api-version=2022-10-01.16.0
   response:
@@ -87,13 +80,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:11 GMT
+      - Sat, 25 Feb 2023 09:04:33 GMT
       etag:
-      - '0x8DABB977008D5DE'
+      - '0x8DB170F4FEB0C6A'
       last-modified:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:33 GMT
       request-id:
-      - 224f9bd4-43e5-4626-ac7a-d40a8a10d2e1
+      - b8801d4f-3429-4703-80f1-35904dc67337
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -106,25 +99,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"priority": 900}'
+    body: '{"maxParallelTasks": -1, "priority": 900}'
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '17'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
+      - '41'
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:33 GMT
     method: PATCH
     uri: https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e?api-version=2022-10-01.16.0
   response:
@@ -136,13 +126,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:11 GMT
+      - Sat, 25 Feb 2023 09:04:33 GMT
       etag:
-      - '0x8DABB9770225181'
+      - '0x8DB170F50148D85'
       last-modified:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:33 GMT
       request-id:
-      - a7a7bdc8-2ba9-4e87-bcc6-e28709777a41
+      - a2d0cac7-f5e7-4bae-8ba6-648be4521868
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -164,17 +154,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
     method: GET
     uri: https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e?api-version=2022-10-01.16.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#jobs/@Element\",\"id\":\"batch_job1_8dcc0a7e\",\"url\":\"https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e\",\"eTag\":\"0x8DABB9770225181\",\"lastModified\":\"2022-10-31T23:27:12.2099585Z\",\"creationTime\":\"2022-10-31T23:27:11.8282897Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-10-31T23:27:11.8673037Z\",\"priority\":900,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#jobs/@Element\",\"id\":\"batch_job1_8dcc0a7e\",\"url\":\"https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e\",\"eTag\":\"0x8DB170F50148D85\",\"lastModified\":\"2023-02-25T09:04:33.8529669Z\",\"creationTime\":\"2023-02-25T09:04:33.2989609Z\",\"state\":\"active\",\"stateTransitionTime\":\"2023-02-25T09:04:33.3199592Z\",\"priority\":900,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
         \   \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":3\r\n
         \ },\"jobPreparationTask\":{\r\n    \"id\":\"jobpreparation\",\"commandLine\":\"cmd
         /c \\\"echo hello world\\\"\",\"constraints\":{\r\n      \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P7D\",\"maxTaskRetryCount\":0\r\n
@@ -187,7 +174,7 @@ interactions:
         \     \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\":{\r\n        \"vmSize\":\"standard_d2_v2\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \         \"nodeFillType\":\"Spread\"\r\n        },\"resizeTimeout\":\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\":{\r\n
         \         \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n        }\r\n      }\r\n
-        \   }\r\n  },\"executionInfo\":{\r\n    \"startTime\":\"2022-10-31T23:27:11.8673037Z\",\"poolId\":\"D18499A2-E339-47B0-91D1-D3A7D4A2A5CC\"\r\n
+        \   }\r\n  },\"executionInfo\":{\r\n    \"startTime\":\"2023-02-25T09:04:33.3199592Z\",\"poolId\":\"0B9628B5-B4EF-41B2-952E-C57249A8B315\"\r\n
         \ },\"onAllTasksComplete\":\"noaction\",\"onTaskFailure\":\"noaction\"\r\n}"
     headers:
       content-type:
@@ -195,13 +182,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:11 GMT
+      - Sat, 25 Feb 2023 09:04:33 GMT
       etag:
-      - '0x8DABB9770225181'
+      - '0x8DB170F50148D85'
       last-modified:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:33 GMT
       request-id:
-      - 910dfd2e-8834-4933-be5b-d68866b794b0
+      - d311f1c2-fd45-46d6-8c94-2a7dea72da33
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -214,28 +201,25 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"id": "batch_job2_8dcc0a7e", "maxParallelTasks": -1, "poolInfo": {"autoPoolSpecification":
-      {"poolLifetimeOption": "job", "pool": {"vmSize": "standard_d2_v2", "cloudServiceConfiguration":
-      {"osFamily": "5"}}}}, "onAllTasksComplete": "terminatejob", "onTaskFailure":
-      "performexitoptionsjobaction"}'
+    body: '{"maxParallelTasks": -1, "id": "batch_job2_8dcc0a7e", "onAllTasksComplete":
+      "terminatejob", "onTaskFailure": "performexitoptionsjobaction", "poolInfo":
+      {"autoPoolSpecification": {"poolLifetimeOption": "job", "pool": {"vmSize": "standard_d2_v2",
+      "cloudServiceConfiguration": {"osFamily": "5"}}}}}'
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '295'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
     method: POST
     uri: https://batch.eastus.batch.azure.com/jobs?api-version=2022-10-01.16.0
   response:
@@ -247,15 +231,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:11 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
       etag:
-      - '0x8DABB977060F1E9'
+      - '0x8DB170F506E314A'
       last-modified:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
       location:
       - https://batch.eastus.batch.azure.com/jobs/job-1
       request-id:
-      - 40d1d3df-0c54-40db-88a4-0cbb39496d2a
+      - 0003c772-be25-4595-b389-9dffc86c8f30
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -277,23 +261,20 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
     method: GET
     uri: https://batch.eastus.batch.azure.com/jobs/batch_job2_8dcc0a7e?api-version=2022-10-01.16.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#jobs/@Element\",\"id\":\"batch_job2_8dcc0a7e\",\"url\":\"https://batch.eastus.batch.azure.com/jobs/batch_job2_8dcc0a7e\",\"eTag\":\"0x8DABB977060F1E9\",\"lastModified\":\"2022-10-31T23:27:12.6203881Z\",\"creationTime\":\"2022-10-31T23:27:12.5953865Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-10-31T23:27:12.6203881Z\",\"priority\":0,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#jobs/@Element\",\"id\":\"batch_job2_8dcc0a7e\",\"url\":\"https://batch.eastus.batch.azure.com/jobs/batch_job2_8dcc0a7e\",\"eTag\":\"0x8DB170F506E314A\",\"lastModified\":\"2023-02-25T09:04:34.4404298Z\",\"creationTime\":\"2023-02-25T09:04:34.4184289Z\",\"state\":\"active\",\"stateTransitionTime\":\"2023-02-25T09:04:34.4404298Z\",\"priority\":0,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
         \   \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
         \ },\"poolInfo\":{\r\n    \"autoPoolSpecification\":{\r\n      \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\":{\r\n
         \       \"vmSize\":\"standard_d2_v2\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \         \"nodeFillType\":\"Spread\"\r\n        },\"resizeTimeout\":\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\":{\r\n
         \         \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n        }\r\n      }\r\n
-        \   }\r\n  },\"executionInfo\":{\r\n    \"startTime\":\"2022-10-31T23:27:12.6203881Z\",\"poolId\":\"D1C2C590-C877-424B-AAC8-0BD14DC7EB08\"\r\n
+        \   }\r\n  },\"executionInfo\":{\r\n    \"startTime\":\"2023-02-25T09:04:34.4404298Z\",\"poolId\":\"612EDED2-AA24-4537-AC2A-815BCE9EA2EA\"\r\n
         \ },\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"performexitoptionsjobaction\"\r\n}"
     headers:
       content-type:
@@ -301,13 +282,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:11 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
       etag:
-      - '0x8DABB977060F1E9'
+      - '0x8DB170F506E314A'
       last-modified:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
       request-id:
-      - b200bc3a-3b12-4786-9098-7f3d3a61f409
+      - bb083099-8ed6-4a30-bc4d-35e3e9a5241b
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -329,18 +310,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
     method: GET
     uri: https://batch.eastus.batch.azure.com/jobs?api-version=2022-10-01.16.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#jobs\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"batch_job1_8dcc0a7e\",\"url\":\"https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e\",\"eTag\":\"0x8DABB9770225181\",\"lastModified\":\"2022-10-31T23:27:12.2099585Z\",\"creationTime\":\"2022-10-31T23:27:11.8282897Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-10-31T23:27:11.8673037Z\",\"priority\":900,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
+        \   {\r\n      \"id\":\"batch_job1_8dcc0a7e\",\"url\":\"https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e\",\"eTag\":\"0x8DB170F50148D85\",\"lastModified\":\"2023-02-25T09:04:33.8529669Z\",\"creationTime\":\"2023-02-25T09:04:33.2989609Z\",\"state\":\"active\",\"stateTransitionTime\":\"2023-02-25T09:04:33.3199592Z\",\"priority\":900,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
         \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":3\r\n
         \     },\"jobPreparationTask\":{\r\n        \"id\":\"jobpreparation\",\"commandLine\":\"cmd
         /c \\\"echo hello world\\\"\",\"constraints\":{\r\n          \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P7D\",\"maxTaskRetryCount\":0\r\n
@@ -354,15 +332,15 @@ interactions:
         \           \"vmSize\":\"standard_d2_v2\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \             \"nodeFillType\":\"Spread\"\r\n            },\"resizeTimeout\":\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\":{\r\n
         \             \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n            }\r\n
-        \         }\r\n        }\r\n      },\"executionInfo\":{\r\n        \"startTime\":\"2022-10-31T23:27:11.8673037Z\",\"poolId\":\"D18499A2-E339-47B0-91D1-D3A7D4A2A5CC\"\r\n
+        \         }\r\n        }\r\n      },\"executionInfo\":{\r\n        \"startTime\":\"2023-02-25T09:04:33.3199592Z\",\"poolId\":\"0B9628B5-B4EF-41B2-952E-C57249A8B315\"\r\n
         \     },\"onAllTasksComplete\":\"noaction\",\"onTaskFailure\":\"noaction\"\r\n
-        \   },{\r\n      \"id\":\"batch_job2_8dcc0a7e\",\"url\":\"https://batch.eastus.batch.azure.com/jobs/batch_job2_8dcc0a7e\",\"eTag\":\"0x8DABB977060F1E9\",\"lastModified\":\"2022-10-31T23:27:12.6203881Z\",\"creationTime\":\"2022-10-31T23:27:12.5953865Z\",\"state\":\"active\",\"stateTransitionTime\":\"2022-10-31T23:27:12.6203881Z\",\"priority\":0,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
+        \   },{\r\n      \"id\":\"batch_job2_8dcc0a7e\",\"url\":\"https://batch.eastus.batch.azure.com/jobs/batch_job2_8dcc0a7e\",\"eTag\":\"0x8DB170F506E314A\",\"lastModified\":\"2023-02-25T09:04:34.4404298Z\",\"creationTime\":\"2023-02-25T09:04:34.4184289Z\",\"state\":\"active\",\"stateTransitionTime\":\"2023-02-25T09:04:34.4404298Z\",\"priority\":0,\"maxParallelTasks\":-1,\"usesTaskDependencies\":false,\"allowTaskPreemption\":false,\"constraints\":{\r\n
         \       \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"maxTaskRetryCount\":0\r\n
         \     },\"poolInfo\":{\r\n        \"autoPoolSpecification\":{\r\n          \"poolLifetimeOption\":\"job\",\"keepAlive\":false,\"pool\":{\r\n
         \           \"vmSize\":\"standard_d2_v2\",\"taskSlotsPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \             \"nodeFillType\":\"Spread\"\r\n            },\"resizeTimeout\":\"PT15M\",\"targetDedicatedNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"cloudServiceConfiguration\":{\r\n
         \             \"osFamily\":\"5\",\"osVersion\":\"*\"\r\n            }\r\n
-        \         }\r\n        }\r\n      },\"executionInfo\":{\r\n        \"startTime\":\"2022-10-31T23:27:12.6203881Z\",\"poolId\":\"D1C2C590-C877-424B-AAC8-0BD14DC7EB08\"\r\n
+        \         }\r\n        }\r\n      },\"executionInfo\":{\r\n        \"startTime\":\"2023-02-25T09:04:34.4404298Z\",\"poolId\":\"612EDED2-AA24-4537-AC2A-815BCE9EA2EA\"\r\n
         \     },\"onAllTasksComplete\":\"terminatejob\",\"onTaskFailure\":\"performexitoptionsjobaction\"\r\n
         \   }\r\n  ]\r\n}"
     headers:
@@ -371,9 +349,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:11 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
       request-id:
-      - 87a0a12b-ce9d-47bd-88be-8b781374039c
+      - 13588d25-9488-4e34-86af-ef4da424cbd3
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -389,22 +367,19 @@ interactions:
     body: '{"disableTasks": "requeue"}'
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '27'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:13 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
     method: POST
     uri: https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e/disable?api-version=2022-10-01.16.0
   response:
@@ -416,13 +391,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:34 GMT
       etag:
-      - '0x8DABB9770B1DCDB'
+      - '0x8DB170F50E4058B'
       last-modified:
-      - Mon, 31 Oct 2022 23:27:13 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
       request-id:
-      - 910cb307-9733-43b7-8432-5d5a1cc99dd6
+      - 0a485be8-a71c-4425-98cd-82c3d4abeea2
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -438,7 +413,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -446,12 +421,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:13 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
     method: POST
     uri: https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e/enable?api-version=2022-10-01.16.0
   response:
@@ -463,13 +435,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
       etag:
-      - '0x8DABB9770CD5529'
+      - '0x8DB170F510CC124'
       last-modified:
-      - Mon, 31 Oct 2022 23:27:13 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
       request-id:
-      - 58403d26-47af-48cb-8fdb-be45f563c4b6
+      - bb60b799-1da7-4bd0-b801-e6e7c0e1b78c
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -491,12 +463,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:13 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
     method: GET
     uri: https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e/jobpreparationandreleasetaskstatus?api-version=2022-10-01.16.0
   response:
@@ -508,9 +477,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
       request-id:
-      - 08369208-cde4-47a8-82b2-75542624187f
+      - 49ed05ff-82b0-418b-91f0-e6fb94705e3b
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -526,7 +495,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -534,14 +503,11 @@ interactions:
       Content-Length:
       - '0'
       Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:13 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
     method: POST
     uri: https://batch.eastus.batch.azure.com/jobs/batch_job1_8dcc0a7e/terminate?api-version=2022-10-01.16.0
   response:
@@ -553,13 +519,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
       etag:
-      - '0x8DABB977101E5D1'
+      - '0x8DB170F514F15F4'
       last-modified:
-      - Mon, 31 Oct 2022 23:27:13 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
       request-id:
-      - fde87057-126c-4664-8403-6740773b6036
+      - 0f9e1114-89fa-4909-8645-30edd890f79d
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -575,7 +541,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -583,12 +549,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:13 GMT
+      - Sat, 25 Feb 2023 09:04:36 GMT
     method: DELETE
     uri: https://batch.eastus.batch.azure.com/jobs/batch_job2_8dcc0a7e?api-version=2022-10-01.16.0
   response:
@@ -598,9 +561,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:12 GMT
+      - Sat, 25 Feb 2023 09:04:35 GMT
       request-id:
-      - c0391d2d-8d49-4c32-a82b-b56046f833a8
+      - 1cf1b33e-ce63-4970-afba-7a4b42bad1b4
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -622,26 +585,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Mon, 31 Oct 2022 23:27:14 GMT
+      - Sat, 25 Feb 2023 09:04:36 GMT
     method: GET
     uri: https://batch.eastus.batch.azure.com/lifetimejobstats?api-version=2022-10-01.16.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#jobstats/@Element\",\"url\":\"https://batch.eastus.batch.azure.com/lifetimejobstats\",\"startTime\":\"2022-10-31T23:26:54.6765228Z\",\"lastUpdateTime\":\"2022-10-31T23:26:54.6765228Z\",\"userCPUTime\":\"PT0S\",\"kernelCPUTime\":\"PT0S\",\"wallClockTime\":\"PT0S\",\"readIOps\":\"0\",\"writeIOps\":\"0\",\"readIOGiB\":0.0,\"writeIOGiB\":0.0,\"numTaskRetries\":\"0\",\"numSucceededTasks\":\"0\",\"numFailedTasks\":\"0\",\"waitTime\":\"PT0S\"\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#jobstats/@Element\",\"url\":\"https://batch.eastus.batch.azure.com/lifetimejobstats\",\"startTime\":\"2023-02-25T09:04:15.9758233Z\",\"lastUpdateTime\":\"2023-02-25T09:04:15.9758233Z\",\"userCPUTime\":\"PT0S\",\"kernelCPUTime\":\"PT0S\",\"wallClockTime\":\"PT0S\",\"readIOps\":\"0\",\"writeIOps\":\"0\",\"readIOGiB\":0.0,\"writeIOGiB\":0.0,\"numTaskRetries\":\"0\",\"numSucceededTasks\":\"0\",\"numFailedTasks\":\"0\",\"waitTime\":\"PT0S\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Mon, 31 Oct 2022 23:27:14 GMT
+      - Sat, 25 Feb 2023 09:04:36 GMT
       request-id:
-      - 6cebd24a-6d57-45e4-872b-e5f3ae07aa17
+      - 28a5304e-6e2d-416d-b376-20e7a7452ed0
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

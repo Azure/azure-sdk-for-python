@@ -12,17 +12,14 @@ interactions:
       - keep-alive
       Content-Length:
       - '2272'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/1.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Thu, 27 Oct 2022 21:45:26 GMT
+      - Fri, 17 Feb 2023 01:52:07 GMT
     method: POST
-    uri: https://batch.eastus.batch.azure.com/certificates?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/certificates?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -32,11 +29,11 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 21:45:27 GMT
+      - Fri, 17 Feb 2023 01:52:07 GMT
       location:
       - https://batch.eastus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)
       request-id:
-      - 19612e1a-e53c-4a75-b4bf-df09f80b66f7
+      - 7272c1fc-7031-4fe6-8b56-419f0fe4cf9a
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -58,18 +55,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/1.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 21:45:27 GMT
+      - Fri, 17 Feb 2023 01:52:08 GMT
     method: GET
-    uri: https://batch.eastus.batch.azure.com/certificates?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/certificates?api-version=2022-01-01.15.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#certificates\",\"value\":[\r\n
-        \   {\r\n      \"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2022-10-27T21:45:27.2612408Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n
+        \   {\r\n      \"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2023-02-17T01:52:08.1054948Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n
         \   }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -77,9 +71,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 21:45:27 GMT
+      - Fri, 17 Feb 2023 01:52:07 GMT
       request-id:
-      - 9be14e7f-99cc-4728-a11c-586ac471b420
+      - 2cc8a0fa-f88d-4a05-a91e-34b563b625cb
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -101,26 +95,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/1.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 21:45:27 GMT
+      - Fri, 17 Feb 2023 01:52:08 GMT
     method: GET
-    uri: https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2022-01-01.15.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#certificates/@Element\",\"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2022-10-27T21:45:27.2612408Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#certificates/@Element\",\"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2023-02-17T01:52:08.1054948Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 21:45:27 GMT
+      - Fri, 17 Feb 2023 01:52:07 GMT
       request-id:
-      - 5d3ddf69-5c62-44fc-977b-6c1b919aad63
+      - b3d96f27-13eb-422f-9a0d-577bc536cd12
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -144,19 +135,16 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/1.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 21:45:27 GMT
+      - Fri, 17 Feb 2023 01:52:20 GMT
     method: POST
-    uri: https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)/canceldelete?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)/canceldelete?api-version=2022-01-01.15.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"CertificateStateActive\",\"message\":{\r\n
         \   \"lang\":\"en-US\",\"value\":\"The specified certificate is in active
-        state.\\nRequestId:79015a39-82fe-4b8d-92a6-9c361b646d10\\nTime:2022-10-27T21:45:27.8151520Z\"\r\n
+        state.\\nRequestId:0fd891f9-09f4-42b4-add8-8a8a21dbe36f\\nTime:2023-02-17T01:52:19.8195270Z\"\r\n
         \ }\r\n}"
     headers:
       content-length:
@@ -166,9 +154,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 21:45:27 GMT
+      - Fri, 17 Feb 2023 01:52:19 GMT
       request-id:
-      - 79015a39-82fe-4b8d-92a6-9c361b646d10
+      - 0fd891f9-09f4-42b4-add8-8a8a21dbe36f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -182,7 +170,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -190,14 +178,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/1.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 21:45:27 GMT
+      - Fri, 17 Feb 2023 01:54:44 GMT
     method: DELETE
-    uri: https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2022-01-01.15.0
   response:
     body:
       string: ''
@@ -205,9 +190,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 21:45:27 GMT
+      - Fri, 17 Feb 2023 01:54:45 GMT
       request-id:
-      - 794618f6-1eaa-4f23-ab82-4022ac6f3d90
+      - 06ef0d63-2378-4223-9d95-48a6df7e6647
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

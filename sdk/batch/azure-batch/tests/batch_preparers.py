@@ -4,10 +4,11 @@ import os
 import requests
 import time
 
+import azure.core.exceptions
 import azure.mgmt.batch
 from azure.mgmt.batch import models
 import azure.batch
-from azure.batch.batch_auth import SharedKeyCredentials
+from azure.batch import SharedKeyCredentials
 
 from azure_devtools.scenario_tests.preparers import (
     AbstractPreparer,
@@ -269,7 +270,7 @@ class JobPreparer(AzureMgmtPreparer):
             account = kwargs[self.batch_account_parameter_name]
             credentials = kwargs[self.batch_credentials_parameter_name]
             return azure.batch.BatchServiceClient(
-                credentials, batch_url='https://' + account.account_endpoint)
+                credentials=credentials, batch_url='https://' + account.account_endpoint)
         except KeyError:
             template = 'To create a batch job, a batch account is required. Please add ' \
                        'decorator @AccountPreparer in front of this job preparer.'
@@ -297,14 +298,14 @@ class JobPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self._get_batch_client(**kwargs)
             pool = self._get_batch_pool_id(**kwargs)
-            self.resource = azure.batch.models.JobAddParameter(
+            self.resource = azure.batch.models.BatchJob(
                 id=name,
                 pool_info=pool,
                 **self.extra_args
             )
             try:
                 self.client.job.add(self.resource)
-            except azure.batch.models.BatchErrorException as e:
+            except azure.core.exceptions.HttpResponseError as e:
                 message = "{}:{} ".format(e.error.code, e.error.message)
                 for v in e.error.values:
                     message += "\n{}: {}".format(v.key, v.value)

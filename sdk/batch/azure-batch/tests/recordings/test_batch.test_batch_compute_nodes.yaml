@@ -9,25 +9,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:28 GMT
+      - Mon, 27 Feb 2023 22:24:35 GMT
     method: GET
     uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-10-27T23:13:25.6782146Z\",\"allocationTime\":\"2022-10-27T23:13:25.6782146Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.121.177.139\",\"publicFQDN\":\"dns355d25c6-ebf1-4d6c-9e86-91375faf7bdc-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:32.4008423Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
         \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
-        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202210180\"\r\n
-        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-10-27T23:13:25.6782146Z\",\"allocationTime\":\"2022-10-27T23:13:25.6782146Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.121.177.139\",\"publicFQDN\":\"dns355d25c6-ebf1-4d6c-9e86-91375faf7bdc-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"creating\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:32.4008423Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
         \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
-        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202210180\"\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
         \       }\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -35,9 +32,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:29 GMT
+      - Mon, 27 Feb 2023 22:24:36 GMT
       request-id:
-      - 43c98c63-ba24-4569-81f2-614bfeebcbcc
+      - affbe800-b36b-46e0-a213-e0cb7fe23afa
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -59,25 +56,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:39 GMT
+      - Mon, 27 Feb 2023 22:24:46 GMT
     method: GET
     uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-10-27T23:13:36.5636161Z\",\"allocationTime\":\"2022-10-27T23:13:25.6782146Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.121.177.139\",\"publicFQDN\":\"dns355d25c6-ebf1-4d6c-9e86-91375faf7bdc-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:42.5702752Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
         \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
-        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202210180\"\r\n
-        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-10-27T23:13:36.5466169Z\",\"allocationTime\":\"2022-10-27T23:13:25.6782146Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.121.177.139\",\"publicFQDN\":\"dns355d25c6-ebf1-4d6c-9e86-91375faf7bdc-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:42.5702752Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
         \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
-        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202210180\"\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
         \       }\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -85,9 +79,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:40 GMT
+      - Mon, 27 Feb 2023 22:24:46 GMT
       request-id:
-      - 43450e81-399e-410d-8f66-620518c42115
+      - bfa2c4f4-51cb-40a8-ba40-2c647d1051f5
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -109,25 +103,22 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:50 GMT
+      - Mon, 27 Feb 2023 22:24:56 GMT
     method: GET
     uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-10-27T23:13:42.148274Z\",\"lastBootTime\":\"2022-10-27T23:13:41.642683Z\",\"allocationTime\":\"2022-10-27T23:13:25.6782146Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.121.177.139\",\"publicFQDN\":\"dns355d25c6-ebf1-4d6c-9e86-91375faf7bdc-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
-        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2022-10-27T23:13:41.642683Z\",\"version\":\"1.9.31\"\r\n
-        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202210180\"\r\n
-        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-10-27T23:13:42.187864Z\",\"lastBootTime\":\"2022-10-27T23:13:41.64496Z\",\"allocationTime\":\"2022-10-27T23:13:25.6782146Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.121.177.139\",\"publicFQDN\":\"dns355d25c6-ebf1-4d6c-9e86-91375faf7bdc-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
-        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2022-10-27T23:13:41.64496Z\",\"version\":\"1.9.31\"\r\n
-        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202210180\"\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:48.102962Z\",\"lastBootTime\":\"2023-02-27T22:24:47.681255Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2023-02-27T22:24:47.681255Z\",\"version\":\"1.9.35\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:42.5702752Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
         \       }\r\n      }\r\n    }\r\n  ]\r\n}"
     headers:
       content-type:
@@ -135,9 +126,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:50 GMT
+      - Mon, 27 Feb 2023 22:24:56 GMT
       request-id:
-      - e4bd6b98-474c-44fe-8d00-114b95e0459e
+      - 6a08ab2e-8b0c-441a-9cc1-603489c9396d
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -159,20 +150,346 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:51 GMT
+      - Mon, 27 Feb 2023 22:25:07 GMT
     method: GET
-    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes/@Element\",\"id\":\"tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2022-10-27T23:13:42.148274Z\",\"lastBootTime\":\"2022-10-27T23:13:41.642683Z\",\"allocationTime\":\"2022-10-27T23:13:25.6782146Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
-        \   \"inboundEndpoints\":[\r\n      {\r\n        \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.121.177.139\",\"publicFQDN\":\"dns355d25c6-ebf1-4d6c-9e86-91375faf7bdc-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
-        \     }\r\n    ]\r\n  },\"nodeAgentInfo\":{\r\n    \"lastUpdateTime\":\"2022-10-27T23:13:41.642683Z\",\"version\":\"1.9.31\"\r\n
-        \ },\"virtualMachineInfo\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202210180\"\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:48.102962Z\",\"lastBootTime\":\"2023-02-27T22:24:47.681255Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2023-02-27T22:24:47.681255Z\",\"version\":\"1.9.35\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:42.5702752Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 27 Feb 2023 22:25:06 GMT
+      request-id:
+      - 9108154c-bbcc-472b-b8df-d15fc7ef88a7
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      ocp-date:
+      - Mon, 27 Feb 2023 22:25:17 GMT
+    method: GET
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:48.102962Z\",\"lastBootTime\":\"2023-02-27T22:24:47.681255Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2023-02-27T22:24:47.681255Z\",\"version\":\"1.9.35\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:42.5702752Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 27 Feb 2023 22:25:16 GMT
+      request-id:
+      - ebaaba93-1a24-41d6-9f5d-7b908066a3a0
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      ocp-date:
+      - Mon, 27 Feb 2023 22:25:27 GMT
+    method: GET
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:48.102962Z\",\"lastBootTime\":\"2023-02-27T22:24:47.681255Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2023-02-27T22:24:47.681255Z\",\"version\":\"1.9.35\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:42.5702752Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 27 Feb 2023 22:25:27 GMT
+      request-id:
+      - 00a74c17-3e31-4465-a2f9-4c907cd9ee33
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      ocp-date:
+      - Mon, 27 Feb 2023 22:25:37 GMT
+    method: GET
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:48.102962Z\",\"lastBootTime\":\"2023-02-27T22:24:47.681255Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2023-02-27T22:24:47.681255Z\",\"version\":\"1.9.35\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:42.5702752Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 27 Feb 2023 22:25:37 GMT
+      request-id:
+      - 0e9712c9-6e96-4504-979c-44d89e9bfe74
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      ocp-date:
+      - Mon, 27 Feb 2023 22:25:47 GMT
+    method: GET
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:48.102962Z\",\"lastBootTime\":\"2023-02-27T22:24:47.681255Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2023-02-27T22:24:47.681255Z\",\"version\":\"1.9.35\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:42.5702752Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 27 Feb 2023 22:25:46 GMT
+      request-id:
+      - 98a9b463-4ae2-4ad1-9f48-c5a1359383b5
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      ocp-date:
+      - Mon, 27 Feb 2023 22:25:58 GMT
+    method: GET
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:48.102962Z\",\"lastBootTime\":\"2023-02-27T22:24:47.681255Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2023-02-27T22:24:47.681255Z\",\"version\":\"1.9.35\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"starting\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:42.5702752Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n
+        \         \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 27 Feb 2023 22:25:57 GMT
+      request-id:
+      - 54122b3f-9ad7-45ce-9bfd-b980d01279e1
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      ocp-date:
+      - Mon, 27 Feb 2023 22:26:08 GMT
+    method: GET
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes?api-version=2022-10-01.16.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:48.102962Z\",\"lastBootTime\":\"2023-02-27T22:24:47.681255Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2023-02-27T22:24:47.681255Z\",\"version\":\"1.9.35\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    },{\r\n      \"id\":\"tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:26:02.431729Z\",\"lastBootTime\":\"2023-02-27T22:26:01.692196Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.4\",\"affinityId\":\"TVM:tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \       \"inboundEndpoints\":[\r\n          {\r\n            \"name\":\"SSHRule.0\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50000,\"backendPort\":22\r\n
+        \         }\r\n        ]\r\n      },\"nodeAgentInfo\":{\r\n        \"lastUpdateTime\":\"2023-02-27T22:26:01.692196Z\",\"version\":\"1.9.35\"\r\n
+        \     },\"virtualMachineInfo\":{\r\n        \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
+        \       }\r\n      }\r\n    }\r\n  ]\r\n}"
+    headers:
+      content-type:
+      - application/json;odata=minimalmetadata
+      dataserviceversion:
+      - '3.0'
+      date:
+      - Mon, 27 Feb 2023 22:26:07 GMT
+      request-id:
+      - 2b2efc43-54e2-4487-8bbd-a11783f2dacb
+      server:
+      - Microsoft-HTTPAPI/2.0
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      ocp-date:
+      - Mon, 27 Feb 2023 22:26:08 GMT
+    method: GET
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d?api-version=2022-10-01.16.0
+  response:
+    body:
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#nodes/@Element\",\"id\":\"tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"url\":\"https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"state\":\"idle\",\"schedulingState\":\"enabled\",\"stateTransitionTime\":\"2023-02-27T22:24:48.102962Z\",\"lastBootTime\":\"2023-02-27T22:24:47.681255Z\",\"allocationTime\":\"2023-02-27T22:24:32.4008423Z\",\"ipAddress\":\"10.0.0.5\",\"affinityId\":\"TVM:tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d\",\"vmSize\":\"standard_d2_v2\",\"totalTasksRun\":0,\"totalTasksSucceeded\":0,\"runningTasksCount\":0,\"runningTaskSlotsCount\":0,\"certificateReferences\":[],\"isDedicated\":true,\"endpointConfiguration\":{\r\n
+        \   \"inboundEndpoints\":[\r\n      {\r\n        \"name\":\"SSHRule.1\",\"protocol\":\"tcp\",\"publicIPAddress\":\"20.102.33.197\",\"publicFQDN\":\"dnsd811b054-2ac0-4b9f-8000-8b0d0a2b373a-azurebatch-cloudservice.eastus.cloudapp.azure.com\",\"frontendPort\":50001,\"backendPort\":22\r\n
+        \     }\r\n    ]\r\n  },\"nodeAgentInfo\":{\r\n    \"lastUpdateTime\":\"2023-02-27T22:24:47.681255Z\",\"version\":\"1.9.35\"\r\n
+        \ },\"virtualMachineInfo\":{\r\n    \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"18.04-LTS\",\"version\":\"latest\",\"exactVersion\":\"18.04.202302100\"\r\n
         \   }\r\n  }\r\n}"
     headers:
       content-type:
@@ -180,9 +497,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:50 GMT
+      - Mon, 27 Feb 2023 22:26:08 GMT
       request-id:
-      - e443e30a-88c7-425a-a47e-07defcb9f622
+      - 5a047126-7602-441d-91d3-69a3e3410d81
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -196,7 +513,7 @@ interactions:
       message: OK
 - request:
     body: '{"containerUrl": "https://computecontainer.blob.core.windows.net/", "startTime":
-      "2022-10-27T23:07:51.247637Z"}'
+      "2023-02-27T22:20:08.850168Z"}'
     headers:
       Accept:
       - application/json
@@ -206,29 +523,26 @@ interactions:
       - keep-alive
       Content-Length:
       - '111'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:51 GMT
+      - Mon, 27 Feb 2023 22:26:08 GMT
     method: POST
-    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d/uploadbatchservicelogs?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d/uploadbatchservicelogs?api-version=2022-10-01.16.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.UploadBatchServiceLogsResult\",\"virtualDirectoryName\":\"batch-22EF70058626899F/test_batch_test_batch_compute_nodesff3f0e45/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d/09ab9e0f-d024-4337-b7b3-5c2995e75ca4\",\"numberOfFilesUploaded\":4\r\n}"
+      string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.UploadBatchServiceLogsResult\",\"virtualDirectoryName\":\"batch-22EF0F64D4523E17/test_batch_test_batch_compute_nodesff3f0e45/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d/93a2fde7-a1f0-4f7b-b432-57aa6210c0c6\",\"numberOfFilesUploaded\":4\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:51 GMT
+      - Mon, 27 Feb 2023 22:26:08 GMT
       request-id:
-      - 09ab9e0f-d024-4337-b7b3-5c2995e75ca4
+      - 93a2fde7-a1f0-4f7b-b432-57aa6210c0c6
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -244,7 +558,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -252,28 +566,25 @@ interactions:
       Content-Length:
       - '0'
       Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
+      - application/json
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:51 GMT
+      - Mon, 27 Feb 2023 22:26:09 GMT
     method: POST
-    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d/disablescheduling?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d/disablescheduling?api-version=2022-10-01.16.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchff3f0e45.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d/disablescheduling
+      - https://batchff3f0e45.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d/disablescheduling
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:51 GMT
+      - Mon, 27 Feb 2023 22:26:08 GMT
       request-id:
-      - 81574a24-4b44-473c-b0b2-b14921fd5d35
+      - 0e331ca9-45dc-432d-8531-f3e0c88b1923
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -289,7 +600,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -297,26 +608,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:51 GMT
+      - Mon, 27 Feb 2023 22:26:09 GMT
     method: POST
-    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d/enablescheduling?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d/enablescheduling?api-version=2022-10-01.16.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchff3f0e45.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d/enablescheduling
+      - https://batchff3f0e45.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d/enablescheduling
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:51 GMT
+      - Mon, 27 Feb 2023 22:26:08 GMT
       request-id:
-      - 3eed207a-249f-4a75-be05-dfa866840369
+      - 9f0df1ab-773d-44af-9943-dece17059524
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -332,36 +640,33 @@ interactions:
     body: '{"nodeRebootOption": "terminate"}'
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '33'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:52 GMT
+      - Mon, 27 Feb 2023 22:26:09 GMT
     method: POST
-    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d/reboot?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d/reboot?api-version=2022-10-01.16.0
   response:
     body:
       string: ''
     headers:
       dataserviceid:
-      - https://batchff3f0e45.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d/reboot
+      - https://batchff3f0e45.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d/reboot
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:51 GMT
+      - Mon, 27 Feb 2023 22:26:09 GMT
       request-id:
-      - 6bd08975-e4b8-4ba8-a3ef-90c07c86fe5a
+      - cd8f0621-ad13-4abb-86c8-43fd934e60ce
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -377,29 +682,26 @@ interactions:
     body: '{"nodeReimageOption": "terminate"}'
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '34'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:52 GMT
+      - Mon, 27 Feb 2023 22:26:09 GMT
     method: POST
-    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d/reimage?api-version=2022-10-01.16.0
+    uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/nodes/tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d/reimage?api-version=2022-10-01.16.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batch.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"OperationNotValidOnNode\",\"message\":{\r\n
         \   \"lang\":\"en-US\",\"value\":\"The specified operation is not valid on
-        the node.\\nRequestId:6e6d5462-5901-4ef3-b439-a5c8db357203\\nTime:2022-10-27T23:13:52.3862909Z\"\r\n
+        the node.\\nRequestId:ad85ce21-29aa-4bbd-afe7-19eb709706fd\\nTime:2023-02-27T22:26:09.6024041Z\"\r\n
         \ },\"values\":[\r\n    {\r\n      \"key\":\"Reason\",\"value\":\"Operation
         reimage can be invoked only on pools created with cloudServiceConfiguration\"\r\n
         \   }\r\n  ]\r\n}"
@@ -411,9 +713,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:51 GMT
+      - Mon, 27 Feb 2023 22:26:09 GMT
       request-id:
-      - 6e6d5462-5901-4ef3-b439-a5c8db357203
+      - ad85ce21-29aa-4bbd-afe7-19eb709706fd
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -424,26 +726,23 @@ interactions:
       code: 409
       message: The specified operation is not valid on the node.
 - request:
-    body: '{"nodeList": ["tvmps_79fc34fd35c72e0faf1296d2939fd8387da182ebbc88e2d865c9ec81bf932873_d",
-      "tvmps_d94f64902bf9e90be6042701e098db3dfc4680afc6609ea3e1a7c293dc4172ac_d"]}'
+    body: '{"nodeList": ["tvmps_14775f9df7c62ff237978503653cc265db934e590e11d797bcd2efa02f49f349_d",
+      "tvmps_9a317be1df5ec45ada58d035e0c4f6b7a557675be4d6efb762da93b317a16016_d"]}'
     headers:
       Accept:
-      - application/json
+      - '*/*'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '166'
-      Content-Type:
-      - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.8.6 (Windows-10-10.0.22000-SP0) msrest/0.7.1 msrest_azure/0.4.34
-        azure-batch/13.0.0 Azure-SDK-For-Python
-      accept-language:
-      - en-US
+      - azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)
+      content-type:
+      - application/json; odata=minimalmetadata
       ocp-date:
-      - Thu, 27 Oct 2022 23:13:52 GMT
+      - Mon, 27 Feb 2023 22:26:09 GMT
     method: POST
     uri: https://batch.eastus.batch.azure.com/pools/test_batch_test_batch_compute_nodesff3f0e45/removenodes?api-version=2022-10-01.16.0
   response:
@@ -455,13 +754,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 27 Oct 2022 23:13:52 GMT
+      - Mon, 27 Feb 2023 22:26:09 GMT
       etag:
-      - '0x8DAB870E9E1ACFB'
+      - '0x8DB1911A04C9DE0'
       last-modified:
-      - Thu, 27 Oct 2022 23:13:52 GMT
+      - Mon, 27 Feb 2023 22:26:09 GMT
       request-id:
-      - 0ca1741b-ec53-490c-af20-20063c716ae1
+      - b4feb0da-61d5-4010-9e38-a08b27d53e9c
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
