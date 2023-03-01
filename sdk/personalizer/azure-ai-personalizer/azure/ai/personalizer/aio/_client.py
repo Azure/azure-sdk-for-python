@@ -18,9 +18,7 @@ from ._configuration import PersonalizerClientConfiguration
 from ._operations import PersonalizerClientOperationsMixin
 
 
-class PersonalizerClient(
-    PersonalizerClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class PersonalizerClient(PersonalizerClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Personalizer Service is an Azure Cognitive Service that makes it easy to target content and
     experiences without complex pre-analysis or cleanup of past data. Given a context and
     featurized content, the Personalizer Service returns which content item to show to users in
@@ -36,24 +34,16 @@ class PersonalizerClient(
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/personalizer"
-        self._config = PersonalizerClientConfiguration(
-            endpoint=endpoint, credential=credential, **kwargs
-        )
-        self._client = AsyncPipelineClient(
-            base_url=_endpoint, config=self._config, **kwargs
-        )
+        self._config = PersonalizerClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(
-        self, request: HttpRequest, **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -73,14 +63,10 @@ class PersonalizerClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        request_copy.url = self._client.format_url(
-            request_copy.url, **path_format_arguments
-        )
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:

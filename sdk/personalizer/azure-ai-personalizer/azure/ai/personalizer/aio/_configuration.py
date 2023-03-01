@@ -21,9 +21,7 @@ else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 
-class PersonalizerClientConfiguration(
-    Configuration
-):  # pylint: disable=too-many-instance-attributes
+class PersonalizerClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for PersonalizerClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -38,13 +36,9 @@ class PersonalizerClientConfiguration(
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         super(PersonalizerClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop(
-            "api_version", "2022-09-01-preview"
-        )  # type: Literal["2022-09-01-preview"]
+        api_version = kwargs.pop("api_version", "2022-09-01-preview")  # type: Literal["2022-09-01-preview"]
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -58,28 +52,14 @@ class PersonalizerClientConfiguration(
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
-        self.user_agent_policy = kwargs.get(
-            "user_agent_policy"
-        ) or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(
-            **kwargs
-        )
+        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get(
-            "logging_policy"
-        ) or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get(
-            "http_logging_policy"
-        ) or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(
-            **kwargs
-        )
-        self.custom_hook_policy = kwargs.get(
-            "custom_hook_policy"
-        ) or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get(
-            "redirect_policy"
-        ) or policies.AsyncRedirectPolicy(**kwargs)
+        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.AzureKeyCredentialPolicy(
