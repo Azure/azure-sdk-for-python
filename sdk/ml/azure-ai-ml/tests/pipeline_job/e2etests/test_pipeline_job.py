@@ -1952,12 +1952,15 @@ class TestPipelineJob(AzureRecordedTestCase):
             "command/node_serverless_compute_no_default.yml",
             "sweep/pipeline_serverless_compute.yml",
             "sweep/node_serverless_compute.yml",
+            "sweep/node_serverless_compute_no_default.yml",
             "pipeline/pipeline_serverless_compute.yml",
             "pipeline/node_serverless_compute.yml",
             "automl/pipeline_with_vm_size.yml",
             "automl/pipeline_without_vm_size.yml",
-            "parallel/pipeline.yml",
-            "spark/pipeline.yml",
+            "automl/pipeline_with_vm_size_no_default.yml",
+            "parallel/pipeline_serverless_compute.yml",
+            "spark/pipeline_serverless_compute.yml",
+            "spark/node_serverless_compute_no_default.yml",
         ],
     )
     def test_serverless_compute_in_pipeline(self, client: MLClient, test_path: str) -> None:
