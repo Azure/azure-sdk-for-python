@@ -30,6 +30,10 @@ steps:
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
 
+  - pwsh: |
+      Write-Host $(Agent.JobName)
+    displayName: Output Job Details
+
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
   - script: |

@@ -119,9 +119,6 @@ jobs:
 
     dependsOn:
       - 'Build Linux'
-      - ${{ if parameters.AdvancedBuild }}:
-        - 'Build Mac'
-        - 'Build Windows'
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -170,9 +167,9 @@ jobs:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       DependsOn:
         - 'Build Linux'
-        - ${{ if parameters.AdvancedBuild }}:
-          - 'Build Mac'
-          - 'Build Windows'
+        # - ${{ if parameters.AdvancedBuild }}:
+        #   - 'Build Mac'
+        #   - 'Build Windows'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
@@ -220,9 +217,9 @@ jobs:
         Cloud: Public
       DependsOn:
         - 'Build Linux'
-        - ${{ if parameters.AdvancedBuild }}:
-          - 'Build Mac'
-          - 'Build Windows'
+        # - ${{ if parameters.AdvancedBuild }}:
+        #   - 'Build Mac'
+        #   - 'Build Windows'
       AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
