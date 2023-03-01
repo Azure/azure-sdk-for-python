@@ -324,7 +324,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
         :param parameters: Parameters supplied to the Capture Virtual Machine operation. Is either a
-         model type or a IO type. Required.
+         VirtualMachineCaptureParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineCaptureParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -542,7 +542,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
         :param parameters: Parameters supplied to the Create Virtual Machine operation. Is either a
-         model type or a IO type. Required.
+         VirtualMachine type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachine or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -758,7 +758,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
         :param parameters: Parameters supplied to the Update Virtual Machine operation. Is either a
-         model type or a IO type. Required.
+         VirtualMachineUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2294,8 +2294,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param parameters: Parameters supplied to the Run command operation. Is either a model type or
-         a IO type. Required.
+        :param parameters: Parameters supplied to the Run command operation. Is either a
+         RunCommandInput type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2018_04_01.models.RunCommandInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.

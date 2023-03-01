@@ -7,6 +7,9 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- The type hints for `KeyVaultCertificate.cer` and `DeletedCertificate.cer` are now
+  `Optional[bytearray]` instead of `Optional[bytes]`
+  ([#28959](https://github.com/Azure/azure-sdk-for-python/issues/28959))
 
 ### Other Changes
 - Updated minimum `azure-core` version to 1.24.0

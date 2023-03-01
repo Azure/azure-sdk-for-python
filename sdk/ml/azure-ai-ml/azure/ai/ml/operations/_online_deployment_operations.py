@@ -162,7 +162,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 operation_config=self._operation_config,
             )
             if deployment.data_collector:
-                self._register_collection_data_assets(deployment= deployment)
+                self._register_collection_data_assets(deployment=deployment)
 
             upload_dependencies(deployment, orchestrators)
             try:
@@ -349,18 +349,18 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:
         for collection in deployment.data_collector.collections:
-            data_name = deployment.endpoint_name + "-" + deployment.name + "-" + collection
-            data_object = Data(
-                name = data_name,
-                path = deployment.data_collector.destination.path
+            data_name = f"{deployment.endpoint_name}-{deployment.name}-{collection}"
+            short_form_path = (
+                f"{deployment.data_collector.destination.path}/{deployment.endpoint_name}/{deployment.name}/{collection}"  # pylint: disable=line-too-long
                 if deployment.data_collector.destination and deployment.data_collector.destination.path
-                else DEFAULT_MDC_PATH,
-                is_anonymous= True
-        )
+                else f"{DEFAULT_MDC_PATH}/{deployment.endpoint_name}/{deployment.name}/{collection}"
+            )
+            data_object = Data(
+                name=data_name,
+                path=short_form_path,
+                is_anonymous=True,
+            )
             result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
             deployment.data_collector.collections[collection].data = DataAsset(
-                data_id = result.id,
-                path = result.path,
-                name = result.name,
-                version = result.version
-                )
+                path=short_form_path, name=result.name, version=result.version
+            )

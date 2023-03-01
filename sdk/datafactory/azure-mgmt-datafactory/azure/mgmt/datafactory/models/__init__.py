@@ -149,6 +149,7 @@ from ._models_py3 import ConnectionStateProperties
 from ._models_py3 import ControlActivity
 from ._models_py3 import CopyActivity
 from ._models_py3 import CopyActivityLogSettings
+from ._models_py3 import CopyComputeScaleProperties
 from ._models_py3 import CopySink
 from ._models_py3 import CopySource
 from ._models_py3 import CopyTranslator
@@ -168,6 +169,7 @@ from ._models_py3 import CreateDataFlowDebugSessionResponse
 from ._models_py3 import CreateLinkedIntegrationRuntimeRequest
 from ._models_py3 import CreateRunResponse
 from ._models_py3 import Credential
+from ._models_py3 import CredentialListResponse
 from ._models_py3 import CredentialReference
 from ._models_py3 import CredentialResource
 from ._models_py3 import CustomActivity
@@ -395,6 +397,7 @@ from ._models_py3 import MagentoLinkedService
 from ._models_py3 import MagentoObjectDataset
 from ._models_py3 import MagentoSource
 from ._models_py3 import ManagedIdentityCredential
+from ._models_py3 import ManagedIdentityCredentialResource
 from ._models_py3 import ManagedIntegrationRuntime
 from ._models_py3 import ManagedIntegrationRuntimeError
 from ._models_py3 import ManagedIntegrationRuntimeNode
@@ -488,6 +491,7 @@ from ._models_py3 import PhoenixLinkedService
 from ._models_py3 import PhoenixObjectDataset
 from ._models_py3 import PhoenixSource
 from ._models_py3 import PipelineElapsedTimeMetricPolicy
+from ._models_py3 import PipelineExternalComputeScaleProperties
 from ._models_py3 import PipelineFolder
 from ._models_py3 import PipelineListResponse
 from ._models_py3 import PipelinePolicy
@@ -619,6 +623,7 @@ from ._models_py3 import SnowflakeImportCopyCommand
 from ._models_py3 import SnowflakeLinkedService
 from ._models_py3 import SnowflakeSink
 from ._models_py3 import SnowflakeSource
+from ._models_py3 import SparkConfigurationParametrizationReference
 from ._models_py3 import SparkLinkedService
 from ._models_py3 import SparkObjectDataset
 from ._models_py3 import SparkSource
@@ -729,10 +734,12 @@ from ._data_factory_management_client_enums import AmazonRdsForOraclePartitionOp
 from ._data_factory_management_client_enums import AvroCompressionCodec
 from ._data_factory_management_client_enums import AzureFunctionActivityMethod
 from ._data_factory_management_client_enums import AzureSearchIndexWriteBehaviorType
+from ._data_factory_management_client_enums import AzureStorageAuthenticationType
 from ._data_factory_management_client_enums import BigDataPoolReferenceType
 from ._data_factory_management_client_enums import BlobEventTypes
 from ._data_factory_management_client_enums import CassandraSourceReadConsistencyLevels
 from ._data_factory_management_client_enums import CompressionCodec
+from ._data_factory_management_client_enums import ConfigurationType
 from ._data_factory_management_client_enums import CopyBehaviorType
 from ._data_factory_management_client_enums import CosmosDbConnectionMode
 from ._data_factory_management_client_enums import CosmosDbServicePrincipalCredentialType
@@ -814,6 +821,7 @@ from ._data_factory_management_client_enums import ServiceNowAuthenticationType
 from ._data_factory_management_client_enums import ServicePrincipalCredentialType
 from ._data_factory_management_client_enums import SftpAuthenticationType
 from ._data_factory_management_client_enums import SparkAuthenticationType
+from ._data_factory_management_client_enums import SparkConfigurationReferenceType
 from ._data_factory_management_client_enums import SparkJobReferenceType
 from ._data_factory_management_client_enums import SparkServerType
 from ._data_factory_management_client_enums import SparkThriftTransportProtocol
@@ -840,7 +848,7 @@ from ._data_factory_management_client_enums import WebAuthenticationType
 from ._data_factory_management_client_enums import WebHookActivityMethod
 from ._data_factory_management_client_enums import ZendeskAuthenticationType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -987,6 +995,7 @@ __all__ = [
     "ControlActivity",
     "CopyActivity",
     "CopyActivityLogSettings",
+    "CopyComputeScaleProperties",
     "CopySink",
     "CopySource",
     "CopyTranslator",
@@ -1006,6 +1015,7 @@ __all__ = [
     "CreateLinkedIntegrationRuntimeRequest",
     "CreateRunResponse",
     "Credential",
+    "CredentialListResponse",
     "CredentialReference",
     "CredentialResource",
     "CustomActivity",
@@ -1233,6 +1243,7 @@ __all__ = [
     "MagentoObjectDataset",
     "MagentoSource",
     "ManagedIdentityCredential",
+    "ManagedIdentityCredentialResource",
     "ManagedIntegrationRuntime",
     "ManagedIntegrationRuntimeError",
     "ManagedIntegrationRuntimeNode",
@@ -1326,6 +1337,7 @@ __all__ = [
     "PhoenixObjectDataset",
     "PhoenixSource",
     "PipelineElapsedTimeMetricPolicy",
+    "PipelineExternalComputeScaleProperties",
     "PipelineFolder",
     "PipelineListResponse",
     "PipelinePolicy",
@@ -1457,6 +1469,7 @@ __all__ = [
     "SnowflakeLinkedService",
     "SnowflakeSink",
     "SnowflakeSource",
+    "SparkConfigurationParametrizationReference",
     "SparkLinkedService",
     "SparkObjectDataset",
     "SparkSource",
@@ -1566,10 +1579,12 @@ __all__ = [
     "AvroCompressionCodec",
     "AzureFunctionActivityMethod",
     "AzureSearchIndexWriteBehaviorType",
+    "AzureStorageAuthenticationType",
     "BigDataPoolReferenceType",
     "BlobEventTypes",
     "CassandraSourceReadConsistencyLevels",
     "CompressionCodec",
+    "ConfigurationType",
     "CopyBehaviorType",
     "CosmosDbConnectionMode",
     "CosmosDbServicePrincipalCredentialType",
@@ -1651,6 +1666,7 @@ __all__ = [
     "ServicePrincipalCredentialType",
     "SftpAuthenticationType",
     "SparkAuthenticationType",
+    "SparkConfigurationReferenceType",
     "SparkJobReferenceType",
     "SparkServerType",
     "SparkThriftTransportProtocol",

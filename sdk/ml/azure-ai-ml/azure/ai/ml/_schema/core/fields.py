@@ -131,14 +131,20 @@ class LocalPathField(fields.Str):
         """Resolve path to absolute path based on base_path in context.
         Will resolve the path if it's already an absolute path.
         """
-        result = Path(value)
-        base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
-        if not result.is_absolute():
-            result = base_path / result
         try:
-            return result.resolve()
+            result = Path(value)
+            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            if not result.is_absolute():
+                result = base_path / result
+
+            # for non-path string like "azureml:/xxx", OSError can be raised in either
+            # resolve() or is_dir() or is_file()
+            result = result.resolve()
+            if (self._allow_dir and result.is_dir()) or (self._allow_file and result.is_file()):
+                return result
         except OSError:
             raise self.make_error("invalid_path")
+        raise self.make_error("path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type)
 
     @property
     def allowed_path_type(self) -> str:
@@ -154,16 +160,12 @@ class LocalPathField(fields.Str):
 
         if value is None:
             return
-        path = self._resolve_path(value)
-        if (self._allow_dir and path.is_dir()) or (self._allow_file and path.is_file()):
-            return
-        raise self.make_error("path_not_exist", path=path.as_posix(), allow_type=self.allowed_path_type)
+        self._resolve_path(value)
 
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
         # do not block serializing None even if required or not allow_none.
         if value is None:
             return None
-        self._validate(value)
         # always dump path as absolute path in string as base_path will be dropped after serialization
         return super(LocalPathField, self)._serialize(self._resolve_path(value).as_posix(), attr, obj, **kwargs)
 

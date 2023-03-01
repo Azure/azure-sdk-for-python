@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -45,7 +45,7 @@ class CheckNameAvailabilityResult(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_available = None
@@ -75,7 +75,7 @@ class CustomDomain(_serialization.Model):
         "use_sub_domain_name": {"key": "useSubDomainName", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs):
+    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the custom domain name assigned to the storage account. Name is the
          CNAME source. Required.
@@ -115,8 +115,8 @@ class Encryption(_serialization.Model):
         *,
         key_source: Union[str, "_models.EncryptionKeySource"],
         services: Optional["_models.EncryptionServices"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword services: List of services which support encryption.
         :paramtype services: ~azure.mgmt.storage.v2016_01_01.models.EncryptionServices
@@ -152,7 +152,7 @@ class EncryptionService(_serialization.Model):
         "last_enabled_time": {"key": "lastEnabledTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: A boolean indicating whether or not the service encrypts the data as it is
          stored.
@@ -174,7 +174,7 @@ class EncryptionServices(_serialization.Model):
         "blob": {"key": "blob", "type": "EncryptionService"},
     }
 
-    def __init__(self, *, blob: Optional["_models.EncryptionService"] = None, **kwargs):
+    def __init__(self, *, blob: Optional["_models.EncryptionService"] = None, **kwargs: Any) -> None:
         """
         :keyword blob: The encryption function of the blob storage service.
         :paramtype blob: ~azure.mgmt.storage.v2016_01_01.models.EncryptionService
@@ -212,7 +212,7 @@ class Endpoints(_serialization.Model):
         "file": {"key": "file", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.blob = None
@@ -253,7 +253,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -295,7 +295,7 @@ class Sku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, *, name: Union[str, "_models.SkuName"], **kwargs):
+    def __init__(self, *, name: Union[str, "_models.SkuName"], **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the sku name. Required for account creation; optional for update.
          Note that in older versions, sku name was called accountType. Required. Known values are:
@@ -409,7 +409,7 @@ class StorageAccount(Resource):  # pylint: disable=too-many-instance-attributes
         "access_tier": {"key": "properties.accessTier", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -457,8 +457,8 @@ class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, type: Union[str, "_models.StorageAccountCheckNameAvailabilityParametersType"], **kwargs
-    ):
+        self, *, name: str, type: Union[str, "_models.StorageAccountCheckNameAvailabilityParametersType"], **kwargs: Any
+    ) -> None:
         """
         :keyword name: Required.
         :paramtype name: str
@@ -529,8 +529,8 @@ class StorageAccountCreateParameters(_serialization.Model):
         custom_domain: Optional["_models.CustomDomain"] = None,
         encryption: Optional["_models.Encryption"] = None,
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Required. Gets or sets the sku name. Required.
         :paramtype sku: ~azure.mgmt.storage.v2016_01_01.models.Sku
@@ -594,7 +594,7 @@ class StorageAccountKey(_serialization.Model):
         "permissions": {"key": "permissions", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.key_name = None
@@ -620,7 +620,7 @@ class StorageAccountListKeysResult(_serialization.Model):
         "keys": {"key": "keys", "type": "[StorageAccountKey]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.keys = None
@@ -643,7 +643,7 @@ class StorageAccountListResult(_serialization.Model):
         "value": {"key": "value", "type": "[StorageAccount]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -666,7 +666,7 @@ class StorageAccountRegenerateKeyParameters(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: str, **kwargs):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
         :keyword key_name: Required.
         :paramtype key_name: str
@@ -714,8 +714,8 @@ class StorageAccountUpdateParameters(_serialization.Model):
         custom_domain: Optional["_models.CustomDomain"] = None,
         encryption: Optional["_models.Encryption"] = None,
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to
          Standard_ZRS or Premium_LRS, nor can accounts of those sku names be updated to any other value.
@@ -774,7 +774,7 @@ class Usage(_serialization.Model):
         "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.unit = None
@@ -794,7 +794,7 @@ class UsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Gets or sets the list of Storage Resource Usages.
         :paramtype value: list[~azure.mgmt.storage.v2016_01_01.models.Usage]
@@ -824,7 +824,7 @@ class UsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
