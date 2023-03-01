@@ -5,7 +5,7 @@
 from marshmallow import fields, pre_load
 
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DumpableEnumField
+from azure.ai.ml._schema.core.fields import DumpableEnumField, VersionField
 
 
 class InternalEnvironmentSchema(PathAwareSchema):
@@ -17,11 +17,5 @@ class InternalEnvironmentSchema(PathAwareSchema):
         required=False,
     )
     name = fields.Str()
-    version = fields.Str()
+    version =  VersionField()
     python = fields.Dict()
-
-    @pre_load
-    def convert_version_to_str(self, data, **kwargs):
-        if "version" in data and data["version"] is not None:
-            data["version"] = str(data["version"])
-        return data
