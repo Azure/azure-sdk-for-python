@@ -469,7 +469,7 @@
               "contact": "amldesigner@microsoft.com"
             },
             "version": "0.0.1",
-            "$schema": "https://component00000.azureedge.net/jsonschema/AE365ExePoolComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/AE365ExePoolComponent.json",
             "display_name": "CAX EyesOn Module [ND] v1.6",
             "inputs": {
               "ComplianceCluster": {
@@ -614,7 +614,7 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
-            "$schema": "https://component00000.azureedge.net/jsonschema/AE365ExePoolComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/AE365ExePoolComponent.json",
             "name": "microsoft_com_azureml_samples_ae365exepool_cax_eyes_on_module",
             "version": "0.0.1",
             "display_name": "CAX EyesOn Module [ND] v1.6",

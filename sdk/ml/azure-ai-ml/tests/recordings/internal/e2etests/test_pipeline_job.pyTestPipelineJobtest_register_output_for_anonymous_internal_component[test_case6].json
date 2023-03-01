@@ -469,7 +469,7 @@
               "contact": "amldesigner@microsoft.com"
             },
             "version": "0.0.1",
-            "$schema": "https://component00000.azureedge.net/jsonschema/StarliteComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/StarliteComponent.json",
             "display_name": "Starlite SearchGold Get Files",
             "inputs": {
               "UploadToCosmos": {
@@ -551,7 +551,7 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
-            "$schema": "https://component00000.azureedge.net/jsonschema/StarliteComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/StarliteComponent.json",
             "name": "microsoft_com_azureml_samples_starlite__search_gold_get_files",
             "version": "0.0.1",
             "display_name": "Starlite SearchGold Get Files",

@@ -469,7 +469,7 @@
               "contact": "amldesigner@microsoft.com"
             },
             "version": "0.0.1",
-            "$schema": "https://component00000.azureedge.net/jsonschema/DataTransferComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/DataTransferComponent.json",
             "display_name": "Data Transfer",
             "is_deterministic": true,
             "inputs": {
@@ -524,7 +524,7 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
-            "$schema": "https://component00000.azureedge.net/jsonschema/DataTransferComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/DataTransferComponent.json",
             "name": "data_transfer",
             "version": "0.0.1",
             "display_name": "Data Transfer",

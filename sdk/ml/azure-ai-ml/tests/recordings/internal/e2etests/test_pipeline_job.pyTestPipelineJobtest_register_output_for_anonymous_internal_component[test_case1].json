@@ -517,7 +517,7 @@
               "helpDocument": "https://aka.ms/parallel-modules"
             },
             "version": "0.0.1",
-            "$schema": "https://component00000.azureedge.net/jsonschema/ParallelComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/ParallelComponent.json",
             "display_name": "Parallel Score Image Classification with MNIST",
             "inputs": {
               "model_path": {
@@ -612,7 +612,7 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
-            "$schema": "https://component00000.azureedge.net/jsonschema/ParallelComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/ParallelComponent.json",
             "name": "microsoft.com.azureml.samples.parallel_score_image",
             "version": "0.0.1",
             "display_name": "Parallel Score Image Classification with MNIST",

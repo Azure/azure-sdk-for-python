@@ -887,7 +887,7 @@
           "componentSpec": {
             "name": "microsoft.com.azureml.samples.mpi_example",
             "version": "0.0.1",
-            "$schema": "https://component00000.azureedge.net/jsonschema/DistributedComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/DistributedComponent.json",
             "display_name": "MPI Example",
             "inputs": {
               "input_path": {
@@ -952,7 +952,7 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
-            "$schema": "https://component00000.azureedge.net/jsonschema/DistributedComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/DistributedComponent.json",
             "name": "microsoft.com.azureml.samples.mpi_example",
             "version": "0.0.1",
             "display_name": "MPI Example",

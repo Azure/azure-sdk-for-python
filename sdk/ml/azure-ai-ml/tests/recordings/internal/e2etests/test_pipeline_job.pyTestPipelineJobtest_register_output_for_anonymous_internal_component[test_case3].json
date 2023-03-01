@@ -401,7 +401,7 @@
               "helpDocument": "https://aka.ms/hdinsight-modules"
             },
             "version": "0.0.1",
-            "$schema": "https://component00000.azureedge.net/jsonschema/HDInsightComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HDInsightComponent.json",
             "display_name": "Train in Spark",
             "inputs": {
               "input_path": {
@@ -468,7 +468,7 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
-            "$schema": "https://component00000.azureedge.net/jsonschema/HDInsightComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HDInsightComponent.json",
             "name": "train_in_spark",
             "version": "0.0.1",
             "display_name": "Train in Spark",

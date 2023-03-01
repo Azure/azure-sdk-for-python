@@ -270,7 +270,7 @@
               "contact": "amldesigner@microsoft.com"
             },
             "version": "0.0.2",
-            "$schema": "https://component00000.azureedge.net/jsonschema/HemeraComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HemeraComponent.json",
             "display_name": "Ads LR DNN Raw Keys",
             "inputs": {
               "TrainingDataDir": {
@@ -376,7 +376,7 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
-            "$schema": "https://component00000.azureedge.net/jsonschema/HemeraComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/HemeraComponent.json",
             "name": "adslrdnnrawkeys_dummy",
             "version": "0.0.2",
             "display_name": "Ads LR DNN Raw Keys",
