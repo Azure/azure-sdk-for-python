@@ -19,6 +19,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest_version_from_container,
+    _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -69,13 +70,15 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         """
         if name:
             return self._operation.list(
-                name=name,
+                resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
+                name=name,
                 cls=lambda objs: [FeaturestoreEntity._from_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
         return self._container_operation.list(
+            resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             cls=lambda objs: [FeaturestoreEntity._from_container_rest_object(obj) for obj in objs],
             list_view_type=list_view_type,
@@ -121,26 +124,26 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
                 msg = "Cannot specify both version and label."
                 raise ValidationException(
                     message=msg,
-                    target=ErrorTarget.DATA,
+                    target=ErrorTarget.FEATURESTORE_ENTITY,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
                 )
 
-            # if label:
-            # return _resolve_label_to_asset(self, name, label)
+            if label:
+                return _resolve_label_to_asset(self, name, label)
 
             if not version:
                 msg = "Must provide either version or label."
                 raise ValidationException(
                     message=msg,
-                    target=ErrorTarget.DATA,
+                    target=ErrorTarget.FEATURESTORE_ENTITY,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.MISSING_FIELD,
                 )
-            featureset_version_resource = self._get(name, version)
-            return FeaturestoreEntity._from_rest_object(featureset_version_resource)
+            featurestore_entity_version_resource = self._get(name, version)
+            return FeaturestoreEntity._from_rest_object(featurestore_entity_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
@@ -156,10 +159,10 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         featurestore_entity_resource = FeaturestoreEntity._to_rest_object(featurestore_entity)
 
         return self._operation.begin_create_or_update(
-            name=featurestore_entity.name,
-            version=featurestore_entity.version,
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
+            name=featurestore_entity.name,
+            version=featurestore_entity.version,
             body=featurestore_entity_resource,
         )
 

@@ -47,6 +47,12 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelContainersOperations,
     ModelVersionsOperations,
 )
+from azure.ai.ml._restclient.v2023_02_01_preview.operations import (
+    FeaturesetVersionsOperations,
+    FeaturesetContainersOperations,
+    FeaturestoreEntityVersionsOperations,
+    FeaturestoreEntityContainersOperations,
+)
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
@@ -61,7 +67,14 @@ from azure.ai.ml.exceptions import (
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
+    from azure.ai.ml.operations import (
+        ComponentOperations,
+        DataOperations,
+        EnvironmentOperations,
+        ModelOperations,
+        FeaturesetOperations,
+        FeaturestoreEntityOperations,
+    )
 
 hash_type = type(hashlib.md5())  # nosec
 
@@ -384,13 +397,16 @@ def traverse_directory(
                         os.path.join(r, name): symlink_prefix + os.path.join(r, name).replace(target_prefix, "")
                         for name in f
                     }  # for each symlink, store its target_path as key and symlink path as value
-                    file_paths_including_links.update(target_file_paths)  # Add discovered symlinks to file paths list
+                    # Add discovered symlinks to file paths list
+                    file_paths_including_links.update(target_file_paths)
             else:
                 file_path_info = {
                     target_absolute_path: path.replace(root + "/", "")
                 }  # for each symlink, store its target_path as key and symlink path as value
-                file_paths_including_links.update(file_path_info)  # Add discovered symlinks to file paths list
-            del file_paths_including_links[path]  # Remove original symlink entry now that detailed entry has been added
+                # Add discovered symlinks to file paths list
+                file_paths_including_links.update(file_path_info)
+            # Remove original symlink entry now that detailed entry has been added
+            del file_paths_including_links[path]
 
     file_paths = sorted(
         file_paths_including_links
@@ -632,7 +648,8 @@ def upload_directory(
         if show_progress:
             warnings.simplefilter("ignore", category=TqdmWarning)
             msg += f" ({round(total_size/10**6, 2)} MBs)"
-            is_windows = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
+            # Default unicode progress bar doesn't display well on Windows
+            is_windows = system() == "Windows"
             with tqdm(total=total_size, desc=msg, ascii=is_windows) as pbar:
                 for future in as_completed(futures_dict):
                     future.result()  # access result to propagate any exceptions
@@ -824,18 +841,24 @@ def _archive_or_restore(
         "EnvironmentOperations",
         "ModelOperations",
         "ComponentOperations",
+        "FeaturesetOperations",
+        "FeaturestoreEntityOperations",
     ],
     version_operation: Union[
         "DataVersionsOperations",
         "EnvironmentVersionsOperations",
         "ModelVersionsOperations",
         "ComponentVersionsOperations",
+        "FeaturesetVersionsOperations",
+        "FeaturestoreEntityVersionsOperations",
     ],
     container_operation: Union[
         "DataContainersOperations",
         "EnvironmentContainersOperations",
         "ModelContainersOperations",
         "ComponentContainersOperations",
+        "FeaturesetContainersOperations",
+        "FeaturestoreEntityContainersOperations",
     ],
     is_archived: bool,
     name: str,
@@ -945,7 +968,8 @@ def _resolve_label_to_asset(
 class FileUploadProgressBar(tqdm):
     def __init__(self, msg: Optional[str] = None):
         warnings.simplefilter("ignore", category=TqdmWarning)
-        is_windows = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
+        # Default unicode progress bar doesn't display well on Windows
+        is_windows = system() == "Windows"
         super().__init__(unit="B", unit_scale=True, desc=msg, ascii=is_windows)
 
     def update_to(self, response):
