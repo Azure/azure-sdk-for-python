@@ -75,16 +75,16 @@ jobs:
 
     strategy:
       matrix:
-        linux:
+        Linux:
           imageName: 'MMSUbuntu22.04'
           poolName: 'azsdk-pool-mms-ubuntu-2204-general'
           artifactName: 'linux'
         ${{ if parameters.AdvancedBuild }}:
-          windows:
+          Windows:
             imageName: 'MMS2022'
             poolName: 'azsdk-pool-mms-win-2022-general'
             artifactName: 'windows'
-          mac:
+          Mac:
             imageName: 'macos-11'
             poolName: 'Azure Pipelines'
             artifactName: 'mac'
@@ -118,7 +118,7 @@ jobs:
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
     dependsOn:
-      - 'Build'
+      - 'Build Linux'
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -166,7 +166,10 @@ jobs:
     parameters:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       DependsOn:
-        - 'Build'
+        - 'Build Linux'
+        ${{ if parameters.AdvancedBuild }}:
+          - 'Build Mac'
+          - 'Build Windows'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
@@ -213,7 +216,10 @@ jobs:
       CloudConfig:
         Cloud: Public
       DependsOn:
-        - 'Build'
+        - 'Build Linux'
+        ${{ if parameters.AdvancedBuild }}:
+          - 'Build Mac'
+          - 'Build Windows'
       AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
