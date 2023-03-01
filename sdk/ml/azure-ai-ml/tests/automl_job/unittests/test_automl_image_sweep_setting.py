@@ -7,12 +7,12 @@ from typing import Optional
 
 import pytest
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2022_10_01_preview.models import EarlyTerminationPolicyType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SamplingAlgorithmType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2022_12_01_preview.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2022_12_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
+from azure.ai.ml._restclient.v2022_12_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml.entities._job.automl.image import ImageSweepSettings

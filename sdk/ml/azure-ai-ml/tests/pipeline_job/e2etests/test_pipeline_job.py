@@ -1959,6 +1959,19 @@ class TestPipelineJob(AzureRecordedTestCase):
         pipeline_job = load_job(yaml_path)
         assert_job_cancel(pipeline_job, client)
 
+    @pytest.mark.disable_mock_code_hash
+    def test_register_automl_output(self, client: MLClient, randstr: Callable[[str], str]):
+        register_pipeline_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/automl_regression_with_command_node_register_output.yml"
+        pipeline = load_job(source=register_pipeline_path, params_override=[{"name": randstr("name")}])
+        pipeline_job = assert_job_cancel(pipeline, client)
+        assert pipeline_job.jobs["regression_node"].outputs["best_model"].name == "regression_name"
+        assert pipeline_job.jobs["regression_node"].outputs["best_model"].version == "1"
+
+        # Current code won't copy NodeOutput to the binding PipelineOutput for yaml defined job.
+        # To register a binding NodeOutput, define name and version in pipeline level is more expected.
+        assert pipeline_job.outputs.regression_node_2.name == None
+        assert pipeline_job.outputs.regression_node_2.version == None
+
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
