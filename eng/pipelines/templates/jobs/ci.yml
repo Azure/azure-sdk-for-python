@@ -119,6 +119,9 @@ jobs:
 
     dependsOn:
       - 'Build Linux'
+      - ${{ if parameters.AdvancedBuild }}:
+        - 'Build Mac'
+        - 'Build Windows'
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
