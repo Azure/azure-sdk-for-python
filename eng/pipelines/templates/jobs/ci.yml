@@ -105,6 +105,7 @@ jobs:
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
+        ArtifactName: packages_$(artifactName)
 
     - template: ../steps/build-conda-artifacts.yml
       parameters:

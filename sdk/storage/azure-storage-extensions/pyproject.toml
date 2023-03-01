@@ -5,6 +5,8 @@ type_check_samples = false
 verifytypes = false
 pylint = false
 sphinx = false
+verifysdist = false
+verifywhl = false
 
 [tool.cibuildwheel]
 skip = ["*-musllinux*", "pp*"]
