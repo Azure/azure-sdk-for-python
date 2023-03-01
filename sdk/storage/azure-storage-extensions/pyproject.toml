@@ -4,6 +4,7 @@ pyright = false
 type_check_samples = false
 verifytypes = false
 pylint = false
+sphinx = false
 
 [tool.cibuildwheel]
 skip = ["*-musllinux*", "pp*"]
