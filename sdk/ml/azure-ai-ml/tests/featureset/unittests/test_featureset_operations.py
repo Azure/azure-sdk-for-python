@@ -30,17 +30,6 @@ def mock_featureset_operations(
     )
 
 
-# @pytest.fixture
-def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
-    return ArtifactStorageInfo(
-        name="testFileData",
-        version="3",
-        relative_path="path",
-        datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
-        container_name="containerName",
-    )
-
-
 @pytest.mark.unittest
 @patch.object(Featureset, "_from_rest_object", new=Mock())
 @patch.object(Featureset, "_from_container_rest_object", new=Mock())

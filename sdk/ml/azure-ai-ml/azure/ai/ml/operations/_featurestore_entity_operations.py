@@ -69,7 +69,6 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         """
         if name:
             return self._operation.list(
-                resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
                 name=name,
                 cls=lambda objs: [FeaturestoreEntity._from_rest_object(obj) for obj in objs],
@@ -77,7 +76,6 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
                 **self._scope_kwargs,
             )
         return self._container_operation.list(
-            resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             cls=lambda objs: [FeaturestoreEntity._from_container_rest_object(obj) for obj in objs],
             list_view_type=list_view_type,
