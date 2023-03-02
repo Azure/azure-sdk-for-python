@@ -603,3 +603,10 @@ class IdentityType:
 class Boolean:
     TRUE = "true"
     FALSE = "false"
+
+
+class InferenceServerType:
+    AZUREML_ONLINE = "AzureMLOnline"
+    AZUREML_BATCH = "AzureMLBatch"
+    TRITON = "Triton"
+    CUSTOM = "Custom"
