@@ -50,14 +50,12 @@ def mock_code_operation(
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_datastore_operation: Mock,
-    mock_machinelearning_client: Mock,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
         datastore_operations=mock_datastore_operation,
-        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -148,6 +146,32 @@ class TestJobOperations:
         mock_method.return_value = Command(component=None)
         mock_job_operation.get("randon_name")
         mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+
+    @patch.object(JobOperations, "_get_job")
+    def test_get_job(self, mock_method, mock_job_operation: JobOperations) -> None:
+        from azure.ai.ml import Input, dsl, load_component
+
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node = component(component_in_path=component_input)
+
+        @dsl.pipeline()
+        def register_both_output():
+            sub_node = sub_pipeline()
+
+        pipeline = register_both_output()
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline.jobs["sub_node"]._component = "fake_component"
+
+        # add settings for subgraph node to simulate the result of getting pipeline that submitted with previous sdk
+        pipeline.jobs["sub_node"]["settings"] = {}
+
+        pipeline_job_base = pipeline._to_rest_object()
+        mock_method.return_value = pipeline_job_base
+        mock_job_operation.get(name="random_name")
 
     @patch.object(Job, "_from_rest_object")
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
