@@ -180,7 +180,7 @@ stages:
             inputs:
               scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
               arguments: >-
-                "$(TargetingString)" 
+                "azure*" 
                 --mark_arg="${{ parameters.TestMarkArgument }}" 
                 --service="${{ parameters.ServiceDirectory }}" 
                 --toxenv="next-mypy"
@@ -193,7 +193,7 @@ stages:
             inputs:
               scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
               arguments: >-
-                "$(TargetingString)"
+                "azure*"
                 --mark_arg="${{ parameters.TestMarkArgument }}"
                 --service="${{ parameters.ServiceDirectory }}"
                 --toxenv="next-pyright"
