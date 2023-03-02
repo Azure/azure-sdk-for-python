@@ -18,16 +18,16 @@ class CallRecording(object):
 
         self._call_recording_client = call_recording_client
 
-    def startRecording(
+    def start_recording(
         self,
-        startCallRecordingRequest:StartCallRecordingRequest,
+        start_call_recording_request:StartCallRecordingRequest,
         **kwargs
     ):
         # type: (...) -> RecordingStateResponse
         """Start recording the call.
 
-        :param callLocator: Required.
-        :type content: CallLocator
+        :param start_call_recording_request: Required.
+        :type content: StartCallRecordingRequest
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -53,16 +53,16 @@ class CallRecording(object):
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
         recording_state_response = self._call_recording_client.start_recording(
-        start_call_recording = startCallRecordingRequest._to_generated(),
+        start_call_recording = start_call_recording_request._to_generated(),
         repeatability_first_sent = repeatability_first_sent,
         repeatability_request_id = repeatability_request_id,
         **kwargs)
 
         return RecordingStateResponse._from_generated(recording_state_response)
 
-    def stopRecording(
+    def stop_recording(
         self,
-        recordingId,
+        recording_id,
         **kwargs
     ):
         # type: (...) -> None
@@ -74,11 +74,11 @@ class CallRecording(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.stop_recording(recording_id = recordingId, **kwargs)
+        self._call_recording_client.stop_recording(recording_id = recording_id, **kwargs)
 
-    def pauseRecording(
+    def pause_recording(
         self,
-        recordingId,
+        recording_id,
         **kwargs
     ):
         # type: (...) -> None
@@ -90,11 +90,11 @@ class CallRecording(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.pause_recording(recording_id = recordingId, **kwargs)
+        self._call_recording_client.pause_recording(recording_id = recording_id, **kwargs)
 
-    def resumeRecording(
+    def resume_recording(
         self,
-        recordingId,
+        recording_id,
         **kwargs
     ):
         # type: (...) -> None
@@ -106,11 +106,11 @@ class CallRecording(object):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._call_recording_client.resume_recording(recording_id = recordingId, **kwargs)
+        self._call_recording_client.resume_recording(recording_id = recording_id, **kwargs)
 
-    def getRecordingProperties(
+    def get_recording_properties(
         self,
-        recordingId,
+        recording_id,
         **kwargs
     ):
         # type: (...) -> RecordingStateResponse
@@ -122,5 +122,5 @@ class CallRecording(object):
         :rtype: ~azure.communication.callautomation.models.RecordingStateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        recording_state_response = self._call_recording_client.get_recording_properties(recording_id = recordingId, **kwargs)
+        recording_state_response = self._call_recording_client.get_recording_properties(recording_id = recording_id, **kwargs)
         return RecordingStateResponse._from_generated(recording_state_response)

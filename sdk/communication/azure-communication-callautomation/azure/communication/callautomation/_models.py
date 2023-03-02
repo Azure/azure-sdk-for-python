@@ -1,4 +1,3 @@
-# coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -38,12 +37,12 @@ class ServerCallLocator(object):
     def __init__(
         self,
         *,
-        locatorid: str,
+        locator_id: str,
         **kwargs: Any
     ) -> None:
 
         super().__init__(**kwargs)
-        self.id = locatorid
+        self.id = locator_id
         self.kind = "serverCallLocator"
 
     def _to_generated(self):
@@ -57,12 +56,12 @@ class GroupCallLocator(object):
     def __init__(
         self,
         *,
-        locatorid: str,
+        locator_id: str,
         **kwargs: Any
     ) -> None:
 
         super().__init__(**kwargs)
-        self.id = locatorid
+        self.id = locator_id
         self.kind = "groupCallLocator"
 
     def _to_generated(self):
@@ -198,31 +197,6 @@ class FileSource(PlaySource):
             **kwargs
     ):
         self.uri = kwargs['uri']
-        super().__init__(play_source_id=kwargs.get('play_source_id'))
-
-
-class TextSource(PlaySource):
-    """
-    The TextSource model.
-
-    :ivar text: Text for the cognitive service to be played.
-    :vartype text: str
-    :ivar source_locale: Source language locale to be played.
-    :vartype source_locale: str
-    :ivar voice_gender: Voice gender type.
-    :vartype voice_gender: str or ~azure.communication.callautomation.models.Gender
-    :ivar voice_name: Voice name to be played.
-    :vartype voice_name: str
-    """
-
-    def __init__(
-            self,
-            **kwargs
-    ):
-        self.text = kwargs['text']
-        self.source_locale = kwargs['source_locale']
-        self.voice_gender = kwargs['voice_gender']
-        self.voice_name = kwargs['voice_name']
         super().__init__(play_source_id=kwargs.get('play_source_id'))
 
 
@@ -517,24 +491,6 @@ class CallMediaRecognizeDtmfOptions(CallMediaRecognizeOptions):
         super().__init__(RecognizeInputType.DTMF, target_participant, **kwargs)
 
 
-class CallMediaRecognizeChoiceOptions(CallMediaRecognizeOptions):
-    """
-    The Recognize configurations specific for Recognize Choice.
-
-    :ivar recognize_choices: List of recognize choices
-    :vartype recognize_choices: list[~azure.communication.callautomation.models.Choice]
-    """
-
-    def __init__(
-            self,
-            target_participant,
-            recognize_choices,
-            **kwargs
-    ):
-        self.recognize_choices = recognize_choices
-        super().__init__(RecognizeInputType.CHOICES, target_participant, **kwargs)
-
-
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tone."""
 
@@ -555,20 +511,21 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POUND = "pound"
     ASTERISK = "asterisk"
 
-    class RecognizeCanceled(object):
-        """RecognizeCanceled.
 
-        :ivar call_connection_id: Call connection ID.
-        :vartype call_connection_id: str
-        :ivar server_call_id: Server call ID.
-        :vartype server_call_id: str
-        :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-        skype chain ID.
-        :vartype correlation_id: str
-        :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-        request to the response event.
-        :vartype operation_context: str
-        """
+class RecognizeCanceled(object):
+    """RecognizeCanceled.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+    skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    """
 
     def __init__(
         self,
@@ -580,10 +537,10 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         :keyword server_call_id: Server call ID.
         :paramtype server_call_id: str
         :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
-         skype chain ID.
+            skype chain ID.
         :paramtype correlation_id: str
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
-         request to the response event.
+            request to the response event.
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)

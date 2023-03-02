@@ -4,27 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, TYPE_CHECKING  # pylint: disable=unused-import
-from urllib.parse import urlparse
-from azure.core.credentials import TokenCredential
+from typing import List, TYPE_CHECKING  # pylint: disable=unused-import
 
-from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 
-from ._generated._client import AzureCommunicationCallAutomationService
-from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._communication_identifier_serializer import serialize_identifier
 
 from ._generated.models._models import (
-PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, PlayOptions, CommunicationIdentifierModel, 
-PlaySource as PlaySourceInternal, FileSource as FileSourceInternal, 
-TextSource as TextSourceInternal
+PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, PlayOptions, 
+PlaySource as PlaySourceInternal, FileSource as FileSourceInternal
 )
 
 from ._generated.models import PlaySourceType
 from ._models import  (
-    CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions, CallMediaRecognizeChoiceOptions, 
-    PlaySource, FileSource, TextSource, CommunicationIdentifier
+    CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions, 
+    PlaySource, FileSource, CommunicationIdentifier
 )
 
 if TYPE_CHECKING:
@@ -51,19 +45,6 @@ class CallMediaClient(object):
                 source_type=PlaySourceType.FILE, 
                 file_source=file_source, 
                 play_source_id=play_source.play_source_id
-            )
-
-        if isinstance(play_source, TextSource):
-            text_source = TextSourceInternal(
-                text=play_source.text,
-                voice_gender=play_source.voice_gender,
-                source_locale=play_source.source_locale,
-                voice_name=play_source.voice_name
-            )
-            return PlaySourceInternal(
-                source_type=PlaySourceType.TEXT,
-                play_source_id=play_source.play_source_id,
-                text_source=text_source
             )
         return None
 
@@ -139,9 +120,6 @@ class CallMediaClient(object):
                 max_tones_to_collect=recognize_options.max_tones_to_collect,
                 stop_tones=recognize_options.stop_dtmf_tones
             )
-
-        if isinstance(recognize_options, CallMediaRecognizeChoiceOptions):
-            options.choices = recognize_options.recognize_choices
 
         play_source = recognize_options.play_prompt
 
