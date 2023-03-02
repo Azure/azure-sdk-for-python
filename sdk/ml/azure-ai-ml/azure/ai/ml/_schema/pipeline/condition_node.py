@@ -13,5 +13,5 @@ from azure.ai.ml.constants._component import ControlFlowType
 class ConditionNodeSchema(ControlFlowSchema):
     type = StringTransformedEnum(allowed_values=[ControlFlowType.IF_ELSE])
     condition = UnionField([DataBindingStr(), fields.Bool()])
-    true_block = NodeBindingStr()
-    false_block = NodeBindingStr()
+    true_block = UnionField([NodeBindingStr(), fields.List(NodeBindingStr())])
+    false_block = UnionField([NodeBindingStr(), fields.List(NodeBindingStr())])
