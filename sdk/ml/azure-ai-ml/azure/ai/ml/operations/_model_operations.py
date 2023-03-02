@@ -53,8 +53,8 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import ResourceNotFoundError
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -122,35 +122,36 @@ class ModelOperations(_ScopeDependentOperations):
             if self._registry_name:
                 # Case of copy model to registry
                 if isinstance(model, WorkspaceAssetReference):
-                    # verify that model is not already in registry
-                    # try:
-                    #     self._model_versions_operation.get(
-                    #         name=model.name,
-                    #         version=model.version,
-                    #         resource_group_name=self._resource_group_name,
-                    #         registry_name=self._registry_name,
-                    #     )
-                    # except Exception as err:  # pylint: disable=broad-except
-                    #     if isinstance(err, ResourceNotFoundError):
-                    #         pass
-                    #     else:
-                    #         raise err
-                    # else:
-                    #     msg = "A model with this name and version already exists in registry"
-                    #     raise ValidationException(
-                    #         message=msg,
-                    #         no_personal_data_message=msg,
-                    #         target=ErrorTarget.MODEL,
-                    #         error_category=ErrorCategory.USER_ERROR,
-                    #     )
+                    ## verify that model is not already in registry
+                    try:
+                        self._model_versions_operation.get(
+                            name=model.name,
+                            version=model.version,
+                            resource_group_name=self._resource_group_name,
+                            registry_name=self._registry_name,
+                        )
+                    except Exception as err:  # pylint: disable=broad-except
+                        if isinstance(err, ResourceNotFoundError):
+                            pass
+                        else:
+                            raise err
+                    else:
+                        msg = "A model with this name and version already exists in registry"
+                        raise ValidationException(
+                            message=msg,
+                            no_personal_data_message=msg,
+                            target=ErrorTarget.MODEL,
+                            error_category=ErrorCategory.USER_ERROR,
+                        )
 
-                    model = model._to_rest_object()
-                    result = self._service_client.resource_management_asset_reference.begin_import_method(
+                    model_rest_obj = model._to_rest_object()
+                    self._service_client.resource_management_asset_reference.begin_import_method(
                         resource_group_name=self._resource_group_name,
                         registry_name=self._registry_name,
-                        body=model,
+                        body=model_rest_obj,
                     )
-                    return result
+                    env_rest_obj = self._get(name=model.name, version=model.version)
+                    return Model._from_rest_object(model_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
@@ -212,7 +213,7 @@ class ModelOperations(_ScopeDependentOperations):
 
             return model
         except Exception as ex:  # pylint: disable=broad-except
-            if isinstance(ex, (ValidationException, SchemaValidationError)):
+            if isinstance(ex, SchemaValidationError):
                 log_and_raise_error(ex)
             else:
                 raise ex

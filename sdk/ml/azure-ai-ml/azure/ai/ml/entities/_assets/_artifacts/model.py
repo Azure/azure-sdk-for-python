@@ -113,7 +113,8 @@ class Model(Artifact):
     def _from_rest_object(cls, model_rest_object: ModelVersionData) -> "Model":
         rest_model_version: ModelVersionDetails = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
-        flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
+        if hasattr(rest_model_version, "flavors"):
+            flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
         model = Model(
             id=model_rest_object.id,
             name=arm_id.asset_name,
