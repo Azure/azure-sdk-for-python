@@ -75,6 +75,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
     @distributed_trace
+    # pylint: disable=arguments-renamed
     def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
         """Get a workspace by name.
 
@@ -84,10 +85,11 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :rtype: Workspace
         """
 
-        return super().get(name=name, **kwargs)
+        return super().get(workspace_name=name, **kwargs)
 
     # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
+    # pylint: disable=arguments-differ
     def get_keys(self, name: Optional[str] = None) -> WorkspaceKeys:
         """Get keys for the workspace.
 

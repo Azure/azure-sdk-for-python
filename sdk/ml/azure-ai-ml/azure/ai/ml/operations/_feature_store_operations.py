@@ -94,7 +94,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     @distributed_trace
-    # pylint: disable=arguments-differ
+    # pylint: disable=arguments-renamed
     def get(self, name: str, **kwargs: Dict) -> FeatureStore:
         """Get a feature store by name.
 

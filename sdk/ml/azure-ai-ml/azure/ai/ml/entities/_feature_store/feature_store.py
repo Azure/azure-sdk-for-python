@@ -6,6 +6,8 @@
 
 from typing import Dict, Optional
 
+from marshmallow import ValidationError
+
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntime
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
@@ -49,6 +51,7 @@ class FeatureStore(Workspace):
         :param compute_runtime: Compute runtime of the feature store.
         :type compute_runtime: ~azure.ai.ml.entities.ComputeRuntime
         :param offline_store: Offline store for feature store.
+        materialization_identity is required when offline_store is passed.
         :type offline_store: ~azure.ai.ml.entities.MaterializationStore
         :param materialization_identity: Identity used for materialization.
         :type materialization_identity: ~azure.ai.ml.entities.ManagedIdentityConfiguration
@@ -94,6 +97,9 @@ class FeatureStore(Workspace):
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
+
+        if offline_store and not materialization_identity:
+            raise ValidationError("materialization_identity is required to setup offline store")
 
         feature_store_settings = FeatureStoreSettings(
             compute_runtime=compute_runtime
