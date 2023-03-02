@@ -76,6 +76,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self.remote_max_message_size = None
         self.available = kwargs.pop("available", None)
         self.properties = kwargs.pop("properties", None)
+        self.remote_properties = None
         self.offered_capabilities = None
         self.desired_capabilities = kwargs.pop("desired_capabilities", None)
 
@@ -113,7 +114,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
             try:
                 raise self._error
             except TypeError:
-                raise AMQPConnectionError(condition=ErrorCondition.InternalError, description="Link already closed.")
+                _LOGGER.warn("Link already closed", extra=self.network_trace_params)
 
     def _set_state(self, new_state):
         # type: (LinkState) -> None
@@ -172,10 +173,8 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self.remote_handle = frame[1]  # handle
         self.remote_max_message_size = frame[10]  # max_message_size
         self.offered_capabilities = frame[11]  # offered_capabilities
-        if self.properties:
-            self.properties.update(frame[13])  # properties
-        else:
-            self.properties = frame[13]
+        self.remote_properties = frame[13]  # properties
+
         if self.state == LinkState.DETACHED:
             self._set_state(LinkState.ATTACH_RCVD)
         elif self.state == LinkState.ATTACH_SENT:
