@@ -14,11 +14,14 @@ security: AADToken
 security-scopes: https://cnt-prod.loadtesting.azure.com/.default
 directive:
   - from: swagger-document
+    where: $["paths"]["/test-runs/{testRunId}"].patch
+    transform: $["x-ms-long-running-operation"] = true;
+  - from: swagger-document
     where: $["paths"]["/tests/{testId}/files/{fileName}"].put
     transform: $["operationId"] = "LoadTestAdministration_BeginUploadTestFile";
   - from: swagger-document
     where: $["paths"]["/test-runs/{testRunId}"].patch
-    transform: $["operationId"] = "LoadTestRun_BeginTestRun";
+    transform: $["operationId"] = "LoadTestRun_TestRun";
   - from: swagger-document
     where: $["paths"]["/test-runs/{testRunId}/metric-namespaces"].get
     transform: $["operationId"] = "LoadTestRun_GetMetricNamespaces";

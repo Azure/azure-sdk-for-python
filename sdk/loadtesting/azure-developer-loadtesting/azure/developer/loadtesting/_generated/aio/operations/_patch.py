@@ -132,70 +132,6 @@ class TestRunOperations(TestRunOperationsGenerated):
     def __init__(self, *args, **kwargs):
         super(TestRunOperations, self).__init__(*args, **kwargs)
 
-    @overload
-    async def begin_test_run(
-        self,
-        test_run_id: str,
-        body: JSON,
-        *,
-        old_test_run_id: Optional[str] = None,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
-        """Create and start a new test run with the given name.
-
-        Create and start a new test run with the given name.
-
-        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
-         numeric, underscore or hyphen characters. Required.
-        :type test_run_id: str
-        :param body: Load test run model. Required.
-        :type body: IO
-        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
-         provided, the test will run with the JMX file, configuration and app components from the
-         existing test run. You can override the configuration values for new test run in the request
-         body. Default value is None.
-        :paramtype old_test_run_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_test_run(
-        self,
-        test_run_id: str,
-        body: IO,
-        *,
-        old_test_run_id: Optional[str] = None,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
-        """Create and start a new test run with the given name.
-
-        Create and start a new test run with the given name.
-
-        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
-         numeric, underscore or hyphen characters. Required.
-        :type test_run_id: str
-        :param body: Load test run model. Required.
-        :type body: IO
-        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
-         provided, the test will run with the JMX file, configuration and app components from the
-         existing test run. You can override the configuration values for new test run in the request
-         body. Default value is None.
-        :paramtype old_test_run_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace
     async def begin_test_run(
         self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
@@ -226,7 +162,7 @@ class TestRunOperations(TestRunOperationsGenerated):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        create_or_update_test_run_operation = await super().begin_test_run(
+        create_or_update_test_run_operation = await super()._test_run_initial(
             test_run_id, body, old_test_run_id=old_test_run_id, **kwargs
         )
 
