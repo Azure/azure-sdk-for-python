@@ -14,7 +14,7 @@ from azure.mgmt.workloads import WorkloadsClient
     pip install azure-identity
     pip install azure-mgmt-workloads
 # USAGE
-    python sap_virtual_instances_create_distributed_mount_trans.py
+    python sap_virtual_instances_create_distributed_mount_transport.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2022-11-01-preview/examples/sapvirtualinstances/SAPVirtualInstances_Create_Distributed_MountTrans.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/stable/2023-04-01/examples/sapvirtualinstances/SAPVirtualInstances_Create_Distributed_MountTransport.json
 if __name__ == "__main__":
     main()

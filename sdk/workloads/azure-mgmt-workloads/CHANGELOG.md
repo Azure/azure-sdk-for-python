@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0 (2023-03-02)
+
+### Breaking Changes
+
+  - Model ImageReference no longer has parameter exact_version
+  - Model ImageReference no longer has parameter shared_gallery_image_id
+
 ## 1.0.0b3 (2023-02-15)
 
 ### Features Added

@@ -35,7 +35,10 @@ if TYPE_CHECKING:
 class WorkloadsClient(
     WorkloadsClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """Workloads client provides access to various workload operations.
+    """Workloads client provides access to various workload operations.:code:`<br>`Azure Center for
+    SAP solutions is currently in PREVIEW. See the `Azure Center for SAP solutions - Legal Terms
+    <https://learn.microsoft.com/en-us/legal/azure-center-for-sap-solutions/azure-center-for-sap-solutions-legal-terms>`_
+    for legal notices applicable to Azure Center for SAP solutions.
 
     :ivar sap_virtual_instances: SAPVirtualInstancesOperations operations
     :vartype sap_virtual_instances:
@@ -64,8 +67,8 @@ class WorkloadsClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-04-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -135,5 +138,5 @@ class WorkloadsClient(
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
