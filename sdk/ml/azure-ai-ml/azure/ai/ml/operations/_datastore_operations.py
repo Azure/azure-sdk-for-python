@@ -46,7 +46,6 @@ class DatastoreOperations(_ScopeDependentOperations):
         self._operation = serviceclient_2022_10_01.datastores
         self._credential = serviceclient_2022_10_01._config.credential
         self._init_kwargs = kwargs
-        self._service_client = serviceclient_2022_10_01
 
     @monitor_with_activity(logger, "Datastore.List", ActivityType.PUBLICAPI)
     def list(self, *, include_secrets: bool = False) -> Iterable[Datastore]:
