@@ -408,7 +408,8 @@ class DataOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[Job]
         """
 
-        return self._job_operation.list(job_type="Pipeline", asset_name=name, list_view_type=list_view_type)
+        # TODO: Add back 'asset_name=name' filter once client switches to mfe 2023-02-01-preview and above
+        return self._job_operation.list(job_type="Pipeline", list_view_type=list_view_type)
 
     # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
