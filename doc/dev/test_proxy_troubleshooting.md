@@ -8,22 +8,14 @@ Documentation of the motivations and goals of the test proxy can be found [here]
 GitHub repository, and documentation of how to set up and use the proxy can be found [here][detailed_docs].
 
 ## Table of contents
-- [General troubleshooting tip](#general-troubleshooting-tip)
 - [Test collection failure](#test-collection-failure)
 - [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
 - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
 - [Recordings not being produced](#recordings-not-being-produced)
-- [KeyError during container startup](#keyerror-during-container-startup)
-- [ConnectionError during test startup](#connectionerror-during-test-startup)
+- [ConnectionError during tests](#connectionerror-during-tests)
 - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
 - [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
 - [Fixture not found error](#fixture-not-found-error)
-
-## General troubleshooting tip
-
-For any issue that may come up, it's generally a good idea to first try deleting any existing proxy container (which
-will be called `ambitious_azsdk_test_proxy`) and creating a new one by running tests. This will fetch the latest tag of
-the test proxy Docker container, meaning the latest version of the proxy tool will be used.
 
 ## Test collection failure
 
@@ -54,22 +46,14 @@ matching enabled by default.
 
 ## Recordings not being produced
 
-First, make sure that the environment variable `AZURE_SKIP_LIVE_RECORDING` isn't set to "true". If it's not and live
-tests still aren't producing recordings, try deleting the `ambitious_azsdk_test_proxy` Docker container and re-running
-tests. The recording storage location is determined when the test proxy Docker container is created. If there are
-multiple local copies of the `azure-sdk-for-python` repo on your machine, the container could be storing recordings in
-the wrong repo.
+Ensure the environment variable `AZURE_SKIP_LIVE_RECORDING` **isn't** set to "true", and that `AZURE_TEST_RUN_LIVE`
+**is** set to "true".
 
-## KeyError during container startup
+## ConnectionError during tests
 
-Try updating your machine's version of Docker. Older versions of Docker may not return a status to indicate whether or
-not the proxy container is running, which the [proxy_startup.py][proxy_startup] script needs to determine.
-
-## ConnectionError during test startup
-
-For example, you may see a `requests.exceptions.ConnectionError` when trying to contact URL `/Info/Available`. This
-means that the test proxy tool wasn't started up properly, so requests to the tool are failing. Make sure Docker is
-installed and is up to date, and ensure that Linux containers are being used.
+For example, you may see a `requests.exceptions.ConnectionError` when trying to make service or sanitizer setup
+requests. This means that the test proxy tool never started correctly; ensure the `test_proxy` fixture is being invoked
+during test startup so that the tool is available during tests.
 
 ## Different error than expected when using proxy
 
