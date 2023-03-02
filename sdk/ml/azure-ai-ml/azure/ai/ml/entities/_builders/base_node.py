@@ -14,6 +14,7 @@ from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import CommonYamlFields
 from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.entities import Data, Model
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
@@ -187,8 +188,6 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @classmethod
     def _get_supported_inputs_types(cls):
-        from azure.ai.ml.entities import Data, Model
-
         # supported input types for node input
         return (
             PipelineInput,

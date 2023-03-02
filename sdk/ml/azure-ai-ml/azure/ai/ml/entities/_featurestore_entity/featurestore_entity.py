@@ -27,8 +27,8 @@ class FeaturestoreEntity(Asset):
         self,
         *,
         name: str,
-        version: str,
         index_columns: List[DataColumn],
+        version: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
@@ -92,7 +92,6 @@ class FeaturestoreEntity(Asset):
         arm_id_object = get_arm_id_object_from_id(rest_obj.id)
         featurestoreEntity = FeaturestoreEntity(
             name=arm_id_object.asset_name,
-            version=arm_id_object.asset_version,
             description=rest_object_details.description,
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,

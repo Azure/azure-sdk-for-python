@@ -83,22 +83,12 @@ class FeaturesetOperations(_ScopeDependentOperations):
         )
 
     def _get(self, name: str, version: str = None) -> FeaturesetVersion:
-        return (
-            self._operation.get(
-                name=name,
-                version=version,
-                registry_name=self._registry_name,
-                **self._scope_kwargs,
-                **self._init_kwargs,
-            )
-            if self._registry_name
-            else self._operation.get(
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                name=name,
-                version=version,
-                **self._init_kwargs,
-            )
+        return self._operation.get(
+            name=name,
+            version=version,
+            registry_name=self._registry_name,
+            **self._scope_kwargs,
+            **self._init_kwargs,
         )
 
     # @monitor_with_activity(logger, "Featureset.Get", ActivityType.PUBLICAPI)
@@ -159,7 +149,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             name=featureset.name,
-            version=featureset.version,
+            version=featureset.version if featureset.version else "1",
             body=featureset_resource,
         )
 

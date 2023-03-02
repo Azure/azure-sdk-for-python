@@ -30,9 +30,9 @@ class Featureset(Artifact):
         self,
         *,
         name: str = None,
-        version: str = None,
         entities: List[str],
         specification: FeaturesetSpecification,
+        version: Optional[str] = None,
         stage: Optional[str] = None,
         description: Optional[str] = None,
         materialization_settings: Optional[MaterializationSettings] = None,
@@ -117,7 +117,6 @@ class Featureset(Artifact):
         arm_id_object = get_arm_id_object_from_id(rest_obj.id)
         featureset = Featureset(
             name=arm_id_object.asset_name,
-            version=arm_id_object.asset_version,
             description=rest_object_details.description,
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,
