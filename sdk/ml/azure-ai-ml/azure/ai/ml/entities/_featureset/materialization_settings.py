@@ -9,7 +9,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     MaterializationStoreType,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._schedule.schedule import JobSchedule
+from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
 from azure.ai.ml.entities._notification.notification import Notification
 from azure.ai.ml.entities._featureset.materialization_compute_resource import MaterializationComputeResource
 from azure.ai.ml._utils._experimental import experimental
@@ -20,19 +20,19 @@ class MaterializationSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        schedule: JobSchedule,
-        offline_enabled: Optional[bool],
-        online_enabled: Optional[bool],
-        notification: Optional[Notification],
-        resources: Optional[MaterializationComputeResource],
-        spark_conf: Optional[Dict[str, str]],
+        schedule: RecurrenceTrigger,
+        offline_enabled: Optional[bool] = None,
+        online_enabled: Optional[bool] = None,
+        notification: Optional[Notification] = None,
+        resource: Optional[MaterializationComputeResource] = None,
+        spark_conf: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         self.schedule = schedule
         self.offline_enabled = offline_enabled
         self.online_enabled = online_enabled
         self.notification = notification
-        self.resources = resources
+        self.resource = resource
         self.spark_conf = spark_conf
 
     def _to_rest_object(self) -> RestMaterializationSettings:
@@ -49,7 +49,7 @@ class MaterializationSettings(RestTranslatableMixin):
         return RestMaterializationSettings(
             schedule=self.schedule._to_rest_object(),
             notification=self.notification._to_rest_object() if self.notification else None,
-            resource=self.resources._to_rest_object() if self.resources else None,
+            resource=self.resource._to_rest_object() if self.resource else None,
             spark_configuration=self.spark_conf,
             store_type=store_type,
         )
@@ -59,9 +59,9 @@ class MaterializationSettings(RestTranslatableMixin):
         if not obj:
             return None
         return MaterializationSettings(
-            schedule=JobSchedule._from_rest_object(obj.schedule),
-            notification=NotificationConfiguration._from_rest_object(obj.notification),
-            resources=MaterializationComputeResource._from_rest_object(obj.resources),
+            schedule=RecurrenceTrigger._from_rest_object(obj.schedule),
+            notification=Notification._from_rest_object(obj.notification),
+            resource=MaterializationComputeResource._from_rest_object(obj.resource),
             spark_conf=obj.spark_configuration,
             offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE,
             online_enabled=obj.store_type == MaterializationStoreType.ONLINE,

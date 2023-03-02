@@ -36,7 +36,9 @@ def mock_featurestore_entity_operations(
 class TestFeaturestoreEntityOperations:
     def test_list(self, mock_featurestore_entity_operations: FeaturestoreEntityOperations) -> None:
         mock_featurestore_entity_operations._operation.list.return_value = [Mock(FeaturestoreEntity) for _ in range(10)]
-        mock_featurestore_entity_operations._container_operation.list.return_value = [Mock(FeaturestoreEntity) for _ in range(10)]
+        mock_featurestore_entity_operations._container_operation.list.return_value = [
+            Mock(FeaturestoreEntity) for _ in range(10)
+        ]
         result = mock_featurestore_entity_operations.list()
         assert isinstance(result, Iterable)
         mock_featurestore_entity_operations._container_operation.list.assert_called_once()
@@ -47,11 +49,11 @@ class TestFeaturestoreEntityOperations:
         name_only = "some_name"
         version = "1"
         featurestoreEntity = FeaturestoreEntity(
-            name=name_only,
-            version=version,
-            index_columns=[DataColumn(name="test", type=DataColumnType.string)]
+            name=name_only, version=version, index_columns=[DataColumn(name="test", type=DataColumnType.string)]
         )
-        with patch.object(ItemPaged, "next"), patch.object(FeaturestoreEntity, "_from_rest_object", return_value=featurestoreEntity):
+        with patch.object(ItemPaged, "next"), patch.object(
+            FeaturestoreEntity, "_from_rest_object", return_value=featurestoreEntity
+        ):
             mock_featurestore_entity_operations.get(name=name_only, version=version)
         mock_featurestore_entity_operations._operation.get.assert_called_once_with(
             name=name_only, version=version, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
@@ -65,7 +67,9 @@ class TestFeaturestoreEntityOperations:
 
     def test_archive_version(self, mock_featurestore_entity_operations: FeaturestoreEntityOperations):
         name = "random_name"
-        FeaturestoreEntity_version = Mock(FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties())))
+        FeaturestoreEntity_version = Mock(
+            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties()))
+        )
         version = "1"
         mock_featurestore_entity_operations._operation.get.return_value = FeaturestoreEntity_version
         mock_featurestore_entity_operations.archive(name=name, version=version)
@@ -93,7 +97,9 @@ class TestFeaturestoreEntityOperations:
 
     def test_restore_version(self, mock_featurestore_entity_operations: FeaturestoreEntityOperations):
         name = "random_name"
-        FeaturestoreEntity_version = Mock(FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties())))
+        FeaturestoreEntity_version = Mock(
+            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties()))
+        )
         version = "1"
         mock_featurestore_entity_operations._operation.get.return_value = FeaturestoreEntity_version
         mock_featurestore_entity_operations.restore(name=name, version=version)

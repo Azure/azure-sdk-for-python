@@ -12,7 +12,6 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities import Featureset, FeaturesetSpecification
-from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.operations import FeaturesetOperations
 from azure.core.paging import ItemPaged
 
