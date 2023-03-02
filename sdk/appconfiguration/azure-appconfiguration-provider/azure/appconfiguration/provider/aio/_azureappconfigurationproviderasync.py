@@ -19,7 +19,7 @@ from .._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
-JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
 
 @overload
 async def load_provider(

@@ -29,7 +29,7 @@ from ._user_agent import USER_AGENT
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
-JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
 
 @overload
 def load_provider(
