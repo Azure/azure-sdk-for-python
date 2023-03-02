@@ -468,10 +468,15 @@ def _get_asset_by_hash(
     # get workspace credentials
     subscription_id = operations._subscription_id
     resource_group_name = operations._resource_group_name
+    location = workspace.location
 
     # make sure correct cloud endpoint is used
-    cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
-    service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", workspace.location)
+    if location == "centraluseuap": # centraluseuap is master region and aliased with a special api url
+        service_url = "https://master.api.azureml-test.ms/"
+    else:
+        cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
+        service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", location)
+
     request_url = (
         f"{service_url}content/v2.0/subscriptions/{subscription_id}/"
         f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"
