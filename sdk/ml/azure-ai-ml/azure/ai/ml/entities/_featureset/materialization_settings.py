@@ -28,6 +28,23 @@ class MaterializationSettings(RestTranslatableMixin):
         spark_conf: Optional[Dict[str, str]] = None,
         **kwargs  # pylint: disable=unused-argument
     ):
+
+        """MaterializationSettings.
+
+        :param schedule: Specifies the schedule details.
+        :type schedule: ~azure.ai.ml.entities.RecurrenceTrigger
+        :param offline_enabled: Specifies if offline store is enabled.
+        :type offline_enabled: bool
+        :param online_enabled: Specifies if online store is enabled.
+        :type online_enabled: bool
+        :param notification: Specifies the notification details.
+        :type notification: ~azure.ai.ml.entities.Notification
+        :param resource: Specifies the compute resource settings.
+        :type resource: ~azure.ai.ml.entities.MaterializationComputeResource
+        :param spark_conf: Specifies the spark compute settings.
+        :type spark_conf: dict[str, str]
+        """
+
         self.schedule = schedule
         self.offline_enabled = offline_enabled
         self.online_enabled = online_enabled

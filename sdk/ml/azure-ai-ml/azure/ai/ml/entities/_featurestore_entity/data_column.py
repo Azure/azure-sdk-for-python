@@ -21,7 +21,7 @@ DataColumnTypeMap: Dict[DataColumnType, FeatureDataType] = {
     DataColumnType.double: FeatureDataType.DOUBLE,
     DataColumnType.binary: FeatureDataType.BINARY,
     DataColumnType.datetime: FeatureDataType.DATETIME,
-    DataColumnType.bool: FeatureDataType.BOOLEAN
+    DataColumnType.bool: FeatureDataType.BOOLEAN,
 }
 
 FeatureDataTypeMap: Dict[str, DataColumnType] = {
@@ -32,7 +32,7 @@ FeatureDataTypeMap: Dict[str, DataColumnType] = {
     "Double": DataColumnType.double,
     "Binary": DataColumnType.binary,
     "Datetime": DataColumnType.datetime,
-    "Boolean": DataColumnType.boolean,
+    "Boolean": DataColumnType.bool,
 }
 
 
@@ -42,7 +42,7 @@ class DataColumn(RestTranslatableMixin):
     :param name: The column name
     :type name: str, required
     :param type: Column data type
-    :type type: str, one of [string, integer, long, float, double, binary, datetime, boolean], optional"""
+    :type type: ~azure.ai.ml.entities.DataColumnType, optional"""
 
     def __init__(self, *, name: str, type: DataColumnType = None, **kwargs):
         self.name = name
