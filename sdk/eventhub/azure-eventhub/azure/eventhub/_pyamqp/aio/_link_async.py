@@ -115,7 +115,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
             try:
                 raise self._error
             except TypeError:
-                _LOGGER.warn("Link already closed", extra=self.network_trace_params)
+                raise AMQPConnectionError(condition=ErrorCondition.InternalError, description="Link already closed.")
 
     async def _set_state(self, new_state):
         # type: (LinkState) -> None
