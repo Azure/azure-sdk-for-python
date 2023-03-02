@@ -610,9 +610,9 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-            return ConfigurationSettingSnapshot._from_generated(response)
         except HttpResponseError as error:
             raise error
+        return ConfigurationSettingSnapshot._from_generated(response)
 
     @distributed_trace
     def archive_snapshot(
@@ -653,9 +653,9 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-            return ConfigurationSettingSnapshot._from_generated(response)
         except HttpResponseError as error:
             raise error
+        return ConfigurationSettingSnapshot._from_generated(response)
 
     @distributed_trace
     def recover_snapshot(
@@ -696,9 +696,9 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-            return ConfigurationSettingSnapshot._from_generated(response)
         except HttpResponseError as error:
             raise error
+        return ConfigurationSettingSnapshot._from_generated(response)
 
     @distributed_trace
     def get_snapshot(
@@ -725,9 +725,9 @@ class AzureAppConfigurationClient:
                 select=fields,
                 **kwargs
             )
-            return ConfigurationSettingSnapshot._from_generated(response)
         except HttpResponseError as error:
             raise error
+        return ConfigurationSettingSnapshot._from_generated(response)
 
     @distributed_trace
     def list_snapshots(
@@ -744,7 +744,7 @@ class AzureAppConfigurationClient:
         :raises: :class:`HttpResponseError`
         """
         try:
-            return self._impl.get_snapshots(
+            return self._impl.get_snapshots(  # type: ignore
                 name=name,
                 select=fields,
                 status=status,

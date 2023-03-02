@@ -356,7 +356,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             etag=self.etag,
         )
 
-class ConfigurationSettingSnapshot(Model):
+class ConfigurationSettingSnapshot(Model):  # pylint: disable=too-many-instance-attributes
     """The snapshot.
     Variables are only populated by the server, and will be ignored when sending a request.
     :ivar name: The name of the snapshot.
@@ -406,7 +406,7 @@ class ConfigurationSettingSnapshot(Model):
         "tags": {"key": "tags", "type": "{str}"},
         "etag": {"key": "etag", "type": "str"},
     }
-    
+
     def __init__(
         self,
         filters: List[Dict[str, str]],
@@ -435,8 +435,11 @@ class ConfigurationSettingSnapshot(Model):
         if snapshot is None:
             return snapshot
         filters = []
-        for filter in snapshot.filters:
-            filters.append({"key": filter.key, "label": filter.label})
+        for kv_filter in snapshot.filters:
+            if not kv_filter.label:
+                filters.append({"key": kv_filter.key})
+            else:
+                filters.append({"key": kv_filter.key, "label": kv_filter.label})
         return cls(
             name = snapshot.name,
             status = snapshot.status,
@@ -454,8 +457,11 @@ class ConfigurationSettingSnapshot(Model):
 
     def _to_generated(self) -> Snapshot:
         kv_filters = []
-        for filter in self.filters:
-            kv_filters.append(KeyValueFilter(key=filter["key"], label=filter["label"]))
+        for kv_filter in self.filters:
+            try:
+                kv_filters.append(KeyValueFilter(key=kv_filter["key"], label=kv_filter["label"]))
+            except KeyError:
+                kv_filters.append(KeyValueFilter(key=kv_filter["key"]))
         return Snapshot(
             filters=kv_filters,
             composition_type=self.composition_type,
