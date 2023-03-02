@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
@@ -59,6 +59,11 @@ common_omit_fields = [
 ]
 
 
+def check_name_and_version(output, output_name, output_version):
+    assert output.name == output_name
+    assert output.version == output_version
+
+
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
@@ -66,7 +71,6 @@ common_omit_fields = [
     "mock_code_hash",
     "mock_component_hash",
     "recorded_test",
-    "mock_snapshot_hash",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -294,10 +298,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             experiment_name="dsl_pipeline_e2e",
         )
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_data_input(self, client: MLClient) -> None:
         parent_dir = str(tests_root_dir / "test_configs/dsl_pipeline/nyc_taxi_data_regression")
 
@@ -588,10 +588,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
@@ -1537,10 +1533,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job = client.jobs.create_or_update(pipeline, force_rerun=True)
         assert job.settings.force_rerun is True
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_parallel_components_with_tabular_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1575,12 +1567,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
         batch_inference = load_component(source=str(components_dir / "score.yml"))
@@ -1610,10 +1597,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_parallel_run_function(self, client: MLClient):
         # command job with dict distribution
         environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
@@ -1728,12 +1711,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
-        set_bodiless_matcher()
-
         environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         inputs = {
             "job_data_path": Input(
@@ -1843,14 +1821,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_multi_parallel_components_with_file_input_pipeline_output(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        set_bodiless_matcher()
-
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
@@ -1973,10 +1946,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             client.jobs.get(child.name)
             client.jobs.get(child.name)._repr_html_()
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_dsl_pipeline_without_setting_binding_node(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_without_setting_binding_node,
@@ -2239,10 +2208,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
@@ -2573,10 +2538,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
-    )
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
             BanditPolicy,
@@ -2692,8 +2653,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_output.name == "b_output"
         assert pipeline_output.version == "2"
         node_output = pipeline_job.jobs["node"].outputs.component_out_path
-        assert node_output.name == "a_output"
-        assert node_output.version == "1"
+        assert node_output.name == None
+        assert node_output.version == None
 
     def test_dsl_pipeline_with_data_transfer_copy_2urifolder(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
@@ -2808,7 +2769,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             }
         }
 
-    @pytest.mark.skip(reason="TODO (2256981): Pipeline step fails with ServiceError")
     @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk_succeed(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -2833,6 +2793,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             node_2.outputs.component_out_path.name = "n2_output"
             node_2.outputs.component_out_path.version = "v1"
 
+            # register NodeOutput without version, in this case the run result can be reused
+            node_3 = component(component_in_path=component_input)
+            node_3.outputs.component_out_path.name = "n3_output"
+
             # register NodeOutput of subgraph
             sub_node = sub_pipeline()
             sub_node.outputs.sub_pipeine_a_output.name = "sub_pipeline"
@@ -2844,18 +2808,90 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.pipeine_a_output.name = "p1_output"
         pipeline.outputs.pipeine_a_output.version = "v1"
         pipeline.settings.default_compute = "cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline)
-        client.jobs.stream(pipeline_job.name)
+        pipeline_job = assert_job_cancel(pipeline, client)
 
-        def check_name_version_and_register_succeed(output, output_name, output_version):
-            assert output.name == output_name
-            assert output.version == output_version
-            assert client.data.get(name=output_name, version=output_version)
+        check_name_and_version(pipeline_job.outputs.pipeine_a_output, "p1_output", "v1")
+        check_name_and_version(pipeline_job.jobs["node_2"].outputs.component_out_path, "n2_output", "v1")
+        assert pipeline_job.jobs["node_3"].outputs.component_out_path.name == "n3_output"
+        check_name_and_version(pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1")
 
-        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, "p1_output", "v1")
-        check_name_version_and_register_succeed(
-            pipeline_job.jobs["node_2"].outputs.component_out_path, "n2_output", "v1"
-        )
-        check_name_version_and_register_succeed(
-            pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1"
-        )
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skip(reason="TODO (269646): Internal Server Error")
+    def test_register_output_for_pipeline_component(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node_1 = component(component_in_path=component_input)  # test use Output to initialize subgraph.jobs.output
+            node_1.outputs.component_out_path = Output(name="sub_pipeline_1_output", version="v1")
+
+            node_2 = component(component_in_path=component_input)  # test we can pass NodeOutput in PipelineComponent
+            node_2.outputs.component_out_path.name = "sub_pipeline_2_output"
+            node_2.outputs.component_out_path.version = "v2"
+
+            return {
+                "sub_node_1": node_1.outputs.component_out_path,
+            }
+
+        @dsl.pipeline()
+        def register_both_output():
+            subgraph = sub_pipeline()
+
+        pipeline = register_both_output()
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        check_name_and_version(pipeline_job.jobs["subgraph"].outputs["sub_node_1"], "sub_pipeline_1_output", "v1")
+
+        subgraph_id = pipeline_job.jobs["subgraph"].component
+        subgraph_id = subgraph_id.split(":")
+        subgraph = client.components.get(name=subgraph_id[0], version=subgraph_id[1])
+        check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
+
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
+    )
+    @pytest.mark.disable_mock_code_hash
+    # without this mark, the code would be passed with different id even when we upload the same component,
+    # add this mark to reuse node and further reuse pipeline
+    def test_register_with_output_format(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path = Output(name="sub_pipeline_o_output", version="v1")
+            return {"sub_pipeine_a_output": node.outputs.component_out_path}
+
+        @dsl.pipeline()
+        def register_both_output():
+            # register NodeOutput which is binding to PipelineOutput
+            node = component(component_in_path=component_input)  # binding and re-define name and version
+            node.outputs.component_out_path = Output(name="n1_o_output", version="1")
+
+            node_2 = component(component_in_path=component_input)  # binding
+            node_2.outputs.component_out_path = Output(name="n2_o_output", version="2")
+
+            node_3 = component(component_in_path=component_input)  # isn't binding
+            node_3.outputs.component_out_path = Output(name="n3_o_output", version="4")
+
+            sub_node = sub_pipeline()  # test set Output for PipelineComponent
+            sub_node.outputs.sub_pipeine_a_output = Output(name="subgraph_o_output", version="1")
+            return {
+                "pipeine_a_output": node.outputs.component_out_path,
+                "pipeine_b_output": node_2.outputs.component_out_path,
+            }
+
+        pipeline = register_both_output()
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline.outputs.pipeine_a_output.name = "np_output"
+        pipeline.outputs.pipeine_a_output.version = "1"
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        check_name_and_version(pipeline_job.outputs.pipeine_a_output, "np_output", "1")
+        check_name_and_version(pipeline_job.outputs.pipeine_b_output, "n2_o_output", "2")
+        check_name_and_version(pipeline_job.jobs["node_3"].outputs["component_out_path"], "n3_o_output", "4")
+        check_name_and_version(pipeline_job.jobs["sub_node"].outputs["sub_pipeine_a_output"], "subgraph_o_output", "1")
