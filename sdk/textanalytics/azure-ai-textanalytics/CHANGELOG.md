@@ -1,6 +1,6 @@
 # Release History
 
-## 5.3.0b2 (Unreleased)
+## 5.3.0b2 (2023-03-07)
 
 This version of the client library defaults to the service API version `2022-10-01-preview`.
 
@@ -15,9 +15,9 @@ This version of the client library defaults to the service API version `2022-10-
 - Renamed model `AbstractSummaryAction` to `AbstractiveSummaryAction`.
 - Renamed model `AbstractSummaryResult` to `AbstractiveSummaryResult`.
 
-### Bugs Fixed
-
 ### Other Changes
+
+ - Improved static typing in the client library. 
 
 ## 5.3.0b1 (2022-11-17)
 
