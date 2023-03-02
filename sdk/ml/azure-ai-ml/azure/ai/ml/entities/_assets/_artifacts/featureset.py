@@ -36,6 +36,8 @@ class Featureset(Artifact):
         stage: Optional[str] = None,
         description: Optional[str] = None,
         materialization_settings: Optional[MaterializationSettings] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
         """Featureset
@@ -59,7 +61,8 @@ class Featureset(Artifact):
             name=name,
             version=version,
             description=description,
-            path=specification.path,
+            tags=tags,
+            properties=properties,
             **kwargs,
         )
         self.entities = entities
@@ -71,6 +74,8 @@ class Featureset(Artifact):
     def _to_rest_object(self) -> FeaturesetVersion:
         featureset_version_properties = FeaturesetVersionProperties(
             description=self.description,
+            properties=self.properties,
+            tags=self.tags,
             entities=self.entities,
             materialization_settings=self.materialization_settings._to_rest_object()
             if self.materialization_settings
@@ -91,6 +96,8 @@ class Featureset(Artifact):
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
             description=featureset_rest_object_details.description,
+            tags=featureset_rest_object_details.tags,
+            properties=featureset_rest_object_details.properties,
             entities=featureset_rest_object_details.entities,
             materialization_settings=MaterializationSettings._from_rest_object(
                 featureset_rest_object_details.materialization_settings
@@ -108,6 +115,8 @@ class Featureset(Artifact):
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
             description=rest_object_details.description,
+            tags=rest_object_details.tags,
+            properties=rest_object_details.properties,
         )
         featureset.latest_version = rest_object_details.latest_version
         return featureset
