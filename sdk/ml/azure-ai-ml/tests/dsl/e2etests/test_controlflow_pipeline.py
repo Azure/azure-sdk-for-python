@@ -323,8 +323,6 @@ class TestIfElse(TestControlFlowPipeline):
 
     @pytest.mark.skip(reason="Backend not ready yet.")
     def test_if_else_multiple_blocks(self, client: MLClient):
-        # update jobs field to include private preview nodes
-
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
         )
