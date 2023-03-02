@@ -52,6 +52,10 @@ class Featureset(Artifact):
         :type specification: ~azure.ai.ml.entities.FeaturesetSpecification
         :param description: Description of the resource.
         :type description: str
+        :param tags: Tag dictionary. Tags can be added, removed, and updated.
+        :type tags: dict[str, str]
+        :param properties: The asset property dictionary.
+        :type properties: dict[str, str]
         :param materialization_settings: Specifies the materialization settings.
         :type materialization_settings: ~azure.ai.ml.entities.MaterializationSettings
         :param kwargs: A dictionary of additional configuration parameters.

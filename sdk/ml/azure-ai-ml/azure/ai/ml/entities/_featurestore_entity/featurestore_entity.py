@@ -31,6 +31,7 @@ class FeaturestoreEntity(Asset):
         index_columns: List[DataColumn],
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
         **kwargs,
     ):
         """FeaturestoreEntity
@@ -45,6 +46,8 @@ class FeaturestoreEntity(Asset):
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
         :type tags: dict[str, str]
+        :param properties: The asset property dictionary.
+        :type properties: dict[str, str]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -53,6 +56,7 @@ class FeaturestoreEntity(Asset):
             version=version,
             description=description,
             tags=tags,
+            properties=properties,
             **kwargs,
         )
         self.index_columns = index_columns
