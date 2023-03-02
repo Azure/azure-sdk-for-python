@@ -1,8 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-display_name: Serverless in Pipeline - AutoML
-settings:
-  default_compute: azureml:serverless
+display_name: AutoML with instance type - pipeline serverless compute with no default
+experiment_name: Serverless in Pipeline
 inputs:
   text_ner_training_data:
     type: mltable
@@ -22,6 +21,7 @@ jobs:
         type: mltable
       preprocessed_validation_data:
         type: mltable
+    compute: azureml:cpu-cluster
   text_ner_node:
     type: automl
     task: text_ner
@@ -36,7 +36,6 @@ jobs:
     outputs:
       best_model:
         type: mlflow_model
-    # BUG 2246569: resources should be optional, explicitly specify here with NC/ND-family for dnn tasks.
     resources:
       instance_type: Standard_NC6
   register_model_node:
@@ -45,3 +44,4 @@ jobs:
     inputs:
       model_input_path: ${{parent.jobs.text_ner_node.outputs.best_model}}
       model_base_name: paper_categorization_model
+    compute: azureml:cpu-cluster
