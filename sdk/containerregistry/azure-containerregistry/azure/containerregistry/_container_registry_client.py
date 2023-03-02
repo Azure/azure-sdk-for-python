@@ -886,7 +886,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def download_blob(self, repository, digest, **kwargs):
-        # type: (str, str, **Any) -> DownloadBlobResult | None
+        # type: (str, str, **Any) -> Union[DownloadBlobResult, None]
         """Download a blob that is part of an artifact.
 
         :param str repository: Name of the repository
