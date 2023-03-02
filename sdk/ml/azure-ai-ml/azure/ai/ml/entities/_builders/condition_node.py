@@ -23,10 +23,10 @@ class ConditionNode(ControlFlowNode):
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
         self.condition = condition
-        if not isinstance(true_block, list):
+        if true_block and not isinstance(true_block, list):
             true_block = [true_block]
         self._true_block = true_block
-        if not isinstance(false_block, list):
+        if false_block and not isinstance(false_block, list):
             false_block = [false_block]
         self._false_block = false_block
 
@@ -135,7 +135,7 @@ class ConditionNode(ControlFlowNode):
         elif intersection:
             validation_result.append_error(
                 yaml_path="true_block",
-                message="'true_block' and 'false_block' of dsl.condition has intersection: {}.".format(intersection),
+                message="'true_block' and 'false_block' of dsl.condition has intersection.",
             )
 
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
