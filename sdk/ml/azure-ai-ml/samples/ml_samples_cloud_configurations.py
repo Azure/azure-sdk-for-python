@@ -57,12 +57,14 @@ class CloudConfigurationOptions(object):
         # and will throw an "Unknown cloud environment" error.
         kwargs = {
             "cloud": "TestCloud",
-            "azure_portal": "https://test.portal.azure.com/",
-            "resource_manager": "https://test.management.azure.com/",
-            "active_directory": "https://test.login.microsoftonline.com/",
-            "aml_resource_id": "https://test.ml.azure.com/",
-            "storage_endpoint": "test.core.windows.net",
-            "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/",
+            "cloud_metadata": {
+                "azure_portal": "https://test.portal.azure.com/",
+                "resource_manager": "https://test.management.azure.com/",
+                "active_directory": "https://test.login.microsoftonline.com/",
+                "aml_resource_id": "https://test.ml.azure.com/",
+                "storage_endpoint": "test.core.windows.net",
+                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/"
+            }
         }
         ml_client = MLClient(
             credential=credential,
