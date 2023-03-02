@@ -499,7 +499,7 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     def begin_package(self, model_name: str, model_version: str, package_request: PackageRequest, **kwargs) -> None:
-        out = self._model_versions_operation.begin_package(
+        package_out = self._model_versions_operation.begin_package(
             name=model_name,
             version=model_version,
             workspace_name=self._workspace_name,
@@ -508,7 +508,7 @@ class ModelOperations(_ScopeDependentOperations):
             **self._scope_kwargs,
         ).result()
 
-        return out
+        return package_out
 
     def _set_preview_client(self) -> str:
         """Returns the preview client for model versions operation with base url replaced by mfe url

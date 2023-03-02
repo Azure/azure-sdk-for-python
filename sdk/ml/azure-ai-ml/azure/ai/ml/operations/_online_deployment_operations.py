@@ -44,13 +44,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    PackageRequest,
-    CodeConfiguration,
-    BaseEnvironmentId,
-    ModelConfiguration,
-    AzureMLOnlineInferencingServer,
-)
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -176,7 +169,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             try:
                 location = self._get_workspace_location()
                 if kwargs.pop("package_model", True):
-                    deployment = package_deployment(deployment, self._all_operations.all_operations["models"])
+                    deployment = package_deployment(deployment, self._all_operations.all_operations)
                 deployment_rest = deployment._to_rest_object(location=location)
 
                 poller = self._online_deployment.begin_create_or_update(
