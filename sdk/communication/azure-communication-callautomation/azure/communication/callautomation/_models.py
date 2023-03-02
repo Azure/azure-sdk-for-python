@@ -28,7 +28,6 @@ from ._generated.models import CallParticipant as CallParticipantGenerated
 from ._generated.models import CallConnectionProperties as CallConnectionPropertiesGenerated
 from ._generated.models import GetParticipantsResponse as GetParticipantsResponseGenerated
 from ._generated.models import AddParticipantResponse as AddParticipantResponseGenerated
-from ._call_connection import CallConnection
 
 from ._communication_identifier_serializer import *
 
@@ -759,25 +758,6 @@ class CallConnectionProperties(object):
                 call_connection_properties_generated.source_caller_id_number) if call_connection_properties_generated.source_caller_id_number else None,
             source_display_name=call_connection_properties_generated.source_display_name,
             source_identity=deserialize_identifier(call_connection_properties_generated.source_identity) if call_connection_properties_generated.source_identity else None)
-
-
-class CallResult(object):
-    def __init__(
-        self,
-        *,
-        call_connection: CallConnection,
-        call_connection_properties: CallConnectionProperties,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword call_connection: Call connection. Required.
-        :paramtype call_connection: CallConnection
-        :keyword call_connection_properties: Properties of the call connection
-        :paramtype call_connection_properties: CallConnectionProperties
-        """
-        super().__init__(**kwargs)
-        self.call_connection = call_connection
-        self.call_connection_properties = call_connection_properties
 
 
 class CallParticipant(object):
