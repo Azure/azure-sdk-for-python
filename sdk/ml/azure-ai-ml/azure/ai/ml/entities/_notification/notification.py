@@ -7,8 +7,10 @@ from typing import List, Optional
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import NotificationSetting as RestNotificationSetting
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class Notification(RestTranslatableMixin):
     """Configuration for notification."""
 
