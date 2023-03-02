@@ -2193,7 +2193,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_autodetect_with_default(self, client):
+    async def test_autodetect_language(self, client):
         docs = ["hello world"]
         actions=[
             RecognizeEntitiesAction(),

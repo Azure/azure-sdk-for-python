@@ -2071,7 +2071,7 @@ class TestAnalyze(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_autodetect_with_default(self, client):
+    def test_autodetect_language(self, client):
         docs = ["hello world"]
         actions=[
             RecognizeEntitiesAction(),
