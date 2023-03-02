@@ -17,7 +17,7 @@ from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_priva
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml.entities._builders.base_node import BaseNode
+from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
