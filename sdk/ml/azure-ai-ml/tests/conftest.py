@@ -99,12 +99,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
     )
-    # masks signature in SAS uri
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='sig=([^/\\s"]{46,52})',
-        group_for_replace="1",
-    )
     # TODO: REMOVE before the merge
     add_uri_string_sanitizer(
         target="https://master.api.azureml-test.ms/mferp/managementfrontend/", value="https://management.azure.com/"
