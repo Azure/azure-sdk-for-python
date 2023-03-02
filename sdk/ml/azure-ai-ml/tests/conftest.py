@@ -88,7 +88,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         json_path="$.properties.notebookInfo.resourceId", value="0000000-0000-0000-0000-000000000000"
     )
     add_body_key_sanitizer(json_path="$.identity.principalId", value="0000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(value="0000000-0000-0000-0000-000000000000", regex=os.environ.get("ML_TENANT_ID"))
     add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
     add_general_regex_sanitizer(

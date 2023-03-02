@@ -421,8 +421,12 @@ def _get_snapshot_temporary_data_reference(
     serialized_data = json.loads(data_encoded)
 
     # make sure correct cloud endpoint is used
-    cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
-    service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", workspace.location)
+    location = workspace.location
+    if location == "centraluseuap": # centraluseuap is master region and aliased with a special api url
+        service_url = "https://master.api.azureml-test.ms/"
+    else:
+        cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
+        service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", location)
 
     # send request
     request_url = f"{service_url}assetstore/v1.0/temporaryDataReference/createOrGet"
