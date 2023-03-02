@@ -4,7 +4,9 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Optional
+from os import PathLike
+
+from typing import Dict, List, Optional, Union
 
 
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
@@ -17,6 +19,8 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._featureset.featureset_specification import FeaturesetSpecification
 from azure.ai.ml.entities._featureset.materialization_settings import MaterializationSettings
+
+from .artifact import ArtifactStorageInfo
 
 
 class Featureset(Artifact):
@@ -41,13 +45,13 @@ class Featureset(Artifact):
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        version: Optional[str] = None,
-        description: Optional[str] = None,
+        name: str = None,
+        version: str = None,
         entities: List[str],
         specification: FeaturesetSpecification,
         materialization_settings: Optional[MaterializationSettings] = None,
-        stage: Optional[str],
+        stage: Optional[str] = None,
+        description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs,
@@ -72,8 +76,8 @@ class Featureset(Artifact):
             properties=self.properties,
             tags=self.tags,
             entities=self.entities,
-            materialization_settings=self.materialization_settings,
-            specification=self.specification,
+            materialization_settings=self.materialization_settings._to_rest_object(),
+            specification=self.specification._to_rest_object(),
             stage=self.stage,
         )
         return FeaturesetVersion(properties=featureset_version_properties)
@@ -113,3 +117,21 @@ class Featureset(Artifact):
         )
         featureset.latest_version = rest_object_details.latest_version
         return featureset
+
+    @classmethod
+    def _load(
+        cls,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs,
+    ) -> "Featureset":
+
+        return None
+
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        return None
+
+    def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
+        return None

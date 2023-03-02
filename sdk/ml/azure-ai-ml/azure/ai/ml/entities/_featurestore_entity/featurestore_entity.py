@@ -5,7 +5,6 @@
 # pylint: disable=protected-access
 
 from os import PathLike
-from pathlib import Path
 
 from typing import Dict, List, Optional, Union
 
