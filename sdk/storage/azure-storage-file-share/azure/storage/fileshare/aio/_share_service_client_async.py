@@ -28,6 +28,11 @@ from ._share_client_async import ShareClient
 from ._models import SharePropertiesPaged
 from .._models import service_properties_deserialize
 
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
+
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from .._models import (
@@ -59,7 +64,14 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :keyword str file_request_intent: File request intent. Only needed for OAuth.
+    :keyword token_intent:
+        Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
+        Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+        backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+    :paramtype token_intent: Literal['backup']
     :keyword bool allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
     :keyword bool allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source URI.
     :keyword str api_version:
@@ -84,6 +96,8 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
     def __init__(
             self, account_url: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            *,
+            token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
@@ -97,7 +111,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
-        self.file_request_intent = kwargs.pop('token_intent', None)
+        self.file_request_intent = token_intent
         self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
