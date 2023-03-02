@@ -14,6 +14,7 @@ from typing import Any, Dict, Optional, Tuple, TypeVar, Union
 
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 
 from azure.ai.ml._azure_environments import (
     CloudArgumentKeys,
@@ -24,6 +25,7 @@ from azure.ai.ml._azure_environments import (
     _set_cloud,
     _add_cloud_to_environments,
 )
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.registry_discovery import (
     AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery,
@@ -52,6 +54,11 @@ from azure.ai.ml._restclient.v2022_12_01_preview import (
 from azure.ai.ml._restclient.v2023_02_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient022023Preview,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
+
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -314,6 +321,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_04_2023_preview = ServiceClient042023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._service_client_12_2022_preview = ServiceClient122022Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
@@ -379,8 +393,13 @@ class MLClient:
         self._models = ModelOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview
+            if registry_name
+            else self._service_client_04_2023_preview
+            if is_private_preview_enabled
+            else self._service_client_05_2022,
             self._datastores,
+            requests_pipeline=self._requests_pipeline,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)

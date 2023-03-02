@@ -44,6 +44,13 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureMLOnlineInferencingServer
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    PackageRequest,
+    CodeConfiguration,
+    BaseEnvironmentId,
+    ModelConfiguration,
+)
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -85,6 +92,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         local: bool = False,
         vscode_debug: bool = False,
         skip_script_validation: bool = False,
+        **kwargs,
     ) -> LROPoller[OnlineDeployment]:
         """Create or update a deployment.
 
@@ -167,6 +175,37 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             upload_dependencies(deployment, orchestrators)
             try:
                 location = self._get_workspace_location()
+                if kwargs.pop("package_model", True):
+                    # call package model, wait for the LRO to finish
+                    model_str = deployment.model
+                    model_version = model_str.split("/")[-1]
+                    model_name = model_str.split("/")[-3]
+                    model_ops = self._all_operations.all_operations["models"]
+                    package_request = PackageRequest(
+                        target_environment_name="btt1",
+                        target_environment_version="1.0.0",
+                        base_environment_source=BaseEnvironmentId(
+                            base_environment_source_type="EnvironmentAsset", resource_id=deployment.environment
+                        ),
+                        inferencing_server=AzureMLOnlineInferencingServer(
+                            code_configuration=CodeConfiguration(
+                                code_id=deployment.code_configuration.code,
+                                scoring_script=deployment.code_configuration.scoring_script,
+                            )
+                        ),
+                        model_configuration=ModelConfiguration(mode="Download", mount_path="."),
+                    )
+                    try:
+                        package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
+                        package_request.inferencing_server.code_configuration.code_id = (
+                            "azureml:/" + deployment.code_configuration.code
+                        )
+                        out = model_ops.begin_package(model_name, model_version, package_request=package_request)
+                    except Exception as e:
+                        print(e)
+                    deployment.environment = out.target_environment_id
+                    deployment.model = None
+                    deployment.code_configuration = None
                 deployment_rest = deployment._to_rest_object(location=location)
 
                 poller = self._online_deployment.begin_create_or_update(

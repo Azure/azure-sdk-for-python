@@ -23,8 +23,12 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PackageRequest, PackageResponse
+from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListViewType
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PackageRequest, PackageResponse
+from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListViewType
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -34,6 +38,7 @@ from azure.ai.ml._utils._asset_utils import (
     _resolve_label_to_asset,
     _get_next_version_from_container,
 )
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     get_asset_body_for_registry_storage,
@@ -43,7 +48,8 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
-from azure.ai.ml.entities._assets import Model, WorkspaceAssetReference
+from azure.ai.ml.entities._assets import Model
+from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -72,7 +78,7 @@ class ModelOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -86,6 +92,8 @@ class ModelOperations(_ScopeDependentOperations):
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
+        if is_private_preview_enabled:
+            self._set_preview_client()
 
     # @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
@@ -186,6 +194,7 @@ class ModelOperations(_ScopeDependentOperations):
                         version=version,
                         body=model_version_resource,
                         workspace_name=self._workspace_name,
+                        api_version="2023-02-01-preview",
                         **self._scope_kwargs,
                     )
                 )
@@ -230,6 +239,7 @@ class ModelOperations(_ScopeDependentOperations):
                     name=name,
                     version=version,
                     workspace_name=self._workspace_name,
+                    api_version="2023-02-01-preview",
                     **self._scope_kwargs,
                 )
             )
@@ -487,3 +497,20 @@ class ModelOperations(_ScopeDependentOperations):
             version=version if version else model.version,
             asset_id=asset_id,
         )
+
+    def begin_package(self, model_name: str, model_version: str, package_request: PackageRequest, **kwargs) -> None:
+        out = self._model_versions_operation.begin_package(
+            name=model_name,
+            version=model_version,
+            workspace_name=self._workspace_name,
+            body=package_request,
+            api_version="2023-02-01-preview",
+            **self._scope_kwargs,
+        ).result()
+
+        return out
+
+    def _set_preview_client(self) -> str:
+        """Returns the preview client for model versions operation with base url replaced by mfe url
+        as this API version is not available in ARM yet"""
+        self._model_versions_operation._client._base_url = "https://eastus2euap.management.azure.com"
