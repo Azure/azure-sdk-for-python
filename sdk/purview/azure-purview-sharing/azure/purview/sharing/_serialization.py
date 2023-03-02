@@ -618,6 +618,7 @@ class Serializer(object):
                         keys, orig_attr = key_transformer(attr, attr_desc.copy(), orig_attr)
                         keys = keys if isinstance(keys, list) else [keys]
 
+                    # cspell:disable-next-line
                     kwargs["serialization_ctxt"] = attr_desc
                     new_attr = self.serialize_data(orig_attr, attr_desc["type"], **kwargs)
 
@@ -878,6 +879,7 @@ class Serializer(object):
             return str(data)
 
     def serialize_iter(self, data, iter_type, div=None, **kwargs):
+        # cspell:disable
         """Serialize iterable.
 
         Supported kwargs:
@@ -893,11 +895,14 @@ class Serializer(object):
          in the iterable into a combined string. Default is 'None'.
         :rtype: list, str
         """
+
         if isinstance(data, str):
             raise SerializationError("Refuse str type as a valid iter type.")
 
         serialization_ctxt = kwargs.get("serialization_ctxt", {})
         is_xml = kwargs.get("is_xml", False)
+
+        # cspell:enable
 
         serialized = []
         for d in data:
