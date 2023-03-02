@@ -49,5 +49,6 @@ class DataColumn(RestTranslatableMixin):
     def _to_rest_object(self) -> IndexColumn:
         return IndexColumn(column_name=self.name, data_type=DataColumnTypeMap[self.type])
 
+    @classmethod
     def _from_rest_object(cls, obj: IndexColumn) -> "DataColumn":
         return DataColumn(name=obj.column_name, type=FeatureDataTypeMap[obj.data_type])
