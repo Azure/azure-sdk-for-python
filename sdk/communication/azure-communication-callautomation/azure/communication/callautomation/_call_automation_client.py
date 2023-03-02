@@ -17,7 +17,26 @@ from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._generated.models import (
     CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest)
 from ._communication_identifier_serializer import *
-from ._models import (CallInvite, CallResult, CallConnectionProperties)
+from ._models import (CallInvite, CallConnectionProperties)
+
+
+class CallResult(object):
+    def __init__(
+        self,
+        *,
+        call_connection: CallConnection,
+        call_connection_properties: CallConnectionProperties,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection: Call connection. Required.
+        :type call_connection: CallConnection
+        :keyword call_connection_properties: Properties of the call connection
+        :type call_connection_properties: CallConnectionProperties
+        """
+        super().__init__(**kwargs)
+        self.call_connection = call_connection
+        self.call_connection_properties = call_connection_properties
 
 
 class CallAutomationClient(object):
