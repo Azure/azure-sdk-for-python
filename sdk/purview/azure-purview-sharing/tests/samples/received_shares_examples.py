@@ -20,14 +20,14 @@ client = PurviewSharing(endpoint=endpoint)
 # [END create_a_received_share_client]
 
 # Get all detached received shares
-# [START get_all_detached_recieved_shares]
+# [START get_all_detached_received_shares]
 from azure.purview.sharing.operations._operations import (
     build_received_shares_list_detached_request
 )
 
 list_detached_request = build_received_shares_list_detached_request(orderby="properties/createdAt desc")
 list_detached_response = client.send_request(list_detached_request)
-# [END get_all_detached_recieved_shares]
+# [END get_all_detached_received_shares]
 
 # Attach a received share
 # [START attach_a_received_share]
@@ -99,7 +99,7 @@ list = json.loads(list_attached_response.content)['value']
 # [END list_attached_received_shares]
 
 # Delete a received share
-# [START delete_a_recieved_share]
+# [START delete_a_received_share]
 from azure.purview.sharing.operations._operations import (
     build_received_shares_delete_request
 )
@@ -112,4 +112,4 @@ try:
 except HttpResponseError as e:
     print("Exception " + str(e))
     print("Response " + delete_received_share_response.text())
-# [END delete_a_recieved_share]
+# [END delete_a_received_share]
