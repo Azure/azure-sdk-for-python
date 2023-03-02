@@ -21,7 +21,6 @@ from azure.ai.ml._utils._asset_utils import (
     _get_latest_version_from_container,
     _resolve_label_to_asset,
 )
-from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import FeaturestoreEntity
 from azure.core.polling import LROPoller
