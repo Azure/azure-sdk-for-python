@@ -20,7 +20,13 @@ from azure.ai.ml import (
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.entities._job.job_service import JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService
+from azure.ai.ml.entities._job.job_service import (
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
 
@@ -744,9 +750,9 @@ class TestCommandFunction:
             )
             node._to_rest_object()
             assert (
-                    ve.message
-                    == "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
-                       "spark.executor.instances are mandatory fields."
+                ve.message
+                == "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
+                "spark.executor.instances are mandatory fields."
             )
 
     def test_executor_instances_is_specified_as_min_executor_if_unset(self):
@@ -828,7 +834,7 @@ class TestCommandFunction:
         command_obj = command(
             name="interactive-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="ls",
             compute="testCompute",
             services=services,
@@ -865,7 +871,7 @@ class TestCommandFunction:
         node = command(
             name="interactive-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="ls",
             compute="testCompute",
             services=services,
@@ -887,7 +893,7 @@ class TestCommandFunction:
             node = command(
                 name="interactive-command-job",
                 description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 command="ls",
                 compute="testCompute",
                 services=invalid_services_0,
@@ -899,7 +905,7 @@ class TestCommandFunction:
             node = command(
                 name="interactive-command-job",
                 description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 command="ls",
                 compute="testCompute",
                 services=invalid_services_1,
@@ -911,7 +917,7 @@ class TestCommandFunction:
             node = command(
                 name="interactive-command-job",
                 description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 command="ls",
                 compute="testCompute",
                 services=invalid_services_2,
@@ -921,9 +927,7 @@ class TestCommandFunction:
     def test_command_services_subtypes(self) -> None:
         services = {
             "my_ssh": SshJobService(),
-            "my_tensorboard": TensorBoardJobService(
-                    log_dir="~/tblog"
-            ),
+            "my_tensorboard": TensorBoardJobService(log_dir="~/tblog"),
             "my_jupyterlab": JupyterLabJobService(),
             "my_vscode": VsCodeJobService(),
         }
@@ -936,12 +940,12 @@ class TestCommandFunction:
                 },
             },
             "my_jupyterlab": {"job_service_type": "JupyterLab"},
-            "my_vscode": { "job_service_type": "VSCode"},
+            "my_vscode": {"job_service_type": "VSCode"},
         }
         node = command(
             name="interactive-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="ls",
             compute="testCompute",
             services=services,
@@ -952,7 +956,6 @@ class TestCommandFunction:
         assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
         assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
         assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
-
 
         command_job_services = node._to_job().services
         assert isinstance(command_job_services.get("my_ssh"), SshJobService)
@@ -1023,15 +1026,17 @@ class TestCommandFunction:
 
     def test_set_identity(self, test_command):
         from azure.ai.ml.entities._credentials import AmlTokenConfiguration
+
         node1 = test_command()
         node2 = node1()
         node2.identity = AmlTokenConfiguration()
         node3 = node1()
-        node3.identity = {'type': 'AMLToken'}
+        node3.identity = {"type": "AMLToken"}
         assert node2.identity == node3.identity
 
     def test_sweep_set_search_space(self, test_command):
         from azure.ai.ml.entities._job.sweep.search_space import Choice
+
         node1 = test_command()
         command_node_to_sweep_1 = node1()
         sweep_node_1 = command_node_to_sweep_1.sweep(
@@ -1039,7 +1044,7 @@ class TestCommandFunction:
             goal="maximize",
             sampling_algorithm="random",
         )
-        sweep_node_1.search_space = {'batch_size': {'type': 'choice', 'values': [25, 35]}}
+        sweep_node_1.search_space = {"batch_size": {"type": "choice", "values": [25, 35]}}
 
         command_node_to_sweep_2 = node1()
         sweep_node_2 = command_node_to_sweep_2.sweep(
@@ -1047,13 +1052,15 @@ class TestCommandFunction:
             goal="maximize",
             sampling_algorithm="random",
         )
-        sweep_node_2.search_space = {'batch_size': Choice(values=[25, 35])}
+        sweep_node_2.search_space = {"batch_size": Choice(values=[25, 35])}
         assert sweep_node_1.search_space == sweep_node_2.search_space
 
     def test_unsupported_positional_args(self, test_command):
         with pytest.raises(ValidationException) as e:
             test_command(1)
-        msg = "Component function doesn't support positional arguments, got (1,) " \
-              "for my_job. Please use keyword arguments like: " \
-              "component_func(float=xxx, integer=xxx, string=xxx, boolean=xxx, uri_folder=xxx, uri_file=xxx)."
+        msg = (
+            "Component function doesn't support positional arguments, got (1,) "
+            "for my_job. Please use keyword arguments like: "
+            "component_func(float=xxx, integer=xxx, string=xxx, boolean=xxx, uri_folder=xxx, uri_file=xxx)."
+        )
         assert msg in str(e.value)

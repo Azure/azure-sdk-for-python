@@ -234,9 +234,7 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     def user_agent(self) -> str:
         """The current user agent value."""
         if self.use_env:
-            add_user_agent_header = os.environ.get(
-                self._ENV_ADDITIONAL_USER_AGENT, None
-            )
+            add_user_agent_header = os.environ.get(self._ENV_ADDITIONAL_USER_AGENT, None)
             if add_user_agent_header is not None:
                 return "{} {}".format(self._user_agent, add_user_agent_header)
         return self._user_agent
@@ -285,9 +283,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTy
             :caption: Configuring a network trace logging policy.
     """
 
-    def __init__(
-        self, logging_enable=False, **kwargs
-    ):  # pylint: disable=unused-argument
+    def __init__(self, logging_enable=False, **kwargs):  # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
     def on_request(
@@ -367,9 +363,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTy
                 if header and pattern.match(header):
                     filename = header.partition("=")[2]
                     log_string += "\nFile attachments: {}".format(filename)
-                elif http_response.headers.get("content-type", "").endswith(
-                    "octet-stream"
-                ):
+                elif http_response.headers.get("content-type", "").endswith("octet-stream"):
                     log_string += "\nBody contains binary data."
                 elif http_response.headers.get("content-type", "").startswith("image"):
                     log_string += "\nBody contains image data."
@@ -435,31 +429,17 @@ class HttpLoggingPolicy(
     MULTI_RECORD_LOG = "AZURE_SDK_LOGGING_MULTIRECORD"
 
     def __init__(self, logger=None, **kwargs):  # pylint: disable=unused-argument
-        self.logger = logger or logging.getLogger(
-            "azure.core.pipeline.policies.http_logging_policy"
-        )
+        self.logger = logger or logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
         self.allowed_query_params = set()
         self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 
     def _redact_query_param(self, key, value):
-        lower_case_allowed_query_params = [
-            param.lower() for param in self.allowed_query_params
-        ]
-        return (
-            value
-            if key.lower() in lower_case_allowed_query_params
-            else HttpLoggingPolicy.REDACTED_PLACEHOLDER
-        )
+        lower_case_allowed_query_params = [param.lower() for param in self.allowed_query_params]
+        return value if key.lower() in lower_case_allowed_query_params else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def _redact_header(self, key, value):
-        lower_case_allowed_header_names = [
-            header.lower() for header in self.allowed_header_names
-        ]
-        return (
-            value
-            if key.lower() in lower_case_allowed_header_names
-            else HttpLoggingPolicy.REDACTED_PLACEHOLDER
-        )
+        lower_case_allowed_header_names = [header.lower() for header in self.allowed_header_names]
+        return value if key.lower() in lower_case_allowed_header_names else HttpLoggingPolicy.REDACTED_PLACEHOLDER
 
     def on_request(  # pylint: disable=too-many-return-statements
         self, request: PipelineRequest[HTTPRequestType]
@@ -473,9 +453,7 @@ class HttpLoggingPolicy(
         # Get logger in my context first (request has been retried)
         # then read from kwargs (pop if that's the case)
         # then use my instance logger
-        logger = request.context.setdefault(
-            "logger", options.pop("logger", self.logger)
-        )
+        logger = request.context.setdefault("logger", options.pop("logger", self.logger))
 
         if not logger.isEnabledFor(logging.INFO):
             return
@@ -483,9 +461,7 @@ class HttpLoggingPolicy(
         try:
             parsed_url = list(urllib.parse.urlparse(http_request.url))
             parsed_qp = urllib.parse.parse_qsl(parsed_url[4], keep_blank_values=True)
-            filtered_qp = [
-                (key, self._redact_query_param(key, value)) for key, value in parsed_qp
-            ]
+            filtered_qp = [(key, self._redact_query_param(key, value)) for key, value in parsed_qp]
             # 4 is query
             parsed_url[4] = "&".join(["=".join(part) for part in filtered_qp])
             redacted_url = urllib.parse.urlunparse(parsed_url)
@@ -551,9 +527,7 @@ class HttpLoggingPolicy(
         # then use my instance logger
         # If on_request was called, should always read from context
         options = request.context.options
-        logger = request.context.setdefault(
-            "logger", options.pop("logger", self.logger)
-        )
+        logger = request.context.setdefault("logger", options.pop("logger", self.logger))
 
         try:
             if not logger.isEnabledFor(logging.INFO):
@@ -590,11 +564,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     # Name used in context
     CONTEXT_NAME = "deserialized_data"
 
-    def __init__(
-        self,
-        response_encoding: Optional[str] = None,
-        **kwargs  # pylint: disable=unused-argument
-    ) -> None:
+    def __init__(self, response_encoding: Optional[str] = None, **kwargs) -> None:  # pylint: disable=unused-argument
         self._response_encoding = response_encoding
 
     @classmethod
@@ -663,9 +633,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
                 # The function hack is because Py2.7 messes up with exception
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
-                raise_with_traceback(
-                    DecodeError, message="XML is invalid", response=response
-                )
+                raise_with_traceback(DecodeError, message="XML is invalid", response=response)
         elif mime_type.startswith("text/"):
             return data_as_str
         raise DecodeError("Cannot deserialize content-type: {}".format(mime_type))
@@ -706,9 +674,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
             # even if it's likely dead code
             if not inspect.iscoroutinefunction(response.read):  # type: ignore
                 response.read()  # type: ignore
-        return cls.deserialize_from_text(
-            response.text(encoding), mime_type, response=response
-        )
+        return cls.deserialize_from_text(response.text(encoding), mime_type, response=response)
 
     def on_request(self, request: PipelineRequest) -> None:
         options = request.context.options
@@ -767,9 +733,7 @@ class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
             :caption: Configuring a proxy policy.
     """
 
-    def __init__(
-        self, proxies=None, **kwargs
-    ):  # pylint: disable=unused-argument,super-init-not-called
+    def __init__(self, proxies=None, **kwargs):  # pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:

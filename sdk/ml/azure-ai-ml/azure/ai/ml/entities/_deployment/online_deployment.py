@@ -53,7 +53,7 @@ from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
 module_logger = logging.getLogger(__name__)
 
-#pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes
 class OnlineDeployment(Deployment):
     """Online endpoint deployment entity
 
@@ -327,9 +327,8 @@ class OnlineDeployment(Deployment):
 
     @classmethod
     def _filter_datastore_from_rest_object(
-        cls,
-        entity: "OnlineDeployment",
-        deployment: RestOnlineDeploymentDetails) -> "OnlineDeployment":
+        cls, entity: "OnlineDeployment", deployment: RestOnlineDeploymentDetails
+    ) -> "OnlineDeployment":
         # Data collector is private preview. If Private Preview environment variable is not enable
         # data collector will be removed from tags. Data Collector values will be stored in tags
         # until data collector is added to the contract.

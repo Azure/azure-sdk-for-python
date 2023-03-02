@@ -1,6 +1,17 @@
 # Release History
 
-## 1.4.0 (2022-02-09)
+## 1.4.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed async `update_sync_token` to use async/await keywords
+
+### Other Changes
+
+## 1.4.0 (2022-02-13)
 
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.7 or later.

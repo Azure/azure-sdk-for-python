@@ -689,13 +689,15 @@ class ServiceBusMessageBatch(object):
         # type: () -> int
         return self._count
 
-    def _from_list(self, messages, parent_span=None):
-        # type: (Iterable[ServiceBusMessage], AbstractSpan) -> None
+    def _from_list(self, messages: Iterable[ServiceBusMessage], parent_span: Optional["AbstractSpan"] = None) -> None:
         for message in messages:
             self._add(message, parent_span)
 
-    def _add(self, add_message, parent_span=None):
-        # type: (Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage], AbstractSpan) -> None
+    def _add(
+        self,
+        add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage],
+        parent_span: Optional["AbstractSpan"] = None
+    ) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         message = transform_messages_if_needed(add_message, ServiceBusMessage)
         message = cast(ServiceBusMessage, message)

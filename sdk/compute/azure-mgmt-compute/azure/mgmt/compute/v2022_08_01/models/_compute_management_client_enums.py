@@ -291,10 +291,10 @@ class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The OS State. For managed images, use Generalized."""
 
-    #: Generalized image. Needs to be provisioned during deployment time.
     GENERALIZED = "Generalized"
-    #: Specialized image. Contains already provisioned OS Disk.
+    """Generalized image. Needs to be provisioned during deployment time."""
     SPECIALIZED = "Specialized"
+    """Specialized image. Contains already provisioned OS Disk."""
 
 
 class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

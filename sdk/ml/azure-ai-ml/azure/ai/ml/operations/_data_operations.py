@@ -22,7 +22,9 @@ from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces a
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane, )
+    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
+)
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -43,8 +45,13 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
 )
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes
-from azure.ai.ml.entities._assets import Data
+from azure.ai.ml.constants._common import (
+    MLTABLE_METADATA_SCHEMA_URL_FALLBACK,
+    AssetTypes,
+    ASSET_ID_FORMAT,
+    AzureMLResourceType,
+)
+from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -56,19 +63,18 @@ from azure.ai.ml.exceptions import (
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
-
     def __init__(
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022,
-                              ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -103,65 +109,76 @@ class DataOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.paging.ItemPaged[Data]
         """
         if name:
-            return (self._operation.list(
-                name=name,
+            return (
+                self._operation.list(
+                    name=name,
+                    registry_name=self._registry_name,
+                    cls=lambda objs: [Data._from_rest_object(obj) for obj in objs],
+                    list_view_type=list_view_type,
+                    **self._scope_kwargs,
+                )
+                if self._registry_name
+                else self._operation.list(
+                    name=name,
+                    workspace_name=self._workspace_name,
+                    cls=lambda objs: [Data._from_rest_object(obj) for obj in objs],
+                    list_view_type=list_view_type,
+                    **self._scope_kwargs,
+                )
+            )
+        return (
+            self._container_operation.list(
                 registry_name=self._registry_name,
-                cls=lambda objs: [Data._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
-            ) if self._registry_name else self._operation.list(
-                name=name,
+            )
+            if self._registry_name
+            else self._container_operation.list(
                 workspace_name=self._workspace_name,
-                cls=lambda objs: [Data._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: [Data._from_container_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
-            ))
-        return (self._container_operation.list(
-            registry_name=self._registry_name,
-            cls=lambda objs:
-            [Data._from_container_rest_object(obj) for obj in objs],
-            list_view_type=list_view_type,
-            **self._scope_kwargs,
-        ) if self._registry_name else self._container_operation.list(
-            workspace_name=self._workspace_name,
-            cls=lambda objs:
-            [Data._from_container_rest_object(obj) for obj in objs],
-            list_view_type=list_view_type,
-            **self._scope_kwargs,
-        ))
+            )
+        )
 
     def _get(self, name: str, version: Optional[str] = None) -> Data:
         if version:
-            return (self._operation.get(
+            return (
+                self._operation.get(
+                    name=name,
+                    version=version,
+                    registry_name=self._registry_name,
+                    **self._scope_kwargs,
+                    **self._init_kwargs,
+                )
+                if self._registry_name
+                else self._operation.get(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    name=name,
+                    version=version,
+                    **self._init_kwargs,
+                )
+            )
+        return (
+            self._container_operation.get(
                 name=name,
-                version=version,
                 registry_name=self._registry_name,
                 **self._scope_kwargs,
                 **self._init_kwargs,
-            ) if self._registry_name else self._operation.get(
+            )
+            if self._registry_name
+            else self._container_operation.get(
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
                 name=name,
-                version=version,
                 **self._init_kwargs,
-            ))
-        return (self._container_operation.get(
-            name=name,
-            registry_name=self._registry_name,
-            **self._scope_kwargs,
-            **self._init_kwargs,
-        ) if self._registry_name else self._container_operation.get(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            name=name,
-            **self._init_kwargs,
-        ))
+            )
+        )
 
     # @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
-    def get(self,
-            name: str,
-            version: Optional[str] = None,
-            label: Optional[str] = None) -> Data:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:
         """Get the specified data asset.
 
         :param name: Name of data asset.
@@ -219,7 +236,6 @@ class DataOperations(_ScopeDependentOperations):
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
         """
-
         try:
             name = data.name
             if not data.version and self._registry_name:
@@ -235,28 +251,52 @@ class DataOperations(_ScopeDependentOperations):
 
             sas_uri = None
             if self._registry_name:
+                # If the data asset is a workspace asset, promote to registry
+                if isinstance(data, WorkspaceAssetReference):
+                    try:
+                        self._operation.get(
+                            name=data.name,
+                            version=data.version,
+                            resource_group_name=self._resource_group_name,
+                            registry_name=self._registry_name,
+                        )
+                    except Exception as err:  # pylint: disable=broad-except
+                        if isinstance(err, ResourceNotFoundError):
+                            pass
+                        else:
+                            raise err
+                    else:
+                        msg = "An data asset with this name and version already exists in registry"
+                        raise ValidationException(
+                            message=msg,
+                            no_personal_data_message=msg,
+                            target=ErrorTarget.DATA,
+                            error_category=ErrorCategory.USER_ERROR,
+                        )
+                    data = data._to_rest_object()
+                    result = self._service_client.resource_management_asset_reference.begin_import_method(
+                        resource_group_name=self._resource_group_name, registry_name=self._registry_name, body=data
+                    )
+                    return result
+
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
                     name=name,
                     version=version,
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(
-                        self._registry_name, "data", name, version),
+                    body=get_asset_body_for_registry_storage(self._registry_name, "data", name, version),
                 )
                 if not sas_uri:
-                    module_logger.debug(
-                        "Getting the existing asset name: %s, version: %s",
-                        name, version)
+                    module_logger.debug("Getting the existing asset name: %s, version: %s", name, version)
                     return self.get(name=name, version=version)
             referenced_uris = self._validate(data)
             if referenced_uris:
                 data._referenced_uris = referenced_uris
 
-            data, _ = _check_and_upload_path(artifact=data,
-                                             asset_operations=self,
-                                             sas_uri=sas_uri,
-                                             artifact_type=ErrorTarget.DATA)
+            data, _ = _check_and_upload_path(
+                artifact=data, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.DATA
+            )
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
 
@@ -271,20 +311,23 @@ class DataOperations(_ScopeDependentOperations):
                     **self._init_kwargs,
                 )
             else:
-                result = (self._operation.begin_create_or_update(
-                    name=name,
-                    version=version,
-                    registry_name=self._registry_name,
-                    body=data_version_resource,
-                    **self._scope_kwargs,
-                ).result() if self._registry_name else
-                          self._operation.create_or_update(
-                              name=name,
-                              version=version,
-                              workspace_name=self._workspace_name,
-                              body=data_version_resource,
-                              **self._scope_kwargs,
-                          ))
+                result = (
+                    self._operation.begin_create_or_update(
+                        name=name,
+                        version=version,
+                        registry_name=self._registry_name,
+                        body=data_version_resource,
+                        **self._scope_kwargs,
+                    ).result()
+                    if self._registry_name
+                    else self._operation.create_or_update(
+                        name=name,
+                        version=version,
+                        workspace_name=self._workspace_name,
+                        body=data_version_resource,
+                        **self._scope_kwargs,
+                    )
+                )
 
             if not result and self._registry_name:
                 result = self._get(name=name, version=version)
@@ -431,13 +474,46 @@ class DataOperations(_ScopeDependentOperations):
         recently updated.
         """
         latest_version = _get_latest_version_from_container(
-            name,
-            self._container_operation,
-            self._resource_group_name,
-            self._workspace_name,
-            self._registry_name
-            )
+            name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
+        )
         return self.get(name, version=latest_version)
+
+    # pylint: disable=no-self-use
+    def _prepare_to_copy(
+        self, data: Data, name: Optional[str] = None, version: Optional[str] = None
+    ) -> WorkspaceAssetReference:
+
+        """Returns WorkspaceAssetReference
+        to copy a registered data to registry given the asset id
+
+        :param data: Registered data
+        :type data: Data
+        :param name: Destination name
+        :type name: str
+        :param version: Destination version
+        :type version: str
+        """
+        #  Get workspace info to get workspace GUID
+        workspace = self._service_client.workspaces.get(
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+        )
+        workspace_guid = workspace.workspace_id
+        workspace_location = workspace.location
+
+        # Get data asset ID
+        asset_id = ASSET_ID_FORMAT.format(
+            workspace_location,
+            workspace_guid,
+            AzureMLResourceType.DATA,
+            data.name,
+            data.version,
+        )
+
+        return WorkspaceAssetReference(
+            name=name if name else data.name,
+            version=version if version else data.version,
+            asset_id=asset_id,
+        )
 
 
 def _assert_local_path_matches_asset_type(

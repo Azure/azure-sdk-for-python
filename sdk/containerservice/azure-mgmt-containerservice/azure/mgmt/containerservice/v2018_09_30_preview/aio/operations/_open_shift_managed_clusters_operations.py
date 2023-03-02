@@ -483,7 +483,7 @@ class OpenShiftManagedClustersOperations:
         :param resource_name: The name of the OpenShift managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Create or Update an OpenShift Managed Cluster
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a OpenShiftManagedCluster type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.containerservice.v2018_09_30_preview.models.OpenShiftManagedCluster or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -708,7 +708,7 @@ class OpenShiftManagedClustersOperations:
         :param resource_name: The name of the OpenShift managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters supplied to the Update OpenShift Managed Cluster Tags operation.
-         Is either a model type or a IO type. Required.
+         Is either a TagsObject type or a IO type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2018_09_30_preview.models.TagsObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

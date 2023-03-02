@@ -30,21 +30,19 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 # Simple console exporter
 exporter = ConsoleSpanExporter()
-span_processor = SimpleSpanProcessor(
-    exporter
-)
+span_processor = SimpleSpanProcessor(exporter)
 trace.get_tracer_provider().add_span_processor(span_processor)
 
 # Example with Servicebus SDKs
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-connstr = os.environ['SERVICE_BUS_CONN_STR']
-queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+connstr = os.environ["SERVICE_BUS_CONN_STR"]
+queue_name = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 with tracer.start_as_current_span(name="MyApplication2"):
     with ServiceBusClient.from_connection_string(connstr) as client:
         with client.get_queue_sender(queue_name) as sender:
-            #Sending a single message
+            # Sending a single message
             single_message = ServiceBusMessage("Single message")
             sender.send_messages(single_message)
         # continually receives new messages until it doesn't receive any new messages for 5 (max_wait_time) seconds.

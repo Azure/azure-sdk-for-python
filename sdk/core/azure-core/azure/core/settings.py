@@ -111,11 +111,7 @@ def convert_logging(value: Union[str, int]) -> int:
     val = cast(str, value).upper()
     level = _levels.get(val)
     if not level:
-        raise ValueError(
-            "Cannot convert {} to log level, valid values are: {}".format(
-                value, ", ".join(_levels)
-            )
-        )
+        raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
     return level
 
 
@@ -142,9 +138,7 @@ _tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]
 }
 
 
-def convert_tracing_impl(
-    value: Union[str, Type[AbstractSpan]]
-) -> Optional[Type[AbstractSpan]]:
+def convert_tracing_impl(value: Union[str, Type[AbstractSpan]]) -> Optional[Type[AbstractSpan]]:
     """Convert a string to AbstractSpan
 
     If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
@@ -205,9 +199,7 @@ class PrioritizedSetting:
 
     """
 
-    def __init__(
-        self, name, env_var=None, system_hook=None, default=_Unset, convert=None
-    ):
+    def __init__(self, name, env_var=None, system_hook=None, default=_Unset, convert=None):
 
         self._name = name
         self._env_var = env_var
@@ -384,11 +376,7 @@ class Settings:
 
         :rtype: namedtuple
         """
-        props = {
-            k: v.default
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v.default for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         return self._config(props)
 
     @property
@@ -412,11 +400,7 @@ class Settings:
            settings.config(log_level=logging.DEBUG)
 
         """
-        props = {
-            k: v()
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v() for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         props.update(kwargs)
         return self._config(props)
 

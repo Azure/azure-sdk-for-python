@@ -22,11 +22,9 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_analyze_actions() -> None:
     # [START analyze]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import (
         TextAnalyticsClient,

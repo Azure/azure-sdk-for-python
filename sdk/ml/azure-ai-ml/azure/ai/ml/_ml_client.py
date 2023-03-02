@@ -16,24 +16,47 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
 from azure.ai.ml._azure_environments import (
+    CloudArgumentKeys,
     _get_base_url_from_metadata,
     _get_cloud_information_from_metadata,
     _get_default_cloud_name,
     _get_registry_discovery_endpoint_from_metadata,
     _set_cloud,
+    _add_cloud_to_environments,
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
-from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._restclient.registry_discovery import (
+    AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery,
+)
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
-from azure.ai.ml._restclient.v2022_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012022Preview
-from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
+from azure.ai.ml._restclient.v2022_01_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient012022Preview,
+)
+from azure.ai.ml._restclient.v2022_02_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient022022Preview,
+)
+from azure.ai.ml._restclient.v2022_05_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient052022,
+)
+from azure.ai.ml._restclient.v2022_10_01 import (
+    AzureMachineLearningWorkspaces as ServiceClient102022,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient102022Preview,
+)
+from azure.ai.ml._restclient.v2022_12_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient122022Preview,
+)
+from azure.ai.ml._restclient.v2023_02_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient022023Preview,
+)
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+)
 
 # from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
@@ -75,6 +98,7 @@ from azure.ai.ml.operations import (
     VirtualClusterOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    WorkspaceOutboundRuleOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -164,7 +188,21 @@ class MLClient:
         show_progress = kwargs.pop("show_progress", True)
         self._operation_config = OperationConfig(show_progress=show_progress)
 
-        cloud_name = kwargs.get("cloud", _get_default_cloud_name())
+        if "cloud" in kwargs:
+            cloud_name = kwargs["cloud"]
+            if CloudArgumentKeys.CLOUD_METADATA in kwargs:
+                try:
+                    _add_cloud_to_environments(kwargs)
+                except AttributeError as e:
+                    module_logger.debug("Cloud already exists: %s", e)
+                except LookupError as e:
+                    module_logger.debug("Missing keyword: %s", e)
+            else:
+                module_logger.debug("%s key not found in kwargs", CloudArgumentKeys.CLOUD_METADATA)
+        else:
+            module_logger.debug("cloud key not found in kwargs")
+            cloud_name = _get_default_cloud_name()
+
         self._cloud = cloud_name
         _set_cloud(cloud_name)
         if "cloud" not in kwargs:
@@ -185,7 +223,10 @@ class MLClient:
                 credential=self._credential, base_url=base_url, **kwargs_registry
             )
             registry_discovery = RegistryDiscovery(
-                self._credential, registry_name, self._service_client_registry_discovery_client, **kwargs_registry
+                self._credential,
+                registry_name,
+                self._service_client_registry_discovery_client,
+                **kwargs_registry,
             )
             self._service_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
             subscription_id = registry_discovery.subscription_id
@@ -222,7 +263,7 @@ class MLClient:
             **kwargs,
         )
 
-        self._rp_service_client = ServiceClient102022Preview(
+        self._rp_service_client = ServiceClient122022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,
@@ -280,12 +321,27 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_02_2023_preview = ServiceClient022023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
             self._rp_service_client,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
+        )
+
+        self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
+            self._operation_scope,
+            self._rp_service_client,
+            self._operation_container,
+            self._credential,
+            **kwargs,
         )
 
         # TODO make sure that at least one reviewer who understands operation initialization details reviews this
@@ -392,8 +448,7 @@ class MLClient:
         self._data = DataOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview
-            if registry_name else self._service_client_10_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
@@ -762,7 +817,7 @@ class MLClient:
 
     # T = valid inputs/outputs for create_or_update
     # Each entry here requires a registered _create_or_update function below
-    T = TypeVar("T", Job, Model, Environment, Component, Datastore, WorkspaceAssetReference)
+    T = TypeVar("T", Job, Model, Environment, Component, Datastore)
 
     def create_or_update(
         self,
@@ -774,7 +829,7 @@ class MLClient:
         :param entity: The resource to create or update.
         :type entity: typing.Union[~azure.ai.ml.entities.Job
             , ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component
-            , ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceAssetReference]
+            , ~azure.ai.ml.entities.Datastore]
         :return: The created or updated resource.
         :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
             , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
@@ -785,7 +840,15 @@ class MLClient:
     # R = valid inputs/outputs for begin_create_or_update
     # Each entry here requires a registered _begin_create_or_update function below
     R = TypeVar(
-        "R", Workspace, Registry, Compute, OnlineDeployment, OnlineEndpoint, BatchDeployment, BatchEndpoint, JobSchedule
+        "R",
+        Workspace,
+        Registry,
+        Compute,
+        OnlineDeployment,
+        OnlineEndpoint,
+        BatchDeployment,
+        BatchEndpoint,
+        JobSchedule,
     )
 
     def begin_create_or_update(

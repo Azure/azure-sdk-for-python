@@ -6,6 +6,7 @@
 Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing
 model, runs and run output/logging etc.
 """
+# pylint: disable=naming-mismatch
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
@@ -15,7 +16,7 @@ from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
-from ._assets.workspace_asset_reference import WorkspaceAssetReference
+from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
 from ._component.component import Component
@@ -79,7 +80,7 @@ from ._job.input_port import InputPort
 from ._job.job import Job
 from ._job.job_limits import CommandJobLimits
 from ._job.job_resource_configuration import JobResourceConfiguration
-from ._job.job_service import JobService, SshJobService,JupyterLabJobService, TensorBoardJobService, VsCodeJobService
+from ._job.job_service import JobService, SshJobService, JupyterLabJobService, TensorBoardJobService, VsCodeJobService
 from ._job.parallel.parallel_task import ParallelTask
 from ._job.parallel.retry_settings import RetrySettings
 from ._job.parameterized_command import ParameterizedCommand
@@ -123,9 +124,18 @@ from ._workspace.diagnose import (
     DiagnoseResult,
     DiagnoseWorkspaceParameters,
 )
+from ._workspace.networking import (
+    OutboundRule,
+    ManagedNetwork,
+    FqdnDestination,
+    ServiceTagDestination,
+    PrivateEndpointDestination,
+)
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+from ._workspace.compute_runtime import ComputeRuntime
+from ._workspace.feature_store_settings import FeatureStoreSettings
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -184,12 +194,19 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
+    "ComputeRuntime",
+    "FeatureStoreSettings",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
     "DiagnoseResponseResultValue",
     "DiagnoseWorkspaceParameters",
     "PrivateEndpoint",
+    "OutboundRule",
+    "ManagedNetwork",
+    "FqdnDestination",
+    "ServiceTagDestination",
+    "PrivateEndpointDestination",
     "EndpointConnection",
     "CustomerManagedKey",
     "Datastore",
@@ -254,7 +271,7 @@ __all__ = [
     "SynapseSparkCompute",
     "AutoScaleSettings",
     "AutoPauseSettings",
-    "WorkspaceAssetReference",
+    "WorkspaceModelReference",
     # builders
     "Command",
     "Parallel",

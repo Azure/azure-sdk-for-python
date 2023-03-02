@@ -31,7 +31,7 @@ import os
 
 from azure.core.exceptions import HttpResponseError
 from azure.identity.aio import DefaultAzureCredential
-from azure.monitor.ingestion import UploadLogsError
+from azure.monitor.ingestion import LogsUploadError
 from azure.monitor.ingestion.aio import LogsIngestionClient
 
 
@@ -55,7 +55,7 @@ async def send_logs():
     failed_logs = []
 
     # Sample callback that stores the logs that failed to upload.
-    async def on_error_save(error: UploadLogsError) -> None:
+    async def on_error_save(error: LogsUploadError) -> None:
         print("Log chunk failed to upload with error: ", error.error)
         failed_logs.extend(error.failed_logs)
 
@@ -65,7 +65,7 @@ async def send_logs():
 
     # Sample callback that raises the error if it corresponds to a specific HTTP error code.
     # This aborts the rest of the upload.
-    async def on_error_abort(error: UploadLogsError) -> None:
+    async def on_error_abort(error: LogsUploadError) -> None:
         if isinstance(error.error, HttpResponseError) and error.error.status_code in (400, 401, 403):
             print("Aborting upload...")
             raise error.error

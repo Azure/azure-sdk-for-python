@@ -1,4 +1,4 @@
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
 #
@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 import sys
 
 from azure.core.pipeline import AsyncPipeline
@@ -40,7 +40,7 @@ from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     AsyncioRequestsTransport,
     TrioRequestsTransport,
-    AioHttpTransport
+    AioHttpTransport,
 )
 
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -76,7 +76,7 @@ async def test_sans_io_exception(http_request):
 
     pipeline = AsyncPipeline(BrokenSender(), [SansIOHTTPPolicy()])
 
-    req = http_request('GET', '/')
+    req = http_request("GET", "/")
     with pytest.raises(ValueError):
         await pipeline.run(req)
 
@@ -89,15 +89,13 @@ async def test_sans_io_exception(http_request):
     with pytest.raises(NotImplementedError):
         await pipeline.run(req)
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_basic_aiohttp(port, http_request):
 
     request = http_request("GET", "http://localhost:{}/basic/string".format(port))
-    policies = [
-        UserAgentPolicy("myusergant"),
-        AsyncRedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myusergant"), AsyncRedirectPolicy()]
     async with AsyncPipeline(AioHttpTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
 
@@ -105,16 +103,14 @@ async def test_basic_aiohttp(port, http_request):
     # all we need to check is if we are able to make the call
     assert isinstance(response.http_response.status_code, int)
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_basic_aiohttp_separate_session(port, http_request):
 
     session = aiohttp.ClientSession()
     request = http_request("GET", "http://localhost:{}/basic/string".format(port))
-    policies = [
-        UserAgentPolicy("myusergant"),
-        AsyncRedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myusergant"), AsyncRedirectPolicy()]
     transport = AioHttpTransport(session=session, session_owner=False)
     async with AsyncPipeline(transport, policies=policies) as pipeline:
         response = await pipeline.run(request)
@@ -125,19 +121,18 @@ async def test_basic_aiohttp_separate_session(port, http_request):
     assert transport.session
     await transport.session.close()
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_basic_async_requests(port, http_request):
 
     request = http_request("GET", "http://localhost:{}/basic/string".format(port))
-    policies = [
-        UserAgentPolicy("myusergant"),
-        AsyncRedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myusergant"), AsyncRedirectPolicy()]
     async with AsyncPipeline(AsyncioRequestsTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
 
     assert isinstance(response.http_response.status_code, int)
+
 
 @pytest.mark.asyncio
 async def test_async_transport_sleep():
@@ -148,25 +143,26 @@ async def test_async_transport_sleep():
     async with AioHttpTransport() as transport:
         await transport.sleep(1)
 
+
 def test_polling_with_path_format_arguments():
-    method = AsyncLROBasePolling(
-        timeout=0,
-        path_format_arguments={"host": "host:3000", "accountName": "local"}
-    )
+    method = AsyncLROBasePolling(timeout=0, path_format_arguments={"host": "host:3000", "accountName": "local"})
     client = AsyncPipelineClient(base_url="http://{accountName}{host}")
 
     method._operation = LocationPolling()
     method._operation._location_url = "/results/1"
     method._client = client
-    assert "http://localhost:3000/results/1" == method._client.format_url(method._operation.get_polling_url(), **method._path_format_arguments)
+    assert "http://localhost:3000/results/1" == method._client.format_url(
+        method._operation.get_polling_url(), **method._path_format_arguments
+    )
+
 
 def test_async_trio_transport_sleep():
-
     async def do():
         async with TrioRequestsTransport() as transport:
             await transport.sleep(1)
 
     response = trio.run(do)
+
 
 def test_default_http_logging_policy():
     config = Configuration()
@@ -176,70 +172,70 @@ def test_default_http_logging_policy():
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
 
+
 def test_pass_in_http_logging_policy():
     config = Configuration()
     http_logging_policy = HttpLoggingPolicy()
-    http_logging_policy.allowed_header_names.update(
-        {"x-ms-added-header"}
-    )
+    http_logging_policy.allowed_header_names.update({"x-ms-added-header"})
     config.http_logging_policy = http_logging_policy
 
     pipeline_client = AsyncPipelineClient(base_url="test")
     pipeline = pipeline_client._build_pipeline(config)
     http_logging_policy = pipeline._impl_policies[-1]._policy
-    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
-    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.union({"x-ms-added-header"})
+    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union(
+        {"x-ms-added-header"}
+    )
+    assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.union(
+        {"x-ms-added-header"}
+    )
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_conf_async_requests(port, http_request):
 
     request = http_request("GET", "http://localhost:{}/basic/string".format(port))
-    policies = [
-        UserAgentPolicy("myusergant"),
-        AsyncRedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myusergant"), AsyncRedirectPolicy()]
     async with AsyncPipeline(AsyncioRequestsTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
 
     assert isinstance(response.http_response.status_code, int)
 
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_conf_async_trio_requests(port, http_request):
-
     async def do():
         request = http_request("GET", "http://localhost:{}/basic/string".format(port))
-        policies = [
-            UserAgentPolicy("myusergant"),
-            AsyncRedirectPolicy()
-        ]
+        policies = [UserAgentPolicy("myusergant"), AsyncRedirectPolicy()]
         async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline:
             return await pipeline.run(request)
 
     response = trio.run(do)
     assert isinstance(response.http_response.status_code, int)
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_retry_without_http_response(http_request):
     class NaughtyPolicy(AsyncHTTPPolicy):
         def send(*args):
-            raise AzureError('boo')
+            raise AzureError("boo")
 
     policies = [AsyncRetryPolicy(), NaughtyPolicy()]
     pipeline = AsyncPipeline(policies=policies, transport=None)
     with pytest.raises(AzureError):
-        await pipeline.run(http_request('GET', url='https://foo.bar'))
+        await pipeline.run(http_request("GET", url="https://foo.bar"))
+
 
 @pytest.mark.asyncio
 async def test_add_custom_policy():
     class BooPolicy(AsyncHTTPPolicy):
         def send(*args):
-            raise AzureError('boo')
+            raise AzureError("boo")
 
     class FooPolicy(AsyncHTTPPolicy):
         def send(*args):
-            raise AzureError('boo')
+            raise AzureError("boo")
 
     config = Configuration()
     retry_policy = AsyncRetryPolicy()
@@ -274,8 +270,9 @@ async def test_add_custom_policy():
     pos_retry = policies.index(retry_policy)
     assert pos_boo > pos_retry
 
-    client = AsyncPipelineClient(base_url="test", config=config, per_call_policies=boo_policy,
-                                 per_retry_policies=foo_policy)
+    client = AsyncPipelineClient(
+        base_url="test", config=config, per_call_policies=boo_policy, per_retry_policies=foo_policy
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     assert foo_policy in policies
@@ -285,8 +282,9 @@ async def test_add_custom_policy():
     assert pos_boo < pos_retry
     assert pos_foo > pos_retry
 
-    client = AsyncPipelineClient(base_url="test", config=config, per_call_policies=[boo_policy],
-                                 per_retry_policies=[foo_policy])
+    client = AsyncPipelineClient(
+        base_url="test", config=config, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+    )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     assert foo_policy in policies
@@ -296,9 +294,7 @@ async def test_add_custom_policy():
     assert pos_boo < pos_retry
     assert pos_foo > pos_retry
 
-    policies = [UserAgentPolicy(),
-                AsyncRetryPolicy(),
-                DistributedTracingPolicy()]
+    policies = [UserAgentPolicy(), AsyncRetryPolicy(), DistributedTracingPolicy()]
     client = AsyncPipelineClient(base_url="test", policies=policies, per_call_policies=boo_policy)
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
@@ -313,19 +309,20 @@ async def test_add_custom_policy():
     actual_policies = client._pipeline._impl_policies
     assert foo_policy == actual_policies[2]
 
-    client = AsyncPipelineClient(base_url="test", policies=policies, per_call_policies=boo_policy,
-                                 per_retry_policies=[foo_policy])
+    client = AsyncPipelineClient(
+        base_url="test", policies=policies, per_call_policies=boo_policy, per_retry_policies=[foo_policy]
+    )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
     assert foo_policy == actual_policies[3]
-    client = AsyncPipelineClient(base_url="test", policies=policies, per_call_policies=[boo_policy],
-                            per_retry_policies=[foo_policy])
+    client = AsyncPipelineClient(
+        base_url="test", policies=policies, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+    )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
     assert foo_policy == actual_policies[3]
 
-    policies = [UserAgentPolicy(),
-                DistributedTracingPolicy()]
+    policies = [UserAgentPolicy(), DistributedTracingPolicy()]
     with pytest.raises(ValueError):
         client = AsyncPipelineClient(base_url="test", policies=policies, per_retry_policies=foo_policy)
     with pytest.raises(ValueError):

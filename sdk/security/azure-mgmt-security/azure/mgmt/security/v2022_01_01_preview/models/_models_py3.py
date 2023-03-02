@@ -58,7 +58,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -92,11 +92,11 @@ class Condition(_serialization.Model):
     def __init__(
         self,
         *,
-        property: Optional[str] = None,
+        property: Optional[str] = None,  # pylint: disable=redefined-builtin
         value: Optional[str] = None,
         operator: Optional[Union[str, "_models.GovernanceRuleConditionOperator"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword property: The governance rule Condition's Property, e.g. Severity or AssessmentKey,
          see examples.
@@ -136,7 +136,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -154,36 +154,13 @@ class ExecuteGovernanceRuleParams(_serialization.Model):
         "override": {"key": "override", "type": "bool"},
     }
 
-    def __init__(self, *, override: Optional[bool] = None, **kwargs):
+    def __init__(self, *, override: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword override: Describe if governance rule should be override.
         :paramtype override: bool
         """
         super().__init__(**kwargs)
         self.override = override
-
-
-class ExecuteRuleStatus(_serialization.Model):
-    """Execute status of Security GovernanceRule over a given scope.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar operation_id: Unique key for the execution of GovernanceRule.
-    :vartype operation_id: str
-    """
-
-    _validation = {
-        "operation_id": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "operation_id": {"key": "operationId", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.operation_id = None
 
 
 class Resource(_serialization.Model):
@@ -211,7 +188,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -220,7 +197,7 @@ class Resource(_serialization.Model):
 
 
 class GovernanceAssignment(Resource):
-    """Security GovernanceAssignment over a given scope.
+    """Governance assignment over a given scope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -280,8 +257,8 @@ class GovernanceAssignment(Resource):
         is_grace_period: Optional[bool] = None,
         governance_email_notification: Optional["_models.GovernanceEmailNotification"] = None,
         additional_data: Optional["_models.GovernanceAssignmentAdditionalData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword owner: The Owner for the governance assignment - e.g. user@contoso.com - see example.
         :paramtype owner: str
@@ -312,15 +289,15 @@ class GovernanceAssignment(Resource):
 
 
 class GovernanceAssignmentAdditionalData(_serialization.Model):
-    """Describe the additional data of GovernanceAssignment - optional.
+    """Describe the additional data of governance assignment - optional.
 
-    :ivar ticket_number: Ticket number associated with this GovernanceAssignment.
+    :ivar ticket_number: Ticket number associated with this governance assignment.
     :vartype ticket_number: int
-    :ivar ticket_link: Ticket link associated with this GovernanceAssignment - for example:
+    :ivar ticket_link: Ticket link associated with this governance assignment - for example:
      https://snow.com.
     :vartype ticket_link: str
-    :ivar ticket_status: The ticket status associated with this GovernanceAssignment - for example:
-     Active.
+    :ivar ticket_status: The ticket status associated with this governance assignment - for
+     example: Active.
     :vartype ticket_status: str
     """
 
@@ -340,15 +317,15 @@ class GovernanceAssignmentAdditionalData(_serialization.Model):
         ticket_number: Optional[int] = None,
         ticket_link: Optional[str] = None,
         ticket_status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword ticket_number: Ticket number associated with this GovernanceAssignment.
+        :keyword ticket_number: Ticket number associated with this governance assignment.
         :paramtype ticket_number: int
-        :keyword ticket_link: Ticket link associated with this GovernanceAssignment - for example:
+        :keyword ticket_link: Ticket link associated with this governance assignment - for example:
          https://snow.com.
         :paramtype ticket_link: str
-        :keyword ticket_status: The ticket status associated with this GovernanceAssignment - for
+        :keyword ticket_status: The ticket status associated with this governance assignment - for
          example: Active.
         :paramtype ticket_status: str
         """
@@ -359,7 +336,7 @@ class GovernanceAssignmentAdditionalData(_serialization.Model):
 
 
 class GovernanceAssignmentsList(_serialization.Model):
-    """Page of a security governance assignments list.
+    """Page of a governance assignments list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -379,7 +356,7 @@ class GovernanceAssignmentsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -405,8 +382,8 @@ class GovernanceEmailNotification(_serialization.Model):
         *,
         disable_manager_email_notification: Optional[bool] = None,
         disable_owner_email_notification: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disable_manager_email_notification: Exclude manager from weekly email notification.
         :paramtype disable_manager_email_notification: bool
@@ -419,7 +396,7 @@ class GovernanceEmailNotification(_serialization.Model):
 
 
 class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
-    """Security GovernanceRule over a given scope.
+    """Governance rule over a given scope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -429,9 +406,11 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar display_name: display name of the governanceRule.
+    :ivar tenant_id: The tenantId (GUID).
+    :vartype tenant_id: str
+    :ivar display_name: Display name of the governance rule.
     :vartype display_name: str
-    :ivar description: description of the governanceRule.
+    :ivar description: Description of the governance rule.
     :vartype description: str
     :ivar remediation_timeframe: Governance rule remediation timeframe - this is the time that will
      affect on the grace-period duration e.g. 7.00:00:00 - means 7 days.
@@ -439,7 +418,7 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar is_grace_period: Defines whether there is a grace period on the governance rule.
     :vartype is_grace_period: bool
     :ivar rule_priority: The governance rule priority, priority to the lower number. Rules with the
-     same priority on the same subscription will not be allowed.
+     same priority on the same scope will not be allowed.
     :vartype rule_priority: int
     :ivar is_disabled: Defines whether the rule is active/inactive.
     :vartype is_disabled: bool
@@ -450,9 +429,15 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
      Assessments. "Assessments"
     :vartype source_resource_type: str or
      ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleSourceResourceType
+    :ivar excluded_scopes: Excluded scopes, filter out the descendants of the scope (on management
+     scopes).
+    :vartype excluded_scopes: list[str]
     :ivar condition_sets: The governance rule conditionSets - see examples.
     :vartype condition_sets: list[JSON]
-    :ivar owner_source: The Owner source for the governance rule - e.g. Manually by
+    :ivar include_member_scopes: Defines whether the rule is management scope rule (master
+     connector as a single scope or management scope).
+    :vartype include_member_scopes: bool
+    :ivar owner_source: The owner source for the governance rule - e.g. Manually by
      user@contoso.com - see example.
     :vartype owner_source:
      ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleOwnerSource
@@ -460,12 +445,16 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
      states whether to disable notifications for mangers and owners.
     :vartype governance_email_notification:
      ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleEmailNotification
+    :ivar metadata: The governance rule metadata.
+    :vartype metadata: ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleMetadata
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "remediation_timeframe": {"pattern": r"^[0-9]+\.[0-9]{2}:[0-9]{2}:[0-9]{2}$"},
         "rule_priority": {"maximum": 1000, "minimum": 0},
     }
 
@@ -473,6 +462,7 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
         "display_name": {"key": "properties.displayName", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
         "remediation_timeframe": {"key": "properties.remediationTimeframe", "type": "str"},
@@ -481,12 +471,15 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
         "is_disabled": {"key": "properties.isDisabled", "type": "bool"},
         "rule_type": {"key": "properties.ruleType", "type": "str"},
         "source_resource_type": {"key": "properties.sourceResourceType", "type": "str"},
+        "excluded_scopes": {"key": "properties.excludedScopes", "type": "[str]"},
         "condition_sets": {"key": "properties.conditionSets", "type": "[object]"},
+        "include_member_scopes": {"key": "properties.includeMemberScopes", "type": "bool"},
         "owner_source": {"key": "properties.ownerSource", "type": "GovernanceRuleOwnerSource"},
         "governance_email_notification": {
             "key": "properties.governanceEmailNotification",
             "type": "GovernanceRuleEmailNotification",
         },
+        "metadata": {"key": "properties.metadata", "type": "GovernanceRuleMetadata"},
     }
 
     def __init__(
@@ -500,15 +493,18 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
         is_disabled: Optional[bool] = None,
         rule_type: Optional[Union[str, "_models.GovernanceRuleType"]] = None,
         source_resource_type: Optional[Union[str, "_models.GovernanceRuleSourceResourceType"]] = None,
+        excluded_scopes: Optional[List[str]] = None,
         condition_sets: Optional[List[JSON]] = None,
+        include_member_scopes: Optional[bool] = None,
         owner_source: Optional["_models.GovernanceRuleOwnerSource"] = None,
         governance_email_notification: Optional["_models.GovernanceRuleEmailNotification"] = None,
-        **kwargs
-    ):
+        metadata: Optional["_models.GovernanceRuleMetadata"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword display_name: display name of the governanceRule.
+        :keyword display_name: Display name of the governance rule.
         :paramtype display_name: str
-        :keyword description: description of the governanceRule.
+        :keyword description: Description of the governance rule.
         :paramtype description: str
         :keyword remediation_timeframe: Governance rule remediation timeframe - this is the time that
          will affect on the grace-period duration e.g. 7.00:00:00 - means 7 days.
@@ -516,7 +512,7 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword is_grace_period: Defines whether there is a grace period on the governance rule.
         :paramtype is_grace_period: bool
         :keyword rule_priority: The governance rule priority, priority to the lower number. Rules with
-         the same priority on the same subscription will not be allowed.
+         the same priority on the same scope will not be allowed.
         :paramtype rule_priority: int
         :keyword is_disabled: Defines whether the rule is active/inactive.
         :paramtype is_disabled: bool
@@ -527,9 +523,15 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
          Assessments. "Assessments"
         :paramtype source_resource_type: str or
          ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleSourceResourceType
+        :keyword excluded_scopes: Excluded scopes, filter out the descendants of the scope (on
+         management scopes).
+        :paramtype excluded_scopes: list[str]
         :keyword condition_sets: The governance rule conditionSets - see examples.
         :paramtype condition_sets: list[JSON]
-        :keyword owner_source: The Owner source for the governance rule - e.g. Manually by
+        :keyword include_member_scopes: Defines whether the rule is management scope rule (master
+         connector as a single scope or management scope).
+        :paramtype include_member_scopes: bool
+        :keyword owner_source: The owner source for the governance rule - e.g. Manually by
          user@contoso.com - see example.
         :paramtype owner_source:
          ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleOwnerSource
@@ -537,8 +539,11 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
          rule, states whether to disable notifications for mangers and owners.
         :paramtype governance_email_notification:
          ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleEmailNotification
+        :keyword metadata: The governance rule metadata.
+        :paramtype metadata: ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRuleMetadata
         """
         super().__init__(**kwargs)
+        self.tenant_id = None
         self.display_name = display_name
         self.description = description
         self.remediation_timeframe = remediation_timeframe
@@ -547,9 +552,12 @@ class GovernanceRule(Resource):  # pylint: disable=too-many-instance-attributes
         self.is_disabled = is_disabled
         self.rule_type = rule_type
         self.source_resource_type = source_resource_type
+        self.excluded_scopes = excluded_scopes
         self.condition_sets = condition_sets
+        self.include_member_scopes = include_member_scopes
         self.owner_source = owner_source
         self.governance_email_notification = governance_email_notification
+        self.metadata = metadata
 
 
 class GovernanceRuleEmailNotification(_serialization.Model):
@@ -572,8 +580,8 @@ class GovernanceRuleEmailNotification(_serialization.Model):
         *,
         disable_manager_email_notification: Optional[bool] = None,
         disable_owner_email_notification: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disable_manager_email_notification: Defines whether manager email notifications are
          disabled.
@@ -588,11 +596,11 @@ class GovernanceRuleEmailNotification(_serialization.Model):
 
 
 class GovernanceRuleList(_serialization.Model):
-    """Page of a security governanceRules list.
+    """Page of a governance rules list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: Collection of governanceRules in this page.
+    :ivar value: Collection of governance rules in this page.
     :vartype value: list[~azure.mgmt.security.v2022_01_01_preview.models.GovernanceRule]
     :ivar next_link: The URI to fetch the next page.
     :vartype next_link: str
@@ -608,11 +616,49 @@ class GovernanceRuleList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class GovernanceRuleMetadata(_serialization.Model):
+    """The governance rule metadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_by: Governance rule Created by object id (GUID).
+    :vartype created_by: str
+    :ivar created_on: Governance rule creation date.
+    :vartype created_on: ~datetime.datetime
+    :ivar updated_by: Governance rule last updated by object id (GUID).
+    :vartype updated_by: str
+    :ivar updated_on: Governance rule last update date.
+    :vartype updated_on: ~datetime.datetime
+    """
+
+    _validation = {
+        "created_by": {"readonly": True},
+        "created_on": {"readonly": True},
+        "updated_by": {"readonly": True},
+        "updated_on": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_on": {"key": "createdOn", "type": "iso-8601"},
+        "updated_by": {"key": "updatedBy", "type": "str"},
+        "updated_on": {"key": "updatedOn", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.created_by = None
+        self.created_on = None
+        self.updated_by = None
+        self.updated_on = None
 
 
 class GovernanceRuleOwnerSource(_serialization.Model):
@@ -636,8 +682,8 @@ class GovernanceRuleOwnerSource(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.GovernanceRuleOwnerSourceType"]] = None,
         value: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The owner type for the governance rule owner source. Known values are: "ByTag"
          and "Manually".
@@ -649,6 +695,30 @@ class GovernanceRuleOwnerSource(_serialization.Model):
         super().__init__(**kwargs)
         self.type = type
         self.value = value
+
+
+class OperationResultAutoGenerated(_serialization.Model):
+    """Long run operation status of governance rule over a given scope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The status of the long run operation result of governance rule. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype status: str or ~azure.mgmt.security.v2022_01_01_preview.models.OperationResult
+    """
+
+    _validation = {
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.status = None
 
 
 class RemediationEta(_serialization.Model):
@@ -672,7 +742,7 @@ class RemediationEta(_serialization.Model):
         "justification": {"key": "justification", "type": "str"},
     }
 
-    def __init__(self, *, eta: datetime.datetime, justification: str, **kwargs):
+    def __init__(self, *, eta: datetime.datetime, justification: str, **kwargs: Any) -> None:
         """
         :keyword eta: ETA for remediation. Required.
         :paramtype eta: ~datetime.datetime

@@ -135,7 +135,7 @@ class MetricValue:
         if not generated:
             return cls()
         return cls(
-            timestamp=Deserializer.deserialize_iso(generated.get("time_stamp")),
+            timestamp=Deserializer.deserialize_iso(generated.get("timeStamp")),
             average=generated.get("average"),
             minimum=generated.get("minimum"),
             maximum=generated.get("maximum"),

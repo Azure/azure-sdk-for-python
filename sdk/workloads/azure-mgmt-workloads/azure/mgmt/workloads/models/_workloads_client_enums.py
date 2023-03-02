@@ -16,23 +16,12 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
-class ApplicationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """WordPress instance provisioning state."""
+class ApplicationServerVirtualMachineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the type of application server VM."""
 
-    NOT_SPECIFIED = "NotSpecified"
-    ACCEPTED = "Accepted"
-    CREATED = "Created"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    INSTALLING = "Installing"
-
-
-class AzureFrontDoorEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether to enable Azure front door."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
+    ACTIVE = "Active"
+    STANDBY = "Standby"
+    UNKNOWN = "Unknown"
 
 
 class CentralServerVirtualMachineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -47,6 +36,14 @@ class CentralServerVirtualMachineType(str, Enum, metaclass=CaseInsensitiveEnumMe
     STANDBY = "Standby"
 
 
+class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of file share config."""
+
+    SKIP = "Skip"
+    CREATE_AND_MOUNT = "CreateAndMount"
+    MOUNT = "Mount"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -56,40 +53,16 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
-class DatabaseTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Tier of the server SKU."""
+class DiskSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the disk sku name."""
 
-    BURSTABLE = "Burstable"
-    GENERAL_PURPOSE = "GeneralPurpose"
-    MEMORY_OPTIMIZED = "MemoryOptimized"
-
-
-class DatabaseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Database type."""
-
-    MY_SQL = "MySql"
-
-
-class DiskStorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Storage type."""
-
-    PREMIUM_LRS = "Premium_LRS"
     STANDARD_LRS = "Standard_LRS"
+    PREMIUM_LRS = "Premium_LRS"
     STANDARD_SSD_LRS = "StandardSSD_LRS"
-
-
-class EnableBackup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether to enable Azure backup for the workload."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-
-class EnableSslEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether to enable SSL enforcement on the database."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
+    ULTRA_SSD_LRS = "UltraSSD_LRS"
+    PREMIUM_ZRS = "Premium_ZRS"
+    STANDARD_SSD_ZRS = "StandardSSD_ZRS"
+    PREMIUM_V2_LRS = "PremiumV2_LRS"
 
 
 class EnqueueReplicationServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -99,48 +72,17 @@ class EnqueueReplicationServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     ENQUEUE_REPLICATOR2 = "EnqueueReplicator2"
 
 
-class FileShareStorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """File share backing storage type."""
-
-    STANDARD_LRS = "Standard_LRS"
-    STANDARD_GRS = "Standard_GRS"
-    STANDARD_ZRS = "Standard_ZRS"
-    PREMIUM_LRS = "Premium_LRS"
-
-
-class FileShareType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Share type."""
-
-    NFS_ON_CONTROLLER = "NfsOnController"
-    AZURE_FILES = "AzureFiles"
-
-
-class HAEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether to enable HA for the server."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-
-class LoadBalancerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Load balancer type."""
-
-    APPLICATION_GATEWAY = "ApplicationGateway"
-    LOAD_BALANCER = "LoadBalancer"
-
-
-class LocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the extended location."""
-
-    REGION = "Region"
-    EDGE_ZONE = "EdgeZone"
-
-
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (only None, UserAssigned types are allowed)."""
 
     NONE = "None"
     USER_ASSIGNED = "UserAssigned"
+
+
+class NamingPatternType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The pattern type to be used for resource naming."""
+
+    FULL_RESOURCE_NAME = "FullResourceName"
 
 
 class OperationProperties(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -161,64 +103,11 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
-class OSImageOffer(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OS image offer."""
-
-    UBUNTU_SERVER = "UbuntuServer"
-
-
-class OSImagePublisher(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OS image publisher."""
-
-    CANONICAL = "Canonical"
-
-
-class OSImageSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OS image sku."""
-
-    EIGHTEEN04_LTS = "18.04-LTS"
-    SIXTEEN04_LTS = "16.04-LTS"
-
-
-class OSImageVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OS image version."""
-
-    LATEST = "latest"
-
-
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The OS Type."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
-
-
-class PHPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PHP version."""
-
-    SEVEN2 = "7.2"
-    SEVEN3 = "7.3"
-    SEVEN4 = "7.4"
-
-
-class PhpWorkloadProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Php workload resource provisioning state."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    ACCEPTED = "Accepted"
-    CREATED = "Created"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    PROVISIONING = "Provisioning"
-    DELETING = "Deleting"
-
-
-class RedisCacheFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Cache family."""
-
-    C = "C"
-    P = "P"
 
 
 class RoutingPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -283,6 +172,16 @@ class SAPHighAvailabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AVAILABILITY_ZONE = "AvailabilityZone"
 
 
+class SapLandscapeMonitorProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of provisioning of the SAP monitor."""
+
+    ACCEPTED = "Accepted"
+    CREATED = "Created"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+
+
 class SAPProductType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the SAP Product type."""
 
@@ -335,47 +234,7 @@ class SAPVirtualInstanceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OFFLINE = "Offline"
     PARTIALLY_RUNNING = "PartiallyRunning"
     UNAVAILABLE = "Unavailable"
-
-
-class SearchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Search type."""
-
-    ELASTIC = "Elastic"
-
-
-class SkuRestrictionReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The SKU restriction reason code."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    QUOTA_ID = "QuotaId"
-    NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
-
-
-class SkuRestrictionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The SKU restriction type."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    LOCATION = "Location"
-    ZONE = "Zone"
-
-
-class SkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Scale type of the SKU capacity."""
-
-    NONE = "None"
-    MANUAL = "Manual"
-    AUTOMATIC = "Automatic"
-
-
-class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This field is required to be implemented by the Resource Provider if the service has more than
-    one tier, but is not required on a PUT.
-    """
-
-    FREE = "Free"
-    BASIC = "Basic"
-    STANDARD = "Standard"
-    PREMIUM = "Premium"
+    SOFT_SHUTDOWN = "SoftShutdown"
 
 
 class SslPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -384,21 +243,6 @@ class SslPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
     ROOT_CERTIFICATE = "RootCertificate"
     SERVER_CERTIFICATE = "ServerCertificate"
-
-
-class WordpressVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Application version."""
-
-    FIVE4_3 = "5.4.3"
-    FIVE4_2 = "5.4.2"
-    FIVE4_1 = "5.4.1"
-    FIVE4 = "5.4"
-
-
-class WorkloadKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates which kind of php workload this resource represent e.g WordPress."""
-
-    WORD_PRESS = "WordPress"
 
 
 class WorkloadMonitorActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

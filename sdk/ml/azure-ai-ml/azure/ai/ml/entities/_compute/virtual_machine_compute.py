@@ -55,6 +55,8 @@ class VirtualMachineCompute(Compute):
     :type description: Optional[str], optional
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param ssh_settings: SSH settings.
     :type ssh_settings: VirtualMachineSshSettings, optional
     """
@@ -65,6 +67,7 @@ class VirtualMachineCompute(Compute):
         name: str,
         description: Optional[str] = None,
         resource_id: str,
+        tags: Optional[dict] = None,
         ssh_settings: Optional[VirtualMachineSshSettings] = None,
         **kwargs,
     ):
@@ -75,6 +78,7 @@ class VirtualMachineCompute(Compute):
             location=kwargs.pop("location", None),
             description=description,
             resource_id=resource_id,
+            tags=tags,
             **kwargs,
         )
         self.ssh_settings = ssh_settings
@@ -105,6 +109,7 @@ class VirtualMachineCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             public_key_data=credentials.public_key_data if credentials else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
@@ -141,5 +146,5 @@ class VirtualMachineCompute(Compute):
             resource_id=self.resource_id,
             description=self.description,
         )
-        resource = ComputeResource(name=self.name, location=self.location, properties=vm_compute)
+        resource = ComputeResource(name=self.name, location=self.location, tags=self.tags, properties=vm_compute)
         return resource

@@ -24,13 +24,12 @@ USAGE:
     4) CUSTOM_ENTITIES_DEPLOYMENT_NAME - your Language deployed model name
 """
 
-
-import os
 import asyncio
 
 
 async def sample_recognize_custom_entities_async() -> None:
     # [START recognize_custom_entities_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 

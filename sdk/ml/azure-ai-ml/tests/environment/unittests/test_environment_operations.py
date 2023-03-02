@@ -13,8 +13,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations
-from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations import EnvironmentOperations
 from azure.core.exceptions import ResourceNotFoundError
 
 
@@ -23,13 +22,13 @@ def mock_environment_operation_reg(
     mock_registry_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2021_10_01_dataplanepreview: Mock,
-    mock_machinelearning_client: Mock,
+    mock_machinelearning_registry_client: Mock,
 ) -> EnvironmentOperations:
     yield EnvironmentOperations(
         operation_scope=mock_registry_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2021_10_01_dataplanepreview,
-        all_operations=mock_machinelearning_client._operation_container,
+        all_operations=mock_machinelearning_registry_client._operation_container,
     )
 
 
@@ -37,14 +36,14 @@ def mock_environment_operation_reg(
 def mock_environment_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_machinelearning_registry_client: Mock,
+    mock_machinelearning_client: Mock,
     mock_aml_services_2022_05_01: Mock,
 ) -> EnvironmentOperations:
     yield EnvironmentOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_05_01,
-        all_operations=mock_machinelearning_registry_client._operation_container,
+        all_operations=mock_machinelearning_client._operation_container,
     )
 
 

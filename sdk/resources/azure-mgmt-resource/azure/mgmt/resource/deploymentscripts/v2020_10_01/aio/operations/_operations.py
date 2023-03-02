@@ -230,8 +230,8 @@ class DeploymentScriptsOperations:
         :type resource_group_name: str
         :param script_name: Name of the deployment script. Required.
         :type script_name: str
-        :param deployment_script: Deployment script supplied to the operation. Is either a model type
-         or a IO type. Required.
+        :param deployment_script: Deployment script supplied to the operation. Is either a
+         DeploymentScript type or a IO type. Required.
         :type deployment_script:
          ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.DeploymentScript or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -374,7 +374,7 @@ class DeploymentScriptsOperations:
         :param script_name: Name of the deployment script. Required.
         :type script_name: str
         :param deployment_script: Deployment script resource with the tags to be updated. Is either a
-         model type or a IO type. Default value is None.
+         DeploymentScriptUpdateParameter type or a IO type. Default value is None.
         :type deployment_script:
          ~azure.mgmt.resource.deploymentscripts.v2020_10_01.models.DeploymentScriptUpdateParameter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

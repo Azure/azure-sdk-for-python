@@ -71,15 +71,17 @@ class ConditionNode(ControlFlowNode):
 
         # check if condition is valid binding
         if isinstance(self.condition, str) and not is_data_binding_expression(
-                self.condition, ["parent"], is_singular=False):
+            self.condition, ["parent"], is_singular=False
+        ):
             error_tail = "for example, ${{parent.jobs.xxx.outputs.output}}"
             validation_result.append_error(
                 yaml_path="condition",
                 message=f"'condition' of dsl.condition has invalid binding expression: {self.condition}, {error_tail}",
             )
 
-        error_msg = "{!r} of dsl.condition node must be an instance of " \
-                    f"{BaseNode}, {AutoMLJob} or {str}," "got {!r}."
+        error_msg = (
+            "{!r} of dsl.condition node must be an instance of " f"{BaseNode}, {AutoMLJob} or {str}," "got {!r}."
+        )
         if self.true_block is not None and not isinstance(self.true_block, (BaseNode, AutoMLJob, str)):
             validation_result.append_error(
                 yaml_path="true_block", message=error_msg.format("true_block", type(self.true_block))

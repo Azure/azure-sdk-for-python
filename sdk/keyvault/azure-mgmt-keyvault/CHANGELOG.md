@@ -1,5 +1,11 @@
 # Release History
 
+## 10.2.0b1 (2023-02-14)
+
+### Features Added
+
+  - Model ManagedHsmProperties has a new parameter security_domain_properties
+
 ## 10.1.0 (2022-08-10)
 
 ### Features Added

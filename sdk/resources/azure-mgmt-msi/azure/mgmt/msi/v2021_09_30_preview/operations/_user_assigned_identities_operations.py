@@ -661,8 +661,8 @@ class UserAssignedIdentitiesOperations:
         :type resource_group_name: str
         :param resource_name: The name of the identity resource. Required.
         :type resource_name: str
-        :param parameters: Parameters to create or update the identity. Is either a model type or a IO
-         type. Required.
+        :param parameters: Parameters to create or update the identity. Is either a Identity type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.msi.v2021_09_30_preview.models.Identity or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -804,8 +804,8 @@ class UserAssignedIdentitiesOperations:
         :type resource_group_name: str
         :param resource_name: The name of the identity resource. Required.
         :type resource_name: str
-        :param parameters: Parameters to update the identity. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters to update the identity. Is either a IdentityUpdate type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.msi.v2021_09_30_preview.models.IdentityUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
