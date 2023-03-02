@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturesetContainerProperties,
 )
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import LONG_URI_FORMAT
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._featureset.featureset_specification import FeaturesetSpecification
 from azure.ai.ml.entities._featureset.materialization_settings import MaterializationSettings
@@ -59,6 +60,7 @@ class Featureset(Artifact):
             name=name,
             version=version,
             description=description,
+            path=specification.path,
             **kwargs,
         )
         self.entities = entities
@@ -125,4 +127,11 @@ class Featureset(Artifact):
         return None
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        return None
+        aml_datastore_id = AMLNamedArmId(asset_artifact.datastore_arm_id)
+        self.path = LONG_URI_FORMAT.format(
+            aml_datastore_id.subscription_id,
+            aml_datastore_id.resource_group_name,
+            aml_datastore_id.workspace_name,
+            aml_datastore_id.asset_name,
+            asset_artifact.relative_path,
+        )
