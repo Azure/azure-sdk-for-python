@@ -57,7 +57,6 @@ from .._job.pipeline._io import NodeOutput
 from .._job.spark_helpers import (
     _validate_compute_or_resources,
     _validate_input_output_mode,
-    _validate_spark_configurations,
 )
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, load_from_dict, validate_attribute_type
@@ -186,7 +185,9 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         is_spark_component = isinstance(component, SparkComponent)
         if is_spark_component:
-            self.conf = self.conf or component.conf
+            # conf is dict and we need copy component conf here, otherwise node conf setting will affect component
+            # setting
+            self.conf = self.conf or copy.copy(component.conf)
             self.driver_cores = self.driver_cores or component.driver_cores
             self.driver_memory = self.driver_memory or component.driver_memory
             self.executor_cores = self.executor_cores or component.executor_cores
