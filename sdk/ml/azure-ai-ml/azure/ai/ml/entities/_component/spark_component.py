@@ -135,6 +135,8 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
         self.dynamic_allocation_max_executors = dynamic_allocation_max_executors or conf.get(
             RestSparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None
         )
+        if self.executor_instances is None and self.dynamic_allocation_enabled in ["True", "true", True]:
+            self.executor_instances = self.dynamic_allocation_min_executors
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -188,12 +190,8 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
                     yaml_path="conf",
                     message=msg,
                 )
-            if self.executor_instances is None:
-                self.executor_instances = self.dynamic_allocation_min_executors
-            elif (
-                    self.executor_instances > self.dynamic_allocation_max_executors
-                    or self.executor_instances < self.dynamic_allocation_min_executors
-            ):
+            if self.executor_instances > self.dynamic_allocation_max_executors or \
+                    self.executor_instances < self.dynamic_allocation_min_executors:
                 msg = (
                     "Executor instances must be a valid non-negative integer and must be between "
                     "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"

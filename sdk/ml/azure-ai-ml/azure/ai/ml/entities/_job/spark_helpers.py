@@ -9,9 +9,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 def _validate_spark_configurations(obj):
-    # skip validation when component of node is from remote
-    if hasattr(obj, "component") and isinstance(obj.component, str):
-        return
     if obj.dynamic_allocation_enabled in ["True", "true", True]:
         if (
             obj.driver_cores is None

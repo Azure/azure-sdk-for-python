@@ -526,7 +526,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
     def _validate_fields(self) -> None:
         _validate_compute_or_resources(self.compute, self.resources)
         _validate_input_output_mode(self.inputs, self.outputs)
-        _validate_spark_configurations(self)
         self._validate_entry()
 
         if self.args:
