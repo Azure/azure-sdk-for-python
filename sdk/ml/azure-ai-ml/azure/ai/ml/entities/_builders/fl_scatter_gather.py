@@ -1,7 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Optional, Tuple
+import re
 
 from azure.ai.ml import Output
 from azure.ai.ml.constants._common import AssetTypes
@@ -24,6 +25,13 @@ MERGE_COMPONENT_MAPPING = {
     "mltable": aggregate_output,
     "uri_folder": aggregate_output,
 }
+
+ANCHORABLE_OUTPUT_TYPES = {
+    AssetTypes.MLTABLE,
+    AssetTypes.URI_FOLDER
+}
+
+ANCHORING_PATH_ROOT = "root"
 
 
 
@@ -119,7 +127,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             type=JobType.COMPONENT,  # pylint: disable=redefined-builtin
             component=None,
             inputs=None,
-            outputs=None,
+            outputs=self.subgraph[-1]["aggregation"].outputs,
             name=None,
             display_name=None,
             description=None,
@@ -183,7 +191,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             FLScatterGather._anchor_step_in_silo(
                 pipeline_step=executed_silo_component,
                 compute=silo_config.compute,
-                output_datastore=silo_config.datastore
+                internal_datastore=silo_config.datastore,
+                orchestrator_datastore=self.aggregation_datastore
             )
 
             sg_graph["silos"].append(executed_silo_component)
@@ -230,14 +239,15 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             FLScatterGather._anchor_step_in_silo(
                 pipeline_step=executed_aggregation_component,
                 compute=self.aggregation_compute,
-                output_datastore=self.aggregation_datastore
+                internal_datastore=self.aggregation_datastore,
+                orchestrator_datastore=self.aggregation_datastore
             )
         return sg_graph
 
     @classmethod
     def _custom_fl_data_output(
-        cls, datastore_name, output_name, unique_id="${{name}}", iteration_num=None
-    ):
+        cls, assetType: str, datastore_name: str, output_name: str, unique_id: str="${{name}}", iteration_num: Optional[int]=None
+    ) -> Output:
         """Returns an Output pointing to a path to store the data during FL training.
         Args:
             datastore_name (str): name of the Azure ML datastore
@@ -247,126 +257,131 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         Returns:
             data_path (str): direct url to the data path to store the data
         """
+        data_path = cls._get_fl_datastore_path(datastore_name=datastore_name, output_name=output_name, unique_id=unique_id, iteration_num=iteration_num)
+
+        return Output(type=assetType, mode="mount", path=data_path)
+
+    @classmethod
+    def _get_fl_datastore_path(
+        cls, datastore_name: str, output_name: str, unique_id: str="${{name}}", iteration_num: Optional[int]=None
+    ) -> Output:
         data_path = f"azureml://datastores/{datastore_name}/paths/federated_learning/{output_name}/{unique_id}/"
         if iteration_num:
             data_path += f"iteration_{iteration_num}/"
+        return data_path
 
-        return Output(type=AssetTypes.URI_FOLDER, mode="mount", path=data_path)
+    @classmethod
+    def _check_datastore(cls, path, expected_datastore) -> bool:
+        match = re.match("(.*datastore/)([^/]*)(/.*)", path)
+        if match:
+            grps = match.groups()
+            if grps[1] == expected_datastore:
+                return True
+        return False
+
+    @classmethod
+    def _check_or_set_datastore(cls, 
+        name: str,
+        output: Output,
+        target_datastore: str,
+        iteration_num: Optional[int]=None    
+    ) -> MutableValidationResult:
+        """ Tries to assign output.path to a value which includes the target_datastore if it's not already
+        set. If the output's path is already set, return a warning if it doesn't match the target_datastore.
+        """
+        validation_result = cls._create_empty_validation_result()
+        if not hasattr(output, "path") or not output.path:
+            output.path = cls._get_fl_datastore_path(target_datastore, name, iteration_num=iteration_num)
+        # Double check the path's datastore leads to the target if it's already set.
+        elif not cls._check_datastore(output.path, target_datastore):
+            validation_result.append_warning(yaml_path=name,
+                message=f"Output '{name}' has an unparseable datastore, or a datstore"
+                    + f" that does not match the expected datastore for this output, which is '{target_datastore}'."
+                    + " Make sure this is intended.")
+        return validation_result
 
     @classmethod
     def _anchor_step_in_silo(
             cls,
             pipeline_step,
             compute,
-            output_datastore,
-            tags={},
-            description=None,
-            orchestrator_datastore=None,
+            internal_datastore,
+            orchestrator_datastore,
+            iteration: Optional[int]=0,
             _path="root",
-    ):
+    ) -> MutableValidationResult:
         """Take a step and recursively enforces the right compute/datastore config.
         Args:
             pipeline_step (PipelineStep): a step to anchor
             compute (str): name of the compute target
-            output_datastore (str): name of the datastore for the outputs of this step
-            tags (dict): tags to add to the step in AzureML UI
-            description (str): description of the step in AzureML UI
-            orchestrator_datastore (str): name of the orchestrator datastore
-            _path (str): for recursive anchoring, codes the "path" inside the pipeline
+            internal_datastore (str): The name of the datastore that should be used for internal
+                output anchoring.
+            orchestrator_datastore (str): The name of the orchestrator/aggregation datastore that
+                should be used for 'real' output anchoring.
+            _path (str): for recursive anchoring, codes the "path" inside the pipeline for messaging
         Returns:
-            pipeline_step (PipelineStep): the anchored step
+            validation_result: An validation result containing any issues that were uncovered
+                during anchoring. This function adds warnings when outputs already have
+                assigned paths which don't contain the expected datastore.
         """
-        # TODO re-enable logging
-        # self.logger.debug(f"{_path}: anchoring node of type={pipeline_step.type}")
 
-        if pipeline_step.type == "pipeline":  # if the current step is a pipeline
+        validation_result = cls._create_empty_validation_result()
+
+        # Current step is a pipeline, which means we need to inspect its steps (jobs) and
+        # potentially anchor those as well.
+        if pipeline_step.type == "pipeline": 
             if hasattr(pipeline_step, "component"):
-                # current step is a pipeline component
-                # self.logger.debug(f"{_path} --  pipeline component detected")
+                # Current step is probably not the root of the graph
+                # its outputs should be anchored to the internal_datastore.
+                for name, output in pipeline_step.outputs.items():
+                    if output.type in ANCHORABLE_OUTPUT_TYPES:
+                        validation_result.merge_with(cls._check_or_set_datastore(name=name, output=output, target_datastore=orchestrator_datastore, iteration_num=iteration))
 
-                # then anchor the component inside the current step
+                # then we need to anchor the internal component of this step
+                # The outputs of this sub-component are a deep copy of the outputs of this step
+                # This is dangerous, and we need to make sure they both use the same datastore,
+                # so we keep datastore types idendical across this recursive call.
                 cls._anchor_step_in_silo(
                     pipeline_step.component,
                     compute,
-                    output_datastore,
-                    tags=tags,
-                    description=description,
+                    internal_datastore=internal_datastore,
                     orchestrator_datastore=orchestrator_datastore,
-                    _path=f"{_path}.component",  # pass the path for the debug logs
+                    _path=f"{_path}.component",  
                 )
 
-                # and make sure every output data is anchored to the right datastore
-                for key in pipeline_step.outputs:
-                    # self.logger.debug(f"{_path}.outputs.{key}: has type={pipeline_step.outputs[key].type}
-                    # class={type(pipeline_step.outputs[key])}, anchoring to datastore={output_datastore}")
-                    setattr(
-                        pipeline_step.outputs,
-                        key,
-                        cls ._custom_fl_data_output(output_datastore, key),
-                    )
-
             else:
-                # current step is a (regular) pipeline (likely the root of the graph)
-                # self.logger.debug(f"{_path}: pipeline (regular) detected")
-
-                # let's anchor each outputs of the pipeline to the right datastore
-                for key in pipeline_step.outputs:
-                    # self.logger.debug(f"{_path}.outputs.{key}: has type={pipeline_step.outputs[key].type}
-                    # class={type(pipeline_step.outputs[key])}, anchoring to datastore={output_datastore}")
-                    pipeline_step.outputs[key] = cls ._custom_fl_data_output(
-                        output_datastore, key
-                    )
-
-                # then recursively anchor each job inside the pipeline
+                # This is a pipeline step with multiple jobs beneath it.
+                # Anchor its outputs...
+                for name, output in pipeline_step.outputs.items():
+                    if output.type in ANCHORABLE_OUTPUT_TYPES:
+                        validation_result.merge_with(cls._check_or_set_datastore(name=name, output=output, target_datastore=orchestrator_datastore, iteration_num=iteration))
+                # ...then recursively anchor each job inside the pipeline
                 for job_key in pipeline_step.jobs:
                     job = pipeline_step.jobs[job_key]
+                    # replace orchestrator with internal datastore, jobs components should either use the local datastore
+                    # or have already had their outputs re-assigned 
                     cls._anchor_step_in_silo(
                         job,
                         compute,
-                        output_datastore,
-                        tags=tags,
-                        description=description,
-                        orchestrator_datastore=orchestrator_datastore,
-                        _path=f"{_path}.jobs.{job_key}",  # pass the path for the debug logs
+                        internal_datastore=internal_datastore,
+                        orchestrator_datastore=internal_datastore, 
+                        _path=f"{_path}.jobs.{job_key}",
                     )
-
-            # return the anchored pipeline
-            return pipeline_step
 
         elif pipeline_step.type == "command":
-            # if the current step is a command
-            # self.logger.debug(f"{_path}: command detected")
-
+            # if the current step is a command component
             # make sure the compute corresponds to the silo
             if pipeline_step.compute is None:
-                # self.logger.debug(f"{_path}: compute is None, forcing compute={compute} instead")
                 pipeline_step.compute = compute
-
-            # then anchor each of the job's outputs to the right datastore
-            for key in pipeline_step.outputs:
-                # self.logger.debug(f"{_path}.outputs.{key}: has type={pipeline_step.outputs[key].type}
-                # class={type(pipeline_step.outputs[key])}, anchoring to datastore={output_datastore}")
-
-                if pipeline_step.outputs[key]._data is None:
-                    # if the output is an intermediary output
-                    # self.logger.debug(f"{_path}.outputs.{key}: intermediary output detected, forcing datastore {output_datastore}")
-                    setattr(
-                        pipeline_step.outputs,
-                        key,
-                        cls ._custom_fl_data_output(output_datastore, key),
-                    )
-                else:
-                    pass
-                    # if the output is an internal reference to a parent output
-                    # let's trust that the parent has been anchored properly
-                    # self.logger.debug(f"{_path}.outputs.{key}: reference output detected, leaving as is")
-
-            # return the anchored pipeline
-            return pipeline_step
-
+            # then anchor each of the job's outputs
+            for name, output in pipeline_step.outputs.items():
+                if output.type in ANCHORABLE_OUTPUT_TYPES:
+                    validation_result.merge_with(cls._check_or_set_datastore(name=name, output=output, target_datastore=orchestrator_datastore, iteration_num=iteration))
         else:
-            # TODO revisit this
+            # TODO revisit this and add support for anchoring more things
             raise NotImplementedError(f"under path={_path}: step type={pipeline_step.type} is not supported")
+        
+        return validation_result
 
     def _construct_silo_input_from_aggregation(executed_aggregation_component):
         """

@@ -6,8 +6,7 @@
 # that are used within node constructors. Keep imports and
 # general complexity in this file to a minimum.
 
-from mldesigner import command_component
-from azure.ai.ml import Output
+from mldesigner import command_component, Output
 
 def save_mltable_yaml(path, mltable_paths):
     import os

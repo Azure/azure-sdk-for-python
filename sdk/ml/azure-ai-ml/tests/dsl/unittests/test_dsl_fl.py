@@ -4,6 +4,9 @@ from azure.ai.ml import command, Input, Output
 from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather, FL_SILO_INDEX_INPUT, FL_ITERATION_INPUT
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType
+
 
 from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
@@ -166,5 +169,89 @@ class TestDSLPipeline:
         validation_result = try_validate()
         assert validation_result.passed
     
-    def test_fl_node_anchoring(self) -> None:
-        pass
+    def test_anchoring_component(self) -> None:
+        # A component should have its compute anchored as specified
+        # Its output datastores should be assigned to aggregator datastore, if one is inputted
+        # If output datastores are already set, and the database doesn't match the
+        # orchestrator datatstore, we should get a warning.
+        # The local_datastore should be ignored, since there are no in-step outputs for single 
+        # components.
+        command_component = command(
+            name="example_comp",
+            display_name="test component",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            command=("echo unit test example component. Why was this actually run?"),
+            inputs={},
+            outputs={"output": Output(type="uri_folder", mode="rw_mount", path="")},
+        )
+        executed_command_component = command_component()
+
+        compute_name = "a_compute"
+        local_ds_name = "local_datastore"
+        orch_ds_name = "orchestrator_datastore"
+        def try_anchor():
+            return FLScatterGather._anchor_step_in_silo(
+                pipeline_step=executed_command_component,
+                compute=compute_name,
+                internal_datastore=local_ds_name,
+                orchestrator_datastore=orch_ds_name,
+            )
+        warnings = try_anchor()
+        assert len(warnings._warnings) == 0
+        assert executed_command_component.compute == compute_name
+        assert orch_ds_name in executed_command_component.outputs["output"].path
+
+        command_component.outputs["output"].path = "some_path"
+        warnings = try_anchor()
+        assert "Make sure this is intended" in warnings._warnings[0].message
+        assert len(warnings._warnings) == 1
+        assert "some_path" not in executed_command_component.outputs["output"].path
+
+
+
+    def test_anchoring_pipeline_steps(self) -> None:
+
+        @pipeline(name="test pipeline")
+        def test_pipeline_func(
+            x: Input(type="uri_folder")
+        ):
+            subcomponent1 = command(
+                name="example_comp",
+                display_name="test component",
+                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                command=("echo unit test example component. Why was this actually run?"),
+                inputs={},
+                outputs={"output": Output(type="uri_folder", mode="rw_mount", path="")},
+            )
+            executed_subcomponent1 = subcomponent1()
+            subcomponent2 = command(
+                name="example_comp",
+                display_name="test component",
+                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                command=("echo unit test example component. Why was this actually run?"),
+                inputs={"input": Input(type="uri_folder", mode="rw_mount", path="")},
+                outputs={"output2": Output(type="uri_folder", mode="rw_mount", path=""), 
+                    "other_output": Output(type=AssetTypes.MLTABLE, path="this-should-not-change")},
+            )
+            executed_subcomponent2 = subcomponent2(input=executed_subcomponent1.outputs["output"])
+            return { "pipeline_output": executed_subcomponent2.outputs["output2"], "pipeline_output2": executed_subcomponent2.outputs["other_output"]}
+
+
+        compute_name = "a_compute"
+        local_ds_name = "local_datastore"
+        orch_ds_name = "orchestrator_datastore"
+        executed_pipeline = test_pipeline_func(x= Input(type="uri_folder", mode="mount", path="hello"))
+        import pdb; pdb.set_trace() 
+        FLScatterGather._anchor_step_in_silo(
+            pipeline_step=executed_pipeline,
+            compute=compute_name,
+            internal_datastore=local_ds_name,
+            orchestrator_datastore=orch_ds_name,
+        )
+
+        assert executed_pipeline.component.jobs["executed_subcomponent1"].compute == compute_name
+        assert executed_pipeline.component.jobs["executed_subcomponent2"].compute == compute_name
+        assert local_ds_name in executed_pipeline.component.jobs["executed_subcomponent1"].outputs["output"].path
+        assert orch_ds_name in executed_pipeline.component.jobs["executed_subcomponent2"].outputs["output2"].path
+        assert orch_ds_name in executed_pipeline.outputs["pipeline_output"].path
+        assert executed_pipeline.outputs["pipeline_output2"].path == "this-should-not-change"
