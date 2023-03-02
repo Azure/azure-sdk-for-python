@@ -7,7 +7,7 @@
 from abc import ABC
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     AutoNCrossValidations,
     BlockedTransformers,
     CustomNCrossValidations,

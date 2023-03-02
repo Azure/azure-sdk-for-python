@@ -385,7 +385,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "880",
+        "Content-Length": "832",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -417,9 +417,7 @@
                 "outputs": {
                   "component_out_path": {
                     "value": "${{parent.outputs.sub_pipeine_a_output}}",
-                    "type": "literal",
-                    "name": "sub_pipeline_output",
-                    "version": "v1"
+                    "type": "literal"
                   }
                 },
                 "_source": "YAML.COMPONENT",
@@ -490,7 +488,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "2030",
+        "Content-Length": "2517",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -516,9 +514,7 @@
               "outputs": {
                 "component_out_path": {
                   "value": "${{parent.outputs.pipeine_a_output}}",
-                  "type": "literal",
-                  "name": "n1_output",
-                  "version": "v1"
+                  "type": "literal"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -654,9 +650,7 @@
               "outputs": {
                 "component_out_path": {
                   "value": "${{parent.outputs.pipeine_a_output}}",
-                  "type": "literal",
-                  "name": "n1_output",
-                  "version": "v1"
+                  "type": "literal"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -833,8 +827,7 @@
               "outputs": {
                 "component_out_path": {
                   "job_output_type": "uri_folder",
-                  "name": "n2_output",
-                  "version": "v1"
+                  "name": "n3_output"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -884,13 +877,14 @@
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 200,
+      "StatusCode": 202,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Encoding": "gzip",
+        "Content-Length": "4",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 23 Feb 2023 20:42:28 GMT",
         "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/eastus2/mfeOperationResults/jc:ecbb7cb0-7fe6-4581-aa65-c0ed290f5304:000000000000000000000?api-version=2022-12-01-preview",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Server-Timing": "traceparent;desc=\u002200-a3f7656e5f71181da82c8716146704f6-1133609953f151f3-01\u0022",

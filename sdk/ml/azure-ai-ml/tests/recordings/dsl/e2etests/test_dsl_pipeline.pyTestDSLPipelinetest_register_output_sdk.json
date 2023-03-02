@@ -1531,10 +1531,11 @@
         "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
         "properties": {
           "description": null,
-          "tags": {},
-          "properties": {
-            "hash_sha256": "0000000000000",
-            "hash_version": "0000000000000"
+          "tags": null,
+          "properties": null,
+          "isDefault": true,
+          "credentials": {
+            "credentialsType": "AccountKey"
           },
           "isArchived": false,
           "isAnonymous": false,
@@ -1554,7 +1555,7 @@
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/7ca56656-085f-6ce4-2ad3-3f28db0f8d06?api-version=2022-10-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "1912",
@@ -2323,7 +2324,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "4873",
+        "Content-Length": "4871",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -2510,7 +2511,7 @@
               },
               "outputs": {
                 "trained_model_dir": {
-                  "job_output_type": "mlflow_model",
+                  "job_output_type": "uri_folder",
                   "name": "sweep_output",
                   "version": "sweep_2"
                 }
@@ -2773,7 +2774,7 @@
               },
               "outputs": {
                 "trained_model_dir": {
-                  "job_output_type": "mlflow_model",
+                  "job_output_type": "uri_folder",
                   "name": "sweep_output",
                   "version": "sweep_2"
                 }
@@ -3064,10 +3065,10 @@
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 202,
+      "StatusCode": 400,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "4",
+        "Content-Length": "1224",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 02 Mar 2023 09:00:08 GMT",
         "Expires": "-1",
@@ -3145,7 +3146,63 @@
         "x-ms-routing-request-id": "WESTUS2:20230302T090040Z:7a0afdbc-8cd9-4671-8b44-cdb88878209c",
         "x-request-time": "0.026"
       },
-      "ResponseBody": null
+      "ResponseBody": {
+        "error": {
+          "code": "UserError",
+          "message": "The pipeline run 000000000000000000000 is in terminal status, it can\u0027t be canceled.",
+          "details": [],
+          "additionalInfo": [
+            {
+              "type": "ComponentName",
+              "info": {
+                "value": "managementfrontend"
+              }
+            },
+            {
+              "type": "Correlation",
+              "info": {
+                "value": {
+                  "operation": "ff3a2494db64e2de6dfb2ec18a81ad22",
+                  "request": "f811453eb9386f77"
+                }
+              }
+            },
+            {
+              "type": "Environment",
+              "info": {
+                "value": "eastus2"
+              }
+            },
+            {
+              "type": "Location",
+              "info": {
+                "value": "eastus2"
+              }
+            },
+            {
+              "type": "Time",
+              "info": {
+                "value": "2023-03-01T19:22:10.3612202\u002B00:00"
+              }
+            },
+            {
+              "type": "InnerError",
+              "info": {
+                "value": {
+                  "code": "BadArgument",
+                  "innerError": {
+                    "code": "ArgumentInvalid",
+                    "innerError": {
+                      "code": "CancelPipelineRunInTerminalStatus",
+                      "innerError": null
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2022-12-01-preview",
@@ -3154,7 +3211,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1083",
+        "Content-Length": "1047",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -3180,9 +3237,7 @@
               "outputs": {
                 "component_out_path": {
                   "value": "${{parent.outputs.pipeine_a_output}}",
-                  "type": "literal",
-                  "name": "a_output",
-                  "version": "1"
+                  "type": "literal"
                 }
               },
               "_source": "YAML.COMPONENT",
@@ -3286,9 +3341,7 @@
               "outputs": {
                 "component_out_path": {
                   "value": "${{parent.outputs.pipeine_a_output}}",
-                  "type": "literal",
-                  "name": "a_output",
-                  "version": "1"
+                  "type": "literal"
                 }
               },
               "_source": "YAML.COMPONENT",

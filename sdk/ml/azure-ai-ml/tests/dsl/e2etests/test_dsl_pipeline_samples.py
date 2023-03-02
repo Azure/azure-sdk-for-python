@@ -421,7 +421,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
             "jobs.add_greeting_column.component.entry": "Missing data for required field.",
         }
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     @pytest.mark.e2etest
     def test_data_transfer_copy_2urifolder_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
@@ -431,7 +430,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = data_transfer_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     @pytest.mark.e2etest
     def test_data_transfer_copy_2urifolder_job_with_builder_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
@@ -441,7 +439,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = data_transfer_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     @pytest.mark.e2etest
     def test_data_transfer_copy_mixtype_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
@@ -451,7 +448,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = data_transfer_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     @pytest.mark.e2etest
     def test_data_transfer_copy_urifile_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
@@ -461,7 +457,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = data_transfer_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     @pytest.mark.e2etest
     def test_data_transfer_copy_urifolder_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
@@ -471,7 +466,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = data_transfer_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     @pytest.mark.e2etest
     def test_data_transfer_import_filesystem_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_file_system.pipeline import (
@@ -481,7 +475,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = data_transfer_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     @pytest.mark.e2etest
     def test_data_transfer_import_sql_database_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_database.pipeline import (
@@ -491,7 +484,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = data_transfer_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     @pytest.mark.e2etest
     def test_data_transfer_import_snowflake_database_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_database.pipeline import (
@@ -501,11 +493,19 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = data_transfer_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     @pytest.mark.e2etest
     def test_data_transfer_export_sql_database_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.export_database.pipeline import (
             generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_multi_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline as data_transfer_job_in_pipeline,
         )
 
         pipeline = data_transfer_job_in_pipeline()

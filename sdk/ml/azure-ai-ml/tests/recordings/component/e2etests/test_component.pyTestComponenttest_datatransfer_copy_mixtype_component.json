@@ -185,6 +185,7 @@
               }
             },
             "task": "copy_data",
+            "data_copy_mode": "merge_with_overwrite",
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json"
           }
         },
@@ -268,6 +269,7 @@
               }
             },
             "task": "copy_data",
+            "data_copy_mode": "merge_with_overwrite",
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json"
           }
         },
@@ -383,6 +385,7 @@
               }
             },
             "task": "copy_data",
+            "data_copy_mode": "merge_with_overwrite",
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json"
           }
         },

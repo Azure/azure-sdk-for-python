@@ -3,7 +3,7 @@ type: pipeline
 
 description: 'pipeline with data transfer components'
 settings:
-  default_compute: azureml:adftest
+  default_compute: azureml:serverless
 inputs:
   query_source_snowflake: select top(10) Name from SalesLT.ProductCategory
 
@@ -18,7 +18,7 @@ jobs:
     outputs:
       sink:
         type: mltable
-    compute: azureml:adftest
+    compute: azureml:serverless
 
   snowflake_blob_node_input:
     type: data_transfer

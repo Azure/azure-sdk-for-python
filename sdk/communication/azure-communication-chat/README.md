@@ -99,7 +99,7 @@ Once you initialized a `ChatClient` class, you can do the following chat operati
 
 Perform CRD(Create-Read-Delete) operations on threads
 
-```Python
+```python
 create_chat_thread(topic, **kwargs)
 list_chat_threads(**kwargs)
 delete_chat_thread(thread_id, **kwargs)
@@ -124,7 +124,7 @@ get_properties(**kwargs)
 
 Perform CRUD(Create-Read-Update-Delete) operations on messages
 
-```Python
+```python
 send_message(content, **kwargs)
 get_message(message_id, **kwargs)
 list_messages(**kwargs)
@@ -136,7 +136,7 @@ delete_message(message_id, **kwargs)
 
 Perform CRD(Create-Read-Delete) operations on thread participants
 
-```Python
+```python
 list_participants(**kwargs)
 add_participants(thread_participants, **kwargs)
 remove_participant(participant_identifier, **kwargs)
@@ -154,7 +154,7 @@ send_typing_notification(**kwargs)
 
 Notify the service that a message is read and get list of read messages.
 
-```Python
+```python
 send_read_receipt(message_id, **kwargs)
 list_read_receipts(**kwargs)
 ```
@@ -188,14 +188,14 @@ Use the `create_chat_thread` method to create a chat thread.
 the chat thread that got created. This `id` can then be used to fetch a `ChatThreadClient` object using
 the `get_chat_thread_client` method. `ChatThreadClient` can be used to perform other chat operations to this chat thread.
 
-```Python
+```python
 # Without idempotency_token and thread_participants
 topic = "test topic"
 create_chat_thread_result = chat_client.create_chat_thread(topic)
 chat_thread_client = chat_client.get_chat_thread_client(create_chat_thread_result.chat_thread.id)
 ```
 
-```Python
+```python
 # With idempotency_token and thread_participants
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import ChatParticipant, ChatClient, CommunicationTokenCredential
@@ -261,7 +261,7 @@ if retry:
 
 Use `get_properties` method retrieves a `ChatThreadProperties` from the service; `thread_id` is the unique ID of the thread.
 
-```Python
+```python
 chat_thread_properties = chat_thread_client.get_properties()
 ```
 
@@ -306,7 +306,7 @@ assert chat_thread.topic == topic
 
 Use `delete_chat_thread` method to delete a thread; `thread_id` is the unique ID of the thread.
 - Use `thread_id`, required, to specify the unique ID of the thread.
-```Python
+```python
 chat_client.delete_chat_thread(thread_id=thread_id)
 ```
 
@@ -323,7 +323,7 @@ Use `send_message` method to sends a message to a thread identified by `thread_i
 
 `SendChatMessageResult` is the response returned from sending a message, it contains an id, which is the unique ID of the message.
 
-```Python
+```python
 from azure.communication.chat import ChatMessageType
 
 topic = "test topic"
@@ -369,7 +369,7 @@ Use `list_messages` method retrieves messages from the service.
 
 An iterator of `[ChatMessage]` is the response returned from listing messages
 
-```Python
+```python
 from datetime import datetime, timedelta
 
 start_time = datetime.utcnow() - timedelta(days=1)
@@ -386,7 +386,7 @@ Use `update_message` to update a message identified by threadId and messageId.
 - Use `message_id`,required, is the unique ID of the message.
 - Use `content`, optional, is the message content to be updated; if not specified it is assigned to be empty
 
-```Python
+```python
 content = "updated message content"
 chat_thread_client.update_message(send_message_result_id, content=content)
 
@@ -435,7 +435,7 @@ A `list(tuple(ChatParticipant, ChatError))` is returned. When participant is suc
 an empty list is expected. In case of an error encountered while adding participant, the list is populated
 with the failed participants along with the error that was encountered.
 
-```Python
+```python
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import ChatParticipant
 from datetime import datetime
@@ -503,7 +503,7 @@ chat_thread_client.remove_participant(identifier=new_user)
 
 Use `send_typing_notification` method to post a typing notification event to a thread, on behalf of a user.
 
-```Python
+```python
 chat_thread_client.send_typing_notification()
 ```
 
