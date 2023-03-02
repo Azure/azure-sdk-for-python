@@ -1400,6 +1400,38 @@ class TestPipelineJobEntity:
         job = load_job(test_path)
         job._validate()
 
+    def test_spark_node_with_remote_component_in_pipeline(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
+        test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/kmeans_sample/pipeline.yml"
+
+        job = load_job(test_path)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, Spark)
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
+        rest_job_dict = job._to_rest_object().as_dict()
+        omit_fields = []  # "name", "display_name", "experiment_name", "properties"
+        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["kmeans_cluster"], omit_fields)
+
+        expected_dict = {
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "componentId": "",
+            "computeId": "",
+            "identity": {"identity_type": "Managed"},
+            "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+            'name': 'kmeans_cluster',
+            'outputs': {'output': {'type': 'literal',
+                                   'value': '${{parent.outputs.output}}'}},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "type": "spark",
+        }
+        assert actual_dict == expected_dict
+
     def test_infer_pipeline_output_type_as_node_type(
         self,
     ) -> None:

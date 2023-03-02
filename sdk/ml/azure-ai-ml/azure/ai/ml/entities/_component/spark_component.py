@@ -13,6 +13,10 @@ from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._job.job import RestSparkConfKey
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    REGISTRY_URI_FORMAT,
+)
 
 from ..._schema import PathAwareSchema
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
@@ -142,6 +146,85 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
             "environment": (str, Environment),
             "code": (str, os.PathLike),
         }
+
+    def _customized_validate(self):
+        validation_result = super(SparkComponent, self)._customized_validate()
+        validation_result.merge_with(self._validate_spark_configurations())
+        return validation_result
+
+    def _validate_spark_configurations(self, ):
+        validation_result = self._create_empty_validation_result()
+        if self.dynamic_allocation_enabled in ["True", "true", True]:
+            if (
+                    self.driver_cores is None
+                    or self.driver_memory is None
+                    or self.executor_cores is None
+                    or self.executor_memory is None
+            ):
+                msg = (
+                    "spark.driver.cores, spark.driver.memory, spark.executor.cores and spark.executor.memory are "
+                    "mandatory fields."
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+            if self.dynamic_allocation_min_executors is None or self.dynamic_allocation_max_executors is None:
+                msg = (
+                    "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors are required "
+                    "when dynamic allocation is enabled."
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+            if not self.dynamic_allocation_min_executors > 0 and self.dynamic_allocation_min_executors <= \
+                    self.dynamic_allocation_max_executors:
+                msg = (
+                    "Dynamic min executors should be bigger than 0 and min executors should be equal or less than "
+                    "max executors."
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+            if self.executor_instances is None:
+                self.executor_instances = self.dynamic_allocation_min_executors
+            elif (
+                    self.executor_instances > self.dynamic_allocation_max_executors
+                    or self.executor_instances < self.dynamic_allocation_min_executors
+            ):
+                msg = (
+                    "Executor instances must be a valid non-negative integer and must be between "
+                    "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+        else:
+            if (
+                    self.driver_cores is None
+                    or self.driver_memory is None
+                    or self.executor_cores is None
+                    or self.executor_memory is None
+                    or self.executor_instances is None
+            ):
+                msg = (
+                    "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
+                    "spark.executor.instances are mandatory fields."
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+            if self.dynamic_allocation_min_executors is not None or self.dynamic_allocation_max_executors is not None:
+                msg = "Should not specify min or max executors when dynamic allocation is disabled."
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+        return validation_result
 
     def _to_dict(self) -> Dict:
         """Dump the spark component content into a dictionary."""
