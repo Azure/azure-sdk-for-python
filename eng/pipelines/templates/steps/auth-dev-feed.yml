@@ -1,5 +1,6 @@
 parameters:
   DevFeedName: 'public/azure-sdk-for-python'
+  CustomCondition: true
 
 steps:
   - pwsh: |
@@ -13,14 +14,17 @@ steps:
       echo "##vso[task.setvariable variable=DevFeedName]$devopsFeedName"
       echo "Using DevopsFeed = $devopsFeedName"
     displayName: Setup DevOpsFeedName
+    condition: and(succeededOrFailed(), ${{ parameters.CustomCondition }})
 
   - task: TwineAuthenticate@0
     displayName: 'Twine Authenticate to feed'
+    condition: and(succeededOrFailed(), ${{ parameters.CustomCondition }})
     inputs:
       artifactFeeds: $(DevFeedName)
 
   - task: PipAuthenticate@1
     displayName: 'Pip Authenticate to feed'
+    condition: and(succeededOrFailed(), ${{ parameters.CustomCondition }})
     inputs:
       artifactFeeds: $(DevFeedName)
       onlyAddExtraIndex: false

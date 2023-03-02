@@ -27,16 +27,18 @@ parameters:
 #     eng/pipelines/templates/jobs/live.test.yml
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+
+# The variable '$(artifactName)' is set at runtime by the strategy for the `Build` job.
+# Specifically, one of 3 values `linux`, `mac`, or `windows` will always be populated when invoked from `jobs/ci.yml`.
+
+# However, please note that this variable will not ALWAYS be set. If using `build-artifacts.yml`, ensure that this variable is set AT LEAST
+# to "linux", otherwise the primary tasks will not be run as expected. APIStub, Docs, etc are NOT run on machines that aren't linux.
 steps:
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
-
-  - pwsh: |
-      Write-Host $(Agent.JobName)
-    displayName: Output Job Details
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
@@ -79,11 +81,13 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.zip
     displayName: 'Verify Readme'
+    condition: and(succeededOrFailed(), eq(variables.artifactName, 'linux'))
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: ../steps/auth-dev-feed.yml
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
+        CustomCondition: eq(variables.artifactName, 'linux')
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
@@ -98,10 +102,12 @@ steps:
   - pwsh: |
       Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL]https://pypi.python.org/simple"
     displayName: Reset PIP Index For APIStubGen
+    condition: and(succeededOrFailed(), eq(variables.artifactName, 'linux'))
 
   - template: /eng/pipelines/templates/steps/run_apistub.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      CustomCondition: eq(variables.artifactName, 'linux')
 
   - ${{ parameters.BeforePublishSteps }}
 

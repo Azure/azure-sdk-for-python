@@ -12,6 +12,12 @@ parameters:
     type: string
     default: ''
 
+# The variable '$(artifactName)' is set at runtime by the strategy for the `Build` job.
+# Specifically, one of 3 values `linux`, `mac`, or `windows` will always be populated when invoked from `jobs/ci.yml`.
+
+# However, please note that this variable will not ALWAYS be set. If using `build-artifacts.yml`, ensure that this variable is set AT LEAST
+# to "linux", otherwise the primary tasks will not be run as expected. APIStub, Docs, etc are NOT run on machines that aren't linux.
+
 steps:
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
@@ -21,12 +27,14 @@ steps:
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
+    condition: and(succeededOrFailed(), eq(variables.artifactName, 'linux'))
     inputs:
       versionSpec: $(PythonVersion)
 
   - script: |
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
+    condition: and(succeededOrFailed(), eq(variables.artifactName, 'linux'))
 
   - pwsh: |
       mkdir $(Agent.BuildDirectory)/conda/
@@ -44,6 +52,7 @@ steps:
         Write-Host "Clean up Conda Build Directory $(conda.build)"
         Remove-Item $(conda.build)/* -Recurse -Force
       displayName: 'Clean Up Before Building ${{ artifact.name }}'
+      
 
     - ${{ each checkout in artifact.checkout }}:
       - template: /eng/pipelines/templates/steps/get-tagged-code.yml
@@ -55,6 +64,7 @@ steps:
 
     - task: PythonScript@0
       displayName: 'Build Source Distribution for ${{ artifact.name }}'
+      condition: and(succeededOrFailed(), eq(variables.artifactName, 'linux'))
       inputs:
         scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
         arguments: >-
@@ -70,27 +80,31 @@ steps:
     - bash: |
         echo "##vso[task.prependpath]$CONDA/bin"
       displayName: 'Prepend PATH with Conda and INIT'
+      condition: and(succeededOrFailed(), eq(variables.artifactName, 'linux'))
 
     - bash: |
         conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
         conda install --yes --quiet --name ${{ artifact.name }} conda-build conda-verify typing-extensions
       displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
+      condition: and(succeededOrFailed(), eq(variables.artifactName, 'linux'))
 
     - bash: |
         source activate ${{ artifact.name }}
         conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output/${{ artifact.name }}" -c $(AzureSDKCondaChannel)
       displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
       workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/conda-recipe
+      condition: and(succeededOrFailed(), eq(variables.artifactName, 'linux'))
   
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Agent.BuildDirectory)/conda/output'
       ArtifactName: 'conda_${{ parameters.ArtifactSuffix }}'
+      CustomCondition: eq(variables.artifactName, 'linux')
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
       displayName: 'Upload Conda Package SBOM'
-      condition: succeededOrFailed()
+      condition: and(succeededOrFailed()eq(variables.artifactName, 'linux'))
       inputs:
         BuildDropPath: '$(Agent.BuildDirectory)/conda/manifest'
 
@@ -98,3 +112,4 @@ steps:
       parameters:
         ArtifactPath: '$(Agent.BuildDirectory)/conda/manifest/_manifest'
         ArtifactName: 'conda_manifest_${{ parameters.ArtifactSuffix }}'
+        CustomCondition: eq(variables.artifactName, 'linux')

@@ -12,6 +12,12 @@ parameters:
     type: string
     default: ''
 
+# The variable '$(artifactName)' is set at runtime by the strategy for the `Build` job.
+# Specifically, one of 3 values `linux`, `mac`, or `windows` will always be populated when invoked from `jobs/ci.yml`.
+
+# However, please note that this variable will not ALWAYS be set. If using `build-artifacts.yml`, ensure that this variable is set AT LEAST
+# to "linux", otherwise the primary tasks will not be run as expected. APIStub, Docs, etc are NOT run on machines that aren't linux.
+
 steps:
   - pwsh: |
       $targetPath = "$(Agent.TempDirectory)/${{ parameters.Package }}"

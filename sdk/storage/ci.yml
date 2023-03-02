@@ -60,6 +60,7 @@ extends:
       safeName: azuremgmtstorageimportexport
     - name: azure-storage-extensions
       safeName: azure-storage-extensions
+      skipVerifyChangeLog: true
     AdvancedBuild: true
     CondaArtifacts:
     - name: azure-storage

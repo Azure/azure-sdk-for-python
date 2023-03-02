@@ -1,5 +1,6 @@
 parameters:
   ServiceDirectory: ''
+  CustomCondition: true
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -12,14 +13,15 @@ steps:
     displayName: 'Use Python 3.10'
     inputs:
      versionSpec: '3.10'
-    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'), ${{ parameters.customCondition }})
 
   - script: |
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'), ${{ parameters.customCondition }})
 
   - task: PythonScript@0
-    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
+    condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'), ${{ parameters.customCondition }})
     displayName: 'Generate API stub files'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
