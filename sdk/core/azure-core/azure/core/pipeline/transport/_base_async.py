@@ -103,7 +103,7 @@ class AsyncHttpTransport(
     """An http sender ABC."""
 
     @abc.abstractmethod
-    async def send(self, request, **kwargs):
+    async def send(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
         """Send the request using this HTTP sender."""
 
     @abc.abstractmethod

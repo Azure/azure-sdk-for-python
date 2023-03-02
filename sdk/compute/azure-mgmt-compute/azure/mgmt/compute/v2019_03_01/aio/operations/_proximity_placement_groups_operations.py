@@ -136,7 +136,7 @@ class ProximityPlacementGroupsOperations:
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
         :param parameters: Parameters supplied to the Create Proximity Placement Group operation. Is
-         either a model type or a IO type. Required.
+         either a ProximityPlacementGroup type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2019_03_01.models.ProximityPlacementGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -280,7 +280,7 @@ class ProximityPlacementGroupsOperations:
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
         :param parameters: Parameters supplied to the Update Proximity Placement Group operation. Is
-         either a model type or a IO type. Required.
+         either a ProximityPlacementGroupUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2019_03_01.models.ProximityPlacementGroupUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -313,7 +313,7 @@ class ContainerServicesOperations:
          and resource group. Required.
         :type container_service_name: str
         :param parameters: Parameters supplied to the Create or Update a Container Service operation.
-         Is either a model type or a IO type. Required.
+         Is either a ContainerService type or a IO type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2017_07_01.models.ContainerService or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

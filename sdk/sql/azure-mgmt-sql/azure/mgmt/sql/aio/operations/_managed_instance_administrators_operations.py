@@ -390,8 +390,8 @@ class ManagedInstanceAdministratorsOperations:
         :type managed_instance_name: str
         :param administrator_name: "ActiveDirectory" Required.
         :type administrator_name: str or ~azure.mgmt.sql.models.AdministratorName
-        :param parameters: The requested administrator parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested administrator parameters. Is either a
+         ManagedInstanceAdministrator type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceAdministrator or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

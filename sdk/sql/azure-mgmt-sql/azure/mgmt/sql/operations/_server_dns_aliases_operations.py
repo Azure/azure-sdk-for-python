@@ -796,7 +796,7 @@ class ServerDnsAliasesOperations:
         :type server_name: str
         :param dns_alias_name: The name of the server dns alias. Required.
         :type dns_alias_name: str
-        :param parameters: Is either a model type or a IO type. Required.
+        :param parameters: Is either a ServerDnsAliasAcquisition type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ServerDnsAliasAcquisition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

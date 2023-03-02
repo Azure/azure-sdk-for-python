@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -33,7 +33,7 @@ class AccessUri(_serialization.Model):
         "access_sas": {"key": "accessSAS", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.access_sas = None
@@ -70,8 +70,8 @@ class ApiError(_serialization.Model):
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword details: The Api error details.
         :paramtype details: list[~azure.mgmt.compute.v2019_11_01.models.ApiErrorBase]
@@ -110,8 +110,8 @@ class ApiErrorBase(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
-    ):
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -186,8 +186,8 @@ class CreationData(_serialization.Model):
         source_uri: Optional[str] = None,
         source_resource_id: Optional[str] = None,
         upload_size_bytes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword create_option: This enumerates the possible sources of a disk's creation. Required.
          Known values are: "Empty", "Attach", "FromImage", "Import", "Copy", "Restore", and "Upload".
@@ -257,7 +257,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -418,8 +418,8 @@ class Disk(Resource):  # pylint: disable=too-many-instance-attributes
         disk_m_bps_read_only: Optional[int] = None,
         encryption: Optional["_models.Encryption"] = None,
         max_shares: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -550,8 +550,8 @@ class DiskEncryptionSet(Resource):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.EncryptionSetIdentity"] = None,
         active_key: Optional["_models.KeyVaultAndKeyReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -591,7 +591,9 @@ class DiskEncryptionSetList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DiskEncryptionSet"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.DiskEncryptionSet"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of disk encryption sets. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_11_01.models.DiskEncryptionSet]
@@ -624,8 +626,8 @@ class DiskEncryptionSetUpdate(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         active_key: Optional["_models.KeyVaultAndKeyReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -659,7 +661,7 @@ class DiskList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Disk"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Disk"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of disks. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_11_01.models.Disk]
@@ -693,7 +695,7 @@ class DiskSku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None, **kwargs):
+    def __init__(self, *, name: Optional[Union[str, "_models.DiskStorageAccountTypes"]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS",
          "StandardSSD_LRS", and "UltraSSD_LRS".
@@ -776,8 +778,8 @@ class DiskUpdate(_serialization.Model):  # pylint: disable=too-many-instance-att
         disk_m_bps_read_only: Optional[int] = None,
         max_shares: Optional[int] = None,
         encryption: Optional["_models.Encryption"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -851,8 +853,8 @@ class Encryption(_serialization.Model):
         *,
         disk_encryption_set_id: Optional[str] = None,
         type: Optional[Union[str, "_models.EncryptionType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_encryption_set_id: ResourceId of the disk encryption set to use for enabling
          encryption at rest.
@@ -867,7 +869,8 @@ class Encryption(_serialization.Model):
 
 
 class EncryptionSetIdentity(_serialization.Model):
-    """The managed identity for the disk encryption set. It should be given permission on the key vault before it can be used to encrypt disks.
+    """The managed identity for the disk encryption set. It should be given permission on the key
+    vault before it can be used to encrypt disks.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -895,7 +898,9 @@ class EncryptionSetIdentity(_serialization.Model):
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.DiskEncryptionSetIdentityType"]] = None, **kwargs):
+    def __init__(
+        self, *, type: Optional[Union[str, "_models.DiskEncryptionSetIdentityType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned
          is supported. "SystemAssigned"
@@ -942,8 +947,8 @@ class EncryptionSettingsCollection(_serialization.Model):
         enabled: bool,
         encryption_settings: Optional[List["_models.EncryptionSettingsElement"]] = None,
         encryption_settings_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Set this flag to true and provide DiskEncryptionKey and optional
          KeyEncryptionKey to enable encryption. Set this flag to false and remove DiskEncryptionKey and
@@ -984,8 +989,8 @@ class EncryptionSettingsElement(_serialization.Model):
         *,
         disk_encryption_key: Optional["_models.KeyVaultAndSecretReference"] = None,
         key_encryption_key: Optional["_models.KeyVaultAndKeyReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_encryption_key: Key Vault Secret Url and vault id of the disk encryption key.
         :paramtype disk_encryption_key:
@@ -1020,7 +1025,7 @@ class GrantAccessData(_serialization.Model):
         "duration_in_seconds": {"key": "durationInSeconds", "type": "int"},
     }
 
-    def __init__(self, *, access: Union[str, "_models.AccessLevel"], duration_in_seconds: int, **kwargs):
+    def __init__(self, *, access: Union[str, "_models.AccessLevel"], duration_in_seconds: int, **kwargs: Any) -> None:
         """
         :keyword access: Required. Known values are: "None", "Read", and "Write".
         :paramtype access: str or ~azure.mgmt.compute.v2019_11_01.models.AccessLevel
@@ -1054,7 +1059,9 @@ class ImageDiskReference(_serialization.Model):
         "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(self, *, id: str, lun: Optional[int] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(
+        self, *, id: str, lun: Optional[int] = None, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
         """
         :keyword id: A relative uri containing either a Platform Image Repository or user image
          reference. Required.
@@ -1082,7 +1089,9 @@ class InnerError(_serialization.Model):
         "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword exceptiontype: The exception type.
         :paramtype exceptiontype: str
@@ -1095,7 +1104,8 @@ class InnerError(_serialization.Model):
 
 
 class KeyVaultAndKeyReference(_serialization.Model):
-    """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the encryptionKey.
+    """Key Vault Key Url and vault id of KeK, KeK is optional and when provided is used to unwrap the
+    encryptionKey.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1115,7 +1125,7 @@ class KeyVaultAndKeyReference(_serialization.Model):
         "key_url": {"key": "keyUrl", "type": "str"},
     }
 
-    def __init__(self, *, source_vault: "_models.SourceVault", key_url: str, **kwargs):
+    def __init__(self, *, source_vault: "_models.SourceVault", key_url: str, **kwargs: Any) -> None:
         """
         :keyword source_vault: Resource id of the KeyVault containing the key or secret. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2019_11_01.models.SourceVault
@@ -1148,7 +1158,7 @@ class KeyVaultAndSecretReference(_serialization.Model):
         "secret_url": {"key": "secretUrl", "type": "str"},
     }
 
-    def __init__(self, *, source_vault: "_models.SourceVault", secret_url: str, **kwargs):
+    def __init__(self, *, source_vault: "_models.SourceVault", secret_url: str, **kwargs: Any) -> None:
         """
         :keyword source_vault: Resource id of the KeyVault containing the key or secret. Required.
         :paramtype source_vault: ~azure.mgmt.compute.v2019_11_01.models.SourceVault
@@ -1177,7 +1187,7 @@ class ShareInfoElement(_serialization.Model):
         "vm_uri": {"key": "vmUri", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.vm_uri = None
@@ -1286,8 +1296,8 @@ class Snapshot(Resource):  # pylint: disable=too-many-instance-attributes
         encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         incremental: Optional[bool] = None,
         encryption: Optional["_models.Encryption"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1356,7 +1366,7 @@ class SnapshotList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Snapshot"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Snapshot"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of snapshots. Required.
         :paramtype value: list[~azure.mgmt.compute.v2019_11_01.models.Snapshot]
@@ -1389,7 +1399,9 @@ class SnapshotSku(_serialization.Model):
         "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[Union[str, "_models.SnapshotStorageAccountTypes"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The sku name. Known values are: "Standard_LRS", "Premium_LRS", and
          "Standard_ZRS".
@@ -1444,8 +1456,8 @@ class SnapshotUpdate(_serialization.Model):
         disk_size_gb: Optional[int] = None,
         encryption_settings_collection: Optional["_models.EncryptionSettingsCollection"] = None,
         encryption: Optional["_models.Encryption"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1476,7 +1488,8 @@ class SnapshotUpdate(_serialization.Model):
 
 
 class SourceVault(_serialization.Model):
-    """The vault id is an Azure Resource Manager Resource id in the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
+    """The vault id is an Azure Resource Manager Resource id in the form
+    /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}.
 
     :ivar id: Resource Id.
     :vartype id: str
@@ -1486,7 +1499,7 @@ class SourceVault(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
