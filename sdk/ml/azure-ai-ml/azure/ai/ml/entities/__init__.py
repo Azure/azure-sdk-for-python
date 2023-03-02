@@ -144,7 +144,7 @@ from ._featureset.featureset_specification import FeaturesetSpecification
 from ._notification.notification_configuration import NotificationConfiguration
 from ._featureset.materialization_compute_resource import MaterializationComputeResource
 from ._featureset.materialization_settings import MaterializationSettings
-from ._featureset.featureset_materialization_job import FeaturesetMaterializationJob
+from ._featureset.featureset_materialization_operation import FeaturesetMaterializationOperation
 from ._featureset.materialization_type import MaterializationType
 
 # TODO: enable in PuP
@@ -210,7 +210,7 @@ __all__ = [
     "MaterializationComputeResource",
     "MaterializationSettings",
     "MaterializationType",
-    "FeaturesetMaterializationJob",
+    "FeaturesetMaterializationOperation",
     "FeaturesetSpecification",
     "DataColumn",
     "DataColumnType",

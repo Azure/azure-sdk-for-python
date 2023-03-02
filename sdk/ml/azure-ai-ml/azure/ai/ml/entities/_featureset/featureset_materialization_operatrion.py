@@ -13,24 +13,23 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._utils._experimental import experimental
 
 from .materialization_type import MaterializationType
+from .creation_context import CreationContext
 
 
 @experimental
-class FeaturesetMaterializationJob(RestTranslatableMixin):
+class FeaturesetMaterializationOperation(RestTranslatableMixin):
     def __init__(
         self,
         *,
         type: MaterializationType,
         feature_window_start_time: Optional[Union[str, datetime]],
         feature_window_end_time: Optional[Union[str, datetime]],
-        job_name: Optional[str],
-        experiment_name: Optional[str],
+        name: Optional[str],
         display_name: Optional[str],
-        created_time: Optional[Union[str, datetime]],
+        creation_context: Optional[CreationContext],
         duration: Optional[Union[str, timedelta]],
-        job_status: Optional[str],
-        tags: Optional[Dict[str, str]],
-        **kwargs
+        status: Optional[str],
+        tags: Optional[Dict[str, str]] ** kwargs
     ):
         """
         :param type: Specifies the feature store job type. Possible values include:
@@ -60,28 +59,25 @@ class FeaturesetMaterializationJob(RestTranslatableMixin):
         self.type = type
         self.feature_window_start_time = feature_window_start_time
         self.feature_window_end_time = feature_window_end_time
-        self.job_name = job_name
-        self.experiment_name = experiment_name
+        self.name = job_name
         self.display_name = display_name
-        self.created_time = created_time
+        self.creation_context = creation_context
         self.duration = duration
-        self.job_status = job_status
+        self.status = status
         self.tags = tags
 
-    def _to_rest_object(self) -> "RestFeaturesetJob":
-        return RestFeaturesetJob(
-            feature_window=FeatureWindow(
-                feature_window_start=self.feature_window_start_time, feature_window_end=self.feature_window_end_time
-            ),
-            created_date=self.created_time,  # str to datetime
-            duration=self.duration,  # str to timedelta
-            display_name=self.display_name,
-            status=self.job_status,
-            tags=self.tags,
-        )
-
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetJob) -> "FeaturesetMaterializationJob":
+    def _from_rest_object(cls, obj: RestFeaturesetJob) -> "FeaturesetMaterializationOperation":
         if not obj:
             return None
-        return FeaturesetMaterializationJob(path=obj.path)
+        return FeaturesetMaterializationOperation(
+            type=obj.type,
+            feature_window_start_time=obj.feature_window.feature_window_start,
+            feature_window_end_time=obj.feature_window.feature_window_end,
+            name=obj.job_id,
+            display_name=obj.display_name,
+            creation_context=CreationContext(created_time=obj.created_date),
+            duration=obj.duration,
+            status=obj.status,
+            tags=obj.tags,
+        )

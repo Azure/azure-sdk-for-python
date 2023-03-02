@@ -188,6 +188,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     @classmethod
     def _get_supported_inputs_types(cls):
         from azure.ai.ml.entities import Data, Model
+
         # supported input types for node input
         return (
             PipelineInput,

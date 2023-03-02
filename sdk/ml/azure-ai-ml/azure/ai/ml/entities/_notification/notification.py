@@ -9,7 +9,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import NotificationSetti
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-class NotificationConfiguration(RestTranslatableMixin):
+class Notification(RestTranslatableMixin):
     """Configuration for notification."""
 
     def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None, **kwargs):
