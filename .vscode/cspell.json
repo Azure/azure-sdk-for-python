@@ -391,6 +391,25 @@
   ],
   "overrides": [
     {
+      "filename": "doc/dev/test_proxy_migration_guide.md",
+      "words": [
+        "pytestmarkparametrize"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/devtools_testutils/proxy_startup.py",
+      "words": [
+        "certifi",
+        "passenv"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/tests/integration/test_proxy_startup.py",
+      "words": [
+        "spinup"
+      ]
+    },
+    {
       "filename": "sdk/remoterendering/**",
       "words": [
         "Phong"

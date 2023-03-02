@@ -268,7 +268,7 @@ def prepare_local_tool(repo_root: str) -> str:
         )
 
 
-def start_test_proxy(request: pytest.FixtureRequest) -> None:
+def start_test_proxy(request) -> None:
     """Starts the test proxy and returns when the proxy server is ready to receive requests.
 
     In regular use cases, this will auto-start the test-proxy docker container. In CI, or when environment variable
