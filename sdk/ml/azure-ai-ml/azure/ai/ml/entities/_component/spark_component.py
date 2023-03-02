@@ -131,8 +131,6 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
         self.dynamic_allocation_max_executors = dynamic_allocation_max_executors or conf.get(
             RestSparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None
         )
-        if self.executor_instances is None and self.dynamic_allocation_enabled in ["True", "true", True]:
-            self.executor_instances = self.dynamic_allocation_min_executors
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -190,7 +188,7 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
                     yaml_path="conf",
                     message=msg,
                 )
-            if (
+            if self.executor_instances and (
                 self.executor_instances > self.dynamic_allocation_max_executors
                 or self.executor_instances < self.dynamic_allocation_min_executors
             ):

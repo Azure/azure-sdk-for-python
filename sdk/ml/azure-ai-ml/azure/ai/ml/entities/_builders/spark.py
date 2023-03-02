@@ -199,7 +199,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
             self.dynamic_allocation_max_executors = (
                 self.dynamic_allocation_max_executors or component.dynamic_allocation_max_executors
             )
-
+        if self.executor_instances is None and self.dynamic_allocation_enabled in ["True", "true", True]:
+            self.executor_instances = self.dynamic_allocation_min_executors
         # When create standalone job or pipeline job, following fields will always get value from component or get
         # default None, because we will not pass those fields to Spark. But in following cases, we expect to get
         # correct value from spark._from_rest_object() and then following fields will get from their respective
