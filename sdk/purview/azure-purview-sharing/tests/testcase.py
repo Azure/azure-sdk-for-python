@@ -31,6 +31,7 @@ class TestPurviewSharing(AzureRecordedTestCase):
             },
             "storeKind": "AdlsGen2Account",
             "storeReference": {
+                # cspell:disable-next-line
                 "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/ftsharersan",
                 "type": "ArmResourceReference"
             }

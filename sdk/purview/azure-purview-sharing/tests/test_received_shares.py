@@ -213,6 +213,8 @@ class TestReceivedShares(TestPurviewSharing):
         sent_share_id = uuid.uuid4()
         sent_share_invitation_id = uuid.uuid4()
         sent_share = self.prepare_sent_share()
+
+        # cspell:disable-next-line
         consumer_storage_account_resource_id = "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/ftreceiversan"
 
         request = build_sent_shares_create_or_replace_request(
