@@ -84,10 +84,10 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
 
     def _get(self, name: str, version: str = None) -> FeaturestoreEntityVersion:
         return self._operation.get(
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
             name=name,
             version=version,
-            registry_name=self._registry_name,
-            **self._scope_kwargs,
             **self._init_kwargs,
         )
 
