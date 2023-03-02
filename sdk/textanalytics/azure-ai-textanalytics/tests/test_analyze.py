@@ -2084,7 +2084,6 @@ class TestAnalyze(TextAnalyticsTest):
             docs,
             actions,
             language="auto",
-            autodetect_default_language="es",
             polling_interval=self._interval(),
         )
 
