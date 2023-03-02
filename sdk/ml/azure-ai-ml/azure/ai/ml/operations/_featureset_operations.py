@@ -224,4 +224,4 @@ class FeaturesetOperations(_ScopeDependentOperations):
         latest_version = _get_latest_version_from_container(
             name, self._container_operation, self._resource_group_name, self._workspace_name
         )
-        return self.get(name, version=latest_version)
+        return self.get(name=name, version=latest_version)
