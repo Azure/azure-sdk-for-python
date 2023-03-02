@@ -1747,17 +1747,26 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     @pytest.mark.skipif(condition=not is_live(), reason="Task 2177353: component version changes across tests.")
     @pytest.mark.parametrize(
-        "yaml_path",
+        "test_path",
         [
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/command/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/sweep/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/pipeline/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/automl/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/parallel/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/spark/pipeline.yml",
+            "command/pipeline_serverless_compute.yml",
+            "command/node_serverless_compute.yml",
+            "command/node_serverless_compute_no_default.yml",
+            "sweep/pipeline_serverless_compute.yml",
+            "sweep/node_serverless_compute.yml",
+            "sweep/node_serverless_compute_no_default.yml",
+            "pipeline/pipeline_serverless_compute.yml",
+            "pipeline/node_serverless_compute.yml",
+            "automl/pipeline_with_instance_type.yml",
+            "automl/pipeline_without_instance_type.yml",
+            "automl/pipeline_with_instance_type_no_default.yml",
+            "parallel/pipeline_serverless_compute.yml",
+            "spark/pipeline_serverless_compute.yml",
+            "spark/node_serverless_compute_no_default.yml",
         ],
     )
-    def test_serverless_compute_in_pipeline(self, client: MLClient, yaml_path: str) -> None:
+    def test_serverless_compute_in_pipeline(self, client: MLClient, test_path: str) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/" + test_path
         pipeline_job = load_job(yaml_path)
         assert_job_cancel(pipeline_job, client)
 
