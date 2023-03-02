@@ -126,6 +126,20 @@ class TestIfElse(TestConditionalNodeInPipeline):
         assert '"path": "jobs.conditionnode.true_block",' in str(e.value)
         assert "'true_block' of dsl.condition has invalid binding expression:" in str(e.value)
 
+    @pytest.mark.skip(reason="Backend not ready yet.")
+    def test_if_else_multiple_block(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        params_override = [{"name": randstr("name")}]
+        my_job = load_job(
+            "./tests/test_configs/pipeline_jobs/control_flow/if_else/multiple_block.yml",
+            params_override=params_override,
+        )
+        created_pipeline = assert_job_cancel(my_job, client)
+
+        pipeline_job_dict = created_pipeline._to_rest_object().as_dict()
+
+        pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
+        assert pipeline_job_dict["properties"]["jobs"] == {}
+
 
 class TestDoWhile(TestConditionalNodeInPipeline):
     @pytest.mark.disable_mock_code_hash
@@ -177,11 +191,11 @@ def assert_foreach(client: MLClient, job_name, source, expected_node, yaml_node=
     assert yaml_job_dict["jobs"]["parallel_node"] == yaml_node
 
 
-# @pytest.mark.skipif(
-#     condition=is_live(),
-#     # TODO: reopen live test when parallel_for deployed to canary
-#     reason="parallel_for is not available in canary."
-# )
+@pytest.mark.skipif(
+    condition=is_live(),
+    # TODO: reopen live test when parallel_for deployed to canary
+    reason="parallel_for is not available in canary.",
+)
 class TestParallelFor(TestConditionalNodeInPipeline):
     def test_simple_foreach_string_item(self, client: MLClient, randstr: Callable):
         source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml"
