@@ -496,10 +496,10 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.FEATURESET, self._featuresets)
 
-        self._featurestoreEntities = FeaturestoreEntityOperations(
+        self._featurestore_entities = FeaturestoreEntityOperations(
             self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
         )
-        self._operation_container.add(AzureMLResourceType.FEATURESTORE_ENTITY, self._featurestoreEntities)
+        self._operation_container.add(AzureMLResourceType.FEATURESTORE_ENTITY, self._featurestore_entities)
 
     @classmethod
     def from_config(
@@ -754,13 +754,13 @@ class MLClient:
         return self._featuresets
 
     @property
-    def featurestoreEntities(self) -> FeaturestoreEntityOperations:
+    def featurestore_entities(self) -> FeaturestoreEntityOperations:
         """A collection of featurestore_entity related operations.
 
         :return: FeaturestoreEntity operations
         :rtype: FeaturestoreEntityOperations
         """
-        return self._featurestoreEntities
+        return self._featurestore_entities
 
     @property
     def subscription_id(self) -> str:
