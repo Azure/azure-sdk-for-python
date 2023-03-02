@@ -141,7 +141,7 @@ from ._featurestore_entity.featurestore_entity import FeaturestoreEntity
 from ._featurestore_entity.data_column import DataColumn
 from ._featurestore_entity.data_column_type import DataColumnType
 from ._featureset.featureset_specification import FeaturesetSpecification
-from ._notification.notification_configuration import NotificationConfiguration
+from ._notification.notification import Notification
 from ._featureset.materialization_compute_resource import MaterializationComputeResource
 from ._featureset.materialization_settings import MaterializationSettings
 from ._featureset.featureset_materialization_operation import FeaturesetMaterializationOperation
@@ -214,7 +214,7 @@ __all__ = [
     "FeaturesetSpecification",
     "DataColumn",
     "DataColumnType",
-    "NotificationConfiguration",
+    "Notification",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",

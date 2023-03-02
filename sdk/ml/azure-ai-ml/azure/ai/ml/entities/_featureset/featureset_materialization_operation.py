@@ -29,7 +29,8 @@ class FeaturesetMaterializationOperation(RestTranslatableMixin):
         creation_context: Optional[CreationContext],
         duration: Optional[Union[str, timedelta]],
         status: Optional[str],
-        tags: Optional[Dict[str, str]] ** kwargs
+        tags: Optional[Dict[str, str]],
+        **kwargs
     ):
         """
         :param type: Specifies the feature store job type. Possible values include:

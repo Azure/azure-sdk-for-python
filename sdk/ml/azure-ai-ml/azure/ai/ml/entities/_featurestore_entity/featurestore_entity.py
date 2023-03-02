@@ -4,7 +4,10 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Optional
+from os import PathLike
+from pathlib import Path
+
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
@@ -12,6 +15,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturestoreEntityVersionProperties,
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
+    IndexColumn,
 )
 from azure.ai.ml._utils._experimental import experimental
 
@@ -31,8 +35,6 @@ class FeaturestoreEntity(Asset):
     :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
     :param path: The path to the asset on the datastore. This can be local or remote
     :type path: str
     :param kwargs: A dictionary of additional configuration parameters.
@@ -47,15 +49,12 @@ class FeaturestoreEntity(Asset):
         index_columns: List[DataColumn],
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
-        properties: Optional[Dict] = None,
         **kwargs,
     ):
         super().__init__(
             name=name,
             version=version,
-            description=description,
             tags=tags,
-            properties=properties,
             **kwargs,
         )
         self.index_columns = index_columns
@@ -64,7 +63,10 @@ class FeaturestoreEntity(Asset):
 
     def _to_rest_object(self) -> FeaturestoreEntityVersion:
         feature_store_entity_version_properties = FeaturestoreEntityVersionProperties(
-            description=self.description, index_columns=self.index_columns, tags=self.tags, properties=self.properties
+            description=self.description,
+            index_columns=[column._to_rest_object() for column in self.index_columns],
+            tags=self.tags,
+            properties=self.properties,
         )
         return FeaturestoreEntityVersion(properties=feature_store_entity_version_properties)
 
@@ -75,7 +77,7 @@ class FeaturestoreEntity(Asset):
         featurestoreEntity = FeaturestoreEntity(
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
-            index_columns=rest_object_details.index_columns,
+            index_columns=[DataColumn._from_rest_object(column) for column in rest_object_details.index_columns],
             description=rest_object_details.description,
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,
@@ -95,3 +97,18 @@ class FeaturestoreEntity(Asset):
         )
         featurestoreEntity.latest_version = rest_object_details.latest_version
         return featurestoreEntity
+
+    @classmethod
+    def _load(
+        cls,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs,
+    ) -> "FeaturestoreEntity":
+
+        return None
+
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        return None
