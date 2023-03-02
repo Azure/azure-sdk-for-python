@@ -1,6 +1,31 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 """
-Usage: python sample_send_small_logs_async.py
+FILE: sample_send_small_logs_async.py
+
+DESCRIPTION:
+    This sample demonstrates how to send a small number of logs to a Log Analytics workspace.
+
+    Note: This sample requires the azure-identity library.
+
+USAGE:
+    python sample_send_small_logs_async.py
+
+    Set the environment variables with your own values before running the sample:
+    1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
+    2) LOGS_DCR_RULE_ID - your data collection rule immutable ID
+    3) LOGS_DCR_STREAM_NAME - your data collection rule stream name
+
+    If using an application service principal for authentication, set the following:
+    1) AZURE_TENANT_ID - your Azure AD tenant (directory) ID
+    2) AZURE_CLIENT_ID - your Azure AD client (application) ID
+    3) AZURE_CLIENT_SECRET - your Azure AD client secret
 """
+
 import asyncio
 import os
 

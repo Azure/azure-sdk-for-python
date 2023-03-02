@@ -69,8 +69,8 @@ from ._models import (
     _AnalyzeActionsType,
     ExtractSummaryAction,
     ExtractSummaryResult,
-    AbstractSummaryAction,
-    AbstractSummaryResult,
+    AbstractiveSummaryAction,
+    AbstractiveSummaryResult,
     DynamicClassificationResult,
     PiiEntityDomain,
     PiiEntityCategory,
@@ -91,7 +91,7 @@ AnalyzeActionsResponse = TextAnalysisLROPoller[
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
                 ExtractSummaryResult,
-                AbstractSummaryResult,
+                AbstractiveSummaryResult,
                 DocumentError,
             ]
         ]
@@ -1117,7 +1117,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
                 ExtractSummaryAction,
-                AbstractSummaryAction,
+                AbstractiveSummaryAction,
             ]
         ],
         *,
@@ -1141,7 +1141,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
                     ExtractSummaryResult,
-                    AbstractSummaryResult,
+                    AbstractiveSummaryResult,
                     DocumentError,
                 ]
             ]
@@ -1174,7 +1174,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
             MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or ExtractSummaryAction
-            or AbstractSummaryAction]
+            or AbstractiveSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1207,7 +1207,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
             or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult
-            or AbstractSummaryResult or DocumentError]]]
+            or AbstractiveSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1860,5 +1860,269 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     **kwargs
                 )
             )
+        except HttpResponseError as error:
+            return process_http_response_error(error)
+
+    @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="2022-10-01-preview"
+    )
+    def begin_extract_summary(
+        self,
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        *,
+        autodetect_default_language: Optional[str] = None,
+        continuation_token: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        language: Optional[str] = None,
+        polling_interval: Optional[int] = None,
+        show_stats: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        max_sentence_count: Optional[int] = None,
+        order_by: Optional[str] = None,
+        **kwargs: Any,
+    ) -> TextAnalysisLROPoller[ItemPaged[Union[ExtractSummaryResult, DocumentError]]]:
+        """Start a long-running extractive summarization operation.
+
+        For a conceptual discussion of extractive summarization, see the service documentation:
+        https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            For automatic language detection, use "auto" (Only supported by API version
+            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            Per-document language will take precedence over whole batch language.
+            See https://aka.ms/talangs for supported languages in Language API.
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
+            automatic language detection.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword Optional[int] max_sentence_count: Maximum number of sentences to return. Defaults to 3.
+        :keyword Optional[str] order_by:  Possible values include: "Offset", "Rank". Default value: "Offset".
+        :keyword Optional[str] model_version: The model version to use for the analysis.
+        :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, the Language service logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the service's natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :return: An instance of an TextAnalysisLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.ExtractSummaryResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.TextAnalysisLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.ExtractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2022-10-01-preview
+            The *begin_extract_summary* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_extract_summary.py
+                :start-after: [START extract_summary]
+                :end-before: [END extract_summary]
+                :language: python
+                :dedent: 4
+                :caption: Perform extractive summarization on a batch of documents.
+        """
+
+        polling_interval_arg = polling_interval if polling_interval is not None else 5
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_index_type_default
+
+        if continuation_token:
+            return cast(
+                TextAnalysisLROPoller[ItemPaged[Union[ExtractSummaryResult, DocumentError]]],
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AnalyzeActionsLROPoller,
+                    AnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval_arg,
+                        **kwargs
+                    ),
+                    self._analyze_result_callback,
+                    bespoke=True
+                )
+            )
+
+        try:
+            return cast(
+                TextAnalysisLROPoller[
+                    ItemPaged[Union[ExtractSummaryResult, DocumentError]]
+                ],
+                self.begin_analyze_actions(
+                    documents,
+                    actions=[
+                        ExtractSummaryAction(
+                            model_version=model_version,
+                            string_index_type=string_index_type_arg,
+                            max_sentence_count=max_sentence_count,
+                            order_by=order_by,
+                            disable_service_logs=disable_service_logs,
+                        )
+                    ],
+                    polling_interval=polling_interval_arg,
+                    autodetect_default_language=autodetect_default_language,
+                    display_name=display_name,
+                    show_stats=show_stats,
+                    language=language,
+                    bespoke=True,
+                    **kwargs
+                )
+            )
+
+        except HttpResponseError as error:
+            return process_http_response_error(error)
+
+    @distributed_trace
+    @validate_multiapi_args(
+        version_method_added="2022-10-01-preview"
+    )
+    def begin_abstractive_summary(
+        self,
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        *,
+        autodetect_default_language: Optional[str] = None,
+        continuation_token: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        language: Optional[str] = None,
+        polling_interval: Optional[int] = None,
+        show_stats: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        string_index_type: Optional[str] = None,
+        sentence_count: Optional[int] = None,
+        **kwargs: Any,
+    ) -> TextAnalysisLROPoller[ItemPaged[Union[AbstractiveSummaryResult, DocumentError]]]:
+        """Start a long-running abstractive summarization operation.
+
+        For a conceptual discussion of abstractive summarization, see the service documentation:
+        https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
+
+        .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
+            https://aka.ms/applyforgatedsummarizationfeatures
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list of
+            dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`, like
+            `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            For automatic language detection, use "auto" (Only supported by API version
+            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            Per-document language will take precedence over whole batch language.
+            See https://aka.ms/talangs for supported languages in Language API.
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
+            automatic language detection.
+        :keyword bool show_stats: If set to true, response will contain document level statistics.
+        :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
+        :keyword Optional[str] model_version: The model version to use for the analysis.
+        :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, the Language service logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the service's natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :keyword int polling_interval: Waiting time between two polls for LRO operations
+            if no Retry-After header is present. Defaults to 5 seconds.
+        :keyword str continuation_token:
+            Call `continuation_token()` on the poller object to save the long-running operation (LRO)
+            state into an opaque token. Pass the value as the `continuation_token` keyword argument
+            to restart the LRO from a saved state.
+        :keyword str display_name: An optional display name to set for the requested analysis.
+        :return: An instance of an TextAnalysisLROPoller. Call `result()` on the this
+            object to return a heterogeneous pageable of
+            :class:`~azure.ai.textanalytics.AbstractiveSummaryResult` and
+            :class:`~azure.ai.textanalytics.DocumentError`.
+        :rtype:
+            ~azure.ai.textanalytics.TextAnalysisLROPoller[~azure.core.paging.ItemPaged[
+            ~azure.ai.textanalytics.AbstractiveSummaryResult or ~azure.ai.textanalytics.DocumentError]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2022-10-01-preview
+            The *begin_abstractive_summary* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_abstractive_summary.py
+                :start-after: [START abstractive_summary]
+                :end-before: [END abstractive_summary]
+                :language: python
+                :dedent: 4
+                :caption: Perform abstractive summarization on a batch of documents.
+        """
+
+        polling_interval_arg = polling_interval if polling_interval is not None else 5
+        string_index_type_arg = string_index_type if string_index_type is not None else self._string_index_type_default
+
+        if continuation_token:
+            return cast(
+                TextAnalysisLROPoller[ItemPaged[Union[AbstractiveSummaryResult, DocumentError]]],
+                _get_result_from_continuation_token(
+                    self._client._client,  # pylint: disable=protected-access
+                    continuation_token,
+                    AnalyzeActionsLROPoller,
+                    AnalyzeActionsLROPollingMethod(
+                        text_analytics_client=self._client,
+                        timeout=polling_interval_arg,
+                        **kwargs
+                    ),
+                    self._analyze_result_callback,
+                    bespoke=True
+                )
+            )
+
+        try:
+            return cast(
+                TextAnalysisLROPoller[
+                    ItemPaged[Union[AbstractiveSummaryResult, DocumentError]]
+                ],
+                self.begin_analyze_actions(
+                    documents,
+                    actions=[
+                        AbstractiveSummaryAction(
+                            model_version=model_version,
+                            string_index_type=string_index_type_arg,
+                            sentence_count=sentence_count,
+                            disable_service_logs=disable_service_logs,
+                        )
+                    ],
+                    polling_interval=polling_interval_arg,
+                    autodetect_default_language=autodetect_default_language,
+                    display_name=display_name,
+                    show_stats=show_stats,
+                    language=language,
+                    bespoke=True,
+                    **kwargs
+                )
+            )
+
         except HttpResponseError as error:
             return process_http_response_error(error)

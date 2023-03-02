@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,15 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._application_insights_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ErrorFieldContract(msrest.serialization.Model):
+class ErrorFieldContract(_serialization.Model):
     """Error Field contract.
 
     :ivar code: Property level error code.
@@ -26,19 +28,14 @@ class ErrorFieldContract(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, code: Optional[str] = None, message: Optional[str] = None, target: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: Property level error code.
         :paramtype code: str
@@ -47,14 +44,15 @@ class ErrorFieldContract(msrest.serialization.Model):
         :keyword target: Property name.
         :paramtype target: str
         """
-        super(ErrorFieldContract, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Error response indicates Insights service is not able to process the incoming request. The reason is provided in the error message.
+class ErrorResponse(_serialization.Model):
+    """Error response indicates Insights service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     :ivar code: Error code.
     :vartype code: str
@@ -63,29 +61,23 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """CDN REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -95,29 +87,25 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     :ivar provider: Service provider: Microsoft.Cdn.
@@ -129,9 +117,9 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
     }
 
     def __init__(
@@ -140,8 +128,8 @@ class OperationDisplay(msrest.serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft.Cdn.
         :paramtype provider: str
@@ -150,14 +138,15 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword operation: Operation type: Read, write, delete, etc.
         :paramtype operation: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
 
 
-class OperationListResult(msrest.serialization.Model):
-    """Result of the request to list CDN operations. It contains a list of operations and a URL link to get the next set of results.
+class OperationListResult(_serialization.Model):
+    """Result of the request to list CDN operations. It contains a list of operations and a URL link
+    to get the next set of results.
 
     :ivar value: List of CDN operations supported by the CDN resource provider.
     :vartype value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Operation]
@@ -166,29 +155,25 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of CDN operations supported by the CDN resource provider.
         :paramtype value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
-        super(OperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -202,50 +187,50 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        kind: Optional[Union[str, "SharedTypeKind"]] = None,
+        kind: Optional[Union[str, "_models.SharedTypeKind"]] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
-         "user", "shared".
+        :keyword kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
+         "shared".
         :paramtype kind: str or
          ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -254,7 +239,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class Workbook(Resource):
+class Workbook(Resource):  # pylint: disable=too-many-instance-attributes
     """An Application Insights workbook definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -268,12 +253,12 @@ class Workbook(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar display_name: The user-defined name (display name) of the workbook.
     :vartype display_name: str
@@ -297,36 +282,36 @@ class Workbook(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'time_modified': {'readonly': True},
-        'user_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "time_modified": {"readonly": True},
+        "user_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'serialized_data': {'key': 'properties.serializedData', 'type': 'str'},
-        'time_modified': {'key': 'properties.timeModified', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'tags_properties_tags': {'key': 'properties.tags', 'type': '[str]'},
-        'user_id': {'key': 'properties.userId', 'type': 'str'},
-        'source_id': {'key': 'properties.sourceId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "serialized_data": {"key": "properties.serializedData", "type": "str"},
+        "time_modified": {"key": "properties.timeModified", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "tags_properties_tags": {"key": "properties.tags", "type": "[str]"},
+        "user_id": {"key": "properties.userId", "type": "str"},
+        "source_id": {"key": "properties.sourceId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        kind: Optional[Union[str, "SharedTypeKind"]] = None,
+        kind: Optional[Union[str, "_models.SharedTypeKind"]] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
         serialized_data: Optional[str] = None,
@@ -334,16 +319,16 @@ class Workbook(Resource):
         version: Optional[str] = None,
         tags_properties_tags: Optional[List[str]] = None,
         source_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
-         "user", "shared".
+        :keyword kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
+         "shared".
         :paramtype kind: str or
          ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword display_name: The user-defined name (display name) of the workbook.
         :paramtype display_name: str
@@ -360,7 +345,7 @@ class Workbook(Resource):
         :keyword source_id: ResourceId for a source resource.
         :paramtype source_id: str
         """
-        super(Workbook, self).__init__(kind=kind, location=location, tags=tags, **kwargs)
+        super().__init__(kind=kind, location=location, tags=tags, **kwargs)
         self.display_name = display_name
         self.serialized_data = serialized_data
         self.time_modified = None
@@ -371,7 +356,7 @@ class Workbook(Resource):
         self.source_id = source_id
 
 
-class WorkbookError(msrest.serialization.Model):
+class WorkbookError(_serialization.Model):
     """Error message body that will indicate why the operation failed.
 
     :ivar code: Service-defined error code. This code serves as a sub-status for the HTTP error
@@ -385,9 +370,9 @@ class WorkbookError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorFieldContract]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorFieldContract]"},
     }
 
     def __init__(
@@ -395,9 +380,9 @@ class WorkbookError(msrest.serialization.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        details: Optional[List["ErrorFieldContract"]] = None,
-        **kwargs
-    ):
+        details: Optional[List["_models.ErrorFieldContract"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Service-defined error code. This code serves as a sub-status for the HTTP error
          code specified in the response.
@@ -408,13 +393,13 @@ class WorkbookError(msrest.serialization.Model):
         :paramtype details:
          list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.ErrorFieldContract]
         """
-        super(WorkbookError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
 
 
-class WorkbooksListResult(msrest.serialization.Model):
+class WorkbooksListResult(_serialization.Model):
     """Workbook list result.
 
     :ivar value: An array of workbooks.
@@ -422,30 +407,25 @@ class WorkbooksListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Workbook]'},
+        "value": {"key": "value", "type": "[Workbook]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Workbook"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Workbook"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of workbooks.
         :paramtype value: list[~azure.mgmt.applicationinsights.v2018_06_17_preview.models.Workbook]
         """
-        super(WorkbooksListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class WorkbookUpdateParameters(msrest.serialization.Model):
+class WorkbookUpdateParameters(_serialization.Model):
     """The parameters that can be provided when updating workbook properties properties.
 
-    :ivar kind: The kind of workbook. Choices are user and shared. Possible values include: "user",
+    :ivar kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
      "shared".
     :vartype kind: str or ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar display_name: The user-defined name (display name) of the workbook.
     :vartype display_name: str
@@ -460,31 +440,31 @@ class WorkbookUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'serialized_data': {'key': 'properties.serializedData', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
-        'tags_properties_tags': {'key': 'properties.tags', 'type': '[str]'},
+        "kind": {"key": "kind", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "serialized_data": {"key": "properties.serializedData", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "tags_properties_tags": {"key": "properties.tags", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        kind: Optional[Union[str, "SharedTypeKind"]] = None,
+        kind: Optional[Union[str, "_models.SharedTypeKind"]] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
         serialized_data: Optional[str] = None,
         category: Optional[str] = None,
         tags_properties_tags: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword kind: The kind of workbook. Choices are user and shared. Possible values include:
-         "user", "shared".
+        :keyword kind: The kind of workbook. Choices are user and shared. Known values are: "user" and
+         "shared".
         :paramtype kind: str or
          ~azure.mgmt.applicationinsights.v2018_06_17_preview.models.SharedTypeKind
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword display_name: The user-defined name (display name) of the workbook.
         :paramtype display_name: str
@@ -497,7 +477,7 @@ class WorkbookUpdateParameters(msrest.serialization.Model):
          definition.
         :paramtype tags_properties_tags: list[str]
         """
-        super(WorkbookUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.kind = kind
         self.tags = tags
         self.display_name = display_name

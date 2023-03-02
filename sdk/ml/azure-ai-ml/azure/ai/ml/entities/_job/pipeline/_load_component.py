@@ -11,11 +11,21 @@ from azure.ai.ml import Output
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.pipeline.component_job import SweepSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
-from azure.ai.ml.constants._component import ControlFlowType, NodeType
+from azure.ai.ml.constants._component import ControlFlowType, NodeType, DataTransferTaskType
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
-from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, Spark, Sweep
+from azure.ai.ml.entities._builders import (
+    BaseNode,
+    Command,
+    Import,
+    Parallel,
+    Spark,
+    Sweep,
+    DataTransferCopy,
+    DataTransferImport,
+    DataTransferExport,
+)
 from azure.ai.ml.entities._builders.condition_node import ConditionNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._builders.do_while import DoWhile
@@ -93,6 +103,24 @@ class _PipelineNodeFactory:
             _type=ControlFlowType.PARALLEL_FOR,
             create_instance_func=None,
             load_from_rest_object_func=ParallelFor._from_rest_object,
+            nested_schema=None,
+        )
+        self.register_type(
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.COPY_DATA]),
+            create_instance_func=lambda: DataTransferCopy.__new__(DataTransferCopy),
+            load_from_rest_object_func=DataTransferCopy._from_rest_object,
+            nested_schema=None,
+        )
+        self.register_type(
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.IMPORT_DATA]),
+            create_instance_func=lambda: DataTransferImport.__new__(DataTransferImport),
+            load_from_rest_object_func=DataTransferImport._from_rest_object,
+            nested_schema=None,
+        )
+        self.register_type(
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.EXPORT_DATA]),
+            create_instance_func=lambda: DataTransferExport.__new__(DataTransferExport),
+            load_from_rest_object_func=DataTransferExport._from_rest_object,
             nested_schema=None,
         )
 
@@ -176,6 +204,9 @@ class _PipelineNodeFactory:
         """
         if _type is None:
             _type = data[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in data else NodeType.COMMAND
+            # todo: refine Hard code for now to support different task type for DataTransfer node
+            if _type == NodeType.DATA_TRANSFER:
+                _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", " ")])
         else:
             data[CommonYamlFields.TYPE] = _type
 
@@ -209,6 +240,9 @@ class _PipelineNodeFactory:
 
         if _type is None:
             _type = obj[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in obj else NodeType.COMMAND
+            # todo: refine Hard code for now to support different task type for DataTransfer node
+            if _type == NodeType.DATA_TRANSFER:
+                _type = "_".join([NodeType.DATA_TRANSFER, obj.get("task", " ")])
         else:
             obj[CommonYamlFields.TYPE] = _type
 
@@ -239,9 +273,18 @@ def _generate_component_function(
 ) -> Callable[..., Union[Command, Parallel]]:
     # Generate a function which returns a component node.
     def create_component_func(**kwargs):
+        # todo: refine Hard code for now to support different task type for DataTransfer node
+        _type = component_entity.type
+        if _type == NodeType.DATA_TRANSFER:
+            _type = "_".join([NodeType.DATA_TRANSFER, component_entity.task])
+            if component_entity.task == DataTransferTaskType.IMPORT_DATA:
+                return pipeline_node_factory.load_from_dict(
+                    data=dict(component=component_entity, **kwargs, _from_component_func=True),
+                    _type=_type,
+                )
         return pipeline_node_factory.load_from_dict(
             data=dict(component=component_entity, inputs=kwargs, _from_component_func=True),
-            _type=component_entity.type,
+            _type=_type,
         )
 
     return to_component_func(component_entity, create_component_func)

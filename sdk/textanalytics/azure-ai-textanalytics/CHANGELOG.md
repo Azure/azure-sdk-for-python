@@ -2,9 +2,18 @@
 
 ## 5.3.0b2 (Unreleased)
 
+This version of the client library defaults to the service API version `2022-10-01-preview`.
+
 ### Features Added
 
+- Added `begin_extract_summary` client method to perform extractive summarization on documents.
+- Added `begin_abstractive_summary` client method to perform abstractive summarization on documents.
+
 ### Breaking Changes
+
+- Removed models `BaseResolution` and `BooleanResolution`.
+- Renamed model `AbstractSummaryAction` to `AbstractiveSummaryAction`.
+- Renamed model `AbstractSummaryResult` to `AbstractiveSummaryResult`.
 
 ### Bugs Fixed
 

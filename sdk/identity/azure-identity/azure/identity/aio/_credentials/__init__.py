@@ -16,6 +16,7 @@ from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .vscode import VisualStudioCodeCredential
 from .client_assertion import ClientAssertionCredential
+from .workload_identity import WorkloadIdentityCredential
 
 
 __all__ = [
@@ -33,4 +34,5 @@ __all__ = [
     "SharedTokenCacheCredential",
     "VisualStudioCodeCredential",
     "ClientAssertionCredential",
+    "WorkloadIdentityCredential",
 ]

@@ -23,6 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from datetime import datetime
+
 import pytest
 
 from devtools_testutils.sanitizers import (
@@ -80,3 +82,17 @@ def monitor_info(environment_variables):
         "dce": environment_variables.get(ENV_DCE),
         "dcr_id": environment_variables.get(ENV_DCR_ID)
     }
+
+
+@pytest.fixture(scope="session")
+def large_data():
+    logs = []
+    content = "a" * (1024 * 100) # 100 KiB string
+
+    # Ensure total size is > 2 MiB data
+    for i in range(24):
+        logs.append({
+            "Time": datetime.now().isoformat(),
+            "AdditionalContext": content
+        })
+    return logs

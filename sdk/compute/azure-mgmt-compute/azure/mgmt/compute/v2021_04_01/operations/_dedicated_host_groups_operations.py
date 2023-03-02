@@ -317,8 +317,8 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param parameters: Parameters supplied to the Create Dedicated Host Group. Is either a model
-         type or a IO type. Required.
+        :param parameters: Parameters supplied to the Create Dedicated Host Group. Is either a
+         DedicatedHostGroup type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2021_04_01.models.DedicatedHostGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -460,7 +460,7 @@ class DedicatedHostGroupsOperations:
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
         :param parameters: Parameters supplied to the Update Dedicated Host Group operation. Is either
-         a model type or a IO type. Required.
+         a DedicatedHostGroupUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2021_04_01.models.DedicatedHostGroupUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

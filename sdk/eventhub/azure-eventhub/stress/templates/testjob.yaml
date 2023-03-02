@@ -5,8 +5,6 @@ metadata:
     testName: "deploy-python-eh-stress"
     testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
 spec:
-  nodeSelector:
-    sku: 'd4v4'
   containers:
     - name: python-eh-stress
       image: {{ .Stress.imageTag }}

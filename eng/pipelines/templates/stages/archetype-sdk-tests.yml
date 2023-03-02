@@ -141,3 +141,36 @@ stages:
               SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
               Cloud: ${{ cloud.key }}
+
+- ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
+  - stage:
+    displayName: 'Analyze_${{ parameters.JobName }}'
+    dependsOn: []
+    jobs:
+      - job: 'Analyze'
+        timeoutInMinutes: 90
+
+        variables:
+          PythonVersion: '3.9'
+
+        pool:
+          name: azsdk-pool-mms-ubuntu-2004-general
+          vmImage: MMSUbuntu20.04
+
+        steps:
+          - pwsh: |
+              python -m pip install -r eng/ci_tools.txt 
+            displayName: 'Install Necessary Dependencies'
+          - task: PythonScript@0
+            displayName: 'Run Pylint Next'
+            continueOnError: true
+            inputs:
+              scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+              arguments: >-
+                "azure*" 
+                --mark_arg="${{ parameters.TestMarkArgument }}" 
+                --service="${{ parameters.ServiceDirectory }}" 
+                --toxenv="next-pylint"
+                --disablecov
+                --filter-type="Omit_management"
+            env: ${{ parameters.EnvVars }}

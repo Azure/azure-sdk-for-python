@@ -265,8 +265,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.DatabaseListResult] = kwargs.pop("cls", None)
 
@@ -330,7 +330,13 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        expand: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.Database:
         """Gets a database.
 
@@ -341,6 +347,11 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
+        :param expand: The child resources to include in the response. Default value is None.
+        :type expand: str
+        :param filter: An OData filter expression that filters elements in the collection. Default
+         value is None.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Database or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.Database
@@ -357,8 +368,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.Database] = kwargs.pop("cls", None)
 
@@ -367,6 +378,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             server_name=server_name,
             database_name=database_name,
             subscription_id=self._config.subscription_id,
+            expand=expand,
+            filter=filter,
             api_version=api_version,
             template_url=self.get.metadata["url"],
             headers=_headers,
@@ -415,8 +428,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
@@ -567,8 +580,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested database resource state. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested database resource state. Is either a Database type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.sql.models.Database or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -589,8 +602,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Database] = kwargs.pop("cls", None)
@@ -619,7 +632,10 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -651,8 +667,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -714,8 +730,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -739,7 +755,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
                 return cls(pipeline_response, None, {})
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -776,8 +794,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
@@ -925,8 +943,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested database resource state. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested database resource state. Is either a DatabaseUpdate type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -947,8 +965,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Database] = kwargs.pop("cls", None)
@@ -977,7 +995,9 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
             return deserialized
 
         if polling is True:
-            polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1014,8 +1034,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.ImportExportOperationResult]] = kwargs.pop("cls", None)
@@ -1163,8 +1183,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The database export request parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: The database export request parameters. Is either a ExportDatabaseDefinition
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ExportDatabaseDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1185,8 +1205,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ImportExportOperationResult] = kwargs.pop("cls", None)
@@ -1252,8 +1272,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -1324,8 +1344,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1387,8 +1407,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.ImportExportOperationResult]] = kwargs.pop("cls", None)
@@ -1536,8 +1556,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The database import request parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: The database import request parameters. Is either a
+         ImportExistingDatabaseDefinition type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ImportExistingDatabaseDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1558,8 +1578,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ImportExportOperationResult] = kwargs.pop("cls", None)
@@ -1686,8 +1706,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         :type server_name: str
         :param database_name: The name of the database to rename. Required.
         :type database_name: str
-        :param parameters: The resource move definition for renaming this database. Is either a model
-         type or a IO type. Required.
+        :param parameters: The resource move definition for renaming this database. Is either a
+         ResourceMoveDefinition type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ResourceMoveDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1708,8 +1728,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1769,8 +1789,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
 
@@ -1839,8 +1859,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.Database] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1898,8 +1918,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[Optional[_models.Database]] = kwargs.pop("cls", None)
 
@@ -1968,8 +1988,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.Database] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -2027,8 +2047,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -2090,8 +2110,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -2154,8 +2174,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.DatabaseListResult] = kwargs.pop("cls", None)
 
@@ -2236,8 +2256,8 @@ class DatabasesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.DatabaseListResult] = kwargs.pop("cls", None)
 

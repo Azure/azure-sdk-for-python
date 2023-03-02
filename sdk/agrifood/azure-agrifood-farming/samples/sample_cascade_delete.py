@@ -6,8 +6,8 @@ FILE: sample_cascade_delete.py
 
 DESCRIPTION:
     This sample demonstrates 
-    - Getting a filtered list of farmers based on last modified timestamp
-    - Queuing a cascade delete job on a farmer, and polling for it to complete
+    - Getting a filtered list of parties based on last modified timestamp
+    - Queuing a cascade delete job on a party, and polling for it to complete
 
 USAGE:
     ```python sample_cascade_delete.py```
@@ -41,28 +41,28 @@ def sample_cascade_delete():
 
     job_id_prefix = "cascade-delete-job"
 
-    # Getting list of farmers modified in the last 7 days
-    print("Getting list of recently modified farmer id's... ", end="", flush=True)
-    farmers = client.farmers.list(
+    # Getting list of parties modified in the last 7 days
+    print("Getting list of recently modified party id's... ", end="", flush=True)
+    parties = client.parties.list(
         min_last_modified_date_time=datetime.now(tz=UTC) - timedelta(days=7)
     )
-    farmer_ids = [farmer.id for farmer in farmers]
+    party_ids = [party["id"] for party in parties]
     print("Done")
 
-    # Ask for the id of the farmer which is to be deleted.
-    print(f"Recentely modified farmer id's:")
-    print(*farmer_ids, sep="\n")
-    farmer_id_to_delete = input("Please enter the id of the farmer you wish to delete resources for: ").strip()
-    if farmer_id_to_delete not in farmer_ids:
-        raise SystemExit("Entered id for farmer does not exist.")
+    # Ask for the id of the party which is to be deleted.
+    print(f"Recentely modified party id's:")
+    print(*party_ids, sep="\n")
+    party_id_to_delete = input("Please enter the id of the party you wish to delete resources for: ").strip()
+    if party_id_to_delete not in party_ids:
+        raise SystemExit("Entered id for party does not exist.")
 
-    # Deleting the farmer and it's associated resources. Queuing the cascade delete job.
+    # Deleting the party and it's associated resources. Queuing the cascade delete job.
 
     job_id = f"{job_id_prefix}-{randint(0, 1000)}"
     print(f"Queuing cascade delete job {job_id}... ", end="", flush=True)
-    cascade_delete_job_poller = client.farmers.begin_create_cascade_delete_job(
+    cascade_delete_job_poller = client.parties.begin_create_cascade_delete_job(
         job_id=job_id,
-        farmer_id = farmer_id_to_delete
+        party_id = party_id_to_delete
     )
     print("Queued. Waiting for completion... ", end="", flush=True)
     cascade_delete_job_poller.result()

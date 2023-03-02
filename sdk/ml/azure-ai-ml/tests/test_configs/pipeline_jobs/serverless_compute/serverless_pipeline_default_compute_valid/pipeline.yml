@@ -1,0 +1,42 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+display_name: Pipeline Job with Serverless Compute
+
+settings:
+  default_compute: azureml:serverless
+
+jobs:
+  # command component
+  vanilla_node:
+    type: command
+    component: ../component.yml
+  node_with_resources:
+    type: command
+    component: ../component.yml
+    resources:
+      instance_count: 2
+  node_with_compute_target:
+    type: command
+    component: ../component.yml
+    compute: azureml:cpu-cluster
+  node_with_compute_target_and_resources:
+    type: command
+    component: ../component.yml
+    compute: azureml:cpu-cluster
+    resources:
+      instance_count: 2
+  serverless_node:
+    type: command
+    component: ../component.yml
+    compute: azureml:serverless
+  serverless_node_with_resources:
+    type: command
+    component: ../component.yml
+    compute: azureml:serverless
+    resources:
+      instance_count: 2
+  # pipeline component
+  pipeline_node:
+    type: pipeline
+    component: ./pipeline_component.yml

@@ -125,6 +125,19 @@ input-file:
 output-folder: $(python-sdks-folder)/v2022_10_01_preview
 ```
 
+### Tag: v2023-02-01-preview
+
+These settings apply only when `--tag=v2023-0201-preview` is specified on the command line.
+
+```yaml $(tag) == 'v2023-02-01-preview'
+input-file:
+  - Microsoft.MachineLearningServices/preview/2023-02-01-preview/machineLearningServices.json
+  - Microsoft.MachineLearningServices/preview/2023-02-01-preview/registries.json
+  - Microsoft.MachineLearningServices/preview/2023-02-01-preview/workspaceFeatures.json
+  - Microsoft.MachineLearningServices/preview/2023-02-01-preview/mfe.json
+output-folder: $(python-sdks-folder)/v2023_02_01_preview
+```
+
 ### Tag: v2022-12-01-preview
 
 These settings apply only when `--tag=v2022-12-01-preview` is specified on the command line.
@@ -155,6 +168,7 @@ batch:
   - tag: registry-discovery
   - tag: v2022-10-01-preview
   - tag: v2022-12-01-preview
+  - tag: v2023-02-01-preview
   #unstable tags
   - tag: v2021-10-01-dataplanepreview
   - multiapiscript: true

@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
@@ -23,7 +23,7 @@ class AnonymousACRExchangeClient(object):
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs: Dict[str, Any]
+        self, endpoint: str, **kwargs: Any
     ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
@@ -36,11 +36,10 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
+    async def get_acr_access_token(self, challenge: str, **kwargs: Any) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
-        parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return await self.exchange_refresh_token_for_access_token(
-            None,
+            "",
             service=parsed_challenge["service"],
             scope=parsed_challenge["scope"],
             grant_type=TokenGrantType.PASSWORD,
@@ -48,13 +47,8 @@ class AnonymousACRExchangeClient(object):
         )
 
     async def exchange_refresh_token_for_access_token(
-        self,
-        refresh_token: str = None,
-        service: str = None,
-        scope: str = None,
-        grant_type: str = TokenGrantType.PASSWORD,
-        **kwargs: Any
-    ) -> str:
+        self, refresh_token: str, service: str, scope: str, grant_type: str, **kwargs: Any
+    ) -> Optional[str]:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )

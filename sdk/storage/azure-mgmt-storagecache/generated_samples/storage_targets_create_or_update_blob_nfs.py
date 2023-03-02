@@ -33,10 +33,22 @@ def main():
         resource_group_name="scgroup",
         cache_name="sc1",
         storage_target_name="st1",
+        storagetarget={
+            "properties": {
+                "blobNfs": {
+                    "target": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/scgroup/providers/Microsoft.Storage/storageAccounts/blofnfs/blobServices/default/containers/blobnfs",
+                    "usageModel": "READ_WRITE",
+                    "verificationTimer": 28800,
+                    "writeBackTimer": 3600,
+                },
+                "junctions": [{"namespacePath": "/blobnfs"}],
+                "targetType": "blobNfs",
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2022-05-01/examples/StorageTargets_CreateOrUpdate_BlobNfs.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-01-01/examples/StorageTargets_CreateOrUpdate_BlobNfs.json
 if __name__ == "__main__":
     main()

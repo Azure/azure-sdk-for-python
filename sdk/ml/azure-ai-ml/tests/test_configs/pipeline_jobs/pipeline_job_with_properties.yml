@@ -28,7 +28,7 @@ properties:
 jobs:
   node0:  # inline command job with properties
     command: echo hello ${{inputs.hello_string}}
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
     inputs:
       hello_string: ${{parent.inputs.hello_string}}
     properties:

@@ -1,8 +1,7 @@
-from typing import Callable, Iterable
+from typing import Iterable
 from unittest.mock import Mock, patch
 
 import pytest
-from pytest_mock import MockFixture
 
 from azure.ai.ml import load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import (
@@ -14,18 +13,22 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations
-from azure.ai.ml.operations._code_operations import CodeOperations
+from azure.ai.ml.operations import EnvironmentOperations
+from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.fixture
-def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
-) -> CodeOperations:
-    yield DatastoreOperations(
-        operation_scope=mock_workspace_scope,
+def mock_environment_operation_reg(
+    mock_registry_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2021_10_01_dataplanepreview: Mock,
+    mock_machinelearning_registry_client: Mock,
+) -> EnvironmentOperations:
+    yield EnvironmentOperations(
+        operation_scope=mock_registry_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
+        service_client=mock_aml_services_2021_10_01_dataplanepreview,
+        all_operations=mock_machinelearning_registry_client._operation_container,
     )
 
 
@@ -173,3 +176,18 @@ class TestEnvironmentOperations:
             body=env_container,
             resource_group_name=mock_environment_operation._resource_group_name,
         )
+
+    def test_promote_environment_from_workspace(
+        self,
+        mock_environment_operation_reg: EnvironmentOperations,
+        mock_environment_operation: EnvironmentOperations,
+    ) -> None:
+        env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
+        environment_to_promote = mock_environment_operation._prepare_to_copy(env, "new_name", "new_version")
+        assert environment_to_promote.name == "new_name"
+        assert environment_to_promote.version == "new_version"
+        mock_environment_operation_reg._version_operations.get.side_effect = Mock(
+            side_effect=ResourceNotFoundError("Test")
+        )
+        mock_environment_operation_reg.create_or_update(environment_to_promote)
+        mock_environment_operation_reg._service_client.resource_management_asset_reference.begin_import_method.assert_called_once()

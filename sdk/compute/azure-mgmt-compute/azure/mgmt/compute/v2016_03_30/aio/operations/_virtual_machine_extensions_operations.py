@@ -235,7 +235,7 @@ class VirtualMachineExtensionsOperations:
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
         :param extension_parameters: Parameters supplied to the Create Virtual Machine Extension
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a VirtualMachineExtension type or a IO type. Required.
         :type extension_parameters: ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineExtension or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -474,7 +474,7 @@ class VirtualMachineExtensionsOperations:
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
         :param extension_parameters: Parameters supplied to the Update Virtual Machine Extension
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a VirtualMachineExtensionUpdate type or a IO type. Required.
         :type extension_parameters:
          ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineExtensionUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

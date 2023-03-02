@@ -29,14 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.graph_resources.begin_delete_graph_resource(
+    response = client.sql_resources.begin_delete_sql_database(
         resource_group_name="rg1",
         account_name="ddb1",
-        graph_name="graphName",
+        database_name="databaseName",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2022-08-15-preview/examples/CosmosDBGraphResourceDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2022-11-15/examples/CosmosDBSqlDatabaseDelete.json
 if __name__ == "__main__":
     main()

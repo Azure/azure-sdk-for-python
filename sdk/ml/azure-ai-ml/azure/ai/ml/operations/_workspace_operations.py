@@ -9,12 +9,14 @@ from typing import Dict, Iterable, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
 )
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork
+from azure.ai.ml.constants._workspace import IsolationMode
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -66,7 +68,7 @@ class WorkspaceOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient102022Preview,
+        service_client: ServiceClient122022Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -185,6 +187,9 @@ class WorkspaceOperations:
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
             )
+            workspace.feature_store_settings = (
+                workspace.feature_store_settings or existing_workspace.feature_store_settings
+            )
             return self.begin_update(
                 workspace,
                 update_dependent_resources=update_dependent_resources,
@@ -250,7 +255,8 @@ class WorkspaceOperations:
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         identity = kwargs.get("identity", workspace.identity)
-        existing_workspace = self.get(workspace.name, **kwargs)
+        workspace_name = kwargs.get("workspace_name", workspace.name)
+        existing_workspace = self.get(workspace_name, **kwargs)
         if identity:
             identity = identity._to_workspace_rest_object()
             rest_user_assigned_identities = identity.user_assigned_identities
@@ -266,6 +272,12 @@ class WorkspaceOperations:
                     if uai.resource_id not in rest_user_assigned_identities:
                         rest_user_assigned_identities[uai.resource_id] = None
                 identity.user_assigned_identities = rest_user_assigned_identities
+
+        managed_network = kwargs.get("managed_network", workspace.managed_network)
+        if isinstance(managed_network, str):
+            managed_network = ManagedNetwork(managed_network)._to_rest_object()
+        elif isinstance(managed_network, ManagedNetwork):
+            managed_network = workspace.managed_network._to_rest_object()
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
@@ -305,8 +317,12 @@ class WorkspaceOperations:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+        feature_store_settings = kwargs.get("feature_store_settings", workspace.feature_store_settings)
+        if feature_store_settings:
+            feature_store_settings = feature_store_settings._to_rest_object()
+
         update_param = WorkspaceUpdateParameters(
-            tags=workspace.tags,
+            tags=kwargs.get("tags", workspace.tags),
             description=kwargs.get("description", workspace.description),
             friendly_name=kwargs.get("display_name", workspace.display_name),
             public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
@@ -315,6 +331,8 @@ class WorkspaceOperations:
             primary_user_assigned_identity=kwargs.get(
                 "primary_user_assigned_identity", workspace.primary_user_assigned_identity
             ),
+            managed_network=managed_network,
+            feature_store_settings=feature_store_settings,
         )
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
@@ -335,7 +353,7 @@ class WorkspaceOperations:
         def callback(_, deserialized, args):
             return Workspace._from_rest_object(deserialized)
 
-        poller = self._operation.begin_update(resource_group, workspace.name, update_param, polling=True, cls=callback)
+        poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
 
     # @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
@@ -417,7 +435,7 @@ class WorkspaceOperations:
         module_logger.info("Diagnose request initiated for workspace: %s\n", name)
         return poller
 
-    # pylint: disable=too-many-statements,too-many-branches
+    # pylint: disable=too-many-statements,too-many-branches,too-many-locals
     def _populate_arm_paramaters(self, workspace: Workspace) -> Tuple[dict, dict, dict]:
         resources_being_deployed = {}
         if not workspace.location:
@@ -438,6 +456,11 @@ class WorkspaceOperations:
         else:
             _set_val(param["description"], workspace.description)
         _set_val(param["location"], workspace.location)
+
+        if not workspace.kind:
+            _set_val(param["kind"], "default")
+        else:
+            _set_val(param["kind"], workspace.kind)
 
         _set_val(param["resourceGroupName"], workspace.resource_group)
 
@@ -591,6 +614,27 @@ class WorkspaceOperations:
 
         if workspace.primary_user_assigned_identity:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
+
+        if workspace.feature_store_settings:
+            _set_val(
+                param["spark_runtime_version"], workspace.feature_store_settings.compute_runtime.spark_runtime_version
+            )
+            _set_val(
+                param["offline_store_connection_name"],
+                workspace.feature_store_settings.offline_store_connection_name
+                if workspace.feature_store_settings.offline_store_connection_name
+                else "",
+            )
+            _set_val(param["online_store_connection_name"], "")
+
+        _set_val(param["setup_materialization_store"], "false")
+
+        managed_network = None
+        if workspace.managed_network:
+            managed_network = workspace.managed_network._to_rest_object()
+        else:
+            managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
+        _set_val(param["managedNetwork"], managed_network)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

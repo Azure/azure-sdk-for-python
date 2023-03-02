@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Union, Sequence, Dict, List, cast, Tuple
+from typing import Any, Union, Sequence, Dict, List, cast, Tuple, Optional
 from datetime import timedelta, datetime
 
 from azure.core.credentials import TokenCredential
@@ -44,7 +44,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io'.
-    :paramtype endpoint: str
+    :paramtype endpoint: Optional[str]
     """
 
     def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
@@ -67,8 +67,8 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         workspace_id: str,
         query: str,
         *,
-        timespan: Union[
-            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
+        timespan: Optional[Union[
+            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]
         ],
         **kwargs: Any
         ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
@@ -83,9 +83,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
-         a timedelta and a start datetime, or a start datetime/end datetime.
+         a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+         the query to a timespan.
         :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
-         or tuple[~datetime.datetime, ~datetime.datetime]
+         or tuple[~datetime.datetime, ~datetime.datetime] or None
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
@@ -94,7 +95,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
-        :paramtype additional_workspaces: list[str]
+        :paramtype additional_workspaces: Optional[list[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -149,7 +150,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         self,
         queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
         **kwargs: Any
-    ) -> List[Union[LogsQueryResult, LogsQueryPartialResult, LogsQueryError]]:
+    ) -> List[Union[LogsQueryResult, LogsQueryError, LogsQueryPartialResult]]:
         """Execute a list of Kusto queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
 

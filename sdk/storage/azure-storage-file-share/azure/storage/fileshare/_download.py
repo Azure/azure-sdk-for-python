@@ -398,9 +398,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return data
 
     def content_as_bytes(self, max_concurrency=1):
-        """Download the contents of this file.
+        """DEPRECATED: Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
+
+        This method is deprecated, use func:`readall` instead.
 
         :keyword int max_concurrency:
             The number of parallel connections with which to download.
@@ -414,9 +416,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return self.readall()
 
     def content_as_text(self, max_concurrency=1, encoding="UTF-8"):
-        """Download the contents of this file, and decode as text.
+        """DEPRECATED: Download the contents of this file, and decode as text.
 
         This operation is blocking until all data is downloaded.
+
+        This method is deprecated, use func:`readall` instead.
 
         :keyword int max_concurrency:
             The number of parallel connections with which to download.
@@ -495,7 +499,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         return self.size
 
     def download_to_stream(self, stream, max_concurrency=1):
-        """Download the contents of this file to a stream.
+        """DEPRECATED: Download the contents of this file to a stream.
+
+        This method is deprecated, use func:`readinto` instead.
 
         :param stream:
             The stream to download to. This can be an open file-handle,

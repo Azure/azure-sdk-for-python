@@ -51,7 +51,7 @@ class TestEnvironmentEntity:
         assert env == env_from_rest_object
         assert env.properties == env_from_rest_object.properties
         assert env != diff_env
-        
+
     def test_conda_file_deserialize_and_serialize(self) -> None:
         # Tests that conda file is deserialized same way if using load_environment() or Environment()
         conda_file_path = "tests/test_configs/environment/environment_files/environment.yml"
@@ -110,15 +110,15 @@ class TestEnvironmentEntity:
         inference_conf_obj = json.loads(inference_conf)
 
         env_no_inference_config = Environment(
-                    conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
-                    image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1"
-                )
+            conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
+            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
+        )
 
         env_with_inference_config = Environment(
-                    conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
-                    image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
-                    inference_config=inference_conf_obj
-                )
+            conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
+            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
+            inference_config=inference_conf_obj,
+        )
 
         assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
         assert env_no_inference_config.version != env_with_inference_config.version

@@ -3,15 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from typing import TYPE_CHECKING
-
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
 
 try:
@@ -24,18 +23,8 @@ try:
 except ImportError:
     pass
 
-from ._common_conversion import (
-    _sign_string,
-)
-
-from ._error import (
-    _wrap_exception,
-)
-
-if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import PipelineResponse, PipelineRequest  # pylint: disable=ungrouped-imports
+from ._common_conversion import _sign_string
+from ._error import _wrap_exception
 
 
 class AzureSigningError(ClientAuthenticationError):
@@ -150,11 +139,10 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             # Doing so will clarify/locate the source of problem
             raise _wrap_exception(ex, AzureSigningError)
 
-    def on_request(self, request):
-    # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         self.sign_request(request)
 
-    def sign_request(self, request):
+    def sign_request(self, request: PipelineRequest) -> None:
         string_to_sign = (
             self._get_verb(request.http_request)
             + self._get_headers(
@@ -190,17 +178,17 @@ class BearerTokenChallengePolicy(BearerTokenCredentialPolicy):
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: TokenCredential,
         *scopes: str,
         discover_tenant: bool = True,
         discover_scopes: bool = True,
-        **kwargs: "Any"
+        **kwargs
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
         super().__init__(credential, *scopes, **kwargs)
 
-    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.

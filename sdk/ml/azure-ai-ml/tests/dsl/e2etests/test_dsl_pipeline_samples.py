@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
 
 from azure.ai.ml import MLClient, load_job
@@ -332,19 +332,116 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
-    def test_spark_job_with_builder_in_pipeline_without_entry(self, client: MLClient,) -> None:
+    def test_spark_job_with_builder_in_pipeline_without_entry(
+        self,
+        client: MLClient,
+    ) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.invalid_pipeline import (
             generate_dsl_pipeline_from_builder_without_entry as spark_job_in_pipeline,
         )
+
         pipeline = spark_job_in_pipeline()
         with pytest.raises(Exception) as ex:
             created_job = client.jobs.create_or_update(pipeline)
 
-        assert '{\n  "result": "Failed",\n  "errors": [\n    {\n      "message": "Missing data for required field.",' \
-               '\n      "path": "jobs.add_greeting_column.component.entry",\n      "value": null\n    }\n  ]\n}' in ex.value.message
-        
+        assert (
+            '{\n  "result": "Failed",\n  "errors": [\n    {\n      "message": "Missing data for required field.",'
+            '\n      "path": "jobs.add_greeting_column.component.entry",\n      "value": null\n    }\n  ]\n}'
+            == str(ex.value)
+        )
+
         validation_result = client.jobs.validate(pipeline)
         assert validation_result.passed is False
         assert validation_result.error_messages == {
-            "jobs.add_greeting_column.component.entry": 'Missing data for required field.',
+            "jobs.add_greeting_column.component.entry": "Missing data for required field.",
         }
+
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_2urifolder_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_2urifolder_job_with_builder_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_mixtype_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_copy_mixtype_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_urifile_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_copy_urifile_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_urifolder_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_copy_urifolder_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_import_filesystem_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_file_system.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_import_sql_database_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_database.pipeline import (
+            generate_dsl_pipeline_from_builder_sql as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_import_snowflake_database_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_database.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_export_sql_database_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.export_database.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_data_transfer_multi_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)

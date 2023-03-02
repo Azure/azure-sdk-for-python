@@ -34,17 +34,15 @@ exporter = ConsoleSpanExporter()
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(
-    SimpleSpanProcessor(exporter)
-)
+trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
 
 # Example with Servicebus SDKs
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 import os
 
-connstr = os.environ['SERVICE_BUS_CONN_STR']
-queue_name = os.environ['SERVICE_BUS_QUEUE_NAME']
+connstr = os.environ["SERVICE_BUS_CONN_STR"]
+queue_name = os.environ["SERVICE_BUS_QUEUE_NAME"]
 
 
 with tracer.start_as_current_span(name="MyApplication"):

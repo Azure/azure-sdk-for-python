@@ -13,10 +13,10 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
@@ -43,7 +43,14 @@ from azure.ai.ml.entities._job.distribution import (
 )
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._job.job_service import (
+    JobServiceBase,
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import (
@@ -121,7 +128,8 @@ class Command(BaseNode):
     :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
     :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
         Please see https://aka.ms/azuremlexperimental for more information.
-    :type services: Dict[str, JobService]
+    :type services:
+        Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -154,7 +162,9 @@ class Command(BaseNode):
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
-        services: Optional[Dict[str, JobService]] = None,
+        services: Optional[
+            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+        ] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -548,7 +558,7 @@ class Command(BaseNode):
                 # RestJobService, so we need to convert it back. Here we convert the dict to a
                 # dummy rest object which may work as a RestJobService instead.
                 services[service_name] = from_rest_dict_to_dummy_rest_object(service)
-            obj["services"] = JobService._from_rest_job_services(services)
+            obj["services"] = JobServiceBase._from_rest_job_services(services)
 
         # handle limits
         if "limits" in obj and obj["limits"]:
@@ -574,7 +584,7 @@ class Command(BaseNode):
             properties=rest_command_job.properties,
             command=rest_command_job.command,
             experiment_name=rest_command_job.experiment_name,
-            services=JobService._from_rest_job_services(rest_command_job.services),
+            services=JobServiceBase._from_rest_job_services(rest_command_job.services),
             status=rest_command_job.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
@@ -662,7 +672,9 @@ class Command(BaseNode):
         )
 
 
-def _resolve_job_services(services: dict) -> Dict[str, JobService]:
+def _resolve_job_services(
+    services: dict,
+) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
     """Resolve normal dict to dict[str, JobService]"""
     if services is None:
         return None
@@ -680,7 +692,9 @@ def _resolve_job_services(services: dict) -> Dict[str, JobService]:
     for name, service in services.items():
         if isinstance(service, dict):
             service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
-        elif not isinstance(service, JobService):
+        elif not isinstance(
+            service, (JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService)
+        ):
             msg = f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
             raise ValidationException(
                 message=msg,

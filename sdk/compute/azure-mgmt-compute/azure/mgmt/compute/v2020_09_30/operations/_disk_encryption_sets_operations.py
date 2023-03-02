@@ -438,7 +438,7 @@ class DiskEncryptionSetsOperations:
          name are a-z, A-Z, 0-9 and _. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
         :param disk_encryption_set: disk encryption set object supplied in the body of the Put disk
-         encryption set operation. Is either a model type or a IO type. Required.
+         encryption set operation. Is either a DiskEncryptionSet type or a IO type. Required.
         :type disk_encryption_set: ~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSet or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -667,7 +667,7 @@ class DiskEncryptionSetsOperations:
          name are a-z, A-Z, 0-9 and _. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
         :param disk_encryption_set: disk encryption set object supplied in the body of the Patch disk
-         encryption set operation. Is either a model type or a IO type. Required.
+         encryption set operation. Is either a DiskEncryptionSetUpdate type or a IO type. Required.
         :type disk_encryption_set: ~azure.mgmt.compute.v2020_09_30.models.DiskEncryptionSetUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

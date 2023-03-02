@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -28,7 +28,9 @@ class AzureMonitorAlertSettings(_serialization.Model):
         "alerts_for_all_job_failures": {"key": "alertsForAllJobFailures", "type": "str"},
     }
 
-    def __init__(self, *, alerts_for_all_job_failures: Optional[Union[str, "_models.AlertsState"]] = None, **kwargs):
+    def __init__(
+        self, *, alerts_for_all_job_failures: Optional[Union[str, "_models.AlertsState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword alerts_for_all_job_failures: Known values are: "Enabled" and "Disabled".
         :paramtype alerts_for_all_job_failures: str or ~azure.mgmt.recoveryservices.models.AlertsState
@@ -48,7 +50,7 @@ class CapabilitiesProperties(_serialization.Model):
         "dns_zones": {"key": "dnsZones", "type": "[DNSZone]"},
     }
 
-    def __init__(self, *, dns_zones: Optional[List["_models.DNSZone"]] = None, **kwargs):
+    def __init__(self, *, dns_zones: Optional[List["_models.DNSZone"]] = None, **kwargs: Any) -> None:
         """
         :keyword dns_zones:
         :paramtype dns_zones: list[~azure.mgmt.recoveryservices.models.DNSZone]
@@ -74,7 +76,7 @@ class ResourceCapabilitiesBase(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: str, **kwargs):
+    def __init__(self, *, type: str, **kwargs: Any) -> None:
         """
         :keyword type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
         :paramtype type: str
@@ -103,7 +105,9 @@ class CapabilitiesResponse(ResourceCapabilitiesBase):
         "properties": {"key": "properties", "type": "CapabilitiesResponseProperties"},
     }
 
-    def __init__(self, *, type: str, properties: Optional["_models.CapabilitiesResponseProperties"] = None, **kwargs):
+    def __init__(
+        self, *, type: str, properties: Optional["_models.CapabilitiesResponseProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
         :paramtype type: str
@@ -125,7 +129,7 @@ class CapabilitiesResponseProperties(_serialization.Model):
         "dns_zones": {"key": "dnsZones", "type": "[DNSZoneResponse]"},
     }
 
-    def __init__(self, *, dns_zones: Optional[List["_models.DNSZoneResponse"]] = None, **kwargs):
+    def __init__(self, *, dns_zones: Optional[List["_models.DNSZoneResponse"]] = None, **kwargs: Any) -> None:
         """
         :keyword dns_zones:
         :paramtype dns_zones: list[~azure.mgmt.recoveryservices.models.DNSZoneResponse]
@@ -145,7 +149,7 @@ class CertificateRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "RawCertificateData"},
     }
 
-    def __init__(self, *, properties: Optional["_models.RawCertificateData"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.RawCertificateData"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Raw certificate data.
         :paramtype properties: ~azure.mgmt.recoveryservices.models.RawCertificateData
@@ -168,7 +172,7 @@ class CheckNameAvailabilityParameters(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[str] = None, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, type: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword type: Describes the Resource type: Microsoft.RecoveryServices/Vaults.
         :paramtype type: str
@@ -181,7 +185,8 @@ class CheckNameAvailabilityParameters(_serialization.Model):
 
 
 class CheckNameAvailabilityResult(_serialization.Model):
-    """Response for check name availability API. Resource provider will set availability as true | false.
+    """Response for check name availability API. Resource provider will set availability as true |
+    false.
 
     :ivar name_available:
     :vartype name_available: bool
@@ -203,8 +208,8 @@ class CheckNameAvailabilityResult(_serialization.Model):
         name_available: Optional[bool] = None,
         reason: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available:
         :paramtype name_available: bool
@@ -230,7 +235,9 @@ class ClassicAlertSettings(_serialization.Model):
         "alerts_for_critical_operations": {"key": "alertsForCriticalOperations", "type": "str"},
     }
 
-    def __init__(self, *, alerts_for_critical_operations: Optional[Union[str, "_models.AlertsState"]] = None, **kwargs):
+    def __init__(
+        self, *, alerts_for_critical_operations: Optional[Union[str, "_models.AlertsState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword alerts_for_critical_operations: Known values are: "Enabled" and "Disabled".
         :paramtype alerts_for_critical_operations: str or
@@ -267,8 +274,8 @@ class ClientDiscoveryDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Name of the provider for display purposes.
         :paramtype provider: str
@@ -309,8 +316,8 @@ class ClientDiscoveryForLogSpecification(_serialization.Model):
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         blob_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the log.
         :paramtype name: str
@@ -338,8 +345,8 @@ class ClientDiscoveryForProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, service_specification: Optional["_models.ClientDiscoveryForServiceSpecification"] = None, **kwargs
-    ):
+        self, *, service_specification: Optional["_models.ClientDiscoveryForServiceSpecification"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword service_specification: Operation properties.
         :paramtype service_specification:
@@ -362,8 +369,8 @@ class ClientDiscoveryForServiceSpecification(_serialization.Model):
     }
 
     def __init__(
-        self, *, log_specifications: Optional[List["_models.ClientDiscoveryForLogSpecification"]] = None, **kwargs
-    ):
+        self, *, log_specifications: Optional[List["_models.ClientDiscoveryForLogSpecification"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword log_specifications: List of log specifications of this operation.
         :paramtype log_specifications:
@@ -392,8 +399,8 @@ class ClientDiscoveryResponse(_serialization.Model):
         *,
         value: Optional[List["_models.ClientDiscoveryValueForSingleApi"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of available operations.
         :paramtype value: list[~azure.mgmt.recoveryservices.models.ClientDiscoveryValueForSingleApi]
@@ -433,8 +440,8 @@ class ClientDiscoveryValueForSingleApi(_serialization.Model):
         display: Optional["_models.ClientDiscoveryDisplay"] = None,
         origin: Optional[str] = None,
         properties: Optional["_models.ClientDiscoveryForProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the Operation.
         :paramtype name: str
@@ -474,8 +481,8 @@ class CmkKekIdentity(_serialization.Model):
         *,
         use_system_assigned_identity: Optional[bool] = None,
         user_assigned_identity: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword use_system_assigned_identity: Indicate that system assigned identity should be used.
          Mutually exclusive with 'userAssignedIdentity' field.
@@ -500,7 +507,7 @@ class CmkKeyVaultProperties(_serialization.Model):
         "key_uri": {"key": "keyUri", "type": "str"},
     }
 
-    def __init__(self, *, key_uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, key_uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key_uri: The key uri of the Customer Managed Key.
         :paramtype key_uri: str
@@ -522,7 +529,9 @@ class DNSZone(_serialization.Model):
         "sub_resource": {"key": "subResource", "type": "str"},
     }
 
-    def __init__(self, *, sub_resource: Optional[Union[str, "_models.VaultSubResourceType"]] = None, **kwargs):
+    def __init__(
+        self, *, sub_resource: Optional[Union[str, "_models.VaultSubResourceType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword sub_resource: Subresource type for vault AzureBackup, AzureBackup_secondary or
          AzureSiteRecovery. Known values are: "AzureBackup", "AzureBackup_secondary", and
@@ -554,8 +563,8 @@ class DNSZoneResponse(DNSZone):
         *,
         sub_resource: Optional[Union[str, "_models.VaultSubResourceType"]] = None,
         required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sub_resource: Subresource type for vault AzureBackup, AzureBackup_secondary or
          AzureSiteRecovery. Known values are: "AzureBackup", "AzureBackup_secondary", and
@@ -601,7 +610,7 @@ class Error(_serialization.Model):
         "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.additional_info = None
@@ -632,7 +641,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.info = None
@@ -679,8 +688,8 @@ class IdentityData(_serialization.Model):
         *,
         type: Union[str, "_models.ResourceIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of managed identity used. The type 'SystemAssigned, UserAssigned'
          includes both an implicitly created identity and a set of user-assigned identities. The type
@@ -711,7 +720,7 @@ class ImmutabilitySettings(_serialization.Model):
         "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.ImmutabilityState"]] = None, **kwargs):
+    def __init__(self, *, state: Optional[Union[str, "_models.ImmutabilityState"]] = None, **kwargs: Any) -> None:
         """
         :keyword state: Known values are: "Disabled", "Unlocked", and "Locked".
         :paramtype state: str or ~azure.mgmt.recoveryservices.models.ImmutabilityState
@@ -743,8 +752,8 @@ class JobsSummary(_serialization.Model):
         failed_jobs: Optional[int] = None,
         suspended_jobs: Optional[int] = None,
         in_progress_jobs: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failed_jobs: Count of failed jobs.
         :paramtype failed_jobs: int
@@ -779,8 +788,8 @@ class MonitoringSettings(_serialization.Model):
         *,
         azure_monitor_alert_settings: Optional["_models.AzureMonitorAlertSettings"] = None,
         classic_alert_settings: Optional["_models.ClassicAlertSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword azure_monitor_alert_settings: Settings for Azure Monitor based alerts.
         :paramtype azure_monitor_alert_settings:
@@ -828,8 +837,8 @@ class MonitoringSummary(_serialization.Model):
         deprecated_provider_count: Optional[int] = None,
         supported_provider_count: Optional[int] = None,
         unsupported_provider_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword un_healthy_vm_count: Count of unhealthy VMs.
         :paramtype un_healthy_vm_count: int
@@ -867,7 +876,7 @@ class NameInfo(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Value of usage.
         :paramtype value: str
@@ -916,8 +925,8 @@ class OperationResource(_serialization.Model):
         name: Optional[str] = None,
         status: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword end_time: End time of the operation.
         :paramtype end_time: ~datetime.datetime
@@ -972,7 +981,7 @@ class Resource(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, etag: Optional[str] = None, **kwargs):
+    def __init__(self, *, etag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword etag: Optional ETag.
         :paramtype etag: str
@@ -1025,8 +1034,8 @@ class PatchTrackedResource(Resource):
         etag: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword etag: Optional ETag.
         :paramtype etag: str
@@ -1093,8 +1102,8 @@ class PatchVault(PatchTrackedResource):
         properties: Optional["_models.VaultProperties"] = None,
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.IdentityData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword etag: Optional ETag.
         :paramtype etag: str
@@ -1132,7 +1141,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1173,7 +1182,9 @@ class PrivateEndpointConnection(_serialization.Model):
         "group_ids": {"key": "groupIds", "type": "[str]"},
     }
 
-    def __init__(self, *, group_ids: Optional[List[Union[str, "_models.VaultSubResourceType"]]] = None, **kwargs):
+    def __init__(
+        self, *, group_ids: Optional[List[Union[str, "_models.VaultSubResourceType"]]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword group_ids: Group Ids for the Private Endpoint.
         :paramtype group_ids: list[str or ~azure.mgmt.recoveryservices.models.VaultSubResourceType]
@@ -1220,7 +1231,7 @@ class PrivateEndpointConnectionVaultProperties(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1268,7 +1279,7 @@ class PrivateLinkResource(_serialization.Model):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1294,8 +1305,12 @@ class PrivateLinkResources(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of private link resources.
         :paramtype value: list[~azure.mgmt.recoveryservices.models.PrivateLinkResource]
@@ -1333,7 +1348,7 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status = None
@@ -1361,8 +1376,8 @@ class RawCertificateData(_serialization.Model):
         *,
         auth_type: Optional[Union[str, "_models.AuthType"]] = None,
         certificate: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword auth_type: Specifies the authentication type. Known values are: "Invalid", "ACS",
          "AAD", "AccessControlService", and "AzureActiveDirectory".
@@ -1411,8 +1426,8 @@ class ReplicationUsage(_serialization.Model):
         recovery_plan_count: Optional[int] = None,
         registered_servers_count: Optional[int] = None,
         recovery_services_provider_auth_type: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword monitoring_summary: Summary of the replication monitoring data for this vault.
         :paramtype monitoring_summary: ~azure.mgmt.recoveryservices.models.MonitoringSummary
@@ -1448,7 +1463,7 @@ class ReplicationUsageList(_serialization.Model):
         "value": {"key": "value", "type": "[ReplicationUsage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ReplicationUsage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ReplicationUsage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of replication usages for the given vault.
         :paramtype value: list[~azure.mgmt.recoveryservices.models.ReplicationUsage]
@@ -1477,7 +1492,9 @@ class ResourceCapabilities(ResourceCapabilitiesBase):
         "properties": {"key": "properties", "type": "CapabilitiesProperties"},
     }
 
-    def __init__(self, *, type: str, properties: Optional["_models.CapabilitiesProperties"] = None, **kwargs):
+    def __init__(
+        self, *, type: str, properties: Optional["_models.CapabilitiesProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword type: Describes the Resource type: Microsoft.RecoveryServices/Vaults. Required.
         :paramtype type: str
@@ -1551,8 +1568,8 @@ class ResourceCertificateDetails(_serialization.Model):
         thumbprint: Optional[str] = None,
         valid_from: Optional[datetime.datetime] = None,
         valid_to: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword certificate: The base64 encoded certificate raw data string.
         :paramtype certificate: bytes
@@ -1669,8 +1686,8 @@ class ResourceCertificateAndAadDetails(ResourceCertificateDetails):  # pylint: d
         valid_to: Optional[datetime.datetime] = None,
         service_resource_id: Optional[str] = None,
         aad_audience: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword certificate: The base64 encoded certificate raw data string.
         :paramtype certificate: bytes
@@ -1792,8 +1809,8 @@ class ResourceCertificateAndAcsDetails(ResourceCertificateDetails):  # pylint: d
         thumbprint: Optional[str] = None,
         valid_from: Optional[datetime.datetime] = None,
         valid_to: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword certificate: The base64 encoded certificate raw data string.
         :paramtype certificate: bytes
@@ -1846,7 +1863,9 @@ class SecuritySettings(_serialization.Model):
         "immutability_settings": {"key": "immutabilitySettings", "type": "ImmutabilitySettings"},
     }
 
-    def __init__(self, *, immutability_settings: Optional["_models.ImmutabilitySettings"] = None, **kwargs):
+    def __init__(
+        self, *, immutability_settings: Optional["_models.ImmutabilitySettings"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword immutability_settings: Immutability Settings of a vault.
         :paramtype immutability_settings: ~azure.mgmt.recoveryservices.models.ImmutabilitySettings
@@ -1895,8 +1914,8 @@ class Sku(_serialization.Model):
         family: Optional[str] = None,
         size: Optional[str] = None,
         capacity: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of SKU is RS0 (Recovery Services 0th version) and the tier is standard
          tier. They do not have affect on backend storage redundancy or any other vault settings. To
@@ -1957,8 +1976,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -2022,7 +2041,9 @@ class TrackedResource(Resource):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, etag: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self, *, location: str, etag: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword etag: Optional ETag.
         :paramtype etag: str
@@ -2087,7 +2108,7 @@ class UpgradeDetails(_serialization.Model):
         "previous_resource_id": {"key": "previousResourceId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.operation_id = None
@@ -2122,7 +2143,7 @@ class UserIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -2189,8 +2210,8 @@ class Vault(TrackedResource):
         identity: Optional["_models.IdentityData"] = None,
         properties: Optional["_models.VaultProperties"] = None,
         sku: Optional["_models.Sku"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword etag: Optional ETag.
         :paramtype etag: str
@@ -2213,7 +2234,8 @@ class Vault(TrackedResource):
 
 
 class VaultCertificateResponse(_serialization.Model):
-    """Certificate corresponding to a vault that can be used by clients to register themselves with the vault.
+    """Certificate corresponding to a vault that can be used by clients to register themselves with
+    the vault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2241,7 +2263,7 @@ class VaultCertificateResponse(_serialization.Model):
         "properties": {"key": "properties", "type": "ResourceCertificateDetails"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ResourceCertificateDetails"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ResourceCertificateDetails"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Certificate details representing the Vault credentials.
         :paramtype properties: ~azure.mgmt.recoveryservices.models.ResourceCertificateDetails
@@ -2302,8 +2324,8 @@ class VaultExtendedInfoResource(Resource):
         encryption_key: Optional[str] = None,
         encryption_key_thumbprint: Optional[str] = None,
         algorithm: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword etag: Optional ETag.
         :paramtype etag: str
@@ -2343,7 +2365,7 @@ class VaultList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Vault"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Vault"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.recoveryservices.models.Vault]
@@ -2435,8 +2457,8 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         monitoring_settings: Optional["_models.MonitoringSettings"] = None,
         redundancy_settings: Optional["_models.VaultPropertiesRedundancySettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword upgrade_details: Details for upgrading vault.
         :paramtype upgrade_details: ~azure.mgmt.recoveryservices.models.UpgradeDetails
@@ -2498,8 +2520,8 @@ class VaultPropertiesEncryption(_serialization.Model):
         key_vault_properties: Optional["_models.CmkKeyVaultProperties"] = None,
         kek_identity: Optional["_models.CmkKekIdentity"] = None,
         infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryptionState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_vault_properties: The properties of the Key Vault which hosts CMK.
         :paramtype key_vault_properties: ~azure.mgmt.recoveryservices.models.CmkKeyVaultProperties
@@ -2549,7 +2571,7 @@ class VaultPropertiesMoveDetails(_serialization.Model):
         "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.operation_id = None
@@ -2583,7 +2605,7 @@ class VaultPropertiesRedundancySettings(_serialization.Model):
         "cross_region_restore": {"key": "crossRegionRestore", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.standard_tier_storage_redundancy = None
@@ -2626,8 +2648,8 @@ class VaultUsage(_serialization.Model):
         current_value: Optional[int] = None,
         limit: Optional[int] = None,
         name: Optional["_models.NameInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unit: Unit of the usage. Known values are: "Count", "Bytes", "Seconds", "Percent",
          "CountPerSecond", and "BytesPerSecond".
@@ -2663,7 +2685,7 @@ class VaultUsageList(_serialization.Model):
         "value": {"key": "value", "type": "[VaultUsage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VaultUsage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.VaultUsage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of usages for the given vault.
         :paramtype value: list[~azure.mgmt.recoveryservices.models.VaultUsage]

@@ -40,25 +40,26 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_request(
-    resource_group_name: str, server_name: str, database_name: str, subscription_id: str, **kwargs: Any
+def build_list_by_server_request(
+    resource_group_name: str, server_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recoverableDatabases/{databaseName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recoverableDatabases",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "serverName": _SERIALIZER.url("server_name", server_name, "str"),
-        "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -72,29 +73,43 @@ def build_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_by_server_request(
-    resource_group_name: str, server_name: str, subscription_id: str, **kwargs: Any
+def build_get_request(
+    resource_group_name: str,
+    server_name: str,
+    database_name: str,
+    subscription_id: str,
+    *,
+    expand: Optional[str] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recoverableDatabases",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recoverableDatabases/{databaseName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -123,72 +138,6 @@ class RecoverableDatabasesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(
-        self, resource_group_name: str, server_name: str, database_name: str, **kwargs: Any
-    ) -> _models.RecoverableDatabase:
-        """Gets a recoverable database, which is a resource representing a database's geo backup.
-
-        :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal. Required.
-        :type resource_group_name: str
-        :param server_name: The name of the server. Required.
-        :type server_name: str
-        :param database_name: The name of the database. Required.
-        :type database_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RecoverableDatabase or the result of cls(response)
-        :rtype: ~azure.mgmt.sql.models.RecoverableDatabase
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
-        cls: ClsType[_models.RecoverableDatabase] = kwargs.pop("cls", None)
-
-        request = build_get_request(
-            resource_group_name=resource_group_name,
-            server_name=server_name,
-            database_name=database_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.get.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("RecoverableDatabase", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recoverableDatabases/{databaseName}"
-    }
-
-    @distributed_trace
     def list_by_server(
         self, resource_group_name: str, server_name: str, **kwargs: Any
     ) -> Iterable["_models.RecoverableDatabase"]:
@@ -207,7 +156,9 @@ class RecoverableDatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
+        )
         cls: ClsType[_models.RecoverableDatabaseListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -245,7 +196,7 @@ class RecoverableDatabasesOperations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -265,4 +216,85 @@ class RecoverableDatabasesOperations:
 
     list_by_server.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recoverableDatabases"
+    }
+
+    @distributed_trace
+    def get(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        database_name: str,
+        expand: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.RecoverableDatabase:
+        """Gets a recoverable database.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal. Required.
+        :type resource_group_name: str
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param database_name: The name of the database. Required.
+        :type database_name: str
+        :param expand: The child resources to include in the response. Default value is None.
+        :type expand: str
+        :param filter: An OData filter expression that filters elements in the collection. Default
+         value is None.
+        :type filter: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: RecoverableDatabase or the result of cls(response)
+        :rtype: ~azure.mgmt.sql.models.RecoverableDatabase
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
+        )
+        cls: ClsType[_models.RecoverableDatabase] = kwargs.pop("cls", None)
+
+        request = build_get_request(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            expand=expand,
+            filter=filter,
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("RecoverableDatabase", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/recoverableDatabases/{databaseName}"
     }

@@ -18,7 +18,7 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
         "not_callable": "func must be a function or a callable object",
         "conflict_argument": "Injected param name __self conflicts with function args {args}",
         "not_all_template_separators_used": "Not all template separators are used, "
-                                            "please switch to a compatible version of Python.",
+        "please switch to a compatible version of Python.",
     }
     injected_param = "__self"
 
@@ -43,10 +43,10 @@ class PersistentLocalsFunctionBuilder(abc.ABC):
         """
         if isinstance(func, (FunctionType, MethodType)):
             pass
-        elif hasattr(func, '__call__'):
+        elif hasattr(func, "__call__"):
             func = func.__call__
         else:
-            raise TypeError(self.make_error('not_callable'))
+            raise TypeError(self.make_error("not_callable"))
 
         if self.injected_param in func.__code__.co_varnames:
             raise ValueError(self.make_error("conflict_argument", args=list(func.__code__.co_varnames)))
@@ -94,7 +94,6 @@ class PersistentLocalsFunctionProfilerBuilder(PersistentLocalsFunctionBuilder):
 try:
     from bytecode import Bytecode, Instr
 
-
     class PersistentLocalsFunction(object):
         def __init__(self, _func, *, _self: Optional[Any] = None, skip_locals: Optional[List[str]] = None):
             """
@@ -121,17 +120,14 @@ try:
                     for skip_local in __self._skip_locals:
                         __self.locals.pop(skip_local, None)
 
-
     def _source_template_func(mock_arg):
         return mock_arg
-
 
     def _target_template_func(__self, mock_arg):
         try:
             return mock_arg
         finally:
             __self.locals = locals().copy()
-
 
     class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionBuilder):
         def __init__(self):
@@ -178,12 +174,7 @@ try:
 
         # endregion
 
-        def _split_instructions(
-                self,
-                instructions,
-                *,
-                skip_body_instr=False
-        ) -> List[List[Any]]:
+        def _split_instructions(self, instructions, *, skip_body_instr=False) -> List[List[Any]]:
             """Split instructions into several pieces by template separators.
             For example, in Python 3.11, the template separators will be:
             [
@@ -247,12 +238,9 @@ try:
             generated_instructions = []
 
             for template_piece, input_piece, separator in zip(
-                    self._template_body,
-                    self._split_instructions(
-                        self.get_instructions(func),
-                        skip_body_instr=True
-                    ),
-                    self._template_separators,
+                self._template_body,
+                self._split_instructions(self.get_instructions(func), skip_body_instr=True),
+                self._template_separators,
             ):
                 generated_instructions.extend(template_piece)
                 generated_instructions.extend(input_piece)
@@ -265,7 +253,7 @@ try:
                 func.__globals__,
                 func.__name__,
                 func.__defaults__,
-                func.__closure__
+                func.__closure__,
             )
             return PersistentLocalsFunction(
                 generated_func,
