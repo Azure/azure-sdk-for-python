@@ -2,11 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict
-from .data_column_type import DataColumnType
+# pylint: disable=redefined-builtin,disable=unused-argument
 
-from azure.ai.ml._utils._experimental import experimental
+from typing import Dict
+
 from azure.ai.ml._restclient.v2023_02_01_preview.models import IndexColumn, FeatureDataType
+
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._utils._experimental import experimental
+
+from .data_column_type import DataColumnType
 
 DataColumnTypeMap: Dict[DataColumnType, FeatureDataType] = {
     DataColumnType.string: FeatureDataType.STRING,
@@ -30,7 +35,7 @@ FeatureDataTypeMap: Dict[str, DataColumnType] = {
 
 
 @experimental
-class DataColumn(object):
+class DataColumn(RestTranslatableMixin):
     """A dataframe column
     :param name: The column name
     :type name: str, required
@@ -44,5 +49,5 @@ class DataColumn(object):
     def _to_rest_object(self) -> IndexColumn:
         return IndexColumn(column_name=self.name, data_type=DataColumnTypeMap[self.type])
 
-    def _from_rest_object(obj: IndexColumn) -> "DataColumn":
+    def _from_rest_object(cls, obj: IndexColumn) -> "DataColumn":
         return DataColumn(name=obj.column_name, type=FeatureDataTypeMap[obj.data_type])

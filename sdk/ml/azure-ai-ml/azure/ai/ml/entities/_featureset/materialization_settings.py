@@ -26,7 +26,7 @@ class MaterializationSettings(RestTranslatableMixin):
         notification: Optional[Notification] = None,
         resource: Optional[MaterializationComputeResource] = None,
         spark_conf: Optional[Dict[str, str]] = None,
-        **kwargs
+        **kwargs  # pylint: disable=unused-argument
     ):
         self.schedule = schedule
         self.offline_enabled = offline_enabled
@@ -47,9 +47,11 @@ class MaterializationSettings(RestTranslatableMixin):
             store_type = MaterializationStoreType.NONE
 
         return RestMaterializationSettings(
-            schedule=self.schedule._to_rest_object(),
-            notification=self.notification._to_rest_object() if self.notification else None,
-            resource=self.resource._to_rest_object() if self.resource else None,
+            schedule=self.schedule._to_rest_object(),  # pylint: disable=protected-access
+            notification=self.notification._to_rest_object()  # pylint: disable=protected-access
+            if self.notification
+            else None,
+            resource=self.resource._to_rest_object() if self.resource else None,  # pylint: disable=protected-access
             spark_configuration=self.spark_conf,
             store_type=store_type,
         )
@@ -59,9 +61,9 @@ class MaterializationSettings(RestTranslatableMixin):
         if not obj:
             return None
         return MaterializationSettings(
-            schedule=RecurrenceTrigger._from_rest_object(obj.schedule),
-            notification=Notification._from_rest_object(obj.notification),
-            resource=MaterializationComputeResource._from_rest_object(obj.resource),
+            schedule=RecurrenceTrigger._from_rest_object(obj.schedule),  # pylint: disable=protected-access
+            notification=Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
+            resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
             spark_conf=obj.spark_configuration,
             offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE,
             online_enabled=obj.store_type == MaterializationStoreType.ONLINE,

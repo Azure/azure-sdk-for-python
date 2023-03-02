@@ -12,7 +12,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class Notification(RestTranslatableMixin):
     """Configuration for notification."""
 
-    def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None):
         """
         :keyword email_on: Send email notification to user on specified notification type.
         :paramtype email_on: list[Literal]. Values can be [jobcompleted, jobfailed, jobcanceled]

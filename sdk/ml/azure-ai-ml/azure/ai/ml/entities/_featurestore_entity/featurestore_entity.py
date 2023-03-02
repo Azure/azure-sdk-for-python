@@ -14,7 +14,6 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturestoreEntityVersionProperties,
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
-    IndexColumn,
 )
 from azure.ai.ml._utils._experimental import experimental
 

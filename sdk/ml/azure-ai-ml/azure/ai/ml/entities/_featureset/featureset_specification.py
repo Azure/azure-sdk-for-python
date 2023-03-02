@@ -11,7 +11,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class FeaturesetSpecification(RestTranslatableMixin):
-    def __init__(self, *, path: Optional[str] = None, **kwargs):
+    def __init__(self, *, path: Optional[str] = None, **kwargs):  # pylint: disable=unused-argument
         """
         :param path: Specifies the spec path.
         :type path: str
