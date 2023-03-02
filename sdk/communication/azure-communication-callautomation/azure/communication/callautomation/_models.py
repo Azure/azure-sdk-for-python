@@ -20,9 +20,18 @@ from ._generated.models import (
     StartCallRecordingRequest as StartCallRecordingRequestRest,
     RecordingContentType, RecordingChannelType, RecordingFormatType,
     CommunicationIdentifierModel,
+    CallConnectionStateModel,
     RecordingStorageType,
     RecognizeInputType
 )
+
+from ._generated.models import CallParticipant as CallParticipantGenerated
+from ._generated.models import CallConnectionProperties as CallConnectionPropertiesGenerated
+from ._generated.models import GetParticipantsResponse as GetParticipantsResponseGenerated
+from ._generated.models import AddParticipantResponse as AddParticipantResponseGenerated
+from ._call_connection import CallConnection
+
+from ._communication_identifier_serializer import *
 
 
 class ServerCallLocator(object):
@@ -722,3 +731,170 @@ class CallInvite(object):
         self.sourceDisplayName = sourceDisplayName
         self.sipHeaders = sipHeaders
         self.voipHeaders = voipHeaders
+
+
+class CallConnectionProperties(object):
+    """Properties of a call connection."""
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        targets: Optional[List[CommunicationIdentifier]] = None,
+        call_connection_state: Optional[Union[str,
+                                              CallConnectionStateModel]] = None,
+        callback_uri: Optional[str] = None,
+        media_subscription_id: Optional[str] = None,
+        source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
+        source_display_name: Optional[str] = None,
+        source_identity: Optional[CommunicationIdentifier] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection_id: The call connection id.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: The server call id.
+        :paramtype server_call_id: str
+        :keyword targets: The targets of the call.
+        :paramtype targets:
+         list[CommunicationIdentifier]
+        :keyword call_connection_state: The state of the call connection. Known values are: "unknown",
+         "connecting", "connected", "transferring", "transferAccepted", "disconnecting", and
+         "disconnected".
+        :paramtype call_connection_state: str or CallConnectionStateModel
+        :keyword callback_uri: The callback URI.
+        :paramtype callback_uri: str
+        :keyword media_subscription_id: SubscriptionId for media streaming.
+        :paramtype media_subscription_id: str
+        :keyword source_caller_id_number: The source caller Id, a phone number, that's shown to the
+         PSTN participant being invited.
+         Required only when calling a PSTN callee.
+        :paramtype source_caller_id_number: PhoneNumberIdentifier
+        :keyword source_display_name: Display name of the call if dialing out to a pstn number.
+        :paramtype source_display_name: str
+        :keyword source_identity: Source identity.
+        :paramtype source_identity: CommunicationIdentifier
+        """
+        super().__init__(**kwargs)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.targets = targets
+        self.call_connection_state = call_connection_state
+        self.callback_uri = callback_uri
+        self.media_subscription_id = media_subscription_id
+        self.source_caller_id_number = source_caller_id_number
+        self.source_display_name = source_display_name
+        self.source_identity = source_identity
+
+    @classmethod
+    def _from_generated(cls, call_connection_properties_generated: CallConnectionPropertiesGenerated):
+
+        return cls(
+            call_connection_id=call_connection_properties_generated.call_connection_id,
+            server_call_id=call_connection_properties_generated.server_call_id,
+            targets=[deserialize_identifier(
+                target) for target in call_connection_properties_generated.targets],
+            call_connection_state=call_connection_properties_generated.call_connection_state,
+            callback_uri=call_connection_properties_generated.callback_uri,
+            media_subscription_id=call_connection_properties_generated.media_subscription_id,
+            source_caller_id_number=deserialize_phone_identifier(
+                call_connection_properties_generated.source_caller_id_number) if call_connection_properties_generated.source_caller_id_number else None,
+            source_display_name=call_connection_properties_generated.source_display_name,
+            source_identity=deserialize_identifier(call_connection_properties_generated.source_identity) if call_connection_properties_generated.source_identity else None)
+
+
+class CallResult(object):
+    def __init__(
+        self,
+        *,
+        call_connection: CallConnection,
+        call_connection_properties: CallConnectionProperties,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection: Call connection. Required.
+        :paramtype call_connection: CallConnection
+        :keyword call_connection_properties: Properties of the call connection
+        :paramtype call_connection_properties: CallConnectionProperties
+        """
+        super().__init__(**kwargs)
+        self.call_connection = call_connection
+        self.call_connection_properties = call_connection_properties
+
+
+class CallParticipant(object):
+    """Contract model of an ACS call participant.
+    """
+
+    def __init__(
+        self,
+        *,
+        identifier: CommunicationIdentifier,
+        is_muted: bool,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identifier: Communication identifier of the participant.
+        :paramtype identifier: CommunicationIdentifier
+        :keyword is_muted: Is participant muted.
+        :paramtype is_muted: bool
+        """
+        super().__init__(**kwargs)
+        self.identifier = identifier
+        self.is_muted = is_muted
+
+    @classmethod
+    def _from_generated(cls, call_participant_generated: CallParticipantGenerated):
+        return cls(identifier=deserialize_identifier(call_participant_generated.identifier), is_muted=call_participant_generated.is_muted)
+
+
+class GetParticipantsResponse(object):
+    """The response payload for getting participants of the call."""
+
+    def __init__(
+        self,
+        *,
+        values: Optional[List["_models.CallParticipant"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword values: List of the current participants in the call.
+        :paramtype values: list[CallParticipant]
+        :keyword next_link: Continue of the list of participants.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.values = values
+        self.next_link = next_link
+
+    @classmethod
+    def _from_generated(cls, get_participant_response_generated: GetParticipantsResponseGenerated):
+        return cls(values=[CallParticipant._from_generated(participant) for participant in get_participant_response_generated.values], next_link=get_participant_response_generated.next_link)
+
+
+class AddParticipantResponse(object):
+    """The response payload for adding participants to the call.
+    """
+
+    def __init__(
+        self,
+        *,
+        participant: Optional[CallParticipant] = None,
+        operation_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword participant: List of current participants in the call.
+        :paramtype participant: CallParticipant
+        :keyword operation_context: The operation context provided by client.
+        :paramtype operation_context: str
+        """
+        super().__init__(**kwargs)
+        self.participant = participant
+        self.operation_context = operation_context
+
+    @classmethod
+    def _from_generated(cls, add_participant_response_generated: AddParticipantResponseGenerated):
+        return cls(participant=CallParticipant._from_generated(add_participant_response_generated.participant), operation_context=add_participant_response_generated.operation_context)

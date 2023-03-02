@@ -17,7 +17,7 @@ from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._generated.models import (
     CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest)
 from ._communication_identifier_serializer import *
-from ._models import CallInvite
+from ._models import (CallInvite, CallResult, CallConnectionProperties)
 
 
 class CallAutomationClient(object):
@@ -145,9 +145,11 @@ class CallAutomationClient(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        self._client.create_call(create_call_request=create_call_request, repeatability_first_sent=repeatability_first_sent,
-                                 repeatability_request_id=repeatability_request_id,
-                                 **kwargs)
+        result = self._client.create_call(create_call_request=create_call_request, repeatability_first_sent=repeatability_first_sent,
+                                          repeatability_request_id=repeatability_request_id,
+                                          **kwargs)
+
+        return CallResult(call_connection=self.get_call_connection(result.call_connection_id), call_connection_properties=CallConnectionProperties._from_generated(result))
 
     def create_group_call(
         self,
@@ -202,9 +204,11 @@ class CallAutomationClient(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        self._client.create_call(create_call_request=create_call_request, repeatability_first_sent=repeatability_first_sent,
-                                 repeatability_request_id=repeatability_request_id,
-                                 **kwargs)
+        result = self._client.create_call(create_call_request=create_call_request, repeatability_first_sent=repeatability_first_sent,
+                                          repeatability_request_id=repeatability_request_id,
+                                          **kwargs)
+
+        return CallResult(call_connection=self.get_call_connection(result.call_connection_id), call_connection_properties=CallConnectionProperties._from_generated(result))
 
     def answer_call(
         self,
@@ -224,8 +228,18 @@ class CallAutomationClient(object):
         :param azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive Services
         resource attached.
         :type azure_cognitive_services_endpoint_url: str
-        :param answered_by_identifier: The identifier of the contoso app which answers the call.
-        :type answered_by_identifier: CommunicationIdentifierModel
+        :param repeatability_request_id: If specified, the client directs that the request is
+         repeatable; that is, that the client can make the request multiple times with the same
+         Repeatability-Request-Id and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         UUID. Default value is None.
+        :type repeatability_request_id: str
+        :param repeatability_first_sent: If Repeatability-Request-ID header is specified, then
+         Repeatability-First-Sent header must also be specified. The value should be the date and time
+         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
+         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :type repeatability_first_sent: str
         """
 
         if not incoming_call_context:
@@ -247,9 +261,11 @@ class CallAutomationClient(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        self._client.answer_call(answer_call_request == answer_call_request, repeatability_first_sent=repeatability_first_sent,
-                                 repeatability_request_id=repeatability_request_id,
-                                 **kwargs)
+        result = self._client.answer_call(answer_call_request == answer_call_request, repeatability_first_sent=repeatability_first_sent,
+                                          repeatability_request_id=repeatability_request_id,
+                                          **kwargs)
+
+        return CallResult(call_connection=self.get_call_connection(result.call_connection_id), call_connection_properties=CallConnectionProperties._from_generated(result))
 
     def redirect_call(
         self,
@@ -295,7 +311,7 @@ class CallAutomationClient(object):
         :type incoming_call_context: str
         :param call_reject_reason: The rejection reason. Known values are: "none", "busy", and
         "forbidden".
-        :type call_reject_reason: str or ~azure.communication.callautomation.models.CallRejectReason
+        :type call_reject_reason: str or CallRejectReason
         """
 
         if not incoming_call_context:
