@@ -27,14 +27,6 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    PackageRequest,
-    CodeConfiguration,
-    BaseEnvironmentId,
-    ModelConfiguration,
-    AzureMLOnlineInferencingServer,
-)
-from azure.ai.ml._utils._asset_utils import _get_next_version_from_container
 from azure.core.polling import LROPoller
 from azure.core.rest import HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -219,37 +211,3 @@ def validate_scoring_script(deployment):
             message=f"Failed to open scoring script {err.filename}.",
             no_personal_data_message="Failed to open scoring script.",
         )
-
-
-def package_deployment(deployment: Deployment, all_ops) -> Deployment:
-    model_str = deployment.model
-    model_version = model_str.split("/")[-1]
-    model_name = model_str.split("/")[-3]
-    model_ops = all_ops["models"]
-    env_ops = all_ops["environments"]
-    # if not target_environment_version:
-    #     target_environment_version = env_ops.get_latest_version(target_environment_name)
-    package_request = PackageRequest(
-        target_environment_name="btt1",
-        target_environment_version="1.0.0",
-        base_environment_source=BaseEnvironmentId(
-            base_environment_source_type="EnvironmentAsset", resource_id=deployment.environment
-        ),
-        inferencing_server=AzureMLOnlineInferencingServer(
-            code_configuration=CodeConfiguration(
-                code_id=deployment.code_configuration.code,
-                scoring_script=deployment.code_configuration.scoring_script,
-            )
-        ),
-        model_configuration=ModelConfiguration(mode="Download", mount_path="."),
-    )
-    try:
-        package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
-        package_request.inferencing_server.code_configuration.code_id = "azureml:/" + deployment.code_configuration.code
-        packaged_env = model_ops.begin_package(model_name, model_version, package_request=package_request)
-    except Exception as e:
-        print(e)
-    deployment.environment = packaged_env.target_environment_id
-    deployment.model = None
-    deployment.code_configuration = None
-    return deployment

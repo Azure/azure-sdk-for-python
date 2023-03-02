@@ -683,7 +683,7 @@ def _get_next_version_from_container(
     container_operation: Any,
     resource_group_name: str,
     workspace_name: str,
-    registry_name: str,
+    registry_name: str = None,
     **kwargs,
 ) -> str:
     try:
