@@ -24,35 +24,35 @@ from .data_column import DataColumn
 
 @experimental
 class FeaturestoreEntity(Asset):
-    """FeaturestoreEntity
-
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param path: The path to the asset on the datastore. This can be local or remote
-    :type path: str
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
-    """
-
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        version: Optional[str] = None,
+        name: str,
+        version: str,
         index_columns: List[DataColumn],
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         **kwargs,
     ):
+        """FeaturestoreEntity
+
+        :param name: Name of the resource.
+        :type name: str
+        :param version: Version of the resource.
+        :type version: str
+        :param index_columns: Specifies index columns.
+        :type index_columns: list[~azure.mgmt.machinelearningservices.models.IndexColumn]
+        :param description: Description of the resource.
+        :type description: str
+        :param tags: Tag dictionary. Tags can be added, removed, and updated.
+        :type tags: dict[str, str]
+        :param kwargs: A dictionary of additional configuration parameters.
+        :type kwargs: dict
+        """
         super().__init__(
             name=name,
             version=version,
+            description=description,
             tags=tags,
             **kwargs,
         )

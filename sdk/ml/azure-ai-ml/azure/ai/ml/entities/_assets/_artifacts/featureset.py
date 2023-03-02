@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturesetContainer,
     FeaturesetContainerProperties,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._featureset.featureset_specification import FeaturesetSpecification
 from azure.ai.ml.entities._featureset.materialization_settings import MaterializationSettings
@@ -23,25 +24,8 @@ from azure.ai.ml.entities._featureset.materialization_settings import Materializ
 from .artifact import ArtifactStorageInfo
 
 
+@experimental
 class Featureset(Artifact):
-    """Featureset
-
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param path: The path to the asset on the datastore. This can be local or remote
-    :type path: str
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
-    """
-
     def __init__(
         self,
         *,
@@ -49,32 +33,43 @@ class Featureset(Artifact):
         version: str = None,
         entities: List[str],
         specification: FeaturesetSpecification,
-        materialization_settings: Optional[MaterializationSettings] = None,
         stage: Optional[str] = None,
         description: Optional[str] = None,
-        tags: Optional[Dict] = None,
-        properties: Optional[Dict[str, str]] = None,
+        materialization_settings: Optional[MaterializationSettings] = None,
         **kwargs,
     ):
+        """Featureset
+
+        :param name: Name of the resource.
+        :type name: str
+        :param version: Version of the resource.
+        :type version: str
+        :param entities: Specifies list of entities.
+        :type entities: list[str]
+        :param specification: Specifies the feature spec details.
+        :type specification: ~azure.ai.ml.entities.FeaturesetSpecification
+        :param description: Description of the resource.
+        :type description: str
+        :param materialization_settings: Specifies the materialization settings.
+        :type materialization_settings: ~azure.ai.ml.entities.MaterializationSettings
+        :param kwargs: A dictionary of additional configuration parameters.
+        :type kwargs: dict
+        """
         super().__init__(
             name=name,
             version=version,
             description=description,
-            tags=tags,
-            properties=properties,
             **kwargs,
         )
-        self.stage = stage
         self.entities = entities
         self.specification = specification
+        self.stage = stage
         self.materialization_settings = materialization_settings
         self.latest_version = None
 
     def _to_rest_object(self) -> FeaturesetVersion:
         featureset_version_properties = FeaturesetVersionProperties(
             description=self.description,
-            properties=self.properties,
-            tags=self.tags,
             entities=self.entities,
             materialization_settings=self.materialization_settings._to_rest_object(),
             specification=self.specification._to_rest_object(),
@@ -93,8 +88,6 @@ class Featureset(Artifact):
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
             description=featureset_rest_object_details.description,
-            tags=featureset_rest_object_details.tags,
-            properties=featureset_rest_object_details.properties,
             entities=featureset_rest_object_details.entities,
             materialization_settings=MaterializationSettings._from_rest_object(
                 featureset_rest_object_details.materialization_settings
@@ -112,8 +105,6 @@ class Featureset(Artifact):
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
             description=rest_object_details.description,
-            tags=rest_object_details.tags,
-            properties=rest_object_details.properties,
         )
         featureset.latest_version = rest_object_details.latest_version
         return featureset
