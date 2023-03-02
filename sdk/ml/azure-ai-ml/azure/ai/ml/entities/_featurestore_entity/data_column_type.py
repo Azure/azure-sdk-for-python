@@ -16,3 +16,4 @@ class DataColumnType(Enum):
     double = 5
     binary = 6
     datetime = 7
+    boolean = 8
