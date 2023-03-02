@@ -63,8 +63,8 @@ class CloudConfigurationOptions(object):
                 "active_directory": "https://test.login.microsoftonline.com/",
                 "aml_resource_id": "https://test.ml.azure.com/",
                 "storage_endpoint": "test.core.windows.net",
-                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/"
-            }
+                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/",
+            },
         }
         ml_client = MLClient(
             credential=credential,
