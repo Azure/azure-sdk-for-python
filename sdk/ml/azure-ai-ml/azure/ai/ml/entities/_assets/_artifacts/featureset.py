@@ -122,7 +122,7 @@ class Featureset(Artifact):
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,
             entities=[],
-            specification=FeaturesetSpecification()
+            specification=FeaturesetSpecification(),
         )
         featureset.latest_version = rest_object_details.latest_version
         return featureset
