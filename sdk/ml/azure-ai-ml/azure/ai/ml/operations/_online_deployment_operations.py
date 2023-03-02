@@ -24,7 +24,7 @@ from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script, package_deployment
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs, DEFAULT_MDC_PATH
@@ -44,12 +44,12 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureMLOnlineInferencingServer
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     PackageRequest,
     CodeConfiguration,
     BaseEnvironmentId,
     ModelConfiguration,
+    AzureMLOnlineInferencingServer,
 )
 
 ops_logger = OpsLogger(__name__)
@@ -176,36 +176,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             try:
                 location = self._get_workspace_location()
                 if kwargs.pop("package_model", True):
-                    # call package model, wait for the LRO to finish
-                    model_str = deployment.model
-                    model_version = model_str.split("/")[-1]
-                    model_name = model_str.split("/")[-3]
-                    model_ops = self._all_operations.all_operations["models"]
-                    package_request = PackageRequest(
-                        target_environment_name="btt1",
-                        target_environment_version="1.0.0",
-                        base_environment_source=BaseEnvironmentId(
-                            base_environment_source_type="EnvironmentAsset", resource_id=deployment.environment
-                        ),
-                        inferencing_server=AzureMLOnlineInferencingServer(
-                            code_configuration=CodeConfiguration(
-                                code_id=deployment.code_configuration.code,
-                                scoring_script=deployment.code_configuration.scoring_script,
-                            )
-                        ),
-                        model_configuration=ModelConfiguration(mode="Download", mount_path="."),
-                    )
-                    try:
-                        package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
-                        package_request.inferencing_server.code_configuration.code_id = (
-                            "azureml:/" + deployment.code_configuration.code
-                        )
-                        out = model_ops.begin_package(model_name, model_version, package_request=package_request)
-                    except Exception as e:
-                        print(e)
-                    deployment.environment = out.target_environment_id
-                    deployment.model = None
-                    deployment.code_configuration = None
+                    deployment = package_deployment(deployment, self._all_operations.all_operations["models"])
                 deployment_rest = deployment._to_rest_object(location=location)
 
                 poller = self._online_deployment.begin_create_or_update(
