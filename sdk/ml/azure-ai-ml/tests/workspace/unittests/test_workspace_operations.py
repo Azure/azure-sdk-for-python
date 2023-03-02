@@ -5,7 +5,7 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_workspace
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
 )

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from typing import Dict
-from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -21,7 +21,7 @@ class WorkspaceOutboundRuleOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient022023Preview,
+        service_client: ServiceClient122022Preview,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
