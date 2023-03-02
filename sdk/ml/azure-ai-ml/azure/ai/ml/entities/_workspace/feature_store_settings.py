@@ -6,7 +6,7 @@
 
 from typing import Optional, Any
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2023_02_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._utils._experimental import experimental
 from .compute_runtime import ComputeRuntime

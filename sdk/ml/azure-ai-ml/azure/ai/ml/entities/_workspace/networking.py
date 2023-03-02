@@ -4,7 +4,7 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,

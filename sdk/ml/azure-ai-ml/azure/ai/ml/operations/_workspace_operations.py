@@ -9,8 +9,8 @@ from typing import Dict, Iterable, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
