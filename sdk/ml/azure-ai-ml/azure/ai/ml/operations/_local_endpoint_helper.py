@@ -32,8 +32,7 @@ module_logger = logging.getLogger(__name__)
 class _LocalEndpointHelper(object):
     """A helper class to interact with Azure ML endpoints locally.
 
-    Use this helper to manage Azure ML endpoints locally, e.g. create,
-    invoke, show, list, delete.
+    Use this helper to manage Azure ML endpoints locally, e.g. create, invoke, show, list, delete.
     """
 
     def __init__(self, *, requests_pipeline: HttpPipeline):
@@ -163,8 +162,7 @@ def _convert_container_to_endpoint(
     container: "docker.models.containers.Container",
     endpoint_json: Optional[dict] = None,
 ) -> OnlineEndpoint:
-    """Converts provided Container for local deployment to OnlineEndpoint
-    entity.
+    """Converts provided Container for local deployment to OnlineEndpoint entity.
 
     :param container: Container for a local deployment.
     :type container: docker.models.containers.Container

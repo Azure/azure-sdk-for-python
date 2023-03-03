@@ -16,9 +16,11 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
             from azure.ai.ml.dsl import pipeline
             from mldesigner.dsl import do_while
 
+
             @pipeline()
             def your_do_while_body():
                 pass
+
 
             @pipeline()
             def pipeline_with_do_while_node():
@@ -28,13 +30,15 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
                     condition=do_while_body.outputs.condition_output,
                     mapping={
                         do_while_body.outputs.output1: do_while_body_inputs.input1,
-                        do_while_body.outputs.output2: [do_while_body_inputs.input2, do_while_body_inputs.input3]
-                    }
+                        do_while_body.outputs.output2: [
+                            do_while_body_inputs.input2,
+                            do_while_body_inputs.input3,
+                        ],
+                    },
                 )
                 # Connect to the do_while_node outputs
                 component = component_func(
-                    input1=do_while_body.outputs.output1,
-                    input2=do_while_body.outputs.output2
+                    input1=do_while_body.outputs.output1, input2=do_while_body.outputs.output2
                 )
 
     :param body: Pipeline job or command node for the do-while loop body.

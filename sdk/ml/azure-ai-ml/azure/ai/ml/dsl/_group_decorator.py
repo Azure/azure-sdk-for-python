@@ -14,8 +14,7 @@ from azure.ai.ml.entities._inputs_outputs import GroupInput, _get_param_with_sta
 
 
 def group(_cls):
-    """
-    Group decorator to make user-defined class as a group of inputs/outputs.
+    """Group decorator to make user-defined class as a group of inputs/outputs.
 
     Usage:
         Group a set of component inputs make component configuration easier.
@@ -30,6 +29,7 @@ def group(_cls):
                 str_param: str
                 int_param: int = 1
 
+
             # see the help of auto-gen __init__ function
             help(ParamClass.__init__)
 
@@ -43,10 +43,12 @@ def group(_cls):
                 str_param: str
                 int_param: int = 1
 
+
             @dsl.group
             class GroupClass(ParentClass):
                 float_param: float
-                str_param: str = 'test'
+                str_param: str = "test"
+
 
             # see the help of auto-gen __init__ function
             help(GroupClass.__init__)
@@ -61,11 +63,13 @@ def group(_cls):
                 str_param: str
                 int_param: int = 1
 
+
             @dsl.group
             class ParentClass:
                 param_group1: SubGroupClass
                 # declare a sub group field with default
-                param_group2: SubGroupClass = SubGroupClass(str_param='test')
+                param_group2: SubGroupClass = SubGroupClass(str_param="test")
+
 
             # see the help of auto-gen __init__ function
             help(ParentClass.__init__)
@@ -75,28 +79,37 @@ def group(_cls):
         .. code-block:: python
 
             # create a sub group value
-            my_param_group = SubGroupClass(str_param='dataset', int_param=2)
+            my_param_group = SubGroupClass(str_param="dataset", int_param=2)
 
             # create a parent group value
             my_parent_group = ParentClass(param_group1=my_param_group)
 
+
             # option 1. use annotation to declare the input is a group.
             @pipeline
             def pipeline_func(params: SubGroupClass):
-                component = component_func(string_parameter=params.str_param,
-                                           int_parameter=params.int_param)
+                component = component_func(
+                    string_parameter=params.str_param, int_parameter=params.int_param
+                )
                 return component.outputs
+
+
             # create a pipeline instance
             pipeline = pipeline_func(my_param_group)
+
 
             # option 2. use default of input to declare itself a group.
             @pipeline
             def pipeline_func(params=my_param_group):
-                component = component_func(string_parameter=params.str_param,
-                                           int_parameter=params.int_param)
+                component = component_func(
+                    string_parameter=params.str_param, int_parameter=params.int_param
+                )
                 return component.outputs
+
+
             # create a pipeline instance
             pipeline = pipeline_func()
+
 
             # use multi-level group in pipeline.
             @pipeline
@@ -117,7 +130,6 @@ def group(_cls):
         * Each group member's name must be public (not start with '_').
         * When use group as a pipeline input, user **MUST** write the type annotation
           or give it a non-None default value to infer the group class.
-
     """
 
     def _create_fn(name, args, body, *, globals=None, locals=None, return_type):

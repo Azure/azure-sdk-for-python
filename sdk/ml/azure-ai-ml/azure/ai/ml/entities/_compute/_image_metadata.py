@@ -15,8 +15,7 @@ class ImageMetadata:
 
     @property
     def is_latest_os_image_version(self) -> bool:
-        """
-        Indicates whether a compute instance is running on the latest OS image version.
+        """Indicates whether a compute instance is running on the latest OS image version.
 
         return: State of whether the compute instance is running the latest OS image version.
         rtype: bool
@@ -25,8 +24,7 @@ class ImageMetadata:
 
     @property
     def current_image_version(self) -> str:
-        """
-        Indicates the current OS image version number.
+        """Indicates the current OS image version number.
 
         return: Current OS Image version number.
         rtype: str
@@ -35,8 +33,7 @@ class ImageMetadata:
 
     @property
     def latest_image_version(self) -> str:
-        """
-        Indicates the latest OS image version number.
+        """Indicates the latest OS image version number.
 
         return: Latest OS Image version number.
         rtype: str
