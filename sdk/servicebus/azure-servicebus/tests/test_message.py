@@ -474,9 +474,9 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             # - durable/first_acquirer/priority set by default in uamqp, None in pyamqp
             # - setting pyamqp values for durable/first_acquirer increases pyamqp size = 269
             if uamqp_transport:
-                encoded_size = 270
+                encoded_size = 267
             else:
-                encoded_size = 266
+                encoded_size = 263
             assert incoming_message.message.get_message_encoded_size() == encoded_size
             assert list(incoming_message.message.get_data()) == [b'hello']
             assert incoming_message.message.application_properties == {b'prop': b'test'}
@@ -492,7 +492,6 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
                 # 2) MessageHeader.durable/first_acquirer are being set to True always on received message
                 #   These properties should not be modified by uamqp.
                 assert ", 'time_to_live': 30000" in str(incoming_message.message.header)
-                pass
             else:
                 assert incoming_message.message.header.get_header_obj().delivery_count == 0
                 assert ", 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None}" in str(incoming_message.message.header)
@@ -614,11 +613,11 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             assert isinstance(incoming_message.message.encode_message(), bytes)
 
             if uamqp_transport:
-                encoded_size = 337
+                encoded_size = 334
             else:
                 # uamqp bug: sets durable/first_acquirer/priority by default on incoming message
                 # pyamqp = 339 if durable/first_acquirer set
-                encoded_size = 336
+                encoded_size = 333
             assert incoming_message.message.get_message_encoded_size() == encoded_size
             assert list(incoming_message.message.get_data()) == [b'hello']
             assert incoming_message.message.application_properties == {b'prop': b'test'}
@@ -635,7 +634,6 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
                 # 2) MessageHeader.durable/first_acquirer are always being set to True on received message
                 #   These properties should not be modified by uamqp. By default, should be None when not set.
                 assert ", 'time_to_live': 30000" in str(incoming_message.message.header)
-                pass
             else:
                 assert incoming_message.message.header.get_header_obj().delivery_count == 0
                 assert str(incoming_message.message.header) == str({'delivery_count': 0, 'time_to_live': 30000, 'first_acquirer': None, 'durable': None, 'priority': None})
