@@ -506,7 +506,7 @@ def upload_file(
     with open(source, "rb") as data:
         if show_progress and not in_directory:
             file_size, _ = get_directory_size(source)
-            file_size_in_mb = file_size / 10 ** 6
+            file_size_in_mb = file_size / 10**6
             if file_size_in_mb < 1:
                 msg += Fore.GREEN + " (< 1 MB)"
             else:

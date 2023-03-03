@@ -82,7 +82,7 @@ class Gen2StorageClient:
 
             # warn if large file (> 100 MB)
             file_size, _ = get_directory_size(source)
-            file_size_in_mb = file_size / 10 ** 6
+            file_size_in_mb = file_size / 10**6
 
             cloud = _get_cloud_details()
             cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
@@ -187,7 +187,7 @@ class Gen2StorageClient:
                 cloud = _get_cloud_details()
                 cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
                 full_storage_url = f"https://{self.account_name}.dfs.{cloud_endpoint}/{self.file_system}/{starts_with}"
-                download_size_in_mb += file_client.get_file_properties().size / 10 ** 6
+                download_size_in_mb += file_client.get_file_properties().size / 10**6
                 if download_size_in_mb > 100:
                     module_logger.warning(FILE_SIZE_WARNING.format(source=full_storage_url, destination=destination))
 
