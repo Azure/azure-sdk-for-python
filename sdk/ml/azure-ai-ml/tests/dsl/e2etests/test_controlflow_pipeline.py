@@ -321,7 +321,6 @@ class TestIfElse(TestControlFlowPipeline):
             },
         }
 
-    @pytest.mark.skip(reason="Backend not ready yet.")
     def test_if_else_multiple_blocks(self, client: MLClient):
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
@@ -349,7 +348,13 @@ class TestIfElse(TestControlFlowPipeline):
             pipeline_job = assert_job_cancel(pipeline_job, client)
 
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
-        assert dsl_pipeline_job_dict["properties"]["jobs"] == {}
+        assert dsl_pipeline_job_dict["properties"]["jobs"]["conditionnode"] == {
+            "_source": "DSL",
+            "condition": "${{parent.jobs.result.outputs.output}}",
+            "false_block": ["${{parent.jobs.node1}}", "${{parent.jobs.node3}}"],
+            "true_block": ["${{parent.jobs.node2}}", "${{parent.jobs.node4}}"],
+            "type": "if_else",
+        }
 
 
 @pytest.mark.skipif(
