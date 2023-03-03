@@ -102,10 +102,12 @@ if __name__ == '__main__':
         if error.error is not None:
             if error.error.code == "InvalidImage":
                 print(f"Received an invalid image error: {error.error}")
-                sys.exit(1)
+            if error.error.code == "InvalidRequest":
+                print(f"Received an invalid request error: {error.error}")
+            # Raise the error again after printing it
+            raise
         # If the inner error is None and then it is possible to check the message to get more information:
         if "Invalid request".casefold() in error.message.casefold():
-            print(f"Uh-oh! Something unexpected happened: {error}")
-            sys.exit(1)
-        # Print the full error content:
-        print(f"Received a different error: {error}")
+            print(f"Uh-oh! Seems there was an invalid request: {error}")
+        # Raise the error again
+        raise
