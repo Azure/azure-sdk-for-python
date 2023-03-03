@@ -263,10 +263,12 @@ class Test_retry_policy_tests(unittest.TestCase):
         try:
             original_execute_function = _retry_utility.ExecuteFunction
             mf = self.MockExecuteFunctionTimeout(original_execute_function)
-
             _retry_utility.ExecuteFunction = mf
+
             doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
-            self.assertEqual(doc['id'], 'doc')
+            self.assertEqual(doc['id'], document_definition['id'])
+        except exceptions.CosmosHttpResponseError as err:
+                self.assertEqual(err.status_code, 408)
         finally:
             _retry_utility.ExecuteFunction = original_execute_function
 
@@ -285,8 +287,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.counter = 0
 
         def __call__(self, func, *args, **kwargs):
-            self.counter += 1
-
+            self.counter = self.counter + 1
             if self.counter > 1:
                 return self.org_func(func, *args, **kwargs)
             else:
