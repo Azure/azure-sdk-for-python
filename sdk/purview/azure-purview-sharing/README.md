@@ -65,67 +65,62 @@ The following section shows you how to initialize and authenticate your client a
 
 ### Create sent share
 
-```python Snippet:SentSharesClientSample_CreateSentShare
+```python Snippet:create_a_sent_share
 ```
 
 ### Get sent share
 
-```python Snippet:SentSharesClientSample_GetSentShare
+```python Snippet:get_a_sent_share
 ```
 
 ### List sent shares
 
-```python Snippet:SentSharesClientSample_ListSentShares
+```python Snippet:get_all_sent_shares
 ```
 
 ### Create sent share invitation
 
-```python Snippet:SentSharesClientSample_CreateSentShareInvitation
+```python Snippet:send_a_user_invitation
 ```
 
 ### Get sent share invitation
 
-```python Snippet:SentSharesClientSample_GetSentShareInvitation
+```python Snippet:get_a_sent_invitation
 ```
 
 ### List sent share invitations
 
-```python Snippet:SentSharesClientSample_ListSentShareInvitations
+```python Snippet:view_sent_invitations
 ```
 
 ### List detached received shares
 
-```python Snippet:ReceivedSharesClientSample_ListDetachedReceivedShares
+```python Snippet:get_all_detached_received_shares
 ```
 
 ### Create a received share
 
-```python Snippet:ReceivedSharesClientSample_CreateReceivedShare
+```python Snippet:attach_a_received_share
 ```
 
 ### Get received share
 
-```python Snippet:ReceivedSharesClientSample_GetReceivedShare
+```python Snippet:get_a_received_share
 ```
 
 ### List attached received shares
 
-```python Snippet:ReceivedSharesClientSample_ListAttachedReceivedShares
+```python Snippet:list_attached_received_shares
 ```
 
 ### Delete received share
 
-```python Snippet:ReceivedSharesClientSample_DeleteReceivedShare
-```
-
-### Delete sent share invitation
-
-```python Snippet:SentSharesClientSample_DeleteSentShareInvitation
+```python Snippet:delete_a_received_share
 ```
 
 ### Delete sent share
 
-```python Snippet:SentSharesClientSample_DeleteSentShare
+```python Snippet:delete_a_sent_share
 ```
 
 ## Troubleshooting
