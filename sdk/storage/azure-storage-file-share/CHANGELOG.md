@@ -6,7 +6,7 @@
 - Added support for service version 2022-11-02.
 - Added support for `TokenCredential` to be used for authentication. A `TokenCredential` can be provided for the
 `credential` parameter to any client constructor. **Note:** When using a `TokenCredential`, the new keyword parameter
-`token_intnet` is **required** and must be provided. Addtitionally, this form of authentication is only supported for
+`token_intnet` is **required** and must be provided. Additionally, this form of authentication is only supported for
 certain operations in the Data Plane SDK.
 - Added support for `allow_trailing_dot` and `allow_source_trailing_dot` on client construction. When
 `allow_trailing_dot` is provided, the service will not silently remove any trailing `.` character from directory/file
