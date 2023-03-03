@@ -28,7 +28,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._operations import build_list_request
+from ...operations._skus_operations import build_list_request
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -38,14 +38,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class Operations:
+class SkusOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.redisenterprise.aio.RedisEnterpriseManagementClient`'s
-        :attr:`operations` attribute.
+        :attr:`skus` attribute.
     """
 
     models = _models
@@ -58,12 +58,15 @@ class Operations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
-        """Lists all of the available REST API operations of the Microsoft.Cache provider.
+    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.RegionSkuDetail"]:
+        """Gets information about skus in specified location for the given subscription id.
 
+        :param location: The name of Azure region. Required.
+        :type location: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Operation or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.redisenterprise.models.Operation]
+        :return: An iterator like instance of either RegionSkuDetail or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.redisenterprise.models.RegionSkuDetail]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -72,7 +75,7 @@ class Operations:
         api_version: Literal["2023-03-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
-        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RegionSkuDetails] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -86,6 +89,8 @@ class Operations:
             if not next_link:
 
                 request = build_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
@@ -113,11 +118,11 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("RegionSkuDetails", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
+            return None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -136,4 +141,4 @@ class Operations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.Cache/operations"}
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Cache/locations/{location}/skus"}
