@@ -324,10 +324,7 @@ class MLClient:
         self._service_client_02_2023_preview = ServiceClient022023Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
-            # base_url=base_url,
-            # TODO: Below hardcode is just for testing the gates
-            # TODO: REMOVE before the merge
-            base_url="https://master.api.azureml-test.ms/mferp/managementfrontend",
+            base_url=base_url,
             **kwargs,
         )
 
