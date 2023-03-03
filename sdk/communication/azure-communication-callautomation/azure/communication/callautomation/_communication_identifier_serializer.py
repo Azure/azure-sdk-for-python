@@ -38,7 +38,7 @@ def serialize_identifier(identifier):
                         identifier.__class__.__name__)
 
 
-def deserialize_identifier(identifier_model):
+def deserialize_identifier(identifier_model) -> CommunicationIdentifier:
     # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
@@ -63,7 +63,7 @@ def deserialize_identifier(identifier_model):
     return UnknownIdentifier(raw_id)
 
 
-def deserialize_phone_identifier(identifier_model):
+def deserialize_phone_identifier(identifier_model) -> PhoneNumberIdentifier | None:
     # type: (PhoneNumberIdentifierModel) -> PhoneNumberIdentifier
     """
     Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
