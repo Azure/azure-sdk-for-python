@@ -932,10 +932,11 @@ def _resolve_label_to_asset(
 
     resolver = assetOperations._managed_label_resolver.get(label, None)
     if not resolver:
-        msg = "Asset {} with version label {} does not exist in workspace."
+        scope = "registry" if assetOperations._registry_name else "workspace"
+        msg = "Asset {} with version label {} does not exist in {}."
         raise ValidationException(
-            message=msg.format(name, label),
-            no_personal_data_message=msg.format("[name]", "[label]"),
+            message=msg.format(name, label, scope),
+            no_personal_data_message=msg.format("[name]", "[label]", "[scope]"),
             target=ErrorTarget.ASSET,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
