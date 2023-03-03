@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_dump, post_load, pre_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
+from azure.ai.ml._restclient.v2022_12_01_preview.models import NlpLearningRateScheduler
 from azure.ai.ml._schema._sweep.search_space import (
     ChoiceSchema,
     NormalSchema,

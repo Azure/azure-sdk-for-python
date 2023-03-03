@@ -271,11 +271,11 @@ class KeyRotationLifetimeAction(object):
     :keyword time_after_create: Time after creation to attempt the specified action, as an ISO 8601 duration.
         For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
         information on ISO 8601 durations.
-    :paramtype time_after_create: Optional[str]
+    :paramtype time_after_create: str or None
     :keyword time_before_expiry: Time before expiry to attempt the specified action, as an ISO 8601 duration.
         For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
         information on ISO 8601 durations.
-    :paramtype time_before_expiry: Optional[str]
+    :paramtype time_before_expiry: str or None
     """
 
     def __init__(self, action: "Union[KeyRotationPolicyAction, str]", **kwargs) -> None:
@@ -300,17 +300,17 @@ class KeyRotationPolicy(object):
     """The key rotation policy that belongs to a key.
 
     :ivar id: The identifier of the key rotation policy.
-    :vartype id: Optional[str]
+    :vartype id: str or None
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
-    :vartype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
+    :vartype lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
     :ivar expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO 8601
         duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for
         more information on ISO 8601 durations.
-    :vartype expires_in: Optional[str]
+    :vartype expires_in: str or None
     :ivar created_on: When the policy was created, in UTC
-    :vartype created_on: Optional[~datetime.datetime]
+    :vartype created_on: ~datetime.datetime or None
     :ivar updated_on: When the policy was last updated, in UTC
-    :vartype updated_on: Optional[~datetime.datetime]
+    :vartype updated_on: ~datetime.datetime or None
     """
 
     def __init__(self, **kwargs) -> None:

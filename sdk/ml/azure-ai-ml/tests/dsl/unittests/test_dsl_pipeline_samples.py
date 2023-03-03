@@ -12,6 +12,7 @@ from test_utilities.utils import omit_with_wildcard
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -545,12 +546,19 @@ class TestDSLPipelineSamples:
             generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
         )
 
-        pipeline = data_transfer_job_in_pipeline()
         job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/export_file_system/pipeline_inline.yml")
-        omit_fields = [
-            "properties.display_name",
-        ]
-        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+        with pytest.raises(ValidationException) as e:
+            data_transfer_job_in_pipeline()
+            assert (
+                "Sink is a required field for export data task and we don't support exporting file system for now." in e
+            )
+
+        with pytest.raises(ValidationException) as e:
+            load_job(source=job_yaml)
+            assert (
+                "Sink is a required field for export data task and we don't support exporting file system for now." in e
+            )
 
     def test_data_transfer_multi_job_in_pipeline(self) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.pipeline import (
@@ -562,5 +570,6 @@ class TestDSLPipelineSamples:
         omit_fields = [
             "properties.display_name",
             "properties.jobs.merge_files.componentId",
+            "properties.jobs.blob_azuresql.inputs.source.uri",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)

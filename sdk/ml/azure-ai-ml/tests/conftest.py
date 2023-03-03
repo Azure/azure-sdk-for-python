@@ -99,6 +99,22 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         group_for_replace="1",
     )
 
+    identity_json_paths = [
+        ".systemData.createdBy",
+        ".systemData.lastModifiedBy",
+        ".createdBy.userName",
+        ".lastModifiedBy.userName",
+        ".runMetadata.createdBy.userName",
+        ".runMetadata.lastModifiedBy.userName",
+    ]
+    identity_replacements = [("Firstname Lastname", r".+\s.+"), ("alias@contoso.com", r".+@.+")]
+
+    for path in identity_json_paths:
+        for replacement, regexp in identity_replacements:
+            add_body_key_sanitizer(json_path=path, value=replacement, regex=regexp)
+            # Try to match in arrays too
+            add_body_key_sanitizer(json_path=f".value[*]{path}", value=replacement, regex=regexp)
+
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
@@ -849,6 +865,7 @@ def pytest_configure(config):
         ("production_experiences_test", "marks tests as production experience tests"),
         ("training_experiences_test", "marks tests as training experience tests"),
         ("data_experiences_test", "marks tests as data experience tests"),
+        ("data_import_test", "marks tests as data import tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
         ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
         ("virtual_cluster_test", "marks tests as virtual cluster tests"),
