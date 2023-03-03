@@ -1,7 +1,7 @@
 $schema: http://azureml/sdk-2-0/DataTransferComponent.json
 name: datatransfer_blob_azuresql
 display_name: Data Transfer blob-azuresql
-type: data_transfer
+type: data_transfer@vNext
 task: export_data
 inputs:
   source:

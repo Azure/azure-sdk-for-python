@@ -2,7 +2,7 @@ $schema: http://azureml/sdk-2-0/DataTransferComponent.json
 name: datatransfer_s3_blob
 display_name: Data Transfer s3-blob
 
-type: data_transfer
+type: data_transfer@vNext
 task: import_data
 
 source:

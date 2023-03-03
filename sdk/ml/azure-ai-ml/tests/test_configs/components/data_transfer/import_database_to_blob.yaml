@@ -2,7 +2,7 @@ $schema: http://azureml/sdk-2-0/DataTransferComponent.json
 name: datatransfer_snowflake_blob
 display_name: Data Transfer Pipeline snowflake-blob
 # SQL need map to mltable, and system will auto create mltable meta.
-type: data_transfer
+type: data_transfer@vNext
 task: import_data
 source:
   type: database

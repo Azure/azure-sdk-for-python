@@ -14,6 +14,7 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     connection_target = "azureml:my-s3-connection"
     outputs = {"sink": Output(type=AssetTypes.URI_FOLDER)}
     source = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
+    component_id = "azureml:test_941060684503:1"
 
     @dsl.pipeline(description="submit a pipeline with data transfer import file system job")
     def data_transfer_import_file_system_pipeline_from_builder(path_source_s3, connection_target):
