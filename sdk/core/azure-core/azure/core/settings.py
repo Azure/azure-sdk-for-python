@@ -145,7 +145,7 @@ def get_opentelemetry_span_if_opentelemetry_is_imported() -> Optional[Type[Abstr
 
 _tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
     "opencensus": get_opencensus_span,
-    "opentelemetry": get_opentelemetry_span
+    "opentelemetry": get_opentelemetry_span,
 }
 
 
