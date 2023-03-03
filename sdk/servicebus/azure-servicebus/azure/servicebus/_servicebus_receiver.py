@@ -262,10 +262,7 @@ class ServiceBusReceiver(
         try:
             self._receive_context.set()
             self._open()
-            if not self._message_iter:
-                self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
-            elif wait_time:
-                self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
+            self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(self._message_iter)
             message = self._build_message(pyamqp_message)
             if (
