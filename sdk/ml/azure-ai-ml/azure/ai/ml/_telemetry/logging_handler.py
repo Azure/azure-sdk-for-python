@@ -159,7 +159,7 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             return
 
     # The code below is vendored from opencensus-ext-azure's AzureLogHandler base class, but the telemetry disabling
-    # logic has been added to the beginning. Without this, the base class would still send telemetry even if 
+    # logic has been added to the beginning. Without this, the base class would still send telemetry even if
     # enable_telemetry had been set to true.
     def log_record_to_envelope(self, record):
         if self._is_telemetry_collection_disabled:
@@ -168,14 +168,13 @@ class AzureMLSDKLogHandler(AzureLogHandler):
         envelope = create_envelope(self.options.instrumentation_key, record)
 
         properties = {
-            'process': record.processName,
-            'module': record.module,
-            'fileName': record.pathname,
-            'lineNumber': record.lineno,
-            'level': record.levelname,
+            "process": record.processName,
+            "module": record.module,
+            "fileName": record.pathname,
+            "lineNumber": record.lineno,
+            "level": record.levelname,
         }
-        if (hasattr(record, 'custom_dimensions') and
-                isinstance(record.custom_dimensions, dict)):
+        if hasattr(record, "custom_dimensions") and isinstance(record.custom_dimensions, dict):
             properties.update(record.custom_dimensions)
 
         if record.exc_info:
@@ -188,12 +187,14 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             if tb is not None:
                 has_full_stack = True
                 for fileName, line, method, _text in traceback.extract_tb(tb):
-                    callstack.append({
-                        'level': level,
-                        'method': method,
-                        'fileName': fileName,
-                        'line': line,
-                    })
+                    callstack.append(
+                        {
+                            "level": level,
+                            "method": method,
+                            "fileName": fileName,
+                            "line": line,
+                        }
+                    )
                     level += 1
                 callstack.reverse()
             elif record.message:
@@ -202,29 +203,31 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             if exctype is not None:
                 exc_type = exctype.__name__
 
-            envelope.name = 'Microsoft.ApplicationInsights.Exception'
+            envelope.name = "Microsoft.ApplicationInsights.Exception"
 
             data = ExceptionData(
-                exceptions=[{
-                    'id': 1,
-                    'outerId': 0,
-                    'typeName': exc_type,
-                    'message': message,
-                    'hasFullStack': has_full_stack,
-                    'parsedStack': callstack,
-                }],
+                exceptions=[
+                    {
+                        "id": 1,
+                        "outerId": 0,
+                        "typeName": exc_type,
+                        "message": message,
+                        "hasFullStack": has_full_stack,
+                        "parsedStack": callstack,
+                    }
+                ],
                 severityLevel=max(0, record.levelno - 1) // 10,
                 properties=properties,
             )
-            envelope.data = Data(baseData=data, baseType='ExceptionData')
+            envelope.data = Data(baseData=data, baseType="ExceptionData")
         else:
-            envelope.name = 'Microsoft.ApplicationInsights.Message'
+            envelope.name = "Microsoft.ApplicationInsights.Message"
             data = Message(
                 message=self.format(record),
                 severityLevel=max(0, record.levelno - 1) // 10,
                 properties=properties,
             )
-            envelope.data = Data(baseData=data, baseType='MessageData')
+            envelope.data = Data(baseData=data, baseType="MessageData")
         return envelope
 
 
@@ -234,14 +237,14 @@ def create_envelope(instrumentation_key, record):
         tags=dict(utils.azure_monitor_context),
         time=utils.timestamp_to_iso_str(record.created),
     )
-    envelope.tags['ai.operation.id'] = getattr(
+    envelope.tags["ai.operation.id"] = getattr(
         record,
-        'traceId',
-        '00000000000000000000000000000000',
+        "traceId",
+        "00000000000000000000000000000000",
     )
-    envelope.tags['ai.operation.parentId'] = '|{}.{}.'.format(
-        envelope.tags['ai.operation.id'],
-        getattr(record, 'spanId', '0000000000000000'),
+    envelope.tags["ai.operation.parentId"] = "|{}.{}.".format(
+        envelope.tags["ai.operation.id"],
+        getattr(record, "spanId", "0000000000000000"),
     )
 
     return envelope

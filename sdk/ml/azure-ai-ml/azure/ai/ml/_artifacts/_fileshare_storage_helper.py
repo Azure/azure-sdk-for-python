@@ -85,7 +85,7 @@ class FileStorageClient:
 
             # warn if large file (> 100 MB)
             file_size, _ = get_directory_size(source)
-            file_size_in_mb = file_size / 10**6
+            file_size_in_mb = file_size / 10 ** 6
             if file_size_in_mb > 100:
                 module_logger.warning(FILE_SIZE_WARNING)
 

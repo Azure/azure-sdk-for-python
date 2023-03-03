@@ -266,6 +266,7 @@ try:
             outputs = persistent_func(**_all_kwargs)
             return outputs, persistent_func.locals
 
+
 except ImportError:
     # Fall back to the old implementation
     class PersistentLocalsFunctionBytecodeBuilder(PersistentLocalsFunctionProfilerBuilder):
