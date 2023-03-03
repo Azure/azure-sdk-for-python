@@ -490,10 +490,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         result.merge_with(self._validate_spark_configurations(raise_error=False))
         return result
 
-    def _validate_spark_configurations(
-        self,
-        raise_error=True
-    ):
+    def _validate_spark_configurations(self, raise_error=True):
         validation_result = self._create_empty_validation_result()
         # skip validation when component of node is from remote: registry or arm id
         if hasattr(self, "component") and isinstance(self.component, str):
