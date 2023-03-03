@@ -185,7 +185,7 @@
           "isArchived": false,
           "componentSpec": {
             "name": "datatransfer_merge_files",
-            "$schema": "http://azureml/00000-2-0/DataTransferComponent.json",
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
             "display_name": "Data Transfer Component merge-files",
             "is_deterministic": true,
             "inputs": {
@@ -260,7 +260,7 @@
             },
             "task": "copy_data",
             "data_copy_mode": "merge_with_overwrite",
-            "$schema": "http://azureml/00000-2-0/DataTransferComponent.json"
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json"
           }
         },
         "systemData": {
