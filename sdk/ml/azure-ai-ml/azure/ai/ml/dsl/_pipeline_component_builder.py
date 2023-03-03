@@ -351,6 +351,9 @@ class PipelineComponentBuilder:
             if instance_id not in valid_component_ids:
                 continue
             name = getattr(v, "name", None) or k
+            # for node name _, treat it as anonymous node with name unset
+            if name == "_":
+                continue
             if name is not None:
                 name = name.lower()
 
