@@ -11,15 +11,14 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, StringTransformedEnum, UnionField
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PublicNetworkAccess
 from .route import RouteSchema
+from azure.ai.ml._schema.core.schema import PathAwareSchema
 
 
 module_logger = logging.getLogger(__name__)
 
 
-class OnlineInferenceConfigurationSchema(DeploymentSchema):
+class OnlineInferenceConfigurationSchema(PathAwareSchema):
     liveness_route = NestedField(RouteSchema)
     readiness_route = NestedField(RouteSchema)
     scoring_route = NestedField(RouteSchema)

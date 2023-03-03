@@ -59,8 +59,13 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
         package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
         package_request.inferencing_server.code_configuration.code_id = "azureml:/" + deployment.code_configuration.code
         module_logger.info(
-            f"Creating package with environment name: {target_environment_name}, version:  {target_environment_version}"
+            f"Creating package with environment name: {target_environment_name}, version: {target_environment_version}"
         )
+        import debugpy
+
+        debugpy.connect(("localhost", 5678))
+        debugpy.breakpoint()
+
         packaged_env = model_ops.begin_package(model_name, model_version, package_request=package_request)
     except Exception as e:
         raise

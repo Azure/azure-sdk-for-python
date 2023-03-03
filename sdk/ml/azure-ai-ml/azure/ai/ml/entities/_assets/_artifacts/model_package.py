@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from os import PathLike
 from pathlib import Path
-from typing import List, Dict, Optional, Union
+from typing import IO, AnyStr, List, Dict, Optional, Union
 
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -68,6 +68,13 @@ class ModelPackage(PackageRequest, Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
+        import debugpy
+
+        debugpy.connect(("localhost", 5678))
+        debugpy.breakpoint()
+        kwargs.pop(
+            "target_environment_name", None
+        )  # need to remove this because it is not a valid parameter for the model package
         super().__init__(
             target_environment_name=name,
             target_environment_version=version,
@@ -96,6 +103,19 @@ class ModelPackage(PackageRequest, Resource):
         }
         return load_from_dict(ModelPackageSchema, data, context, **kwargs)
 
+    def dump(
+        self,
+        dest: Union[str, PathLike, IO[AnyStr]],
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> None:
+        """Dump the registry spec into a file in yaml format.
+
+        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
+        :type path: str
+        """
+        yaml_serialized = self._to_dict()
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
+
     def _to_dict(self) -> Dict:
         return ModelPackageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
@@ -103,3 +123,6 @@ class ModelPackage(PackageRequest, Resource):
     def _from_rest_object(cls, model_package_rest_object: PackageResponse) -> "ModelPackageResponse":
         target_environment_id = model_package_rest_object.target_environment_id
         return target_environment_id
+
+    def _to_rest_object(self) -> PackageRequest:
+        return self

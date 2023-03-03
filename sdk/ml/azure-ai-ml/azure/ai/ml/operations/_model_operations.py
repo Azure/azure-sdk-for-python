@@ -500,6 +500,8 @@ class ModelOperations(_ScopeDependentOperations):
 
     def begin_package(self, model_name: str, model_version: str, package_request: ModelPackage, **kwargs) -> None:
 
+        package_request = package_request._to_rest_object()
+
         package_out = self._model_versions_operation.begin_package(
             name=model_name,
             version=model_version,
