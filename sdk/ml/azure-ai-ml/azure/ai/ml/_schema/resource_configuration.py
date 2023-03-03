@@ -10,6 +10,7 @@ from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 
 
 class ResourceConfigurationSchema(metaclass=PatchedSchemaMeta):
+    locations = fields.List(fields.Str())
     instance_count = fields.Int()
     instance_type = fields.Str(metadata={"description": "The instance type to make available to this job."})
     properties = fields.Dict(keys=fields.Str())

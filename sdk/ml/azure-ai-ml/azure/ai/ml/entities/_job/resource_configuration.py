@@ -4,7 +4,7 @@
 
 import json
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
 from azure.ai.ml._restclient.v2022_10_01.models import ResourceConfiguration as RestResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
@@ -17,11 +17,13 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
         self,
         *,
+        locations: Optional[List[str]] = None,
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
         properties: Optional[Dict[str, Any]] = None,
         **kwargs  # pylint: disable=unused-argument
     ):
+        self.locations = locations
         self.instance_count = instance_count
         self.instance_type = instance_type
         self.properties = {}
@@ -48,6 +50,7 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
                 except Exception:  # pylint: disable=broad-except
                     pass
         return RestResourceConfiguration(
+            locations=self.locations,
             instance_count=self.instance_count,
             instance_type=self.instance_type,
             properties=serialized_properties,
@@ -60,6 +63,7 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
         if rest_obj is None:
             return None
         return ResourceConfiguration(
+            locations=rest_obj.locations,
             instance_count=rest_obj.instance_count,
             instance_type=rest_obj.instance_type,
             properties=rest_obj.properties,
@@ -69,7 +73,11 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ResourceConfiguration):
             return NotImplemented
-        return self.instance_count == other.instance_count and self.instance_type == other.instance_type
+        return (
+            self.locations == other.locations
+            and self.instance_count == other.instance_count
+            and self.instance_type == other.instance_type
+        )
 
     def __ne__(self, other: object) -> bool:
         if not isinstance(other, ResourceConfiguration):
@@ -78,6 +86,8 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
 
     def _merge_with(self, other: "ResourceConfiguration") -> None:
         if other:
+            if other.locations:
+                self.locations = other.locations
             if other.instance_count:
                 self.instance_count = other.instance_count
             if other.instance_type:

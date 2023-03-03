@@ -78,6 +78,7 @@ from ._job.command_job import CommandJob
 from ._job.compute_configuration import ComputeConfiguration
 from ._job.input_port import InputPort
 from ._job.job import Job
+from ._job.queue_settings import QueueSettings
 from ._job.job_limits import CommandJobLimits
 from ._job.job_resource_configuration import JobResourceConfiguration
 from ._job.job_service import JobService, SshJobService, JupyterLabJobService, TensorBoardJobService, VsCodeJobService
@@ -158,6 +159,7 @@ __all__ = [
     "CreatedByType",
     "ResourceConfiguration",
     "JobResourceConfiguration",
+    "QueueSettings",
     "JobService",
     "SshJobService",
     "TensorBoardJobService",

@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, JobService
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, JobService, QueueSettings
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
@@ -64,6 +64,8 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     :type experiment_name: str
     :param services: Information on services associated with the job.
     :type services: dict[str, JobService]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     :param compute: Information on compute resources associated with the job.
     :type compute: str
     :param kwargs: A dictionary of additional configuration parameters.
@@ -80,6 +82,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         experiment_name: Optional[str] = None,
         compute: Optional[str] = None,
         services: Optional[Dict[str, JobService]] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs,
     ):
         self._type = kwargs.pop("type", JobType.COMMAND)
@@ -98,6 +101,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         self.experiment_name = experiment_name
         self.compute = compute
         self.services = services
+        self.queue_settings = queue_settings
 
     @property
     def type(self) -> Optional[str]:

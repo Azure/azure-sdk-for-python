@@ -38,6 +38,7 @@ from azure.ai.ml.entities._job.job_service import (
     TensorBoardJobService,
     VsCodeJobService,
 )
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -69,6 +70,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :type experiment_name: str
     :param services: Information on services associated with the job, readonly.
     :type services: dict[str, JobService]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     :param inputs: Inputs to the command.
     :type inputs: dict[str, Union[azure.ai.ml.Input, str, bool, int, float]]
     :param outputs: Mapping of output data bindings used in the job.
@@ -108,6 +111,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
         services: Optional[
             Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
         ] = None,
@@ -123,6 +127,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         self.limits = limits
         self.identity = identity
         self.services = services
+        self.queue_settings = queue_settings
 
     @property
     def parameters(self) -> Dict[str, str]:
@@ -173,6 +178,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             resources=resources._to_rest_object() if resources else None,
             limits=self.limits._to_rest_object() if self.limits else None,
             services=JobServiceBase._to_rest_job_services(self.services),
+            queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
         )
         result = JobBase(properties=properties)
         result.name = self.name
@@ -195,6 +201,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             properties=rest_command_job.properties,
             command=rest_command_job.command,
             experiment_name=rest_command_job.experiment_name,
+            queue_settings=QueueSettings._from_rest_object(rest_command_job.queue_settings),
             services=JobServiceBase._from_rest_job_services(rest_command_job.services),
             status=rest_command_job.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,

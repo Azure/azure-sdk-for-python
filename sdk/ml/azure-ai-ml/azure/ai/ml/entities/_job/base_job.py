@@ -11,6 +11,7 @@ from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 
 from .job import Job
 
@@ -40,6 +41,8 @@ class _BaseJob(Job):
     :type experiment_name: str
     :param services: Information on services associated with the job, readonly.
     :type services: dict[str, JobService]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     :param compute: The compute target the job runs on.
     :type compute: str
     :param kwargs: A dictionary of additional configuration parameters.
@@ -77,6 +80,7 @@ class _BaseJob(Job):
             properties=obj.properties,
             experiment_name=obj.experiment_id,
             services=obj.services,
+            queue_settings=obj.queue_settings,
             status=obj.status,
             creation_context=creation_context,
             compute=f"{obj.compute.target}" if obj.compute else None,

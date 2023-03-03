@@ -51,6 +51,7 @@ from azure.ai.ml.entities._job.job_service import (
     TensorBoardJobService,
     VsCodeJobService,
 )
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import (
@@ -116,6 +117,8 @@ class Command(BaseNode):
     :type compute: str
     :param resources: Compute Resource configuration for the command.
     :type resources: Union[Dict, ~azure.ai.ml.entities.JobResourceConfiguration]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     :param code: A local path or http:, https:, azureml: url pointing to a remote location.
     :type code: str
     :param distribution: Distribution configuration for distributed training.
@@ -162,6 +165,7 @@ class Command(BaseNode):
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
+        queue_settings: Optional[QueueSettings] = None,
         services: Optional[
             Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
         ] = None,
@@ -169,7 +173,6 @@ class Command(BaseNode):
     ):
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
-
         # resolve normal dict to dict[str, JobService]
         services = _resolve_job_services(services)
         kwargs.pop("type", None)
@@ -184,7 +187,7 @@ class Command(BaseNode):
             services=services,
             **kwargs,
         )
-
+        self.queue_settings = queue_settings
         # init mark for _AttrDict
         self._init = True
         # initialize command job properties
@@ -344,6 +347,7 @@ class Command(BaseNode):
         *,
         instance_type: Optional[Union[str, List[str]]] = None,
         instance_count: Optional[int] = None,
+        locations: Optional[Union[List[str]]] = None,
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
@@ -353,6 +357,8 @@ class Command(BaseNode):
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
+        if locations is not None:
+            self.resources.locations = locations
         if instance_type is not None:
             self.resources.instance_type = instance_type
         if instance_count is not None:
@@ -502,6 +508,7 @@ class Command(BaseNode):
             inputs=self._job_inputs,
             outputs=self._job_outputs,
             services=self.services,
+            queue_settings=self.queue_settings,
             creation_context=self.creation_context,
             parameters=self.parameters,
         )
