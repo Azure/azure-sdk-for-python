@@ -55,12 +55,12 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         silo_configs: List[FederatedLearningSilo],
         silo_component: Component,
         aggregation_component: Component,
-        aggregation_compute = None,
-        aggregation_datastore = None,
-        shared_silo_kwargs: Dict = None,
-        aggregation_kwargs: Dict = None,
-        silo_to_aggregation_argument_map: Dict = None,
-        aggregation_to_silo_argument_map: Dict = None,
+        aggregation_compute: str = None,
+        aggregation_datastore: str = None,
+        shared_silo_kwargs: Optional[Dict] = None,
+        aggregation_kwargs: Optional[Dict] = None,
+        silo_to_aggregation_argument_map: Optional[Dict] = None,
+        aggregation_to_silo_argument_map: Optional[Dict] = None,
         max_iterations: int = 1,
         pass_iteration_to_components: bool = False,
         pass_index_to_silo_components: bool = False,
@@ -676,15 +676,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         if silo_comp is None or agg_comp is None:
             return silo_agg_map, agg_silo_map
         if silo_agg_map is None and silo_comp.outputs is not None and agg_comp.inputs is not None:
-            silo_agg_map = {}
-            for output_name in silo_comp.outputs.keys():
-                if output_name in agg_comp.inputs:
-                    silo_agg_map[output_name] = output_name
+            silo_agg_map = {output: output for output in silo_comp.outputs.keys() if output in agg_comp.inputs}
         if agg_silo_map is None:
-            agg_silo_map = {}
-            for output_name in agg_comp.outputs.keys():
-                if output_name in silo_comp.inputs:
-                    agg_silo_map[output_name] = output_name
+            agg_silo_map = {output: output for output in agg_comp.outputs.keys() if output in silo_comp.inputs}
         return silo_agg_map, agg_silo_map
 
 
@@ -711,7 +705,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     for i in range(0,len(executed_silo_components))
             }
             executed_merge_component = merge_comp(**merge_component_inputs)
-            for _, input_obj in executed_merge_component.inputs.items():
+            for input_obj in executed_merge_component.inputs.values():
                 input_obj.mode = "direct"
             merge_comp_mapping.update({
                 silo_output_argument_name: executed_merge_component

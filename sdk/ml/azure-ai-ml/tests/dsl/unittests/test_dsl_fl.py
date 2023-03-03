@@ -241,7 +241,6 @@ class TestDSLPipeline:
         local_ds_name = "local_datastore"
         orch_ds_name = "orchestrator_datastore"
         executed_pipeline = test_pipeline_func(x= Input(type="uri_folder", mode="mount", path="hello"))
-        import pdb; pdb.set_trace() 
         FLScatterGather._anchor_step_in_silo(
             pipeline_step=executed_pipeline,
             compute=compute_name,
