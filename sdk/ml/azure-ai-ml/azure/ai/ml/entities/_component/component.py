@@ -459,12 +459,9 @@ class Component(
 
         return validation_result
 
-    def _get_anonymous_component_name_version(self):
-        return ANONYMOUS_COMPONENT_NAME, self._get_anonymous_hash()
-
     def _get_rest_name_version(self):
         if self._is_anonymous:
-            return self._get_anonymous_component_name_version()
+            return ANONYMOUS_COMPONENT_NAME, self._get_anonymous_hash()
         return self.name, self.version
 
     def _to_rest_object(self) -> ComponentVersionData:
