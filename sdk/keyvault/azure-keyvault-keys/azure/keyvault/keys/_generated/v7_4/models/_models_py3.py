@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -53,8 +53,8 @@ class Attributes(_serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -88,7 +88,7 @@ class BackupKeyResult(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -100,16 +100,16 @@ class KeyBundle(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar key: The Json web key.
-    :vartype key: ~azure.keyvault.v7_4_preview_1.models.JsonWebKey
+    :vartype key: ~azure.keyvault.v7_4.models.JsonWebKey
     :ivar attributes: The key management attributes.
-    :vartype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+    :vartype attributes: ~azure.keyvault.v7_4.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
      certificate, then managed will be true.
     :vartype managed: bool
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
     """
 
     _validation = {
@@ -131,17 +131,17 @@ class KeyBundle(_serialization.Model):
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The Json web key.
-        :paramtype key: ~azure.keyvault.v7_4_preview_1.models.JsonWebKey
+        :paramtype key: ~azure.keyvault.v7_4.models.JsonWebKey
         :keyword attributes: The key management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+        :paramtype attributes: ~azure.keyvault.v7_4.models.KeyAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
         """
         super().__init__(**kwargs)
         self.key = key
@@ -157,16 +157,16 @@ class DeletedKeyBundle(KeyBundle):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar key: The Json web key.
-    :vartype key: ~azure.keyvault.v7_4_preview_1.models.JsonWebKey
+    :vartype key: ~azure.keyvault.v7_4.models.JsonWebKey
     :ivar attributes: The key management attributes.
-    :vartype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+    :vartype attributes: ~azure.keyvault.v7_4.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
      certificate, then managed will be true.
     :vartype managed: bool
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
     :ivar recovery_id: The url of the recovery object, used to identify and recover the deleted
      key.
     :vartype recovery_id: str
@@ -201,17 +201,17 @@ class DeletedKeyBundle(KeyBundle):
         tags: Optional[Dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: The Json web key.
-        :paramtype key: ~azure.keyvault.v7_4_preview_1.models.JsonWebKey
+        :paramtype key: ~azure.keyvault.v7_4.models.JsonWebKey
         :keyword attributes: The key management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+        :paramtype attributes: ~azure.keyvault.v7_4.models.KeyAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
         :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
          key.
         :paramtype recovery_id: str
@@ -230,7 +230,7 @@ class KeyItem(_serialization.Model):
     :ivar kid: Key identifier.
     :vartype kid: str
     :ivar attributes: The key management attributes.
-    :vartype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+    :vartype attributes: ~azure.keyvault.v7_4.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
@@ -255,13 +255,13 @@ class KeyItem(_serialization.Model):
         kid: Optional[str] = None,
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
         :keyword attributes: The key management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+        :paramtype attributes: ~azure.keyvault.v7_4.models.KeyAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
@@ -280,7 +280,7 @@ class DeletedKeyItem(KeyItem):
     :ivar kid: Key identifier.
     :vartype kid: str
     :ivar attributes: The key management attributes.
-    :vartype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+    :vartype attributes: ~azure.keyvault.v7_4.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar managed: True if the key's lifetime is managed by key vault. If this is a key backing a
@@ -318,13 +318,13 @@ class DeletedKeyItem(KeyItem):
         attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
         :keyword attributes: The key management attributes.
-        :paramtype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+        :paramtype attributes: ~azure.keyvault.v7_4.models.KeyAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
@@ -344,7 +344,7 @@ class DeletedKeyListResult(_serialization.Model):
 
     :ivar value: A response message containing a list of deleted keys in the vault along with a
      link to the next page of deleted keys.
-    :vartype value: list[~azure.keyvault.v7_4_preview_1.models.DeletedKeyItem]
+    :vartype value: list[~azure.keyvault.v7_4.models.DeletedKeyItem]
     :ivar next_link: The URL to get the next set of deleted keys.
     :vartype next_link: str
     """
@@ -359,7 +359,7 @@ class DeletedKeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -376,7 +376,7 @@ class Error(_serialization.Model):
     :ivar message: The error message.
     :vartype message: str
     :ivar inner_error: The key vault server error.
-    :vartype inner_error: ~azure.keyvault.v7_4_preview_1.models.Error
+    :vartype inner_error: ~azure.keyvault.v7_4.models.Error
     """
 
     _validation = {
@@ -391,7 +391,7 @@ class Error(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -416,7 +416,7 @@ class GetRandomBytesRequest(_serialization.Model):
         "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(self, *, count: int, **kwargs):
+    def __init__(self, *, count: int, **kwargs: Any) -> None:
         """
         :keyword count: The requested number of random bytes. Required.
         :paramtype count: int
@@ -432,15 +432,15 @@ class JsonWebKey(_serialization.Model):  # pylint: disable=too-many-instance-att
     :vartype kid: str
     :ivar kty: JsonWebKey Key Type (kty), as defined in
      https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40. Known values are: "EC",
-     "EC-HSM", "RSA", "RSA-HSM", "oct", "oct-HSM", "OKP", and "OKP-HSM".
-    :vartype kty: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyType
+     "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+    :vartype kty: str or ~azure.keyvault.v7_4.models.JsonWebKeyType
     :ivar key_ops:
     :vartype key_ops: list[str]
     :ivar n: RSA modulus.
     :vartype n: bytes
     :ivar e: RSA public exponent.
     :vartype e: bytes
-    :ivar d: RSA private exponent, or the D component of an EC or OKP private key.
+    :ivar d: RSA private exponent, or the D component of an EC private key.
     :vartype d: bytes
     :ivar dp: RSA private key parameter.
     :vartype dp: bytes
@@ -457,9 +457,9 @@ class JsonWebKey(_serialization.Model):  # pylint: disable=too-many-instance-att
     :ivar t: Protected Key, used with 'Bring Your Own Key'.
     :vartype t: bytes
     :ivar crv: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values are:
-     "P-256", "P-384", "P-521", "P-256K", and "Ed25519".
-    :vartype crv: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyCurveName
-    :ivar x: X component of an EC or OKP public key.
+     "P-256", "P-384", "P-521", and "P-256K".
+    :vartype crv: str or ~azure.keyvault.v7_4.models.JsonWebKeyCurveName
+    :ivar x: X component of an EC public key.
     :vartype x: bytes
     :ivar y: Y component of an EC public key.
     :vartype y: bytes
@@ -503,22 +503,22 @@ class JsonWebKey(_serialization.Model):  # pylint: disable=too-many-instance-att
         crv: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         x: Optional[bytes] = None,
         y: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kid: Key identifier.
         :paramtype kid: str
         :keyword kty: JsonWebKey Key Type (kty), as defined in
          https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40. Known values are: "EC",
-         "EC-HSM", "RSA", "RSA-HSM", "oct", "oct-HSM", "OKP", and "OKP-HSM".
-        :paramtype kty: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyType
+         "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+        :paramtype kty: str or ~azure.keyvault.v7_4.models.JsonWebKeyType
         :keyword key_ops:
         :paramtype key_ops: list[str]
         :keyword n: RSA modulus.
         :paramtype n: bytes
         :keyword e: RSA public exponent.
         :paramtype e: bytes
-        :keyword d: RSA private exponent, or the D component of an EC or OKP private key.
+        :keyword d: RSA private exponent, or the D component of an EC private key.
         :paramtype d: bytes
         :keyword dp: RSA private key parameter.
         :paramtype dp: bytes
@@ -535,9 +535,9 @@ class JsonWebKey(_serialization.Model):  # pylint: disable=too-many-instance-att
         :keyword t: Protected Key, used with 'Bring Your Own Key'.
         :paramtype t: bytes
         :keyword crv: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values are:
-         "P-256", "P-384", "P-521", "P-256K", and "Ed25519".
-        :paramtype crv: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyCurveName
-        :keyword x: X component of an EC or OKP public key.
+         "P-256", "P-384", "P-521", and "P-256K".
+        :paramtype crv: str or ~azure.keyvault.v7_4.models.JsonWebKeyCurveName
+        :keyword x: X component of an EC public key.
         :paramtype x: bytes
         :keyword y: Y component of an EC public key.
         :paramtype y: bytes
@@ -585,7 +585,7 @@ class KeyAttributes(Attributes):
      values are: "Purgeable", "Recoverable+Purgeable", "Recoverable",
      "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
      "CustomizedRecoverable", and "CustomizedRecoverable+ProtectedSubscription".
-    :vartype recovery_level: str or ~azure.keyvault.v7_4_preview_1.models.DeletionRecoveryLevel
+    :vartype recovery_level: str or ~azure.keyvault.v7_4.models.DeletionRecoveryLevel
     :ivar exportable: Indicates if the private key can be exported. Release policy must be provided
      when creating the first version of an exportable key.
     :vartype exportable: bool
@@ -616,8 +616,8 @@ class KeyAttributes(Attributes):
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
         exportable: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -641,23 +641,23 @@ class KeyCreateParameters(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kty: The type of key to create. For valid values, see JsonWebKeyType. Required. Known
-     values are: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", "oct-HSM", "OKP", and "OKP-HSM".
-    :vartype kty: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyType
+     values are: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+    :vartype kty: str or ~azure.keyvault.v7_4.models.JsonWebKeyType
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
     :ivar public_exponent: The public exponent for a RSA key.
     :vartype public_exponent: int
     :ivar key_ops:
-    :vartype key_ops: list[str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyOperation]
+    :vartype key_ops: list[str or ~azure.keyvault.v7_4.models.JsonWebKeyOperation]
     :ivar key_attributes: The attributes of a key managed by the key vault service.
-    :vartype key_attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+    :vartype key_attributes: ~azure.keyvault.v7_4.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values are:
-     "P-256", "P-384", "P-521", "P-256K", and "Ed25519".
-    :vartype curve: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyCurveName
+     "P-256", "P-384", "P-521", and "P-256K".
+    :vartype curve: str or ~azure.keyvault.v7_4.models.JsonWebKeyCurveName
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
     """
 
     _validation = {
@@ -686,27 +686,27 @@ class KeyCreateParameters(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kty: The type of key to create. For valid values, see JsonWebKeyType. Required. Known
-         values are: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", "oct-HSM", "OKP", and "OKP-HSM".
-        :paramtype kty: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyType
+         values are: "EC", "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+        :paramtype kty: str or ~azure.keyvault.v7_4.models.JsonWebKeyType
         :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
         :paramtype key_size: int
         :keyword public_exponent: The public exponent for a RSA key.
         :paramtype public_exponent: int
         :keyword key_ops:
-        :paramtype key_ops: list[str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyOperation]
+        :paramtype key_ops: list[str or ~azure.keyvault.v7_4.models.JsonWebKeyOperation]
         :keyword key_attributes: The attributes of a key managed by the key vault service.
-        :paramtype key_attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+        :paramtype key_attributes: ~azure.keyvault.v7_4.models.KeyAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values
-         are: "P-256", "P-384", "P-521", "P-256K", and "Ed25519".
-        :paramtype curve: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyCurveName
+         are: "P-256", "P-384", "P-521", and "P-256K".
+        :paramtype curve: str or ~azure.keyvault.v7_4.models.JsonWebKeyCurveName
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
         """
         super().__init__(**kwargs)
         self.kty = kty
@@ -724,13 +724,13 @@ class KeyExportParameters(_serialization.Model):
 
     :ivar wrapping_key: The export key encryption Json web key. This key MUST be a RSA key that
      supports encryption.
-    :vartype wrapping_key: ~azure.keyvault.v7_4_preview_1.models.JsonWebKey
+    :vartype wrapping_key: ~azure.keyvault.v7_4.models.JsonWebKey
     :ivar wrapping_kid: The export key encryption key identifier. This key MUST be a RSA key that
      supports encryption.
     :vartype wrapping_kid: str
     :ivar enc: The encryption algorithm to use to protected the exported key material. Known values
      are: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", and "RSA_AES_KEY_WRAP_384".
-    :vartype enc: str or ~azure.keyvault.v7_4_preview_1.models.KeyEncryptionAlgorithm
+    :vartype enc: str or ~azure.keyvault.v7_4.models.KeyEncryptionAlgorithm
     """
 
     _attribute_map = {
@@ -745,18 +745,18 @@ class KeyExportParameters(_serialization.Model):
         wrapping_key: Optional["_models.JsonWebKey"] = None,
         wrapping_kid: Optional[str] = None,
         enc: Optional[Union[str, "_models.KeyEncryptionAlgorithm"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword wrapping_key: The export key encryption Json web key. This key MUST be a RSA key that
          supports encryption.
-        :paramtype wrapping_key: ~azure.keyvault.v7_4_preview_1.models.JsonWebKey
+        :paramtype wrapping_key: ~azure.keyvault.v7_4.models.JsonWebKey
         :keyword wrapping_kid: The export key encryption key identifier. This key MUST be a RSA key
          that supports encryption.
         :paramtype wrapping_kid: str
         :keyword enc: The encryption algorithm to use to protected the exported key material. Known
          values are: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", and "RSA_AES_KEY_WRAP_384".
-        :paramtype enc: str or ~azure.keyvault.v7_4_preview_1.models.KeyEncryptionAlgorithm
+        :paramtype enc: str or ~azure.keyvault.v7_4.models.KeyEncryptionAlgorithm
         """
         super().__init__(**kwargs)
         self.wrapping_key = wrapping_key
@@ -772,13 +772,13 @@ class KeyImportParameters(_serialization.Model):
     :ivar hsm: Whether to import as a hardware key (HSM) or software key.
     :vartype hsm: bool
     :ivar key: The Json web key. Required.
-    :vartype key: ~azure.keyvault.v7_4_preview_1.models.JsonWebKey
+    :vartype key: ~azure.keyvault.v7_4.models.JsonWebKey
     :ivar key_attributes: The key management attributes.
-    :vartype key_attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+    :vartype key_attributes: ~azure.keyvault.v7_4.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
     """
 
     _validation = {
@@ -801,19 +801,19 @@ class KeyImportParameters(_serialization.Model):
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hsm: Whether to import as a hardware key (HSM) or software key.
         :paramtype hsm: bool
         :keyword key: The Json web key. Required.
-        :paramtype key: ~azure.keyvault.v7_4_preview_1.models.JsonWebKey
+        :paramtype key: ~azure.keyvault.v7_4.models.JsonWebKey
         :keyword key_attributes: The key management attributes.
-        :paramtype key_attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+        :paramtype key_attributes: ~azure.keyvault.v7_4.models.KeyAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
         """
         super().__init__(**kwargs)
         self.hsm = hsm
@@ -830,7 +830,7 @@ class KeyListResult(_serialization.Model):
 
     :ivar value: A response message containing a list of keys in the key vault along with a link to
      the next page of keys.
-    :vartype value: list[~azure.keyvault.v7_4_preview_1.models.KeyItem]
+    :vartype value: list[~azure.keyvault.v7_4.models.KeyItem]
     :ivar next_link: The URL to get the next set of keys.
     :vartype next_link: str
     """
@@ -845,7 +845,7 @@ class KeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -885,7 +885,7 @@ class KeyOperationResult(_serialization.Model):
         "additional_authenticated_data": {"key": "aad", "type": "base64"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.kid = None
@@ -903,7 +903,7 @@ class KeyOperationsParameters(_serialization.Model):
     :ivar algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP", "RSA-OAEP-256",
      "RSA1_5", "A128GCM", "A192GCM", "A256GCM", "A128KW", "A192KW", "A256KW", "A128CBC", "A192CBC",
      "A256CBC", "A128CBCPAD", "A192CBCPAD", and "A256CBCPAD".
-    :vartype algorithm: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyEncryptionAlgorithm
+    :vartype algorithm: str or ~azure.keyvault.v7_4.models.JsonWebKeyEncryptionAlgorithm
     :ivar value: Required.
     :vartype value: bytes
     :ivar iv: Cryptographically random, non-repeating initialization vector for symmetric
@@ -937,14 +937,13 @@ class KeyOperationsParameters(_serialization.Model):
         iv: Optional[bytes] = None,
         aad: Optional[bytes] = None,
         tag: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: algorithm identifier. Required. Known values are: "RSA-OAEP",
          "RSA-OAEP-256", "RSA1_5", "A128GCM", "A192GCM", "A256GCM", "A128KW", "A192KW", "A256KW",
          "A128CBC", "A192CBC", "A256CBC", "A128CBCPAD", "A192CBCPAD", and "A256CBCPAD".
-        :paramtype algorithm: str or
-         ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyEncryptionAlgorithm
+        :paramtype algorithm: str or ~azure.keyvault.v7_4.models.JsonWebKeyEncryptionAlgorithm
         :keyword value: Required.
         :paramtype value: bytes
         :keyword iv: Cryptographically random, non-repeating initialization vector for symmetric
@@ -972,15 +971,15 @@ class KeyProperties(_serialization.Model):
      when creating the first version of an exportable key.
     :vartype exportable: bool
     :ivar key_type: The type of key pair to be used for the certificate. Known values are: "EC",
-     "EC-HSM", "RSA", "RSA-HSM", "oct", "oct-HSM", "OKP", and "OKP-HSM".
-    :vartype key_type: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyType
+     "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+    :vartype key_type: str or ~azure.keyvault.v7_4.models.JsonWebKeyType
     :ivar key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
     :vartype key_size: int
     :ivar reuse_key: Indicates if the same key pair will be used on certificate renewal.
     :vartype reuse_key: bool
     :ivar curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values are:
-     "P-256", "P-384", "P-521", "P-256K", and "Ed25519".
-    :vartype curve: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyCurveName
+     "P-256", "P-384", "P-521", and "P-256K".
+    :vartype curve: str or ~azure.keyvault.v7_4.models.JsonWebKeyCurveName
     """
 
     _attribute_map = {
@@ -999,22 +998,22 @@ class KeyProperties(_serialization.Model):
         key_size: Optional[int] = None,
         reuse_key: Optional[bool] = None,
         curve: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword exportable: Indicates if the private key can be exported. Release policy must be
          provided when creating the first version of an exportable key.
         :paramtype exportable: bool
         :keyword key_type: The type of key pair to be used for the certificate. Known values are: "EC",
-         "EC-HSM", "RSA", "RSA-HSM", "oct", "oct-HSM", "OKP", and "OKP-HSM".
-        :paramtype key_type: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyType
+         "EC-HSM", "RSA", "RSA-HSM", "oct", and "oct-HSM".
+        :paramtype key_type: str or ~azure.keyvault.v7_4.models.JsonWebKeyType
         :keyword key_size: The key size in bits. For example: 2048, 3072, or 4096 for RSA.
         :paramtype key_size: int
         :keyword reuse_key: Indicates if the same key pair will be used on certificate renewal.
         :paramtype reuse_key: bool
         :keyword curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName. Known values
-         are: "P-256", "P-384", "P-521", "P-256K", and "Ed25519".
-        :paramtype curve: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyCurveName
+         are: "P-256", "P-384", "P-521", and "P-256K".
+        :paramtype curve: str or ~azure.keyvault.v7_4.models.JsonWebKeyCurveName
         """
         super().__init__(**kwargs)
         self.exportable = exportable
@@ -1036,7 +1035,7 @@ class KeyReleaseParameters(_serialization.Model):
     :vartype nonce: str
     :ivar enc: The encryption algorithm to use to protected the exported key material. Known values
      are: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", and "RSA_AES_KEY_WRAP_384".
-    :vartype enc: str or ~azure.keyvault.v7_4_preview_1.models.KeyEncryptionAlgorithm
+    :vartype enc: str or ~azure.keyvault.v7_4.models.KeyEncryptionAlgorithm
     """
 
     _validation = {
@@ -1055,8 +1054,8 @@ class KeyReleaseParameters(_serialization.Model):
         target_attestation_token: str,
         nonce: Optional[str] = None,
         enc: Optional[Union[str, "_models.KeyEncryptionAlgorithm"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_attestation_token: The attestation assertion for the target of the key release.
          Required.
@@ -1065,7 +1064,7 @@ class KeyReleaseParameters(_serialization.Model):
         :paramtype nonce: str
         :keyword enc: The encryption algorithm to use to protected the exported key material. Known
          values are: "CKM_RSA_AES_KEY_WRAP", "RSA_AES_KEY_WRAP_256", and "RSA_AES_KEY_WRAP_384".
-        :paramtype enc: str or ~azure.keyvault.v7_4_preview_1.models.KeyEncryptionAlgorithm
+        :paramtype enc: str or ~azure.keyvault.v7_4.models.KeyEncryptionAlgorithm
         """
         super().__init__(**kwargs)
         self.target_attestation_token = target_attestation_token
@@ -1098,8 +1097,8 @@ class KeyReleasePolicy(_serialization.Model):
         content_type: str = "application/json; charset=utf-8",
         immutable: Optional[bool] = None,
         encoded_policy: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_type: Content type and version of key release policy.
         :paramtype content_type: str
@@ -1133,7 +1132,7 @@ class KeyReleaseResult(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1156,7 +1155,7 @@ class KeyRestoreParameters(_serialization.Model):
         "key_bundle_backup": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, key_bundle_backup: bytes, **kwargs):
+    def __init__(self, *, key_bundle_backup: bytes, **kwargs: Any) -> None:
         """
         :keyword key_bundle_backup: The backup blob associated with a key bundle. Required.
         :paramtype key_bundle_backup: bytes
@@ -1175,9 +1174,9 @@ class KeyRotationPolicy(_serialization.Model):
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
      For preview, lifetimeActions can only have two items at maximum: one for rotate, one for
      notify. Notification time would be default to 30 days before expiry and it is not configurable.
-    :vartype lifetime_actions: list[~azure.keyvault.v7_4_preview_1.models.LifetimeActions]
+    :vartype lifetime_actions: list[~azure.keyvault.v7_4.models.LifetimeActions]
     :ivar attributes: The key rotation policy attributes.
-    :vartype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyRotationPolicyAttributes
+    :vartype attributes: ~azure.keyvault.v7_4.models.KeyRotationPolicyAttributes
     """
 
     _validation = {
@@ -1195,15 +1194,15 @@ class KeyRotationPolicy(_serialization.Model):
         *,
         lifetime_actions: Optional[List["_models.LifetimeActions"]] = None,
         attributes: Optional["_models.KeyRotationPolicyAttributes"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a
          key. For preview, lifetimeActions can only have two items at maximum: one for rotate, one for
          notify. Notification time would be default to 30 days before expiry and it is not configurable.
-        :paramtype lifetime_actions: list[~azure.keyvault.v7_4_preview_1.models.LifetimeActions]
+        :paramtype lifetime_actions: list[~azure.keyvault.v7_4.models.LifetimeActions]
         :keyword attributes: The key rotation policy attributes.
-        :paramtype attributes: ~azure.keyvault.v7_4_preview_1.models.KeyRotationPolicyAttributes
+        :paramtype attributes: ~azure.keyvault.v7_4.models.KeyRotationPolicyAttributes
         """
         super().__init__(**kwargs)
         self.id = None
@@ -1237,7 +1236,7 @@ class KeyRotationPolicyAttributes(_serialization.Model):
         "updated": {"key": "updated", "type": "unix-time"},
     }
 
-    def __init__(self, *, expiry_time: Optional[str] = None, **kwargs):
+    def __init__(self, *, expiry_time: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword expiry_time: The expiryTime will be applied on the new key version. It should be at
          least 28 days. It will be in ISO 8601 Format. Examples: 90 days: P90D, 3 months: P3M, 48 hours:
@@ -1257,9 +1256,9 @@ class KeySignParameters(_serialization.Model):
 
     :ivar algorithm: The signing/verification algorithm identifier. For more information on
      possible algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are:
-     "PS256", "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512",
-     "ES256K", and "EdDSA".
-    :vartype algorithm: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeySignatureAlgorithm
+     "PS256", "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512", and
+     "ES256K".
+    :vartype algorithm: str or ~azure.keyvault.v7_4.models.JsonWebKeySignatureAlgorithm
     :ivar value: Required.
     :vartype value: bytes
     """
@@ -1274,13 +1273,15 @@ class KeySignParameters(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"], value: bytes, **kwargs):
+    def __init__(
+        self, *, algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"], value: bytes, **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: The signing/verification algorithm identifier. For more information on
          possible algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are:
-         "PS256", "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512",
-         "ES256K", and "EdDSA".
-        :paramtype algorithm: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeySignatureAlgorithm
+         "PS256", "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512", and
+         "ES256K".
+        :paramtype algorithm: str or ~azure.keyvault.v7_4.models.JsonWebKeySignatureAlgorithm
         :keyword value: Required.
         :paramtype value: bytes
         """
@@ -1294,13 +1295,13 @@ class KeyUpdateParameters(_serialization.Model):
 
     :ivar key_ops: Json web key operations. For more information on possible key operations, see
      JsonWebKeyOperation.
-    :vartype key_ops: list[str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyOperation]
+    :vartype key_ops: list[str or ~azure.keyvault.v7_4.models.JsonWebKeyOperation]
     :ivar key_attributes: The attributes of a key managed by the key vault service.
-    :vartype key_attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+    :vartype key_attributes: ~azure.keyvault.v7_4.models.KeyAttributes
     :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar release_policy: The policy rules under which the key can be exported.
-    :vartype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+    :vartype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
     """
 
     _attribute_map = {
@@ -1317,18 +1318,18 @@ class KeyUpdateParameters(_serialization.Model):
         key_attributes: Optional["_models.KeyAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         release_policy: Optional["_models.KeyReleasePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_ops: Json web key operations. For more information on possible key operations, see
          JsonWebKeyOperation.
-        :paramtype key_ops: list[str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeyOperation]
+        :paramtype key_ops: list[str or ~azure.keyvault.v7_4.models.JsonWebKeyOperation]
         :keyword key_attributes: The attributes of a key managed by the key vault service.
-        :paramtype key_attributes: ~azure.keyvault.v7_4_preview_1.models.KeyAttributes
+        :paramtype key_attributes: ~azure.keyvault.v7_4.models.KeyAttributes
         :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword release_policy: The policy rules under which the key can be exported.
-        :paramtype release_policy: ~azure.keyvault.v7_4_preview_1.models.KeyReleasePolicy
+        :paramtype release_policy: ~azure.keyvault.v7_4.models.KeyReleasePolicy
         """
         super().__init__(**kwargs)
         self.key_ops = key_ops
@@ -1343,7 +1344,7 @@ class KeyVaultError(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar error: The key vault server error.
-    :vartype error: ~azure.keyvault.v7_4_preview_1.models.Error
+    :vartype error: ~azure.keyvault.v7_4.models.Error
     """
 
     _validation = {
@@ -1354,7 +1355,7 @@ class KeyVaultError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -1367,8 +1368,8 @@ class KeyVerifyParameters(_serialization.Model):
 
     :ivar algorithm: The signing/verification algorithm. For more information on possible algorithm
      types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256", "PS384", "PS512",
-     "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512", "ES256K", and "EdDSA".
-    :vartype algorithm: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeySignatureAlgorithm
+     "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512", and "ES256K".
+    :vartype algorithm: str or ~azure.keyvault.v7_4.models.JsonWebKeySignatureAlgorithm
     :ivar digest: The digest used for signing. Required.
     :vartype digest: bytes
     :ivar signature: The signature to be verified. Required.
@@ -1393,14 +1394,13 @@ class KeyVerifyParameters(_serialization.Model):
         algorithm: Union[str, "_models.JsonWebKeySignatureAlgorithm"],
         digest: bytes,
         signature: bytes,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword algorithm: The signing/verification algorithm. For more information on possible
          algorithm types, see JsonWebKeySignatureAlgorithm. Required. Known values are: "PS256",
-         "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512", "ES256K", and
-         "EdDSA".
-        :paramtype algorithm: str or ~azure.keyvault.v7_4_preview_1.models.JsonWebKeySignatureAlgorithm
+         "PS384", "PS512", "RS256", "RS384", "RS512", "RSNULL", "ES256", "ES384", "ES512", and "ES256K".
+        :paramtype algorithm: str or ~azure.keyvault.v7_4.models.JsonWebKeySignatureAlgorithm
         :keyword digest: The digest used for signing. Required.
         :paramtype digest: bytes
         :keyword signature: The signature to be verified. Required.
@@ -1429,7 +1429,7 @@ class KeyVerifyResult(_serialization.Model):
         "value": {"key": "value", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1439,9 +1439,9 @@ class LifetimeActions(_serialization.Model):
     """Action and its trigger that will be performed by Key Vault over the lifetime of a key.
 
     :ivar trigger: The condition that will execute the action.
-    :vartype trigger: ~azure.keyvault.v7_4_preview_1.models.LifetimeActionsTrigger
+    :vartype trigger: ~azure.keyvault.v7_4.models.LifetimeActionsTrigger
     :ivar action: The action that will be executed.
-    :vartype action: ~azure.keyvault.v7_4_preview_1.models.LifetimeActionsType
+    :vartype action: ~azure.keyvault.v7_4.models.LifetimeActionsType
     """
 
     _attribute_map = {
@@ -1454,13 +1454,13 @@ class LifetimeActions(_serialization.Model):
         *,
         trigger: Optional["_models.LifetimeActionsTrigger"] = None,
         action: Optional["_models.LifetimeActionsType"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword trigger: The condition that will execute the action.
-        :paramtype trigger: ~azure.keyvault.v7_4_preview_1.models.LifetimeActionsTrigger
+        :paramtype trigger: ~azure.keyvault.v7_4.models.LifetimeActionsTrigger
         :keyword action: The action that will be executed.
-        :paramtype action: ~azure.keyvault.v7_4_preview_1.models.LifetimeActionsType
+        :paramtype action: ~azure.keyvault.v7_4.models.LifetimeActionsType
         """
         super().__init__(**kwargs)
         self.trigger = trigger
@@ -1483,7 +1483,9 @@ class LifetimeActionsTrigger(_serialization.Model):
         "time_before_expiry": {"key": "timeBeforeExpiry", "type": "str"},
     }
 
-    def __init__(self, *, time_after_create: Optional[str] = None, time_before_expiry: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, time_after_create: Optional[str] = None, time_before_expiry: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword time_after_create: Time after creation to attempt to rotate. It only applies to
          rotate. It will be in ISO 8601 duration format. Example: 90 days : "P90D".
@@ -1501,17 +1503,17 @@ class LifetimeActionsType(_serialization.Model):
     """The action that will be executed.
 
     :ivar type: The type of the action. Known values are: "rotate" and "notify".
-    :vartype type: str or ~azure.keyvault.v7_4_preview_1.models.ActionType
+    :vartype type: str or ~azure.keyvault.v7_4.models.ActionType
     """
 
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.ActionType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.ActionType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The type of the action. Known values are: "rotate" and "notify".
-        :paramtype type: str or ~azure.keyvault.v7_4_preview_1.models.ActionType
+        :paramtype type: str or ~azure.keyvault.v7_4.models.ActionType
         """
         super().__init__(**kwargs)
         self.type = type
@@ -1534,7 +1536,7 @@ class RandomBytes(_serialization.Model):
         "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(self, *, value: bytes, **kwargs):
+    def __init__(self, *, value: bytes, **kwargs: Any) -> None:
         """
         :keyword value: The bytes encoded as a base64url string. Required.
         :paramtype value: bytes
