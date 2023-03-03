@@ -223,6 +223,7 @@ if __name__ == '__main__':
     version specs will be frozen to shared_requirements.txt.
     ''')
     parser.add_argument('--verbose', help='verbose output', action='store_true')
+    parser.add_argument('--freeze', help='freeze dependencies after analyzing (otherwise, validate dependencies against frozen list)', action='store_true')
     parser.add_argument('--out', metavar='FILE', help='write HTML-formatted report to FILE')
     parser.add_argument('--dump', metavar='FILE', help='write JSONP-formatted dependency data to FILE')
     parser.add_argument('--wheeldir', metavar='DIR', help='analyze wheels in DIR rather than source packages in this repository')
@@ -262,157 +263,101 @@ if __name__ == '__main__':
                     print('  * %s' % (lib))
             print('')
 
-    inconsistent = []
-    for requirement in sorted(dependencies.keys()):
-        breakpoint()
-        specs = dependencies[requirement]
-        num_specs = len(specs)
-        if num_specs == 1:
-            continue
-
-        if not inconsistent and args.verbose:
-            print('\nInconsistencies detected')
-            print('========================')
-
-        inconsistent.append(requirement)
-        if args.verbose:
-            print("Requirement '%s' has %s unique specifiers:" % (requirement, num_specs))
-            for spec in sorted(specs.keys()):
-                libs = specs[spec]
-                friendly_spec = '(none)' if spec == '' else spec
-                print("  '%s'" % (friendly_spec))
-                print('  ' + ('-' * (len(friendly_spec) + 2)))
-                for lib in sorted(libs):
-                    print('    * %s' % (lib))
-                print('')
-
     frozen_filename = os.path.join(base_dir, 'shared_requirements.txt')
+
+    if os.path.exists(frozen_filename):
+        with open(frozen_filename, 'r') as f:
+            frozen_reqs = set([line.strip() for line in f.readlines()])
+
+        discovered_reqs = set(dependencies.keys())
+        difference = discovered_reqs.difference(frozen_reqs)
+        breakpoint()
+    else:
+        frozen_reqs = None
+        difference = None
+
     if args.freeze:
-        if inconsistent:
-            print('Unable to freeze requirements due to incompatible dependency versions')
+        if difference:
+            print('Unable to freeze requirements due to additional dependency not present in existing shared_requirements.txt.')
             sys.exit(1)
         else:
             with io.open(frozen_filename, 'w', encoding='utf-8') as frozen_file:
                 for requirement in sorted(dependencies.keys()):
-                    spec = list(dependencies[requirement].keys())[0]
-                    if spec == '':
-                        print("Requirement '%s' being frozen with no version spec" % requirement)
-                    frozen_file.write(requirement + spec + '\n')
-            print('Current requirements frozen to %s' % (frozen_filename))
+                    frozen_file.write(requirement + '\n')
+            print('Current known external deps set to %s' % (frozen_filename))
             sys.exit(0)
-
-    frozen = {}
-    overrides = {}
-    override_count = 0
-    try:
-        with io.open(frozen_filename, 'r', encoding='utf-8-sig') as frozen_file:
-            for line in frozen_file:
-                if line.startswith('#override'):
-                    _, lib_name, req_override = line.split(' ', 2)
-                    req_override_name, override_spec = parse_req(req_override)
-                    record_dep(overrides, req_override_name, override_spec, lib_name)
-                    override_count += 1
-                elif not line.startswith('#'):
-                    req_name, spec = parse_req(line)
-                    frozen[req_name] = [spec]
-    except:
-        print('Unable to open shared_requirements.txt, shared requirements have not been validated')
 
     missing_reqs, new_reqs, changed_reqs = {}, {}, {}
     non_overridden_reqs_count = 0
     exitcode = 0
-    if frozen:
-        flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
-        missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
-        if args.verbose and len(overrides) > 0:
-            print('\nThe following requirement overrides are in place:')
-            for overridden_req in overrides:
-                for spec in overrides[overridden_req]:
-                    libs = ', '.join(sorted(overrides[overridden_req][spec]))
-                    print('  * %s is allowed for %s' % (overridden_req + spec, libs))
-        if args.verbose and len(missing_reqs) > 0:
-            print('\nThe following requirements are frozen but do not exist in any current library:')
-            for missing_req in missing_reqs:
-                [spec] = frozen[missing_req]
-                print('  * %s' % (missing_req + spec))
-        if len(new_reqs) > 0:
-            exitcode = 1
-            if args.verbose:
-                for new_req in new_reqs:
-                    for spec in dependencies[new_req]:
-                        libs = dependencies[new_req][spec]
-                        print("\nRequirement '%s' is declared in the following libraries but has not been frozen:" % (new_req + spec))
-                        for lib in libs:
-                            print("  * %s" % (lib))
-        if len(changed_reqs) > 0:
-            for changed_req in changed_reqs:
-                frozen_specs, current_specs = changed_reqs[changed_req]
-                unmatched_specs = set(current_specs) - set(frozen_specs)
-                override_specs = overrides.get(changed_req, [])
-
-                for spec in unmatched_specs:
-                    if spec in override_specs:
-                        non_overridden_libs = set(dependencies[changed_req][spec]) - set(override_specs[spec])
-                    else:
-                        non_overridden_libs = dependencies[changed_req][spec]
-
-                    if len(non_overridden_libs) > 0:
-                        exitcode = 1
-                        non_overridden_reqs_count += 1
-                        if args.verbose:
-                            print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + spec, changed_req + frozen_specs[0]))
-                            for lib in non_overridden_libs:
-                                print("  * %s" % (lib))
-        if exitcode == 0:
-            if args.verbose:
-                print('')
-            print('All library dependencies validated against frozen requirements')
-        elif not args.verbose:
-            print('Library dependencies do not match frozen requirements, run this script with --verbose for details')
-    elif inconsistent:
+    if difference:
         exitcode = 1
+    # if frozen:
+    #     flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
+    #     missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
+    #     if args.verbose and len(overrides) > 0:
+    #         print('\nThe following requirement overrides are in place:')
+    #         for overridden_req in overrides:
+    #             for spec in overrides[overridden_req]:
+    #                 libs = ', '.join(sorted(overrides[overridden_req][spec]))
+    #                 print('  * %s is allowed for %s' % (overridden_req + spec, libs))
+    #     if args.verbose and len(missing_reqs) > 0:
+    #         print('\nThe following requirements are frozen but do not exist in any current library:')
+    #         for missing_req in missing_reqs:
+    #             [spec] = frozen[missing_req]
+    #             print('  * %s' % (missing_req + spec))
+    #     if len(new_reqs) > 0:
+    #         exitcode = 1
+    #         if args.verbose:
+    #             for new_req in new_reqs:
+    #                 for spec in dependencies[new_req]:
+    #                     libs = dependencies[new_req][spec]
+    #                     print("\nRequirement '%s' is declared in the following libraries but has not been frozen:" % (new_req + spec))
+    #                     for lib in libs:
+    #                         print("  * %s" % (lib))
+    #     if len(changed_reqs) > 0:
+    #         for changed_req in changed_reqs:
+    #             frozen_specs, current_specs = changed_reqs[changed_req]
+    #             unmatched_specs = set(current_specs) - set(frozen_specs)
+    #             override_specs = overrides.get(changed_req, [])
+
+    #             for spec in unmatched_specs:
+    #                 if spec in override_specs:
+    #                     non_overridden_libs = set(dependencies[changed_req][spec]) - set(override_specs[spec])
+    #                 else:
+    #                     non_overridden_libs = dependencies[changed_req][spec]
+
+    #                 if len(non_overridden_libs) > 0:
+    #                     exitcode = 1
+    #                     non_overridden_reqs_count += 1
+    #                     if args.verbose:
+    #                         print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + spec, changed_req + frozen_specs[0]))
+    #                         for lib in non_overridden_libs:
+    #                             print("  * %s" % (lib))
+    #     if exitcode == 0:
+    #         if args.verbose:
+    #             print('')
+    #         print('All library dependencies validated against frozen requirements')
+    #     elif not args.verbose:
+    #         print('Library dependencies do not match frozen requirements, run this script with --verbose for details')
+    # elif difference:
+    #     exitcode = 1
     
     if exitcode == 1:
         if not args.verbose:
             print('\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
     else:
-        print('\nAll library dependencies verified, no incompatible versions detected')
+        print('\nAll library dependencies verified, no incompatible versions detected.')
 
-    if args.out:
-        external = [k for k in dependencies if k not in packages and not report_should_skip_lib(k)]
-        def display_order(k):
-            if k in inconsistent:
-                return 'a' + k if k in external else 'b' + k
-            else:
-                return 'c' + k if k in external else 'd' + k
-
-        render_report(args.out, {
-            'changed_reqs': changed_reqs,
-            'curtime': datetime.utcnow(),
-            'dependencies': dependencies,
-            'env': os.environ,
-            'external': external,
-            'frozen': frozen,
-            'inconsistent': inconsistent,
-            'missing_reqs': missing_reqs,
-            'new_reqs': new_reqs,
-            'non_overridden_reqs_count': non_overridden_reqs_count,
-            'ordered_deps': sorted(dependencies.keys(), key=display_order),
-            'override_count': override_count,
-            'overrides': overrides,
-            'packages': packages,
-            'repo_name': 'azure-sdk-for-python'
-        })
-
-    if args.dump:
-        data_pkgs = {k: v for k, v in all_packages.items() if not dump_should_skip_lib(k)}
-        dump_data = dump_packages(data_pkgs)
-        pkg_ids = [k for k in dump_data.keys()]
-        for pkg_id in pkg_ids:
-            resolve_lib_deps(dump_data, data_pkgs, pkg_id)
-        with io.open(f"{args.dump}/data.js", 'w', encoding='utf-8') as dump_file:
-            dump_file.write('const data = ' + json.dumps(dump_data) + ';')
-        with io.open(f"{args.dump}/arcdata.json", 'w', encoding='utf-8') as dump_file:
-            dump_file.write(json.dumps(dump_data))
+    # if args.dump:
+    #     data_pkgs = {k: v for k, v in all_packages.items() if not dump_should_skip_lib(k)}
+    #     dump_data = dump_packages(data_pkgs)
+    #     pkg_ids = [k for k in dump_data.keys()]
+    #     for pkg_id in pkg_ids:
+    #         resolve_lib_deps(dump_data, data_pkgs, pkg_id)
+    #     with io.open(f"{args.dump}/data.js", 'w', encoding='utf-8') as dump_file:
+    #         dump_file.write('const data = ' + json.dumps(dump_data) + ';')
+    #     with io.open(f"{args.dump}/arcdata.json", 'w', encoding='utf-8') as dump_file:
+    #         dump_file.write(json.dumps(dump_data))
 
     sys.exit(exitcode)
