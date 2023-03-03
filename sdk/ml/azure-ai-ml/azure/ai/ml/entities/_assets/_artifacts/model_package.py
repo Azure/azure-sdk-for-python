@@ -14,7 +14,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     BaseEnvironmentSource,
     ModelConfiguration,
 )
-
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.constants._common import (
@@ -26,7 +26,7 @@ from azure.ai.ml.constants._common import (
 )
 
 
-class ModelPackage(PackageRequest):
+class ModelPackage(PackageRequest, Resource):
     """Model for training and scoring.
 
     :param name: Name of the resource.

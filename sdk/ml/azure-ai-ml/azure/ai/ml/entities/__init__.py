@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
+from ._assets._artifacts.model_package import ModelPackage
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
 from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
@@ -292,4 +293,5 @@ __all__ = [
     "ContainerRegistryCredential",
     "EndpointAuthKeys",
     "EndpointAuthToken",
+    "ModelPackage",
 ]

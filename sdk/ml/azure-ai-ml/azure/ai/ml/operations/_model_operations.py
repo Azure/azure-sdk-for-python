@@ -48,7 +48,7 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
-from azure.ai.ml.entities._assets import Model
+from azure.ai.ml.entities._assets import Model, ModelPackage
 from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
@@ -498,7 +498,8 @@ class ModelOperations(_ScopeDependentOperations):
             asset_id=asset_id,
         )
 
-    def begin_package(self, model_name: str, model_version: str, package_request: PackageRequest, **kwargs) -> None:
+    def begin_package(self, model_name: str, model_version: str, package_request: ModelPackage, **kwargs) -> None:
+
         package_out = self._model_versions_operation.begin_package(
             name=model_name,
             version=model_version,
