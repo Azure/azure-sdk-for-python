@@ -13,7 +13,7 @@ description: Samples for the Azure.Analytics.Purview client library.
 
 The following are code samples that show common scenario operations with the Azure Purview client library.
 
-* [sent_shares_examples.py](***/tree/5d69552fd0518275cb5c222b71188bc687925873/sdk/purview/azure-purview-sharing/samples/sent_share_examples.py) - Examples of Sent Shares:
+* [sent_shares_examples.py](https://github.com/yamanwahsheh/azure-sdk-for-python/blob/yaman/share-v2-python-tests-and-samples/sdk/purview/azure-purview-sharing/samples/sent_shares_examples.py) - Examples of Sent Shares:
     * Create a share client
     * Create a sent share
     * Get a sent share
@@ -24,7 +24,7 @@ The following are code samples that show common scenario operations with the Azu
     * View sent invitations
     * Get a sent invitation
 
-* [received_shares_examples.py](***/tree/5d69552fd0518275cb5c222b71188bc687925873/sdk/purview/azure-purview-sharing/samples/received_share_examples.py) - Examples of Received Shares:
+* [received_shares_examples.py](https://github.com/yamanwahsheh/azure-sdk-for-python/blob/yaman/share-v2-python-tests-and-samples/sdk/purview/azure-purview-sharing/samples/received_shares_examples.py) - Examples of Received Shares:
     * Create a share client
     * Get all detached received shares
     * Attach a received share
