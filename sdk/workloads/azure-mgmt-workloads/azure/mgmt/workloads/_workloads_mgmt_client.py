@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
-from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
 
-from .. import models as _models
-from .._serialization import Deserializer, Serializer
-from ._configuration import WorkloadsClientConfiguration
+from . import models as _models
+from ._configuration import WorkloadsMgmtClientConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import (
     MonitorsOperations,
     Operations,
@@ -24,48 +24,47 @@ from .operations import (
     SAPDatabaseInstancesOperations,
     SAPVirtualInstancesOperations,
     SapLandscapeMonitorOperations,
-    WorkloadsClientOperationsMixin,
+    WorkloadsMgmtClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
 
-class WorkloadsClient(
-    WorkloadsClientOperationsMixin
+class WorkloadsMgmtClient(
+    WorkloadsMgmtClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """Workloads client provides access to various workload operations.
+    """Workloads client provides access to various workload operations.:code:`<br>`Azure Center for
+    SAP solutions is currently in PREVIEW. See the `Azure Center for SAP solutions - Legal Terms
+    <https://learn.microsoft.com/en-us/legal/azure-center-for-sap-solutions/azure-center-for-sap-solutions-legal-terms>`_
+    for legal notices applicable to Azure Center for SAP solutions.
 
     :ivar sap_virtual_instances: SAPVirtualInstancesOperations operations
-    :vartype sap_virtual_instances:
-     azure.mgmt.workloads.aio.operations.SAPVirtualInstancesOperations
+    :vartype sap_virtual_instances: azure.mgmt.workloads.operations.SAPVirtualInstancesOperations
     :ivar sap_central_instances: SAPCentralInstancesOperations operations
-    :vartype sap_central_instances:
-     azure.mgmt.workloads.aio.operations.SAPCentralInstancesOperations
+    :vartype sap_central_instances: azure.mgmt.workloads.operations.SAPCentralInstancesOperations
     :ivar sap_database_instances: SAPDatabaseInstancesOperations operations
-    :vartype sap_database_instances:
-     azure.mgmt.workloads.aio.operations.SAPDatabaseInstancesOperations
+    :vartype sap_database_instances: azure.mgmt.workloads.operations.SAPDatabaseInstancesOperations
     :ivar sap_application_server_instances: SAPApplicationServerInstancesOperations operations
     :vartype sap_application_server_instances:
-     azure.mgmt.workloads.aio.operations.SAPApplicationServerInstancesOperations
+     azure.mgmt.workloads.operations.SAPApplicationServerInstancesOperations
     :ivar monitors: MonitorsOperations operations
-    :vartype monitors: azure.mgmt.workloads.aio.operations.MonitorsOperations
+    :vartype monitors: azure.mgmt.workloads.operations.MonitorsOperations
     :ivar provider_instances: ProviderInstancesOperations operations
-    :vartype provider_instances: azure.mgmt.workloads.aio.operations.ProviderInstancesOperations
+    :vartype provider_instances: azure.mgmt.workloads.operations.ProviderInstancesOperations
     :ivar sap_landscape_monitor: SapLandscapeMonitorOperations operations
-    :vartype sap_landscape_monitor:
-     azure.mgmt.workloads.aio.operations.SapLandscapeMonitorOperations
+    :vartype sap_landscape_monitor: azure.mgmt.workloads.operations.SapLandscapeMonitorOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.workloads.aio.operations.Operations
+    :vartype operations: azure.mgmt.workloads.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-04-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -73,13 +72,15 @@ class WorkloadsClient(
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
+        credential: "TokenCredential",
         subscription_id: str,
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = WorkloadsClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = WorkloadsMgmtClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -106,14 +107,14 @@ class WorkloadsClient(
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client._send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -121,19 +122,19 @@ class WorkloadsClient(
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self) -> None:
+        self._client.close()
 
-    async def __aenter__(self) -> "WorkloadsClient":
-        await self._client.__aenter__()
+    def __enter__(self) -> "WorkloadsMgmtClient":
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)
