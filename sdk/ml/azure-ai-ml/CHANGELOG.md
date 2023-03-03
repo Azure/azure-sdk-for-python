@@ -5,12 +5,10 @@
 ### Features Added
 - Added support for `tags` on Compute Resources.
 - Added support for promoting data asset from a workspace to a registry
-- Added support for registering named asset from job output or node output by specifying named and version settings.
+- Added support for registering name asset from job output or node output by specifying named and version settings.
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline job
 - Added support for Datatransfer component (copy/import/export) in pipeline job
-- Added support for while True loop for control flow in pipeline job
-- Added support for assets in parallel_for items in pipeline job
 
 ### Bugs Fixed
 
