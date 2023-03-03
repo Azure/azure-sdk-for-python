@@ -7,13 +7,18 @@
 """Contains functionality for sending telemetry to Application Insights via OpenCensus Azure Monitor Exporter."""
 
 import logging
-
 import platform
+import traceback
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
-
+from opencensus.ext.azure.common import utils
+from opencensus.ext.azure.common.protocol import (
+    Data,
+    ExceptionData,
+    Message,
+    Envelope,
+)
 from azure.ai.ml._user_agent import USER_AGENT
-from azure.ai.ml._telemetry._customtraceback import format_exc
 
 
 AML_INTERNAL_LOGGER_NAMESPACE = "azure.ai.ml._telemetry"
@@ -90,7 +95,7 @@ def get_appinsights_log_handler(
     :param kwargs: Optional keyword arguments for adding additional information to messages.
     :type kwargs: dict
     :return: The logging handler.
-    :rtype: opencensus.ext.azure.log_exporter.AzureLogHandler
+    :rtype: AzureMLSDKLogHandler
     """
     try:
         if instrumentation_key is None:
@@ -124,7 +129,7 @@ def get_appinsights_log_handler(
 
         return handler
     except Exception:  # pylint: disable=broad-except
-        # ignore exceptions, telemetry should not block
+        # ignore any exceptions, telemetry collection errors shouldn't block an operation
         return logging.NullHandler()
 
 
@@ -152,3 +157,91 @@ class AzureMLSDKLogHandler(AzureLogHandler):
         except Exception:  # pylint: disable=broad-except
             # ignore any exceptions, telemetry collection errors shouldn't block an operation
             return
+
+    # The code below is vendored from opencensus-ext-azure's AzureLogHandler base class, but the telemetry disabling
+    # logic has been added to the beginning. Without this, the base class would still send telemetry even if 
+    # enable_telemetry had been set to true.
+    def log_record_to_envelope(self, record):
+        if self._is_telemetry_collection_disabled:
+            return
+
+        envelope = create_envelope(self.options.instrumentation_key, record)
+
+        properties = {
+            'process': record.processName,
+            'module': record.module,
+            'fileName': record.pathname,
+            'lineNumber': record.lineno,
+            'level': record.levelname,
+        }
+        if (hasattr(record, 'custom_dimensions') and
+                isinstance(record.custom_dimensions, dict)):
+            properties.update(record.custom_dimensions)
+
+        if record.exc_info:
+            exctype, _value, tb = record.exc_info
+            callstack = []
+            level = 0
+            has_full_stack = False
+            exc_type = "N/A"
+            message = self.format(record)
+            if tb is not None:
+                has_full_stack = True
+                for fileName, line, method, _text in traceback.extract_tb(tb):
+                    callstack.append({
+                        'level': level,
+                        'method': method,
+                        'fileName': fileName,
+                        'line': line,
+                    })
+                    level += 1
+                callstack.reverse()
+            elif record.message:
+                message = record.message
+
+            if exctype is not None:
+                exc_type = exctype.__name__
+
+            envelope.name = 'Microsoft.ApplicationInsights.Exception'
+
+            data = ExceptionData(
+                exceptions=[{
+                    'id': 1,
+                    'outerId': 0,
+                    'typeName': exc_type,
+                    'message': message,
+                    'hasFullStack': has_full_stack,
+                    'parsedStack': callstack,
+                }],
+                severityLevel=max(0, record.levelno - 1) // 10,
+                properties=properties,
+            )
+            envelope.data = Data(baseData=data, baseType='ExceptionData')
+        else:
+            envelope.name = 'Microsoft.ApplicationInsights.Message'
+            data = Message(
+                message=self.format(record),
+                severityLevel=max(0, record.levelno - 1) // 10,
+                properties=properties,
+            )
+            envelope.data = Data(baseData=data, baseType='MessageData')
+        return envelope
+
+
+def create_envelope(instrumentation_key, record):
+    envelope = Envelope(
+        iKey=instrumentation_key,
+        tags=dict(utils.azure_monitor_context),
+        time=utils.timestamp_to_iso_str(record.created),
+    )
+    envelope.tags['ai.operation.id'] = getattr(
+        record,
+        'traceId',
+        '00000000000000000000000000000000',
+    )
+    envelope.tags['ai.operation.parentId'] = '|{}.{}.'.format(
+        envelope.tags['ai.operation.id'],
+        getattr(record, 'spanId', '0000000000000000'),
+    )
+
+    return envelope
