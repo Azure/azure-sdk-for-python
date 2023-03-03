@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 """Contains entities and SDK objects for Azure Machine Learning SDKv2.
 
-Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing
-model, runs and run output/logging etc.
+Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing model, runs
+and run output/logging etc.
 """
 # pylint: disable=naming-mismatch
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
@@ -51,6 +51,7 @@ from ._credentials import (
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
+from ._data_import.data_import import DataImport
 from ._datastore.datastore import Datastore
 from ._deployment.batch_deployment import BatchDeployment
 from ._deployment.batch_job import BatchJob
@@ -134,6 +135,10 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+from ._workspace.compute_runtime import ComputeRuntime
+from ._workspace.feature_store_settings import FeatureStoreSettings
+from ._feature_store.feature_store import FeatureStore
+from ._feature_store.materialization_store import MaterializationStore
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -192,6 +197,10 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
+    "ComputeRuntime",
+    "FeatureStoreSettings",
+    "FeatureStore",
+    "MaterializationStore",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -205,6 +214,7 @@ __all__ = [
     "PrivateEndpointDestination",
     "EndpointConnection",
     "CustomerManagedKey",
+    "DataImport",
     "Datastore",
     "AzureDataLakeGen1Datastore",
     "AzureBlobDatastore",

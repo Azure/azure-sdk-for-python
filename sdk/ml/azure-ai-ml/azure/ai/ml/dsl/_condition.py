@@ -18,8 +18,7 @@ def condition(
     true_block: Optional[BaseNode] = None,
     false_block: Optional[BaseNode] = None,
 ) -> ConditionNode:
-    """
-    Create a condition node to provide runtime condition graph experience.
+    """Create a condition node to provide runtime condition graph experience.
 
     Below is an example of using expression result to control which step is executed.
     If pipeline parameter 'int_param1' > 'int_param2', then 'true_step' will be executed,

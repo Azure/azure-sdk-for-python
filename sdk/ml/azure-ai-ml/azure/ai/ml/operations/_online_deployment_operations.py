@@ -52,9 +52,8 @@ module_logger = ops_logger.module_logger
 class OnlineDeploymentOperations(_ScopeDependentOperations):
     """OnlineDeploymentOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -340,8 +339,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return f"{self._workspace_name}-{name}-{random.randint(1, 10000000)}"
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location TODO[TASK 1260265]: can we cache this
-        information and only refresh when the operation_scope is changed?"""
+        """Get the workspace location TODO[TASK 1260265]: can we cache this information and only refresh when the
+        operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _get_local_endpoint_mode(self, vscode_debug):
@@ -350,14 +349,17 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
     def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:
         for collection in deployment.data_collector.collections:
             data_name = f"{deployment.endpoint_name}-{deployment.name}-{collection}"
+            short_form_path = (
+                f"{deployment.data_collector.destination.path}/{deployment.endpoint_name}/{deployment.name}/{collection}"  # pylint: disable=line-too-long
+                if deployment.data_collector.destination and deployment.data_collector.destination.path
+                else f"{DEFAULT_MDC_PATH}/{deployment.endpoint_name}/{deployment.name}/{collection}"
+            )
             data_object = Data(
                 name=data_name,
-                path=deployment.data_collector.destination.path
-                if deployment.data_collector.destination and deployment.data_collector.destination.path
-                else f"{DEFAULT_MDC_PATH}/{deployment.endpoint_name}/{deployment.name}/{collection}",
+                path=short_form_path,
                 is_anonymous=True,
             )
             result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
             deployment.data_collector.collections[collection].data = DataAsset(
-                data_id=result.id, path=result.path, name=result.name, version=result.version
+                path=short_form_path, name=result.name, version=result.version
             )

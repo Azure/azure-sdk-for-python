@@ -72,7 +72,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     partition_key_range_gone_retry_policy = _gone_retry_policy.PartitionKeyRangeGoneRetryPolicy(client, *args)
 
     timeout_failover_retry_policy = _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy(
-        client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args
+        client.connection_policy, global_endpoint_manager, *args
     )
 
     while True:

@@ -334,6 +334,9 @@ class TestComponent:
         component.environment.resolve(component._base_path)
         rest_obj = component._to_rest_object()
         assert rest_obj.properties.component_spec["environment"] == expected_dict
+        assert component.environment._validate_docker_section(
+            base_path=component.base_path, skip_path_validation=False
+        ).passed
 
     @pytest.mark.parametrize(
         "yaml_path,invalid_field",
@@ -359,6 +362,17 @@ class TestComponent:
             "will honor in the order conda_dependencies, conda_dependencies_file and pip_requirements_file."
         )
         assert str(validation_result._warnings[0]) == expected_warning_message
+
+    def test_load_environment_with_version(self):
+        yaml_path = (
+            r"tests/test_configs/internal/command-component/command-linux/"
+            r"component_with_bool_and_data_input/component.yaml"
+        )
+        yaml_dict = load_yaml(yaml_path)
+        component = load_component(source=yaml_path)
+        assert component.environment.name == yaml_dict["environment"]["name"]
+        assert component.environment.version == str(yaml_dict["environment"]["version"])
+        assert component.environment.os == yaml_dict["environment"]["os"]
 
     def test_resolve_local_code(self) -> None:
         # internal component code (snapshot) default includes items in base directory when code is None,
