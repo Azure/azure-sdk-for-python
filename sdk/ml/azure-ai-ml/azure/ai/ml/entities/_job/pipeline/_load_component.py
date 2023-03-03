@@ -170,8 +170,10 @@ class _PipelineNodeFactory:
         :param create_instance_func: A function to create a new instance of the node, defaults to None
         :type create_instance_func: typing.Optional[typing.Callable[..., typing.Union[BaseNode, AutoMLJob]]]
         :param load_from_rest_object_func: A function to load a node from a rest object, defaults to None
-        :type load_from_rest_object_func: typing.Optional[typing.Callable[[Any], typing.Union[BaseNode, AutoMLJob, ControlFlowNode]]]
-        :param nested_schema: schema/schemas of corresponding nested field, will be used in PipelineJobSchema.jobs.value, defaults to None
+        :type load_from_rest_object_func: typing.Optional[typing.Callable[[Any], typing.Union[BaseNode, AutoMLJob\
+            , ControlFlowNode]]]
+        :param nested_schema: schema/schemas of corresponding nested field, will be used in \
+            PipelineJobSchema.jobs.value, defaults to None
         :type nested_schema: typing.Optional[typing.Union[NestedField, List[NestedField]]]
         """
         # pylint: disable=no-member

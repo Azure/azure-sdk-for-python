@@ -420,7 +420,7 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
 def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(None)) -> Tuple[int, Dict[str, int]]:
     """Returns total size of a directory and a dictionary itemizing each sub- path and its size.
 
-    If an optional ignore_file argument is provided, then files specified in the ignore file are not \ included in the
+    If an optional ignore_file argument is provided, then files specified in the ignore file are not included in the
     directory size calculation.
     """
     total_size = 0
