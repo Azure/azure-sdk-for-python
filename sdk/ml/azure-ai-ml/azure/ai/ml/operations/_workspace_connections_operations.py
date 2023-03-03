@@ -4,7 +4,6 @@
 
 # pylint: disable=protected-access
 
-import logging
 from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
