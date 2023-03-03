@@ -52,6 +52,7 @@ from ._credentials import (
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
+from ._data_import.data_import import DataImport
 from ._datastore.datastore import Datastore
 from ._deployment.batch_deployment import BatchDeployment
 from ._deployment.batch_job import BatchJob
@@ -146,6 +147,8 @@ from ._featureset.materialization_compute_resource import MaterializationCompute
 from ._featureset.materialization_settings import MaterializationSettings
 from ._featureset.featureset_materialization_operation import FeaturesetMaterializationOperation
 from ._featureset.materialization_type import MaterializationType
+from ._feature_store.feature_store import FeatureStore
+from ._feature_store.materialization_store import MaterializationStore
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -216,6 +219,8 @@ __all__ = [
     "DataColumn",
     "DataColumnType",
     "Notification",
+    "FeatureStore",
+    "MaterializationStore",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -229,6 +234,7 @@ __all__ = [
     "PrivateEndpointDestination",
     "EndpointConnection",
     "CustomerManagedKey",
+    "DataImport",
     "Datastore",
     "AzureDataLakeGen1Datastore",
     "AzureBlobDatastore",

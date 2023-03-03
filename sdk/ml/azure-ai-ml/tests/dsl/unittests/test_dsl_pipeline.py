@@ -3034,3 +3034,62 @@ class TestDSLPipeline:
             pipeline_dict["jobs"]["hello_world_component"]["environment_variables"]
             == "${{parent.inputs.environment_variables}}"
         )
+
+    def test_node_name_underscore(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {"microsoftsamplescommandcomponentbasic_nopaths_test"}
+        assert (
+            pipeline_job.jobs["microsoftsamplescommandcomponentbasic_nopaths_test"].name
+            == "microsoftsamplescommandcomponentbasic_nopaths_test"
+        )
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+            _ = component_func(component_in_number=2)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {
+            "microsoftsamplescommandcomponentbasic_nopaths_test",
+            "microsoftsamplescommandcomponentbasic_nopaths_test_1",
+        }
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+            component_func(component_in_number=2)
+            _ = component_func(component_in_number=3)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {
+            "microsoftsamplescommandcomponentbasic_nopaths_test",
+            "microsoftsamplescommandcomponentbasic_nopaths_test_1",
+            "microsoftsamplescommandcomponentbasic_nopaths_test_2",
+        }
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+            component_func(component_in_number=2)
+            _ = component_func(component_in_number=3)
+            node = component_func(component_in_number=4)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {"node", "node_1", "node_2", "node_3"}
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node = component_func(component_in_number=1)
+            component_func(component_in_number=2)
+            _ = component_func(component_in_number=3)
+            component_func(component_in_number=4)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {"node", "node_1", "node_2", "node_3"}
