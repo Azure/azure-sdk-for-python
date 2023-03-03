@@ -579,6 +579,7 @@ class DataOperations(_ScopeDependentOperations):
             asset_id=asset_id,
         )
 
+
 def _assert_local_path_matches_asset_type(
     local_path: str,
     asset_type: Union[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER],
