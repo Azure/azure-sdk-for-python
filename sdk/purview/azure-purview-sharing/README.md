@@ -1,10 +1,10 @@
-# Azure Share client library for .NET
+# Azure Share client library for pPython
 
 Microsoft Purview Share is a fully managed cloud service.
 
-**Please rely heavily on the [service's documentation][share_product_documentation] and our [protocol client docs][protocol_client_quickstart] to use this library**
+**Please rely heavily on the [service's documentation][sharing_product_documentation] and our [protocol client docs][protocol_client_quickstart] to use this library**
 
-[Source code][source_code] | [Package (NuGet)][client_nuget_package] | [Product documentation][share_product_documentation]
+[Source code][source_code] | [Package (PyPI)][client_pypi_package] | [Product documentation][sharing_product_documentation]
 
 ## Getting started
 
@@ -27,14 +27,14 @@ pip install azure-purview-sharing
 
 This document demonstrates using [DefaultAzureCredential][default_cred_ref] to authenticate via Azure Active Directory. However, any of the credentials offered by the [Azure.Identity][azure_identity] will be accepted.  See the [Azure.Identity][azure_identity] documentation for more information about other credentials.
 
-Once you have chosen and configured your credential, you can create instances of the `SentSharesClient`.
+Once you have chosen and configured your credential, you can create instances of the `PurviewSharing`.
 
 ```python
-from azure.purview.sharing import PurviewSharingClient
+from azure.purview.sharing import PurviewSharing
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = PurviewSharingClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
+client = PurviewSharing(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 ```
 
 ## Key concepts
@@ -125,20 +125,53 @@ The following section shows you how to initialize and authenticate your client a
 
 ## Troubleshooting
 
-### Setting up console logging
-To create an Azure SDK log listener that outputs messages to console use python to receive events from event hubs.
+### General
 
-As shown here [python_event_hubs]
+The Purview Catalog client will raise exceptions defined in [Azure Core][azure_core] if you call `.raise_for_status()` on your responses.
 
-To learn more about other logging mechanisms see [here][azure_core_diagnostics].
+### Logging
+
+This library uses the standard
+[logging][python_logging] library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` keyword argument:
+
+```python
+import sys
+import logging
+from azure.identity import DefaultAzureCredential
+from azure.purview.catalog import PurviewCatalogClient
+
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+endpoint = "https://<my-account-name>.purview.azure.com"
+credential = DefaultAzureCredential()
+
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+client = PurviewCatalogClient(endpoint=endpoint, credential=credential, logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single `send_request` call,
+even when it isn't enabled for the client:
+
+```python
+result = client.types.get_all_type_definitions(logging_enable=True)
+```
 
 ## Next steps
 
-This client SDK exposes operations using *protocol methods*, you can learn more about how to use SDK Clients which use protocol methods in our [documentation][protocol_client_quickstart].
+For more generic samples, see our [client docs][request_builders_and_client].
 
 ## Contributing
-
-See the [CONTRIBUTING.md][contributing] for details on building, testing, and contributing to this library.
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
 
@@ -147,20 +180,23 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_contact] with any additional questions or comments.
 
 <!-- LINKS -->
-[source_code]: https://azure.microsoft.com/services/purview/
-[client_nuget_package]: https://www.nuget.org/packages?q=Azure.Analytics.Purview.Sharing
-[share_product_documentation]: https://docs.microsoft.com/azure/purview/concept-data-share
-[azure_identity]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/identity/Azure.Identity
-[protocol_client_quickstart]: https://aka.ms/azsdk/net/protocol/quickstart
-[default_cred_ref]: https://docs.microsoft.com/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet
-[azure_subscription]: https://azure.microsoft.com/free/dotnet/
+
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-sharing/azure/purview/sharing
+[client_pypi_package]: https://aka.ms/azsdk/python/purviewsharing/pypi
+[sharing_ref_docs]: https://aka.ms/azsdk/python/purviewcatalog/ref-docs
+[sharing_product_documentation]: https://azure.microsoft.com/services/purview/
+[azure_subscription]: https://azure.microsoft.com/free/
 [purview_resource]: https://docs.microsoft.com/azure/purview
-[azure_core_diagnostics]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/core/Azure.Core/samples/Diagnostics.md
+[pip]: https://pypi.org/project/pip/
+[authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
+[azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
+[azure_identity_pip]: https://pypi.org/project/azure-identity/
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
+[request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
+[enable_aad]: https://docs.microsoft.com/azure/purview/
+[azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
+[python_logging]: https://docs.python.org/3.5/library/logging.html
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-[contributing]: https://github.com/Azure/azure-sdk-for-net/blob/main/CONTRIBUTING.md
-[python_event_hubs]: https://learn.microsoft.com/en-us/azure/event-hubs/event-hubs-python-get-started-send?tabs=passwordless%2Croles-azure-portal
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-net%2Fsdk%2Fpurview%2FAzure.Analytics.Purview.Sharing%2FREADME.png)
