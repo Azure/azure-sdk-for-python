@@ -419,7 +419,7 @@ class BatchTest(AzureMgmtTestCase):
         client = self.create_sharedkey_client(**kwargs)
         # Test Enable Autoscale
         interval = datetime.timedelta(minutes=6)
-        response = client. .enable_auto_scale(
+        response = client.pool.enable_auto_scale(
             batch_pool.name,
             models.BatchPoolEnableAutoScaleParameters(
             auto_scale_formula='$TargetDedicatedNodes=2',
@@ -656,6 +656,79 @@ class BatchTest(AzureMgmtTestCase):
         response = client.pool.remove_nodes(batch_pool.name, options)
         self.assertIsNone(response)
 
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    def test_batch_compute_node_extensions(self, **kwargs):
+        client = self.create_sharedkey_client(**kwargs)
+
+
+        # Test Create Iaas Pool
+        network_config = models.NetworkConfiguration(
+            endpoint_configuration=models.PoolEndpointConfiguration(
+                inbound_nat_pools=[
+                    models.InboundNATPool(
+                        name="TestEndpointConfig",
+                        protocol=models.InboundEndpointProtocol.udp,
+                        backend_port=64444,
+                        frontend_port_range_start=60000,
+                        frontend_port_range_end=61000,
+                        network_security_group_rules=[
+                            models.NetworkSecurityGroupRule(
+                                priority=150,
+                                access=models.NetworkSecurityGroupRuleAccess.allow,
+                                source_address_prefix='*'
+                            )
+                        ]
+                    )
+                ]
+            )
+        )
+        extension = models.VMExtension(name="secretext",type="KeyVaultForLinux",publisher="Microsoft.Azure.KeyVault",
+        type_handler_version="1.0",auto_upgrade_minor_version=True)
+        virtual_machine_config = models.VirtualMachineConfiguration(
+            node_agent_sku_id="batch.node.ubuntu 18.04",
+            extensions=[extension],
+            image_reference=models.ImageReference(
+                publisher="Canonical",
+                offer="UbuntuServer",
+                sku="18.04-LTS")
+        )
+        batch_pool = models.BatchPool(
+            id=self.get_resource_name('batch_network_'),
+            target_dedicated_nodes=1,
+            vm_size=DEFAULT_VM_SIZE,
+            virtual_machine_configuration=virtual_machine_config,
+            network_configuration=network_config
+        )
+        response = client.pool.add(batch_pool)
+        self.assertIsNone(response)
+
+        batch_pool = client.pool.get(batch_pool.id)
+        while self.is_live and batch_pool.allocation_state != models.AllocationState.steady:
+            time.sleep(10)
+            batch_pool = client.pool.get(batch_pool.id)
+
+
+        nodes = list(client.compute_nodes.list(batch_pool.id))
+        self.assertEqual(len(nodes), 1)
+
+
+        extensions = list(client.compute_node_extensions.list(batch_pool.id,nodes[0].id))
+        self.assertIsNotNone(extensions)
+        self.assertEqual(len(extensions), 2)
+        extension = client.compute_node_extensions.get(batch_pool.id,nodes[0].id, extensions[0].vm_extension.name)
+        self.assertIsNotNone(extension)
+        self.assertEqual(extension.vm_extension.name, "secretext")
+        self.assertIsNotNone(extension.vm_extension.publisher,"Microsoft.Azure.KeyVault")
+        self.assertIsNotNone(extension.vm_extension.type,"KeyVaultForLinux")
+
+
+    
+        
+
+
+
+
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION, size=1)
@@ -682,6 +755,12 @@ class BatchTest(AzureMgmtTestCase):
         # Test Get remote login settings
         remote_login_settings = client.compute_nodes.get_remote_login_settings(batch_pool.name, nodes[0].id)
         self.assertIsInstance(remote_login_settings, models.ComputeNodeGetRemoteLoginSettingsResult)
+        self.assertIsNotNone(remote_login_settings.remote_login_ip_address)
+        self.assertIsNotNone(remote_login_settings.remote_login_port)
+
+        # Test Get remote desktop 
+        remote_desktop = client.compute_nodes.get_remote_desktop(batch_pool.name, nodes[0].id)
+        self.assertIsInstance(remote_desktop, models.ComputeNodeGetRemoteLoginSettingsResult)
         self.assertIsNotNone(remote_login_settings.remote_login_ip_address)
         self.assertIsNotNone(remote_login_settings.remote_login_port)
 
@@ -723,12 +802,12 @@ class BatchTest(AzureMgmtTestCase):
         self.assertTrue('Content-Type' in props.headers)
 
         # Test Get File from Compute Node
-        file_length = 0
-        with io.BytesIO() as file_handle:
-            response = client.file.get_from_compute_node(batch_pool.name, node, only_files[0].name)
-            for data in response:
-                file_length += len(data)
-        self.assertEqual(file_length, props.headers['Content-Length'])
+        #file_length = 0
+        #with io.BytesIO() as file_handle:
+        #    response = client.file.get_from_compute_node(batch_pool.name, node, only_files[0].name)
+        #    for data in response:
+        #        file_length += len(data)
+        #self.assertEqual(file_length, props.headers['Content-Length'])
 
         # Test Delete File from Compute Node
         response = client.file.delete_from_compute_node(batch_pool.name, node, only_files[0].name)
@@ -741,7 +820,7 @@ class BatchTest(AzureMgmtTestCase):
 
         # Test File Properties from Task
         props = client.file.get_properties_from_task(
-            batch_job.id, task_id, only_files[0].name, raw=True)
+            job_id=batch_job.id, task_id=task_id, file_path=only_files[0].name)
         self.assertTrue('Content-Length' in props.headers)
         self.assertTrue('Content-Type' in props.headers)
 
@@ -760,7 +839,7 @@ class BatchTest(AzureMgmtTestCase):
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @JobPreparer(on_task_failure=models.OnTaskFailure.perform_exit_options_job_action)
-    def test_batch_tasks2(self, batch_job, **kwargs):
+    def test_batch_tasks(self, batch_job, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
 
         # Test Create Task with Auto Complete

@@ -408,7 +408,9 @@ def build_new_get_properties_from_task(original_get):
             headers,
         )
 
-        get_response = original_get(self, job_id, task_id, file_path, time_out, client_request_id, return_client_request_id, ocp_date, if__modified__since, if__unmodified__since, **kwargs)
+        get_response = original_get(self=self, job_id=job_id, task_id=task_id, file_path=file_path, time_out=time_out,
+        client_request_id=client_request_id, return_client_request_id=return_client_request_id, ocp_date=ocp_date, 
+        if__modified__since=if__modified__since, if__unmodified__since=if__unmodified__since, **kwargs)
         return get_response[0].http_response
 
     new_get_properties_from_task.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
