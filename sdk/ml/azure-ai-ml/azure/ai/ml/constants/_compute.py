@@ -42,5 +42,11 @@ class CustomApplicationDefaults:
     ENDPOINT_NAME = "connect"
 
 
+class ComputeSizeTier:
+    AML_COMPUTE_DEDICATED = "amlComputeDedicatedVMSize"
+    AML_COMPUTE_LOWPRIORITY = "amlComputeLowPriorityVMSize"
+    COMPUTE_INSTANCE = "computeInstanceVMSize"
+
+
 DUPLICATE_APPLICATION_ERROR = "Value of {} must be unique across all custom applications."
 INVALID_VALUE_ERROR = "Value of {} must be between {} and {}."
