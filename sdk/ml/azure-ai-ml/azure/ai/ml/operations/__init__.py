@@ -17,6 +17,7 @@ from ._datastore_operations import DatastoreOperations
 from ._environment_operations import EnvironmentOperations
 from ._featureset_operations import FeaturesetOperations
 from ._featurestore_entity_operations import FeaturestoreEntityOperations
+from ._feature_store_operations import FeatureStoreOperations
 from ._job_operations import JobOperations
 from ._model_operations import ModelOperations
 from ._online_deployment_operations import OnlineDeploymentOperations
@@ -49,4 +50,5 @@ __all__ = [
     "VirtualClusterOperations",
     "FeaturesetOperations",
     "FeaturestoreEntityOperations",
+    "FeatureStoreOperations",
 ]

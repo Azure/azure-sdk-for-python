@@ -18,7 +18,8 @@ from .generate_utils import (
     format_samples,
     gen_dpg,
     dpg_relative_folder,
-    gen_cadl
+    gen_cadl,
+    update_cadl_location,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -147,6 +148,19 @@ def main(generate_input, generate_output):
                 )
             except Exception as e:
                 _LOGGER.info(f"fail to update meta: {str(e)}")
+            
+            # update cadl-location.yaml
+            try:
+                update_cadl_location(
+                    sdk_folder,
+                    data,
+                    config,
+                    folder_name,
+                    package_name,
+                    input_readme,
+                )
+            except Exception as e:
+                _LOGGER.info(f"fail to update cadl-location: {str(e)}")
 
             # Setup package locally
             check_call(
