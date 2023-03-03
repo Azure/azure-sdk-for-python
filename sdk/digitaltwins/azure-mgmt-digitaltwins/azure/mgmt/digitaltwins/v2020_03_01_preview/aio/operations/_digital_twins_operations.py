@@ -301,8 +301,8 @@ class DigitalTwinsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the DigitalTwinsInstance. Required.
         :type resource_name: str
-        :param digital_twins_create: The DigitalTwinsInstance and security metadata. Is either a model
-         type or a IO type. Required.
+        :param digital_twins_create: The DigitalTwinsInstance and security metadata. Is either a
+         DigitalTwinsDescription type or a IO type. Required.
         :type digital_twins_create:
          ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsDescription or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -536,7 +536,7 @@ class DigitalTwinsOperations:
         :param resource_name: The name of the DigitalTwinsInstance. Required.
         :type resource_name: str
         :param digital_twins_patch_description: The DigitalTwinsInstance and security metadata. Is
-         either a model type or a IO type. Required.
+         either a DigitalTwinsPatchDescription type or a IO type. Required.
         :type digital_twins_patch_description:
          ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.DigitalTwinsPatchDescription or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -662,7 +662,9 @@ class DigitalTwinsOperations:
     }
 
     @distributed_trace_async
-    async def begin_delete(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_delete(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.DigitalTwinsDescription]:
         """Delete a DigitalTwinsInstance.
 
         :param resource_group_name: The name of the resource group that contains the
@@ -970,7 +972,7 @@ class DigitalTwinsOperations:
         :type location: str
         :param digital_twins_instance_check_name: Set the name parameter in the
          DigitalTwinsInstanceCheckName structure to the name of the DigitalTwinsInstance to check. Is
-         either a model type or a IO type. Required.
+         either a CheckNameRequest type or a IO type. Required.
         :type digital_twins_instance_check_name:
          ~azure.mgmt.digitaltwins.v2020_03_01_preview.models.CheckNameRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

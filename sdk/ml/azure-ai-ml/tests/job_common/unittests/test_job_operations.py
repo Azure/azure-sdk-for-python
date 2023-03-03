@@ -147,6 +147,32 @@ class TestJobOperations:
         mock_job_operation.get("randon_name")
         mock_job_operation._operation_2022_12_preview.get.assert_called_once()
 
+    @patch.object(JobOperations, "_get_job")
+    def test_get_job(self, mock_method, mock_job_operation: JobOperations) -> None:
+        from azure.ai.ml import Input, dsl, load_component
+
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node = component(component_in_path=component_input)
+
+        @dsl.pipeline()
+        def register_both_output():
+            sub_node = sub_pipeline()
+
+        pipeline = register_both_output()
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline.jobs["sub_node"]._component = "fake_component"
+
+        # add settings for subgraph node to simulate the result of getting pipeline that submitted with previous sdk
+        pipeline.jobs["sub_node"]["settings"] = {}
+
+        pipeline_job_base = pipeline._to_rest_object()
+        mock_method.return_value = pipeline_job_base
+        mock_job_operation.get(name="random_name")
+
     @patch.object(Job, "_from_rest_object")
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
     def test_get_private_preview_flag_returns_latest(self, mock_method, mock_job_operation: JobOperations) -> None:
@@ -189,14 +215,16 @@ class TestJobOperations:
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
             mock_get_token.return_value = AccessToken(
-                token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234)
+                token=jwt.encode({"aud": aml_resource_id}, key="utf-8"), expires_on=1234
+            )
             mock_job_operation.create_or_update(job=job)
             mock_job_operation._operation_2022_12_preview.create_or_update.assert_called_once()
             mock_job_operation._credential.get_token.assert_called_once_with(azure_ml_scopes[0])
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
             mock_get_token.return_value = AccessToken(
-                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234)
+                token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234
+            )
             with pytest.raises(Exception):
                 mock_job_operation.create_or_update(job=job)
 
@@ -250,3 +278,8 @@ class TestJobOperations:
             mock_thing.assert_not_called()
             mock_job_operation.create_or_update(job=job)
             mock_thing.assert_called_once()
+
+    def test_download_with_none(self, mock_job_operation: JobOperations) -> None:
+        with pytest.raises(Exception) as ex:
+            mock_job_operation.download(None)
+        assert "None is a invalid input for client.jobs.get()." in ex.value.message

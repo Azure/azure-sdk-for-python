@@ -44,6 +44,7 @@ def analyze_general_documents():
         )
     )
 
+    # [START analyze_general_documents]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient
 
@@ -146,6 +147,7 @@ def analyze_general_documents():
                     )
                 )
     print("----------------------------------------")
+    # [END analyze_general_documents]
 
 
 if __name__ == "__main__":

@@ -15,15 +15,11 @@ from azure.ai.ml._schema.component import (
     AnonymousParallelComponentSchema,
     AnonymousSparkComponentSchema,
     AnonymousDataTransferCopyComponentSchema,
-    AnonymousDataTransferImportComponentSchema,
-    AnonymousDataTransferExportComponentSchema,
     ComponentFileRefField,
     ImportComponentFileRefField,
     ParallelComponentFileRefField,
     SparkComponentFileRefField,
     DataTransferCopyComponentFileRefField,
-    DataTransferImportComponentFileRefField,
-    DataTransferExportComponentFileRefField,
 )
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -418,16 +414,8 @@ class DataTransferCopySchema(BaseNodeSchema):
 
 class DataTransferImportSchema(BaseNodeSchema):
     # pylint: disable=unused-argument
-    component = TypeSensitiveUnionField(
-        {
-            NodeType.DATA_TRANSFER: [
-                # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousDataTransferImportComponentSchema, unknown=INCLUDE),
-                # component file reference
-                DataTransferImportComponentFileRefField(),
-            ],
-        },
-        plain_union_fields=[
+    component = UnionField(
+        [
             # for registry type assets
             RegistryStr(),
             # existing component
@@ -440,21 +428,20 @@ class DataTransferImportSchema(BaseNodeSchema):
     compute = ComputeField()
     source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
     outputs = fields.Dict(
-        keys=fields.Str(),
-        values=UnionField([OutputBindingStr, NestedField(OutputSchema)]),
-        allow_none=False
+        keys=fields.Str(), values=UnionField([OutputBindingStr, NestedField(OutputSchema)]), allow_none=False
     )
 
     @validates("inputs")
     def inputs_key(self, value):
-        raise ValidationError(f"inputs field is not a valid filed in task type "
-                              f"{DataTransferTaskType.IMPORT_DATA}.")
+        raise ValidationError(f"inputs field is not a valid filed in task type " f"{DataTransferTaskType.IMPORT_DATA}.")
 
     @validates("outputs")
     def outputs_key(self, value):
         if len(value) != 1 or list(value.keys())[0] != "sink":
-            raise ValidationError(f"outputs field only support one output called sink in task type "
-                                  f"{DataTransferTaskType.IMPORT_DATA}.")
+            raise ValidationError(
+                f"outputs field only support one output called sink in task type "
+                f"{DataTransferTaskType.IMPORT_DATA}."
+            )
 
     @post_load
     def make(self, data, **kwargs) -> "DataTransferImport":
@@ -478,16 +465,8 @@ class DataTransferImportSchema(BaseNodeSchema):
 
 class DataTransferExportSchema(BaseNodeSchema):
     # pylint: disable=unused-argument
-    component = TypeSensitiveUnionField(
-        {
-            NodeType.DATA_TRANSFER: [
-                # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousDataTransferExportComponentSchema, unknown=INCLUDE),
-                # component file reference
-                DataTransferExportComponentFileRefField(),
-            ],
-        },
-        plain_union_fields=[
+    component = UnionField(
+        [
             # for registry type assets
             RegistryStr(),
             # existing component
@@ -504,13 +483,16 @@ class DataTransferExportSchema(BaseNodeSchema):
     @validates("inputs")
     def inputs_key(self, value):
         if len(value) != 1 or list(value.keys())[0] != "source":
-            raise ValidationError(f"inputs field only support one input called source in task type "
-                                  f"{DataTransferTaskType.EXPORT_DATA}.")
+            raise ValidationError(
+                f"inputs field only support one input called source in task type "
+                f"{DataTransferTaskType.EXPORT_DATA}."
+            )
 
     @validates("outputs")
     def outputs_key(self, value):
-        raise ValidationError(f"outputs field is not a valid filed in task type "
-                              f"{DataTransferTaskType.EXPORT_DATA}.")
+        raise ValidationError(
+            f"outputs field is not a valid filed in task type " f"{DataTransferTaskType.EXPORT_DATA}."
+        )
 
     @post_load
     def make(self, data, **kwargs) -> "DataTransferExport":

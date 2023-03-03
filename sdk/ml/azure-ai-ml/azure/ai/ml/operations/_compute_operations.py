@@ -115,7 +115,7 @@ class ComputeOperations(_ScopeDependentOperations):
                 module_logger.warning(
                     "Warning: 'Location' is not supported for compute type %s and will not be used.",
                     compute.type,
-                    )
+                )
             compute.location = self._get_workspace_location()
 
         if not compute.location:

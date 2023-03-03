@@ -18,7 +18,7 @@ SUPPORTED_INTERNAL_PARAM_TYPES = [
     "float",
     "Float",
     "double",
-    "Double"
+    "Double",
 ]
 
 

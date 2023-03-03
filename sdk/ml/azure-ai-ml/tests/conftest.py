@@ -99,6 +99,22 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         group_for_replace="1",
     )
 
+    identity_json_paths = [
+        ".systemData.createdBy",
+        ".systemData.lastModifiedBy",
+        ".createdBy.userName",
+        ".lastModifiedBy.userName",
+        ".runMetadata.createdBy.userName",
+        ".runMetadata.lastModifiedBy.userName",
+    ]
+    identity_replacements = [("Firstname Lastname", r".+\s.+"), ("alias@contoso.com", r".+@.+")]
+
+    for path in identity_json_paths:
+        for replacement, regexp in identity_replacements:
+            add_body_key_sanitizer(json_path=path, value=replacement, regex=regexp)
+            # Try to match in arrays too
+            add_body_key_sanitizer(json_path=f".value[*]{path}", value=replacement, regex=regexp)
+
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
@@ -219,9 +235,11 @@ def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
 def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview")
 
+
 @pytest.fixture
 def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+
 
 @pytest.fixture
 def mock_aml_services_run_history(mocker: MockFixture) -> Mock:
@@ -342,6 +360,7 @@ def registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) 
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="testFeed",
     )
+
 
 @pytest.fixture
 def data_asset_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:

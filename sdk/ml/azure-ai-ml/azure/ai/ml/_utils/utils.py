@@ -927,12 +927,7 @@ def write_to_shared_file(file_path: Union[str, PathLike], content: str):
 
 
 def _get_valid_dot_keys_with_wildcard_impl(
-    left_reversed_parts,
-    root,
-    *,
-    validate_func=None,
-    cur_node=None,
-    processed_parts=None
+    left_reversed_parts, root, *, validate_func=None, cur_node=None, processed_parts=None
 ):
     if len(left_reversed_parts) == 0:
         if validate_func is None or validate_func(root, processed_parts):
@@ -953,12 +948,14 @@ def _get_valid_dot_keys_with_wildcard_impl(
             if not isinstance(next_key, str):
                 continue
             processed_parts.append(next_key)
-            result.extend(_get_valid_dot_keys_with_wildcard_impl(
-                left_reversed_parts,
-                root,
-                validate_func=validate_func,
-                cur_node=cur_node[next_key],
-                processed_parts=processed_parts)
+            result.extend(
+                _get_valid_dot_keys_with_wildcard_impl(
+                    left_reversed_parts,
+                    root,
+                    validate_func=validate_func,
+                    cur_node=cur_node[next_key],
+                    processed_parts=processed_parts,
+                )
             )
             processed_parts.pop()
     elif key in cur_node:
@@ -968,12 +965,13 @@ def _get_valid_dot_keys_with_wildcard_impl(
             root,
             validate_func=validate_func,
             cur_node=cur_node[key],
-            processed_parts=processed_parts
+            processed_parts=processed_parts,
         )
         processed_parts.pop()
 
     left_reversed_parts.append(key)
     return result
+
 
 def get_valid_dot_keys_with_wildcard(
     root: Dict[str, Any],

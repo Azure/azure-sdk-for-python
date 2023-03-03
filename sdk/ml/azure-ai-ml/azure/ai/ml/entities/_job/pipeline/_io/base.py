@@ -384,8 +384,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._port_name = port_name
         self._owner = owner
-        self._name = data.name if isinstance(data, Output) else None
-        self._version = data.version if isinstance(data, Output) else None
+        self._name = self._data.name if isinstance(self._data, Output) else None
+        self._version = self._data.version if isinstance(self._data, Output) else None
 
         self._assert_name_and_version()
 
@@ -418,7 +418,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             raise UserErrorException(
                 f"We support self._data of Input, Output, InputOutputBase, NodeOutput and NodeInput,"
                 f"but got type: {type(self._data)}."
-                )
+            )
 
     @property
     def version(self) -> str:
@@ -430,7 +430,6 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         """Receive input version,
         assign the version to NodeOutput/PipelineOutput and build data according to the version"""
         self._build_default_data()
-        self._data.type = self.type
         self._version = version
         if isinstance(self._data, (Input, Output)):
             self._data.version = version
@@ -440,7 +439,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             raise UserErrorException(
                 f"We support self._data of Input, Output, InputOutputBase, NodeOutput and NodeInput,"
                 f"but got type: {type(self._data)}."
-                )
+            )
 
     @property
     def path(self) -> Optional[str]:
@@ -470,7 +469,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             raise UserErrorException(
                 f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores, "
                 f"with a limit of 255 characters."
-                )
+            )
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")
 
@@ -511,9 +510,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
                 path=self._data._data_binding(),
                 mode=self.mode,
                 is_control=is_control,
-                name=self.name,
-                version=self.version,
-                description=self.description
+                name=self._data.name,
+                version=self._data.version,
+                description=self.description,
             )
         else:
             msg = "Got unexpected type for output: {}."

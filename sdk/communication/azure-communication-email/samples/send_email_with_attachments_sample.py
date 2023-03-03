@@ -14,7 +14,7 @@ DESCRIPTION:
 USAGE:
     python send_email_with_attachment.py
     Set the environment variable with your own value before running the sample:
-    1) COMMUNICATION_CONNECTION_STRING - the connection string in your ACS resource
+    1) COMMUNICATION_CONNECTION_STRING_EMAIL - the connection string in your ACS resource
     2) SENDER_ADDRESS - the address found in the linked domain that will send the email
     3) RECIPIENT_ADDRESS - the address that will receive the email
 """
@@ -56,25 +56,26 @@ class EmailWithAttachmentSample(object):
             "recipients": {
                 "to": [
                     {
-                        "email": self.recipient_address,
+                        "address": self.recipient_address,
                         "displayName": "Customer Name"
                     }
                 ]
             },
-            "sender": self.sender_address,
+            "senderAddress": self.sender_address,
             "attachments": [
                 {
                     "name": "attachment.txt",
-                    "attachmentType": "txt",
-                    "contentBytesBase64": file_bytes_b64.decode()
+                    "contentType": "text/plain",
+                    "contentInBase64": file_bytes_b64.decode()
                 }
             ]
         }
 
         try:
             # sending the email message
-            response = email_client.send(message)
-            print("Message ID: " + response['messageId'])
+            poller = email_client.begin_send(message)
+            response = poller.result()
+            print("Operation ID: " + response['id'])
         except HttpResponseError as ex:
             print(ex)
             pass
