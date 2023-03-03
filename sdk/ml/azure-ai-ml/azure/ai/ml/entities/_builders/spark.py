@@ -492,7 +492,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
     def _validate_spark_configurations(self, raise_error=True):
         validation_result = self._create_empty_validation_result()
-        # skip validation when component of node is from remote: registry or arm id
+        # skip validation when component of node is from remote
         if hasattr(self, "component") and isinstance(self.component, str):
             return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
         if str(self.dynamic_allocation_enabled).lower() == "true":

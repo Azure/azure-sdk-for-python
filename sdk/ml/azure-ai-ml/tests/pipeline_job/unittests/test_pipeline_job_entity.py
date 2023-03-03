@@ -1421,8 +1421,7 @@ class TestPipelineJobEntity:
         result = job._validate()
         assert result.passed is True
         rest_job_dict = job._to_rest_object().as_dict()
-        omit_fields = []  # "name", "display_name", "experiment_name", "properties"
-        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["kmeans_cluster"], omit_fields)
+        actual_dict = rest_job_dict["properties"]["jobs"]["kmeans_cluster"]
 
         expected_dict = {
             "_source": "REMOTE.WORKSPACE.COMPONENT",
