@@ -1,4 +1,4 @@
-# Azure Share client library for pPython
+# Azure Share client library for Python
 
 Microsoft Purview Share is a fully managed cloud service.
 
@@ -10,7 +10,7 @@ Microsoft Purview Share is a fully managed cloud service.
 
 ### Install the package
 
-Install the Azure Purview Catalog client library for Python with [pip][pip]:
+Install the Azure Purview Sharing client library for Python with [pip][pip]:
 
 ```bash
 pip install azure-purview-sharing
