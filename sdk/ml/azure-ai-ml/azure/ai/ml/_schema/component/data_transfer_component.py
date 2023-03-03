@@ -25,7 +25,7 @@ from azure.ai.ml.constants._component import (
 
 
 class DataTransferComponentSchemaMixin(ComponentSchema):
-    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER])
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], casing_transform=lambda x: x)
 
 
 class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):

@@ -389,7 +389,7 @@ class DataTransferCopySchema(BaseNodeSchema):
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA], required=True)
-    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True, casing_transform=lambda x: x)
     compute = ComputeField()
 
     @post_load
@@ -424,7 +424,7 @@ class DataTransferImportSchema(BaseNodeSchema):
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
-    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True, casing_transform=lambda x: x)
     compute = ComputeField()
     source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
     outputs = fields.Dict(
@@ -475,7 +475,7 @@ class DataTransferExportSchema(BaseNodeSchema):
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA])
-    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER])
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], casing_transform=lambda x: x)
     compute = ComputeField()
     inputs = InputsField(support_databinding=True, allow_none=False)
     sink = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
