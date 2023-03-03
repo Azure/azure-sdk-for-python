@@ -3,16 +3,22 @@
 ## 12.12.0b1 (Unreleased)
 
 ### Features Added
-
-### Bugs Fixed
+- Added support for service version 2022-11-02.
+- Added support for `TokenCredential` to be used for authentication. A `TokenCredential` can be provided for the
+`credential` parameter to any client constructor. **Note:** When using a `TokenCredential`, the new keyword parameter
+`token_intnet` is **required** and must be provided. Addtitionally, this form of authentication is only supported for
+certain operations in the Data Plane SDK.
+- Added support for `allow_trailing_dot` and `allow_source_trailing_dot` on client construction. When
+`allow_trailing_dot` is provided, the service will not silently remove any trailing `.` character from directory/file
+names for all operations made from that client. `allow_source_trailing_dot` will apply this same rule to source files
+when performing a rename or copy operation.
 
 ## 12.11.0 (2023-02-22)
 
 ### Features Added
+- Stable release of features from 12.11.0b1
 
-### Bugs Fixed
-
-## 12.11.0b1 (Unreleased)
+## 12.11.0b1 (2023-02-02)
 
 ### Features Added
 - Added support for service version 2021-12-02.

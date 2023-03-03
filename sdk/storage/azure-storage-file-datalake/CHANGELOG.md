@@ -3,16 +3,16 @@
 ## 12.11.0b1 (Unreleased)
 
 ### Features Added
-
-### Bugs Fixed
+- Added support for service version 2022-11-02.
+- Added support for `encryption_context`, a string value that can be passed when creating a file that will not be
+encrypted with the file. This value is returned on `download_file`, `get_file_properties` and `get_paths`.
 
 ## 12.10.0 (2023-02-22)
 
 ### Features Added
+- Stable release of features from 12.10.0b1
 
-### Bugs Fixed
-
-## 12.10.0b1 (Unreleased)
+## 12.10.0b1 (2023-02-02)
 
 ### Features Added
 - Added support for service version 2021-12-02.
