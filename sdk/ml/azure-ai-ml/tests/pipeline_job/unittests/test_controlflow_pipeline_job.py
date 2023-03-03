@@ -20,6 +20,42 @@ class TestControlFlowPipelineJobUT:
     pass
 
 
+class TestIfElseUI(TestControlFlowPipelineJobUT):
+    @pytest.mark.parametrize(
+        "exception_cls, yaml_path, msg, location",
+        [
+            # None true & None false
+            (
+                ValidationException,
+                "./tests/test_configs/pipeline_jobs/invalid/if_else/none_true_none_false.yml",
+                "of dsl.condition node cannot both be empty",
+                '"path": "jobs.conditionnode.true_block",',
+            ),
+            # None true & empty false
+            (
+                ValidationException,
+                "./tests/test_configs/pipeline_jobs/invalid/if_else/none_true_empty_false.yml",
+                "of dsl.condition node cannot both be empty",
+                '"path": "jobs.conditionnode.true_block",',
+            ),
+            # true & false intersection
+            (
+                ValidationException,
+                "./tests/test_configs/pipeline_jobs/invalid/if_else/true_false_intersection.yml",
+                "of dsl.condition has intersection",
+                '"path": "jobs.conditionnode.true_block",',
+            ),
+        ],
+    )
+    def test_if_else_validate(self, exception_cls, yaml_path, msg, location):
+        with pytest.raises(exception_cls) as e:
+            job = load_job(yaml_path)
+            job._validate(raise_error=True)
+
+        assert msg in str(e.value)
+        assert location in str(e.value)
+
+
 class TestDoWhilePipelineJobUT(TestControlFlowPipelineJobUT):
     def test_do_while_true_pipeline_omit_condition(self):
         yaml_path = "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline.yml"
