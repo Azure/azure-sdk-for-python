@@ -22,7 +22,7 @@ class NodeType(object):
     PIPELINE = "pipeline"
     IMPORT = "import"
     SPARK = "spark"
-    DATA_TRANSFER = "data_transfer"
+    DATA_TRANSFER = "data_transfer@vNext"
     # Note: container is not a real component type,
     # only used to mark component from container data.
     _CONTAINER = "_container"

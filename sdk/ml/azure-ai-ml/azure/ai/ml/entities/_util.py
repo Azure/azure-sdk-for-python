@@ -328,8 +328,8 @@ def from_rest_dict_to_dummy_rest_object(rest_dict):
 def extract_label(input_str: str):
     if not isinstance(input_str, str):
         return None, None
-    if "@" in input_str:
-        return input_str.rsplit("@", 1)
+    # if "@" in input_str:
+    #     return input_str.rsplit("@", 1)
     return input_str, None
 
 

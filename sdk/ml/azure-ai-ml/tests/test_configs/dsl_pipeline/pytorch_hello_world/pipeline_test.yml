@@ -1,0 +1,17 @@
+type: pipeline
+description: "Prints the environment variables useful for scripts running in a PyTorch training environment"
+
+jobs:
+  pytorch_job:
+    type: command
+    component: file:./component.yml
+    compute: azureml:cpu-cluster
+    resources:
+      instance_count: 2
+      shm_size: "4g" # shared memory size in GB
+    distribution:
+      type: pytorch
+      process_count_per_instance: 1
+
+    environment_variables:
+      NCCL_DEBUG: "INFO" # adjusts the level of info from NCCL tests

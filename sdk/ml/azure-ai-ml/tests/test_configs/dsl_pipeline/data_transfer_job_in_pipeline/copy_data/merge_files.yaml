@@ -2,7 +2,7 @@ $schema: http://azureml/sdk-2-0/DataTransferComponent.json
 name: datatransfer_merge_files
 display_name: Data Transfer Component merge-files
 
-type: data_transfer
+type: data_transfer@vNext
 task: copy_data
 inputs:
   folder1:
