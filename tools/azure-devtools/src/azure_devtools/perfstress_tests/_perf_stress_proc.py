@@ -17,7 +17,7 @@ from ._perf_stress_base import _PerfTestABC, _PerfTestBase
 
 def run_process(index, args, module, test_name, num_tests, test_stages, results, status):
     """The child process main function.
-    
+
     Here we load the test class from the correct module and start it.
     """
     test_module = importlib.import_module(module)
@@ -28,7 +28,7 @@ def run_process(index, args, module, test_name, num_tests, test_stages, results,
 
 def _synchronize(stages, ignore_error=False):
     """Synchronize all processes by waiting on the barrier.
-    
+
     Optionally we can also ignore a broken barrier during the cleanup stages
     so that if some processes have failed, the others can still complete cleanup.
     """
@@ -125,7 +125,7 @@ async def _run_tests(duration: int, args, tests, results, status) -> None:
         else:
             tasks = [asyncio.create_task(test.run_all_async(duration)) for test in tests]
             await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
-        
+
         # If any of the parallel test runs raised an exception, let it be propagated, after all tasks have
         # completed.
         # TODO: This will only raise the first Exception encountered. Once we migrate the perf pipelines
@@ -144,7 +144,7 @@ async def _run_tests(duration: int, args, tests, results, status) -> None:
 
 def _report_status(status: multiprocessing.JoinableQueue, tests: List[_PerfTestABC], stop: threading.Event):
     """Report ongoing status of running tests.
-    
+
     This is achieved by adding status to a joinable queue then waiting for that queue to be cleared
     by the parent processes. This should implicitly synchronize the status reporting across all child
     processes and the parent will dictate the frequency by which status is gathered.

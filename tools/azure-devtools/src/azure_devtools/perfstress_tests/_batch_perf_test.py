@@ -214,5 +214,8 @@ class BatchPerfTest(_PerfTestBase):
         A sort key can be specified to establish how stats should be sorted, and a line count can also be
         specified to limit the number of lines printed.
         """
+        # Increase the precision of the pstats output
+        pstats.f8 = lambda x: f"{x:8.5f}"
+
         stats = pstats.Stats(profile).sort_stats(sort_key)
         stats.print_stats(count)

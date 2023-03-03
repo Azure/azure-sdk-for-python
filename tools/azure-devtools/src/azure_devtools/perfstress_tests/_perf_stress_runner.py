@@ -113,6 +113,10 @@ class _PerfStressRunner:
         self._test_class_to_run.add_arguments(per_test_arg_parser)
         self.per_test_args = per_test_arg_parser.parse_args(sys.argv[2:])
 
+        if self.per_test_args.profile and self.per_test_args.parallel > 1:
+            self.logger.warning("Warning: With profiling enabled, parallelism is disabled. Running with parallel=1.")
+            self.per_test_args.parallel = 1
+
         self.logger.info("")
         self.logger.info("=== Options ===")
         self.logger.info(args)
