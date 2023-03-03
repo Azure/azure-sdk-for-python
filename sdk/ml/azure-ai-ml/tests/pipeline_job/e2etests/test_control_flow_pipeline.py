@@ -132,7 +132,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
         assert pipeline_job_dict["jobs"] == {
             "conditionnode": {
                 "condition": "${{parent.jobs.result.outputs.output}}",
-                "false_block": ["${{parent.jobs.node3}}"],
+                "false_block": "${{parent.jobs.node3}}",
                 "true_block": ["${{parent.jobs.node1}}", "${{parent.jobs.node2}}"],
                 "type": "if_else",
             },

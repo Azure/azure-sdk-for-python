@@ -1032,9 +1032,7 @@
                 "${{parent.jobs.node1}}",
                 "${{parent.jobs.node2}}"
               ],
-              "false_block": [
-                "${{parent.jobs.node3}}"
-              ],
+              "false_block": "${{parent.jobs.node3}}",
               "_source": "YAML.JOB"
             }
           },
@@ -1166,9 +1164,7 @@
                 "${{parent.jobs.node1}}",
                 "${{parent.jobs.node2}}"
               ],
-              "false_block": [
-                "${{parent.jobs.node3}}"
-              ],
+              "false_block": "${{parent.jobs.node3}}",
               "_source": "YAML.JOB"
             }
           },
