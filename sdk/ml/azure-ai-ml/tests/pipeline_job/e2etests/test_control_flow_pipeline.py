@@ -21,6 +21,7 @@ omit_fields = [
     "properties.settings",
     "properties.jobs.*._source",
     "properties.jobs.*.componentId",
+    "jobs.*.component",
 ]
 
 
@@ -126,7 +127,6 @@ class TestIfElse(TestConditionalNodeInPipeline):
         assert '"path": "jobs.conditionnode.true_block",' in str(e.value)
         assert "'true_block' of dsl.condition has invalid binding expression:" in str(e.value)
 
-    @pytest.mark.skip(reason="Backend not ready yet.")
     def test_if_else_multiple_block(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         my_job = load_job(
@@ -135,10 +135,44 @@ class TestIfElse(TestConditionalNodeInPipeline):
         )
         created_pipeline = assert_job_cancel(my_job, client)
 
-        pipeline_job_dict = created_pipeline._to_rest_object().as_dict()
+        pipeline_job_dict = created_pipeline._to_dict()
 
         pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
-        assert pipeline_job_dict["properties"]["jobs"] == {}
+        assert pipeline_job_dict["jobs"] == {
+            "conditionnode": {
+                "condition": "${{parent.jobs.result.outputs.output}}",
+                "false_block": ["${{parent.jobs.node3}}"],
+                "true_block": ["${{parent.jobs.node1}}", "${{parent.jobs.node2}}"],
+                "type": "if_else",
+            },
+            "node1": {"inputs": {"component_in_number": "1"}, "type": "command"},
+            "node2": {"inputs": {"component_in_number": "2"}, "type": "command"},
+            "node3": {"inputs": {"component_in_number": "3"}, "type": "command"},
+            "result": {"type": "command"},
+        }
+
+    def test_if_else_single_multiple_block(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        params_override = [{"name": randstr("name")}]
+        my_job = load_job(
+            "./tests/test_configs/pipeline_jobs/control_flow/if_else/single_multiple_block.yml",
+            params_override=params_override,
+        )
+        created_pipeline = assert_job_cancel(my_job, client)
+
+        pipeline_job_dict = created_pipeline._to_dict()
+
+        pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
+        assert pipeline_job_dict["jobs"] == {
+            "conditionnode": {
+                "condition": "${{parent.jobs.result.outputs.output}}",
+                "true_block": ["${{parent.jobs.node1}}", "${{parent.jobs.node2}}"],
+                "type": "if_else",
+            },
+            "node1": {"inputs": {"component_in_number": "1"}, "type": "command"},
+            "node2": {"inputs": {"component_in_number": "2"}, "type": "command"},
+            "node3": {"inputs": {"component_in_number": "3"}, "type": "command"},
+            "result": {"type": "command"},
+        }
 
 
 class TestDoWhile(TestConditionalNodeInPipeline):

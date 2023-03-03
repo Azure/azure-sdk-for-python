@@ -94,12 +94,14 @@ class ConditionNode(ControlFlowNode):
         error_msg = (
             "{!r} of dsl.condition node must be an instance of " f"{BaseNode}, {AutoMLJob} or {str}," "got {!r}."
         )
-        for block in self.true_block:
+        blocks = self.true_block if self.true_block else []
+        for block in blocks:
             if block is not None and not isinstance(block, (BaseNode, AutoMLJob, str)):
                 validation_result.append_error(
                     yaml_path="true_block", message=error_msg.format("true_block", type(block))
                 )
-        for block in self.false_block:
+        blocks = self.false_block if self.false_block else []
+        for block in blocks:
             if block is not None and not isinstance(block, (BaseNode, AutoMLJob, str)):
                 validation_result.append_error(
                     yaml_path="false_block", message=error_msg.format("false_block", type(block))
@@ -107,6 +109,7 @@ class ConditionNode(ControlFlowNode):
 
         # check if true/false block is valid binding
         for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():
+            blocks = blocks if blocks else []
             for block in blocks:
                 if block is None or not isinstance(block, str):
                     continue
@@ -118,14 +121,18 @@ class ConditionNode(ControlFlowNode):
                     )
 
         def _get_intersection(lst1, lst2):
+            if not lst1:
+                lst1 = []
+            if not lst2:
+                lst2 = []
             return list(set(lst1) & set(lst2))
 
         intersection = _get_intersection(self.true_block, self.false_block)
 
-        if self.true_block is None and self.false_block is None:
+        if not self.true_block and not self.false_block:
             validation_result.append_error(
                 yaml_path="true_block",
-                message="'true_block' and 'false_block' of dsl.condition node cannot both be None.",
+                message="'true_block' and 'false_block' of dsl.condition node cannot both be empty.",
             )
         elif self.true_block is self.false_block:
             validation_result.append_error(
