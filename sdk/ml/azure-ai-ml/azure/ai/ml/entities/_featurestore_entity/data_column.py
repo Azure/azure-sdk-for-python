@@ -21,7 +21,7 @@ DataColumnTypeMap: Dict[DataColumnType, FeatureDataType] = {
     DataColumnType.double: FeatureDataType.DOUBLE,
     DataColumnType.binary: FeatureDataType.BINARY,
     DataColumnType.datetime: FeatureDataType.DATETIME,
-    DataColumnType.bool: FeatureDataType.BOOLEAN,
+    DataColumnType.boolean: FeatureDataType.BOOLEAN,
 }
 
 FeatureDataTypeMap: Dict[str, DataColumnType] = {
@@ -32,7 +32,7 @@ FeatureDataTypeMap: Dict[str, DataColumnType] = {
     "Double": DataColumnType.double,
     "Binary": DataColumnType.binary,
     "Datetime": DataColumnType.datetime,
-    "Boolean": DataColumnType.bool,
+    "Boolean": DataColumnType.boolean,
 }
 
 
@@ -42,15 +42,16 @@ class DataColumn(RestTranslatableMixin):
     :param name: The column name
     :type name: str, required
     :param type: Column data type
-    :type type: ~azure.ai.ml.entities.DataColumnType, optional"""
+    :type type: str, one of [string, integer, long, float, double, binary, datetime, boolean] or
+    ~azure.ai.ml.entities.DataColumnType, optional"""
 
     def __init__(self, *, name: str, type: DataColumnType = None, **kwargs):
         self.name = name
         self.type = type
 
     def _to_rest_object(self) -> IndexColumn:
-        return IndexColumn(column_name=self.name, data_type=DataColumnTypeMap[self.type])
+        return IndexColumn(column_name=self.name, data_type=DataColumnTypeMap.get(self.type, None))
 
     @classmethod
     def _from_rest_object(cls, obj: IndexColumn) -> "DataColumn":
-        return DataColumn(name=obj.column_name, type=FeatureDataTypeMap[obj.data_type])
+        return DataColumn(name=obj.column_name, type=FeatureDataTypeMap.get(obj.data_type, None))
