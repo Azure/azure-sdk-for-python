@@ -93,6 +93,7 @@ class CommunicationUserIdentifier(object):
     def __eq__(self, other):
         return self.raw_id == _communication_user_raw_id(other)
 
+
 def _communication_user_raw_id(identifier: CommunicationUserIdentifier) -> str:
     return identifier.properties['id']
 
@@ -250,7 +251,7 @@ class MicrosoftBotIdentifier(object):
             bot_id=bot_id,
             is_global=kwargs.get('is_global', False),
             cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.PUBLIC
-        )
+        )  # type: MicrosoftBotProperties
         if self.raw_id is None:
             self.raw_id = _microsoft_bot_raw_id(self)
 
