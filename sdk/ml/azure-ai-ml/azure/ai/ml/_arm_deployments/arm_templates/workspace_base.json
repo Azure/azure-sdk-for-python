@@ -434,14 +434,14 @@
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Feature store offline store connection credential client id"
+                "description": "Feature store materialization credential client id"
             }
         },
         "materialization_identity_resource_id": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
-                "description": "Feature store offline store connection credential resource id"
+                "description": "Feature store materialization credential resource id"
             }
         },
         "setup_materialization_store": {
@@ -683,7 +683,7 @@
             "condition": "[equals(parameters('setup_materialization_store'), 'true')]",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2022-05-01",
-			"name": "[concat(parameters('workspaceName'), '-update-UAI')]",
+			"name": "[concat(parameters('workspaceName'), '-update-materialization-identity')]",
 			"dependsOn": [
 				"[parameters('workspaceName')]"
 			],
@@ -715,8 +715,6 @@
                             "hbiWorkspace": "[parameters('confidential_data')]",
                             "imageBuildCompute": "[parameters('imageBuildCompute')]",
                             "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
-                            "softDeleteEnabled": "[parameters('soft_delete_enabled')]",
-                            "allowRecoverSoftDeletedWorkspace": "[parameters('allow_recover_softdeleted_workspace')]",
                             "encryption": {
                                 "status": "[parameters('encryption_status')]",
                                 "keyVaultProperties": {
