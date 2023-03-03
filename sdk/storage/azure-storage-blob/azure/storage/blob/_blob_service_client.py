@@ -770,6 +770,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             blob_name = blob.name
         except AttributeError:
             blob_name = blob
+        try:
+            version_id = blob.version_id
+        except AttributeError:
+            version_id = None
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
@@ -779,4 +783,5 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
+            version_id=version_id)

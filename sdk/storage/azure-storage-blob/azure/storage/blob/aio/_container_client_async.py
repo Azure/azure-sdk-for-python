@@ -1031,9 +1031,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         blob = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
+        try:
+            version_id = kwargs.pop('version_id', None) or blob.version_id
+        except AttributeError:
+            version_id = None
         await blob.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             timeout=timeout,
+            version_id=version_id,
             **kwargs)
 
     @overload
@@ -1148,11 +1153,16 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :rtype: ~azure.storage.blob.aio.StorageStreamDownloader
         """
         blob_client = self.get_blob_client(blob) # type: ignore
+        try:
+            version_id = kwargs.pop('version_id', None) or blob.version_id
+        except AttributeError:
+            version_id = None
         kwargs.setdefault('merge_span', True)
         return await blob_client.download_blob(
             offset=offset,
             length=length,
             encoding=encoding,
+            version_id=version_id,
             **kwargs)
 
     @distributed_trace_async
@@ -1408,9 +1418,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        version_id = None
-        if isinstance(blob, BlobProperties):
-            version_id = blob['version_id']
+        try:
+            version_id = blob.version_id
+        except AttributeError:
+            version_id = None
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,

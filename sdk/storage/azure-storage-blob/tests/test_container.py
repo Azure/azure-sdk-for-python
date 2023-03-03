@@ -1607,6 +1607,32 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_delete_blob_with_properties_versioning(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container: ContainerClient = self._create_container(bsc)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+        blob_client = container.get_blob_client(blob_name)
+
+        blob_client.upload_blob(blob_data, overwrite=True)
+        v1_props = blob_client.get_blob_properties()
+        blob_client.upload_blob(blob_data * 2, overwrite=True)
+        v2_props = blob_client.get_blob_properties()
+
+        # Act
+        container.delete_blob(v2_props, version_id=v1_props['version_id'])
+
+        # Assert
+        with pytest.raises(HttpResponseError):
+            deleted = container.get_blob_client(v1_props)
+            deleted.get_blob_properties()
+
     @pytest.mark.live_test_only
     @BlobPreparer()
     def test_delete_blobs_with_version_id(self, **kwargs):
@@ -1649,6 +1675,41 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert response[0].status_code == 202
         assert response[1].status_code == 202
         assert blob.get_blob_properties().get("version_id") == new_blob_version_id
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_delete_blobs_with_properties_versioning(self, **kwargs):
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container: ContainerClient = self._create_container(bsc)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+        blob_client = container.get_blob_client(blob_name)
+
+        blob_client.upload_blob(blob_data, overwrite=True)
+        v1_props = blob_client.get_blob_properties()
+        blob_client.upload_blob(blob_data * 2, overwrite=True)
+        v2_props = blob_client.get_blob_properties()
+        blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = blob_client.get_blob_properties()
+
+        # Act
+        response = container.delete_blobs(
+            v1_props,
+            v2_props
+        )
+        remaining_blob = container.get_blob_client(v3_props)
+
+        # Assert
+        response = list(response)
+        assert len(response) == 2
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert remaining_blob.get_blob_properties().get("version_id") == v3_props['version_id']
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -2391,7 +2452,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         container = self._create_container(bsc)
         data = b'hello world'
-        blob_name =  self.get_resource_name("blob")
+        blob_name = self.get_resource_name("blob")
 
         container.get_blob_client(blob_name).upload_blob(data)
 
@@ -2399,6 +2460,30 @@ class TestStorageContainer(StorageRecordedTestCase):
         downloaded = container.download_blob(blob_name)
 
         assert downloaded.readall() == data
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_blob_with_properties_versioning(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container: ContainerClient = self._create_container(bsc)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = b'abc'
+        blob_client = container.get_blob_client(blob_name)
+
+        blob_client.upload_blob(blob_data, overwrite=True)
+        v1_props = blob_client.get_blob_properties()
+        blob_client.upload_blob(blob_data * 2, overwrite=True)
+        v2_props = blob_client.get_blob_properties()
+
+        # Act
+        downloaded = container.download_blob(v2_props, version_id=v1_props['version_id'])
+
+        # Assert
+        assert downloaded.readall() == blob_data
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2565,7 +2650,7 @@ class TestStorageContainer(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_blob_version_properties_versioning_enabled(self, **kwargs):
+    def test_get_blob_client_with_properties_versioning(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 

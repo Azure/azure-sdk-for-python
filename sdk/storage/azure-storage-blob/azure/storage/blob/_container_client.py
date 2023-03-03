@@ -1169,9 +1169,14 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
+        try:
+            version_id = kwargs.pop('version_id', None) or blob.version_id
+        except AttributeError:
+            version_id = None
         blob_client.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             timeout=timeout,
+            version_id=version_id,
             **kwargs)
 
     @overload
@@ -1286,11 +1291,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :rtype: ~azure.storage.blob.StorageStreamDownloader
         """
         blob_client = self.get_blob_client(blob) # type: ignore
+        try:
+            version_id = kwargs.pop('version_id', None) or blob.version_id
+        except AttributeError:
+            version_id = None
         kwargs.setdefault('merge_span', True)
         return blob_client.download_blob(
             offset=offset,
             length=length,
             encoding=encoding,
+            version_id=version_id,
             **kwargs)
 
     def _generate_delete_blobs_subrequest_options(
@@ -1384,7 +1394,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             try:
                 options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
                     snapshot=blob.get('snapshot'),
-                    version_id=blob.get('version_id'),
+                    version_id=kwargs.pop('version_id', None) or blob.get('version_id'),
                     delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
                     lease=blob.get('lease_id'),
                     if_modified_since=if_modified_since or blob.get('if_modified_since'),
@@ -1581,7 +1591,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
                     tier=tier,
                     snapshot=blob.get('snapshot'),
-                    version_id=blob.get('version_id'),
+                    version_id=kwargs.pop('version_id', None) or blob.get('version_id'),
                     rehydrate_priority=rehydrate_priority or blob.get('rehydrate_priority'),
                     lease_access_conditions=blob.get('lease_id'),
                     if_tags=if_tags or blob.get('if_tags_match_condition'),
@@ -1761,9 +1771,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access
         )
-        version_id = None
-        if isinstance(blob, BlobProperties):
-            version_id = blob['version_id']
+        try:
+            version_id = blob.version_id
+        except AttributeError:
+            version_id = None
         return BlobClient(
             self.url, container_name=self.container_name, blob_name=blob_name, snapshot=snapshot,
             credential=self.credential, api_version=self.api_version, _configuration=self._config,

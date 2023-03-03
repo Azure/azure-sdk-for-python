@@ -98,12 +98,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
-    :keyword str version_id:
-            The version id parameter is an opaque DateTime
-            value that, when present, specifies the version of the blob to operate on.
-
-            .. versionadded:: 12.X.X
-            This keyword argument was introduced in API version '20XX-XX-XX'.
+    :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+        specifies the version of the blob to operate on.
 
     .. admonition:: Example:
 
