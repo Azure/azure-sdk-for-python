@@ -151,7 +151,7 @@ class CallAutomationClient(object):
             targets=[serialize_identifier(call_invite.target)],
             callback_uri=callback_url,
             source_caller_id_number=serialize_identifier(
-                call_invite.sourceCallIdNumber),
+                call_invite.sourceCallIdNumber) if call_invite.sourceCallIdNumber else None,
             source_display_name=call_invite.sourceDisplayName,
             source_identity=serialize_identifier(
                 self.source_identity) if self.source_identity else None,

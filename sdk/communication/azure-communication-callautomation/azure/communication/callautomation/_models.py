@@ -745,12 +745,14 @@ class CallConnectionProperties(object):
 
     @classmethod
     def _from_generated(cls, call_connection_properties_generated: CallConnectionPropertiesGenerated):
+        target_models = []
+        for target in call_connection_properties_generated.targets:
+            target_models.append(deserialize_identifier(target))
 
         return cls(
             call_connection_id=call_connection_properties_generated.call_connection_id,
             server_call_id=call_connection_properties_generated.server_call_id,
-            targets=[deserialize_identifier(
-                target) for target in call_connection_properties_generated.targets],
+            targets=target_models,
             call_connection_state=call_connection_properties_generated.call_connection_state,
             callback_uri=call_connection_properties_generated.callback_uri,
             media_subscription_id=call_connection_properties_generated.media_subscription_id,

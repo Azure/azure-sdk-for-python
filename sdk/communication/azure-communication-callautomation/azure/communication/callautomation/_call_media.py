@@ -11,18 +11,19 @@ from ._api_versions import DEFAULT_VERSION
 from ._communication_identifier_serializer import serialize_identifier
 
 from ._generated.models._models import (
-PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, PlayOptions, 
-PlaySource as PlaySourceInternal, FileSource as FileSourceInternal
+    PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, PlayOptions,
+    PlaySource as PlaySourceInternal, FileSource as FileSourceInternal
 )
 
 from ._generated.models import PlaySourceType
-from ._models import  (
-    CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions, 
+from ._models import (
+    CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions,
     PlaySource, FileSource, CommunicationIdentifier
 )
 
 if TYPE_CHECKING:
     from ._generated.operations import CallMediaOperations
+
 
 class CallMediaClient(object):
     def __init__(
@@ -30,27 +31,25 @@ class CallMediaClient(object):
         call_connection_id,  # type: str
         call_media_operations,  # type: CallMediaOperations
         **kwargs
-    ):     
+    ):
         # type: (...) -> None
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
         self.call_connection_id = call_connection_id
         self._call_media_operations = call_media_operations
 
-
     def _create_play_source_internal(self, play_source):
         if isinstance(play_source, FileSource):
             file_source = FileSourceInternal(uri=play_source.uri)
             return PlaySourceInternal(
-                source_type=PlaySourceType.FILE, 
-                file_source=file_source, 
+                source_type=PlaySourceType.FILE,
+                file_source=file_source,
                 play_source_id=play_source.play_source_id
             )
         return None
 
-
     def play_to_all(
-        self, 
+        self,
         play_source,
         **kwargs
     ):
@@ -61,13 +60,12 @@ class CallMediaClient(object):
         """
         if not play_source:
             raise ValueError('play_source cannot be None.')
-        
+
         self.play(play_source=play_source, play_to=[], **kwargs)
 
-
     def play(
-        self, 
-        play_source: PlaySource, 
+        self,
+        play_source: PlaySource,
         play_to: List[CommunicationIdentifier],
         **kwargs
     ):
@@ -85,15 +83,15 @@ class CallMediaClient(object):
             raise ValueError('play_source cannot be None.')
 
         play_request = PlayRequest(
-            play_source_info=self._create_play_source_internal(play_source), 
-            play_to=[serialize_identifier(identifier) for identifier in play_to], 
+            play_source_info=self._create_play_source_internal(play_source),
+            play_to=[serialize_identifier(identifier)
+                     for identifier in play_to],
             play_options=PlayOptions(loop=kwargs.get('loop', False))
         )
         self._call_media_operations.play(self.call_connection_id, play_request)
 
-
     def start_recognizing(
-        self, 
+        self,
         recognize_options: CallMediaRecognizeOptions
     ):
         """
@@ -109,8 +107,9 @@ class CallMediaClient(object):
             raise ValueError('recognize_options cannot be None.')
 
         options = RecognizeOptions(
-            target_participant=serialize_identifier(recognize_options.target_participant), 
-            interrupt_prompt=recognize_options.interrupt_prompt, 
+            target_participant=serialize_identifier(
+                recognize_options.target_participant),
+            interrupt_prompt=recognize_options.interrupt_prompt,
             initial_silence_timeout_in_seconds=recognize_options.initial_silence_timeout
         )
 
@@ -131,14 +130,15 @@ class CallMediaClient(object):
             recognize_options=options
         )
 
-        self._call_media_operations.recognize(self.call_connection_id, recognize_request)
-
+        self._call_media_operations.recognize(
+            self.call_connection_id, recognize_request)
 
     def cancel_all_media_operations(
         self
     ):
         """
         Cancels all the queued media operations.
-        
+
         """
-        self._call_media_operations.cancel_all_media_operations(self.call_connection_id)
+        self._call_media_operations.cancel_all_media_operations(
+            self.call_connection_id)
