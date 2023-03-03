@@ -31,8 +31,9 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType
-from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, ASSET_ID_FORMAT
+from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
+from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 ops_logger = OpsLogger(__name__)
@@ -92,6 +93,37 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             sas_uri = None
             if self._registry_name:
+                if isinstance(environment, WorkspaceAssetReference):
+                    # verify that environment is not already in registry
+                    try:
+                        self._version_operations.get(
+                            name=environment.name,
+                            version=environment.version,
+                            resource_group_name=self._resource_group_name,
+                            registry_name=self._registry_name,
+                        )
+                    except Exception as err:  # pylint: disable=broad-except
+                        if isinstance(err, ResourceNotFoundError):
+                            pass
+                        else:
+                            raise err
+                    else:
+                        msg = "A environment with this name and version already exists in registry"
+                        raise ValidationException(
+                            message=msg,
+                            no_personal_data_message=msg,
+                            target=ErrorTarget.ENVIRONMENT,
+                            error_category=ErrorCategory.USER_ERROR,
+                        )
+
+                    environment = environment._to_rest_object()
+                    result = self._service_client.resource_management_asset_reference.begin_import_method(
+                        resource_group_name=self._resource_group_name,
+                        registry_name=self._registry_name,
+                        body=environment,
+                    )
+                    return result
+
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
                     name=environment.name,
@@ -111,9 +143,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     )
                     return self.get(name=environment.name, version=environment.version)
 
-            environment = _check_and_upload_env_build_context(
-                environment=environment, operations=self, sas_uri=sas_uri
-            )
+            environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
                 self._version_operations.begin_create_or_update(
@@ -279,7 +309,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs # pylint:disable=unused-argument
+        **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Archive an environment or an environment version.
 
@@ -307,7 +337,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
-        **kwargs # pylint:disable=unused-argument
+        **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Restore an archived environment version.
 
@@ -342,6 +372,43 @@ class EnvironmentOperations(_ScopeDependentOperations):
             self._workspace_name,
         )
         return Environment._from_rest_object(result)
+
+    # pylint: disable=no-self-use
+    def _prepare_to_copy(
+        self, environment: Environment, name: Optional[str] = None, version: Optional[str] = None
+    ) -> WorkspaceAssetReference:
+
+        """Returns WorkspaceAssetReference
+        to copy a registered environment to registry given the asset id
+
+        :param environment: Registered environment
+        :type environment: Environment
+        :param name: Destination name
+        :type name: str
+        :param version: Destination version
+        :type version: str
+        """
+        #  Get workspace info to get workspace GUID
+        workspace = self._service_client.workspaces.get(
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+        )
+        workspace_guid = workspace.workspace_id
+        workspace_location = workspace.location
+
+        # Get environment asset ID
+        asset_id = ASSET_ID_FORMAT.format(
+            workspace_location,
+            workspace_guid,
+            AzureMLResourceType.ENVIRONMENT,
+            environment.name,
+            environment.version,
+        )
+
+        return WorkspaceAssetReference(
+            name=name if name else environment.name,
+            version=version if version else environment.version,
+            asset_id=asset_id,
+        )
 
 
 def _preprocess_environment_name(environment_name: str) -> str:

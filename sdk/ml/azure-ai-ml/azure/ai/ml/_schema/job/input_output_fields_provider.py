@@ -37,12 +37,7 @@ def InputsField(*, support_databinding: bool = False, **kwargs):
 
     return fields.Dict(
         keys=fields.Str(),
-        values=UnionField(
-            value_fields,
-            metadata={"description": "Inputs to a job."},
-            is_strict=True,
-            **kwargs
-        ),
+        values=UnionField(value_fields, metadata={"description": "Inputs to a job."}, is_strict=True, **kwargs),
     )
 
 

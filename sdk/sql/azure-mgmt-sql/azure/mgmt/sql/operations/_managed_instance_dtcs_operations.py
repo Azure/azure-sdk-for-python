@@ -488,8 +488,8 @@ class ManagedInstanceDtcsOperations:
         :type managed_instance_name: str
         :param dtc_name: The name of the managed instance DTC. "current" Required.
         :type dtc_name: str or ~azure.mgmt.sql.models.DtcName
-        :param parameters: Managed instance DTC settings. Is either a model type or a IO type.
-         Required.
+        :param parameters: Managed instance DTC settings. Is either a ManagedInstanceDtc type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedInstanceDtc or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

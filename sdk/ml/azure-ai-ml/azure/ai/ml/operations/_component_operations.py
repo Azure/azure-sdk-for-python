@@ -477,9 +477,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 not isinstance(component.environment, dict)
                 and not type(component.environment).__name__ == "InternalEnvironment"
             ):
-                component.environment = resolver(
-                    component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-                )
+                component.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
     def _resolve_arm_id_or_upload_dependencies(self, component: Component) -> None:
         if isinstance(component, AutoMLComponent):
@@ -577,6 +575,7 @@ class ComponentOperations(_ScopeDependentOperations):
         The ideal solution should be done after PRS team decides how to handle parallel.task.code
         """
         from azure.ai.ml.entities import Parallel, ParallelComponent
+
         if not isinstance(node, Parallel):
             return
         component = node._component  # pylint: disable=protected-access
@@ -592,9 +591,7 @@ class ComponentOperations(_ScopeDependentOperations):
             )
             node.task.code = component.code
         if node.task.environment:
-            node.task.environment = resolver(
-                component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-            )
+            node.task.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
     @classmethod
     def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
@@ -610,12 +607,12 @@ class ComponentOperations(_ScopeDependentOperations):
         # TODO: the same anonymous component with different node name will have different anonymous hash
         # as their display name will be different.
         if (
-                isinstance(component, Component)
-                # check if component is anonymous and not created based on its id. We can't directly check
-                # node._component._is_anonymous as it will be set to True on component creation,
-                # which is later than this check
-                and not component.id
-                and not component.display_name
+            isinstance(component, Component)
+            # check if component is anonymous and not created based on its id. We can't directly check
+            # node._component._is_anonymous as it will be set to True on component creation,
+            # which is later than this check
+            and not component.id
+            and not component.display_name
         ):
             component.display_name = default_name
 
@@ -634,11 +631,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
 
     @classmethod
-    def _divide_nodes_to_resolve_into_layers(
-        cls,
-        component: PipelineComponent,
-        extra_operations: List[Callable]
-    ):
+    def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
         """Traverse the pipeline component and divide nodes to resolve into layers.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
           A
@@ -676,7 +669,7 @@ class ComponentOperations(_ScopeDependentOperations):
             if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
                 if cur_layer + 1 == len(layers):
                     layers.append([])
-                layers[cur_layer+1].extend(job_instance.component.jobs.items())
+                layers[cur_layer + 1].extend(job_instance.component.jobs.items())
 
             if cur_layer_head == len(layers[cur_layer]):
                 cur_layer += 1
@@ -689,11 +682,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return layers
 
     def _resolve_dependencies_for_pipeline_component_jobs(
-        self,
-        component: Union[Component, str],
-        resolver: Callable,
-        *,
-        resolve_inputs: bool = True
+        self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
     ):
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
@@ -725,7 +714,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 partial(self._try_resolve_environment_for_component, resolver=resolver),
                 partial(self._try_resolve_compute_for_node, resolver=resolver),
                 # should we resolve code here after we do extra operations concurrently?
-            ]
+            ],
         )
 
         # cache anonymous component only for now

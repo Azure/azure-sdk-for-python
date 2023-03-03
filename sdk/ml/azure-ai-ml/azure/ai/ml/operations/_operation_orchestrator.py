@@ -18,6 +18,7 @@ from azure.ai.ml._utils._arm_id_utils import (
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
+    is_singularity_id_for_resource,
     parse_name_label,
     parse_prefixed_name_version,
 )
@@ -124,6 +125,7 @@ class OperationOrchestrator(object):
             asset is None
             or is_ARM_id_for_resource(asset, azureml_type, sub_workspace_resource)
             or is_registry_id_for_resource(asset)
+            or is_singularity_id_for_resource(asset)
         ):
             return asset
         if isinstance(asset, str):
@@ -142,9 +144,10 @@ class OperationOrchestrator(object):
                 if azureml_type == AzureMLResourceType.ENVIRONMENT:
                     azureml_prefix = "azureml:"
                     # return the same value if resolved result is passed in
-                    _asset = asset[len(azureml_prefix):] if asset.startswith(azureml_prefix) else asset
+                    _asset = asset[len(azureml_prefix) :] if asset.startswith(azureml_prefix) else asset
                     if _asset.startswith(CURATED_ENV_PREFIX) or re.match(
-                            REGISTRY_VERSION_PATTERN, f"{azureml_prefix}{_asset}"):
+                        REGISTRY_VERSION_PATTERN, f"{azureml_prefix}{_asset}"
+                    ):
                         return f"{azureml_prefix}{_asset}"
 
                 name, label = parse_name_label(asset)

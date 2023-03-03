@@ -49,13 +49,13 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
     include_package_data=True,
     packages=find_packages(
         exclude=[
-            "samples",
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
@@ -85,6 +85,8 @@ setup(
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",
         # "opencensus-ext-azure<2.0.0", disabled until SDK logging re-activated
+        "azure-mgmt-resourcegraph<9.0.0,>=2.0.0",
+        "azure-mgmt-resource<23.0.0,>=3.0.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package

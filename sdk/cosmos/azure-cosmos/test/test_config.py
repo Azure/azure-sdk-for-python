@@ -137,7 +137,7 @@ class _test_config(object):
                 collection_id = cls.TEST_COLLECTION_MULTI_PARTITION_ID
                 partition_key = cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY
 
-        document_collection = database.create_container(
+        document_collection = database.create_container_if_not_exists(
             id=collection_id,
             partition_key=PartitionKey(path='/' + partition_key, kind='Hash'),
             offer_throughput=throughput)

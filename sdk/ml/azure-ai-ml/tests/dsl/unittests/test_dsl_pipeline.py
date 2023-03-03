@@ -1,3 +1,4 @@
+import logging
 import os
 from io import StringIO
 from pathlib import Path
@@ -10,7 +11,7 @@ import pytest
 
 from azure.ai.ml.constants._job import PipelineConstants
 from test_configs.dsl_pipeline import data_binding_expression
-from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
+from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated, assert_job_cancel
 
 from azure.ai.ml import (
     AmlTokenConfiguration,
@@ -36,7 +37,7 @@ from azure.ai.ml.constants._common import (
     InputOutputModes,
 )
 from azure.ai.ml.entities import Component, Data, JobResourceConfiguration, PipelineJob
-from azure.ai.ml.entities._builders import Command, Spark
+from azure.ai.ml.entities._builders import Command, Spark, DataTransferCopy
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 from azure.ai.ml.exceptions import (
@@ -53,10 +54,7 @@ tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
 
 
-@pytest.mark.usefixtures(
-    "enable_pipeline_private_preview_features",
-    "enable_private_preview_schema_features"
-)
+@pytest.mark.usefixtures("enable_pipeline_private_preview_features", "enable_private_preview_schema_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
@@ -229,18 +227,15 @@ class TestDSLPipeline:
             "component_in_path": Input(path="${{parent.inputs.path}}", type="uri_folder", mode=None),
         }
 
-    @pytest.mark.parametrize(
-        "output_type",
-        ["uri_file", "mltable", "mlflow_model", "triton_model", "custom_model"]
-    )
+    @pytest.mark.parametrize("output_type", ["uri_file", "mltable", "mlflow_model", "triton_model", "custom_model"])
     def test_dsl_pipeline_output_type(self, output_type):
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
 
         @dsl.pipeline()
         def pipeline(number, path):
-            component_func = load_component(source=yaml_file, params_override=[
-                {"outputs.component_out_path.type": output_type}
-            ])
+            component_func = load_component(
+                source=yaml_file, params_override=[{"outputs.component_out_path.type": output_type}]
+            )
             node1 = component_func(component_in_number=number, component_in_path=path)
             return {"pipeline_output": node1.outputs.component_out_path}
 
@@ -253,21 +248,21 @@ class TestDSLPipeline:
 
         @dsl.pipeline()
         def pipeline(
-                job_in_data_name_version_def_mode,
-                job_in_data_name_version_mode_mount,
-                job_in_data_name_version_mode_download,
-                job_in_data_by_name,
-                job_in_data_by_armid,
-                job_in_data_by_store_path,
-                job_in_data_by_path_default_store,
-                job_in_data_by_store_path_and_mount,
-                job_in_data_by_store_path_and_download,
-                job_in_data_by_blob_dir,
-                job_in_data_by_blob_file,
-                job_in_data_local_dir,
-                job_in_data_local_file,
-                job_in_data_local_yaml_definition,
-                job_in_data_uri,
+            job_in_data_name_version_def_mode,
+            job_in_data_name_version_mode_mount,
+            job_in_data_name_version_mode_download,
+            job_in_data_by_name,
+            job_in_data_by_armid,
+            job_in_data_by_store_path,
+            job_in_data_by_path_default_store,
+            job_in_data_by_store_path_and_mount,
+            job_in_data_by_store_path_and_download,
+            job_in_data_by_blob_dir,
+            job_in_data_by_blob_file,
+            job_in_data_local_dir,
+            job_in_data_local_file,
+            job_in_data_local_yaml_definition,
+            job_in_data_uri,
         ):
             component_func = load_component(source=yaml_file)
             multiple_data_component = component_func(
@@ -781,8 +776,8 @@ class TestDSLPipeline:
         with pytest.raises(UserErrorException) as ex:
             pipeline(10, test_job_input)
         assert (
-                "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), but got type <class 'tuple'>."
-                in ex.__str__()
+            "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), but got type <class 'tuple'>."
+            in ex.__str__()
         )
 
     def test_dsl_pipeline_multi_times(self):
@@ -817,8 +812,8 @@ class TestDSLPipeline:
             _add_component_to_current_definition_builder(component)
 
         with mock.patch(
-                "azure.ai.ml.dsl._pipeline_component_builder._add_component_to_current_definition_builder",
-                side_effect=mock_add_to_builder,
+            "azure.ai.ml.dsl._pipeline_component_builder._add_component_to_current_definition_builder",
+            side_effect=mock_add_to_builder,
         ) as mocker:
             # DSL
             yaml_file = "./tests/test_configs/components/helloworld_component.yml"
@@ -922,12 +917,12 @@ class TestDSLPipeline:
 
         component_names = set()
         with mock.patch(
-                "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
-                side_effect=mock_arm_id,
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+            side_effect=mock_arm_id,
         ):
             with mock.patch(
-                    "azure.ai.ml._restclient.v2022_10_01.operations.ComponentVersionsOperations.create_or_update",
-                    side_effect=mock_create,
+                "azure.ai.ml._restclient.v2022_10_01.operations.ComponentVersionsOperations.create_or_update",
+                side_effect=mock_create,
             ):
                 with mock.patch.object(Component, "_from_rest_object", side_effect=mock_from_rest):
                     for _, job in pipeline.jobs.items():
@@ -963,7 +958,7 @@ class TestDSLPipeline:
     )
     def test_command_function_reuse(self, mock_machinelearning_client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
         inputs = {
@@ -1098,56 +1093,56 @@ class TestDSLPipeline:
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(pipeline1)
             assert (
-                    "display_name: pipeline\ntype: pipeline\ninputs:\n  number: 10\n  path:\n    type: uri_folder"
-                    in std_out.getvalue()
+                "display_name: pipeline\ntype: pipeline\ninputs:\n  number: 10\n  path:\n    type: uri_folder"
+                in std_out.getvalue()
             )
 
     @pytest.mark.parametrize(
         "target_yml, target_dsl_pipeline",
         [
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
-                    data_binding_expression.input_basic(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
+                data_binding_expression.input_basic(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
-                    data_binding_expression.input_literal_cross_type(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
+                data_binding_expression.input_literal_cross_type(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
-                    data_binding_expression.input_literal_meta(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
+                data_binding_expression.input_literal_meta(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
-                    data_binding_expression.input_path_concatenate(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
+                data_binding_expression.input_path_concatenate(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
-                    data_binding_expression.input_reason_expression(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
+                data_binding_expression.input_reason_expression(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
-                    data_binding_expression.input_string_concatenate(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
+                data_binding_expression.input_string_concatenate(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
-                    data_binding_expression.run_settings_compute(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
+                data_binding_expression.run_settings_compute(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
-                    data_binding_expression.input_path(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
+                data_binding_expression.input_path(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
-                    data_binding_expression.run_settings_sweep_choice(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
+                data_binding_expression.run_settings_sweep_choice(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_limits.yml",
-                    data_binding_expression.run_settings_sweep_limits(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_limits.yml",
+                data_binding_expression.run_settings_sweep_limits(),
             ),
             (
-                    "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_literal.yml",
-                    data_binding_expression.run_settings_sweep_literal(),
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_literal.yml",
+                data_binding_expression.run_settings_sweep_literal(),
             ),
         ],
     )
@@ -1359,7 +1354,7 @@ class TestDSLPipeline:
                         },
                     }
                 },
-                "outputs": {"trained_model": {"job_output_type": "uri_folder"}},
+                "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "Upload"}},
                 "settings": {},
             }
         }
@@ -1514,7 +1509,7 @@ class TestDSLPipeline:
                     "type": "pipeline",
                 },
             },
-            'outputs': {'sub_pipeline_out': {'type': 'uri_folder'}}
+            "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
         }
         actual_dict = pipeline._to_dict()
         actual_dict = pydash.omit(actual_dict, *omit_fields)
@@ -1703,9 +1698,9 @@ class TestDSLPipeline:
 
         pipeline = concatenation_in_pipeline(str_param="string value")
         for node_name, expected_value in (
-                ("microsoft_samples_echo_string", "${{parent.inputs.str_param}} right"),
-                ("microsoft_samples_echo_string_1", "left ${{parent.inputs.str_param}}"),
-                ("microsoft_samples_echo_string_2", "${{parent.inputs.str_param}}${{parent.inputs.str_param}}"),
+            ("microsoft_samples_echo_string", "${{parent.inputs.str_param}} right"),
+            ("microsoft_samples_echo_string_1", "left ${{parent.inputs.str_param}}"),
+            ("microsoft_samples_echo_string_2", "${{parent.inputs.str_param}}${{parent.inputs.str_param}}"),
         ):
             assert pipeline.jobs[node_name].inputs.component_in_string._data == expected_value
 
@@ -1786,7 +1781,7 @@ class TestDSLPipeline:
                     "type": "pipeline",
                 },
             },
-            'outputs': {'sub_pipeline_out': {'type': 'uri_folder'}}
+            "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
         }
         actual_dict = pydash.omit(pipeline._to_dict(), *omit_fields)
         assert actual_dict == expected_root_dict
@@ -1862,7 +1857,7 @@ class TestDSLPipeline:
                     "type": "pipeline",
                 },
             },
-            'outputs': {'sub_pipeline_out': {'type': 'uri_folder'}}
+            "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
         }
         actual_dict = pydash.omit(
             pipeline._to_dict(),
@@ -1934,50 +1929,47 @@ class TestDSLPipeline:
 
         @dsl.pipeline
         def pipeline_func(component_in_path):
-            node1 = component_func(
-                component_in_number=1, component_in_path=component_in_path
-            )
+            node1 = component_func(component_in_number=1, component_in_path=component_in_path)
             node1.identity = AmlTokenConfiguration()
 
-            node2 = component_func(
-                component_in_number=1, component_in_path=component_in_path
-            )
+            node2 = component_func(component_in_number=1, component_in_path=component_in_path)
             node2.identity = UserIdentityConfiguration()
 
-            node3 = component_func(
-                component_in_number=1, component_in_path=component_in_path
-            )
+            node3 = component_func(component_in_number=1, component_in_path=component_in_path)
             node3.identity = ManagedIdentityConfiguration()
 
         pipeline = pipeline_func(component_in_path=Data(name="test", version="1", type=AssetTypes.MLTABLE))
-        omit_fields = [
-            "jobs.*.componentId",
-            "jobs.*._source"
-        ]
+        omit_fields = ["jobs.*.componentId", "jobs.*._source"]
         actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
 
         assert actual_dict["jobs"] == {
-            'node1': {'identity': {'type': 'aml_token'},
-                      'inputs': {'component_in_number': {'job_input_type': 'literal',
-                                                         'value': '1'},
-                                 'component_in_path': {'job_input_type': 'literal',
-                                                       'value': '${{parent.inputs.component_in_path}}'}},
-                      'name': 'node1',
-                      'type': 'command'},
-            'node2': {'identity': {'type': 'user_identity'},
-                      'inputs': {'component_in_number': {'job_input_type': 'literal',
-                                                         'value': '1'},
-                                 'component_in_path': {'job_input_type': 'literal',
-                                                       'value': '${{parent.inputs.component_in_path}}'}},
-                      'name': 'node2',
-                      'type': 'command'},
-            'node3': {'identity': {'type': 'managed_identity'},
-                      'inputs': {'component_in_number': {'job_input_type': 'literal',
-                                                         'value': '1'},
-                                 'component_in_path': {'job_input_type': 'literal',
-                                                       'value': '${{parent.inputs.component_in_path}}'}},
-                      'name': 'node3',
-                      'type': 'command'}
+            "node1": {
+                "identity": {"type": "aml_token"},
+                "inputs": {
+                    "component_in_number": {"job_input_type": "literal", "value": "1"},
+                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
+                },
+                "name": "node1",
+                "type": "command",
+            },
+            "node2": {
+                "identity": {"type": "user_identity"},
+                "inputs": {
+                    "component_in_number": {"job_input_type": "literal", "value": "1"},
+                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
+                },
+                "name": "node2",
+                "type": "command",
+            },
+            "node3": {
+                "identity": {"type": "managed_identity"},
+                "inputs": {
+                    "component_in_number": {"job_input_type": "literal", "value": "1"},
+                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
+                },
+                "name": "node3",
+                "type": "command",
+            },
         }
 
     def test_pipeline_with_non_pipeline_inputs(self):
@@ -1985,10 +1977,17 @@ class TestDSLPipeline:
         component_func1 = load_component(source=component_yaml, params_override=[{"name": "component_name_1"}])
         component_func2 = load_component(source=component_yaml, params_override=[{"name": "component_name_2"}])
 
-        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component",
-                                           "param_with_annotation", "param_with_default"])
-        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component,
-                          param_with_annotation: Dict[str, str], param_with_default: int = 1):
+        @dsl.pipeline(
+            non_pipeline_inputs=["other_params", "is_add_component", "param_with_annotation", "param_with_default"]
+        )
+        def pipeline_func(
+            job_in_number,
+            job_in_path,
+            other_params,
+            is_add_component,
+            param_with_annotation: Dict[str, str],
+            param_with_default: int = 1,
+        ):
             assert param_with_default == 1
             assert param_with_annotation == {"mock": "dict"}
             component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
@@ -2016,7 +2015,6 @@ class TestDSLPipeline:
         assert len(pipeline.jobs) == 3
 
     def test_pipeline_with_invalid_non_pipeline_inputs(self):
-
         @dsl.pipeline(non_pipeline_inputs=[123])
         def pipeline_func():
             pass
@@ -2031,7 +2029,10 @@ class TestDSLPipeline:
 
         with pytest.raises(ParamValueNotExistsError) as error_info:
             pipeline_func()
-        assert "pipeline_func() got unexpected params in non_pipeline_inputs ['non_exist_param1', 'non_exist_param2']" in str(error_info)
+        assert (
+            "pipeline_func() got unexpected params in non_pipeline_inputs ['non_exist_param1', 'non_exist_param2']"
+            in str(error_info)
+        )
 
     def test_component_func_as_non_pipeline_inputs(self):
         component_yaml = components_dir / "helloworld_component.yml"
@@ -2044,9 +2045,8 @@ class TestDSLPipeline:
             component_func(component_in_number=job_in_number, component_in_path=job_in_path)
 
         pipeline = pipeline_func(
-            job_in_number=10,
-            job_in_path=Input(path="/a/path/on/ds"),
-            component_func=component_func2)
+            job_in_number=10, job_in_path=Input(path="/a/path/on/ds"), component_func=component_func2
+        )
         assert len(pipeline.jobs) == 2
         assert component_func2.name in pipeline.jobs
 
@@ -2057,8 +2057,9 @@ class TestDSLPipeline:
 
         @dsl.pipeline
         def pipeline_with_variable_args(**kwargs):
-            node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
-                                          component_in_path=kwargs["component_in_path1"])
+            node_kwargs = component_func1(
+                component_in_number=kwargs["component_in_number1"], component_in_path=kwargs["component_in_path1"]
+            )
 
         @dsl.pipeline
         def root_pipeline(component_in_number: int, component_in_path: Input, **kwargs):
@@ -2075,21 +2076,19 @@ class TestDSLPipeline:
                 args_0: args_0 description
             """
             node = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
-            node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
-                                          component_in_path=kwargs["component_in_path1"])
+            node_kwargs = component_func1(
+                component_in_number=kwargs["component_in_number1"], component_in_path=kwargs["component_in_path1"]
+            )
             node_with_arg_kwarg = pipeline_with_variable_args(**kwargs)
 
         pipeline = root_pipeline(10, data, component_in_number1=12, component_in_path1=data)
 
-        assert pipeline.component.inputs['component_in_number'].description == "component_in_number description"
-        assert pipeline.component.inputs['component_in_path'].description == "component_in_path description"
-        assert pipeline.component.inputs['component_in_number1'].description == "component_in_number1 description"
-        assert pipeline.component.inputs['component_in_path1'].description == "component_in_path1 description"
+        assert pipeline.component.inputs["component_in_number"].description == "component_in_number description"
+        assert pipeline.component.inputs["component_in_path"].description == "component_in_path description"
+        assert pipeline.component.inputs["component_in_number1"].description == "component_in_number1 description"
+        assert pipeline.component.inputs["component_in_path1"].description == "component_in_path1 description"
 
-        omit_fields = [
-            "jobs.*.componentId",
-            "jobs.*._source"
-        ]
+        omit_fields = ["jobs.*.componentId", "jobs.*._source"]
         actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
 
         assert actual_dict["inputs"] == {
@@ -2099,50 +2098,51 @@ class TestDSLPipeline:
             "component_in_path1": {"uri": "test:1", "job_input_type": "mltable"},
         }
         assert actual_dict["jobs"] == {
-            'node': {
-                'name': 'node', 'type': 'command', 'inputs': {
-                    'component_in_number': {
-                        'job_input_type': 'literal',
-                        'value': '${{parent.inputs.component_in_number}}'
+            "node": {
+                "name": "node",
+                "type": "command",
+                "inputs": {
+                    "component_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_number}}",
                     },
-                    'component_in_path': {
-                        'job_input_type': 'literal',
-                        'value': '${{parent.inputs.component_in_path}}'
-                    }
-                }
+                    "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.component_in_path}}"},
+                },
             },
-            'node_kwargs': {
-                'name': 'node_kwargs',
-                'type': 'command',
-                'inputs': {
-                    'component_in_number': {
-                        'job_input_type': 'literal',
-                        'value': '${{parent.inputs.component_in_number1}}'
+            "node_kwargs": {
+                "name": "node_kwargs",
+                "type": "command",
+                "inputs": {
+                    "component_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_number1}}",
                     },
-                    'component_in_path': {
-                        'job_input_type': 'literal',
-                        'value': '${{parent.inputs.component_in_path1}}'
-                    }
-                }
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_path1}}",
+                    },
+                },
             },
-            'node_with_arg_kwarg': {
-                'name': 'node_with_arg_kwarg',
-                'type': 'pipeline',
-                'inputs': {
-                    'component_in_number1': {
-                        'job_input_type': 'literal',
-                        'value': '${{parent.inputs.component_in_number1}}'
+            "node_with_arg_kwarg": {
+                "name": "node_with_arg_kwarg",
+                "type": "pipeline",
+                "inputs": {
+                    "component_in_number1": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_number1}}",
                     },
-                    'component_in_path1': {
-                        'job_input_type': 'literal',
-                        'value': '${{parent.inputs.component_in_path1}}'
-                    }
-                }
-            }
+                    "component_in_path1": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_path1}}",
+                    },
+                },
+            },
         }
 
-        with pytest.raises(UnsupportedParameterKindError,
-                           match="dsl pipeline does not accept \*custorm_args as parameters\."):
+        with pytest.raises(
+            UnsupportedParameterKindError, match="dsl pipeline does not accept \*custorm_args as parameters\."
+        ):
+
             @dsl.pipeline
             def pipeline_with_variable_args(*custorm_args):
                 pass
@@ -2150,19 +2150,38 @@ class TestDSLPipeline:
             pipeline_with_variable_args(1, 2, 3)
 
         with mock.patch("azure.ai.ml.dsl._pipeline_decorator.is_private_preview_enabled", return_value=False):
-            with pytest.raises(UnsupportedParameterKindError,
-                               match="dsl pipeline does not accept \*args or \*\*kwargs as parameters\."):
+            with pytest.raises(
+                UnsupportedParameterKindError, match="dsl pipeline does not accept \*args or \*\*kwargs as parameters\."
+            ):
                 root_pipeline(10, data, 11, data, component_in_number1=11, component_in_path1=data)
 
     def test_pipeline_with_dumplicate_variable_inputs(self):
-
         @dsl.pipeline
         def pipeline_with_variable_args(key_1: int, **kargs):
             pass
 
-        with pytest.raises(MultipleValueError,
-                           match="pipeline_with_variable_args\(\) got multiple values for argument 'key_1'\."):
+        with pytest.raises(
+            MultipleValueError, match="pipeline_with_variable_args\(\) got multiple values for argument 'key_1'\."
+        ):
             pipeline_with_variable_args(10, key_1=10)
+
+    def test_pipeline_with_output_binding_in_dynamic_args(self):
+        hello_world_func = load_component(components_dir / "helloworld_component.yml")
+        hello_world_no_inputs_func = load_component(components_dir / "helloworld_component_no_inputs.yml")
+
+        @dsl.pipeline
+        def pipeline_func_consume_dynamic_arg(**kwargs):
+            hello_world_func(component_in_number=kwargs["int_param"], component_in_path=kwargs["path_param"])
+
+        @dsl.pipeline
+        def root_pipeline_func():
+            node = hello_world_no_inputs_func()
+            kwargs = {"int_param": 0, "path_param": node.outputs.component_out_path}
+            pipeline_func_consume_dynamic_arg(**kwargs)
+
+        pipeline_job = root_pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        assert pipeline_job._customized_validate().passed is True
 
     def test_condition_node_consumption(self):
         from azure.ai.ml.dsl._condition import condition
@@ -2180,6 +2199,7 @@ class TestDSLPipeline:
 
         pipeline_job = pipeline_func_consume_expression(int_param=1)
         assert pipeline_job.jobs["control_node"]._to_rest_object() == {
+            "_source": "DSL",
             "type": "if_else",
             "condition": "${{parent.jobs.expression_component.outputs.output}}",
             "true_block": "${{parent.jobs.node1}}",
@@ -2305,6 +2325,173 @@ class TestDSLPipeline:
             "settings": {"_source": "DSL"},
         }
 
+    def test_dsl_pipeline_with_data_transfer_copy_node(self) -> None:
+        merge_files = load_component("./tests/test_configs/components/data_transfer/copy_files.yaml")
+
+        @dsl.pipeline(description="submit a pipeline with data transfer copy job")
+        def data_transfer_copy_pipeline_from_yaml(folder1):
+            copy_files_node = merge_files(folder1=folder1)
+            return {"output": copy_files_node.outputs.output_folder}
+
+        dsl_pipeline: PipelineJob = data_transfer_copy_pipeline_from_yaml(
+            folder1=Input(
+                path="azureml://datastores/my_cosmos/paths/source_cosmos",
+                type=AssetTypes.URI_FOLDER,
+            ),
+        )
+        dsl_pipeline.outputs.output.path = "azureml://datastores/my_blob/paths/merged_blob"
+
+        data_transfer_copy_node = dsl_pipeline.jobs["copy_files_node"]
+        job_data_path_input = data_transfer_copy_node.inputs["folder1"]._meta
+        assert job_data_path_input
+        data_transfer_copy_node_dict = data_transfer_copy_node._to_dict()
+
+        data_transfer_copy_node_rest_obj = data_transfer_copy_node._to_rest_object()
+        regenerated_data_transfer_copy_node = DataTransferCopy._from_rest_object(data_transfer_copy_node_rest_obj)
+
+        data_transfer_copy_node_dict_from_rest = regenerated_data_transfer_copy_node._to_dict()
+        omit_fields = []
+        assert pydash.omit(data_transfer_copy_node_dict, *omit_fields) == pydash.omit(
+            data_transfer_copy_node_dict_from_rest, *omit_fields
+        )
+        omit_fields = [
+            "jobs.copy_files_node.componentId",
+        ]
+        actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
+        assert actual_job == {
+            "description": "submit a pipeline with data transfer copy job",
+            "display_name": "data_transfer_copy_pipeline_from_yaml",
+            "inputs": {
+                "folder1": {"job_input_type": "uri_folder", "uri": "azureml://datastores/my_cosmos/paths/source_cosmos"}
+            },
+            "is_archived": False,
+            "job_type": "Pipeline",
+            "jobs": {
+                "copy_files_node": {
+                    "_source": "YAML.COMPONENT",
+                    "data_copy_mode": "merge_with_overwrite",
+                    "inputs": {"folder1": {"job_input_type": "literal", "value": "${{parent.inputs.folder1}}"}},
+                    "name": "copy_files_node",
+                    "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+                    "task": "copy_data",
+                    "type": "data_transfer",
+                }
+            },
+            "outputs": {
+                "output": {"job_output_type": "uri_folder", "uri": "azureml://datastores/my_blob/paths/merged_blob"}
+            },
+            "properties": {},
+            "settings": {"_source": "DSL"},
+            "tags": {},
+        }
+
+    def test_dsl_pipeline_with_data_transfer_merge_node(self) -> None:
+        merge_files = load_component("./tests/test_configs/components/data_transfer/merge_files.yaml")
+
+        @dsl.pipeline(description="submit a pipeline with data transfer copy job")
+        def data_transfer_copy_pipeline_from_yaml(folder1, folder2):
+            merge_files_node = merge_files(folder1=folder1, folder2=folder2)
+            return {"output": merge_files_node.outputs.output_folder}
+
+        dsl_pipeline: PipelineJob = data_transfer_copy_pipeline_from_yaml(
+            folder1=Input(
+                path="azureml://datastores/my_cosmos/paths/source_cosmos",
+                type=AssetTypes.URI_FOLDER,
+            ),
+            folder2=Input(
+                path="azureml://datastores/my_cosmos/paths/source_cosmos",
+                type=AssetTypes.URI_FOLDER,
+            ),
+        )
+        dsl_pipeline.outputs.output.path = "azureml://datastores/my_blob/paths/merged_blob"
+
+        data_transfer_copy_node = dsl_pipeline.jobs["merge_files_node"]
+        job_data_path_input = data_transfer_copy_node.inputs["folder1"]._meta
+        assert job_data_path_input
+        data_transfer_copy_node_dict = data_transfer_copy_node._to_dict()
+
+        data_transfer_copy_node_rest_obj = data_transfer_copy_node._to_rest_object()
+        regenerated_data_transfer_copy_node = DataTransferCopy._from_rest_object(data_transfer_copy_node_rest_obj)
+
+        data_transfer_copy_node_dict_from_rest = regenerated_data_transfer_copy_node._to_dict()
+        omit_fields = []
+        assert pydash.omit(data_transfer_copy_node_dict, *omit_fields) == pydash.omit(
+            data_transfer_copy_node_dict_from_rest, *omit_fields
+        )
+        omit_fields = [
+            "jobs.merge_files_node.componentId",
+        ]
+        actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
+        assert actual_job == {
+            "description": "submit a pipeline with data transfer copy job",
+            "display_name": "data_transfer_copy_pipeline_from_yaml",
+            "inputs": {
+                "folder1": {
+                    "job_input_type": "uri_folder",
+                    "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
+                },
+                "folder2": {
+                    "job_input_type": "uri_folder",
+                    "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
+                },
+            },
+            "is_archived": False,
+            "job_type": "Pipeline",
+            "jobs": {
+                "merge_files_node": {
+                    "_source": "YAML.COMPONENT",
+                    "data_copy_mode": "merge_with_overwrite",
+                    "inputs": {
+                        "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.folder1}}"},
+                        "folder2": {"job_input_type": "literal", "value": "${{parent.inputs.folder2}}"},
+                    },
+                    "name": "merge_files_node",
+                    "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+                    "task": "copy_data",
+                    "type": "data_transfer",
+                }
+            },
+            "outputs": {
+                "output": {"job_output_type": "uri_folder", "uri": "azureml://datastores/my_blob/paths/merged_blob"}
+            },
+            "properties": {},
+            "settings": {"_source": "DSL"},
+            "tags": {},
+        }
+
+    def test_dsl_pipeline_with_data_transfer_import_component(self) -> None:
+        s3_blob = load_component("./tests/test_configs/components/data_transfer/import_file_to_blob.yaml")
+        path_source_s3 = "test1/*"
+        connection_target = "azureml:my-s3-connection"
+        source = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
+
+        with pytest.raises(ValidationException) as e:
+
+            @dsl.pipeline
+            def data_transfer_copy_pipeline_from_yaml():
+                s3_blob(source=source)
+
+            data_transfer_copy_pipeline_from_yaml()
+            assert "DataTransfer component is not callable for import task." in str(e.value)
+
+    def test_dsl_pipeline_with_data_transfer_export_component(self) -> None:
+        blob_azuresql = load_component("./tests/test_configs/components/data_transfer/export_blob_to_database.yaml")
+
+        my_cosmos_folder = Input(type=AssetTypes.URI_FILE, path="/data/testFile_ForSqlDB.parquet")
+        connection_target_azuresql = "azureml:my_export_azuresqldb_connection"
+        table_name = "dbo.Persons"
+        sink = {"type": "database", "connection": connection_target_azuresql, "table_name": table_name}
+
+        with pytest.raises(ValidationException) as e:
+
+            @dsl.pipeline
+            def data_transfer_copy_pipeline_from_yaml():
+                blob_azuresql_node = blob_azuresql(source=my_cosmos_folder)
+                blob_azuresql_node.sink = sink
+
+            data_transfer_copy_pipeline_from_yaml()
+            assert "DataTransfer component is not callable for import task." in str(e.value)
+
     def test_node_sweep_with_optional_input(self) -> None:
         component_yaml = components_dir / "helloworld_component_optional_input.yml"
         component_func = load_component(component_yaml)
@@ -2348,8 +2535,7 @@ class TestDSLPipeline:
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {
-            'inputs.required_input': "Required input 'required_input' for pipeline "
-                                     "'pipeline_func' not provided."
+            "inputs.required_input": "Required input 'required_input' for pipeline " "'pipeline_func' not provided."
         }
 
         validate_result = pipeline_job.component._validate()
@@ -2357,8 +2543,8 @@ class TestDSLPipeline:
 
         # pipeline component has required inputs
         assert pipeline_job.component._to_dict()["inputs"] == {
-            'optional_input': {'default': '2', 'optional': True, 'type': 'integer'},
-            'required_input': {'type': 'integer'}
+            "optional_input": {"default": "2", "optional": True, "type": "integer"},
+            "required_input": {"type": "integer"},
         }
 
         # setting _validate_required_input_not_provided to False will skip the unprovided input check
@@ -2392,8 +2578,10 @@ class TestDSLPipeline:
 
         # optional pipeline parameter binding to optional node parameter
         @dsl.pipeline()
-        def pipeline_func(optional_param: Input(optional=True, type="string"),
-                          optional_param_duplicate: Input(optional=True, type="string")):
+        def pipeline_func(
+            optional_param: Input(optional=True, type="string"),
+            optional_param_duplicate: Input(optional=True, type="string"),
+        ):
             component_func(
                 required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
                 required_param="def",
@@ -2422,14 +2610,15 @@ class TestDSLPipeline:
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {
-            'inputs.required_input': "Required input 'required_input' for pipeline "
-                                     "'pipeline_func' not provided."
+            "inputs.required_input": "Required input 'required_input' for pipeline " "'pipeline_func' not provided."
         }
 
         # required pipeline parameter binding to optional node parameter
         @dsl.pipeline()
-        def pipeline_func(required_param: Input(optional=False, type="string"),
-                          required_param_duplicate: Input(optional=False, type="string")):
+        def pipeline_func(
+            required_param: Input(optional=False, type="string"),
+            required_param_duplicate: Input(optional=False, type="string"),
+        ):
             component_func(
                 required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
                 required_param="def",
@@ -2441,10 +2630,9 @@ class TestDSLPipeline:
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {
-            'inputs.required_param': "Required input 'required_param' for pipeline "
-                                     "'pipeline_func' not provided.",
-            'inputs.required_param_duplicate': "Required input 'required_param_duplicate' for pipeline "
-                                               "'pipeline_func' not provided."
+            "inputs.required_param": "Required input 'required_param' for pipeline " "'pipeline_func' not provided.",
+            "inputs.required_param_duplicate": "Required input 'required_param_duplicate' for pipeline "
+            "'pipeline_func' not provided.",
         }
 
         # required pipeline parameter with default value binding to optional node parameter
@@ -2476,8 +2664,7 @@ class TestDSLPipeline:
 
         @dsl.pipeline()
         def root_pipeline():
-            subgraph_node = subgraph_pipeline(
-            )
+            subgraph_node = subgraph_pipeline()
 
         pipeline_job = root_pipeline()
         pipeline_job.settings.default_compute = "cpu-cluster"
@@ -2486,8 +2673,10 @@ class TestDSLPipeline:
 
         # optional pipeline parameter binding to optional node parameter
         @dsl.pipeline()
-        def subgraph_pipeline(optional_parameter: Input(optional=True, type="string"),
-                              optional_parameter_duplicate: Input(optional=True, type="string")):
+        def subgraph_pipeline(
+            optional_parameter: Input(optional=True, type="string"),
+            optional_parameter_duplicate: Input(optional=True, type="string"),
+        ):
             component_func(
                 required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
                 required_param="def",
@@ -2497,8 +2686,7 @@ class TestDSLPipeline:
 
         @dsl.pipeline()
         def root_pipeline():
-            subgraph_node = subgraph_pipeline(
-            )
+            subgraph_node = subgraph_pipeline()
 
         pipeline_job = root_pipeline()
         pipeline_job.settings.default_compute = "cpu-cluster"
@@ -2514,33 +2702,30 @@ class TestDSLPipeline:
             component_func(
                 required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
                 required_param="def",
-                optional_input=required_input
+                optional_input=required_input,
             )
 
         @dsl.pipeline()
         def root_pipeline():
-            subgraph_node = subgraph_pipeline(
-            )
+            subgraph_node = subgraph_pipeline()
 
         pipeline_job = root_pipeline()
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {
-            'jobs.subgraph_node.inputs.required_input': "Required input 'required_input' for component 'subgraph_node'"
-                                                        " not provided."
+            "jobs.subgraph_node.inputs.required_input": "Required input 'required_input' for component 'subgraph_node'"
+            " not provided."
         }
 
         @dsl.pipeline()
         def root_pipeline(required_input: Input(optional=False, type="uri_file")):
-            subgraph_node = subgraph_pipeline(
-                required_input=required_input
-            )
+            subgraph_node = subgraph_pipeline(required_input=required_input)
 
         pipeline_job = root_pipeline()
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {
-            'inputs.required_input': "Required input 'required_input' for pipeline 'root_pipeline' not provided."
+            "inputs.required_input": "Required input 'required_input' for pipeline 'root_pipeline' not provided."
         }
 
         # required pipeline parameter binding to optional node parameter
@@ -2549,20 +2734,19 @@ class TestDSLPipeline:
             component_func(
                 required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
                 required_param="def",
-                optional_param=required_parameter
+                optional_param=required_parameter,
             )
 
         @dsl.pipeline()
         def root_pipeline():
-            subgraph_node = subgraph_pipeline(
-            )
+            subgraph_node = subgraph_pipeline()
 
         pipeline_job = root_pipeline()
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {
-            'jobs.subgraph_node.inputs.required_parameter': "Required input 'required_parameter' for component "
-                                                            "'subgraph_node' not provided."
+            "jobs.subgraph_node.inputs.required_parameter": "Required input 'required_parameter' for component "
+            "'subgraph_node' not provided."
         }
 
         # required pipeline parameter with default value binding to optional node parameter
@@ -2571,13 +2755,12 @@ class TestDSLPipeline:
             component_func(
                 required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
                 required_param="def",
-                optional_param=required_parameter
+                optional_param=required_parameter,
             )
 
         @dsl.pipeline()
         def root_pipeline():
-            subgraph_node = subgraph_pipeline(
-            )
+            subgraph_node = subgraph_pipeline()
 
         pipeline_job = root_pipeline()
         pipeline_job.settings.default_compute = "cpu-cluster"
@@ -2594,9 +2777,9 @@ class TestDSLPipeline:
             return {"output": node.outputs.component_out_path}
 
         pipeline_job = my_pipeline()
-        expected_outputs = {'output': {
-            'description': 'new description', 'job_output_type': 'uri_folder', 'mode': 'Upload'
-        }}
+        expected_outputs = {
+            "output": {"description": "new description", "job_output_type": "uri_folder", "mode": "Upload"}
+        }
         assert pipeline_job._to_rest_object().as_dict()["properties"]["outputs"] == expected_outputs
 
     def test_dsl_pipeline_run_settings(self) -> None:
@@ -2617,6 +2800,237 @@ class TestDSLPipeline:
             PipelineConstants.DEFAULT_COMPUTE: "cpu-cluster",
             PipelineConstants.CONTINUE_ON_STEP_FAILURE: True,
             PipelineConstants.CONTINUE_RUN_ON_FAILED_OPTIONAL_INPUT: False,
-            "_source": "DSL"
+            "_source": "DSL",
         }
 
+    def test_register_output_without_name_sdk(self):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def register_node_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.version = 1
+
+        pipeline = register_node_output()
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        with pytest.raises(UserErrorException) as e:
+            pipeline._validate()
+        assert "Output name is required when output version is specified." in str(e.value)
+
+        @dsl.pipeline()
+        def register_pipeline_output():
+            node = component(component_in_path=component_input)
+            return {"pipeine_a_output": node.outputs.component_out_path}
+
+        pipeline = register_pipeline_output()
+        pipeline.outputs.pipeine_a_output.version = 1
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        with pytest.raises(UserErrorException) as e:
+            pipeline._validate()
+        assert "Output name is required when output version is specified." in str(e.value)
+
+    def test_register_output_with_invalid_name_sdk(self):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
+
+        @dsl.pipeline()
+        def register_node_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = "@"
+            node.outputs.component_out_path.version = "1"
+
+        pipeline = register_node_output()
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        with pytest.raises(UserErrorException) as e:
+            pipeline._validate()
+        assert (
+            "The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters."
+            in str(e.value)
+        )
+
+    def test_pipeline_output_settings_copy(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            node1.outputs.component_out_path.path = "path1"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job2 = my_pipeline()
+
+        pipeline_job1.outputs.component_out_path.path = "new_path"
+
+        # modified pipeline output setting won't affect pipeline component or other nodes.
+        assert pipeline_job1.outputs.component_out_path.path == "new_path"
+        assert pipeline_job1.component.outputs["component_out_path"].path == "path1"
+        assert pipeline_job2.outputs.component_out_path.path == "path1"
+        assert pipeline_job2.component.outputs["component_out_path"].path == "path1"
+
+        # newly create pipeline job instance won't be affected
+        pipeline_job3 = my_pipeline()
+        assert pipeline_job3.outputs.component_out_path.path == "path1"
+        assert pipeline_job3.component.outputs["component_out_path"].path == "path1"
+
+    def test_node_path_promotion(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            node1.outputs.component_out_path = Output(
+                # the following settings will be copied to pipeline level
+                path="path",
+            )
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        assert pipeline_job1.outputs.component_out_path.path == "path"
+
+        @dsl.pipeline()
+        def outer_pipeline():
+            node1 = my_pipeline()
+            assert node1.outputs.component_out_path.path == "path"
+            node1.outputs.component_out_path.path = "new_path"
+            assert node1.outputs.component_out_path.path == "new_path"
+            return node1.outputs
+
+        pipeline_job2 = outer_pipeline()
+        assert pipeline_job2.outputs.component_out_path.path == "new_path"
+
+    def test_node_output_type_promotion(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        params_override = [{"outputs": {"component_out_path": {"type": "uri_file"}}}]
+        component_func1 = load_component(source=component_yaml, params_override=params_override)
+
+        # without node level setting, node should have same type with component
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            assert node1.outputs.component_out_path.type == "uri_file"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        assert pipeline_job1.outputs.component_out_path.type == "uri_file"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "uri_file"
+
+        # when node level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            assert node1.outputs.component_out_path.type == "uri_file"
+            node1.outputs.component_out_path.type = "mlflow_model"
+            assert node1.outputs.component_out_path.type == "mlflow_model"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        # assert pipeline_job1.outputs.component_out_path.type == "mlflow_model"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "mlflow_model"
+
+        # when pipeline level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            assert node1.outputs.component_out_path.type == "uri_file"
+            node1.outputs.component_out_path.type = "mlflow_model"
+            assert node1.outputs.component_out_path.type == "mlflow_model"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job1.outputs.component_out_path.type = "custom_model"
+        assert pipeline_job1.outputs.component_out_path.type == "custom_model"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "custom_model"
+
+    def test_node_output_mode_promotion(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        params_override = [{"outputs": {"component_out_path": {"mode": "mount", "type": "uri_file"}}}]
+        component_func1 = load_component(source=component_yaml, params_override=params_override)
+
+        # without node level setting, node should have same type with component
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        # assert pipeline_job1.outputs.component_out_path.mode == "mount"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "ReadWriteMount"
+
+        # when node level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            node1.outputs.component_out_path.mode = "upload"
+            assert node1.outputs.component_out_path.mode == "upload"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        # assert pipeline_job1.outputs.component_out_path.mode == "upload"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "Upload"
+
+        # when pipeline level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            node1.outputs.component_out_path.mode = "upload"
+            assert node1.outputs.component_out_path.mode == "upload"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job1.outputs.component_out_path.mode = "direct"
+        assert pipeline_job1.outputs.component_out_path.mode == "direct"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "Direct"
+
+    def test_validate_pipeline_node_io_name_has_keyword(self, caplog):
+        # Refresh logger for pytest to capture log, otherwise the result is empty.
+        from azure.ai.ml.dsl import _pipeline_component_builder
+
+        _pipeline_component_builder.module_logger = logging.getLogger(__file__)
+        with caplog.at_level(logging.WARNING):
+            from test_configs.dsl_pipeline.pipeline_with_keyword_in_node_io.pipeline import pipeline_job
+
+            # validation should pass
+            assert pipeline_job._customized_validate().passed
+
+        warning_template = (
+            'Reserved word "{io_name}" is used as {io} name in node "{node_name}", '
+            "can only be accessed with '{node_name}.{io}s[\"{io_name}\"]'"
+        )
+        assert caplog.messages == [
+            warning_template.format(io_name="__contains__", io="output", node_name="node"),
+            warning_template.format(io_name="items", io="output", node_name="upstream_node"),
+            warning_template.format(io_name="keys", io="input", node_name="downstream_node"),
+            warning_template.format(io_name="__hash__", io="output", node_name="pipeline_component_func"),
+        ]
+
+    def test_pass_pipeline_inpute_to_environment_variables(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline(
+            name="pass_pipeline_inpute_to_environment_variables",
+        )
+        def pipeline(job_in_number: int, environment_variables: str):
+            hello_world_component = component_func(component_in_number=job_in_number)
+            hello_world_component.environment_variables = environment_variables
+
+        pipeline_job = pipeline()
+        assert pipeline_job.jobs["hello_world_component"].environment_variables
+        pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert (
+            pipeline_dict["jobs"]["hello_world_component"]["environment_variables"]
+            == "${{parent.inputs.environment_variables}}"
+        )

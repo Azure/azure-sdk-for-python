@@ -31,9 +31,10 @@ def main():
     response = client.get_catalog(
         subscription_id="23bc208b-083f-4901-ae85-4f98c0c3b4b6",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/reservations/resource-manager/Microsoft.Capacity/stable/2022-03-01/examples/GetCatalog.json
+# x-ms-original-file: specification/reservations/resource-manager/Microsoft.Capacity/stable/2022-11-01/examples/GetCatalog.json
 if __name__ == "__main__":
     main()

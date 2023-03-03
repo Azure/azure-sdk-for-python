@@ -1,15 +1,36 @@
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.5.0 (Unreleased)
 
 ### Features Added
--Add dedicated classes for each type of job service. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
+- Added support for `tags` on Compute Resources.
+- Added support for promoting data asset from a workspace to a registry
+- Added support for registering named asset from job output by specifying named and version settings.
 
 ### Bugs Fixed
-- Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected
-- Fixed an issue where ignore files weren't considered during upload directory size calculations
+
+- Fix experiment name wrongly set to 'Default' when schedule existing job.
+
+### Other Changes
+
+- Added dependency on `azure-mgmt-resource`
+- Added dependency on `azure-mgmt-resourcegraph`
+- Update job types to use MFE Dec preview rest objects.
+- Added classifiers for Python version 3.11.
+
+## 1.4.0 (2023-02-07)
+
+### Features Added
+- Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
+- Added Custom Applications Support to Compute Instances. 
+- Update data asset list, show and create operations to support data assets in registry.
+
+### Bugs Fixed
+- Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.
+- Fixed an issue that attributes with a value of `False` in `PipelineJobSettings` are not respected.
+- Fixed an issue where ignore files weren't considered during upload directory size calculations.
 - Fixed an issue where symlinks crashed upload directory size calculations.
-- Fixed an issue that attributes with a value of `False` in `PipelineJobSettings` are not respected
+- Fixes a bug where enable_node_public_ip returned an improper value when fetching a Compute.
 
 ### Other Changes
 - Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights.

@@ -7,20 +7,20 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CategoryType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CategoryType."""
 
     WORKBOOK = "workbook"
     TSG = "TSG"
     PERFORMANCE = "performance"
     RETENTION = "retention"
 
-class SharedTypeKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The kind of workbook. Choices are user and shared.
-    """
+
+class SharedTypeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of workbook. Choices are user and shared."""
 
     USER = "user"
     SHARED = "shared"

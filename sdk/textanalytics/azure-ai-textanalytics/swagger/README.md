@@ -10,6 +10,10 @@ autorest --use=@autorest/python@5.19.0 swagger/README.md --python-sdks-folder=<p
 
 We automatically hardcode in that this is `python` and `multiapi`.
 
+After generation, run the [postprocessing](https://github.com/Azure/autorest.python/blob/autorestv3/docs/customizations.md#postprocessing) script to fix linting issues in the runtime library.
+
+`autorest --postprocess --output-folder=<path-to-root-of-package> --perform-load=false --python`
+
 ## Basic
 
 ```yaml

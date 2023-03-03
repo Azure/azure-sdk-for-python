@@ -9,8 +9,8 @@ import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType

@@ -54,7 +54,7 @@ class AzureResourceBase(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -84,7 +84,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -92,7 +92,8 @@ class ErrorAdditionalInfo(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -126,7 +127,7 @@ class ErrorResponse(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -137,7 +138,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class LinkedTemplateArtifact(_serialization.Model):
-    """Represents a Template Spec artifact containing an embedded Azure Resource Manager template for use as a linked template.
+    """Represents a Template Spec artifact containing an embedded Azure Resource Manager template for
+    use as a linked template.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -157,7 +159,7 @@ class LinkedTemplateArtifact(_serialization.Model):
         "template": {"key": "template", "type": "object"},
     }
 
-    def __init__(self, *, path: str, template: JSON, **kwargs):
+    def __init__(self, *, path: str, template: JSON, **kwargs: Any) -> None:
         """
         :keyword path: A filesystem safe relative path of the artifact. Required.
         :paramtype path: str
@@ -208,8 +210,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -303,8 +305,8 @@ class TemplateSpec(AzureResourceBase):
         description: Optional[str] = None,
         display_name: Optional[str] = None,
         metadata: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the Template Spec. It cannot be changed after Template Spec
          creation. It must be one of the supported Azure locations. Required.
@@ -340,7 +342,7 @@ class TemplateSpecsError(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Common error response for all Azure Resource Manager APIs to return error
          details for failed operations. (This also follows the OData error response format.).
@@ -371,7 +373,7 @@ class TemplateSpecsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.TemplateSpec"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.TemplateSpec"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of Template Specs.
         :paramtype value:
@@ -415,7 +417,7 @@ class TemplateSpecUpdateModel(AzureResourceBase):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -492,8 +494,8 @@ class TemplateSpecVersion(AzureResourceBase):  # pylint: disable=too-many-instan
         metadata: Optional[JSON] = None,
         main_template: Optional[JSON] = None,
         ui_form_definition: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The location of the Template Spec Version. It must match the location of the
          parent Template Spec. Required.
@@ -548,7 +550,7 @@ class TemplateSpecVersionInfo(_serialization.Model):
         "time_modified": {"key": "timeModified", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.description = None
@@ -577,7 +579,7 @@ class TemplateSpecVersionsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.TemplateSpecVersion"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.TemplateSpecVersion"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of Template Spec versions.
         :paramtype value:
@@ -621,7 +623,7 @@ class TemplateSpecVersionUpdateModel(AzureResourceBase):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]

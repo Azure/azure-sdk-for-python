@@ -1265,15 +1265,16 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(HttpResponseError):
             await dir2.get_directory_properties()
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_rename_dir_with_file_system_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
-        token = generate_file_system_sas(
+        token = self.generate_sas(
+            generate_file_system_sas,
             self.dsc.account_name,
             self.file_system_name,
             self.dsc.credential.account_key,
@@ -1284,7 +1285,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         # read the created file which is under root directory
         dir_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, "olddir", credential=token)
         await dir_client.create_directory()
-        new_client = await dir_client.rename_directory(dir_client.file_system_name+'/'+'newdir'+'?')
+        new_client = await dir_client.rename_directory(dir_client.file_system_name + '/' + 'newdir')
 
         properties = await new_client.get_directory_properties()
         assert properties.name == "newdir"

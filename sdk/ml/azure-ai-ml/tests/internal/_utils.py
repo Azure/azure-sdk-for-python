@@ -185,10 +185,14 @@ PARAMETERS_TO_TEST = [
 ]
 
 # this is to shorten the test name
-TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
-    lambda params: Path(params[0]).name,
-    PARAMETERS_TO_TEST,
-)))
+TEST_CASE_NAME_ENUMERATE = list(
+    enumerate(
+        map(
+            lambda params: Path(params[0]).name,
+            PARAMETERS_TO_TEST,
+        )
+    )
+)
 
 
 def get_expected_runsettings_items(runsettings_dict, client=None):
@@ -208,11 +212,13 @@ def get_expected_runsettings_items(runsettings_dict, client=None):
             expected_values[dot_key] = "PT5M"
         # hack: compute_name for hdinsight will be transformed into arm str
         if dot_key == "compute_name" and client is not None:
-            expected_values[dot_key] = f"/subscriptions/{client.subscription_id}/" \
-                             f"resourceGroups/{client.resource_group_name}/" \
-                             f"providers/Microsoft.MachineLearningServices/" \
-                             f"workspaces/{client.workspace_name}/" \
-                             f"computes/{expected_values[dot_key]}"
+            expected_values[dot_key] = (
+                f"/subscriptions/{client.subscription_id}/"
+                f"resourceGroups/{client.resource_group_name}/"
+                f"providers/Microsoft.MachineLearningServices/"
+                f"workspaces/{client.workspace_name}/"
+                f"computes/{expected_values[dot_key]}"
+            )
     return expected_values.items()
 
 
@@ -220,12 +226,12 @@ ANONYMOUS_COMPONENT_TEST_PARAMS = [
     (
         "simple-command/powershell_copy.yaml",
         # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
-        "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+        "75c43313-4777-b2e9-fe3a-3b98cabfaa77",
     ),
     (
         "additional-includes/component_spec.yaml",
         # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
-        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
+        "1dc8271a-9184-df03-c9a5-afac8dcdcf26",
     ),
     # TODO(2076035): skip tests related to zip additional includes for now
     # (

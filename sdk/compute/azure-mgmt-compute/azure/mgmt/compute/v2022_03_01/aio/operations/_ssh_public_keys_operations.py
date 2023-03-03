@@ -305,8 +305,8 @@ class SshPublicKeysOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param parameters: Parameters supplied to create the SSH public key. Is either a model type or
-         a IO type. Required.
+        :param parameters: Parameters supplied to create the SSH public key. Is either a
+         SshPublicKeyResource type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2022_03_01.models.SshPublicKeyResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -447,8 +447,8 @@ class SshPublicKeysOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param parameters: Parameters supplied to update the SSH public key. Is either a model type or
-         a IO type. Required.
+        :param parameters: Parameters supplied to update the SSH public key. Is either a
+         SshPublicKeyUpdateResource type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2022_03_01.models.SshPublicKeyUpdateResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
