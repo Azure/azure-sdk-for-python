@@ -1381,11 +1381,11 @@ class TestPipelineJobEntity:
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
         job = load_job(test_path)
-        result = job.jobs["hello_world"].component._validate()
+        result = job._validate()
         assert (
-            "conf" in result.error_messages
-            and "Should not specify min or max executors when dynamic allocation is disabled."
-            in result.error_messages["conf"]
+            "jobs.hello_world.conf" in result.error_messages
+            and "Should not specify min or max executors when dynamic allocation is disabled." ==
+            result.error_messages["jobs.hello_world.conf"]
         )
 
     def test_spark_node_in_pipeline_with_invalid_code(
@@ -1418,7 +1418,8 @@ class TestPipelineJobEntity:
         )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
-
+        result = job._validate()
+        assert result.passed is True
         rest_job_dict = job._to_rest_object().as_dict()
         omit_fields = []  # "name", "display_name", "experiment_name", "properties"
         actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["kmeans_cluster"], omit_fields)

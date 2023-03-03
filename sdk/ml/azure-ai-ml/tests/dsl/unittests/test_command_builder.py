@@ -733,7 +733,7 @@ class TestCommandFunction:
             dynamic_allocation_min_executors=1,
             dynamic_allocation_max_executors=3,
         )
-        result = node.component._validate()
+        result = node._validate()
         message = "Should not specify min or max executors when dynamic allocation is disabled."
         assert "conf" in result.error_messages and message == result.error_messages["conf"]
 
@@ -747,7 +747,7 @@ class TestCommandFunction:
             executor_cores=2,
             executor_memory="2g",
         )
-        result = node.component._validate()
+        result = node._validate()
         message = (
             "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
             "spark.executor.instances are mandatory fields."
@@ -784,7 +784,7 @@ class TestCommandFunction:
             dynamic_allocation_min_executors=1,
             dynamic_allocation_max_executors=3,
         )
-        result = node.component._validate()
+        result = node._validate()
         message = (
             "Executor instances must be a valid non-negative integer and must be between "
             "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"

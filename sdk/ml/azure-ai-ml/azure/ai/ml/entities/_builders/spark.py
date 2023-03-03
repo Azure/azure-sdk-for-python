@@ -487,7 +487,88 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
             )
         result.merge_with(self._validate_entry_exist(raise_error=False))
+        result.merge_with(self._validate_spark_configurations(raise_error=False))
         return result
+
+    def _validate_spark_configurations(
+        self,
+        raise_error=True
+    ):
+        validation_result = self._create_empty_validation_result()
+        # skip validation when component of node is from remote: registry or arm id
+        if hasattr(self, "component") and isinstance(self.component, str):
+            return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        if str(self.dynamic_allocation_enabled).lower() == "true":
+            if (
+                self.driver_cores is None
+                or self.driver_memory is None
+                or self.executor_cores is None
+                or self.executor_memory is None
+            ):
+                msg = (
+                    "spark.driver.cores, spark.driver.memory, spark.executor.cores and spark.executor.memory are "
+                    "mandatory fields."
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+            if self.dynamic_allocation_min_executors is None or self.dynamic_allocation_max_executors is None:
+                msg = (
+                    "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors are required "
+                    "when dynamic allocation is enabled."
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+            if (
+                not self.dynamic_allocation_min_executors > 0
+                and self.dynamic_allocation_min_executors <= self.dynamic_allocation_max_executors
+            ):
+                msg = (
+                    "Dynamic min executors should be bigger than 0 and min executors should be equal or less than "
+                    "max executors."
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+            if self.executor_instances and (
+                self.executor_instances > self.dynamic_allocation_max_executors
+                or self.executor_instances < self.dynamic_allocation_min_executors
+            ):
+                msg = (
+                    "Executor instances must be a valid non-negative integer and must be between "
+                    "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+        else:
+            if (
+                self.driver_cores is None
+                or self.driver_memory is None
+                or self.executor_cores is None
+                or self.executor_memory is None
+                or self.executor_instances is None
+            ):
+                msg = (
+                    "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
+                    "spark.executor.instances are mandatory fields."
+                )
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+            if self.dynamic_allocation_min_executors is not None or self.dynamic_allocation_max_executors is not None:
+                msg = "Should not specify min or max executors when dynamic allocation is disabled."
+                validation_result.append_error(
+                    yaml_path="conf",
+                    message=msg,
+                )
+        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
 
     def _validate_entry_exist(self, raise_error=False) -> MutableValidationResult:
         is_remote_code = isinstance(self.code, str) and (
