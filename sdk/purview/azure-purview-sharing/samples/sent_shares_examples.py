@@ -14,6 +14,7 @@
 import os
 
 from azure.purview.sharing import PurviewSharing
+from azure.core.credentials import TokenCredential
 
 endpoint = os.environ["ENDPOINT"]
 client = PurviewSharing(endpoint=endpoint)
@@ -56,7 +57,7 @@ sent_share = {
 }
 
 request = build_sent_shares_create_or_replace_request(
-    sent_share_id,
+    str(sent_share_id),
     content_type="application/json",
     content=json.dumps(sent_share))
 
@@ -69,7 +70,7 @@ from azure.purview.sharing.operations._operations import (
     build_sent_shares_get_request
 )
 
-get_request = build_sent_shares_get_request(sent_share_id=sent_share_id)
+get_request = build_sent_shares_get_request(sent_share_id=str(sent_share_id))
 get_response = client.send_request(get_request)
 
 retrieved_sent_share = json.loads(get_response.content)
@@ -82,7 +83,7 @@ from azure.purview.sharing.operations._operations import (
     build_sent_shares_delete_request
 )
 
-delete_request = build_sent_shares_delete_request(sent_share_id=sent_share_id)
+delete_request = build_sent_shares_delete_request(sent_share_id=str(sent_share_id))
 delete_response = client.send_request(delete_request)
 
 try:
@@ -126,8 +127,8 @@ invitation = {
 }
 
 invitation_request = build_sent_shares_create_invitation_request(
-    sent_share_id=sent_share_id,
-    sent_share_invitation_id=sent_share_invitation_id,
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id),
     content_type="application/json",
     content=json.dumps(invitation))
 
@@ -149,8 +150,8 @@ sent_share_invitation = {
 }
 
 invitation_request = build_sent_shares_create_invitation_request(
-    sent_share_id=sent_share_id,
-    sent_share_invitation_id=sent_share_invitation_id,
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id),
     content_type="application/json",
     content=json.dumps(sent_share_invitation))
 
@@ -164,7 +165,7 @@ from azure.purview.sharing.operations._operations import (
     build_sent_shares_list_invitations_request
 )
 
-list_request = build_sent_shares_list_invitations_request(sent_share_id=sent_share_id)
+list_request = build_sent_shares_list_invitations_request(sent_share_id=str(sent_share_id))
 list_response = client.send_request(list_request)
 list = json.loads(list_response.content)['value']
 # [END view_sent_invitations]
@@ -176,8 +177,8 @@ from azure.purview.sharing.operations._operations import (
 )
 
 get_request = build_sent_shares_get_invitation_request(
-    sent_share_id=sent_share_id,
-    sent_share_invitation_id=sent_share_invitation_id,
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id),
     content=json.dumps(sent_share_invitation))
 
 get_response = client.send_request(get_request)
