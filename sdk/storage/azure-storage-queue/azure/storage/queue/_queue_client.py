@@ -568,8 +568,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
         :return:
-            Returns a message from the Queue.
-        :rtype: ~azure.storage.queue.QueueMessage
+            Returns a message from the Queue or None if the Queue is empty.
+        :rtype: ~azure.storage.queue.QueueMessage or None
 
         .. admonition:: Example:
 

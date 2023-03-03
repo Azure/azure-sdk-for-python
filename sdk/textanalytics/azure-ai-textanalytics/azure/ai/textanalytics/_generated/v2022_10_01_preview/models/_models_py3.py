@@ -2870,9 +2870,9 @@ class DateTimeResolution(BaseResolution):
      (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
      Required.
     :vartype timex: str
-    :ivar datetime_subkind: The DateTime SubKind. Required. Known values are: "Time", "Date",
+    :ivar date_time_sub_kind: The DateTime SubKind. Required. Known values are: "Time", "Date",
      "DateTime", "Duration", and "Set".
-    :vartype datetime_subkind: str or
+    :vartype date_time_sub_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.DateTimeSubKind
     :ivar value: The actual time that the extracted text denote. Required.
     :vartype value: str
@@ -2886,14 +2886,14 @@ class DateTimeResolution(BaseResolution):
     _validation = {
         'resolution_kind': {'required': True},
         'timex': {'required': True},
-        'datetime_subkind': {'required': True},
+        'date_time_sub_kind': {'required': True},
         'value': {'required': True},
     }
 
     _attribute_map = {
         "resolution_kind": {"key": "resolutionKind", "type": "str"},
         "timex": {"key": "timex", "type": "str"},
-        "datetime_subkind": {"key": "dateTimeSubKind", "type": "str"},
+        "date_time_sub_kind": {"key": "dateTimeSubKind", "type": "str"},
         "value": {"key": "value", "type": "str"},
         "modifier": {"key": "modifier", "type": "str"},
     }
@@ -2902,7 +2902,7 @@ class DateTimeResolution(BaseResolution):
         self,
         *,
         timex: str,
-        datetime_subkind: Union[str, "_models.DateTimeSubKind"],
+        date_time_sub_kind: Union[str, "_models.DateTimeSubKind"],
         value: str,
         modifier: Optional[Union[str, "_models.TemporalModifier"]] = None,
         **kwargs
@@ -2912,9 +2912,9 @@ class DateTimeResolution(BaseResolution):
          (https://github.com/Microsoft/Recognizers-Text/blob/master/Patterns/English/English-DateTime.yaml).
          Required.
         :paramtype timex: str
-        :keyword datetime_subkind: The DateTime SubKind. Required. Known values are: "Time", "Date",
+        :keyword date_time_sub_kind: The DateTime SubKind. Required. Known values are: "Time", "Date",
          "DateTime", "Duration", and "Set".
-        :paramtype datetime_subkind: str or
+        :paramtype date_time_sub_kind: str or
          ~azure.ai.textanalytics.v2022_10_01_preview.models.DateTimeSubKind
         :keyword value: The actual time that the extracted text denote. Required.
         :paramtype value: str
@@ -2927,7 +2927,7 @@ class DateTimeResolution(BaseResolution):
         super().__init__(**kwargs)
         self.resolution_kind = 'DateTimeResolution'  # type: str
         self.timex = timex
-        self.datetime_subkind = datetime_subkind
+        self.date_time_sub_kind = date_time_sub_kind
         self.value = value
         self.modifier = modifier
 
