@@ -52,7 +52,7 @@ class CustomApplicationDefaults:
     "Attribute CustomApplicationDefaults.DOCKER: Indicates type of a docker custom application on the Compute Instance. (docker)"
 
     ENDPOINT_NAME = "connect"
-    "Attribute CustomApplicationDefaults.DOCKER: Indicates endpoint name of the custom application on the Compute Instance. (connect)"
+    "Attribute CustomApplicationDefaults.ENDPOINT_NAME: Indicates endpoint name of the custom application on the Compute Instance. (connect)"
 
 
 class ComputeSizeTier:
