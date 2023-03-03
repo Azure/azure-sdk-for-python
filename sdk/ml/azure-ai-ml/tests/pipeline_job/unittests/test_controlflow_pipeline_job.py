@@ -45,6 +45,13 @@ class TestIfElseUI(TestControlFlowPipelineJobUT):
                 "of dsl.condition has intersection",
                 '"path": "jobs.conditionnode.true_block",',
             ),
+            # invalid binding
+            (
+                ValidationException,
+                "./tests/test_configs/pipeline_jobs/invalid/if_else/invalid_binding.yml",
+                "of dsl.condition has invalid binding expression",
+                '"path": "jobs.conditionnode.true_block",',
+            ),
         ],
     )
     def test_if_else_validate(self, exception_cls, yaml_path, msg, location):

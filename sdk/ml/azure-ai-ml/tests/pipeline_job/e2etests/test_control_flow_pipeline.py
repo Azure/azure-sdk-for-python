@@ -118,15 +118,6 @@ class TestIfElse(TestConditionalNodeInPipeline):
             },
         }
 
-    def test_if_else_invalid_case(self, client: MLClient) -> None:
-        my_job = load_job(
-            "./tests/test_configs/pipeline_jobs/control_flow/if_else/invalid_binding.yml",
-        )
-        with pytest.raises(ValidationException) as e:
-            my_job._validate(raise_error=True)
-        assert '"path": "jobs.conditionnode.true_block",' in str(e.value)
-        assert "'true_block' of dsl.condition has invalid binding expression:" in str(e.value)
-
     def test_if_else_multiple_block(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         my_job = load_job(
