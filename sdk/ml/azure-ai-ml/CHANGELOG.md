@@ -10,6 +10,8 @@
 ### Bugs Fixed
 
 - Fix experiment name wrongly set to 'Default' when schedule existing job.
+- Error message improvement when a local path fails to match with data asset type.
+- Error message improvement when an asset does not exist in a registry
 
 ### Other Changes
 
