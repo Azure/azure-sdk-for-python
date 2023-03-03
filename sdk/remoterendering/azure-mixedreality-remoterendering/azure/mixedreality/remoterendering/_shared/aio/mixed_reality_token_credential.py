@@ -58,7 +58,7 @@ class MixedRealityTokenCredential(object):
         return await self.stsClient.get_token(**kwargs)
 
     async def close(self) -> None:
-        self.stsClient.close()
+        await self.stsClient.close()
 
     async def __aenter__(self):
         await self.stsClient.__aenter__()

@@ -9,7 +9,7 @@ from pytest_mock import MockFixture
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, dsl, load_component, load_job
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase as RestJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
@@ -1205,87 +1205,6 @@ class TestPipelineJobEntity:
             }
         }
 
-    def test_inline_data_transfer_export_file_system_node_in_pipeline(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
-    ):
-        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_file_system_to_blob.yaml"
-
-        job = load_job(test_path)
-        assert isinstance(job, PipelineJob)
-        node = next(iter(job.jobs.values()))
-        assert isinstance(node, DataTransfer)
-
-        result = job._validate()
-        assert result.passed is True
-
-        mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
-        )
-        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
-        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
-
-        omit_fields = [
-            "properties.jobs.s3_blob_input.componentId",
-            "properties.jobs.s3_blob.componentId",
-        ]
-        rest_job_dict = pydash.omit(job._to_rest_object().as_dict(), *omit_fields)
-
-        assert rest_job_dict == {
-            "properties": {
-                "compute_id": "",
-                "description": "pipeline with data transfer components",
-                "inputs": {
-                    "connection_target": {"job_input_type": "literal", "value": "azureml:my_s3_connection"},
-                    "cosmos_folder": {
-                        "job_input_type": "uri_folder",
-                        "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
-                    },
-                    "path_source_s3": {"job_input_type": "literal", "value": "s3://my_bucket/my_folder"},
-                },
-                "is_archived": False,
-                "job_type": "Pipeline",
-                "jobs": {
-                    "s3_blob": {
-                        "_source": "BUILTIN",
-                        "computeId": "",
-                        "inputs": {
-                            "source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}
-                        },
-                        "name": "s3_blob",
-                        "sink": {
-                            "connection": "${{parent.inputs.connection_target}}",
-                            "path": "${{parent.inputs.path_source_s3}}",
-                            "type": "file_system",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                    "s3_blob_input": {
-                        "_source": "BUILTIN",
-                        "computeId": "",
-                        "inputs": {
-                            "source": {
-                                "job_input_type": "uri_folder",
-                                "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
-                            }
-                        },
-                        "name": "s3_blob_input",
-                        "sink": {
-                            "connection": "azureml:my_s3_connection",
-                            "path": "s3://my_bucket/my_folder",
-                            "type": "file_system",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                },
-                "outputs": {},
-                "properties": {},
-                "settings": {"_source": "YAML.JOB", "default_compute": "", "default_datastore": ""},
-                "tags": {},
-            }
-        }
-
     def test_data_transfer_multi_node_in_pipeline(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/pipeline_with_mutil_task.yaml"
 
@@ -1314,27 +1233,24 @@ class TestPipelineJobEntity:
                 "compute_id": "",
                 "description": "pipeline with data transfer components",
                 "inputs": {
-                    "connection_target_s3": {"job_input_type": "literal", "value": "azureml:my_s3_connection"},
-                    "path_source_s3": {"job_input_type": "literal", "value": "s3://my_bucket/my_folder"},
-                    "query_source_snowflake": {"job_input_type": "literal", "value": "SELECT * FROM my_table"},
+                    "path_source_s3": {"job_input_type": "literal", "value": "test1/*"},
+                    "query_source_sql": {
+                        "job_input_type": "literal",
+                        "value": "select top(10) Name " "from " "SalesLT.ProductCategory",
+                    },
                 },
                 "is_archived": False,
                 "job_type": "Pipeline",
                 "jobs": {
-                    "blob_s3": {
+                    "blob_azuresql": {
                         "_source": "BUILTIN",
                         "computeId": "",
-                        "inputs": {
-                            "source": {
-                                "job_input_type": "literal",
-                                "value": "${{parent.jobs.merge_files.outputs.output_folder}}",
-                            }
-                        },
-                        "name": "blob_s3",
+                        "inputs": {"source": {"job_input_type": "uri_file", "uri": "yyy"}},
+                        "name": "blob_azuresql",
                         "sink": {
-                            "connection": "${{parent.inputs.connection_target_s3}}",
-                            "path": "${{parent.inputs.path_source_s3}}",
-                            "type": "file_system",
+                            "connection": "azureml:my_export_azuresqldb_connection",
+                            "table_name": "dbo.Persons",
+                            "type": "database",
                         },
                         "task": "export_data",
                         "type": "data_transfer",
@@ -1359,14 +1275,9 @@ class TestPipelineJobEntity:
                         "_source": "BUILTIN",
                         "computeId": "",
                         "name": "s3_blob",
-                        "outputs": {
-                            "sink": {
-                                "job_output_type": "uri_folder",
-                                "uri": "azureml://datastores/managed/paths/some_path",
-                            }
-                        },
+                        "outputs": {"sink": {"job_output_type": "uri_folder"}},
                         "source": {
-                            "connection": "azureml:my_s3_connection",
+                            "connection": "azureml:my-s3-connection",
                             "path": "${{parent.inputs.path_source_s3}}",
                             "type": "file_system",
                         },
@@ -1379,20 +1290,15 @@ class TestPipelineJobEntity:
                         "name": "snowflake_blob",
                         "outputs": {"sink": {"job_output_type": "mltable"}},
                         "source": {
-                            "connection": "azureml:my_snowflake_connection",
-                            "query": "${{parent.inputs.query_source_snowflake}}",
+                            "connection": "azureml:my_azuresqldb_connection",
+                            "query": "${{parent.inputs.query_source_sql}}",
                             "type": "database",
                         },
                         "task": "import_data",
                         "type": "data_transfer",
                     },
                 },
-                "outputs": {
-                    "merged_blob": {
-                        "job_output_type": "uri_folder",
-                        "uri": "azureml://datastores/my_blob/paths/merged_blob",
-                    }
-                },
+                "outputs": {"merged_blob": {"job_output_type": "uri_folder"}},
                 "properties": {},
                 "settings": {"_source": "YAML.JOB", "default_compute": "", "default_datastore": ""},
                 "tags": {},
@@ -1515,7 +1421,7 @@ class TestPipelineJobEntity:
                     "score_job": {
                         "_source": "YAML.JOB",
                         "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
                         "is_deterministic": True,
                         "outputs": {"score_output": {"type": "uri_folder"}},
@@ -1531,7 +1437,7 @@ class TestPipelineJobEntity:
                     "score_job": {
                         "_source": "YAML.JOB",
                         "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"model_input": {"type": "mltable"}, "test_data": {"type": "uri_folder"}},
                         "is_deterministic": True,
                         "outputs": {"score_output": {"type": "uri_folder"}},
@@ -1547,7 +1453,7 @@ class TestPipelineJobEntity:
                     "score_job": {
                         "_source": "YAML.JOB",
                         "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
                         "is_deterministic": True,
                         "outputs": {"score_output": {"type": "uri_folder"}},

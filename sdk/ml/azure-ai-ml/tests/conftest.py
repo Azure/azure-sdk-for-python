@@ -22,6 +22,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
+    add_uri_string_sanitizer,
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
@@ -98,6 +99,22 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
     )
+
+    identity_json_paths = [
+        ".systemData.createdBy",
+        ".systemData.lastModifiedBy",
+        ".createdBy.userName",
+        ".lastModifiedBy.userName",
+        ".runMetadata.createdBy.userName",
+        ".runMetadata.lastModifiedBy.userName",
+    ]
+    identity_replacements = [("Firstname Lastname", r".+\s.+"), ("alias@contoso.com", r".+@.+")]
+
+    for path in identity_json_paths:
+        for replacement, regexp in identity_replacements:
+            add_body_key_sanitizer(json_path=path, value=replacement, regex=regexp)
+            # Try to match in arrays too
+            add_body_key_sanitizer(json_path=f".value[*]{path}", value=replacement, regex=regexp)
 
 
 def pytest_addoption(parser):
@@ -223,6 +240,11 @@ def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_02_01_preview")
 
 
 @pytest.fixture
@@ -849,6 +871,7 @@ def pytest_configure(config):
         ("production_experiences_test", "marks tests as production experience tests"),
         ("training_experiences_test", "marks tests as training experience tests"),
         ("data_experiences_test", "marks tests as data experience tests"),
+        ("data_import_test", "marks tests as data import tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
         ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
         ("virtual_cluster_test", "marks tests as virtual cluster tests"),

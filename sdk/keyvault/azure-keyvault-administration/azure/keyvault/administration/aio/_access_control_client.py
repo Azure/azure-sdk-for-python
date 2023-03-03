@@ -153,9 +153,9 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
             definition, the description will be set to an empty string.
         :keyword permissions: the role definition's permissions. If unspecified when creating or updating a role
             definition, the role definition will have no action permissions.
-        :paramtype permissions: Iterable[KeyVaultPermission]
+        :paramtype permissions: list[KeyVaultPermission]
         :keyword assignable_scopes: the scopes for which the role definition can be assigned.
-        :paramtype assignable_scopes: Iterable[str] or Iterable[KeyVaultRoleScope]
+        :paramtype assignable_scopes: list[str] or list[KeyVaultRoleScope]
 
         :returns: The created or updated role definition
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition

@@ -34,5 +34,5 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
         )
 
     pipeline = data_transfer_import_database_pipeline_from_builder()
-    pipeline.settings.default_compute = "adf_compute"
+    pipeline.settings.default_compute = "serverless"
     return pipeline
