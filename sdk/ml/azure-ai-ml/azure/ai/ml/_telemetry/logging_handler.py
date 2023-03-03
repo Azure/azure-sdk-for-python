@@ -21,19 +21,6 @@ AML_INTERNAL_LOGGER_NAMESPACE = "azure.ai.ml._telemetry"
 # vienna-sdk-unitedstates
 INSTRUMENTATION_KEY = "71b954a8-6b7d-43f5-986c-3d3a6605d803"
 
-AZUREML_SDKV2_TELEMETRY_OPTOUT_ENV_VAR = "AZUREML_SDKV2_TELEMETRY_OPTOUT"
-
-# application insight logger name
-LOGGER_NAME = "ApplicationInsightLogger"
-
-SUCCESS = True
-FAILURE = False
-
-TRACEBACK_LOOKUP_STR = "Traceback (most recent call last)"
-
-# extract traceback path from message
-reformat_traceback = True
-
 test_subscriptions = [
     "b17253fa-f327-42d6-9686-f3e553e24763",
     "test_subscription",
@@ -157,25 +144,11 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             return
 
         try:
-            if (
-                reformat_traceback
-                and record.levelno >= logging.WARNING
-                and hasattr(record, "message")
-                and record.message.find(TRACEBACK_LOOKUP_STR) != -1
-            ):
-                record.message = format_exc()
-                record.msg = record.message
+            self._queue.put(record, block=False)
 
-            formatted_message = self.format(record)
-
-            # if we have exec_info, send it as an exception
+            # log the record immediately if it is an error
             if record.exc_info and not all(item is None for item in record.exc_info):
-                # for compliance we not allowed to collect trace with file path
-                self._queue.put(format_exc(), block=False)
                 self._queue.flush()
-                return
-            # otherwise, send the trace
-            self._queue.put(formatted_message, block=False)
         except Exception:  # pylint: disable=broad-except
             # ignore any exceptions, telemetry collection errors shouldn't block an operation
             return
