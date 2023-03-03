@@ -51,6 +51,7 @@ from ._credentials import (
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
+from ._data_import.data_import import DataImport
 from ._datastore.datastore import Datastore
 from ._deployment.batch_deployment import BatchDeployment
 from ._deployment.batch_job import BatchJob
@@ -209,6 +210,7 @@ __all__ = [
     "PrivateEndpointDestination",
     "EndpointConnection",
     "CustomerManagedKey",
+    "DataImport",
     "Datastore",
     "AzureDataLakeGen1Datastore",
     "AzureBlobDatastore",
