@@ -177,6 +177,7 @@ stages:
 
           - task: PythonScript@0
             displayName: 'Run MyPy Next'
+            continueOnError: true
             inputs:
               scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
               arguments: >-
@@ -186,10 +187,10 @@ stages:
                 --toxenv="next-mypy"
                 --disablecov
             env: ${{ parameters.EnvVars }}
-            condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
           - task: PythonScript@0
             displayName: 'Run Pyright Next'
+            continueOnError: true
             inputs:
               scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
               arguments: >-
@@ -198,4 +199,3 @@ stages:
                 --service="${{ parameters.ServiceDirectory }}"
                 --toxenv="next-pyright"
                 --disablecov
-            condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))

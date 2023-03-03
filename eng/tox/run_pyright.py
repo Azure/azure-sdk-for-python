@@ -40,7 +40,6 @@ if __name__ == "__main__":
         required=False
     )
 
-
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
 
