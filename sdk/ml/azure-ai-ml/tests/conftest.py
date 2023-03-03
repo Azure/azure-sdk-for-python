@@ -22,6 +22,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
+    add_uri_string_sanitizer,
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
@@ -239,6 +240,11 @@ def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_02_01_preview")
 
 
 @pytest.fixture
