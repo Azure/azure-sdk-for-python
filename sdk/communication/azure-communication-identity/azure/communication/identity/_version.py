@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-VERSION = "1.3.2"
+VERSION = "2.0.0-beta.1"
 
 SDK_MONIKER = "communication-identity/{}".format(VERSION)  # type: str
