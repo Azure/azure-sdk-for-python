@@ -197,6 +197,7 @@ class AzureMLResourceType(object):
     SCHEDULE = "schedules"
     REGISTRY = "registries"
     CONNECTIONS = "connections"
+    FEATURE_STORE = "feature_store"
 
     NAMED_TYPES = {
         JOB,
