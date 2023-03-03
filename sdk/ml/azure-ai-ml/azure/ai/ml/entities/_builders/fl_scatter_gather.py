@@ -745,17 +745,17 @@ class _ScatterGatherInputOutputHandler(object):
 
     def _validate_and_prepare_scatter_output_dict(self):
         if not self._scatter_output_mapping:
-            for i in range(0, len(self.scatters)):
+            for i, scatter in enumerate(self.scatters):
                 for scatter_output_name, gather_input_name in self.scatter_to_gather_map.items():
                     if scatter_output_name in self._scatter_output_mapping.keys():
                         self._scatter_output_mapping["silos_output"].update(
-                            {scatter_output_name + "_silo_" + str(i): self.scatters[i].outputs[scatter_output_name]}
+                            {f"{scatter_output_name}_silo_{i}": scatter.outputs[scatter_output_name]}
                         )
                     else:
                         self.scatter_to_gather_map[scatter_output_name] = {
                             "gather_input_name": gather_input_name,
                             "merge_component": merge_comp,
                             "merge_component_inputs": {
-                                scatter_output_name + "_silo_" + str(i): self.scatters[i].outputs[scatter_output_name]
+                                f"{scatter_output_name}_silo_{i}": scatter.outputs[scatter_output_name]
                             }
                         }
