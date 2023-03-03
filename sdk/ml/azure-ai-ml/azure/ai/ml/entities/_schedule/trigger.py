@@ -57,7 +57,7 @@ class TriggerBase(RestTranslatableMixin, ABC):
 
 
 class RecurrencePattern(RestTranslatableMixin):
-    """Recurrence pattern
+    """Recurrence pattern.
 
     :param hours: List of hours for recurrence schedule pattern.
     :type hours: Union[int, List[int]]
@@ -115,7 +115,7 @@ class RecurrencePattern(RestTranslatableMixin):
 
 
 class CronTrigger(TriggerBase):
-    """Cron Trigger
+    """Cron Trigger.
 
     :param expression: Specifies cron expression of schedule.
         The expression should follow NCronTab format.
@@ -184,7 +184,7 @@ class CronTrigger(TriggerBase):
 
 
 class RecurrenceTrigger(TriggerBase):
-    """Recurrence trigger
+    """Recurrence trigger.
 
     :param start_time: Specifies start time of schedule in ISO 8601 format.
     :type start_time: Union[str, datetime]

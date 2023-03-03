@@ -101,8 +101,8 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
 
 
 def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_folder_name: str) -> Dict[str, str]:
-    """Returns a dictionary of file name to blob or data lake uri with SAS
-    token, matching the structure of RunDetails.logFiles.
+    """Returns a dictionary of file name to blob or data lake uri with SAS token, matching the structure of
+    RunDetails.logFiles.
 
     legacy_log_folder_name: the name of the folder in the datastore that contains the logs
         /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
@@ -246,8 +246,7 @@ def download_artifact_from_storage_url(
 
 
 def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operation: DatastoreOperations):
-    """Downloads artifact pointed to by URI of the form `azureml://...` to
-    destination.
+    """Downloads artifact pointed to by URI of the form `azureml://...` to destination.
 
     :param str uri: AzureML uri of artifact to download
     :param str destination: Path to download artifact to
@@ -266,8 +265,7 @@ def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operati
 def aml_datastore_path_exists(
     uri: str, datastore_operation: DatastoreOperations, datastore_info: Optional[dict] = None
 ):
-    """Checks whether `uri` of the form "azureml://" points to either a
-    directory or a file.
+    """Checks whether `uri` of the form "azureml://" points to either a directory or a file.
 
     :param str uri: azure ml datastore uri
     :param DatastoreOperations datastore_operation: Datastore operation
@@ -370,8 +368,7 @@ def _check_and_upload_path(
     sas_uri: Optional[str] = None,
     show_progress: bool = True,
 ) -> Tuple[T, str]:
-    """Checks whether `artifact` is a path or a uri and uploads it to the
-    datastore if necessary.
+    """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
 
     param T artifact: artifact to check and upload param
     Union["DataOperations", "ModelOperations", "CodeOperations"]

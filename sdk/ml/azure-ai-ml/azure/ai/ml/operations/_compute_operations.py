@@ -24,9 +24,8 @@ module_logger = ops_logger.module_logger
 class ComputeOperations(_ScopeDependentOperations):
     """ComputeOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -249,8 +248,7 @@ class ComputeOperations(_ScopeDependentOperations):
     @distributed_trace
     # @monitor_with_activity(logger, "Compute.ListUsage", ActivityType.PUBLICAPI)
     def list_usage(self, *, location: Optional[str] = None) -> Iterable[Usage]:
-        """Gets the current usage information as well as limits for AML
-        resources for given subscription and location.
+        """Gets the current usage information as well as limits for AML resources for given subscription and location.
 
         :param location: The location for which resource usage is queried.
             If location not provided , defaults to workspace location

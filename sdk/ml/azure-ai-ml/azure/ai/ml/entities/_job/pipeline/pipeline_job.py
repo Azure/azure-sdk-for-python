@@ -247,8 +247,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         return validation_result
 
     def _customized_validate(self) -> MutableValidationResult:
-        """Validate that all provided inputs and parameters are valid for
-        current pipeline and components in it."""
+        """Validate that all provided inputs and parameters are valid for current pipeline and components in it."""
         validation_result = super(PipelineJob, self)._customized_validate()
 
         if isinstance(self.component, PipelineComponent):
@@ -402,8 +401,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         return validation_result
 
     def _remove_pipeline_input(self):
-        """Remove None pipeline input.If not remove, it will pass "None" to
-        backend."""
+        """Remove None pipeline input.If not remove, it will pass "None" to backend."""
         redundant_pipeline_inputs = []
         for pipeline_input_name, pipeline_input in self._inputs.items():
             if isinstance(pipeline_input, PipelineInput) and pipeline_input._data is None:
@@ -452,8 +450,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         )
 
     def _to_rest_object(self) -> JobBase:
-        """Build current parameterized pipeline instance to a pipeline job object
-        before submission.
+        """Build current parameterized pipeline instance to a pipeline job object before submission.
 
         :return: Rest pipeline job.
         """

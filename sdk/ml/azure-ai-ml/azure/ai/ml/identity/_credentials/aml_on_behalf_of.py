@@ -15,8 +15,8 @@ class AzureMLOnBehalfOfCredential(object):
     """Authenticates a user via the on-behalf-of flow.
 
     This credential can only be used on `Azure Machine Learning Compute.
-    <https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_
-    during job execution when user request to run job during its identity.
+    <https://docs.microsoft.com/en-us/azure/machine-learning/concept-compute-target#azure-machine-learning-compute-managed>`_ during job execution when
+    user request to run job during its identity.
     """
 
     def __init__(self, **kwargs):

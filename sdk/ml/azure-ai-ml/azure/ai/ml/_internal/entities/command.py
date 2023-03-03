@@ -20,6 +20,7 @@ from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
 
 class Command(InternalBaseNode):
     """Node of internal command components in pipeline with specific run settings.
+
     Different from azure.ai.ml.entities.Command, type of this class is CommandComponent.
     """
 

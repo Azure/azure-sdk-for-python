@@ -60,9 +60,8 @@ module_logger = ops_logger.module_logger
 class WorkspaceOperations:
     """WorkspaceOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -85,8 +84,7 @@ class WorkspaceOperations:
 
     # @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Workspace]:
-        """List all workspaces that the user has access to in the current
-        resource group or subscription.
+        """List all workspaces that the user has access to in the current resource group or subscription.
 
         :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
@@ -136,11 +134,10 @@ class WorkspaceOperations:
     # @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_sync_keys(self, name: Optional[str] = None) -> LROPoller:
-        """Triggers the workspace to immediately synchronize keys. If keys for
-        any resource in the workspace are changed, it can take around an hour
-        for them to automatically be updated. This function enables keys to be
-        updated upon request. An example scenario is needing immediate access
-        to storage after regenerating storage keys.
+        """Triggers the workspace to immediately synchronize keys. If keys for any resource in the workspace are
+        changed, it can take around an hour for them to automatically be updated. This function enables keys to be
+        updated upon request. An example scenario is needing immediate access to storage after regenerating storage
+        keys.
 
         :param name: Name of the workspace.
         :type name: str

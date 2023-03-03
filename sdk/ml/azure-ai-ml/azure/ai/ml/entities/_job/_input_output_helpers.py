@@ -177,7 +177,7 @@ def to_rest_dataset_literal_inputs(
     *,
     job_type,
 ) -> Dict[str, RestJobInput]:
-    """Turns dataset and literal inputs into dictionary of REST JobInput
+    """Turns dataset and literal inputs into dictionary of REST JobInput.
 
     :param inputs: Dictionary of dataset and literal inputs to job
     :type inputs: Dict[str, Union[int, str, float, bool, JobInput]]
@@ -290,7 +290,7 @@ def from_rest_inputs_to_dataset_literal(
 
 
 def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]:
-    """Turns job outputs into REST format
+    """Turns job outputs into REST format.
 
     :param outputs: Dictionary of dataset outputs from job
     :type outputs: Dict[str, JobOutput]
@@ -330,7 +330,7 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
 
 
 def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Output]:
-    """Turns REST outputs into the SDK format
+    """Turns REST outputs into the SDK format.
 
     :param outputs: Dictionary of dataset and literal inputs to job
     :type outputs: Dict[str, RestJobOutput]

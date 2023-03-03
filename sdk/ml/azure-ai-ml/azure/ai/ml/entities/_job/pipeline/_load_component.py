@@ -38,8 +38,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class _PipelineNodeFactory:
-    """A class to create pipeline node instances from yaml dict or rest objects
-    without hard-coded type check."""
+    """A class to create pipeline node instances from yaml dict or rest objects without hard-coded type check."""
 
     def __init__(self):
         self._create_instance_funcs = {}
@@ -166,14 +165,14 @@ class _PipelineNodeFactory:
     ):
         """Register a type of node.
 
-        param _type: The type of the node. type _type: str param
-        create_instance_func: A function to create a new instance of the
-        node. type create_instance_func: Callable[..., BaseNode] param
-        load_from_rest_object_func: A function to load a node from a
-        rest object. type load_from_rest_object_func: Callable[[Any],
-        BaseNode] param nested_schema: schema/schemas of corresponding
-        nested field, will be used in PipelineJobSchema.jobs.value. type
-        nested_schema: Union[NestedField, List[NestedField]]
+        :param _type: The type of the node.
+        :type _type: str
+        :param create_instance_func: A function to create a new instance of the node, defaults to None
+        :type create_instance_func: typing.Optional[typing.Callable[..., typing.Union[BaseNode, AutoMLJob]]]
+        :param load_from_rest_object_func: A function to load a node from a rest object, defaults to None
+        :type load_from_rest_object_func: typing.Optional[typing.Callable[[Any], typing.Union[BaseNode, AutoMLJob, ControlFlowNode]]]
+        :param nested_schema: schema/schemas of corresponding nested field, will be used in PipelineJobSchema.jobs.value, defaults to None
+        :type nested_schema: typing.Optional[typing.Union[NestedField, List[NestedField]]]
         """
         # pylint: disable=no-member
         if create_instance_func is not None:
@@ -198,9 +197,10 @@ class _PipelineNodeFactory:
     def load_from_dict(self, *, data: dict, _type: Optional[str] = None) -> Union[BaseNode, AutoMLJob]:
         """Load a node from a dict.
 
-        param data: A dict containing the node's data. type data: dict
-        param _type: The type of the node. If not specified, it will be
-        inferred from the data. type _type: str
+        :param data: A dict containing the node's data.
+        :type data: dict
+        :param _type: The type of the node. If not specified, it will be inferred from the data.
+        :type _type: str
         """
         if _type is None:
             _type = data[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in data else NodeType.COMMAND
@@ -229,9 +229,10 @@ class _PipelineNodeFactory:
     ) -> Union[BaseNode, AutoMLJob, ControlFlowNode]:
         """Load a node from a rest object.
 
-        param obj: A rest object containing the node's data. type obj:
-        dict param _type: The type of the node. If not specified, it
-        will be inferred from the data. type _type: str
+        :param obj: A rest object containing the node's data.
+        :type obj: dict
+        :param _type: The type of the node. If not specified, it will be inferred from the data.
+        :type _type: str
         """
 
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer

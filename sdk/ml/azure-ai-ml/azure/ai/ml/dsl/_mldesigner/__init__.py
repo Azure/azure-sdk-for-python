@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-"""
-This file stores functions and objects that will be used in mldesigner package.
+"""This file stores functions and objects that will be used in mldesigner package.
+
 DO NOT change the module names in "all" list. If the interface has changed in source code, wrap it here and keep
 original function/module names the same as before, otherwise mldesigner will be broken by this change.
 """

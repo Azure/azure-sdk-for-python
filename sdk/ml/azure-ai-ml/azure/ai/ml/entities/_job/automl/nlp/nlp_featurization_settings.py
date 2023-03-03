@@ -10,6 +10,7 @@ from azure.ai.ml.entities._job.automl.featurization_settings import Featurizatio
 
 class NlpFeaturizationSettings(FeaturizationSettings):
     """Featurization settings for all AutoML NLP Verticals.
+
     :ivar type: Specifies the type of FeaturizationSettings. Set automatically to "NLP" for this class.
     :vartype type: str
     """

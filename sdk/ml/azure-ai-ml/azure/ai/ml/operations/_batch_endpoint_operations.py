@@ -71,9 +71,8 @@ module_logger = ops_logger.module_logger
 class BatchEndpointOperations(_ScopeDependentOperations):
     """BatchEndpointOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -322,8 +321,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     @distributed_trace
     # @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str) -> ItemPaged[BatchJob]:
-        """List jobs under the provided batch endpoint deployment. This is only
-        valid for batch endpoint.
+        """List jobs under the provided batch endpoint deployment. This is only valid for batch endpoint.
 
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
