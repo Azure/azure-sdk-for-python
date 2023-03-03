@@ -14,8 +14,9 @@ from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase, JobService
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, JobService
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -295,7 +296,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             if obj.properties.job_type == RestJobType.COMMAND:
                 # PrP only until new import job type is ready on MFE in PuP
                 # compute type 'DataFactory' is reserved compute name for 'clusterless' ADF jobs
-                if obj.properties.compute_id.endswith("/" + ComputeType.ADF):
+                if obj.properties.compute_id and obj.properties.compute_id.endswith("/" + ComputeType.ADF):
                     return ImportJob._load_from_rest(obj)
 
                 return Command._load_from_rest_job(obj)

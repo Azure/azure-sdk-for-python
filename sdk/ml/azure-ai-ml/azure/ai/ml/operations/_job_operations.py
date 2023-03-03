@@ -26,10 +26,10 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
