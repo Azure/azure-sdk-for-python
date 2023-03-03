@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any
 
-from azure.core import AsyncPipelineClient
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
-from .. import models
-from ..._serialization import Deserializer, Serializer
+from . import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import KeyVaultClientConfiguration
 from .operations import KeyVaultClientOperationsMixin, RoleAssignmentsOperations, RoleDefinitionsOperations
 
@@ -23,13 +23,11 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):  # pylint: disable=client-a
     Vault service.
 
     :ivar role_definitions: RoleDefinitionsOperations operations
-    :vartype role_definitions:
-     azure.keyvault.v7_4_preview_1.aio.operations.RoleDefinitionsOperations
+    :vartype role_definitions: azure.keyvault.v7_4.operations.RoleDefinitionsOperations
     :ivar role_assignments: RoleAssignmentsOperations operations
-    :vartype role_assignments:
-     azure.keyvault.v7_4_preview_1.aio.operations.RoleAssignmentsOperations
-    :keyword api_version: Api Version. Default value is "7.4-preview.1". Note that overriding this
-     default value may result in unsupported behavior.
+    :vartype role_assignments: azure.keyvault.v7_4.operations.RoleAssignmentsOperations
+    :keyword api_version: Api Version. Default value is "7.4". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -38,9 +36,9 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):  # pylint: disable=client-a
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
         _endpoint = "{vaultBaseUrl}"
         self._config = KeyVaultClientConfiguration(**kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -51,14 +49,14 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):  # pylint: disable=client-a
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client._send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -66,19 +64,19 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):  # pylint: disable=client-a
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self) -> None:
+        self._client.close()
 
-    async def __aenter__(self) -> "KeyVaultClient":
-        await self._client.__aenter__()
+    def __enter__(self) -> "KeyVaultClient":
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)
