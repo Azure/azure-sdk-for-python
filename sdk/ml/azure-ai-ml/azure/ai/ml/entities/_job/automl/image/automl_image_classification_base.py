@@ -130,8 +130,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
         validation_resize_size: Optional[int] = None,
         weighted_loss: Optional[int] = None,
     ) -> None:
-        """Setting Image training parameters for AutoML Image Classification and
-        Image Classification Multilabel tasks.
+        """Setting Image training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
 
         :param advanced_settings: Settings for advanced scenarios.
         :type advanced_settings: str
@@ -355,8 +354,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
         self,
         value: Union[SearchSpace, List[SearchSpace]],
     ) -> None:
-        """Add Search space for AutoML Image Classification and Image
-        Classification Multilabel tasks.
+        """Add Search space for AutoML Image Classification and Image Classification Multilabel tasks.
 
         :param value: specify either an instance of ImageClassificationSearchSpace or list of
         ImageClassificationSearchSpace for searching through the parameter space

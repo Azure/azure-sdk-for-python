@@ -534,8 +534,7 @@ class DataOperations(_ScopeDependentOperations):
     def _get_latest_version(self, name: str) -> Data:
         """Returns the latest version of the asset with the given name.
 
-        Latest is defined as the most recently created, not the most
-        recently updated.
+        Latest is defined as the most recently created, not the most recently updated.
         """
         latest_version = _get_latest_version_from_container(
             name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
@@ -547,8 +546,7 @@ class DataOperations(_ScopeDependentOperations):
         self, data: Data, name: Optional[str] = None, version: Optional[str] = None
     ) -> WorkspaceAssetReference:
 
-        """Returns WorkspaceAssetReference
-        to copy a registered data to registry given the asset id
+        """Returns WorkspaceAssetReference to copy a registered data to registry given the asset id.
 
         :param data: Registered data
         :type data: Data

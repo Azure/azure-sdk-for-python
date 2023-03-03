@@ -99,7 +99,7 @@ def _get_cloud_details(cloud: str = AzureEnvironments.ENV_DEFAULT):
 
 
 def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
-    """Sets the current cloud
+    """Sets the current cloud.
 
     :param cloud: cloud name
     """
@@ -201,8 +201,9 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = N
 
 
 def _resource_to_scopes(resource):
-    """Convert the resource ID to scopes by appending the /.default suffix and
-    return a list. For example: 'https://management.core.windows.net/' ->
+    """Convert the resource ID to scopes by appending the /.default suffix and return a list. For example:
+    'https://management.core.windows.net/' ->
+
     ['https://management.core.windows.net//.default']
 
     :param resource: The resource ID
@@ -213,7 +214,7 @@ def _resource_to_scopes(resource):
 
 
 def _get_registry_discovery_url(cloud, cloud_suffix=""):
-    """Get or generate the registry discovery url
+    """Get or generate the registry discovery url.
 
     :param cloud: configuration of the cloud to get the registry_discovery_url from
     :param cloud_suffix: the suffix to use for the cloud, in the case that the registry_discovery_url
@@ -235,7 +236,7 @@ def _get_registry_discovery_url(cloud, cloud_suffix=""):
 
 
 def _get_clouds_by_metadata_url(metadata_url):
-    """Get all the clouds by the specified metadata url
+    """Get all the clouds by the specified metadata url.
 
     :return: list of the clouds
     """

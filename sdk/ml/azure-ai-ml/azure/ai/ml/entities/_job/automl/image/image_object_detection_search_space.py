@@ -26,8 +26,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
-    """Search space for AutoML Image Object Detection and Image Instance
-    Segmentation tasks.
+    """Search space for AutoML Image Object Detection and Image Instance Segmentation tasks.
 
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :type ams_gradient: bool or Union[~azure.ai.ml.entities.Choice,
