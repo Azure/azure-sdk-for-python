@@ -1381,10 +1381,12 @@ class TestPipelineJobEntity:
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
         job = load_job(test_path)
-        result = job.jobs['hello_world'].component._validate()
-        assert "conf" in result.error_messages and \
-               "Should not specify min or max executors when dynamic allocation is disabled." in \
-               result.error_messages["conf"]
+        result = job.jobs["hello_world"].component._validate()
+        assert (
+            "conf" in result.error_messages
+            and "Should not specify min or max executors when dynamic allocation is disabled."
+            in result.error_messages["conf"]
+        )
 
     def test_spark_node_in_pipeline_with_invalid_code(
         self,

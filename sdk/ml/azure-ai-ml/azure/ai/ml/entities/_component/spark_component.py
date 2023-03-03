@@ -152,7 +152,7 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
         self,
     ):
         validation_result = self._create_empty_validation_result()
-        if self.dynamic_allocation_enabled in ["True", "true", True]:
+        if str(self.dynamic_allocation_enabled).lower() == "true":
             if (
                 self.driver_cores is None
                 or self.driver_memory is None

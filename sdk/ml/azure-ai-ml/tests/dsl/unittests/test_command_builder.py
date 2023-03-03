@@ -748,8 +748,10 @@ class TestCommandFunction:
             executor_memory="2g",
         )
         result = node.component._validate()
-        message = "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and " \
-                  "spark.executor.instances are mandatory fields."
+        message = (
+            "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
+            "spark.executor.instances are mandatory fields."
+        )
         assert "conf" in result.error_messages and message == result.error_messages["conf"]
 
     def test_executor_instances_is_specified_as_min_executor_if_unset(self):
@@ -783,8 +785,10 @@ class TestCommandFunction:
             dynamic_allocation_max_executors=3,
         )
         result = node.component._validate()
-        message = "Executor instances must be a valid non-negative integer and must be between " \
-                  "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
+        message = (
+            "Executor instances must be a valid non-negative integer and must be between "
+            "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
+        )
         assert "conf" in result.error_messages and message == result.error_messages["conf"]
 
     def test_spark_job_with_additional_conf(self):
