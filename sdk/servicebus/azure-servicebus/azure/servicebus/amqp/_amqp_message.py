@@ -6,11 +6,13 @@
 
 from __future__ import annotations
 import warnings
-from typing import Optional, Any, cast, Mapping, Dict, Union, List, Iterable, Tuple
+from typing import Optional, Any, cast, Mapping, Dict, Union, List, Iterable, Tuple, TYPE_CHECKING
 
 from ._amqp_utils import normalized_data_body, normalized_sequence_body
 from ._constants import AmqpMessageBodyType
 
+if TYPE_CHECKING:
+    import uuid
 
 class DictMixin(object):
     def __setitem__(self, key: str, item: Any) -> None:
@@ -484,7 +486,7 @@ class AmqpMessageProperties(DictMixin):
     def __init__(
         self,
         *,
-        message_id: Optional[Union[str, bytes, uuid.UUID]] = None,
+        message_id: Optional[Union[str, bytes, "uuid.UUID"]] = None,
         user_id: Optional[Union[str, bytes]] = None,
         to: Optional[Union[str, bytes]] = None,
         subject: Optional[Union[str, bytes]] = None,

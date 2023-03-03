@@ -117,7 +117,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
         if uamqp_transport and not UamqpTransport:
-            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
+            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.")
         self._amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
 
         # If the user provided http:// or sb://, let's be polite and strip that.

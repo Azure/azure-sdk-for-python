@@ -27,6 +27,7 @@ from azure.servicebus.amqp import (
     AmqpMessageHeader
 )
 from azure.servicebus._pyamqp.message import Message
+from azure.servicebus._pyamqp._message_backcompat import LegacyBatchMessage
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
@@ -250,6 +251,8 @@ def test_servicebus_message_batch(uamqp_transport):
     with pytest.raises(ValueError):
         batch.add_message(ServiceBusMessage("A"))
 
+    assert batch.message
+
 def test_amqp_message():
     sb_message = ServiceBusMessage(body=None)
     assert sb_message.body_type == AmqpMessageBodyType.VALUE
@@ -466,8 +469,15 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             with pytest.raises(Exception):
                 incoming_message.message.gather()
             assert isinstance(incoming_message.message.encode_message(), bytes)
-            # TODO: Pyamqp has size at 266
-            # assert incoming_message.message.get_message_encoded_size() == 267
+            # TODO: uamqp size = pyamqp size + 4?
+            # uamqp bug accounts for 3 bytes:
+            # - durable/first_acquirer/priority set by default in uamqp, None in pyamqp
+            # - setting pyamqp values for durable/first_acquirer increases pyamqp size = 269
+            if uamqp_transport:
+                encoded_size = 270
+            else:
+                encoded_size = 266
+            assert incoming_message.message.get_message_encoded_size() == encoded_size
             assert list(incoming_message.message.get_data()) == [b'hello']
             assert incoming_message.message.application_properties == {b'prop': b'test'}
             assert incoming_message.message.get_message()  # C instance.
@@ -602,8 +612,14 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             with pytest.raises(Exception):
                 incoming_message.message.gather()
             assert isinstance(incoming_message.message.encode_message(), bytes)
-            # TODO: Pyamqp has size at 336
-            # assert incoming_message.message.get_message_encoded_size() == 334
+
+            if uamqp_transport:
+                encoded_size = 337
+            else:
+                # uamqp bug: sets durable/first_acquirer/priority by default on incoming message
+                # pyamqp = 339 if durable/first_acquirer set
+                encoded_size = 336
+            assert incoming_message.message.get_message_encoded_size() == encoded_size
             assert list(incoming_message.message.get_data()) == [b'hello']
             assert incoming_message.message.application_properties == {b'prop': b'test'}
             assert incoming_message.message.get_message()  # C instance.
@@ -780,7 +796,7 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_message_backcompat_peek_lock_sequencebody(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+    def test_message_batch_backcompat(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(sequence_body=[1, 2, 3])
 
@@ -821,5 +837,3 @@ class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
             assert not incoming_message.message.release()
             assert not incoming_message.message.reject()
             assert not incoming_message.message.modify(True, True)
-
-    # TODO: Add batch message backcompat tests

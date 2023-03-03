@@ -241,10 +241,10 @@ class ServiceBusMessage(
     # TODO: test these
     @property
     def message(self) -> Union["Message", LegacyMessage]:
-        """DEPRECATED: Get the underlying uamqp.BatchMessage or LegacyBatchMessage.
+        """DEPRECATED: Get the underlying uamqp.Message or LegacyMessage.
          This is deprecated and will be removed in a later release.
 
-        :rtype: uamqp.BatchMessage or LegacyBatchMessage
+        :rtype: uamqp.Message or LegacyMessage
         """
         warnings.warn(
             "The `message` property is deprecated and will be removed in future versions.",
@@ -729,11 +729,14 @@ class ServiceBusMessageBatch(object):
             DeprecationWarning,
         )
         if not self._uamqp_message:
-            message = AmqpAnnotatedMessage(message=pyamqp_Message(*self._message))
-            self._uamqp_message = LegacyBatchMessage(
-                message,
-                to_outgoing_amqp_message=PyamqpTransport.to_outgoing_amqp_message,
-            )
+            if issubclass(self._amqp_transport, PyamqpTransport):
+                message = AmqpAnnotatedMessage(message=pyamqp_Message(*self._message))
+                self._uamqp_message = LegacyBatchMessage(
+                    message,
+                    to_outgoing_amqp_message=PyamqpTransport.to_outgoing_amqp_message,
+                )
+            else:
+                self._uamqp_message = self._message
         return self._uamqp_message
 
     @message.setter
