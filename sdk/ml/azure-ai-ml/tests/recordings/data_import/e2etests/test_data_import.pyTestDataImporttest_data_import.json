@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -55,22 +55,22 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "2431",
+        "Content-Length": "2458",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sat, 04 Mar 2023 00:05:01 GMT",
+        "Date": "Sat, 04 Mar 2023 00:09:22 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2022-12-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-6155499ec03f53fcfc3aaf59eb484822-ee1617b8cf9dcbcc-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-f2bc9453ed020f668b8fe4a92b70f400-9b3ea80312d4d383-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-01",
+        "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "acabcf22-4311-4de2-8a71-36a1381d84d0",
+        "x-ms-correlation-request-id": "a70829a9-0c24-4776-a8e9-c724edc2bde5",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS:20230304T000502Z:acabcf22-4311-4de2-8a71-36a1381d84d0",
-        "x-request-time": "7.106"
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230304T000922Z:a70829a9-0c24-4776-a8e9-c724edc2bde5",
+        "x-request-time": "2.894"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
@@ -119,6 +119,7 @@
           "isArchived": false,
           "identity": null,
           "componentId": null,
+          "notificationSetting": null,
           "jobType": "Pipeline",
           "settings": {
             "force_rerun": true,
@@ -151,7 +152,7 @@
           "sourceJobId": null
         },
         "systemData": {
-          "createdAt": "2023-03-04T00:05:01.5635175\u002B00:00",
+          "createdAt": "2023-03-04T00:09:21.7203552\u002B00:00",
           "createdBy": "Firstname Lastname",
           "createdByType": "User"
         }

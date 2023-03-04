@@ -24,6 +24,8 @@ from six.moves.urllib_parse import urlparse
 
 from helpers import (
     build_aad_response,
+    build_id_token,
+    id_token_claims,
     get_discovery_response,
     urlsafeb64_decode,
     mock_response,
@@ -428,3 +430,53 @@ def test_multitenant_authentication_backcompat(cert_path, cert_password):
 
     token = credential.get_token("scope", tenant_id="un" + expected_tenant)
     assert token.token == expected_token
+
+
+def test_client_capabilities():
+    """The credential should configure MSAL for capability CP1 unless AZURE_IDENTITY_DISABLE_CP1 is set"""
+
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+
+    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport)
+    with patch("msal.ConfidentialClientApplication") as ConfidentialClientApplication:
+        credential._get_app()
+
+    assert ConfidentialClientApplication.call_count == 1
+    _, kwargs = ConfidentialClientApplication.call_args
+    assert kwargs["client_capabilities"] == ["CP1"]
+
+    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport)
+    with patch.dict("os.environ", {"AZURE_IDENTITY_DISABLE_CP1": "true"}):
+        with patch("msal.ConfidentialClientApplication") as ConfidentialClientApplication:
+            credential._get_app()
+
+    assert ConfidentialClientApplication.call_count == 1
+    _, kwargs = ConfidentialClientApplication.call_args
+    assert kwargs["client_capabilities"] is None
+
+
+def test_claims_challenge():
+    """get_token should pass any claims challenge to MSAL token acquisition APIs"""
+
+    msal_acquire_token_result = dict(
+        build_aad_response(access_token="**", id_token=build_id_token()),
+        id_token_claims=id_token_claims("issuer", "subject", "audience", upn="upn"),
+    )
+    expected_claims = '{"access_token": {"essential": "true"}}'
+
+    transport = Mock(send=Mock(side_effect=Exception("this test mocks MSAL, so no request should be sent")))
+    credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport)
+    with patch.object(CertificateCredential, "_get_app") as get_mock_app:
+        msal_app = get_mock_app()
+        msal_app.acquire_token_silent_with_error.return_value = None
+        msal_app.acquire_token_for_client.return_value = msal_acquire_token_result
+
+        credential.get_token("scope", claims=expected_claims)
+
+        assert msal_app.acquire_token_silent_with_error.call_count == 1
+        args, kwargs = msal_app.acquire_token_silent_with_error.call_args
+        assert kwargs["claims_challenge"] == expected_claims
+
+        assert msal_app.acquire_token_for_client.call_count == 1
+        args, kwargs = msal_app.acquire_token_for_client.call_args
+        assert kwargs["claims_challenge"] == expected_claims

@@ -5,7 +5,6 @@ from azure.ai.ml.data_transfer import import_data
 from azure.ai.ml.entities import DataImport
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
-from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferImportJob
 
 
 @pytest.mark.unittest

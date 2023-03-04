@@ -22,11 +22,9 @@ module_logger = logging.getLogger(__name__)
 
 
 class DoWhile(LoopNode):
-    """Do-while loop node in the pipeline job.
-    By specifying the loop body and loop termination condition in this class, a job-level do while loop can be
-    implemented.
-    It will be initialized when calling dsl.do_while or when loading the pipeline yml containing do_while node.
-    Please do not manually initialize this class.
+    """Do-while loop node in the pipeline job. By specifying the loop body and loop termination condition in this class,
+    a job-level do while loop can be implemented. It will be initialized when calling dsl.do_while or when loading the
+    pipeline yml containing do_while node. Please do not manually initialize this class.
 
     :param body: Pipeline job for the do-while loop body.
     :type body: Pipeline
@@ -167,7 +165,10 @@ class DoWhile(LoopNode):
         max_iteration_count: int,
         **kwargs,  # pylint: disable=unused-argument
     ):
-        """Set max iteration count for do while job. The range of the iteration count is (0, 1000]."""
+        """Set max iteration count for do while job.
+
+        The range of the iteration count is (0, 1000].
+        """
         if isinstance(self.limits, DoWhileJobLimits):
             self.limits._max_iteration_count = max_iteration_count  # pylint: disable=protected-access
         else:

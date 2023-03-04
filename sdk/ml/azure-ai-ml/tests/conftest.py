@@ -22,6 +22,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
+    add_uri_string_sanitizer,
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
@@ -43,7 +44,7 @@ from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
-from azure.ai.ml.operations._workspace_operations import get_deployment_name, get_name_for_dependent_resource
+from azure.ai.ml.operations._workspace_operations_base import get_deployment_name, get_name_for_dependent_resource
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.transport import HttpTransport
 from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
@@ -239,6 +240,11 @@ def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_02_01_preview")
 
 
 @pytest.fixture
@@ -674,7 +680,7 @@ def mock_workspace_arm_template_deployment_name(mocker: MockFixture, variable_re
         return variable_recorder.get_or_record("deployment_name", deployment_name)
 
     mocker.patch(
-        "azure.ai.ml.operations._workspace_operations.get_deployment_name",
+        "azure.ai.ml.operations._workspace_operations_base.get_deployment_name",
         side_effect=generate_mock_workspace_deployment_name,
     )
 
@@ -686,7 +692,7 @@ def mock_workspace_dependent_resource_name_generator(mocker: MockFixture, variab
         return variable_recorder.get_or_record(f"{resource_type}_name", deployment_name)
 
     mocker.patch(
-        "azure.ai.ml.operations._workspace_operations.get_name_for_dependent_resource",
+        "azure.ai.ml.operations._workspace_operations_base.get_name_for_dependent_resource",
         side_effect=generate_mock_workspace_dependent_resource_name,
     )
 
