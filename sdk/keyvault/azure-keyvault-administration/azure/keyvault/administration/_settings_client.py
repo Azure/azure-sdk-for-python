@@ -5,7 +5,7 @@
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated_models import UpdateSettingsRequest
+from ._generated_models import UpdateSettingRequest
 from ._internal import KeyVaultClientBase
 from ._models import KeyVaultSetting
 
@@ -71,7 +71,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        parameters = UpdateSettingsRequest(value=value)
+        parameters = UpdateSettingRequest(value=value)
         result = self._client.update_settings(
             vault_base_url=self._vault_url,
             setting_name=name,
