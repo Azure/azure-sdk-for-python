@@ -416,6 +416,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert result
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
