@@ -159,7 +159,7 @@ class TestDataOperations:
         mock_workspace_scope: OperationScope,
         mock_data_operations: DataOperations,
     ) -> None:
-        data_path = "./tests/test_configs/dataset/data_local_path.yaml"
+        data_path = "../../../tests/test_configs/dataset/data_local_path.yaml"
         with patch(
             "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
             return_value=ArtifactStorageInfo(
