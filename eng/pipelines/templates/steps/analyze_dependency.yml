@@ -9,7 +9,7 @@ steps:
      versionSpec: '$(PythonVersion)'
 
   - pwsh: |
-     python -m pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+      python -m pip install -r eng/ci_tools.txt
     displayName: 'Install Python Tools'
     condition: succeededOrFailed()
 
