@@ -12,6 +12,7 @@ This version of the client library defaults to the service API version `2022-10-
 ### Breaking Changes
 
 - Removed models `BaseResolution` and `BooleanResolution`.
+- Removed enum value `BooleanResolution` from `ResolutionKind`.
 - Renamed model `AbstractSummaryAction` to `AbstractiveSummaryAction`.
 - Renamed model `AbstractSummaryResult` to `AbstractiveSummaryResult`.
 
