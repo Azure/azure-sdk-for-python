@@ -13,6 +13,7 @@ from azure.ai.ml._schema._deployment.code_configuration_schema import CodeConfig
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml.constants._common import InferenceServerType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureMLOnlineInferencingServer
 
 module_logger = logging.getLogger(__name__)
 
@@ -28,3 +29,7 @@ class InferenceServerSchema(PathAwareSchema):
     )
     code_configuration = NestedField(CodeConfigurationSchema)
     inference_configuration = NestedField(OnlineInferenceConfigurationSchema)
+
+    @post_load
+    def make(self, data, **kwargs):
+        return AzureMLOnlineInferencingServer(**data)

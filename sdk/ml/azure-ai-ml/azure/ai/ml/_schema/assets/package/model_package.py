@@ -20,7 +20,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class ModelPackageSchema(PathAwareSchema):
-    target_environment_name = fields.Str(required=True)
+    target_environment_name = fields.Str(required=True, default="packaged-env")
     target_environment_version = VersionField()
     base_environment_source = NestedField(BaseEnvironmentSource)
     inferencing_server = NestedField(InferenceServerSchema)

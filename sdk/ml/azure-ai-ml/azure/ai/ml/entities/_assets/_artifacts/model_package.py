@@ -68,13 +68,9 @@ class ModelPackage(PackageRequest, Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
-        import debugpy
-
-        debugpy.connect(("localhost", 5678))
-        debugpy.breakpoint()
-        kwargs.pop(
-            "target_environment_name", None
-        )  # need to remove this because it is not a valid parameter for the model package
+        # kwargs.pop(
+        #     "target_environment_name", None
+        # )  # need to remove this because it is not a valid parameter for the model package
         super().__init__(
             target_environment_name=name,
             target_environment_version=version,
@@ -84,7 +80,7 @@ class ModelPackage(PackageRequest, Resource):
             inputs=inputs,
             tags=tags,
             environment_variables=environment_variables,
-            **kwargs,
+            # **kwargs,
         )
 
     @classmethod
@@ -108,7 +104,7 @@ class ModelPackage(PackageRequest, Resource):
         dest: Union[str, PathLike, IO[AnyStr]],
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        """Dump the registry spec into a file in yaml format.
+        """Dump the model package spec into a file in yaml format.
 
         :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
         :type path: str

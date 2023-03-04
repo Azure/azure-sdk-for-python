@@ -32,18 +32,19 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
     model_ops = all_ops["models"]
     env_ops = all_ops["environments"]
     target_environment_name = "packaged-env"
-    target_environment_version = None
-    if not target_environment_version:
-        target_environment_version = _get_next_version_from_container(
-            name=target_environment_name,
-            container_operation=env_ops._containers_operations,
-            resource_group_name=env_ops._resource_group_name,
-            workspace_name=env_ops._workspace_name,
-        )
+    # might need later
+    # target_environment_version = None
+    # if not target_environment_version:
+    #     target_environment_version = _get_next_version_from_container(
+    #         name=target_environment_name,
+    #         container_operation=env_ops._containers_operations,
+    #         resource_group_name=env_ops._resource_group_name,
+    #         workspace_name=env_ops._workspace_name,
+    #     )
 
     package_request = PackageRequest(
         target_environment_name=target_environment_name,
-        target_environment_version=target_environment_version,
+        # target_environment_version=target_environment_version,
         base_environment_source=BaseEnvironmentId(
             base_environment_source_type="EnvironmentAsset", resource_id=deployment.environment
         ),
@@ -58,14 +59,6 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
     try:
         package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
         package_request.inferencing_server.code_configuration.code_id = "azureml:/" + deployment.code_configuration.code
-        module_logger.info(
-            f"Creating package with environment name: {target_environment_name}, version: {target_environment_version}"
-        )
-        import debugpy
-
-        debugpy.connect(("localhost", 5678))
-        debugpy.breakpoint()
-
         packaged_env = model_ops.begin_package(model_name, model_version, package_request=package_request)
     except Exception as e:
         raise
