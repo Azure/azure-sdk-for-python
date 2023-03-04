@@ -14,9 +14,15 @@
 import os
 
 from azure.purview.sharing import PurviewSharing
+from azure.identity import ClientSecretCredential
 
 endpoint = os.environ["ENDPOINT"]
-client = PurviewSharing(endpoint=endpoint)
+tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
+client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
+secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
+credential = ClientSecretCredential(tenant_id=str(tenant_id), client_id=str(client_id), client_secret=str(secret))
+
+client = PurviewSharing(endpoint=endpoint,credential=credential)
 # [END create_a_received_share_client]
 
 # Get all detached received shares

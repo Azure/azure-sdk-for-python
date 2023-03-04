@@ -14,10 +14,15 @@
 import os
 
 from azure.purview.sharing import PurviewSharing
-from azure.core.credentials import TokenCredential
+from azure.identity import ClientSecretCredential
 
 endpoint = os.environ["ENDPOINT"]
-client = PurviewSharing(endpoint=endpoint)
+tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
+client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
+secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
+credential = ClientSecretCredential(tenant_id=str(tenant_id), client_id=str(client_id), client_secret=str(secret))
+
+client = PurviewSharing(endpoint=endpoint, credential=credential)
 # [END create_a_share_client]
 
 # Create a sent share
@@ -100,7 +105,7 @@ from azure.purview.sharing.operations._operations import (
 )
 
 list_request = build_sent_shares_list_request(
-    reference_name=sent_share["properties"]["artifact"]["storeReference"]["referenceName"],
+    reference_name=str(sent_share["properties.artifact.storeReference.referenceName"]),
     orderby="properties/createdAt desc")
 
 list_response = client.send_request(list_request)
