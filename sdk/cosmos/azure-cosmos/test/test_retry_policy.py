@@ -288,7 +288,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         def __call__(self, func, *args, **kwargs):
             self.counter = self.counter + 1
-            if self.counter > 1:
+            if self.counter % 2 == 0:
                 return self.org_func(func, *args, **kwargs)
             else:
                 raise exceptions.CosmosHttpResponseError(
