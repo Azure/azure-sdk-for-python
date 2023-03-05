@@ -25,8 +25,7 @@ OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
 class ParameterizedCommand:
-    """Command component that contains the training command and supporting
-    parameters for the command.
+    """Command component that contains the training command and supporting parameters for the command.
 
     :param command: Command to be executed in training.
     :type command: str

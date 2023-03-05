@@ -13,10 +13,10 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
@@ -85,8 +85,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Command(BaseNode):
-    """Base class for command node, used for command component version
-    consumption.
+    """Base class for command node, used for command component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from builder function: command.
@@ -260,9 +259,7 @@ class Command(BaseNode):
     def identity(
         self,
     ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
-        """
-        Configuration of the hyperparameter identity.
-        """
+        """Configuration of the hyperparameter identity."""
         return self._identity
 
     @identity.setter
@@ -399,10 +396,9 @@ class Command(BaseNode):
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
     ) -> Sweep:
-        """Turn the command into a sweep node with extra sweep run setting. The
-        command component in current Command node will be used as its trial
-        component. A command node can sweep for multiple times, and the
-        generated sweep node will share the same trial component.
+        """Turn the command into a sweep node with extra sweep run setting. The command component in current Command
+        node will be used as its trial component. A command node can sweep for multiple times, and the generated sweep
+        node will share the same trial component.
 
         :param primary_metric: primary metric of the sweep objective, AUC e.g. The metric must be logged in running
             the trial component.

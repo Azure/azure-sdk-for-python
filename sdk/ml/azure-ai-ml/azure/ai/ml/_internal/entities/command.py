@@ -10,8 +10,8 @@ from azure.ai.ml import MpiDistribution, PyTorchDistribution, TensorFlowDistribu
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml._internal.entities.node import InternalBaseNode
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.core.fields import DistributionField
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
@@ -20,6 +20,7 @@ from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
 
 class Command(InternalBaseNode):
     """Node of internal command components in pipeline with specific run settings.
+
     Different from azure.ai.ml.entities.Command, type of this class is CommandComponent.
     """
 
