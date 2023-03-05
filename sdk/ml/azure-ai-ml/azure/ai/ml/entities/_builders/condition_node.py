@@ -15,8 +15,9 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 
 
 class ConditionNode(ControlFlowNode):
-    """
-    Conditional node in pipeline. Please do not directly use this class.
+    """Conditional node in pipeline.
+
+    Please do not directly use this class.
     """
 
     def __init__(self, condition, *, true_block=None, false_block=None, **kwargs):  # pylint: disable=unused-argument

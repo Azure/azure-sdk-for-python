@@ -12,7 +12,7 @@ from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCol
 
 
 class DataCollector:
-    """Data Capture deployment entity
+    """Data Capture deployment entity.
 
     :param collections: Mapping dictionary of strings mapped to DeploymentCollection entities.
     :type collections: Mapping[str, DeploymentCollection], optional

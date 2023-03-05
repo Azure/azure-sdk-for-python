@@ -85,8 +85,7 @@ class OnlineEndpoint(Endpoint):
         kind: Optional[str] = None,
         **kwargs,
     ):
-        """
-        Online endpoint entity.
+        """Online endpoint entity.
 
         Constructor for an Online endpoint entity.
 
@@ -339,8 +338,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
         kind: Optional[str] = None,
         **kwargs,
     ):
-        """
-        K8s Online endpoint entity.
+        """K8s Online endpoint entity.
 
         Constructor for K8s Online endpoint entity.
 
@@ -463,8 +461,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
         public_network_access: Optional[str] = None,
         **kwargs,
     ):
-        """
-        Managed Online endpoint entity.
+        """Managed Online endpoint entity.
 
         Constructor for Managed Online endpoint entity.
 
@@ -562,8 +559,7 @@ class EndpointAuthToken(RestTranslatableMixin):
     """
 
     def __init__(self, **kwargs):
-        """
-        Constuctor for Endpoint authentication token.
+        """Constuctor for Endpoint authentication token.
 
         :keyword access_token: Access token for endpoint authentication.
         :paramtype access_token: str

@@ -48,8 +48,8 @@ module_logger = ops_logger.module_logger
 class CodeOperations(_ScopeDependentOperations):
     """Represents a client for performing operations on code assets.
 
-    You should not instantiate this class directly. Instead, you should
-    create MLClient and use this client via the property MLClient.code
+    You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
+    property MLClient.code
     """
 
     def __init__(
