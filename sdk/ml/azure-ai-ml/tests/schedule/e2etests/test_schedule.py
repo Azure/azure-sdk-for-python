@@ -21,7 +21,6 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_D
     "mock_component_hash",
     "mock_snapshot_hash",
     "mock_anon_component_version",
-    "storage_account_guid_sanitizer",
 )
 @pytest.mark.pipeline_test
 class TestSchedule(AzureRecordedTestCase):
@@ -82,7 +81,6 @@ class TestSchedule(AzureRecordedTestCase):
         assert isinstance(job.identity, AmlTokenConfiguration)
         assert job.inputs["hello_string_top_level_input"]._data == "${{creation_context.trigger_time}}"
 
-    @pytest.mark.skip(reason="TODO (2258616): JSON token setup error for test proxy")
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
 
@@ -139,7 +137,6 @@ class TestSchedule(AzureRecordedTestCase):
         # assert rest_schedule.create_job.inputs["hello_string_top_level_input"] == "${{name}}"
         # assert rest_schedule.create_job.settings.continue_on_step_failure is True
 
-    @pytest.mark.skip(reason="TODO (225960): code asset authorization failure")
     def test_load_recurrence_schedule_no_pattern(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
 
@@ -161,7 +158,6 @@ class TestSchedule(AzureRecordedTestCase):
             "schedule": {"hours": [], "minutes": []},
         }
 
-    @pytest.mark.skip(reason="TODO (225960): code asset authorization failure")
     def test_load_recurrence_schedule_with_pattern(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
 
@@ -209,7 +205,6 @@ class TestSchedule(AzureRecordedTestCase):
         schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
         assert schedule_job_dict == rest_schedule_job_dict
 
-    @pytest.mark.skip(reason="TODO (225960): code asset authorization failure")
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
     )

@@ -1,7 +1,7 @@
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher, set_custom_default_matcher
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -145,6 +145,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         )
         assert job
 
+    @pytest.mark.usefixtures("mock_snapshot_hash", "mock_code_hash")
     def test_batch_invoke_outputs(
         self,
         client: MLClient,
@@ -153,6 +154,10 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         randstr: Callable[[str], str],
     ) -> None:
         set_bodiless_matcher()
+        # global header matcher in conftest isn't being applied, so calling here
+        set_custom_default_matcher(
+            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+        )
 
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
         endpoint_name = rand_batch_name("endpoint_name")

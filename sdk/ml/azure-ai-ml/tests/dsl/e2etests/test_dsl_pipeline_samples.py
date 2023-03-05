@@ -53,7 +53,6 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestDSLPipelineSamples(AzureRecordedTestCase):
-    
     @pytest.mark.e2etest
     def test_e2e_local_components(self, client: MLClient) -> None:
         set_bodiless_matcher()

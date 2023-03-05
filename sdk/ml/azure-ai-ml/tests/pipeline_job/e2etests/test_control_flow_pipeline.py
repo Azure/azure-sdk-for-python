@@ -42,9 +42,7 @@ class TestConditionalNodeInPipeline(AzureRecordedTestCase):
     pass
 
 
-class TestIfElse(TestConditionalNodeInPipeline):
-    
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
+class TestIfElse(TestConditionalNodeInPipeline):    
     def test_happy_path_if_else(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
 
@@ -144,7 +142,10 @@ class TestDoWhile(TestConditionalNodeInPipeline):
     @pytest.mark.disable_mock_code_hash
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
-        set_custom_default_matcher(ignored_headers=["x-ms-meta-version, x-ms-meta-name"])
+        # global header matcher in conftest isn't being applied, so calling here
+        set_custom_default_matcher(
+            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -316,9 +317,7 @@ def assert_control_flow_in_pipeline_component(client, component_path, pipeline_p
     assert pipeline_job_dict["properties"]["jobs"] == {}
 
 
-class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):
-    
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
+class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):    
     def test_if_else(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
 
