@@ -160,7 +160,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         ):
             client.jobs.create_or_update(pipeline_job)
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_pipeline_job_with_inline_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
 
@@ -915,8 +914,13 @@ class TestPipelineJob(AzureRecordedTestCase):
             "test_data": "${{parent.inputs.classification_test_data}}",
         }
 
+
     def test_pipeline_job_with_automl_forecasting(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
+        # global header matcher in conftest isn't being applied, so calling here
+        set_custom_default_matcher(
+            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_forecasting.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1040,6 +1044,10 @@ class TestPipelineJob(AzureRecordedTestCase):
         self, client: MLClient, randstr: Callable[[str], str]
     ):
         set_bodiless_matcher()
+        # global header matcher in conftest isn't being applied, so calling here
+        set_custom_default_matcher(
+            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multiclass_classification.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
