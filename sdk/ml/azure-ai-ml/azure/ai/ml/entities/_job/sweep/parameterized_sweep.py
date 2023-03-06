@@ -106,8 +106,7 @@ class ParameterizedSweep:
         timeout: Optional[int] = None,
         trial_timeout: Optional[int] = None,
     ) -> None:
-        """Set limits for Sweep node. Leave parameters as None if you don't
-        want to update corresponding values.
+        """Set limits for Sweep node. Leave parameters as None if you don't want to update corresponding values.
 
         :param max_concurrent_trials: maximum concurrent trial number.
         :type max_concurrent_trials: int

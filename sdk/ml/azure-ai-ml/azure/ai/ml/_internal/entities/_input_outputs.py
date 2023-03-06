@@ -17,9 +17,9 @@ _INPUT_TYPE_FLOAT_CAP = "Float"
 
 
 class InternalInput(Input):
-    """Internal input class for internal components only.
-    Comparing to the public Input class, this class has additional primitive
-    input types:
+    """Internal input class for internal components only. Comparing to the public Input class, this class has additional
+    primitive input types:
+
     - String
     - Integer
     - Float, float
@@ -96,7 +96,10 @@ class InternalInput(Input):
 
     @classmethod
     def _from_base(cls, _input: Union[Input, Dict]) -> Optional["InternalInput"]:
-        """Cast from Input or Dict to InternalInput. Do not guarantee to create a new object."""
+        """Cast from Input or Dict to InternalInput.
+
+        Do not guarantee to create a new object.
+        """
         if _input is None:
             return None
         if isinstance(_input, InternalInput):

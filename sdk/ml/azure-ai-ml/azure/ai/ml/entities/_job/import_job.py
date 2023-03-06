@@ -109,7 +109,7 @@ class FileImportSource(ImportSource):
 
 
 class ImportJob(Job, JobIOMixin):
-    """Import job
+    """Import job.
 
     :param name: Name of the job.
     :type name: str
