@@ -250,7 +250,7 @@ class MLClient:
             properties.update({"registry_name": registry_name})
 
         user_agent = None
-        if "user_agent" in kwargs:
+        user_agent = kwargs.get("user_agent", None)
             user_agent = kwargs.get("user_agent")
 
         app_insights_handler = get_appinsights_log_handler(
