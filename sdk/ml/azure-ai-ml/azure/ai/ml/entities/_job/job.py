@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase, JobService
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType, QueueSettings
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
