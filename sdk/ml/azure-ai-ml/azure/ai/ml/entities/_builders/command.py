@@ -386,6 +386,14 @@ class Command(BaseNode):
         else:
             self.limits = CommandJobLimits(timeout=timeout)
 
+    def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None):
+        if isinstance(self.queue_settings, QueueSettings):
+            self.queue_settings.job_tier = job_tier
+            self.queue_settings.priority = priority
+        else:
+            self.queue_settings = QueueSettings(job_tier=job_tier, priority=priority)
+
+
     def sweep(
         self,
         *,
