@@ -202,7 +202,6 @@ class Command(BaseNode):
         if isinstance(self.component, CommandComponent):
             self.resources = self.resources or self.component.resources
             self.distribution = self.distribution or self.component.distribution
-            self._queue_settings = self._queue_settings or self.component.queue_settings
 
         self._swept = False
         self._init = False

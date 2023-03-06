@@ -15,7 +15,7 @@ from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
-from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration, QueueSettings
+from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -326,7 +326,6 @@ class TestCommandComponentEntity:
             environment_variables=dict(foo="bar"),
             # Customers can still do this:
             resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_D2"),
-            queue_settings=QueueSettings(job_tier='standard'),
             limits=CommandJobLimits(timeout=300),
             inputs={
                 "float": 0.01,
@@ -347,7 +346,6 @@ class TestCommandComponentEntity:
                 "environment: azureml:my-env:1\n",
                 "code: azureml:./src\n",
                 "resources:\n  instance_count: 2",
-                "queue_settings:\n  job_tier: standard"
             ]:
                 assert piece in outstr
 

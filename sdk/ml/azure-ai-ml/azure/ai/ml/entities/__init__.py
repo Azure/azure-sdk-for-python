@@ -162,6 +162,7 @@ __all__ = [
     "CreatedByType",
     "ResourceConfiguration",
     "JobResourceConfiguration",
+    "QueueSettings",
     "JobService",
     "SshJobService",
     "TensorBoardJobService",

@@ -19,7 +19,6 @@ from azure.ai.ml.entities._job.distribution import (
 )
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
-from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._restclient.v2022_05_01.models import ComponentVersionData
@@ -88,7 +87,6 @@ class CommandComponent(Component, ParameterizedCommand):
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
         properties: Optional[Dict] = None,
-        queue_settings: Optional[QueueSettings] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -124,7 +122,6 @@ class CommandComponent(Component, ParameterizedCommand):
         self.environment = environment
         self.resources = resources
         self.distribution = distribution
-        self.queue_settings = queue_settings
 
         # check mutual exclusivity of promoted properties
         if self.resources is not None and instance_count is not None:
