@@ -182,10 +182,9 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         self.created_collection.create_item(body=document_definition_1)
         self.created_collection.create_item(body=document_definition_2)
-
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
-            original_execute_function = _retry_utility.ExecuteFunction
-            mf = self.MockExecuteFunctionConnectionReset(original_execute_function)
+            mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
 
             docs = self.created_collection.query_items(query="Select * from c", max_item_count=1, enable_cross_partition_query=True)
@@ -200,7 +199,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             else:
                 self.assertEqual(mf.counter, 18)
         finally:
-            _retry_utility.ExecuteFunction = original_execute_function
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         self.created_collection.delete_item(item=result_docs[0], partition_key=result_docs[0]['id'])
         self.created_collection.delete_item(item=result_docs[1], partition_key=result_docs[1]['id'])
@@ -211,10 +210,9 @@ class Test_retry_policy_tests(unittest.TestCase):
                                 'key': 'value'}
 
         created_document = self.created_collection.create_item(body=document_definition)
-
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
-            original_execute_function = _retry_utility.ExecuteFunction
-            mf = self.MockExecuteFunctionConnectionReset(original_execute_function)
+            mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
 
             doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
@@ -222,7 +220,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.assertEqual(mf.counter, 3)
 
         finally:
-            _retry_utility.ExecuteFunction = original_execute_function
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         self.created_collection.delete_item(item=created_document, partition_key=created_document['id'])
 
@@ -260,17 +258,18 @@ class Test_retry_policy_tests(unittest.TestCase):
                                'key': 'value'}
 
         created_document = self.created_collection.create_item(body=document_definition)
-        try:
-            original_execute_function = _retry_utility.ExecuteFunction
-            mf = self.MockExecuteFunctionTimeout(original_execute_function)
-            _retry_utility.ExecuteFunction = mf
+        self.original_execute_function = _retry_utility.ExecuteFunction
 
-            doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
-            self.assertEqual(doc['id'], document_definition['id'])
-        except exceptions.CosmosHttpResponseError as err:
-                self.assertEqual(err.status_code, 408)
+        try:
+            mf = self.MockExecuteFunctionTimeout(self.original_execute_function)
+            _retry_utility.ExecuteFunction = mf
+            try:
+                doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
+                self.assertEqual(doc['id'], document_definition['id'])
+            except exceptions.CosmosHttpResponseError as err:
+                    self.assertEqual(err.status_code, 408)
         finally:
-            _retry_utility.ExecuteFunction = original_execute_function
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         self.created_collection.delete_item(item=created_document, partition_key=created_document['id'])
 
