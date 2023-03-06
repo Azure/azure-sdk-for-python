@@ -31,7 +31,7 @@ class FeaturestoreEntity(Asset):
         self,
         *,
         name: str,
-        version: str = None,
+        version: str,
         index_columns: List[DataColumn],
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -100,6 +100,7 @@ class FeaturestoreEntity(Asset):
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,
             index_columns=[],
+            version="",
         )
         featurestoreEntity.latest_version = rest_object_details.latest_version
         return featurestoreEntity

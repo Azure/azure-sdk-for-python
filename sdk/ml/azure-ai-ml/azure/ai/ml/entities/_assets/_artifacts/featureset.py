@@ -131,6 +131,7 @@ class Featureset(Artifact):
             properties=rest_object_details.properties,
             entities=[],
             specification=FeaturesetSpecification(),
+            version="",
         )
         featureset.latest_version = rest_object_details.latest_version
         return featureset

@@ -145,7 +145,6 @@ from ._featureset.featureset_specification import FeaturesetSpecification
 from ._notification.notification import Notification
 from ._featureset.materialization_compute_resource import MaterializationComputeResource
 from ._featureset.materialization_settings import MaterializationSettings
-from ._featureset.featureset_materialization_operation import FeaturesetMaterializationOperation
 from ._featureset.materialization_type import MaterializationType
 from ._feature_store.feature_store import FeatureStore
 from ._feature_store.materialization_store import MaterializationStore
@@ -214,7 +213,6 @@ __all__ = [
     "MaterializationComputeResource",
     "MaterializationSettings",
     "MaterializationType",
-    "FeaturesetMaterializationOperation",
     "FeaturesetSpecification",
     "DataColumn",
     "DataColumnType",

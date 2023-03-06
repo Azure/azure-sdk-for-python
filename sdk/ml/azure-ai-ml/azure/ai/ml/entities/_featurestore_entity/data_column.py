@@ -42,7 +42,8 @@ class DataColumn(RestTranslatableMixin):
     :param name: The column name
     :type name: str, required
     :param type: Column data type
-    :type type: ~azure.ai.ml.entities.DataColumnType, optional"""
+    :type type: str, one of [string, integer, long, float, double, binary, datetime, boolean] or
+    ~azure.ai.ml.entities.DataColumnType, optional"""
 
     def __init__(self, *, name: str, type: DataColumnType = None, **kwargs):
         self.name = name
