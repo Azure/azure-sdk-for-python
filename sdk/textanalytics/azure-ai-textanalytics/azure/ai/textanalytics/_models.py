@@ -2994,10 +2994,10 @@ class SummaryContext(DictMixin):
     """
 
     offset: int
-    """Start position for the context. Use of different 'stringIndexType' values can
+    """Start position for the context. Use of different 'string_index_type' values can
      affect the offset returned. Required."""
     length: int
-    """The length of the context. Use of different 'stringIndexType' values can affect
+    """The length of the context. Use of different 'string_index_type' values can affect
      the length returned. Required."""
 
     def __init__(self, **kwargs: Any) -> None:
