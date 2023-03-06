@@ -8,9 +8,15 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -1669,7 +1675,7 @@ class Identity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[str] = None, **kwargs):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs):
         """
         :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
@@ -2310,7 +2316,7 @@ class ResourceModelWithAllowedPropertySetIdentity(Identity):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[str] = None, **kwargs):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs):
         """
         :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
