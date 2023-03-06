@@ -688,8 +688,6 @@ class TestCommandFunction:
             }
         )
         command_node = command(**test_command_params)
-        print("-----------------------")
-        print(command_node.queue_settings)
         rest_dict = command_node._to_rest_object()
         assert rest_dict["queue_settings"] == expected_queue_settings
 
