@@ -99,10 +99,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
     )
-    # TODO: REMOVE before the merge
-    add_uri_string_sanitizer(
-        target="https://master.api.azureml-test.ms/mferp/managementfrontend/", value="https://management.azure.com/"
-    )
 
     identity_json_paths = [
         ".systemData.createdBy",
