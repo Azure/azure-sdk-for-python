@@ -138,8 +138,6 @@ class TestSchedule(AzureRecordedTestCase):
         # assert rest_schedule.create_job.settings.continue_on_step_failure is True
 
     def test_load_recurrence_schedule_no_pattern(self, client: MLClient, randstr: Callable[[], str]):
-        set_bodiless_matcher()
-
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/hello_recurrence_schedule_no_pattern.yml"
         schedule = load_schedule(test_path, params_override=[*TRIGGER_ENDTIME_DICT, *params_override])
@@ -205,15 +203,12 @@ class TestSchedule(AzureRecordedTestCase):
         "enable_pipeline_private_preview_features",
     )
     def test_command_job_schedule(self, client: MLClient, randstr: Callable[[], str]):
-        set_bodiless_matcher()
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name, x-ms-meta-version", ignored_query_parameters="api-version"
-        )
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
             ignored_query_parameters="api-version",
-        )  # call to blobstore won't always be made, depends on if the asset is already cached in assetstore
+        )
 
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/local_cron_command_job.yml"
@@ -240,14 +235,12 @@ class TestSchedule(AzureRecordedTestCase):
         "enable_pipeline_private_preview_features",
     )
     def test_spark_job_schedule(self, client: MLClient, randstr: Callable[[], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name, x-ms-meta-version", ignored_query_parameters="api-version"
-        )
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
             ignored_query_parameters="api-version",
-        )  # call to blobstore won't always be made, depends on if the asset is already cached in assetstore
+        )
 
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/local_cron_spark_job.yml"

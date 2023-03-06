@@ -1,6 +1,6 @@
 import pytest
 from azure.ai.ml.dsl._group_decorator import group
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher, set_custom_default_matcher
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
 from azure.ai.ml import Input, MLClient, load_component, Output
@@ -145,8 +145,14 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
     
+    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_dsl_condition_pipeline_with_one_branch(self, client: MLClient):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"

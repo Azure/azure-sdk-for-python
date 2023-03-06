@@ -164,6 +164,10 @@ class TestDoWhile(TestConditionalNodeInPipeline):
     
     def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
+        # global header matcher in conftest isn't being applied, so calling here
+        set_custom_default_matcher(
+            excluded_headers="x-ms-meta-version", ignored_query_parameters="api-version"
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(

@@ -154,9 +154,11 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         randstr: Callable[[str], str],
     ) -> None:
         set_bodiless_matcher()
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher, set_custom_default_matcher
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
 
 from azure.ai.ml import MLClient, load_job
@@ -201,6 +201,13 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
     
     @pytest.mark.e2etest
     def test_env_public_docker_image(self, client: MLClient) -> None:
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
+
         from test_configs.dsl_pipeline.env_public_docker_image.pipeline import (
             generate_dsl_pipeline as env_public_docker_image,
         )

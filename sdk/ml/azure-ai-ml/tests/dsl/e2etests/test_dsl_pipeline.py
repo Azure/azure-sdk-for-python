@@ -301,9 +301,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
     @pytest.mark.usefixtures("mock_snapshot_hash")
     def test_data_input(self, client: MLClient) -> None:
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         parent_dir = str(tests_root_dir / "test_configs/dsl_pipeline/nyc_taxi_data_regression")
@@ -596,9 +598,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert expected_job == actual_job
 
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
@@ -1547,9 +1551,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
     @pytest.mark.usefixtures("mock_snapshot_hash", "mock_code_hash")
     def test_parallel_components_with_tabular_input(self, client: MLClient) -> None:
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
@@ -1587,10 +1593,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
     
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
@@ -1623,9 +1630,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
     def test_parallel_run_function(self, client: MLClient):
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name, x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         # command job with dict distribution
@@ -1743,7 +1752,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
     
     def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         inputs = {
@@ -1859,6 +1873,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
         set_bodiless_matcher()
+        # global header matcher in conftest isn't being applied, so calling here
+        set_custom_default_matcher(
+            excluded_headers="x-ms-meta-name", ignored_query_parameters="api-version"
+        )
 
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
@@ -2251,9 +2269,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
     @pytest.mark.usefixtures("mock_snapshot_hash")
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name, x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
@@ -2600,9 +2620,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             Randint,
             Uniform,
         )
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name, x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")

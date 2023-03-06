@@ -3,7 +3,7 @@ from typing import Callable
 
 import jwt
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live, set_custom_default_matcher
 from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, command, load_environment, load_job
@@ -260,6 +260,13 @@ class TestCommandJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_command_job_dependency_label_resolution(self, randstr: Callable[[], str], client: MLClient) -> None:
         """Checks that dependencies of the form azureml:name@label are resolved to a version"""
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
+
         from uuid import uuid4
 
         job_name = randstr("job_name")

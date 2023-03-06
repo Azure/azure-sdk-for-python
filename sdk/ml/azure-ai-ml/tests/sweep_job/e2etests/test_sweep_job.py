@@ -24,7 +24,6 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
     "mock_asset_name",
     "enable_environment_id_arm_expansion",
     "mock_snapshot_hash",
-    "storage_account_guid_sanitizer",
 )
 @pytest.mark.training_experiences_test
 class TestSweepJob(AzureRecordedTestCase):

@@ -135,41 +135,6 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture
-def storage_account_guid_sanitizer(test_proxy):
-    # masks blob storage account info in SAS uris
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='.blob.core.windows.net:443\\/([^/\\s"]{46,52})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='.blob.core.windows.net\\/([^/\\s"]{47,54})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000",
-        regex='skt=([^/\\s"]{24})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000",
-        regex='ske=([^/\\s"]{24})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='st=([^/\\s"]{25})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='se=([^/\\s"]{25})',
-        group_for_replace="1",
-    )
-
-
-@pytest.fixture
 def location(request):
     return request.config.getoption("--location")
 

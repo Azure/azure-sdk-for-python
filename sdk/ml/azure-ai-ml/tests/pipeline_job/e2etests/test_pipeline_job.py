@@ -160,12 +160,14 @@ class TestPipelineJob(AzureRecordedTestCase):
         ):
             client.jobs.create_or_update(pipeline_job)
 
+    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_pipeline_job_with_inline_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
             ignored_query_parameters="api-version",
-        )  # call to blobstore won't always be made, depends on if the asset is already cached in assetstore
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -393,11 +395,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         test_case_name,
         pipeline_samples_e2e_registered_train_components,  # Test depends on this being in the workspace
     ) -> None:
-        set_bodiless_matcher()
         set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
             ignored_query_parameters="api-version",
-        )  # call to blobstore won't always be made, depends on if the asset is already cached in assetstore
+        )
 
         params = [
             (
@@ -927,14 +929,12 @@ class TestPipelineJob(AzureRecordedTestCase):
 
 
     def test_pipeline_job_with_automl_forecasting(self, client: MLClient, randstr: Callable[[str], str]):
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
-        )
-        set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
             ignored_query_parameters="api-version",
-        )  # call to blobstore won't always be made, depends on if the asset is already cached in assetstore
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_forecasting.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1512,7 +1512,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert created_pipeline_job.settings.default_compute == singularity_compute_id
         assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
 
-    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_register_output_yaml(
         self,
         client: MLClient,

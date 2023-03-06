@@ -1,0 +1,34 @@
+name: office_component
+version: 1.0.7
+display_name: Tune
+description: A naive dummy train component
+is_deterministic: False
+tags: {category: Component Tutorial, contact: amldesigner@microsoft.com and shizs@microsoft.com}
+
+inputs:
+  num_epochs:
+    type: integer
+    optional: true
+  delay_seconds:
+    type: integer
+    optional: true
+  x1:
+    type: number
+    description: Simple example float input argument
+    optional: true
+  x2:
+    type: number
+    optional: true
+  resume_from:
+    type: string
+    optional: true
+outputs:
+  saved_model:
+    description: output path
+    type: path
+environment:
+  image: polymerprod.azurecr.io/polymercd/prod_official/azureml_base_cpu_openmpi312_ubuntu1804:latest
+  conda_file: conda.yaml
+command: >-
+        python run.py [--num_epochs {inputs.num_epochs}] [--delay_seconds {inputs.delay_seconds}]
+        [--x1 {inputs.x1}] [--x2 {inputs.x2}] [--resume-from {inputs.resume_from}] --saved_model {outputs.saved_model}
