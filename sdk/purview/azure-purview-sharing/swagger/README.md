@@ -31,7 +31,7 @@ namespace: azure.purview.sharing
 clear-output-folder: true
 no-namespace-folders: true
 python: true
-package-version: 1.0.0-beta.1
+package-version: 1.0.0b1
 rest-level-client: true
 add-credential: true
 credential-scopes: "https://purview.azure.net/.default"
