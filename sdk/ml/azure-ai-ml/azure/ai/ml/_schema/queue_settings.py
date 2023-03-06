@@ -5,15 +5,15 @@
 from marshmallow import fields, post_load
 from azure.ai.ml.constants._job.job import JobPriorityValues, JobTierNames
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
-from ..core.schema import PathAwareSchema
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
-class QueueSettingsSchema(PathAwareSchema):
+class QueueSettingsSchema(metaclass=PatchedSchemaMeta):
     job_tier = StringTransformedEnum(
-        allowed_values=JobTierNames.EntityNames,
+        allowed_values=JobTierNames.ALLOWED_NAMES,
         pass_original=True,
     )
     priority = StringTransformedEnum(
-        allowed_values=JobPriorityValues.EntityValues,
+        allowed_values=JobPriorityValues.ALLOWED_VALUES,
         pass_original=True,
     )
 

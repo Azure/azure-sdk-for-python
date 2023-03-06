@@ -62,7 +62,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
         
-         if self.priority and not self.priority in JobPriorityValues.ENTITY_TO_REST.keys():
+        if self.priority and not self.priority in JobPriorityValues.ENTITY_TO_REST.keys():
             msg = f"priority should be one of " f"{JobPriorityValues.ALLOWED_VALUES}, but received '{self.priority}'."
             raise ValidationException(
                 message=msg,
