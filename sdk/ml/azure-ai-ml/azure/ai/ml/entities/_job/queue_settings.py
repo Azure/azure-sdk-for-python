@@ -36,10 +36,9 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
     ):
         self.job_tier = job_tier
         self.priority = priority
-        self._validate_job_tier_name()
-        self._validate_job_priority_name()
 
     def _to_rest_object(self) -> RestQueueSettings:
+        self._validate()
         job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier, None) if self.job_tier else None
         priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority, None) if self.priority else None
         return RestQueueSettings(job_tier=job_tier, priority=priority)
@@ -52,7 +51,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
         priority = JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None) if obj.priority else None
         return cls(job_tier=job_tier, priority=priority)
 
-    def _validate_job_tier_name(self):
+    def _validate(self):
         if self.job_tier and not self.job_tier in JobTierNames.ENTITY_TO_REST.keys():
             msg = f"job_tier should be one of " f"{JobTierNames.ALLOWED_NAMES}, but received '{self.job_tier}'."
             raise ValidationException(
@@ -62,9 +61,8 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-
-    def _validate_job_priority_name(self):
-        if self.priority and not self.priority in JobPriorityValues.ENTITY_TO_REST.keys():
+        
+         if self.priority and not self.priority in JobPriorityValues.ENTITY_TO_REST.keys():
             msg = f"priority should be one of " f"{JobPriorityValues.ALLOWED_VALUES}, but received '{self.priority}'."
             raise ValidationException(
                 message=msg,
