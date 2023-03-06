@@ -258,7 +258,7 @@ class ServiceBusReceiver(
 
     next = __next__  # for python2.7
 
-    def _iter_next(self, wait_time=None):
+    def _iter_next(self, wait_time=None): # pylint: disable=protected-access
         try:
             self._receive_context.set()
             self._open()

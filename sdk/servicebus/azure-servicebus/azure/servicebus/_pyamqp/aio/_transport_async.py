@@ -48,7 +48,13 @@ import certifi
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
-from ..constants import DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS, TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL, TIMEOUT_INTERVAL, READ_TIMEOUT_INTERVAL
+from ..constants import (
+    DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
+    TLS_HEADER_FRAME, WEBSOCKET_PORT,
+    AMQP_WS_SUBPROTOCOL,
+    TIMEOUT_INTERVAL,
+    READ_TIMEOUT_INTERVAL,
+)
 from .._transport import (
     AMQP_FRAME,
     get_errno,

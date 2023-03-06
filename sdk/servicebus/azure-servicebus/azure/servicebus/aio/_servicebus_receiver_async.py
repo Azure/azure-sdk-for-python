@@ -247,7 +247,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         finally:
             self._receive_context.clear()
 
-    async def _iter_next(self, wait_time=None):
+    async def _iter_next(self, wait_time=None): # pylint: disable=protected-access
         try:
             self._receive_context.set()
             await self._open()
