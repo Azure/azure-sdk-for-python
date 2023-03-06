@@ -52,9 +52,8 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class OnlineDeploymentOperations(_ScopeDependentOperations):
     """OnlineDeploymentOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -340,8 +339,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return f"{self._workspace_name}-{name}-{random.randint(1, 10000000)}"
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location TODO[TASK 1260265]: can we cache this
-        information and only refresh when the operation_scope is changed?"""
+        """Get the workspace location TODO[TASK 1260265]: can we cache this information and only refresh when the
+        operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _get_local_endpoint_mode(self, vscode_debug):

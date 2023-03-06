@@ -159,6 +159,29 @@ class TestSchedule(AzureRecordedTestCase):
             "schedule": {"hours": [10], "minutes": [15], "week_days": ["Monday"]},
         }
 
+    def test_create_schedule_pipeline_with_output_binding(self, client: MLClient, randstr: Callable[[], str]):
+        params_override = [{"name": randstr("name")}]
+        test_path = "./tests/test_configs/schedule/schedule_pipeline_with_output_binding.yml"
+        schedule = load_schedule(test_path, params_override=params_override)
+        rest_schedule = client.schedules.begin_create_or_update(schedule).result(
+            timeout=LROConfigurations.POLLING_TIMEOUT
+        )
+        assert rest_schedule.name == schedule.name
+        rest_job = rest_schedule.create_job._to_dict()
+        assert rest_job["inputs"] == {
+            "int_param": "10",
+            "data_input": {
+                "mode": "ro_mount",
+                "type": "uri_file",
+                "path": "azureml:https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+            },
+        }
+        assert rest_job["outputs"] == {
+            "output1": {"mode": "rw_mount", "type": "uri_folder"},
+            "output2": {"mode": "rw_mount", "type": "uri_folder"},
+            "output3": {"mode": "rw_mount", "type": "uri_folder"},
+        }
+
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
     )

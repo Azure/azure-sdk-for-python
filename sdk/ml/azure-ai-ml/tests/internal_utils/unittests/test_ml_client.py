@@ -124,7 +124,7 @@ class TestMachineLearningClient:
 
         assert ml_client.workspaces._operation._client._base_url == mock_url
         assert ml_client.compute._operation._client._base_url == mock_url
-        assert ml_client.jobs._operation_2022_12_preview._client._base_url == mock_url
+        assert ml_client.jobs._operation_2023_02_preview._client._base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
     # @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())

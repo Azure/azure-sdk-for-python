@@ -27,9 +27,8 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class RegistryOperations:
     """RegistryOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -53,8 +52,7 @@ class RegistryOperations:
     @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
     @experimental
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
-        """List all registries that the user has access to in the current
-        resource group or subscription.
+        """List all registries that the user has access to in the current resource group or subscription.
 
         :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
@@ -118,8 +116,7 @@ class RegistryOperations:
         registry: Registry,
         **kwargs: Dict,
     ) -> LROPoller[Registry]:
-        """Create a new Azure Machine Learning Registry,
-        or try to update if it already exists.
+        """Create a new Azure Machine Learning Registry, or try to update if it already exists.
 
         Note: Due to service limitations we have to sleep for
         an additional 30~45 seconds AFTER the LRO Poller concludes

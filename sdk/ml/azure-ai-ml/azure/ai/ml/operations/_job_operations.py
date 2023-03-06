@@ -26,10 +26,10 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -139,15 +139,15 @@ class JobOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_12_2022_preview: ServiceClient122022Preview,
+        service_client_02_2023_preview: ServiceClient022023Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._operation_2022_12_preview = service_client_12_2022_preview.jobs
-        self._service_client = service_client_12_2022_preview
+        self._operation_2023_02_preview = service_client_02_2023_preview.jobs
+        self._service_client = service_client_02_2023_preview
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -250,7 +250,7 @@ class JobOperations(_ScopeDependentOperations):
             parent_job = self.get(parent_job_name)
             return self._runs_operations.get_run_children(parent_job.name)
 
-        return self._operation_2022_12_preview.list(
+        return self._operation_2023_02_preview.list(
             self._operation_scope.resource_group_name,
             self._workspace_name,
             cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
@@ -330,7 +330,7 @@ class JobOperations(_ScopeDependentOperations):
         tag = kwargs.pop("tag", None)
 
         if not tag:
-            return self._operation_2022_12_preview.begin_cancel(
+            return self._operation_2023_02_preview.begin_cancel(
                 id=name,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -343,7 +343,7 @@ class JobOperations(_ScopeDependentOperations):
         jobs = self.list(tag=tag)
         # TODO: Do we need to show error message when no jobs is returned for the given tag?
         for job in jobs:
-            result = self._operation_2022_12_preview.begin_cancel(
+            result = self._operation_2023_02_preview.begin_cancel(
                 id=job.name,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -545,7 +545,7 @@ class JobOperations(_ScopeDependentOperations):
             ):
                 self._set_headers_with_user_aml_token(kwargs)
 
-            result = self._operation_2022_12_preview.create_or_update(
+            result = self._operation_2023_02_preview.create_or_update(
                 id=rest_job_resource.name,  # type: ignore
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -579,7 +579,7 @@ class JobOperations(_ScopeDependentOperations):
                 if snapshot_id is not None:
                     job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-                result = self._operation_2022_12_preview.create_or_update(
+                result = self._operation_2023_02_preview.create_or_update(
                     id=rest_job_resource.name,  # type: ignore
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
@@ -599,7 +599,7 @@ class JobOperations(_ScopeDependentOperations):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
 
-        self._operation_2022_12_preview.create_or_update(
+        self._operation_2023_02_preview.create_or_update(
             id=job_object.name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
@@ -841,7 +841,7 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self._operation_2022_12_preview.get(
+        return self._operation_2023_02_preview.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,

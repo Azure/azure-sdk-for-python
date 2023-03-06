@@ -62,9 +62,8 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class ModelOperations(_ScopeDependentOperations):
     """ModelOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     # pylint: disable=unused-argument
@@ -440,8 +439,7 @@ class ModelOperations(_ScopeDependentOperations):
     def _get_latest_version(self, name: str) -> Model:
         """Returns the latest version of the asset with the given name.
 
-        Latest is defined as the most recently created, not the most
-        recently updated.
+        Latest is defined as the most recently created, not the most recently updated.
         """
         result = _get_latest(
             name,
@@ -456,8 +454,7 @@ class ModelOperations(_ScopeDependentOperations):
         self, model: Model, name: Optional[str] = None, version: Optional[str] = None
     ) -> WorkspaceAssetReference:
 
-        """Returns WorkspaceAssetReference
-        to copy a registered model to registry given the asset id
+        """Returns WorkspaceAssetReference to copy a registered model to registry given the asset id.
 
         :param model: Registered model
         :type model: Model

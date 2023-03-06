@@ -43,9 +43,8 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class BatchDeploymentOperations(_ScopeDependentOperations):
     """BatchDeploymentOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -211,8 +210,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
     @distributed_trace
     @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str, *, name: Optional[str] = None) -> ItemPaged[BatchJob]:
-        """List jobs under the provided batch endpoint deployment. This is only
-        valid for batch endpoint.
+        """List jobs under the provided batch endpoint deployment. This is only valid for batch endpoint.
 
         :param endpoint_name: Name of endpoint.
         :type endpoint_name: str
@@ -241,14 +239,14 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             return list(result)
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location TODO[TASK 1260265]: can we cache this
-        information and only refresh when the operation_scope is changed?"""
+        """Get the workspace location TODO[TASK 1260265]: can we cache this information and only refresh when the
+        operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _validate_component(self, deployment: Deployment, orchestrators: OperationOrchestrator) -> None:
-        """Validates that the value provided is associated to an existing component
-        or otherwise we will try to create an anonymous component that will be use
-        for batch deployment
+        """Validates that the value provided is associated to an existing component or otherwise we will try to create
+        an anonymous component that will be use for batch deployment.
+
         :param deployment: Batch deployment
         :type deployment: ~azure.ai.ml.entities._deployment.deployment.Deployment
         :param orchestrators: Operation Orchestrator

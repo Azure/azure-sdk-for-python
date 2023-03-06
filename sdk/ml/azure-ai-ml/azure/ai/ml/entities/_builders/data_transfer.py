@@ -83,8 +83,7 @@ def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
 
 
 class DataTransfer(BaseNode):
-    """Base class for data transfer node, used for data transfer component version
-    consumption.
+    """Base class for data transfer node, used for data transfer component version consumption.
 
     You should not instantiate this class directly.
     """
@@ -230,7 +229,6 @@ class DataTransferCopy(DataTransfer):
         return data_transfer_job
 
     def _to_job(self) -> DataTransferCopyJob:
-
         return DataTransferCopyJob(
             experiment_name=self.experiment_name,
             name=self.name,
@@ -400,7 +398,6 @@ class DataTransferImport(DataTransfer):
         return data_transfer_job
 
     def _to_job(self) -> DataTransferImportJob:
-
         return DataTransferImportJob(
             experiment_name=self.experiment_name,
             name=self.name,
@@ -552,7 +549,6 @@ class DataTransferExport(DataTransfer):
         return data_transfer_job
 
     def _to_job(self) -> DataTransferExportJob:
-
         return DataTransferExportJob(
             experiment_name=self.experiment_name,
             name=self.name,
