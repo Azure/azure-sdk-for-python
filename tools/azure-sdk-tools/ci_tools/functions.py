@@ -59,64 +59,6 @@ omit_function_dict = {
     "Omit_management": omit_mgmt,
 }
 
-
-UPPER = ["<","<="]
-LOWER = [">",">="]
-UNDETERMINED = ["==", "!="]
-
-
-class SortableSpecifierSet:
-    def trim_spec(self, spec):
-        """
-        Expected inputs
-        ">= 2.7.8"
-        "<= 0.16.3a123"
-        "!= 1.0.0"
-        "!= 1.1"
-
-        Should return the bare version value.
-        """
-        matcher = re.compile(r"[\<\>\=\!\~][\<\>\=]?[\=]?")
-        return matcher.sub('', spec, 1).strip()
-
-    def _get_sort_value(self, spec):
-        """
-        Returns the "limiting" part of a spec. Given an input like <2.0.0, >=0.7.16,
-
-        The most limiting is the lower bound, followed by the middle, followed by upper bound. At least for the
-        purposes of this little function.
-
-        This is primarily used to sort SpecifierSets in ascending order, from most restrictive to least.
-        """
-
-        # "<2.0.0, != 1.1.2, == 1.1.3" -> ["<2.0.0", "!=1.1.2", "1.1.3"]
-        # ">=1.1.3, <2.0.0" -> [">=1.1.3", "<2.0.0"]
-        # "<2.0.0,>=1.1.3" -> ["<2.0.0", ">=1.1.3"]
-        individual_specs = spec.split(",")
-
-        lower_specs = [individual_spec for individual_spec in individual_specs if any([individual_spec.startswith(operator) for operator in LOWER])]
-        upper_specs = [individual_spec for individual_spec in individual_specs if any([individual_spec.startswith(operator) for operator in UPPER])]
-        undetermined_specs = [individual_spec for individual_spec in individual_specs if any([individual_spec.startswith(operator) for operator in UNDETERMINED])]
-
-        if lower_specs:
-            result = str(sorted([Version(self.trim_spec(lower_spec)) for lower_spec in lower_specs])[0])
-            return result
-
-        if undetermined_specs:
-            result = str(sorted([Version(self.trim_spec(undetermined_spec)) for undetermined_spec in undetermined_specs])[0])
-            return result
-
-        if upper_specs:
-            result = str(sorted([Version(self.trim_spec(upper_spec)) for upper_spec in upper_specs])[0])
-            return result
-       
-        return self.trim_spec(spec)
-
-    def __init__(self, full_spec):
-        self.full_spec = full_spec
-        self.sort_spec = Version(self._get_sort_value(full_spec))
-
-
 def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     """
     This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
@@ -471,26 +413,6 @@ def find_whl(package_name: str, version: str, whl_directory: str) -> str:
         exit(1)
 
     return whls[0]
-
-def sort_spec_list(specs: List[str]) -> List[SortableSpecifierSet]:
-    """
-    Sorts a given set of specifiers, each unit of which being sorted by it's most restrictive version spec.
-
-    EG:
-        ['!=0.6.2', '>=0.6.2,>=0.6.1,!=0.6.3,!=0.6.4']
-            -> ['>=0.6.2,>=0.6.1,!=0.6.3,!=0.6.4', '!=0.6.2']
-        0.6.1 being most restrictive of second specifier in list.
-    """
-    def sortFunc(x: SortableSpecifierSet):
-        return x.sort_spec
-
-    if specs:
-        inputs = [SortableSpecifierSet(spec) for spec in specs if spec]
-        return sorted(inputs, key=sortFunc)
-    else:
-        return []
-
-
 
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.

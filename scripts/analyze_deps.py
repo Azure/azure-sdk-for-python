@@ -18,7 +18,6 @@ import textwrap
 
 from typing import List
 from pypi_tools.pypi import PyPIClient
-from ci_tools.functions import sort_spec_list, SortableSpecifierSet
 from ci_tools.parsing import parse_require
 
 
@@ -329,13 +328,11 @@ if __name__ == "__main__":
 
     for package in dependencies:
         speclist = dependencies[package].keys()
-        sorted_speclist = sort_spec_list(speclist)
         dep_versions = get_known_versions(package) # todo: include latest from repo as well
         remaining_dep_versions = list(dep_versions)
 
-        # walking ascending order (least to most constrictive)
-        for spec in sorted_speclist:
-            spec = SpecifierSet(spec.full_spec)
+        for spec in speclist:
+            spec = SpecifierSet(spec)
 
             previous_remaining_dep_versions = list(remaining_dep_versions)
             remaining_dep_versions = [version for version in remaining_dep_versions if str(version) in spec]
@@ -350,11 +347,6 @@ if __name__ == "__main__":
                     for specifier in dependencies[package].keys():
                         print(f"{dependencies[package][specifier]} take a dependency on specifier {specifier}")
                     print(f"Resolve conflicts in reqs for \"{package}\" and re-run.")
-
-                breakpoint()
-
-
-            
 
     # if frozen:
     #     flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
