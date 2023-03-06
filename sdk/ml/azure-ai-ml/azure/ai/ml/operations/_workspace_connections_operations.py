@@ -24,9 +24,8 @@ module_logger = logging.getLogger(__name__)
 class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     """WorkspaceConnectionsOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(

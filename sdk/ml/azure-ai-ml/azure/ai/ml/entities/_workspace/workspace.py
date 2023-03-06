@@ -179,7 +179,6 @@ class Workspace(Resource):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> "Workspace":
-
         if not rest_obj:
             return None
         customer_managed_key = (

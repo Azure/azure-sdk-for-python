@@ -33,8 +33,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Parallel(BaseNode):
-    """Base class for parallel node, used for parallel component version
-    consumption.
+    """Base class for parallel node, used for parallel component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from builder function: parallel.
