@@ -531,6 +531,7 @@ class Command(BaseNode):
             "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             "services": get_rest_dict_for_node_attrs(self.services),
             "identity": self.identity._to_dict() if self.identity else None,
+            "queue_settings": get_rest_dict_for_node_attrs(self.queue_settings, clear_empty_value=True)
         }.items():
             if value is not None:
                 rest_obj[key] = value
@@ -677,6 +678,7 @@ class Command(BaseNode):
             node.limits = copy.deepcopy(self.limits)
             node.distribution = copy.deepcopy(self.distribution)
             node.resources = copy.deepcopy(self.resources)
+            node.queue_settings = copy.deepcopy(self.queue_settings)
             node.services = copy.deepcopy(self.services)
             node.identity = copy.deepcopy(self.identity)
             return node
