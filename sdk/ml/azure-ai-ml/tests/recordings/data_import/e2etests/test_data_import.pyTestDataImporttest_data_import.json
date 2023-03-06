@@ -1,0 +1,163 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1079",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "description": "data_import_my_azuresqldb_asset",
+          "properties": {
+            "azureml.materializationAssetName": "my_azuresqldb_asset"
+          },
+          "tags": {},
+          "displayName": "data_import_my_azuresqldb_asset",
+          "experimentName": "data_import_my_azuresqldb_asset",
+          "isArchived": false,
+          "jobType": "Pipeline",
+          "inputs": {},
+          "jobs": {
+            "data_import_my_azuresqldb_asset": {
+              "type": "data_transfer",
+              "task": "import_data",
+              "source": {
+                "type": "database",
+                "query": "select * from region",
+                "connection": "azureml:my_azuresqldb_connection"
+              },
+              "display_name": "data_import_my_azuresqldb_asset",
+              "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
+              "outputs": {
+                "sink": {
+                  "uri": "azureml://datastores/workspaceblobstore/paths/{name}",
+                  "job_output_type": "mltable",
+                  "name": "my_azuresqldb_asset"
+                }
+              },
+              "_source": "BUILTIN",
+              "componentId": "azureml://registries/azureml-dev/components/import_data_database/versions/0.0.1"
+            }
+          },
+          "outputs": {},
+          "settings": {
+            "force_rerun": true,
+            "_source": "CLASS"
+          }
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "2458",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 04 Mar 2023 17:16:02 GMT",
+        "Expires": "-1",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-77a768c16dccf36b76f68d283a64790c-17f112882b45e4d7-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "cb419d93-7c09-45e8-b365-1d21cc0f8b3d",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230304T171603Z:cb419d93-7c09-45e8-b365-1d21cc0f8b3d",
+        "x-request-time": "4.352"
+      },
+      "ResponseBody": {
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
+        "name": "000000000000000000000",
+        "type": "Microsoft.MachineLearningServices/workspaces/jobs",
+        "properties": {
+          "description": "data_import_my_azuresqldb_asset",
+          "tags": {},
+          "properties": {
+            "azureml.materializationAssetName": "my_azuresqldb_asset",
+            "azureml.DevPlatv2": "true",
+            "azureml.runsource": "azureml.PipelineRun",
+            "runSource": "MFE",
+            "runType": "HTTP",
+            "azureml.parameters": "{}",
+            "azureml.continue_on_step_failure": "False",
+            "azureml.continue_on_failed_optional_input": "True",
+            "azureml.enforceRerun": "True",
+            "azureml.defaultDataStoreName": "workspaceblobstore",
+            "azureml.pipelineComponent": "pipelinerun"
+          },
+          "displayName": "data_import_my_azuresqldb_asset",
+          "status": "Preparing",
+          "experimentName": "data_import_my_azuresqldb_asset",
+          "services": {
+            "Tracking": {
+              "jobServiceType": "Tracking",
+              "port": null,
+              "endpoint": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            },
+            "Studio": {
+              "jobServiceType": "Studio",
+              "port": null,
+              "endpoint": "https://ml.azure.com/runs/000000000000000000000?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "status": null,
+              "errorMessage": null,
+              "properties": null,
+              "nodes": null
+            }
+          },
+          "computeId": null,
+          "isArchived": false,
+          "identity": null,
+          "componentId": null,
+          "notificationSetting": null,
+          "jobType": "Pipeline",
+          "settings": {
+            "force_rerun": true,
+            "_source": "CLASS"
+          },
+          "jobs": {
+            "data_import_my_azuresqldb_asset": {
+              "type": "data_transfer",
+              "task": "import_data",
+              "source": {
+                "type": "database",
+                "query": "select * from region",
+                "connection": "azureml:my_azuresqldb_connection"
+              },
+              "display_name": "data_import_my_azuresqldb_asset",
+              "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
+              "outputs": {
+                "sink": {
+                  "uri": "azureml://datastores/workspaceblobstore/paths/{name}",
+                  "job_output_type": "mltable",
+                  "name": "my_azuresqldb_asset"
+                }
+              },
+              "_source": "BUILTIN",
+              "componentId": "azureml://registries/azureml-dev/components/import_data_database/versions/0.0.1"
+            }
+          },
+          "inputs": {},
+          "outputs": {},
+          "sourceJobId": null
+        },
+        "systemData": {
+          "createdAt": "2023-03-04T17:16:02.9271689\u002B00:00",
+          "createdBy": "Firstname Lastname",
+          "createdByType": "User"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

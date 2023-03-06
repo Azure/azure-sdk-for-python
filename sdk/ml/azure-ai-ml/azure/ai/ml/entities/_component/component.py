@@ -56,8 +56,7 @@ class Component(
     YamlTranslatableMixin,
     SchemaValidatableMixin,
 ):
-    """Base class for component version, used to define a component. Can't be
-    instantiated directly.
+    """Base class for component version, used to define a component. Can't be instantiated directly.
 
     :param name: Name of the resource.
     :type name: str
@@ -418,8 +417,7 @@ class Component(
     def _get_anonymous_hash(self) -> str:
         """Return the name of anonymous component.
 
-        same anonymous component(same code and interface) will have same
-        name.
+        same anonymous component(same code and interface) will have same name.
         """
         component_interface_dict = self._to_dict()
         # omit version since anonymous component's version is random guid
@@ -535,8 +533,8 @@ class Component(
     @contextmanager
     def _resolve_local_code(self) -> Optional[Code]:
         """Try to create a Code object pointing to local code and yield it.
-        If there is no local code to upload, yield None.
-        Otherwise, yield a Code object pointing to the code.
+
+        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
         """
         if not hasattr(self, "code"):
             yield None

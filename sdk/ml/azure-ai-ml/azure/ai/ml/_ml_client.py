@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=client-accepts-api-version-keyword,too-many-statements,too-many-instance-attributes
+# pylint: disable=client-accepts-api-version-keyword,too-many-statements,too-many-instance-attributes,too-many-lines
 
 import json
 import logging
@@ -90,6 +90,7 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    FeatureStoreOperations,
     JobOperations,
     ModelOperations,
     OnlineDeploymentOperations,
@@ -335,6 +336,16 @@ class MLClient:
             self._credential,
             **app_insights_handler_kwargs,
         )
+        self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
+
+        self._featurestores = FeatureStoreOperations(
+            self._operation_scope,
+            self._rp_service_client,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
@@ -361,7 +372,7 @@ class MLClient:
             self._operation_container,
             self._credential,
         )
-        self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
+
         self._compute = ComputeOperations(
             self._operation_scope,
             self._operation_config,
@@ -465,18 +476,19 @@ class MLClient:
         self._jobs = JobOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_12_2022_preview,
+            self._service_client_02_2023_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
         )
+        self._data._job_operation = self._jobs
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
         self._schedules = ScheduleOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2022_preview,
+            self._service_client_12_2022_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
@@ -610,6 +622,15 @@ class MLClient:
         :rtype: RegistryOperations
         """
         return self._registries
+
+    @property
+    @experimental
+    def featurestores(self) -> FeatureStoreOperations:
+        """A collection of featurestore related operations.
+        :return: Featurestore operations
+        :rtype: FeatureStoreOperations
+        """
+        return self._featurestores
 
     @property
     def connections(self) -> WorkspaceConnectionsOperations:

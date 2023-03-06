@@ -22,8 +22,7 @@ class Image(object):
 
 
 class Build(object):
-    """Python object representation of devcontainer build.dockerfile
-    property."""
+    """Python object representation of devcontainer build.dockerfile property."""
 
     def __init__(
         self,

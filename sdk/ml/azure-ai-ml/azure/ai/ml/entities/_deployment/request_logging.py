@@ -9,11 +9,10 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
 class RequestLogging:
-    """Request Logging deployment entity
+    """Request Logging deployment entity.
 
     :param capture_headers: Request payload header.
     :type capture_headers: list[str]
-
     """
 
     # pylint: disable=unused-argument,no-self-use

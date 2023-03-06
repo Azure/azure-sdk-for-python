@@ -20,8 +20,7 @@ from .._schema.component import NodeType
 
 
 class InternalBaseNode(BaseNode):
-    """Base class for node of internal components in pipeline. Can be
-    instantiated directly.
+    """Base class for node of internal components in pipeline. Can be instantiated directly.
 
     :param type: Type of pipeline node
     :type type: str
@@ -177,9 +176,10 @@ class HDInsight(InternalBaseNode):
 
     @property
     def driver_memory(self) -> str:
-        """Amount of memory to use for the driver process. It's the same format as JVM memory
-        strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte, megabyte, gigabyte
-        and terabyte respectively. Example values are 10k, 10m and 10g.
+        """Amount of memory to use for the driver process.
+
+        It's the same format as JVM memory strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte,
+        megabyte, gigabyte and terabyte respectively. Example values are 10k, 10m and 10g.
         """
         return self._driver_memory
 
@@ -198,9 +198,10 @@ class HDInsight(InternalBaseNode):
 
     @property
     def executor_memory(self) -> str:
-        """Amount of memory to use per executor process. It's the same format as JVM memory strings.
-        Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte, megabyte, gigabyte
-        and terabyte respectively. Example values are 10k, 10m and 10g.
+        """Amount of memory to use per executor process.
+
+        It's the same format as JVM memory strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte,
+        megabyte, gigabyte and terabyte respectively. Example values are 10k, 10m and 10g.
         """
         return self._executor_memory
 
