@@ -96,6 +96,7 @@ class FeaturestoreEntity(Asset):
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,
             index_columns=[],
+            version="",
         )
         featurestoreEntity.latest_version = rest_object_details.latest_version
         return featurestoreEntity
