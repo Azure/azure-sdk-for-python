@@ -25,7 +25,6 @@ from ._helpers import (
     _parse_next_link,
     _serialize_manifest,
     _validate_digest,
-    _get_stream_size,
     OCI_MANIFEST_MEDIA_TYPE,
     SUPPORTED_API_VERSIONS,
     AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
@@ -45,8 +44,8 @@ if TYPE_CHECKING:
 def _return_response_and_deserialized(pipeline_response, deserialized, _):
     return pipeline_response, deserialized
 
-def _return_deserialized(_, deserialized, __):
-    return deserialized
+def _return_deserialized_and_headers(_, deserialized, response_headers):
+    return deserialized, response_headers
 
 def _return_response_headers(_, __, response_headers):
     return response_headers
@@ -802,15 +801,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 cls=_return_response_headers,
                 **kwargs
             )
-
             digest = response_headers['Docker-Content-Digest']
+            if not _validate_digest(data, digest):
+                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
         except ValueError:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.")
-            if not _validate_digest(data, digest):
-                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
             raise
-
         return digest
 
     @distributed_trace
@@ -830,6 +827,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 repository, cls=_return_response_headers, **kwargs
             ))
             digest, location = self._upload_blob_chunk(start_upload_response_headers['Location'], data, **kwargs)
+            if not _validate_digest(data, digest):
+                raise ValueError("The digest in the response does not match the digest of the uploaded blob.")
             complete_upload_response_headers = cast(
                 Dict[str, str],
                 self._client.container_registry_blob.complete_upload(
@@ -839,28 +838,26 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     **kwargs
                 )
             )
-            digest = complete_upload_response_headers['Docker-Content-Digest']
         except ValueError:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.")
-            if not _validate_digest(data, digest):
-                raise ValueError("The digest in the response does not match the digest of the uploaded blob.")
             raise
-        return digest
+        return complete_upload_response_headers['Docker-Content-Digest']
 
     def _upload_blob_chunk(self, location: str, data: IO, **kwargs) -> Tuple[str, str]:
-        hasher = hashlib.sha256()       
+        hasher = hashlib.sha256()
         buffer = data.read(DEFAULT_CHUNK_SIZE)
         while len(buffer) > 0:
             response_headers = cast(Dict[str, str], self._client.container_registry_blob.upload_chunk(
                 location,
-                data,
+                buffer,
                 cls=_return_response_headers,
                 **kwargs
             ))
+            location = response_headers['Location']
             hasher.update(buffer)
             buffer = data.read(DEFAULT_CHUNK_SIZE)
-        return hasher.hexdigest(), response_headers['Location']
+        return "sha256:" + hasher.hexdigest(), location
 
     @distributed_trace
     def download_manifest(self, repository, tag_or_digest, **kwargs):
@@ -889,70 +886,92 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             digest = response.http_response.headers['Docker-Content-Digest']
             manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
             manifest_stream = _serialize_manifest(manifest)
+            if not _validate_digest(manifest_stream, digest):
+                raise ValueError("The requested digest does not match the digest of the received manifest.")
         except ValueError:
             if repository is None or tag_or_digest is None:
                 raise ValueError("The parameter repository and tag_or_digest cannot be None.")
-            if not _validate_digest(manifest_stream, digest):
-                raise ValueError("The requested digest does not match the digest of the received manifest.")
             raise
-
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @overload
-    def download_blob(self, repository: str, digest: str, destination: str, **kwargs) -> DownloadBlobResult:
+    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobResult:
+        """Download a blob that is part of an artifact to memory.
+
+        :param str repository: Name of the repository.
+        :param str digest: The digest of the blob to download.
+        :returns: DownloadBlobResult
+        :rtype: ~azure.containerregistry.DownloadBlobResult
+        :raises ValueError: If the parameter repository or digest is None.
+        """
+
+    @overload
+    def download_blob(self, repository: str, digest: str, destination: str, **kwargs) -> None:
         """Download a blob that is part of an artifact to a file in destination.
 
         :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
-        :param str destination: The destination of the blob to download.
-        :returns: DownloadBlobResult or None
-        :rtype: ~azure.containerregistry.DownloadBlobResult or None
-        :raises ValueError: If the parameter repository or digest is None.
-        """
-
-    @overload
-    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobResult:
-        """Download a blob that is part of an artifact into memory.
-
-        :param str repository: Name of the repository.
-        :param str digest: The digest of the blob to download.
-        :returns: DownloadBlobResult or None
-        :rtype: ~azure.containerregistry.DownloadBlobResult or None
+        :param str destination: The destination of the blob download to.
+        :returns: None
         :raises ValueError: If the parameter repository or digest is None.
         """
 
     @distributed_trace
-    def download_blob(self, *args: str, **kwargs) -> DownloadBlobResult:
+    def download_blob(self, *args: str, **kwargs) -> Union[DownloadBlobResult, None]:
         repository = args[0]
         digest = args[1]
         if len(args) == 2:
             try:
-                deserialized = self._client.container_registry_blob.get_blob( # type: ignore
-                    repository, digest, cls=_return_deserialized, **kwargs
+                deserialized = self._client.container_registry_blob.get_blob(
+                    repository, digest, **kwargs
                 )
                 blob_content = b''
                 for chunk in deserialized:
                     if chunk:
                         blob_content += chunk
                 blob_stream = BytesIO(blob_content)
+                if not _validate_digest(blob_stream, digest):
+                    raise ValueError("The requested digest does not match the digest of the received blob.")
             except ValueError:
                 if repository is None or digest is None:
                     raise ValueError("The parameter repository and digest cannot be None.")
-                if not _validate_digest(blob_stream, digest):
-                    raise ValueError("The requested digest does not match the digest of the received blob.")
                 raise
             return DownloadBlobResult(data=blob_stream, digest=digest)
         else:
             destination = args[2]
-            self._download_blob_chunk(repository, digest, destination)
+            self._download_blob_chunk(repository, digest, destination, **kwargs)
     
-    def _download_blob_chunk(self, repository: str, digest: str, destination: str) -> None:
+    def _download_blob_chunk(self, repository: str, digest: str, destination: str, **kwargs) -> None:
         import datetime, os
         file_name = datetime.datetime.now().strftime("%Y-%m-%d%H%M%S")
+        downloaded = 0
+        blob_size = None
+        hasher = hashlib.sha256()
         with open(os.path.join(destination, file_name), 'wb') as file:
-            chunk = self._client.container_registry_blob.get_chunk(repository, digest, DEFAULT_CHUNK_SIZE)
-            file.write(chunk)
-            file.flush()
+            try:
+                while(True):
+                    end_range = downloaded + DEFAULT_CHUNK_SIZE
+                    range = f"bytes={downloaded}-{end_range}"
+                    deserialized, headers = self._client.container_registry_blob.get_chunk(
+                        repository, digest, range, cls=_return_deserialized_and_headers, **kwargs
+                    )
+                    if blob_size is None:
+                        blob_size = headers["Content-Range"].split("/")[1]
+                    downloaded += headers["Content-Length"]
+                    for chunk in deserialized:
+                        if chunk:
+                            file.write(chunk)
+                            hasher.update(chunk)
+                    if(str(downloaded) == blob_size):
+                        break
+                computed_digest = "sha256:" + hasher.hexdigest()
+                if computed_digest != digest:
+                    raise ValueError("The requested digest does not match the digest of the received blob.")
+                file.flush()
+            except ValueError:
+                if repository is None or digest or destination is None:
+                    raise ValueError("The parameter repository, digest and destination cannot be None.")
+                raise
 
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):

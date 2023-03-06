@@ -139,9 +139,9 @@ def _deserialize_manifest(data):
 
 def _compute_digest(data):
     # type: (IO) -> str
-    position = data.tell()
+    data.seek(0)
     value = data.read()
-    data.seek(position)
+    data.seek(0)
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
 def _validate_digest(data, digest):
