@@ -151,7 +151,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             name=featureset.name,
-            version=featureset.version if featureset.version else "1",
+            version=featureset.version,
             body=featureset_resource,
         )
 

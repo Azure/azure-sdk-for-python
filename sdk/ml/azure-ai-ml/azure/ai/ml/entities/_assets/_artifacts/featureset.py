@@ -29,10 +29,10 @@ class Featureset(Artifact):
     def __init__(
         self,
         *,
-        name: str = None,
+        name: str,
+        version: str,
         entities: List[str],
         specification: FeaturesetSpecification,
-        version: Optional[str] = None,
         stage: Optional[str] = None,
         description: Optional[str] = None,
         materialization_settings: Optional[MaterializationSettings] = None,
