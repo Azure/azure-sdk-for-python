@@ -45,7 +45,7 @@ class FeaturestoreEntity(Asset):
         :param version: Version of the resource.
         :type version: str
         :param index_columns: Specifies index columns.
-        :type index_columns: list[~azure.mgmt.machinelearningservices.models.IndexColumn]
+        :type index_columns: list[~azure.ai.ml.entities.DataColumn]
         :param description: Description of the resource.
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
