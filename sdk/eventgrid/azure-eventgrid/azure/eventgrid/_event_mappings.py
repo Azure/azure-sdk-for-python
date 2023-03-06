@@ -88,6 +88,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsChatThreadWithUserDeletedEventName = 'Microsoft.Communication.ChatThreadWithUserDeleted'
 
+    AcsEmailDeliveryReportReceivedEventName = 'Microsoft.Communication.EmailDeliveryReportReceived'
+
+    AcsEmailEngagementTrackingReportReceivedEventName = 'Microsoft.Communication.EmailEngagementTrackingReportReceived'
+
     AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'
 
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
@@ -107,6 +111,28 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ApiManagementApiReleaseUpdatedEventName = 'Microsoft.ApiManagement.ApiReleaseUpdated'
 
     ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.ApiUpdated'
+
+    ApiManagementGatewayApiAddedEventName = 'Microsoft.ApiManagement.GatewayApiAdded'
+
+    ApiManagementGatewayApiRemovedEventName = 'Microsoft.ApiManagement.GatewayApiRemoved'
+
+    ApiManagementGatewayCertificateAuthorityCreatedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityCreated'
+
+    ApiManagementGatewayCertificateAuthorityDeletedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityDeleted'
+
+    ApiManagementGatewayCertificateAuthorityUpdatedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityUpdated'
+
+    ApiManagementGatewayCreatedEventName = 'Microsoft.ApiManagement.GatewayCreated'
+
+    ApiManagementGatewayDeletedEventName = 'Microsoft.ApiManagement.GatewayDeleted'
+
+    ApiManagementGatewayHostnameConfigurationCreatedEventName = 'Microsoft.ApiManagement.GatewayHostnameConfigurationCreated'
+
+    ApiManagementGatewayHostnameConfigurationDeletedEventName = 'Microsoft.ApiManagement.GatewayHostnameConfigurationDeleted'
+
+    ApiManagementGatewayHostnameConfigurationUpdatedEventName = 'Microsoft.ApiManagement.GatewayHostnameConfigurationUpdated'
+
+    ApiManagementGatewayUpdatedEventName = 'Microsoft.ApiManagement.GatewayUpdated'
 
     ApiManagementProductCreatedEventName = 'Microsoft.ApiManagement.ProductCreated'
 
@@ -139,6 +165,12 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
+    DataBoxCopyCompletedEventName = 'Microsoft.DataBox.CopyCompleted'
+
+    DataBoxCopyStartedEventName = 'Microsoft.DataBox.CopyStarted'
+
+    DataBoxOrderCompletedEventName = 'Microsoft.DataBox.OrderCompleted'
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
