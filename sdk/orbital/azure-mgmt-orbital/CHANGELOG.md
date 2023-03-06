@@ -1,5 +1,39 @@
 # Release History
 
+## 1.1.0 (2023-03-06)
+
+### Features Added
+
+  - Model ContactProfile has a new parameter third_party_configurations
+  - Model ContactProfileProperties has a new parameter third_party_configurations
+  - Model ContactProfilesProperties has a new parameter third_party_configurations
+  - Model OperationResult has a new parameter next_link
+  - Model OperationResult has a new parameter value
+  - Operation ContactProfilesOperations.begin_create_or_update has a new optional parameter third_party_configurations
+
+### Breaking Changes
+
+  - Model Contact no longer has parameter etag
+  - Model ContactProfile no longer has parameter etag
+  - Model Spacecraft no longer has parameter etag
+  - Parameter contact_profile of model Contact is now required
+  - Parameter expiration_date of model AuthorizedGroundstation is now required
+  - Parameter ground_station of model AuthorizedGroundstation is now required
+  - Parameter ground_station_name of model Contact is now required
+  - Parameter id of model AvailableContactsSpacecraft is now required
+  - Parameter id of model ContactParametersContactProfile is now required
+  - Parameter id of model ContactsPropertiesContactProfile is now required
+  - Parameter id of model ResourceReference is now required
+  - Parameter links of model ContactProfile is now required
+  - Parameter links of model Spacecraft is now required
+  - Parameter network_configuration of model ContactProfile is now required
+  - Parameter reservation_end_time of model Contact is now required
+  - Parameter reservation_start_time of model Contact is now required
+  - Parameter title_line of model Spacecraft is now required
+  - Parameter tle_line1 of model Spacecraft is now required
+  - Parameter tle_line2 of model Spacecraft is now required
+  - Removed operation AvailableGroundStationsOperations.get
+
 ## 1.1.0b1 (2022-11-30)
 
 ### Features Added
