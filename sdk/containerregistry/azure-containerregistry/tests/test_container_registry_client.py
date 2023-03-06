@@ -576,16 +576,30 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             # Cleanup
             client.delete_repository(repo)
 
-    @acr_preparer
+    @acr_preparer()
     @recorded_by_proxy
     def test_upload_blob_by_chunk(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        blob_size = DEFAULT_CHUNK_SIZE * 1.2
-        data = bytearray(b'\x00' * blob_size)
+
         with self.create_registry_client(containerregistry_endpoint) as client:
+            # Test blob upload and download in equal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 2
+            data = bytearray(b'\x00' * int(blob_size))
             digest = client.upload_blob(repo, BytesIO(data))
             assert _compute_digest(BytesIO(data)) == digest
-    
+            
+            path = os.path.join(self.get_test_directory(), "data")
+            client.download_blob(repo, digest, path)
+            
+            # Test blob upload and download in unequal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 2 + 20
+            data = bytearray(b'\x00' * int(blob_size))
+            digest = client.upload_blob(repo, BytesIO(data))
+            assert _compute_digest(BytesIO(data)) == digest
+            
+            path = os.path.join(self.get_test_directory(), "data")
+            client.download_blob(repo, digest, path)
+
     @acr_preparer()
     @recorded_by_proxy
     def test_set_audience(self, containerregistry_endpoint):
