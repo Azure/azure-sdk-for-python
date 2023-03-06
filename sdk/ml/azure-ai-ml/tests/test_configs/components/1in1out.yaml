@@ -1,3 +1,4 @@
+# YAML definition file for command component
 $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
 name: one_in_one_out
 display_name: One In One Out
