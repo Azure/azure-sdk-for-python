@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 from test_utilities.utils import wait_until_done
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
@@ -83,6 +83,8 @@ class TestBatchDeployment(AzureRecordedTestCase):
         rand_batch_name: Callable[[], str],
         rand_batch_deployment_name: Callable[[], str],
     ) -> None:
+        set_bodiless_matcher()
+
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
         name = rand_batch_name("name")
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_mlflow_new.yaml"

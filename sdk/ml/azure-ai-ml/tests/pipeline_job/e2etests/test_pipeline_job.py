@@ -927,10 +927,9 @@ class TestPipelineJob(AzureRecordedTestCase):
 
 
     def test_pipeline_job_with_automl_forecasting(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
         # global header matcher in conftest isn't being applied, so calling here
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False, excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
         )
         set_custom_default_matcher(
             excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
@@ -963,10 +962,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_automl_text_classification(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
         # global header matcher in conftest isn't being applied, so calling here
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False, excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
         )
 
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_classification.yml"
@@ -1028,10 +1026,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_automl_text_ner(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
         # global header matcher in conftest isn't being applied, so calling here
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False, excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
         )
 
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_ner.yml"
@@ -1229,10 +1226,9 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_automl_image_instance_segmentation(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
         # global header matcher in conftest isn't being applied, so calling here
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False, excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
         )
 
         test_path = (
