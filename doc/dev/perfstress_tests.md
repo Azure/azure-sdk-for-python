@@ -82,11 +82,11 @@ class _PerfTestBase:
         # Can be optionally defined. Run once per test instance, after cleanup and global_cleanup.
         # The baseclasses will also define logic here, so if you override this method, make sure you include a call to super().
 
-    def run_all_sync(self, duration: int) -> None:
+    def run_all_sync(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         # Run all sync tests, including both warmup and duration. This method is implemented by the provided base
         # classes, there should be no need to overwrite this function.
 
-    async def run_all_async(self, duration: int) -> None:
+    async def run_all_async(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         # Run all async tests, including both warmup and duration. This method is implemented by the provided base
         # classes, there should be no need to overwrite this function.
 

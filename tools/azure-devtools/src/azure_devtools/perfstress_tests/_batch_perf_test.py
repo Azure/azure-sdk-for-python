@@ -3,10 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import cProfile
-import os
 import aiohttp
-import pstats
 import time
 from typing import Optional, Any, Dict, List
 
@@ -14,10 +11,6 @@ from urllib.parse import urljoin
 
 from ._perf_stress_base import _PerfTestBase
 from ._policies import PerfTestProxyPolicy
-
-
-PSTATS_PRINT_DEFAULT_SORT_KEY = pstats.SortKey.TIME
-PSTATS_PRINT_DEFAULT_LINE_COUNT = 36
 
 
 class BatchPerfTest(_PerfTestBase):
@@ -139,83 +132,44 @@ class BatchPerfTest(_PerfTestBase):
         """
         raise NotImplementedError("run_batch_async must be implemented for {}".format(self.__class__.__name__))
 
-    def run_all_sync(self, duration: int) -> None:
+    def run_all_sync(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all sync tests, including both warmup and duration.
         """
         self._completed_operations = 0
         self._last_completion_time = 0.0
         starttime = time.time()
-        if self.args.profile:
-            # If the profiler is used, ignore the duration and run once.
-            import cProfile
-            profile = cProfile.Profile()
+        if run_profiler:
             try:
-                profile.enable()
+                self._profile.enable()
                 self._completed_operations += self.run_batch_sync()
             finally:
-                profile.disable()
+                self._profile.disable()
             self._last_completion_time = time.time() - starttime
-            self._save_profile(profile, "sync", output_path=self.args.profile_path)
-            self._print_profile_stats(profile)
+            self._save_profile("sync", output_path=self.args.profile_path)
+            self._print_profile_stats()
         else:
             while self._last_completion_time < duration:
                 self._completed_operations += self.run_batch_sync()
                 self._last_completion_time = time.time() - starttime
 
-    async def run_all_async(self, duration: int) -> None:
+    async def run_all_async(self, duration: int, *, run_profiler: bool = False, **kwargs) -> None:
         """
         Run all async tests, including both warmup and duration.
         """
         self._completed_operations = 0
         self._last_completion_time = 0.0
         starttime = time.time()
-        if self.args.profile:
-            # If the profiler is used, ignore the duration and run once.
-            import cProfile
-            profile = cProfile.Profile()
+        if run_profiler:
             try:
-                profile.enable()
+                self._profile.enable()
                 self._completed_operations += await self.run_batch_async()
             finally:
-                profile.disable()
+                self._profile.disable()
             self._last_completion_time = time.time() - starttime
-            self._save_profile(profile, "async", output_path=self.args.profile_path)
-            self._print_profile_stats(profile)
+            self._save_profile("async", output_path=self.args.profile_path)
+            self._print_profile_stats()
         else:
             while self._last_completion_time < duration:
                 self._completed_operations += await self.run_batch_async()
                 self._last_completion_time = time.time() - starttime
-
-    def _save_profile(self, profile: cProfile.Profile, sync: str, output_path: Optional[str] = None) -> None:
-        """
-        Dump the profiler data to the file path specified. If no path is specified, use the current working directory.
-        """
-        if profile:
-            profile_name = output_path or "{}/cProfile-{}-{}-{}.pstats".format(
-                os.getcwd(),
-                self.__class__.__name__,
-                self._parallel_index,
-                sync)
-            print("Dumping profile data to {}".format(profile_name))
-            profile.dump_stats(profile_name)
-        else:
-            print("No profile generated.")
-
-    def _print_profile_stats(
-        self,
-        profile: cProfile.Profile,
-        *,
-        sort_key: pstats.SortKey = PSTATS_PRINT_DEFAULT_SORT_KEY,
-        count: int = PSTATS_PRINT_DEFAULT_LINE_COUNT
-    ) -> None:
-        """Print the profile stats to stdout.
-
-        A sort key can be specified to establish how stats should be sorted, and a line count can also be
-        specified to limit the number of lines printed.
-        """
-        # Increase the precision of the pstats output
-        pstats.f8 = lambda x: f"{x:8.5f}"
-
-        stats = pstats.Stats(profile).sort_stats(sort_key)
-        stats.print_stats(count)

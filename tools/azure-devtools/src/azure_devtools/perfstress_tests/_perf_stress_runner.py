@@ -222,7 +222,7 @@ class _PerfStressRunner:
 
             # If a warm up is configured, wait till all tests have finished all setup
             # stages before beginning "Warmup".
-            if self.per_test_args.warmup and not self.per_test_args.profile:
+            if self.per_test_args.warmup:
                 self._next_stage("Warmup", track_status=True)
 
             # Wait till all tests have completed setup and warmup before beginning "Tests".
