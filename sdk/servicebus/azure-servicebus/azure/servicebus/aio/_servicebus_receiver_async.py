@@ -255,7 +255,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             if wait_time:
                 original_timeout = self._handler._timeout
                 self._handler._timeout = wait_time
-            self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
+            if not self._message_iter:
+                self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
             pyamqp_message = await self._message_iter.__anext__()
             message = self._build_message(pyamqp_message)
             if (
