@@ -2,7 +2,7 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, set_custom_default_matcher
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
@@ -206,6 +206,14 @@ class TestSchedule(AzureRecordedTestCase):
     )
     def test_command_job_schedule(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
+        # global header matcher in conftest isn't being applied, so calling here
+        set_custom_default_matcher(
+            excluded_headers="x-ms-meta-name, x-ms-meta-version", ignored_query_parameters="api-version"
+        )
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )  # call to blobstore won't always be made, depends on if the asset is already cached in assetstore
 
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/local_cron_command_job.yml"
@@ -233,6 +241,13 @@ class TestSchedule(AzureRecordedTestCase):
     )
     def test_spark_job_schedule(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
+        set_custom_default_matcher(
+            excluded_headers="x-ms-meta-name, x-ms-meta-version", ignored_query_parameters="api-version"
+        )
+        set_custom_default_matcher(
+            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )  # call to blobstore won't always be made, depends on if the asset is already cached in assetstore
 
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/local_cron_spark_job.yml"
