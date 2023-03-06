@@ -22,13 +22,13 @@ from ._generated.models import (
     PhoneNumberIdentifierModel,
     CallConnectionStateModel,
     RecordingStorageType,
-    RecognizeInputType
+    RecognizeInputType,
+    MediaStreamingConfiguration as MediaStreamingConfigurationRest,
+    CallParticipant as CallParticipantRest,
+    CallConnectionProperties as CallConnectionPropertiesRest,
+    GetParticipantsResponse as GetParticipantsResponseRest,
+    AddParticipantResponse as AddParticipantResponseRest
 )
-
-from ._generated.models import CallParticipant as CallParticipantGenerated
-from ._generated.models import CallConnectionProperties as CallConnectionPropertiesGenerated
-from ._generated.models import GetParticipantsResponse as GetParticipantsResponseGenerated
-from ._generated.models import AddParticipantResponse as AddParticipantResponseGenerated
 
 
 class ServerCallLocator(object):
@@ -821,7 +821,7 @@ class CallConnectionProperties(object):
         self.source_identity = source_identity
 
     @classmethod
-    def _from_generated(cls, call_connection_properties_generated: CallConnectionPropertiesGenerated):
+    def _from_generated(cls, call_connection_properties_generated: CallConnectionPropertiesRest):
         target_models = []
         for target in call_connection_properties_generated.targets:
             target_models.append(deserialize_identifier(target))
@@ -861,7 +861,7 @@ class CallParticipant(object):
         self.is_muted = is_muted
 
     @classmethod
-    def _from_generated(cls, call_participant_generated: CallParticipantGenerated):
+    def _from_generated(cls, call_participant_generated: CallParticipantRest):
         return cls(identifier=deserialize_identifier(call_participant_generated.identifier), is_muted=call_participant_generated.is_muted)
 
 
@@ -886,7 +886,7 @@ class GetParticipantsResponse(object):
         self.next_link = next_link
 
     @classmethod
-    def _from_generated(cls, get_participant_response_generated: GetParticipantsResponseGenerated):
+    def _from_generated(cls, get_participant_response_generated: GetParticipantsResponseRest):
         return cls(values=[CallParticipant._from_generated(participant) for participant in get_participant_response_generated.values], next_link=get_participant_response_generated.next_link)
 
 
@@ -912,5 +912,64 @@ class AddParticipantResponse(object):
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, add_participant_response_generated: AddParticipantResponseGenerated):
+    def _from_generated(cls, add_participant_response_generated: AddParticipantResponseRest):
         return cls(participant=CallParticipant._from_generated(add_participant_response_generated.participant), operation_context=add_participant_response_generated.operation_context)
+
+
+class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
+
+    MIXED = "mixed"
+    UNMIXED = "unmixed"
+
+
+class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Content type to stream, eg. audio, audio/video."""
+
+    AUDIO = "audio"
+
+
+class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of transport to be used for media streaming, eg. Websocket."""
+
+    WEBSOCKET = "websocket"
+
+
+class MediaStreamingConfiguration(object):
+    """Configuration of Media streaming.
+
+    All required parameters must be populated in order to send to Azure.
+    """
+
+    def __init__(
+        self,
+        *,
+        transport_url: str,
+        transport_type: Union[str, MediaStreamingTransportType],
+        content_type: Union[str, MediaStreamingContentType],
+        audio_channel_type: Union[str, MediaStreamingAudioChannelType],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword transport_url: Transport URL for media streaming. Required.
+        :paramtype transport_url: str
+        :keyword transport_type: The type of transport to be used for media streaming, eg. Websocket.
+         Required. "websocket"
+        :paramtype transport_type: str or MediaStreamingTransportType
+        :keyword content_type: Content type to stream, eg. audio, audio/video. Required. "audio"
+        :paramtype content_type: str or MediaStreamingContentType
+        :keyword audio_channel_type: Audio channel type to stream, eg. unmixed audio, mixed audio.
+         Required. Known values are: "mixed" and "unmixed".
+        :paramtype audio_channel_type: str or MediaStreamingAudioChannelType
+        """
+        super().__init__(**kwargs)
+        self.transport_url = transport_url
+        self.transport_type = transport_type
+        self.content_type = content_type
+        self.audio_channel_type = audio_channel_type
+
+    def to_generated(self):
+        return MediaStreamingConfigurationRest(transport_url=self.transport_url,
+                                               transport_type=self.transport_type,
+                                               content_type=self.content_type,
+                                               audio_channel_type=self.audio_channel_type)

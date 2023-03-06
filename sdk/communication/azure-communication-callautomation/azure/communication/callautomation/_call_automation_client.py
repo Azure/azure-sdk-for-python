@@ -17,7 +17,7 @@ from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._generated.models import (
     CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest)
 from ._models import (CallInvite, CallConnectionProperties, serialize_identifier,
-                      deserialize_identifier, deserialize_phone_identifier, serialize_phone_identifier,
+                      serialize_phone_identifier,
                       CommunicationIdentifier)
 
 
@@ -162,7 +162,6 @@ class CallAutomationClient(object):
             azure_cognitive_services_endpoint_url=kwargs.pop(
                 "azure_cognitive_services_endpoint_url", None),
         )
-        print(create_call_request)
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
@@ -206,12 +205,13 @@ class CallAutomationClient(object):
         if not callback_url:
             raise ValueError('callback_url cannot be None.')
 
+        caller_id_number = kwargs.pop("source_caller_id_number", None)
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(identifier)
                      for identifier in targets],
             callback_uri=callback_url,
-            source_caller_id_number=serialize_identifier(
-                kwargs.pop("source_caller_id_number", None)),
+            source_caller_id_number=serialize_phone_identifier(
+                caller_id_number) if caller_id_number else None,
             source_display_name=kwargs.pop("source_display_name", None),
             source_identity=serialize_identifier(
                 self.source_identity) if self.source_identity else None,
