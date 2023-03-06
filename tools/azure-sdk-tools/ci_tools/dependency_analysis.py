@@ -7,19 +7,21 @@ import glob
 import io
 import json
 import os
-from pkg_resources import Requirement
-from packaging.specifiers import SpecifierSet
-from packaging.version import Version, parse
-
 import re
 import sys
 import textwrap
-
-
 from typing import List
-from pypi_tools.pypi import PyPIClient
-from ci_tools.parsing import parse_require
 
+from pkg_resources import Requirement
+from packaging.specifiers import SpecifierSet
+from ci_tools.variables import discover_repo_root
+
+from pypi_tools.pypi import PyPIClient
+
+try:
+    from jinja2 import Environment, FileSystemLoader
+except:
+    pass # we only technically require this when outputting the rendered report
 
 # Todo: This should use a common omit logic once ci scripts are refactored into ci_tools
 skip_pkgs = [
@@ -34,7 +36,7 @@ skip_pkgs = [
 ]
 
 
-def get_known_versions(package_name: str) -> List[str]:
+def get_known_versions(package_name: str, include_local_version: bool = False) -> List[str]:
     client = PyPIClient()
     return client.get_ordered_versions(package_name)
 
@@ -231,9 +233,8 @@ def resolve_lib_deps(dump_data, data_pkgs, pkg_id):
                     "deps": [],
                 }
 
-
-if __name__ == "__main__":
-    base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+def analyze_dependencies():
+    base_dir = discover_repo_root()
 
     parser = argparse.ArgumentParser(
         description="""\

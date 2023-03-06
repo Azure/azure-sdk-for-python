@@ -43,6 +43,7 @@ setup(
             "sdk_set_dev_version=ci_tools.versioning.version_set_dev:version_set_dev_main",
             "sdk_set_version=ci_tools.versioning.version_set:version_set_main",
             "sdk_increment_version=ci_tools.versioning.version_increment:version_increment_main",
+            "sdk_analyze_deps=ci_tools.dependency_analysis:analyze_dependencies",
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
             "multiapi_combiner=packaging_tools.multiapi_combiner:combine",
         ],
