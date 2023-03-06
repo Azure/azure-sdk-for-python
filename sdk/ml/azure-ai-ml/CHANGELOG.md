@@ -6,7 +6,8 @@
 - Added support for `tags` on Compute Resources.
 - Added support for promoting data asset from a workspace to a registry
 - Added support for registering named asset from job output by specifying named and version settings.
-- Added support for feature store operations
+- Added support for feature store operations.
+- Removed Experimental Tag from Image Metadata on Compute Instances.
 
 ### Bugs Fixed
 
