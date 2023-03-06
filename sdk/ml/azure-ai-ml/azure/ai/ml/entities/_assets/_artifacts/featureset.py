@@ -17,9 +17,14 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 )
 from azure.ai.ml._schema._featureset.featureset_schema import FeaturesetSchema
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    LONG_URI_FORMAT,
+    PARAMS_OVERRIDE_KEY,
+)
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._featureset.featureset_specification import FeaturesetSpecification
 from azure.ai.ml.entities._featureset.materialization_settings import MaterializationSettings
@@ -33,9 +38,9 @@ class Featureset(Artifact):
         self,
         *,
         name: str,
+        version: str,
         entities: List[str],
         specification: FeaturesetSpecification,
-        version: Optional[str] = None,
         stage: Optional[str] = None,
         description: Optional[str] = None,
         materialization_settings: Optional[MaterializationSettings] = None,
@@ -70,6 +75,7 @@ class Featureset(Artifact):
             description=description,
             tags=tags,
             properties=properties,
+            path=specification.path,
             **kwargs,
         )
         self.entities = entities
@@ -151,4 +157,17 @@ class Featureset(Artifact):
         return FeaturesetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        pass
+
+        # if datastore_arm_id is null, capture the full_storage_path
+        if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
+            self.path = asset_artifact.full_storage_path
+        else:
+            aml_datastore_id = AMLNamedArmId(asset_artifact.datastore_arm_id)
+            self.path = LONG_URI_FORMAT.format(
+                aml_datastore_id.subscription_id,
+                aml_datastore_id.resource_group_name,
+                aml_datastore_id.workspace_name,
+                aml_datastore_id.asset_name,
+                asset_artifact.relative_path,
+            )
+            self.specification.path = self.path

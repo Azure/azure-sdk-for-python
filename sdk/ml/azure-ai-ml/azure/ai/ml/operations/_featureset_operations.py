@@ -4,6 +4,9 @@
 
 # pylint: disable=protected-access
 
+import os
+import json
+from pathlib import Path
 from typing import Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -13,7 +16,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, Fea
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-
+from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -21,8 +24,10 @@ from azure.ai.ml._utils._asset_utils import (
     _get_latest_version_from_container,
     _resolve_label_to_asset,
 )
+from azure.ai.ml._utils._featureset_utils import read_featureset_metadata_contents
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets import Featureset
+from azure.ai.ml.entities._featureset.featureset_spec import FeaturesetSpec
 from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -145,13 +150,23 @@ class FeaturesetOperations(_ScopeDependentOperations):
         :return: An instance of LROPoller that returns a Featureset.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Featureset]
         """
+
+        featureset_spec = self._validate_and_get_featureset_spec(featureset)
+        featureset.properties.update("spec_version", "1")
+        featureset.properties.update("spec_data", json.dump(featureset_spec))
+
+        sas_uri = None
+        featureset, _ = _check_and_upload_path(
+            artifact=featureset, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURESET
+        )
+
         featureset_resource = Featureset._to_rest_object(featureset)
 
         return self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             name=featureset.name,
-            version=featureset.version if featureset.version else "1",
+            version=featureset.version,
             body=featureset_resource,
         )
 
@@ -225,3 +240,31 @@ class FeaturesetOperations(_ScopeDependentOperations):
             name, self._container_operation, self._resource_group_name, self._workspace_name
         )
         return self.get(name=name, version=latest_version)
+
+    # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
+    def _validate_and_get_featureset_spec(self, featureset: Featureset) -> str:
+        if not (featureset.specification and featureset.specification.path):
+            msg = "Missing featureset spec path. Path is required for featureset."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.MISSING_FIELD,
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
+        featureset_spec_path = str(featureset.specification.path)
+        base_path = featureset.base_path
+
+        if not os.path.isdir(featureset_spec_path):
+            raise ValidationException(
+                message="No such directory: {}".format(featureset_spec_path),
+                no_personal_data_message="No such directory",
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
+            )
+
+        featureset_spec_contents = read_featureset_metadata_contents(featureset_spec_path)
+        featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec")
+        return FeaturesetSpec._load(featureset_spec_contents, featureset_spec_yaml_path)

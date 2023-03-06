@@ -151,7 +151,7 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             name=featurestore_entity.name,
-            version=featurestore_entity.version if featurestore_entity.version else "1",
+            version=featurestore_entity.version,
             body=featurestore_entity_resource,
         )
 
