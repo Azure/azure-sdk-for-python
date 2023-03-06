@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, Optional
+from typing import Optional
 from typing_extensions import Literal
 
 from azure.ai.ml.constants._job.job import JobPriorityValues, JobTierNames
