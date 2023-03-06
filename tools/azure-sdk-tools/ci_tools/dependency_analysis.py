@@ -15,6 +15,8 @@ from typing import List
 from pkg_resources import Requirement
 from packaging.specifiers import SpecifierSet
 from ci_tools.variables import discover_repo_root
+from ci_tools.functions import discover_targeted_packages
+from ci_tools.parsing import ParsedSetup
 
 from pypi_tools.pypi import PyPIClient
 
@@ -24,40 +26,14 @@ except:
     pass # we only technically require this when outputting the rendered report
 
 # Todo: This should use a common omit logic once ci scripts are refactored into ci_tools
-skip_pkgs = [
-    "azure-mgmt-documentdb",  # deprecated
-    "azure-sdk-for-python",  # top-level package
-    "azure-sdk-tools",  # internal tooling for automation
-    "azure-servicemanagement-legacy",  # legacy (not officially deprecated)
-    "azure-common",
-    "azure",
-    "azure-keyvault",
-    "azure-ai-ml",
-]
-
 
 def get_known_versions(package_name: str, include_local_version: bool = False) -> List[str]:
     client = PyPIClient()
     return client.get_ordered_versions(package_name)
 
 
-def report_should_skip_lib(lib_name):
-    return lib_name in skip_pkgs or lib_name.endswith("-nspkg")
-
-
 def dump_should_skip_lib(lib_name):
-    return report_should_skip_lib(lib_name) or "-mgmt" in lib_name or not lib_name.startswith("azure")
-
-
-def locate_libs(base_dir):
-    packages = [
-        os.path.dirname(p)
-        for p in (
-            glob.glob(os.path.join(base_dir, "azure*", "setup.py"))
-            + glob.glob(os.path.join(base_dir, "sdk/*/azure*", "setup.py"))
-        )
-    ]
-    return sorted(packages)
+    return "-mgmt" in lib_name or not lib_name.startswith("azure")
 
 
 def locate_wheels(base_dir):
@@ -91,18 +67,18 @@ def record_dep(dependencies, req_name, spec, lib_name):
 def get_lib_deps(base_dir):
     packages = {}
     dependencies = {}
-    for lib_dir in locate_libs(base_dir):
+    for lib_dir in discover_targeted_packages("azure*", base_dir):
         try:
             setup_path = os.path.join(lib_dir, "setup.py")
-            lib_name, version, requires = parse_setup(setup_path)
+            parsed = ParsedSetup.from_path(setup_path)
+            lib_name, version, requires = parsed.name, parsed.version, parsed.requires
 
             packages[lib_name] = {"version": version, "source": lib_dir, "deps": []}
 
             for req in requires:
                 req_name, spec = parse_req(req)
                 packages[lib_name]["deps"].append({"name": req_name, "version": spec})
-                if not report_should_skip_lib(lib_name):
-                    record_dep(dependencies, req_name, spec, lib_name)
+                record_dep(dependencies, req_name, spec, lib_name)
         except:
             print("Failed to parse %s" % (setup_path))
     return packages, dependencies
@@ -128,54 +104,13 @@ def get_wheel_deps(wheel_dir):
                     req = re.sub(r"[\s\(\)]", "", req)  # Version specifiers appear in parentheses
                     req_name, spec = parse_req(req)
                     packages[lib_name]["deps"].append({"name": req_name, "version": spec})
-                    if not report_should_skip_lib(lib_name):
-                        record_dep(dependencies, req_name, spec, lib_name)
+                    record_dep(dependencies, req_name, spec, lib_name)
         except:
             print("Failed to parse METADATA from %s" % (whl_path))
     return packages, dependencies
 
 
-def parse_setup(setup_filename):
-    mock_setup = textwrap.dedent(
-        """\
-    def setup(*args, **kwargs):
-        __setup_calls__.append((args, kwargs))
-    """
-    )
-    parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
-    with io.open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
-        parsed = ast.parse(setup_file.read())
-        for index, node in enumerate(parsed.body[:]):
-            if (
-                not isinstance(node, ast.Expr)
-                or not isinstance(node.value, ast.Call)
-                or not hasattr(node.value.func, "id")
-                or node.value.func.id != "setup"
-            ):
-                continue
-            parsed.body[index:index] = parsed_mock_setup.body
-            break
 
-    fixed = ast.fix_missing_locations(parsed)
-    codeobj = compile(fixed, setup_filename, "exec")
-    local_vars = {}
-    global_vars = {"__setup_calls__": []}
-    current_dir = os.getcwd()
-    working_dir = os.path.dirname(setup_filename)
-    os.chdir(working_dir)
-    exec(codeobj, global_vars, local_vars)
-    os.chdir(current_dir)
-    _, kwargs = global_vars["__setup_calls__"][0]
-
-    version = kwargs["version"]
-    name = kwargs["name"]
-    requires = []
-    if "install_requires" in kwargs:
-        requires += kwargs["install_requires"]
-    if "extras_require" in kwargs:
-        for extra in kwargs["extras_require"].values():
-            requires += extra
-    return name, version, requires
 
 
 def dict_compare(d1, d2):
@@ -272,7 +207,7 @@ def analyze_dependencies():
     else:
         all_packages, dependencies = get_lib_deps(base_dir)
 
-    packages = {k: v for k, v in all_packages.items() if not report_should_skip_lib(k)}
+    packages = {k: v for k, v in all_packages.items()}
 
     if args.verbose:
         print("Packages analyzed")
@@ -404,7 +339,7 @@ def analyze_dependencies():
         sys.exit(0)
 
     if args.out:
-        external = [k for k in dependencies if k not in packages and not report_should_skip_lib(k)]
+        external = [k for k in dependencies if k not in packages]
 
         def display_order(k):
             if k in {}:
