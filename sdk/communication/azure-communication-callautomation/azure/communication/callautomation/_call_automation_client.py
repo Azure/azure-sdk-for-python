@@ -16,8 +16,9 @@ from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._generated.models import (
     CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest)
-from ._communication_identifier_serializer import *
-from ._models import (CallInvite, CallConnectionProperties)
+from ._models import (CallInvite, CallConnectionProperties, serialize_identifier,
+                      deserialize_identifier, deserialize_phone_identifier, serialize_phone_identifier,
+                      CommunicationIdentifier)
 
 
 class CallResult(object):
@@ -150,7 +151,7 @@ class CallAutomationClient(object):
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(call_invite.target)],
             callback_uri=callback_url,
-            source_caller_id_number=serialize_identifier(
+            source_caller_id_number=serialize_phone_identifier(
                 call_invite.sourceCallIdNumber) if call_invite.sourceCallIdNumber else None,
             source_display_name=call_invite.sourceDisplayName,
             source_identity=serialize_identifier(
@@ -161,6 +162,7 @@ class CallAutomationClient(object):
             azure_cognitive_services_endpoint_url=kwargs.pop(
                 "azure_cognitive_services_endpoint_url", None),
         )
+        print(create_call_request)
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 

@@ -440,6 +440,26 @@ def serialize_identifier(identifier):
                         identifier.__class__.__name__)
 
 
+def serialize_phone_identifier(identifier):
+    # type: (PhoneNumberIdentifier) -> PhoneNumberIdentifierModel
+    """Serialize the Communication identifier into CommunicationIdentifierModel
+
+    :param identifier: PhoneNumberIdentifier
+    :type identifier: PhoneNumberIdentifier
+    :return: PhoneNumberIdentifierModel
+    """
+    try:
+        if identifier.kind and identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
+            request_model = PhoneNumberIdentifierModel(
+                value=identifier.properties['value'])
+            return request_model
+        else:
+            raise AttributeError
+    except AttributeError:
+        raise TypeError("Unsupported identifier type " +
+                        identifier.__class__.__name__)
+
+
 def deserialize_identifier(identifier_model) -> CommunicationIdentifier:
     # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
     """
@@ -474,11 +494,10 @@ def deserialize_phone_identifier(identifier_model) -> PhoneNumberIdentifier | No
     :type identifier_model: PhoneNumberIdentifierModel
     :return: PhoneNumberIdentifier
     """
-    raw_id = identifier_model.raw_id
-
-    if identifier_model.phone_number:
-        return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
-    return None
+    if identifier_model:
+        return PhoneNumberIdentifier(identifier_model.value)
+    else:
+        return None
 
 
 class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
