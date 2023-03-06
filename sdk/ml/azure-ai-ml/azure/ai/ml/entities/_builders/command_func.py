@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import os
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentSource
@@ -125,7 +125,6 @@ def command(
     outputs: Optional[Dict] = None,
     instance_count: Optional[int] = None,
     instance_type: Optional[str] = None,
-    locations: Optional[List[str]] = None,
     docker_args: Optional[str] = None,
     shm_size: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -174,8 +173,6 @@ def command(
     :vartype instance_count: int
     :param instance_type: Optional type of VM used as supported by the compute target.
     :vartype instance_type: str
-    :param locations: Optional list of locations where the job can run.
-    :vartype locations: List[str]
     :param docker_args: Extra arguments to pass to the Docker run command. This would override any
      parameters that have already been set by the system, or in this section. This parameter is only
      supported for Azure ML compute types.
@@ -250,15 +247,8 @@ def command(
         **kwargs,
     )
 
-    if (
-        locations is not None
-        or instance_count is not None
-        or instance_type is not None
-        or docker_args is not None
-        or shm_size is not None
-    ):
+    if instance_count is not None or instance_type is not None or docker_args is not None or shm_size is not None:
         command_obj.set_resources(
-            locations=locations,
             instance_count=instance_count,
             instance_type=instance_type,
             docker_args=docker_args,

@@ -344,7 +344,6 @@ class Command(BaseNode):
         *,
         instance_type: Optional[Union[str, List[str]]] = None,
         instance_count: Optional[int] = None,
-        locations: Optional[Union[List[str]]] = None,
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
@@ -354,8 +353,6 @@ class Command(BaseNode):
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
-        if locations is not None:
-            self.resources.locations = locations
         if instance_type is not None:
             self.resources.instance_type = instance_type
         if instance_count is not None:
