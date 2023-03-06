@@ -305,26 +305,13 @@ if __name__ == "__main__":
         frozen_reqs = None
         difference = None
 
-    # verify consistency before freezing. if incompatible throw a fit
-    # foreach <package>,<speclist> in <specs>:
-    # <knownversions> = get_published_packages + local versions
-    # sort <speclist> by version ascending
-
-    # foreach <spec>,<sourcepackage> in <speclist>:
-    #     knownversions = knownversions that match speclist
-    #     if knownversions goes to 0
-    #         -> report inconsistency, note the package that causes the break +
-    #         and the previous packages that _were_ broken and the other packages that take newer deps (if present)
-
-    #         inconsistent = true
-
+    incompatible = []
     missing_reqs, new_reqs, changed_reqs = {}, {}, {}
     non_overridden_reqs_count = 0
     exitcode = 0
+
     if difference:
         exitcode = 1
-
-    incompatible = []
 
     for package in dependencies:
         speclist = dependencies[package].keys()
@@ -344,8 +331,9 @@ if __name__ == "__main__":
 
                 if args.verbose:
                     print(f"{package} has incompatible requirement specifiers. No available versions can be found to match the following:")
-                    for specifier in dependencies[package].keys():
-                        print(f"{dependencies[package][specifier]} take a dependency on specifier {specifier}")
+                    for specifier in sorted(dependencies[package].keys(), key=lambda x: len(x)):
+                        pluralizer = "s" if len(dependencies[package][specifier]) == 1 else ""
+                        print(f"{dependencies[package][specifier]} take{pluralizer} a dependency on specifier {specifier}")
                     print(f"Resolve conflicts in reqs for \"{package}\" and re-run.")
 
     # if frozen:
@@ -431,8 +419,8 @@ if __name__ == "__main__":
                 "dependencies": dependencies,
                 "env": os.environ,
                 "external": external,
-                "frozen": [],
-                "inconsistent": [],
+                "frozen": {},
+                "inconsistent": [], # the list of package names that will be marked with a red `inconsistent` bar
                 "missing_reqs": missing_reqs,
                 "new_reqs": new_reqs,
                 "non_overridden_reqs_count": non_overridden_reqs_count,
