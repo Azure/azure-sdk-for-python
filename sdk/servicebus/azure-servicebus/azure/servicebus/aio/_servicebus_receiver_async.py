@@ -253,8 +253,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self._open()
             original_timeout = None
             if wait_time:
-                original_timeout = self._handler._timeout
-                self._handler._timeout = wait_time
+                original_timeout = self._handler._timeout # pylint: disable=protected-access
+                self._handler._timeout = wait_time # pylint: disable=protected-access
             if not self._message_iter:
                 self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
             pyamqp_message = await self._message_iter.__anext__()
@@ -270,7 +270,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self._receive_context.clear()
             if original_timeout:
                 try:
-                    self._handler._timeout = original_timeout
+                    self._handler._timeout = original_timeout # pylint: disable=protected-access
                 except AttributeError:  # Handler may be disposed already.
                     pass
 
