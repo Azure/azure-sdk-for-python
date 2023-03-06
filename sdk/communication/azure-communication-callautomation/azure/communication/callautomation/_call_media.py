@@ -8,8 +8,6 @@ from typing import List, TYPE_CHECKING  # pylint: disable=unused-import
 
 from ._api_versions import DEFAULT_VERSION
 
-from ._communication_identifier_serializer import serialize_identifier
-
 from ._generated.models._models import (
     PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, PlayOptions,
     PlaySource as PlaySourceInternal, FileSource as FileSourceInternal
@@ -18,7 +16,7 @@ from ._generated.models._models import (
 from ._generated.models import PlaySourceType
 from ._models import (
     CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions,
-    PlaySource, FileSource, CommunicationIdentifier
+    PlaySource, FileSource, CommunicationIdentifier, serialize_identifier
 )
 
 if TYPE_CHECKING:

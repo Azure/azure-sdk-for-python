@@ -12,12 +12,18 @@ if TYPE_CHECKING:
 from ._call_media import CallMediaClient
 
 from ._models import (CallConnectionProperties,
-                      CallParticipant, GetParticipantsResponse, CallInvite, AddParticipantResponse)
+                      CallParticipant,
+                      GetParticipantsResponse,
+                      CallInvite,
+                      AddParticipantResponse,
+                      CommunicationIdentifier,
+                      serialize_identifier,
+                      serialize_phone_identifier,
+                      deserialize_identifier,
+                      deserialize_phone_identifier)
 
 from ._generated.models import (
     TransferCallResponse, TransferToParticipantRequest, CustomContext, AddParticipantRequest, RemoveParticipantResponse, RemoveParticipantRequest)
-
-from ._communication_identifier_serializer import *
 
 
 class CallConnection(object):
