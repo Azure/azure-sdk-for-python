@@ -29,9 +29,8 @@ module_logger = ops_logger.module_logger
 class DatastoreOperations(_ScopeDependentOperations):
     """Represents a client for performing operations on Datastores.
 
-    You should not instantiate this class directly. Instead, you should
-    create MLClient and use this client via the property
-    MLClient.datastores
+    You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
+    property MLClient.datastores
     """
 
     def __init__(
@@ -46,7 +45,6 @@ class DatastoreOperations(_ScopeDependentOperations):
         self._operation = serviceclient_2022_10_01.datastores
         self._credential = serviceclient_2022_10_01._config.credential
         self._init_kwargs = kwargs
-        self._service_client = serviceclient_2022_10_01
 
     # @monitor_with_activity(logger, "Datastore.List", ActivityType.PUBLICAPI)
     def list(self, *, include_secrets: bool = False) -> Iterable[Datastore]:
@@ -81,9 +79,8 @@ class DatastoreOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "Datastore.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str) -> None:
-        """Deletes a datastore reference with the given name from the
-        workspace. This method does not delete the actual datastore or
-        underlying data in the datastore.
+        """Deletes a datastore reference with the given name from the workspace. This method does not delete the actual
+        datastore or underlying data in the datastore.
 
         :param name: Name of the datastore
         :type name: str
@@ -98,8 +95,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "Datastore.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, *, include_secrets: bool = False) -> Datastore:
-        """Returns information about the datastore referenced by the given
-        name.
+        """Returns information about the datastore referenced by the given name.
 
         :param name: Datastore name
         :type name: str
@@ -152,8 +148,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "Datastore.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, datastore: Datastore) -> Datastore:
-        """Attaches the passed in datastore to the workspace or updates the
-        datastore if it already exists.
+        """Attaches the passed in datastore to the workspace or updates the datastore if it already exists.
 
         :param datastore: The configuration of the datastore to attach.
         :type datastore: Datastore

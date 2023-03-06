@@ -42,7 +42,6 @@ class BatchRetrySettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, settings: RestBatchRetrySettings) -> "BatchRetrySettings":
-
         return (
             BatchRetrySettings(
                 max_retries=settings.max_retries,
@@ -96,7 +95,6 @@ class OnlineRequestSettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, settings: RestOnlineRequestSettings) -> "OnlineRequestSettings":
-
         return (
             OnlineRequestSettings(
                 request_timeout_ms=from_iso_duration_format_ms(settings.request_timeout),

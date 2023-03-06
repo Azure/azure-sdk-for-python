@@ -1,10 +1,6 @@
 # Release History
 
-## 3.2.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 3.2.1 (2023-03-07)
 
 ### Bugs Fixed
 - Corrected typing for `invoice` argument in `begin_recognize_invoices()` on async `FormRecognizerClient`.
@@ -12,6 +8,7 @@
 - Corrected typing for `form_type_confidence` property on `RecognizedForm`.
 
 ### Other Changes
+- Improved static typing.
 
 ## 3.2.0 (2022-09-08)
 

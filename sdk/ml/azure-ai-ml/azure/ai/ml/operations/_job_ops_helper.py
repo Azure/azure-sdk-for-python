@@ -38,8 +38,7 @@ module_logger = logging.getLogger(__name__)
 def _get_sorted_filtered_logs(
     logs_dict: dict, job_type: str, processed_logs: Optional[dict] = None, only_streamable=True
 ) -> List[str]:
-    """Filters log file names, sorts, and returns list starting with where we
-    left off last iteration.
+    """Filters log file names, sorts, and returns list starting with where we left off last iteration.
 
     :param run_details:
     :type run_details: dict
@@ -178,8 +177,7 @@ def stream_logs_until_completion(
     *,
     requests_pipeline: HttpPipeline
 ) -> None:
-    """Stream the experiment run output to the specified file handle. By
-    default the the file handle points to stdout.
+    """Stream the experiment run output to the specified file handle. By default the the file handle points to stdout.
 
     :param run_operations: The run history operations class.
     :type run_operations: RunOperations
@@ -336,8 +334,7 @@ def get_git_properties() -> Dict[str, str]:
         return str(value).strip() or None
 
     def _run_git_cmd(args) -> Optional[str]:
-        """Return the output of running git with arguments, or None if it
-        fails."""
+        """Return the output of running git with arguments, or None if it fails."""
         try:
             with open(os.devnull, "wb") as devnull:
                 return subprocess.check_output(["git"] + list(args), stderr=devnull).decode()
@@ -400,8 +397,7 @@ def get_job_output_uris_from_dataplane(
     model_dataplane_operations: ModelDataplaneOperations,
     output_names: Optional[Union[Iterable[str], str]] = None,
 ) -> Dict[str, str]:
-    """Returns the output path for the given output in cloud storage of the
-    given job.
+    """Returns the output path for the given output in cloud storage of the given job.
 
     If no output names are given, the output paths for all outputs will be returned.
     URIs obtained from the service will be in the long-form azureml:// format.

@@ -10,8 +10,8 @@ from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_12_01_preview.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJob as RestSparkJob
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
