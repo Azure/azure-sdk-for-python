@@ -133,7 +133,6 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :dedent: 12
                 :caption: Create a queue.
         """
-        metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
