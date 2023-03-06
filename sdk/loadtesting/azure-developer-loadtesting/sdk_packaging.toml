@@ -1,10 +1,2 @@
 [packaging]
-package_name = "azure-developer-loadtesting"
-package_nspkg = "azure-developer-nspkg"
-package_pprint_name = "MyService Management"
-package_doc_id = ""
-is_stable = false
-is_arm = true
-need_msrestazure = false
-need_azuremgmtcore = true
-sample_link = ""
+auto_update = false
