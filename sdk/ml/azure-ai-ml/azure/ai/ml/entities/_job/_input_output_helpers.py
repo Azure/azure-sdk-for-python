@@ -44,6 +44,7 @@ INPUT_MOUNT_MAPPING_FROM_REST = {
 INPUT_MOUNT_MAPPING_TO_REST = {
     InputOutputModes.MOUNT: InputDeliveryMode.READ_ONLY_MOUNT,
     InputOutputModes.RO_MOUNT: InputDeliveryMode.READ_ONLY_MOUNT,
+    InputOutputModes.RW_MOUNT: InputDeliveryMode.READ_WRITE_MOUNT,
     InputOutputModes.DOWNLOAD: InputDeliveryMode.DOWNLOAD,
     InputOutputModes.EVAL_MOUNT: InputDeliveryMode.EVAL_MOUNT,
     InputOutputModes.EVAL_DOWNLOAD: InputDeliveryMode.EVAL_DOWNLOAD,
