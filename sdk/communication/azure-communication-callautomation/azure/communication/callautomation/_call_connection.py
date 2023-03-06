@@ -185,7 +185,7 @@ class CallConnection(object):
         user_custom_context = CustomContext(
             voip_headers=participant.voipHeaders, sip_headers=participant.sipHeaders)
         add_participant_request = AddParticipantRequest(participant_to_add=serialize_identifier(participant.target),
-                                                        source_caller_id_number=serialize_identifier(
+                                                        source_caller_id_number=serialize_phone_identifier(
                                                             participant.sourceCallIdNumber) if participant.sourceCallIdNumber else None,
                                                         source_display_name=participant.sourceDisplayName,
                                                         custom_context=user_custom_context,
@@ -229,7 +229,7 @@ class CallConnection(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        return self._call_connection_client.add_participant(self.call_connection_id,
-                                                            remove_participant_request,
-                                                            repeatability_first_sent=repeatability_first_sent,
-                                                            repeatability_request_id=repeatability_request_id)
+        return self._call_connection_client.remove_participant(self.call_connection_id,
+                                                               remove_participant_request,
+                                                               repeatability_first_sent=repeatability_first_sent,
+                                                               repeatability_request_id=repeatability_request_id)
