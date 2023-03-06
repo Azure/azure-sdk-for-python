@@ -6,7 +6,7 @@ import pytest
 from marshmallow import ValidationError
 
 from azure.ai.ml import PyTorchDistribution, load_component
-from azure.ai.ml.entities import Data, JobResourceConfiguration
+from azure.ai.ml.entities import Data, JobResourceConfiguration, QueueSettings
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
@@ -253,6 +253,7 @@ class TestComponentFunc:
         component.distribution = PyTorchDistribution()
         component.distribution.process_count_per_instance = 2
         component.environment_variables["key"] = "val"
+        component.queue_settings = QueueSettings(job_tier='standard')
         # user can set these fields but we won't pass to backend
         # TODO: Agree on if we should allow this
         # component.command = "new command"
@@ -276,6 +277,7 @@ class TestComponentFunc:
                 "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
             "resources": {"instance_count": 2},
+            "queue_settings": {"job_tier": "standard"}
         }
 
     def test_component_func_dict_distribution(self):
