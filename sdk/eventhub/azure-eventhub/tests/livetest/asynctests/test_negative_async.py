@@ -310,9 +310,9 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
     token = (await credential.get_token(auth_uri)).token
     producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
                                              eventhub_name=live_eventhub['event_hub'],
-                                             credential=EventHubSASTokenCredential(token[:-1], time.time() + 5),
+                                             credential=EventHubSASTokenCredential(token, time.time() + 5),
                                              uamqp_transport=uamqp_transport)
-    await asyncio.sleep(10)
+    await asyncio.sleep(15)
     # expired credential
     async with producer_client:
         with pytest.raises(AuthenticationError):

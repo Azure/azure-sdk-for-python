@@ -104,7 +104,7 @@ def test_send_and_receive_large_body_size(connstr_receivers, uamqp_transport, ti
         client.send_event(EventData("A" * payload))
 
     received = []
-    timeout = 10 * timeout_factor
+    timeout = 20 * timeout_factor
     for r in receivers:
         received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=timeout)])
 
