@@ -22,7 +22,7 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
@@ -37,7 +37,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
@@ -57,7 +57,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(EnvironmentOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._kwargs = kwargs
         self._containers_operations = service_client.environment_containers
         self._version_operations = service_client.environment_versions
@@ -69,7 +69,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    # @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, environment: Environment) -> Environment:
         """Returns created or updated environment asset.
 
@@ -208,7 +208,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
         """Returns the specified environment asset.
 
@@ -250,7 +250,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         return Environment._from_rest_object(env_version_resource)
 
-    # @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -303,7 +303,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -331,7 +331,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
