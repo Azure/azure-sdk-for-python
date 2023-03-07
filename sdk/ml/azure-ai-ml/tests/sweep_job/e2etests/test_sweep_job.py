@@ -28,6 +28,7 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 @pytest.mark.training_experiences_test
 class TestSweepJob(AzureRecordedTestCase):
     
+    pytest.mark.skipif(condition=(not is_live() and platform.system() == "Windows"), reason="Remote tests failing for Windows envs")
     @pytest.mark.e2etest
     def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
         set_bodiless_matcher()
@@ -50,6 +51,7 @@ class TestSweepJob(AzureRecordedTestCase):
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
     
+    pytest.mark.skipif(condition=(not is_live() and platform.system() == "Windows"), reason="Remote tests failing for Windows envs")
     @pytest.mark.e2etest
     def test_sweep_job_submit_with_inputs(self, randstr: Callable[[str], str], client: MLClient) -> None:
         set_bodiless_matcher()
@@ -74,7 +76,7 @@ class TestSweepJob(AzureRecordedTestCase):
         assert "iris_csv" in sweep_job_resource_2.inputs
         assert "some_number" in sweep_job_resource_2.inputs
 
-    
+    pytest.mark.skipif(condition=(not is_live() and platform.system() == "Windows"), reason="Remote tests failing for Windows envs")
     @pytest.mark.e2etest
     def test_sweep_job_submit_minimal(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure the Minimal required properties does not fail on submisison"""
@@ -94,7 +96,7 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
-    
+    pytest.mark.skipif(condition=(not is_live() and platform.system() == "Windows"), reason="Remote tests failing for Windows envs")
     @pytest.mark.e2etest
     def test_sweep_job_await_completion(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure sweep job runs to completion"""

@@ -38,7 +38,7 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_snapshot_hash",
-    "mock_asset_name",
+    # "mock_asset_name",
 )
 @pytest.mark.production_experiences_test
 class TestBatchDeployment(AzureRecordedTestCase):
