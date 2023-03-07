@@ -9,7 +9,6 @@
 - Added support for feature store operations
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline job
-- Added support for Datatransfer component (copy/import/export) in pipeline job
 
 ### Bugs Fixed
 
