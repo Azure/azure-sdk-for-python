@@ -29,6 +29,8 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
     :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
@@ -36,7 +38,7 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureAppConfigurationConfiguration(endpoint=endpoint, sync_token=sync_token, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import ConfigurationSettingFilter
 from ._models_py3 import Error
 from ._models_py3 import Key
 from ._models_py3 import KeyListResult
 from ._models_py3 import KeyValue
-from ._models_py3 import KeyValueFilter
 from ._models_py3 import KeyValueListResult
 from ._models_py3 import Label
 from ._models_py3 import LabelListResult
@@ -28,11 +28,11 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ConfigurationSettingFilter",
     "Error",
     "Key",
     "KeyListResult",
     "KeyValue",
-    "KeyValueFilter",
     "KeyValueListResult",
     "Label",
     "LabelListResult",

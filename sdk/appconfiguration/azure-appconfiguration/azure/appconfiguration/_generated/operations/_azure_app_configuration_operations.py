@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -21,6 +21,8 @@ from azure.core.exceptions import (
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
@@ -827,7 +829,7 @@ def build_check_revisions_request(
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):
+class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_keys(
         self,
@@ -1042,8 +1044,8 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):
         :param select: Used to select what fields are present in the returned resource(s). Default
          value is None.
         :type select: list[str or ~azure.appconfiguration.models.KeyValueFields]
-        :param snapshot: A filter used get key-values for a snapshot. Not valid when used with 'key'
-         and 'label' filters. Default value is None.
+        :param snapshot: A filter used get key-values for a snapshot. The value should be the name of
+         the snapshot. Not valid when used with 'key' and 'label' filters. Default value is None.
         :type snapshot: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyValue or the result of cls(response)
@@ -1947,68 +1949,9 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):
 
     get_snapshot.metadata = {"url": "/snapshots/{name}"}
 
-    @overload
-    def create_snapshot(
-        self, name: str, entity: _models.Snapshot, *, content_type: str = "application/json", **kwargs: Any
+    def _create_snapshot_initial(
+        self, name: str, entity: Union[_models.Snapshot, IO], **kwargs: Any
     ) -> _models.Snapshot:
-        """Creates a key-value snapshot.
-
-        Creates a key-value snapshot.
-
-        :param name: The name of the key-value snapshot to create. Required.
-        :type name: str
-        :param entity: The key-value snapshot to create. Required.
-        :type entity: ~azure.appconfiguration.models.Snapshot
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Snapshot or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.Snapshot
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_snapshot(
-        self, name: str, entity: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Snapshot:
-        """Creates a key-value snapshot.
-
-        Creates a key-value snapshot.
-
-        :param name: The name of the key-value snapshot to create. Required.
-        :type name: str
-        :param entity: The key-value snapshot to create. Required.
-        :type entity: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Known values are: 'application/json', 'application/vnd.microsoft.appconfig.snapshot+json'.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Snapshot or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.Snapshot
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create_snapshot(self, name: str, entity: Union[_models.Snapshot, IO], **kwargs: Any) -> _models.Snapshot:
-        """Creates a key-value snapshot.
-
-        Creates a key-value snapshot.
-
-        :param name: The name of the key-value snapshot to create. Required.
-        :type name: str
-        :param entity: The key-value snapshot to create. Is either a Snapshot type or a IO type.
-         Required.
-        :type entity: ~azure.appconfiguration.models.Snapshot or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
-         'application/vnd.microsoft.appconfig.snapshot+json'. Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Snapshot or the result of cls(response)
-        :rtype: ~azure.appconfiguration.models.Snapshot
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2041,7 +1984,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_snapshot.metadata["url"],
+            template_url=self._create_snapshot_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -2066,6 +2009,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):
         response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
         deserialized = self._deserialize("Snapshot", pipeline_response)
 
@@ -2074,7 +2018,154 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):
 
         return deserialized
 
-    create_snapshot.metadata = {"url": "/snapshots/{name}"}
+    _create_snapshot_initial.metadata = {"url": "/snapshots/{name}"}
+
+    @overload
+    def begin_create_snapshot(
+        self, name: str, entity: _models.Snapshot, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.Snapshot]:
+        """Creates a key-value snapshot.
+
+        Creates a key-value snapshot.
+
+        :param name: The name of the key-value snapshot to create. Required.
+        :type name: str
+        :param entity: The key-value snapshot to create. Required.
+        :type entity: ~azure.appconfiguration.models.Snapshot
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either Snapshot or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_snapshot(
+        self, name: str, entity: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.Snapshot]:
+        """Creates a key-value snapshot.
+
+        Creates a key-value snapshot.
+
+        :param name: The name of the key-value snapshot to create. Required.
+        :type name: str
+        :param entity: The key-value snapshot to create. Required.
+        :type entity: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Known values are: 'application/json', 'application/vnd.microsoft.appconfig.snapshot+json'.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either Snapshot or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create_snapshot(
+        self, name: str, entity: Union[_models.Snapshot, IO], **kwargs: Any
+    ) -> LROPoller[_models.Snapshot]:
+        """Creates a key-value snapshot.
+
+        Creates a key-value snapshot.
+
+        :param name: The name of the key-value snapshot to create. Required.
+        :type name: str
+        :param entity: The key-value snapshot to create. Is either a Snapshot type or a IO type.
+         Required.
+        :type entity: ~azure.appconfiguration.models.Snapshot or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
+         'application/vnd.microsoft.appconfig.snapshot+json'. Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either Snapshot or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_snapshot_initial(
+                name=name,
+                entity=entity,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Sync-Token"] = self._deserialize("str", response.headers.get("Sync-Token"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+
+            deserialized = self._deserialize("Snapshot", pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_create_snapshot.metadata = {"url": "/snapshots/{name}"}
 
     @overload
     def update_snapshot(
@@ -2091,7 +2182,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):
 
         Updates the state of a key-value snapshot.
 
-        :param name: The name of the key-value snapshot to delete. Required.
+        :param name: The name of the key-value snapshot to update. Required.
         :type name: str
         :param entity: The parameters used to update the snapshot. Required.
         :type entity: ~azure.appconfiguration.models.SnapshotUpdateParameters
@@ -2125,7 +2216,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):
 
         Updates the state of a key-value snapshot.
 
-        :param name: The name of the key-value snapshot to delete. Required.
+        :param name: The name of the key-value snapshot to update. Required.
         :type name: str
         :param entity: The parameters used to update the snapshot. Required.
         :type entity: IO
@@ -2157,7 +2248,7 @@ class AzureAppConfigurationOperationsMixin(AzureAppConfigurationMixinABC):
 
         Updates the state of a key-value snapshot.
 
-        :param name: The name of the key-value snapshot to delete. Required.
+        :param name: The name of the key-value snapshot to update. Required.
         :type name: str
         :param entity: The parameters used to update the snapshot. Is either a SnapshotUpdateParameters
          type or a IO type. Required.

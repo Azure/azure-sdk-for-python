@@ -44,7 +44,6 @@ class SnapshotFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NAME = "name"
     STATUS = "status"
-    STATUS_CODE = "status_code"
     FILTERS = "filters"
     COMPOSITION_TYPE = "composition_type"
     CREATED = "created"
