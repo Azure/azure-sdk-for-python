@@ -95,6 +95,12 @@ def test_send_and_receive_large_body_size(connstr_receivers, uamqp_transport, ti
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - open issue regarding message size")
     connection_str, receivers = connstr_receivers
+
+    # TODO: sending large batch to China cloud results in write timeout for pyamqp
+    # https://github.com/Azure/azure-sdk-for-python/issues/29177
+    if not uamqp_transport and 'servicebus.windows.net' not in connection_str:
+        pytest.skip("Skipping for pyamqp - open issue regarding write timeout")
+
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     with client:
         payload = 250 * 1024
