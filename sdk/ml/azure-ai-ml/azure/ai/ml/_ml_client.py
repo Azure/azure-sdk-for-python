@@ -10,7 +10,7 @@ import os
 from functools import singledispatch
 from itertools import product
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, TypeVar, Union
+from typing import Any, Optional, Tuple, TypeVar, Union
 
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
@@ -58,7 +58,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
 )
 
-# from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
+from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -191,7 +191,8 @@ class MLClient:
         self._credential = credential
 
         show_progress = kwargs.pop("show_progress", True)
-        self._operation_config = OperationConfig(show_progress=show_progress)
+        enable_telemetry = kwargs.pop("enable_telemetry", True)
+        self._operation_config = OperationConfig(show_progress=show_progress, enable_telemetry=enable_telemetry)
 
         if "cloud" in kwargs:
             cloud_name = kwargs["cloud"]
@@ -252,7 +253,12 @@ class MLClient:
         if registry_name:
             properties.update({"registry_name": registry_name})
 
-        app_insights_handler_kwargs: Dict[Any, Any] = {}
+        user_agent = kwargs.get("user_agent", None)
+
+        app_insights_handler = get_appinsights_log_handler(
+            user_agent, **{"properties": properties}, enable_telemetry=self._operation_config.enable_telemetry
+        )
+        app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
