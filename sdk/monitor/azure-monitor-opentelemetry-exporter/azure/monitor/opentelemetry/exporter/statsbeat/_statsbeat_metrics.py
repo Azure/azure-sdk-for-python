@@ -88,12 +88,14 @@ class _StatsbeatMetrics:
         endpoint: str,
         disable_offline_storage: bool,
         long_interval_threshold: int,
+        credential: object = None,
     ) -> None:
         self._ikey = instrumentation_key
         self._feature = _StatsbeatFeature.NONE
         if not disable_offline_storage:
             self._feature |= _StatsbeatFeature.DISK_RETRY
-        # TODO: AAD
+        if credential:
+            self._feature |= _StatsbeatFeature.AAD
         self._ikey = instrumentation_key
         self._meter = meter_provider.get_meter(__name__)
         self._long_interval_threshold = long_interval_threshold
