@@ -12,7 +12,6 @@ from .._util import _DSL_TIMEOUT_SECOND
 
 @pytest.mark.usefixtures(
     "enable_pipeline_private_preview_features",
-    "enable_private_preview_schema_features",
     "enable_private_preview_pipeline_node_types",
 )
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)

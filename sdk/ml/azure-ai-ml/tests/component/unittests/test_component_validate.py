@@ -70,7 +70,6 @@ class TestComponentValidate:
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
                 component()
 
-    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_component_early_available_output_not_set_is_control(self):
         yaml_file = str(components_dir / "invalid/helloworld_component_early_available_output_not_set_is_control.yml")
         component = load_component(yaml_file)
