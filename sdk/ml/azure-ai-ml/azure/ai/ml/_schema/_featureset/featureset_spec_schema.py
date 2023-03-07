@@ -12,16 +12,16 @@ from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.core.schema import YamlFileSchema
 from azure.ai.ml._schema._featurestore_entity.data_column_schema import DataColumnSchema
 
-from .source_schema import SourceSchema
-from .delay_schema import DelaySchema
+from .source_metadata_schema import SourceMetadataSchema
+from .delay_metadata_schema import DelayMetadataSchema
 from .feature_schema import FeatureSchema
 
 
 class FeaturesetSpecSchema(YamlFileSchema):
-    source = NestedField(SourceSchema)
+    source = NestedField(SourceMetadataSchema)
     features = fields.List(NestedField(FeatureSchema), required=True, allow_none=False)
     index_columns = fields.List(NestedField(DataColumnSchema), required=True, allow_none=False)
-    temporal_join_lookback = NestedField(DelaySchema)
+    temporal_join_lookback = NestedField(DelayMetadataSchema)
 
     @post_load
     def make(self, data: Dict, **kwargs):

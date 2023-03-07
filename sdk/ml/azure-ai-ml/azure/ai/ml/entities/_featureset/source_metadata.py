@@ -3,12 +3,14 @@
 # ---------------------------------------------------------
 
 
-from .timestamp_column import TimestampColumn
-from .delay import Delay
+from .timestamp_column_metadata import TimestampColumnMetadata
+from .delay_metadata import DelayMetadata
 
 
-class Source(object):
-    def __init__(self, *, type: str, path: str, timestamp_column: TimestampColumn, source_delay: Delay, **kwargs):
+class SourceMetadata(object):
+    def __init__(
+        self, *, type: str, path: str, timestamp_column: TimestampColumnMetadata, source_delay: DelayMetadata, **kwargs
+    ):
         self.type = type
         self.path = path
         self.timestamp_column = timestamp_column

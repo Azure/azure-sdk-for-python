@@ -17,8 +17,8 @@ from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._featurestore_entity.data_column import DataColumn
 
 from .feature import Feature
-from .source import Source
-from .delay import Delay
+from .source_metadata import SourceMetadata
+from .delay_metadata import DelayMetadata
 
 
 class FeaturesetSpec:
@@ -27,10 +27,10 @@ class FeaturesetSpec:
     def __init__(
         self,
         *,
-        source: Source,
+        source: SourceMetadata,
         features: List[Feature],
         index_columns: List[DataColumn],
-        temporal_join_lookback: Delay,
+        temporal_join_lookback: DelayMetadata,
         **_kwargs,
     ):
         self.source = source
