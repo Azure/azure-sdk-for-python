@@ -4,7 +4,7 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import CodeField, DistributionField, NestedField
+from azure.ai.ml._schema.core.fields import CodeField, DistributionField, ExperimentalField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml._schema.queue_settings import QueueSettingsSchema
@@ -41,4 +41,4 @@ class ParameterizedCommandSchema(PathAwareSchema):
     )
     resources = NestedField(JobResourceConfigurationSchema)
     distribution = DistributionField()
-    queue_settings = NestedField(QueueSettingsSchema)
+    queue_settings = ExperimentalField(NestedField(QueueSettingsSchema))
