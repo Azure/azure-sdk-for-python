@@ -37,7 +37,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        result = self._client.get_setting_value(vault_base_url=self._vault_url, setting_name=name, **kwargs)
+        result = self._client.get_setting(vault_base_url=self._vault_url, setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
     @distributed_trace
@@ -72,7 +72,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         parameters = UpdateSettingRequest(value=value)
-        result = self._client.update_settings(
+        result = self._client.update_setting(
             vault_base_url=self._vault_url,
             setting_name=name,
             parameters=parameters,
