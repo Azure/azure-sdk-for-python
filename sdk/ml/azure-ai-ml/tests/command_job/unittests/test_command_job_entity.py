@@ -135,7 +135,7 @@ class TestCommandJobEntity:
             instance_type="STANDARD_BLA",
             timeout=300,
             code="./",
-            queue_settings=QueueSettings(job_tier="standard", priorty="medium")
+            queue_settings=QueueSettings(job_tier="standard", priorty="medium"),
         )
 
         expected_job = CommandJob(

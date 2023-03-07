@@ -134,7 +134,6 @@ class JobTierNames:
     ALLOWED_NAMES = [EntityNames.Spot, EntityNames.Basic, EntityNames.Standard, EntityNames.Premium]
 
 
-
 class JobPriorityValues:
     class EntityValues:
         LOW = "low"

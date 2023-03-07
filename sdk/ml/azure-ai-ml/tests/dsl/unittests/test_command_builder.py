@@ -700,7 +700,6 @@ class TestCommandFunction:
         rest_dict = command_node._to_rest_object()
         assert rest_dict["queue_settings"] == expected_queue_settings
 
-
     def test_to_component_input(self):
         # test literal input
         literal_input_2_expected_type = {

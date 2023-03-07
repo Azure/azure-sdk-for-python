@@ -393,7 +393,6 @@ class Command(BaseNode):
         else:
             self.queue_settings = QueueSettings(job_tier=job_tier, priority=priority)
 
-
     def sweep(
         self,
         *,
@@ -522,7 +521,7 @@ class Command(BaseNode):
             services=self.services,
             creation_context=self.creation_context,
             parameters=self.parameters,
-            queue_settings=self.queue_settings
+            queue_settings=self.queue_settings,
         )
 
     @classmethod
@@ -538,7 +537,7 @@ class Command(BaseNode):
             "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             "services": get_rest_dict_for_node_attrs(self.services),
             "identity": self.identity._to_dict() if self.identity else None,
-            "queue_settings": get_rest_dict_for_node_attrs(self.queue_settings, clear_empty_value=True)
+            "queue_settings": get_rest_dict_for_node_attrs(self.queue_settings, clear_empty_value=True),
         }.items():
             if value is not None:
                 rest_obj[key] = value

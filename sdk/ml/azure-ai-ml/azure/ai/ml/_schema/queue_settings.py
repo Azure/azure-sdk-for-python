@@ -7,6 +7,7 @@ from azure.ai.ml.constants._job.job import JobPriorityValues, JobTierNames
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
+
 class QueueSettingsSchema(metaclass=PatchedSchemaMeta):
     job_tier = StringTransformedEnum(
         allowed_values=JobTierNames.ALLOWED_NAMES,
