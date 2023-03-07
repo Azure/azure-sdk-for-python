@@ -946,6 +946,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
         :rtype: generator[~pyamqp.message.Message]
         """
+        self.open()
         self._timeout_reached = False
         receiving = True
         message = None

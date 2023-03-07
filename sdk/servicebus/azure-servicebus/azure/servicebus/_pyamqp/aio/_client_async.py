@@ -855,6 +855,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
         :rtype: generator[~pyamqp.message.Message]
         """
+        self.open()
         receiving = True
         message = None
         self._last_activity_timestamp = time.time()

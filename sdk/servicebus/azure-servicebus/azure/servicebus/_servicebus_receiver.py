@@ -262,9 +262,11 @@ class ServiceBusReceiver(
         try:
             self._receive_context.set()
             self._open()
+            original_timeout = None
+            if wait_time:
+                original_timeout = self._handler._timeout # pylint: disable=protected-access
+                self._handler._timeout = wait_time # pylint: disable=protected-access
             if not self._message_iter:
-                self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
-            elif wait_time:
                 self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(self._message_iter)
             message = self._build_message(pyamqp_message)
@@ -277,6 +279,11 @@ class ServiceBusReceiver(
             return message
         finally:
             self._receive_context.clear()
+            if original_timeout:
+                try:
+                    self._handler._timeout = original_timeout # pylint: disable=protected-access
+                except AttributeError:  # Handler may be disposed already.
+                    pass
 
     @classmethod
     def _from_connection_string(cls, conn_str, **kwargs):

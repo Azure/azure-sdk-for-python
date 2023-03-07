@@ -223,7 +223,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                     yield message
             except StopAsyncIteration:
                 break
-    
+
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 
@@ -247,14 +247,15 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         finally:
             self._receive_context.clear()
 
-    async def _iter_next(self, wait_time=None):
+    async def _iter_next(self, wait_time=None): # pylint: disable=protected-access
         try:
             self._receive_context.set()
             await self._open()
-            # TODO: Add in Recieve Message Iterator
+            original_timeout = None
+            if wait_time:
+                original_timeout = self._handler._timeout # pylint: disable=protected-access
+                self._handler._timeout = wait_time # pylint: disable=protected-access
             if not self._message_iter:
-                self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
-            elif wait_time:
                 self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
             pyamqp_message = await self._message_iter.__anext__()
             message = self._build_message(pyamqp_message)
@@ -267,6 +268,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             return message
         finally:
             self._receive_context.clear()
+            if original_timeout:
+                try:
+                    self._handler._timeout = original_timeout # pylint: disable=protected-access
+                except AttributeError:  # Handler may be disposed already.
+                    pass
 
     @classmethod
     def _from_connection_string(
