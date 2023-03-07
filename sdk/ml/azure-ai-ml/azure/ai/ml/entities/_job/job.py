@@ -295,7 +295,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             if obj.properties.job_type == RestJobType.COMMAND:
                 # PrP only until new import job type is ready on MFE in PuP
                 # compute type 'DataFactory' is reserved compute name for 'clusterless' ADF jobs
-                if obj.properties.compute_id.endswith("/" + ComputeType.ADF):
+                if obj.properties.compute_id and obj.properties.compute_id.endswith("/" + ComputeType.ADF):
                     return ImportJob._load_from_rest(obj)
 
                 return Command._load_from_rest_job(obj)
