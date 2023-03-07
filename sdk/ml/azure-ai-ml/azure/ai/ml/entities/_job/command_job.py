@@ -278,6 +278,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             services=self.services,
             properties=self.properties,
             identity=self.identity,
+            queue_settings=self.queue_settings
         )
 
     def _validate(self) -> None:
