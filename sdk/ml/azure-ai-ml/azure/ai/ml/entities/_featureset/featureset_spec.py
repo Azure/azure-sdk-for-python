@@ -21,7 +21,7 @@ from .delay_metadata import DelayMetadata
 
 
 class FeaturesetSpec(object):
-    """FeaturesetSpec for data assets."""
+    """FeaturesetSpec for featureset."""
 
     def __init__(
         self,

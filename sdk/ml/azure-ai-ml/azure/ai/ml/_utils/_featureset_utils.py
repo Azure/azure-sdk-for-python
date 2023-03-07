@@ -9,5 +9,5 @@ from .utils import load_yaml
 
 
 def read_featureset_metadata_contents(*, path: str) -> Dict:
-    metadata_path = str(Path(path, "FeaturesetSpec"))
+    metadata_path = str(Path(path, "FeaturesetSpec.yaml"))
     return load_yaml(metadata_path)

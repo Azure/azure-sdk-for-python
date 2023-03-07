@@ -154,7 +154,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Featureset]
         """
 
-        featureset_spec = self._validate_and_get_featureset_spec(featureset)
+        featureset_spec = validate_and_get_featureset_spec(featureset)
         featureset.properties["spec_version"] = "1"
         featureset.properties["spec_data"] = json.dumps(featureset_spec._to_dict())
 
@@ -244,29 +244,30 @@ class FeaturesetOperations(_ScopeDependentOperations):
         )
         return self.get(name=name, version=latest_version)
 
-    # @monitor_with_activity(logger, "Featureset.ValidateAndGetFeaturesetSpec", ActivityType.INTERNALCALL)
-    def _validate_and_get_featureset_spec(self, featureset: Featureset) -> FeaturesetSpec:
-        if not (featureset.specification and featureset.specification.path):
-            msg = "Missing featureset spec path. Path is required for featureset."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                error_type=ValidationErrorType.MISSING_FIELD,
-                target=ErrorTarget.DATA,
-                error_category=ErrorCategory.USER_ERROR,
-            )
 
-        featureset_spec_path = str(featureset.specification.path)
+def validate_and_get_featureset_spec(featureset: Featureset) -> FeaturesetSpec:
+    # pylint: disable=no-member
+    if not featureset.specification and not featureset.specification.path:
+        msg = "Missing featureset spec path. Path is required for featureset."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            error_type=ValidationErrorType.MISSING_FIELD,
+            target=ErrorTarget.FEATURESET,
+            error_category=ErrorCategory.USER_ERROR,
+        )
 
-        if not os.path.isdir(featureset_spec_path):
-            raise ValidationException(
-                message="No such directory: {}".format(featureset_spec_path),
-                no_personal_data_message="No such directory",
-                target=ErrorTarget.DATA,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-            )
+    featureset_spec_path = str(featureset.specification.path)
 
-        featureset_spec_contents = read_featureset_metadata_contents(path=featureset_spec_path)
-        featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec")
-        return FeaturesetSpec._load(featureset_spec_contents, featureset_spec_yaml_path)
+    if not os.path.isdir(featureset_spec_path):
+        raise ValidationException(
+            message="No such directory: {}".format(featureset_spec_path),
+            no_personal_data_message="No such directory",
+            target=ErrorTarget.FEATURESET,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
+        )
+
+    featureset_spec_contents = read_featureset_metadata_contents(path=featureset_spec_path)
+    featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec")
+    return FeaturesetSpec._load(featureset_spec_contents, featureset_spec_yaml_path)
