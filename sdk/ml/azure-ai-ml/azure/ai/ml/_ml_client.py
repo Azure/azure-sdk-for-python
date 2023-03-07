@@ -503,7 +503,11 @@ class MLClient:
         self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
         self._featuresets = FeaturesetOperations(
-            self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_02_2023_preview,
+            self._datastores,
+            **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.FEATURESET, self._featuresets)
 

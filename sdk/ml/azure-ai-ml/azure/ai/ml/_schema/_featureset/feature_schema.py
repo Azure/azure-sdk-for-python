@@ -24,4 +24,4 @@ class FeatureSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._featureset.feature import Feature
 
-        return Feature(**data)
+        return Feature(data_type=type, description=data.pop("description", None), **data)

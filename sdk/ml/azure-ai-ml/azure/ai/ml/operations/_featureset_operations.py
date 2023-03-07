@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWork
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -43,6 +44,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: ServiceClient022023Preview,
+        datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
 
@@ -51,6 +53,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
         self._service_client = service_client
+        self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
         # Maps a label to a function which given an asset name,
@@ -152,8 +155,8 @@ class FeaturesetOperations(_ScopeDependentOperations):
         """
 
         featureset_spec = self._validate_and_get_featureset_spec(featureset)
-        featureset.properties.update("spec_version", "1")
-        featureset.properties.update("spec_data", json.dump(featureset_spec))
+        featureset.properties["spec_version"] = "1"
+        # featureset.properties["spec_data"] = json.dumps(featureset_spec.__dict__)
 
         sas_uri = None
         featureset, _ = _check_and_upload_path(
@@ -242,7 +245,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
         return self.get(name=name, version=latest_version)
 
     # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
-    def _validate_and_get_featureset_spec(self, featureset: Featureset) -> str:
+    def _validate_and_get_featureset_spec(self, featureset: Featureset) -> FeaturesetSpec:
         if not (featureset.specification and featureset.specification.path):
             msg = "Missing featureset spec path. Path is required for featureset."
             raise ValidationException(
@@ -265,6 +268,6 @@ class FeaturesetOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
             )
 
-        featureset_spec_contents = read_featureset_metadata_contents(featureset_spec_path)
+        featureset_spec_contents = read_featureset_metadata_contents(path=featureset_spec_path)
         featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec")
         return FeaturesetSpec._load(featureset_spec_contents, featureset_spec_yaml_path)
