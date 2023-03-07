@@ -14,7 +14,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python backups_account_delete.py
+    python accounts_create_or_update_ad.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,32 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.account_backups.begin_delete(
-        resource_group_name="resourceGroup",
-        account_name="accountName",
-        backup_name="backupName",
+    response = client.accounts.begin_create_or_update(
+        resource_group_name="myRG",
+        account_name="account1",
+        body={
+            "location": "eastus",
+            "properties": {
+                "activeDirectories": [
+                    {
+                        "aesEncryption": True,
+                        "dns": "10.10.10.3, 10.10.10.4",
+                        "domain": "10.10.10.3",
+                        "ldapOverTLS": False,
+                        "ldapSigning": False,
+                        "organizationalUnit": "OU=Engineering",
+                        "password": "ad_password",
+                        "site": "SiteName",
+                        "smbServerName": "SMBServer",
+                        "username": "ad_user_name",
+                    }
+                ]
+            },
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/Backups_Account_Delete.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/Accounts_CreateOrUpdateAD.json
 if __name__ == "__main__":
     main()

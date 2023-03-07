@@ -49,7 +49,7 @@ def build_list_by_net_app_account_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -58,11 +58,13 @@ def build_list_by_net_app_account_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+        ),
     }
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
@@ -82,7 +84,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -91,11 +93,13 @@ def build_get_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+        ),
         "volumeGroupName": _SERIALIZER.url(
             "volume_group_name",
             volume_group_name,
@@ -123,7 +127,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -133,11 +137,13 @@ def build_create_request(
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+        ),
         "volumeGroupName": _SERIALIZER.url(
             "volume_group_name",
             volume_group_name,
@@ -166,18 +172,20 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-05-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-05-01"))
+    api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+        "accountName": _SERIALIZER.url(
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+        ),
         "volumeGroupName": _SERIALIZER.url(
             "volume_group_name",
             volume_group_name,
@@ -223,7 +231,8 @@ class VolumeGroupsOperations:
 
         List all volume groups for given account.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -235,7 +244,7 @@ class VolumeGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.VolumeGroupList] = kwargs.pop("cls", None)
@@ -316,7 +325,8 @@ class VolumeGroupsOperations:
 
         Get details of the specified volume group.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -338,7 +348,7 @@ class VolumeGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.VolumeGroupDetails] = kwargs.pop("cls", None)
@@ -396,7 +406,7 @@ class VolumeGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -464,7 +474,8 @@ class VolumeGroupsOperations:
 
         Create a volume group along with specified volumes.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -506,7 +517,8 @@ class VolumeGroupsOperations:
 
         Create a volume group along with specified volumes.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -546,14 +558,15 @@ class VolumeGroupsOperations:
 
         Create a volume group along with specified volumes.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param volume_group_name: The name of the volumeGroup. Required.
         :type volume_group_name: str
-        :param body: Volume Group object supplied in the body of the operation. Is either a model type
-         or a IO type. Required.
+        :param body: Volume Group object supplied in the body of the operation. Is either a
+         VolumeGroupDetails type or a IO type. Required.
         :type body: ~azure.mgmt.netapp.models.VolumeGroupDetails or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -574,7 +587,7 @@ class VolumeGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -636,7 +649,7 @@ class VolumeGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -679,7 +692,8 @@ class VolumeGroupsOperations:
 
         Delete the specified volume group only if there are no volumes under volume group.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
@@ -700,7 +714,7 @@ class VolumeGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-05-01"] = kwargs.pop(
+        api_version: Literal["2022-09-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)

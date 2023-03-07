@@ -14,7 +14,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python vaults_list.py
+    python volumes_break_file_locks.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,15 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.vaults.list(
+    response = client.volumes.begin_break_file_locks(
         resource_group_name="myRG",
         account_name="account1",
-    )
-    for item in response:
-        print(item)
+        pool_name="pool1",
+        volume_name="volume1",
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-05-01/examples/Vaults_List.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/Volumes_BreakFileLocks.json
 if __name__ == "__main__":
     main()
