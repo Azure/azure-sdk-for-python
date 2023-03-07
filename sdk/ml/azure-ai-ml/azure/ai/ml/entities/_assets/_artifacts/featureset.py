@@ -17,8 +17,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 )
 from azure.ai.ml._schema._featureset.featureset_schema import FeaturesetSchema
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId
-from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
+from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, get_arm_id_object_from_id
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
