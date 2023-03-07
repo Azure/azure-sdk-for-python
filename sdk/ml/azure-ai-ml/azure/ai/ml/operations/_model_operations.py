@@ -29,7 +29,13 @@ from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_04_01_preview.models import PackageRequest, PackageResponse
 from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListViewType
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationScope,
+    _ScopeDependentOperations,
+    OperationsContainer,
+)
+from azure.ai.ml.entities._assets._artifacts.code import Code
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -47,7 +53,7 @@ from azure.ai.ml._utils._registry_utils import (
 )
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
-from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
+from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType, AzureMLResourceType
 from azure.ai.ml.entities._assets import Model, ModelPackage
 from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
@@ -60,6 +66,7 @@ from azure.ai.ml.exceptions import (
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import ResourceNotFoundError
+from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -80,6 +87,7 @@ class ModelOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
+        all_operations: OperationsContainer = None,
         **kwargs: Dict,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
@@ -88,12 +96,11 @@ class ModelOperations(_ScopeDependentOperations):
         self._model_container_operation = service_client.model_containers
         self._service_client = service_client
         self._datastore_operation = datastore_operations
+        self._all_operations = all_operations
 
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
-        if is_private_preview_enabled:
-            self._set_preview_client()
 
     # @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
@@ -500,10 +507,21 @@ class ModelOperations(_ScopeDependentOperations):
 
     def begin_package(self, model_name: str, model_version: str, package_request: ModelPackage, **kwargs) -> None:
 
+        orchestrators = OperationOrchestrator(
+            operation_container=self._all_operations,
+            operation_scope=self._operation_scope,
+            operation_config=self._operation_config,
+        )
+
         import debugpy
 
         debugpy.connect(("localhost", 5678))
         debugpy.breakpoint()
+
+        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
+            Code(base_path=package_request._base_path, path=package_request.inferencing_server.code_configuration.code),
+            azureml_type=AzureMLResourceType.CODE,
+        )
 
         package_out = self._model_versions_operation.begin_package(
             name=model_name,
@@ -515,8 +533,3 @@ class ModelOperations(_ScopeDependentOperations):
         ).result()
 
         return package_out
-
-    def _set_preview_client(self) -> str:
-        """Returns the preview client for model versions operation with base url replaced by mfe url
-        as this API version is not available in ARM yet"""
-        self._model_versions_operation._client._base_url = "https://eastus2euap.management.azure.com"

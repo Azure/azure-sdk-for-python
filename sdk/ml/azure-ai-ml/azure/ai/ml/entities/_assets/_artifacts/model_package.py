@@ -26,7 +26,7 @@ from azure.ai.ml.constants._common import (
 )
 
 
-class ModelPackage(PackageRequest, Resource):
+class ModelPackage(Resource, PackageRequest):
     """Model for training and scoring.
 
     :param name: Name of the resource.
@@ -68,10 +68,10 @@ class ModelPackage(PackageRequest, Resource):
         tags: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
-        # kwargs.pop(
-        #     "target_environment_name", None
-        # )  # need to remove this because it is not a valid parameter for the model package
+        name = kwargs.pop("target_environment_name", None)
+
         super().__init__(
+            name=name,
             target_environment_name=name,
             target_environment_version=version,
             base_environment_source=base_environment_source,
@@ -80,7 +80,7 @@ class ModelPackage(PackageRequest, Resource):
             inputs=inputs,
             tags=tags,
             environment_variables=environment_variables,
-            # **kwargs,
+            **kwargs,
         )
 
     @classmethod

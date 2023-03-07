@@ -399,6 +399,7 @@ class MLClient:
             if is_private_preview_enabled
             else self._service_client_05_2022,
             self._datastores,
+            self._operation_container,
             requests_pipeline=self._requests_pipeline,
             **app_insights_handler_kwargs,
         )
