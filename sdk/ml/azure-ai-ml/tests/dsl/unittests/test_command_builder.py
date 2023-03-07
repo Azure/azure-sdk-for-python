@@ -681,10 +681,10 @@ class TestCommandFunction:
         assert rest_dict["resources"] == {"instance_type": "STANDARD_D2"}
 
     def test_queue_settings(self, test_command_params):
-        expected_queue_settings = {"job_tier": "standard"}
+        expected_queue_settings = {"job_tier": "Standard", "priority": 2}
         test_command_params.update(
             {
-                "queue_settings": QueueSettings(job_tier="standard"),
+                "queue_settings": QueueSettings(job_tier="standard", priority="medium"),
             }
         )
         command_node = command(**test_command_params)
@@ -693,7 +693,7 @@ class TestCommandFunction:
 
         test_command_params.update(
             {
-                "queue_settings": dict(job_tier="standard"),
+                "queue_settings": dict(job_tier="standard", priority="medium"),
             }
         )
         command_node = command(**test_command_params)

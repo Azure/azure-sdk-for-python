@@ -197,7 +197,7 @@ class Command(BaseNode):
         self.environment = environment
         self._resources = resources
         self._services = services
-        self._queue_settings = queue_settings
+        self.queue_settings = queue_settings
 
         if isinstance(self.component, CommandComponent):
             self.resources = self.resources or self.component.resources

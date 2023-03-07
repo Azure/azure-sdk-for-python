@@ -135,7 +135,7 @@ class TestCommandJobEntity:
             instance_type="STANDARD_BLA",
             timeout=300,
             code="./",
-            queue_settings=QueueSettings(job_tier="standard")
+            queue_settings=QueueSettings(job_tier="standard", priorty="medium")
         )
 
         expected_job = CommandJob(
@@ -155,7 +155,7 @@ class TestCommandJobEntity:
             outputs={"best_model": {}},
             limits=CommandJobLimits(timeout=300),
             resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
-            queue_settings=QueueSettings(job_tier="standard"),
+            queue_settings=QueueSettings(job_tier="standard", priorty="medium"),
             code="./",
         )
 

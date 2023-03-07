@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_load
+from marshmallow import post_load
 from azure.ai.ml.constants._job.job import JobPriorityValues, JobTierNames
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
@@ -18,7 +18,7 @@ class QueueSettingsSchema(metaclass=PatchedSchemaMeta):
     )
 
     @post_load
-    def make(self, data, **kwargs):
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument, disable=no-self-use
         from azure.ai.ml.entities import QueueSettings
 
         return QueueSettings(**data)

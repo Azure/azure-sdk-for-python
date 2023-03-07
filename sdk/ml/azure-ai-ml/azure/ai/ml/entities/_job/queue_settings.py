@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, Optional
+from typing import Optional
 from typing_extensions import Literal
 
 from azure.ai.ml.constants._job.job import JobPriorityValues, JobTierNames
@@ -61,7 +61,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
-        
+
         if self.priority and not self.priority in JobPriorityValues.ENTITY_TO_REST.keys():
             msg = f"priority should be one of " f"{JobPriorityValues.ALLOWED_VALUES}, but received '{self.priority}'."
             raise ValidationException(
