@@ -244,7 +244,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
         )
         return self.get(name=name, version=latest_version)
 
-    # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
+    # @monitor_with_activity(logger, "Featureset.ValidateAndGetFeaturesetSpec", ActivityType.INTERNALCALL)
     def _validate_and_get_featureset_spec(self, featureset: Featureset) -> FeaturesetSpec:
         if not (featureset.specification and featureset.specification.path):
             msg = "Missing featureset spec path. Path is required for featureset."
