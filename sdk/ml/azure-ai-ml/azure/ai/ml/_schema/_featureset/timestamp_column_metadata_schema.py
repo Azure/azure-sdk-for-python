@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 
-from marshmallow import fields, validate, post_load
+from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 

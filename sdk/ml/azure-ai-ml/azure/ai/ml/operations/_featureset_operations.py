@@ -257,7 +257,6 @@ class FeaturesetOperations(_ScopeDependentOperations):
             )
 
         featureset_spec_path = str(featureset.specification.path)
-        base_path = featureset.base_path
 
         if not os.path.isdir(featureset_spec_path):
             raise ValidationException(

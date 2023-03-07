@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=redefined-builtin,disable=unused-argument
 
 from .timestamp_column_metadata import TimestampColumnMetadata
 from .delay_metadata import DelayMetadata

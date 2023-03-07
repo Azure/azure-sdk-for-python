@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=no-member
+# pylint: disable=unused-argument
 
 from typing import Optional
 from azure.ai.ml.entities._featurestore_entity.data_column_type import DataColumnType

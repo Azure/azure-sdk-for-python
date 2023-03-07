@@ -27,12 +27,13 @@ def mock_datastore_operation(
         serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
+
 @pytest.fixture
 def mock_featureset_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2023_02_01_preview: Mock,
-    mock_datastore_operation: Mock
+    mock_datastore_operation: Mock,
 ) -> FeaturesetOperations:
     yield FeaturesetOperations(
         operation_scope=mock_workspace_scope,
@@ -40,6 +41,7 @@ def mock_featureset_operations(
         service_client=mock_aml_services_2023_02_01_preview,
         datastore_operations=mock_datastore_operation,
     )
+
 
 # @pytest.fixture
 def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
