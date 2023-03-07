@@ -6,7 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called
 
-from typing import List # pylint: disable=unused-import
+from typing import Any, List, Self, TYPE_CHECKING, Union, Dict # pylint: disable=unused-import
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -16,6 +16,9 @@ from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class QueueAnalyticsLogging(GeneratedLogging):
@@ -31,7 +34,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
@@ -39,7 +42,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
         return cls(
@@ -64,14 +67,14 @@ class Metrics(GeneratedMetrics):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
         return cls(
@@ -95,14 +98,14 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted.
     """
 
-    def __init__(self, enabled=False, days=None):
+    def __init__(self, enabled: bool = False, days: int = None) -> None:
         self.enabled = enabled
         self.days = days
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         if not generated:
             return cls()
         return cls(
@@ -141,7 +144,7 @@ class CorsRule(GeneratedCorsRule):
         headers. Each header can be up to 256 characters.
     """
 
-    def __init__(self, allowed_origins, allowed_methods, **kwargs):
+    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
@@ -149,7 +152,7 @@ class CorsRule(GeneratedCorsRule):
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         return cls(
             [generated.allowed_origins],
             [generated.allowed_methods],
@@ -202,7 +205,11 @@ class AccessPolicy(GenAccessPolicy):
     :type start: ~datetime.datetime or str
     """
 
-    def __init__(self, permission=None, expiry=None, start=None):
+    def __init__(
+            self, permission: str = None,
+            expiry: Union["datetime", str] = None,
+            start: Union["datetime", str] = None
+        ) -> None:
         self.start = start
         self.expiry = expiry
         self.permission = permission
@@ -236,7 +243,7 @@ class QueueMessage(DictMixin):
         Only returned by receive messages operations. Set to None for peek messages.
     """
 
-    def __init__(self, content=None):
+    def __init__(self, content: object = None) -> None:
         self.id = None
         self.inserted_on = None
         self.expires_on = None
@@ -246,7 +253,7 @@ class QueueMessage(DictMixin):
         self.next_visible_on = None
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         message = cls(content=generated.message_text)
         message.id = generated.message_id
         message.inserted_on = generated.insertion_time
@@ -267,7 +274,12 @@ class MessagesPaged(PageIterator):
     :param int max_messages: The maximum number of messages to retrieve from
         the queue.
     """
-    def __init__(self, command, results_per_page=None, continuation_token=None, max_messages=None):
+    def __init__(
+            self, command: callable,
+            results_per_page: int = None,
+            continuation_token: str = None,
+            max_messages: int = None
+        ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
 
@@ -279,7 +291,7 @@ class MessagesPaged(PageIterator):
         self.results_per_page = results_per_page
         self._max_messages = max_messages
 
-    def _get_next_cb(self, continuation_token):
+    def _get_next_cb(self, continuation_token: str) -> Self:
         try:
             if self._max_messages is not None:
                 if self.results_per_page is None:
@@ -291,7 +303,7 @@ class MessagesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, messages): # pylint: disable=no-self-use
+    def _extract_data_cb(self, messages: QueueMessage) -> Self: # pylint: disable=no-self-use
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopIteration("End of paging")
@@ -310,13 +322,13 @@ class QueueProperties(DictMixin):
         for the list queues operation. If this parameter was specified but the
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self.name = None
         self.metadata = kwargs.get('metadata')
         self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count')
 
     @classmethod
-    def _from_generated(cls, generated):
+    def _from_generated(cls, generated: Any) -> Self:
         props = cls()
         props.name = generated.name
         props.metadata = generated.metadata
@@ -340,7 +352,12 @@ class QueuePropertiesPaged(PageIterator):
         call.
     :param str continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+    def __init__(
+            self, command: callable,
+            prefix: str = None,
+            results_per_page: int = None,
+            continuation_token: str = None
+            ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -353,7 +370,7 @@ class QueuePropertiesPaged(PageIterator):
         self.results_per_page = results_per_page
         self.location_mode = None
 
-    def _get_next_cb(self, continuation_token):
+    def _get_next_cb(self, continuation_token: str) -> Self:
         try:
             return self._command(
                 marker=continuation_token or None,
@@ -363,7 +380,7 @@ class QueuePropertiesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, get_next_return):
+    def _extract_data_cb(self, get_next_return: str) -> Self:
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
@@ -388,7 +405,12 @@ class QueueSasPermissions(object):
     :param bool process:
         Get and delete messages from the queue.
     """
-    def __init__(self, read=False, add=False, update=False, process=False):
+    def __init__(
+            self, read: bool = False,
+            add: bool = False,
+            update: bool = False,
+            process: bool = False
+        ) -> None:
         self.read = read
         self.add = add
         self.update = update
@@ -402,7 +424,7 @@ class QueueSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission):
+    def from_string(cls, permission: str) -> Self:
         """Create a QueueSasPermissions from a string.
 
         To specify read, add, update, or process permissions you need only to
@@ -424,7 +446,7 @@ class QueueSasPermissions(object):
         return parsed
 
 
-def service_stats_deserialize(generated):
+def service_stats_deserialize(generated: Any) -> Dict[str, Any]:
     """Deserialize a ServiceStats objects into a dict.
     """
     return {
@@ -435,7 +457,7 @@ def service_stats_deserialize(generated):
     }
 
 
-def service_properties_deserialize(generated):
+def service_properties_deserialize(generated: Any) -> Dict[str, Any]:
     """Deserialize a ServiceProperties objects into a dict.
     """
     return {

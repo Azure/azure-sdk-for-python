@@ -30,7 +30,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     '''
 
-    def __init__(self, account_name, account_key):
+    def __init__(self, account_name: str, account_key: str) -> None:
         '''
         :param str account_name:
             The storage account name used to generate the shared access signatures.
@@ -39,9 +39,15 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         '''
         super(QueueSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
 
-    def generate_queue(self, queue_name, permission=None,
-                       expiry=None, start=None, policy_id=None,
-                       ip=None, protocol=None):
+    def generate_queue(
+            self, queue_name: str,
+            permission: "QueueSasPermissions" = None,
+            expiry: Union["datetime", str] = None,
+            start: Union["datetime", str] = None,
+            policy_id: str = None,
+            ip: str = None,
+            protocol: str = None
+        ) -> str:
         '''
         Generates a shared access signature for the queue.
         Use the returned signature with the sas_token parameter of QueueService.
@@ -92,7 +98,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
 
 class _QueueSharedAccessHelper(_SharedAccessHelper):
 
-    def add_resource_signature(self, account_name, account_key, path):  # pylint: disable=arguments-differ
+    def add_resource_signature(self, account_name: str, account_key: str, path: str) -> str:  # pylint: disable=arguments-differ
         def get_value_to_append(query):
             return_value = self.query_dict.get(query) or ''
             return return_value + '\n'
@@ -123,15 +129,15 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
 
 
 def generate_account_sas(
-        account_name,  # type: str
-        account_key,  # type: str
-        resource_types,  # type: Union[ResourceTypes, str]
-        permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        ip=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):  # type: (...) -> str
+        account_name: str,
+        account_key: str,
+        resource_types: Union["ResourceTypes", str],
+        permission: Union["AccountSasPermissions", str],
+        expiry: Optional[Union["datetime", str]],
+        start: Optional[Union["datetime", str]] = None,
+        ip: Optional[str] = None,
+        **kwargs: Any
+    ) -> str:
     """Generates a shared access signature for the queue service.
 
     Use the returned signature with the credential parameter of any Queue Service.
@@ -180,20 +186,20 @@ def generate_account_sas(
         start=start,
         ip=ip,
         **kwargs
-    ) # type: ignore
+    )
 
 
 def generate_queue_sas(
-        account_name,  # type: str
-        queue_name,  # type: str
-        account_key,  # type: str
-        permission=None,  # type: Optional[Union[QueueSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
-        ip=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):  # type: (...) -> str
+        account_name: str,
+        queue_name: str,
+        account_key: str,
+        permission: Optional[Union["QueueSasPermissions", str]] = None,
+        expiry: Optional[Union["datetime", str]] = None,
+        start: Optional[Union["datetime", str]] = None,
+        policy_id: Optional[str] = None,
+        ip: Optional[str] = None,
+        **kwargs: Any
+    ) -> str:
     """Generates a shared access signature for a queue.
 
     Use the returned signature with the credential parameter of any Queue Service.

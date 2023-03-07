@@ -24,7 +24,12 @@ class MessagesPaged(AsyncPageIterator):
     :param int max_messages: The maximum number of messages to retrieve from
         the queue.
     """
-    def __init__(self, command, results_per_page=None, continuation_token=None, max_messages=None):
+    def __init__(
+            self, command: callable,
+            results_per_page: int = None,
+            continuation_token: str = None,
+            max_messages: int = None
+        ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
 
@@ -36,7 +41,7 @@ class MessagesPaged(AsyncPageIterator):
         self.results_per_page = results_per_page
         self._max_messages = max_messages
 
-    async def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token: str) -> Self:
         try:
             if self._max_messages is not None:
                 if self.results_per_page is None:
@@ -48,7 +53,7 @@ class MessagesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, messages):
+    async def _extract_data_cb(self, messages: QueueMessage) -> Self:
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopAsyncIteration("End of paging")
@@ -74,7 +79,12 @@ class QueuePropertiesPaged(AsyncPageIterator):
         call.
     :param str continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+    def __init__(
+            self, command: callable,
+            prefix: str = None,
+            results_per_page: int = None,
+            continuation_token: str = None
+        ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -87,7 +97,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
         self.results_per_page = results_per_page
         self.location_mode = None
 
-    async def _get_next_cb(self, continuation_token):
+    async def _get_next_cb(self, continuation_token: str) -> Self:
         try:
             return await self._command(
                 marker=continuation_token or None,
@@ -97,7 +107,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _extract_data_cb(self, get_next_return):
+    async def _extract_data_cb(self, get_next_return: str) -> Self:
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix

@@ -7,28 +7,37 @@
 
 import sys
 from base64 import b64encode, b64decode
+from typing import Any, Dict, TYPE_CHECKING
 
 from azure.core.exceptions import DecodeError
 
 from ._encryption import decrypt_queue_message, encrypt_queue_message, _ENCRYPTION_PROTOCOL_V1
 
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
+
 
 class MessageEncodePolicy(object):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.require_encryption = False
         self.encryption_version = None
         self.key_encryption_key = None
         self.resolver = None
 
-    def __call__(self, content):
+    def __call__(self, content: object) -> str:
         if content:
             content = self.encode(content)
             if self.key_encryption_key is not None:
                 content = encrypt_queue_message(content, self.key_encryption_key, self.encryption_version)
         return content
 
-    def configure(self, require_encryption, key_encryption_key, resolver, encryption_version=_ENCRYPTION_PROTOCOL_V1):
+    def configure(
+        self, require_encryption: bool,
+        key_encryption_key: str,
+        resolver: callable,
+        encryption_version: str = _ENCRYPTION_PROTOCOL_V1
+    ) -> None:
         self.require_encryption = require_encryption
         self.encryption_version = encryption_version
         self.key_encryption_key = key_encryption_key
@@ -36,7 +45,7 @@ class MessageEncodePolicy(object):
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
 
-    def encode(self, content):
+    def encode(self, content: object) -> None:
         raise NotImplementedError("Must be implemented by child class.")
 
 
@@ -47,7 +56,7 @@ class MessageDecodePolicy(object):
         self.key_encryption_key = None
         self.resolver = None
 
-    def __call__(self, response, obj, headers):
+    def __call__(self, response: "PipelineResponse", obj: object, headers: Dict[str, Any]) -> object:
         for message in obj:
             if message.message_text in [None, "", b""]:
                 continue
@@ -61,12 +70,12 @@ class MessageDecodePolicy(object):
             message.message_text = self.decode(content, response)
         return obj
 
-    def configure(self, require_encryption, key_encryption_key, resolver):
+    def configure(self, require_encryption: bool, key_encryption_key: object, resolver: callable) -> None:
         self.require_encryption = require_encryption
         self.key_encryption_key = key_encryption_key
         self.resolver = resolver
 
-    def decode(self, content, response):
+    def decode(self, content: object, response: "PipelineResponse") -> None:
         raise NotImplementedError("Must be implemented by child class.")
 
 
@@ -77,7 +86,7 @@ class TextBase64EncodePolicy(MessageEncodePolicy):
     is not text, a TypeError will be raised. Input text must support UTF-8.
     """
 
-    def encode(self, content):
+    def encode(self, content: object) -> str:
         if not isinstance(content, str):
             raise TypeError("Message content must be text for base 64 encoding.")
         return b64encode(content.encode('utf-8')).decode('utf-8')
@@ -91,7 +100,7 @@ class TextBase64DecodePolicy(MessageDecodePolicy):
     support UTF-8.
     """
 
-    def decode(self, content, response):
+    def decode(self, content: object, response: "PipelineResponse") -> bytes:
         try:
             return b64decode(content.encode('utf-8')).decode('utf-8')
         except (ValueError, TypeError) as error:
@@ -109,7 +118,7 @@ class BinaryBase64EncodePolicy(MessageEncodePolicy):
     is not bytes, a TypeError will be raised.
     """
 
-    def encode(self, content):
+    def encode(self, content: object) -> str:
         if not isinstance(content, bytes):
             raise TypeError("Message content must be bytes for base 64 encoding.")
         return b64encode(content).decode('utf-8')
@@ -122,7 +131,7 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
     is not valid base 64, a DecodeError will be raised.
     """
 
-    def decode(self, content, response):
+    def decode(self, content: object, response: "PipelineResponse") -> bytes:
         response = response.http_response
         try:
             return b64decode(content.encode('utf-8'))
@@ -137,7 +146,7 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
 class NoEncodePolicy(MessageEncodePolicy):
     """Bypass any message content encoding."""
 
-    def encode(self, content):
+    def encode(self, content: object) -> object:
         if isinstance(content, bytes) and sys.version_info > (3,):
             raise TypeError(
                 "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
@@ -148,5 +157,5 @@ class NoEncodePolicy(MessageEncodePolicy):
 class NoDecodePolicy(MessageDecodePolicy):
     """Bypass any message content decoding."""
 
-    def decode(self, content, response):
+    def decode(self, content: object, response: "PipelineResponse") -> object:
         return content

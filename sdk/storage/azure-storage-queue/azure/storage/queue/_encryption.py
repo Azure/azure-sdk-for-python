@@ -14,7 +14,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Dict, Optional, Tuple
+from typing import Any, BinaryIO, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher
@@ -28,6 +28,11 @@ from azure.core.exceptions import HttpResponseError
 from ._version import VERSION
 from ._shared import encode_base64, decode_base64_to_bytes
 
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
+    from cryptography.hazmat.primitives.ciphers import AEADEncryptionContext
+    from cryptography.hazmat.primitives.padding import PaddingContext
+
 
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
 _ENCRYPTION_PROTOCOL_V2 = '2.0'
@@ -39,12 +44,12 @@ _ERROR_OBJECT_INVALID = \
     '{0} does not define a complete interface. Value of {1} is either missing or invalid.'
 
 
-def _validate_not_none(param_name, param):
+def _validate_not_none(param_name: str, param: Any) -> None:
     if param is None:
         raise ValueError(f'{param_name} should not be None.')
 
 
-def _validate_key_encryption_key_wrap(kek):
+def _validate_key_encryption_key_wrap(kek: Any) -> None:
     # Note that None is not callable and so will fail the second clause of each check.
     if not hasattr(kek, 'wrap_key') or not callable(kek.wrap_key):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'wrap_key'))
@@ -55,7 +60,7 @@ def _validate_key_encryption_key_wrap(kek):
 
 
 class StorageEncryptionMixin(object):
-    def _configure_encryption(self, kwargs):
+    def _configure_encryption(self, kwargs: Any) -> None:
         self.require_encryption = kwargs.get("require_encryption", False)
         self.encryption_version = kwargs.get("encryption_version", "1.0")
         self.key_encryption_key = kwargs.get("key_encryption_key")
@@ -80,7 +85,7 @@ class _WrappedContentKey:
     Represents the envelope key details stored on the service.
     '''
 
-    def __init__(self, algorithm, encrypted_key, key_id):
+    def __init__(self, algorithm: str, encrypted_key: bytes, key_id: str) -> None:
         '''
         :param str algorithm:
             The algorithm used for wrapping.
@@ -105,7 +110,7 @@ class _EncryptedRegionInfo:
     This is only used for Encryption V2.
     '''
 
-    def __init__(self, data_length, nonce_length, tag_length):
+    def __init__(self, data_length: int, nonce_length: str, tag_length: int) -> None:
         '''
         :param int data_length:
             The length of the encryption region data (not including nonce + tag).
@@ -129,7 +134,7 @@ class _EncryptionAgent:
     It consists of the encryption protocol version and encryption algorithm used.
     '''
 
-    def __init__(self, encryption_algorithm, protocol):
+    def __init__(self, encryption_algorithm: _EncryptionAlgorithm, protocol: str) -> None:
         '''
         :param _EncryptionAlgorithm encryption_algorithm:
             The algorithm used for encrypting the message contents.
@@ -150,12 +155,12 @@ class _EncryptionData:
     '''
 
     def __init__(
-            self,
-            content_encryption_IV,
-            encrypted_region_info,
-            encryption_agent,
-            wrapped_content_key,
-            key_wrapping_metadata):
+            self, content_encryption_IV: Optional[bytes],
+            encrypted_region_info: Optional[_EncryptedRegionInfo],
+            encryption_agent: _EncryptionAgent,
+            wrapped_content_key: _WrappedContentKey,
+            key_wrapping_metadata: Dict[Any, Any]
+        ) -> None:
         '''
         :param Optional[bytes] content_encryption_IV:
             The content encryption initialization vector.
@@ -198,10 +203,9 @@ class GCMBlobEncryptionStream:
     nonce for each encryption region.
     """
     def __init__(
-            self,
-            content_encryption_key: bytes,
+            self, content_encryption_key: bytes,
             data_stream: BinaryIO,
-            ):
+        ) -> None:
         """
         :param bytes content_encryption_key: The encryption key to use.
         :param BinaryIO data_stream: The data stream to read data from.
@@ -294,7 +298,8 @@ def get_adjusted_download_range_and_offset(
         start: int,
         end: int,
         length: int,
-        encryption_data: Optional[_EncryptionData]) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+        encryption_data: Optional[_EncryptionData]
+    ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """
     Gets the new download range and offsets into the decrypted data for
     the given user-specified range. The new download range will include all
@@ -400,7 +405,7 @@ def adjust_blob_size_for_encryption(size: int, encryption_data: Optional[_Encryp
     return size
 
 
-def _generate_encryption_data_dict(kek, cek, iv, version):
+def _generate_encryption_data_dict(kek: object, cek: bytes, iv: Optional[bytes], version: str) -> Dict[str, Any]:
     '''
     Generates and returns the encryption metadata as a dict.
 
@@ -452,7 +457,7 @@ def _generate_encryption_data_dict(kek, cek, iv, version):
     return encryption_data_dict
 
 
-def _dict_to_encryption_data(encryption_data_dict):
+def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _EncryptionData:
     '''
     Converts the specified dictionary to an EncryptionData object for
     eventual use in decryption.
@@ -504,7 +509,7 @@ def _dict_to_encryption_data(encryption_data_dict):
     return encryption_data
 
 
-def _generate_AES_CBC_cipher(cek, iv):
+def _generate_AES_CBC_cipher(cek: List[bytes], iv: List[bytes]) -> Cipher:
     '''
     Generates and returns an encryption cipher for AES CBC using the given cek and iv.
 
@@ -520,7 +525,11 @@ def _generate_AES_CBC_cipher(cek, iv):
     return Cipher(algorithm, mode, backend)
 
 
-def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resolver=None):
+def _validate_and_unwrap_cek(
+        encryption_data: _EncryptionData,
+        key_encryption_key: object = None,
+        key_resolver: callable = None
+    ) -> List[bytes]:
     '''
     Extracts and returns the content_encryption_key stored in the encryption_data object
     and performs necessary validation on all parameters.
@@ -579,7 +588,12 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
     return content_encryption_key
 
 
-def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver=None):
+def _decrypt_message(
+        message: str,
+        encryption_data: _EncryptionData,
+        key_encryption_key: object = None,
+        resolver: callable = None
+    ) -> str:
     '''
     Decrypts the given ciphertext using AES256 in CBC mode with 128 bit padding.
     Unwraps the content-encryption-key using the user-provided or resolved key-encryption-key (kek).
@@ -639,7 +653,7 @@ def _decrypt_message(message, encryption_data, key_encryption_key=None, resolver
     return decrypted_data
 
 
-def encrypt_blob(blob, key_encryption_key, version):
+def encrypt_blob(blob: bytes, key_encryption_key: object, version: str) -> Tuple[str, bytes]:
     '''
     Encrypts the given blob using the given encryption protocol version.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
@@ -698,7 +712,7 @@ def encrypt_blob(blob, key_encryption_key, version):
     return dumps(encryption_data), encrypted_data
 
 
-def generate_blob_encryption_data(key_encryption_key, version):
+def generate_blob_encryption_data(key_encryption_key: object, version: str) -> Tuple[bytes, Optional[bytes], str]:
     '''
     Generates the encryption_metadata for the blob.
 
@@ -729,13 +743,14 @@ def generate_blob_encryption_data(key_encryption_key, version):
 
 
 def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
-        require_encryption,
-        key_encryption_key,
-        key_resolver,
-        content,
-        start_offset,
-        end_offset,
-        response_headers):
+        require_encryption: bool,
+        key_encryption_key: object,
+        key_resolver: object,
+        content: bytes,
+        start_offset: int,
+        end_offset: int,
+        response_headers: Dict[str, Any]
+    ) -> bytes:
     """
     Decrypts the given blob contents and returns only the requested range.
 
@@ -854,7 +869,11 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         return decrypted_content[start_offset:end_offset]
 
 
-def get_blob_encryptor_and_padder(cek, iv, should_pad):
+def get_blob_encryptor_and_padder(
+        cek: bytes,
+        iv: Optional[bytes],
+        should_pad: bool
+    ) -> Tuple["AEADEncryptionContext", "PaddingContext"]:
     encryptor = None
     padder = None
 
@@ -866,7 +885,7 @@ def get_blob_encryptor_and_padder(cek, iv, should_pad):
     return encryptor, padder
 
 
-def encrypt_queue_message(message, key_encryption_key, version):
+def encrypt_queue_message(message: object, key_encryption_key: object, version: str) -> str:
     '''
     Encrypts the given plain text message using the given protocol version.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
@@ -933,7 +952,13 @@ def encrypt_queue_message(message, key_encryption_key, version):
     return dumps(queue_message)
 
 
-def decrypt_queue_message(message, response, require_encryption, key_encryption_key, resolver):
+def decrypt_queue_message(
+        message: str,
+        response: "PipelineResponse",
+        require_encryption: bool,
+        key_encryption_key: object,
+        resolver: callable
+    ) -> str:
     '''
     Returns the decrypted message contents from an EncryptedQueueMessage.
     If no encryption metadata is present, will return the unaltered message.
