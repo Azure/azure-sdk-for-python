@@ -22,6 +22,7 @@ SERVICEBUS_SUBSCRIPTION_PARAM = 'servicebus_subscription'
 SERVICEBUS_QUEUE_PARAM = 'servicebus_queue'
 SERVICEBUS_AUTHORIZATION_RULE_PARAM = 'servicebus_authorization_rule'
 SERVICEBUS_QUEUE_AUTHORIZATION_RULE_PARAM = 'servicebus_queue_authorization_rule'
+SERVICEBUS_ENDPOINT_SUFFIX = os.environ.get('SERVICEBUS_ENDPOINT_SUFFIX', 'servicebus.windows.net')
 
 # Service Bus Namespace Preparer and its shorthand decorator
 class ServiceBusNamespacePreparer(AzureMgmtPreparer):
@@ -50,7 +51,8 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("SERVICEBUS_RESOURCE_MANAGER_URL", "https://management.azure.com")
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url)
             group = self._get_resource_group(**kwargs)
             retries = 4
             for i in range(retries):
@@ -83,7 +85,7 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             )
         else:
             self.resource = FakeResource(name=name, id=name)
-            self.connection_string = 'Endpoint=sb://{}.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='.format(name)
+            self.connection_string = f"Endpoint=sb://{name}.{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
             self.key_name = SERVICEBUS_DEFAULT_AUTH_RULE_NAME
             self.primary_key = 'ZmFrZV9hY29jdW50X2tleQ=='
         return {
@@ -163,7 +165,8 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("SERVICEBUS_RESOURCE_MANAGER_URL", "https://management.azure.com")
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             retries = 4
@@ -229,7 +232,8 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("SERVICEBUS_RESOURCE_MANAGER_URL", "https://management.azure.com")
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             topic = self._get_topic(**kwargs)
@@ -312,7 +316,8 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("SERVICEBUS_RESOURCE_MANAGER_URL", "https://management.azure.com")
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             retries = 4
@@ -378,7 +383,8 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("SERVICEBUS_RESOURCE_MANAGER_URL", "https://management.azure.com")
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             retries = 4
@@ -447,7 +453,8 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
-            self.client = self.create_mgmt_client(ServiceBusManagementClient)
+            base_url = os.environ.get("SERVICEBUS_RESOURCE_MANAGER_URL", "https://management.azure.com")
+            self.client = self.create_mgmt_client(ServiceBusManagementClient, base_url=base_url)
             group = self._get_resource_group(**kwargs)
             namespace = self._get_namespace(**kwargs)
             queue = self._get_queue(**kwargs)
