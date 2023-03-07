@@ -2,6 +2,7 @@ import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable
+import platform
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, is_live
