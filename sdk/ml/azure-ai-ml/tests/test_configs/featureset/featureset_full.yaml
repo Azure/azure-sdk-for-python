@@ -19,7 +19,7 @@ materialization_settings:
     emails: [fake@email.com, test@email.com]
   resource:
     instance_type: standard_e8s_v3
-  spark_conf:
+  spark_configuration:
     spark.driver.cores: 2
     spark.driver.memory: 4g
     spark.executor.cores: 4

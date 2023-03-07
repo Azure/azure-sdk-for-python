@@ -24,7 +24,7 @@ class MaterializationSettingsSchema(metaclass=PatchedSchemaMeta):
     schedule = NestedField(RecurrenceTriggerSchema)
     notification = NestedField(NotificationSchema)
     resource = NestedField(MaterializationComputeResourceSchema)
-    spark_conf = fields.Dict()
+    spark_configuration = fields.Dict()
     offline_enabled = fields.Boolean()
     online_enabled = fields.Boolean()
 

@@ -8,6 +8,7 @@
 - Added support for registering named asset from job output by specifying named and version settings.
 - Added support for feature store operations.
 - Removed Experimental Tag from Image Metadata on Compute Instances.
+- Added support for featureset and featurestore_entity operations.
 
 ### Bugs Fixed
 
