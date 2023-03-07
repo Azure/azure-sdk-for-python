@@ -148,6 +148,8 @@ class CallAutomationClient(object):
         if not callback_url:
             raise ValueError('callback_url cannot be None.')
 
+        media_streaming_config = kwargs.pop(
+            "media_streaming_configuration", None)
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(call_invite.target)],
             callback_uri=callback_url,
@@ -157,8 +159,8 @@ class CallAutomationClient(object):
             source_identity=serialize_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=kwargs.pop("operation_context", None),
-            media_streaming_configuration=kwargs.pop(
-                "media_streaming_configuration", None),
+            media_streaming_configuration=media_streaming_config.to_generated(
+            ) if media_streaming_config else None,
             azure_cognitive_services_endpoint_url=kwargs.pop(
                 "azure_cognitive_services_endpoint_url", None),
         )
@@ -206,6 +208,9 @@ class CallAutomationClient(object):
             raise ValueError('callback_url cannot be None.')
 
         caller_id_number = kwargs.pop("source_caller_id_number", None)
+        media_streaming_config = kwargs.pop(
+            "media_streaming_configuration", None)
+
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(identifier)
                      for identifier in targets],
@@ -216,8 +221,8 @@ class CallAutomationClient(object):
             source_identity=serialize_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=kwargs.pop("operation_context", None),
-            media_streaming_configuration=kwargs.pop(
-                "media_streaming_configuration", None),
+            media_streaming_configuration=media_streaming_config.to_generated(
+            ) if media_streaming_config else None,
             azure_cognitive_services_endpoint_url=kwargs.pop(
                 "azure_cognitive_services_endpoint_url", None),
         )
@@ -268,11 +273,14 @@ class CallAutomationClient(object):
         if not callback_url:
             raise ValueError('callback_url cannot be None.')
 
+        media_streaming_config = kwargs.pop(
+            "media_streaming_configuration", None)
+
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            media_streaming_configuration=kwargs.pop(
-                "media_streaming_configuration", None),
+            media_streaming_configuration=media_streaming_config.to_generated(
+            ) if media_streaming_config else None,
             azure_cognitive_services_endpoint_url=kwargs.pop(
                 "azure_cognitive_services_endpoint_url", None),
             answered_by_identifier=serialize_identifier(
