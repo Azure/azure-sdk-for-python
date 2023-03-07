@@ -99,6 +99,9 @@ class _PerfStressRunner:
             "--profile", action="store_true", help="Run tests with profiler.  Default is False.", default=False
         )
         per_test_arg_parser.add_argument(
+            "--profile-path", nargs="?", type=str, help="File path to store profiler results. If not specified, results will be stored in the current directory."
+        )
+        per_test_arg_parser.add_argument(
             "-x", "--test-proxies", help="URIs of TestProxy Servers (separated by ';')",
             type=lambda s: s.split(';')
         )
@@ -109,6 +112,10 @@ class _PerfStressRunner:
         # Per-test args
         self._test_class_to_run.add_arguments(per_test_arg_parser)
         self.per_test_args = per_test_arg_parser.parse_args(sys.argv[2:])
+
+        if self.per_test_args.profile and self.per_test_args.parallel > 1:
+            self.logger.warning("Warning: With profiling enabled, parallelism is disabled. Running with parallel=1.")
+            self.per_test_args.parallel = 1
 
         self.logger.info("")
         self.logger.info("=== Options ===")
