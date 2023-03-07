@@ -1,5 +1,18 @@
 # Release History
 
+## 23.0.0 (2023-03-07)
+
+### Features Added
+
+  - Model ExpressRouteCircuit has a new parameter authorization_status
+  - Model NspAccessRule has a new parameter email_addresses
+  - Model NspAccessRule has a new parameter phone_numbers
+  - Model NspLink has a new parameter remote_perimeter_location
+  - Model NspLinkReference has a new parameter remote_perimeter_location
+  - Model VirtualNetwork has a new parameter flow_logs
+  - Model WebApplicationFirewallCustomRule has a new parameter state
+  - Operation VpnGatewaysOperations.begin_reset has a new optional parameter ip_configuration_id
+
 ## 23.0.0b2 (2023-02-20)
 
 ### Other Changes
