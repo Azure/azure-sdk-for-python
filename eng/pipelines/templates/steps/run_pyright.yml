@@ -14,7 +14,7 @@ steps:
     displayName: 'Use Python 3.7'
     inputs:
      versionSpec: '3.7'
-    condition: or(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true'))
+    condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
 
   - script: |
       pip install -r eng/ci_tools.txt
