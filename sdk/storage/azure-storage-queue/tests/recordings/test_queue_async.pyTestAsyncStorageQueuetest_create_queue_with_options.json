@@ -7,8 +7,8 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-queue/12.7.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 06 Mar 2023 22:11:41 GMT",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:34:58 GMT",
         "x-ms-meta": "{\u0027val1\u0027: \u0027test\u0027, \u0027val2\u0027: \u0027blah\u0027}",
         "x-ms-meta-val1": "test",
         "x-ms-meta-val2": "blah",
@@ -18,7 +18,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 06 Mar 2023 22:11:20 GMT",
+        "Date": "Thu, 27 Oct 2022 22:34:57 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -33,8 +33,8 @@
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-storage-queue/12.7.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 06 Mar 2023 22:11:42 GMT",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:34:58 GMT",
         "x-ms-version": "2021-02-12"
       },
       "RequestBody": null,
@@ -42,7 +42,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Mon, 06 Mar 2023 22:11:21 GMT",
+        "Date": "Thu, 27 Oct 2022 22:34:57 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"

@@ -7,15 +7,15 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-queue/12.7.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 06 Mar 2023 22:12:05 GMT",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:34:58 GMT",
         "x-ms-version": "2021-02-12"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 06 Mar 2023 22:11:45 GMT",
+        "Date": "Thu, 27 Oct 2022 22:34:57 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -31,8 +31,8 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-queue/12.7.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 06 Mar 2023 22:12:06 GMT",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:34:58 GMT",
         "x-ms-meta": "{\u0027val\u0027: \u0027value\u0027}",
         "x-ms-meta-val": "value",
         "x-ms-version": "2021-02-12"
@@ -42,7 +42,7 @@
       "ResponseHeaders": {
         "Content-Length": "222",
         "Content-Type": "application/xml",
-        "Date": "Mon, 06 Mar 2023 22:11:45 GMT",
+        "Date": "Thu, 27 Oct 2022 22:34:57 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -52,8 +52,8 @@
       },
       "ResponseBody": [
         "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EQueueAlreadyExists\u003C/Code\u003E\u003CMessage\u003EThe specified queue already exists.\n",
-        "RequestId:87cf181a-4003-0081-2278-5056fb000000\n",
-        "Time:2023-03-06T22:11:45.3353094Z\u003C/Message\u003E\u003C/Error\u003E"
+        "RequestId:d57bc4b7-1003-0035-4954-ea9a35000000\n",
+        "Time:2022-10-27T22:34:58.1531981Z\u003C/Message\u003E\u003C/Error\u003E"
       ]
     }
   ],
