@@ -353,8 +353,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _validate_or_throw(self, value):
         """Validate input parameter value, throw exception if not as expected.
 
-        It will throw exception if validate failed, otherwise do
-        nothing.
+        It will throw exception if validate failed, otherwise do nothing.
         """
         if not self.optional and value is None:
             msg = "Parameter {} cannot be None since it is not optional."

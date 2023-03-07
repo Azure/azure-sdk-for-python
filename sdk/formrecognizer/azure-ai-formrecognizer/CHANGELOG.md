@@ -6,6 +6,10 @@
 - Corrected typing for `invoice` argument in `begin_recognize_invoices()` on async `FormRecognizerClient`.
 - Fixed issue when calling `to_dict()` on `DocumentField` where `value` is not returned for address and currency fields.
 - Corrected typing for `form_type_confidence` property on `RecognizedForm`.
+- Corrected typing for `appearance` property on `FormLine`.
+
+### Other Changes
+- Improved static typing.
 
 ## 3.2.0 (2022-09-08)
 

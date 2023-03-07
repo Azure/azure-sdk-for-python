@@ -31,8 +31,7 @@ class DistributionConfiguration(RestTranslatableMixin):
     def _from_rest_object(
         cls, obj: Optional[Union[RestDistributionConfiguration, Dict]]
     ) -> "DistributionConfiguration":
-        """This function works for distribution property of a Job object and of
-        a Component object()
+        """This function works for distribution property of a Job object and of a Component object()
 
         Distribution of Job when returned by MFE, is a RestDistributionConfiguration
 
