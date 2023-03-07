@@ -8,7 +8,6 @@ from marshmallow import ValidationError, fields, post_load, pre_dump
 
 from azure.ai.ml._schema import StringTransformedEnum
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
 
 

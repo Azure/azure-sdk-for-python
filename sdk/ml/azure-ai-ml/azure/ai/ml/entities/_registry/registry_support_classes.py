@@ -17,7 +17,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount as RestUserCreatedAcrAccount
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
