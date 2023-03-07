@@ -148,6 +148,7 @@ Once completed, set the values of the client ID, tenant ID, and client secret of
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
 <!-- SNIPPET:sample_authentication.create_da_client_with_aad -->
+
 ```python
 """DefaultAzureCredential will use the values from these environment
 variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
@@ -160,6 +161,7 @@ credential = DefaultAzureCredential()
 
 document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 ```
+
 <!-- END SNIPPET -->
 
 ## Key concepts
@@ -213,6 +215,7 @@ The following section provides several code snippets covering some of the most c
 Extract text, selection marks, text styles, and table structures, along with their bounding region coordinates, from documents.
 
 <!-- SNIPPET:sample_analyze_layout.extract_layout -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -303,6 +306,7 @@ for table_idx, table in enumerate(result.tables):
 
 print("----------------------------------------")
 ```
+
 <!-- END SNIPPET -->
 
 ### Using the General Document Model
@@ -311,6 +315,7 @@ Analyze key-value pairs, tables, styles, and selection marks from documents usin
 Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
 
 <!-- SNIPPET:sample_analyze_general_documents.analyze_general_documents -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -415,6 +420,7 @@ for table_idx, table in enumerate(result.tables):
             )
 print("----------------------------------------")
 ```
+
 <!-- END SNIPPET -->
 
 - Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
@@ -426,6 +432,7 @@ Extract fields from select document types such as receipts, invoices, business c
 For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_document` method:
 
 <!-- SNIPPET:sample_analyze_receipts.analyze_receipts -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -509,6 +516,7 @@ for idx, receipt in enumerate(receipts.documents):
         print("Total: {} has confidence: {}".format(total.value, total.confidence))
     print("--------------------------------------")
 ```
+
 <!-- END SNIPPET -->
 
 You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields. See other supported prebuilt models [here][fr-models].
@@ -521,6 +529,7 @@ Provide a container SAS URL to your Azure Storage Blob container where you're st
 More details on setting up a container and required file structure can be found in the [service documentation][fr-build-training-set].
 
 <!-- SNIPPET:sample_build_model.build_model -->
+
 ```python
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 from azure.core.credentials import AzureKeyCredential
@@ -546,6 +555,7 @@ for name, doc_type in model.doc_types.items():
             field_name, field["type"], doc_type.field_confidence[field_name]
         ))
 ```
+
 <!-- END SNIPPET -->
 
 ### Analyze Documents Using a Custom Model
@@ -554,6 +564,7 @@ Analyze document fields, tables, selection marks, and more. These models are tra
 For best results, you should only analyze documents of the same document type that the custom model was built with.
 
 <!-- SNIPPET:sample_analyze_custom_documents.analyze_custom_documents -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -613,6 +624,7 @@ for i, table in enumerate(result.tables):
         )
 print("-----------------------------------")
 ```
+
 <!-- END SNIPPET -->
 
 Alternatively, a document URL can also be used to analyze documents using the `begin_analyze_document_from_url` method.
