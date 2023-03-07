@@ -21,7 +21,7 @@ from ._generated.models import (
     CallParticipant
 )
 
-from ._communication_identifier_serializer import deserialize_identifier
+from ._models import deserialize_identifier
 
 
 class AddParticipantSucceeded(AddParticipantSucceededRest):

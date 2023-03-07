@@ -282,7 +282,7 @@ class CallAutomationClient(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        result = self._client.answer_call(answer_call_request == answer_call_request, repeatability_first_sent=repeatability_first_sent,
+        result = self._client.answer_call(answer_call_request=answer_call_request, repeatability_first_sent=repeatability_first_sent,
                                           repeatability_request_id=repeatability_request_id,
                                           **kwargs)
 
