@@ -1,5 +1,11 @@
 # Release History
 
+## 1.2.0 (2023-03-07)
+
+### Features Added
+
+  - Model SignalRResource has a new parameter serverless
+
 ## 1.2.0b1 (2022-11-15)
 
 ### Features Added
