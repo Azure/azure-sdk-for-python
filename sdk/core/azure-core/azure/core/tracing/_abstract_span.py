@@ -4,6 +4,8 @@
 # ------------------------------------
 """Protocol that defines what functions wrappers of tracing libraries should implement."""
 from enum import Enum
+from urllib.parse import urlparse
+
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -202,6 +204,8 @@ class HttpSpanMixin(_MIXIN_BASE):
     _HTTP_METHOD = "http.method"
     _HTTP_URL = "http.url"
     _HTTP_STATUS_CODE = "http.status_code"
+    _NET_PEER_NAME = "net.peer.name"
+    _NET_PEER_PORT = "net.peer.port"
 
     def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
         """
@@ -209,13 +213,21 @@ class HttpSpanMixin(_MIXIN_BASE):
 
         :param request: The request made
         :type request: HttpRequest
-        :param response: The response received by the server. Is None if no response received.
+        :param response: The response received from the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         self.kind = SpanKind.CLIENT
         self.add_attribute(self._SPAN_COMPONENT, "http")
         self.add_attribute(self._HTTP_METHOD, request.method)
         self.add_attribute(self._HTTP_URL, request.url)
+
+        host = urlparse(request.url).netloc
+        if host:
+            host_parts = host.split(":")
+            self.add_attribute(self._NET_PEER_NAME, host_parts[0])
+            if len(host_parts) > 1 and host_parts[1] not in ["80", "443"]:
+                self.add_attribute(self._NET_PEER_PORT, int(host_parts[1]))
+
         user_agent = request.headers.get("User-Agent")
         if user_agent:
             self.add_attribute(self._HTTP_USER_AGENT, user_agent)
