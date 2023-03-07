@@ -7,12 +7,18 @@
 import os
 import json
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Iterable, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, FeaturesetVersion
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    ListViewType,
+    FeaturesetVersion,
+    FeaturesetVersionBackfillRequest,
+    FeatureWindow,
+    GetFeatureRequest,
+)
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -29,6 +35,9 @@ from azure.ai.ml._utils._featureset_utils import read_featureset_metadata_conten
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets import Featureset
 from azure.ai.ml.entities._featureset.featureset_spec import FeaturesetSpec
+from azure.ai.ml.entities._featureset.materialization_compute_resource import MaterializationComputeResource
+from azure.ai.ml.entities._featureset.featureset_materialization_response import FeaturesetMaterializationResponse
+from azure.ai.ml.entities._featureset.feature import Feature
 from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -173,6 +182,40 @@ class FeaturesetOperations(_ScopeDependentOperations):
             body=featureset_resource,
         )
 
+    # @monitor_with_activity(logger, "Featureset.BeginBackFill", ActivityType.PUBLICAPI)
+    def begin_backfill(
+        self,
+        *,
+        name,
+        version,
+        feature_window_start_time,
+        feature_window_end_time,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        compute_resource: Optional[MaterializationComputeResource] = None,
+        spark_configuration: Optional[Dict[str, str]] = None,
+        **kwargs,
+    ) -> LROPoller[FeaturesetMaterializationResponse]:
+
+        request_body: FeaturesetVersionBackfillRequest = FeaturesetVersionBackfillRequest(
+            description=description,
+            display_name=display_name,
+            feature_window=FeatureWindow(
+                feature_window_start=feature_window_start_time, feature_window_end=feature_window_end_time
+            ),
+            compute_resource=compute_resource._to_rest_object(),
+            spark_configuration=spark_configuration,
+            tags=tags,
+        )
+        return self._operation.begin_backfill(
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            name=name,
+            version=version,
+            body=request_body,
+        )
+
     # @monitor_with_activity(logger, "Featureset.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
@@ -233,6 +276,71 @@ class FeaturesetOperations(_ScopeDependentOperations):
             label=label,
         )
 
+    # @monitor_with_activity(logger, "Featureset.ListMaterializationOperation", ActivityType.PUBLICAPI)
+    def list_materialization_operation(
+        self,
+        *,
+        name,
+        version,
+        feature_window_start_time: Optional[str],
+        feature_window_end_time: Optional[str],
+        filters: Optional[str],
+        **kwargs,
+    ) -> Iterable[FeaturesetMaterializationResponse]:
+        materialization_jobs = self._operation.list_materialization_jobs(
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            name=name,
+            version=version,
+            filters=filters,
+            feature_window_start=feature_window_start_time,
+            feature_window_end=feature_window_end_time,
+        )
+
+        materialization_job_list = []
+        for job in materialization_jobs:
+            if job.value:
+                materialization_job_list.append(job.value)
+
+        return [FeaturesetMaterializationResponse._from_rest_object(obj) for obj in materialization_job_list]
+
+    # @monitor_with_activity(logger, "Featureset.ListFeatures", ActivityType.INTERNALCALL)
+    def list_features(
+        self,
+        *,
+        featureset_name,
+        version,
+        tags: Optional[str] = None,
+    ) -> Iterable[Feature]:
+        feature_page_list = self._operation.list_features(
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            name=featureset_name,
+            version=version,
+            tags=tags,
+        )
+
+        feature_list = []
+        for feature_page in feature_page_list:
+            if feature_page.value:
+                feature_list.append(feature_page.value)
+
+        return [Feature._from_rest_object(obj) for obj in feature_list]
+
+    # @monitor_with_activity(logger, "Featureset.GetFeature", ActivityType.INTERNALCALL)
+    def get_feature(self, *, featureset_name, version, feature_name) -> "Feature":
+
+        request_body = GetFeatureRequest(feature_name=feature_name)
+        feature = self._operation.get_feature(
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            name=featureset_name,
+            version=version,
+            body=request_body,
+        )
+
+        return Feature._from_rest_object(feature)
+
     def _get_latest_version(self, name: str) -> Featureset:
         """Returns the latest version of the asset with the given name.
 
@@ -244,7 +352,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
         )
         return self.get(name=name, version=latest_version)
 
-    # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
+    # @monitor_with_activity(logger, "Featureset.Validate", ActivityType.INTERNALCALL)
     def _validate_and_get_featureset_spec(self, featureset: Featureset) -> FeaturesetSpec:
         if not (featureset.specification and featureset.specification.path):
             msg = "Missing featureset spec path. Path is required for featureset."
