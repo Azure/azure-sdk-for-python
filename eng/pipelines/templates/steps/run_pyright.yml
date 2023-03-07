@@ -19,7 +19,7 @@ steps:
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
-    condition: or(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true'))
+    condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
 
   - task: PythonScript@0
     displayName: 'Run Pyright'
