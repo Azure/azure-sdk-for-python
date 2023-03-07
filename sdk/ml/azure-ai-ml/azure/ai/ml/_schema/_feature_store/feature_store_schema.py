@@ -11,7 +11,6 @@ from azure.ai.ml._schema.workspace.customer_managed_key import CustomerManagedKe
 from azure.ai.ml._schema.workspace.identity import IdentitySchema
 from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
-from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
 from .compute_runtime_schema import ComputeRuntimeSchema
 from .materialization_store_schema import MaterializationStoreSchema
 from .managed_identity_schema import ManagedIdentityConfigurationSchema
