@@ -25,6 +25,7 @@ omit_fields = [
 
 
 @pytest.mark.usefixtures(
+    "enable_private_preview_schema_features",
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
     "mock_code_hash",

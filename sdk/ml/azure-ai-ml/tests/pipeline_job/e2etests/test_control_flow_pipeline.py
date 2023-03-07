@@ -29,6 +29,7 @@ omit_fields = [
     "recorded_test",
     "mock_code_hash",
     "enable_pipeline_private_preview_features",
+    "enable_private_preview_schema_features",
     "enable_private_preview_pipeline_node_types",
     "mock_asset_name",
     "mock_component_hash",

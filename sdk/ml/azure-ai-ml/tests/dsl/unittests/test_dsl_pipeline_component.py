@@ -10,7 +10,7 @@ tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
 
 
-@pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+@pytest.mark.usefixtures("enable_pipeline_private_preview_features", "enable_private_preview_schema_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test

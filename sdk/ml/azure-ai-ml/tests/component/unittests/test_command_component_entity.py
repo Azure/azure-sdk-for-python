@@ -419,6 +419,7 @@ class TestCommandComponentEntity:
         assert not validation_result.passed
         assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_primitive_output(self):
         expected_rest_component = {
             "command": "echo Hello World",
@@ -482,6 +483,7 @@ class TestCommandComponentEntity:
         )
         assert actual_component_dict2 == expected_rest_component
 
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_invalid_component_outputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
         component = load_component(yaml_path)

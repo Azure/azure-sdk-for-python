@@ -16,7 +16,7 @@ from azure.ai.ml.exceptions import UserErrorException
 from .._util import _DSL_TIMEOUT_SECOND
 
 
-@pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+@pytest.mark.usefixtures("enable_pipeline_private_preview_features", "enable_private_preview_schema_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test

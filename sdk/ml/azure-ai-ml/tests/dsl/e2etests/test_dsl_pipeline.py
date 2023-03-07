@@ -67,6 +67,7 @@ def check_name_and_version(output, output_name, output_version):
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
+    "enable_private_preview_schema_features",
     "mock_code_hash",
     "mock_component_hash",
     "recorded_test",
