@@ -263,6 +263,7 @@ class ServiceBusReceiver(
             self._receive_context.set()
             self._open()
             original_timeout = None
+            # TODO: reset timeout differently (on pyamqp side)
             if wait_time:
                 original_timeout = self._handler._timeout # pylint: disable=protected-access
                 self._handler._timeout = wait_time # pylint: disable=protected-access
