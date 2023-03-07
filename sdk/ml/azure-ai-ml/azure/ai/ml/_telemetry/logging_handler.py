@@ -170,8 +170,6 @@ class AzureMLSDKLogHandler(AzureLogHandler):
         properties = {
             "process": record.processName,
             "module": record.module,
-            "fileName": record.pathname,
-            "lineNumber": record.lineno,
             "level": record.levelname,
         }
         if hasattr(record, "custom_dimensions") and isinstance(record.custom_dimensions, dict):
@@ -186,12 +184,11 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             message = self.format(record)
             if tb is not None:
                 has_full_stack = True
-                for fileName, line, method, _text in traceback.extract_tb(tb):
+                for _, line, method, _text in traceback.extract_tb(tb):
                     callstack.append(
                         {
                             "level": level,
                             "method": method,
-                            "fileName": fileName,
                             "line": line,
                         }
                     )
