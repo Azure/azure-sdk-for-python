@@ -5,10 +5,12 @@
 ### Features Added
 - Added support for `tags` on Compute Resources.
 - Added support for promoting data asset from a workspace to a registry
-- Added support for registering named asset from job output by specifying named and version settings.
-- Added support for feature store operations.
+- Added support for registering named asset from job output or node output by specifying name and version settings.
+- Added support for feature store operations
 - Removed Experimental Tag from Image Metadata on Compute Instances.
 - Added support for featureset and featurestore_entity operations.
+- Added support for data binding on outputs inside dynamic arguments for dsl pipeline
+- Added support for serverless compute in pipeline job
 
 ### Bugs Fixed
 
@@ -22,12 +24,13 @@
 - Added dependency on `azure-mgmt-resourcegraph`
 - Update job types to use MFE Dec preview rest objects.
 - Added classifiers for Python version 3.11.
+- Added warning for reserved keywords in IO names in pipeline job nodes.
 
 ## 1.4.0 (2023-02-07)
 
 ### Features Added
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
-- Added Custom Applications Support to Compute Instances. 
+- Added Custom Applications Support to Compute Instances.
 - Update data asset list, show and create operations to support data assets in registry.
 
 ### Bugs Fixed

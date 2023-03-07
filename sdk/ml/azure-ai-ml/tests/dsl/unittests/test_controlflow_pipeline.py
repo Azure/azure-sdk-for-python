@@ -3,6 +3,7 @@ import pytest
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.dsl._condition import condition
 from azure.ai.ml.dsl._parallel_for import parallel_for
 from azure.ai.ml.exceptions import ValidationException
 
@@ -23,6 +24,53 @@ class TestControlFlowPipelineUT:
 
 class CustomizedObject:
     pass
+
+
+class TestIfElseUT(TestControlFlowPipelineUT):
+    def test_multiblock_if_else(self):
+        hello_world_component_no_paths = load_component(
+            source="./tests/test_configs/components/helloworld_component_no_paths.yml"
+        )
+        basic_component = load_component(
+            source="./tests/test_configs/components/component_with_conditional_output/spec.yaml"
+        )
+
+        @pipeline()
+        def condition_pipeline():
+            result = basic_component()
+            node1 = hello_world_component_no_paths(component_in_number=1)
+            node2 = hello_world_component_no_paths(component_in_number=2)
+            condition(condition=result.outputs.output, false_block=[node1, node2])
+
+        pipeline_job = condition_pipeline()
+        rest_pipeline_job = pipeline_job._to_rest_object().as_dict()
+        assert rest_pipeline_job["properties"]["jobs"]["conditionnode"] == {
+            "_source": "DSL",
+            "condition": "${{parent.jobs.result.outputs.output}}",
+            "false_block": ["${{parent.jobs.node1}}", "${{parent.jobs.node2}}"],
+            "type": "if_else",
+        }
+
+    def test_if_else_validate(self):
+        hello_world_component_no_paths = load_component(
+            source="./tests/test_configs/components/helloworld_component_no_paths.yml"
+        )
+        basic_component = load_component(
+            source="./tests/test_configs/components/component_with_conditional_output/spec.yaml"
+        )
+
+        @pipeline(compute="cpu-cluster")
+        def condition_pipeline():
+            result = basic_component()
+            node1 = hello_world_component_no_paths(component_in_number=1)
+            node2 = hello_world_component_no_paths(component_in_number=2)
+            # true block and false block has intersection
+            condition(condition=result.outputs.output, false_block=[node1, node2], true_block=[node1])
+
+        with pytest.raises(ValidationException) as e:
+            pipeline_job = condition_pipeline()
+            pipeline_job._validate(raise_error=True)
+        assert "'true_block' and 'false_block' of dsl.condition has intersection" in str(e.value)
 
 
 class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
