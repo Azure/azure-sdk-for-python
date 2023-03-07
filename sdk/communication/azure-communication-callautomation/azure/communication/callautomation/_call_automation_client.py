@@ -301,7 +301,7 @@ class CallAutomationClient(object):
         incoming_call_context: str,
         target: CallInvite,
         **kwargs
-    ):
+    ) -> None:
         """
         Create a call connection request from a source identity to a list of target identities.
 
@@ -332,7 +332,7 @@ class CallAutomationClient(object):
         self,
         incoming_call_context: str,
         **kwargs
-    ):
+    ) -> None:
         """
         Reject the call.
 

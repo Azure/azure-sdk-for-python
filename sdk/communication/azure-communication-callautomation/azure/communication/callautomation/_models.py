@@ -738,8 +738,8 @@ class RecognizeFailed(object):
 class CallInvite(object):
     def __init__(
         self,
-        *,
         target: CommunicationIdentifier,
+        *,
         sourceCallIdNumber: Optional[PhoneNumberIdentifier] = None,
         sourceDisplayName: Optional[str] = None,
         sipHeaders: Optional[dict[str, str]] = None,
@@ -845,9 +845,9 @@ class CallParticipant(object):
 
     def __init__(
         self,
-        *,
         identifier: CommunicationIdentifier,
-        is_muted: bool,
+        *,
+        is_muted: Optional[bool] = False,
         **kwargs: Any
     ) -> None:
         """
@@ -870,8 +870,8 @@ class GetParticipantsResponse(object):
 
     def __init__(
         self,
+        values: List[CallParticipant],
         *,
-        values: Optional[List["_models.CallParticipant"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -896,8 +896,8 @@ class AddParticipantResponse(object):
 
     def __init__(
         self,
+        participant: CallParticipant,
         *,
-        participant: Optional[CallParticipant] = None,
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -943,7 +943,6 @@ class MediaStreamingConfiguration(object):
 
     def __init__(
         self,
-        *,
         transport_url: str,
         transport_type: Union[str, MediaStreamingTransportType],
         content_type: Union[str, MediaStreamingContentType],
@@ -973,3 +972,11 @@ class MediaStreamingConfiguration(object):
                                                transport_type=self.transport_type,
                                                content_type=self.content_type,
                                                audio_channel_type=self.audio_channel_type)
+
+
+class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The rejection reason."""
+
+    NONE = "none"
+    BUSY = "busy"
+    FORBIDDEN = "forbidden"
