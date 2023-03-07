@@ -15,6 +15,7 @@ This version of the client library defaults to the service API version `2022-10-
 - Removed enum value `BooleanResolution` from `ResolutionKind`.
 - Renamed model `AbstractSummaryAction` to `AbstractiveSummaryAction`.
 - Renamed model `AbstractSummaryResult` to `AbstractiveSummaryResult`.
+- Removed keyword argument `autodetect_default_language` from long-running operation APIs.
 
 ### Other Changes
 

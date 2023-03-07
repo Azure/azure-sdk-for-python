@@ -587,16 +587,16 @@ def _assert_local_path_matches_asset_type(
     # assert file system type matches asset type
     if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):
         raise ValidationException(
-            message="No such file or directory: {}".format(local_path),
-            no_personal_data_message="No such file or directory",
+            message="File path does not match asset type {}: {}".format(asset_type, local_path),
+            no_personal_data_message="File path does not match asset type {}".format(asset_type),
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
         )
     if asset_type == AssetTypes.URI_FILE and not os.path.isfile(local_path):
         raise ValidationException(
-            message="No such file or directory: {}".format(local_path),
-            no_personal_data_message="No such file or directory",
+            message="File path does not match asset type {}: {}".format(asset_type, local_path),
+            no_personal_data_message="File path does not match asset type {}".format(asset_type),
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
