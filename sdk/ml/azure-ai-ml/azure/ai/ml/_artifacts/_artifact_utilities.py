@@ -112,8 +112,8 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
 
 
 def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_folder_name: str) -> Dict[str, str]:
-    """Returns a dictionary of file name to blob or data lake uri with SAS
-    token, matching the structure of RunDetails.logFiles.
+    """Returns a dictionary of file name to blob or data lake uri with SAS token, matching the structure of
+    RunDetails.logFiles.
 
     legacy_log_folder_name: the name of the folder in the datastore that contains the logs
         /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
@@ -257,8 +257,7 @@ def download_artifact_from_storage_url(
 
 
 def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operation: DatastoreOperations):
-    """Downloads artifact pointed to by URI of the form `azureml://...` to
-    destination.
+    """Downloads artifact pointed to by URI of the form `azureml://...` to destination.
 
     :param str uri: AzureML uri of artifact to download
     :param str destination: Path to download artifact to
@@ -277,8 +276,7 @@ def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operati
 def aml_datastore_path_exists(
     uri: str, datastore_operation: DatastoreOperations, datastore_info: Optional[dict] = None
 ):
-    """Checks whether `uri` of the form "azureml://" points to either a
-    directory or a file.
+    """Checks whether `uri` of the form "azureml://" points to either a directory or a file.
 
     :param str uri: azure ml datastore uri
     :param DatastoreOperations datastore_operation: Datastore operation
@@ -421,8 +419,12 @@ def _get_snapshot_temporary_data_reference(
     serialized_data = json.loads(data_encoded)
 
     # make sure correct cloud endpoint is used
-    cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
-    service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", workspace.location)
+    location = workspace.location
+    if location == "centraluseuap": # centraluseuap is master region and aliased with a special api url
+        service_url = "https://master.api.azureml-test.ms/"
+    else:
+        cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
+        service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", location)
 
     # send request
     request_url = f"{service_url}assetstore/v1.0/temporaryDataReference/createOrGet"
@@ -468,10 +470,15 @@ def _get_asset_by_hash(
     # get workspace credentials
     subscription_id = operations._subscription_id
     resource_group_name = operations._resource_group_name
+    location = workspace.location
 
     # make sure correct cloud endpoint is used
-    cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
-    service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", workspace.location)
+    if location == "centraluseuap": # centraluseuap is master region and aliased with a special api url
+        service_url = "https://master.api.azureml-test.ms/"
+    else:
+        cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
+        service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", location)
+
     request_url = (
         f"{service_url}content/v2.0/subscriptions/{subscription_id}/"
         f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"
@@ -501,8 +508,7 @@ def _check_and_upload_path(
     sas_uri: Optional[str] = None,
     show_progress: bool = True,
 ) -> Tuple[T, str]:
-    """Checks whether `artifact` is a path or a uri and uploads it to the
-    datastore if necessary.
+    """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
 
     param T artifact: artifact to check and upload param
     Union["DataOperations", "ModelOperations", "CodeOperations"]
