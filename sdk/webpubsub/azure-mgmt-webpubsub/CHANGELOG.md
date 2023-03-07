@@ -1,5 +1,13 @@
 # Release History
 
+## 1.1.0 (2023-03-07)
+
+### Features Added
+
+  - Added operation group WebPubSubCustomCertificatesOperations
+  - Added operation group WebPubSubCustomDomainsOperations
+  - Model WebPubSubHubProperties has a new parameter event_listeners
+
 ## 1.1.0b1 (2022-11-02)
 
 ### Features Added
