@@ -12,7 +12,6 @@ steps:
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
  
   # Automatic API review is generated for a package when pipeline runs irrespective of how pipeline gets triggered.
-  # One excpetion to this case is Python Azure ML package. Azure ML does not want API reviews to be created by scheduled and individual CI runs.
   # Below condition ensures that API review is generated only for manual pipeline runs when flag GenerateApiReviewForManualOnly is set to true. 
   - ${{ if or(ne(parameters.GenerateApiReviewForManualOnly, true), eq(variables['Build.Reason'], 'Manual')) }}:
     - task: Powershell@2
