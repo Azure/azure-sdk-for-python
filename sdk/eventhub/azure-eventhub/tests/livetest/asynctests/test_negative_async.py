@@ -241,7 +241,7 @@ async def test_client_send_timeout(connstr_receivers, uamqp_transport):
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_client_invalid_credential_async(live_eventhub, uamqp_transport, location):
+async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
 
     async def on_event(partition_context, event):
         pass

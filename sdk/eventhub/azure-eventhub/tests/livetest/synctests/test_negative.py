@@ -330,10 +330,10 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
                                              uamqp_transport=uamqp_transport)
 
     with producer_client:
-        errors = [AuthenticationError]
+        errors = (AuthenticationError)
         # TODO: flaky TimeoutError during connect for China region
         if 'servicebus.windows.net' not in live_eventhub['hostname']:
-            errors.append(ConnectError)
+            errors = (AuthenticationError, ConnectError)
         with pytest.raises(errors):
             producer_client.create_batch(partition_id='0')
 
