@@ -1,16 +1,11 @@
 name: test-featurestore-entity
 version: "1"
 description: Yaml load test featurestore_entity
-index_columns: [
-  {
-    name: name,
+index_columns:
+  - name: name,
     type: string
-  },
-  {
-    name: id,
+  - name: id,
     type: integer
-  },
-]
 tags:
   t1: v1
 properties:

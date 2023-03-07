@@ -1,29 +1,27 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Callable
 
+import yaml
 import pytest
-from test_utilities.utils import verify_entity_load_and_dump
 
+
+from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml import load_feature_store
 
 
 @pytest.mark.unittest
 @pytest.mark.data_experiences_test
 class TestFeatureStoreSchema:
-    def test_feature_store_load(self, randstr: Callable[[], str]) -> None:
-        name = f"unittest_{randstr('featureset')}"
-        description = f"{name} description"
-        params_override = [{"name": name}, {"description": description}]
-
-        def feature_store_validation(featureset):
-            assert featureset.name == name
-            assert featureset.description == description
-
-        verify_entity_load_and_dump(
-            load_feature_store,
-            feature_store_validation,
-            "./tests/test_configs/feature_store/feature_store_full.yaml",
-            params_override=params_override,
-        )
+    def test_feature_store_load(self) -> None:
+        test_path = "./tests/test_configs/feature_store/feature_store_full.yaml"
+        with open(test_path, "r") as f:
+            target = yaml.safe_load(f)
+        with open(test_path, "r") as f:
+            feature_store: FeatureStore = load_feature_store(source=test_path)
+        assert feature_store.name == target["name"]
+        assert feature_store.description == target["description"]
+        assert feature_store.materialization_identity is not None
+        assert feature_store.offline_store is not None
+        assert feature_store.tags is not None
+        assert feature_store.properties is not None
