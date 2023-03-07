@@ -32,8 +32,8 @@ from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from ._generated import AzureAppConfiguration
 from ._generated._configuration import AzureAppConfigurationConfiguration
-from ._generated.models import SnapshotStatus, SnapshotUpdateParameters
-from ._models import ConfigurationSetting, ConfigurationSettingSnapshot
+from ._generated.models import Snapshot, SnapshotStatus, SnapshotUpdateParameters
+from ._models import ConfigurationSetting
 from ._utils import (
     get_endpoint_from_connection_string,
     prep_if_match,
@@ -577,7 +577,7 @@ class AzureAppConfigurationClient:
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
-    ) -> ConfigurationSettingSnapshot:
+    ) -> Snapshot:
         """Create a snapshot of the configuration settings.
 
         :param name: The name of the snapshot to create.
@@ -595,16 +595,16 @@ class AzureAppConfigurationClient:
             snapshot. If not specified, will set to 2592000(30 days). If specified, should be
             in range 0 to 7776000(90 days). When set to 0, the snapshot will be deleted when archiving it.
         :keyword dict[str, str] tags: The tags of the snapshot.
-        :return: The ConfigurationSettingSnapshot returned from the service.
-        :rtype: :class:`~azure.appconfiguration.models.ConfigurationSettingSnapshot`
+        :return: The Snapshot returned from the service.
+        :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
         """
-        snapshot = ConfigurationSettingSnapshot(
+        snapshot = Snapshot(
             filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
         error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
         try:
-            response = self._impl.create_snapshot(
+            return self._impl.create_snapshot(
                 name=name,
                 entity=snapshot._to_generated(),
                 error_map=error_map,
@@ -612,7 +612,6 @@ class AzureAppConfigurationClient:
             )
         except HttpResponseError as error:
             raise error
-        return ConfigurationSettingSnapshot._from_generated(response)
 
     @distributed_trace
     def archive_snapshot(
@@ -622,7 +621,7 @@ class AzureAppConfigurationClient:
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
         **kwargs
-    ) -> ConfigurationSettingSnapshot:
+    ) -> Snapshot:
         """Archive a configuration setting snapshot. It will update the status of a snapshot from "ready" to "archived".
 
         :param name: The name of the configuration setting snapshot to archive.
@@ -630,8 +629,8 @@ class AzureAppConfigurationClient:
         :keyword match_condition: The match condition to use upon the etag.
         :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
-        :return: The ConfigurationSettingSnapshot returned from the service.
-        :rtype: :class:`~azure.appconfiguration.models.ConfigurationSettingSnapshot`
+        :return: The Snapshot returned from the service.
+        :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
         :class:`ResourceModifiedError` :class`ResourceNotModifiedError` :class`ResourceExistsError`
         """
@@ -645,7 +644,7 @@ class AzureAppConfigurationClient:
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
         try:
-            response = self._impl.update_snapshot(
+            return self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
                 if_match=prep_if_match(etag, match_condition),
@@ -655,7 +654,6 @@ class AzureAppConfigurationClient:
             )
         except HttpResponseError as error:
             raise error
-        return ConfigurationSettingSnapshot._from_generated(response)
 
     @distributed_trace
     def recover_snapshot(
@@ -665,7 +663,7 @@ class AzureAppConfigurationClient:
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
         **kwargs
-    ) -> ConfigurationSettingSnapshot:
+    ) -> Snapshot:
         """Recover a configuration setting snapshot. It will update the status of a snapshot from "archived" to "ready".
 
         :param name: The name of the configuration setting snapshot to recover.
@@ -673,8 +671,8 @@ class AzureAppConfigurationClient:
         :keyword match_condition: The match condition to use upon the etag.
         :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
-        :return: The ConfigurationSettingSnapshot returned from the service.
-        :rtype: :class:`~azure.appconfiguration.models.ConfigurationSettingSnapshot`
+        :return: The Snapshot returned from the service.
+        :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
         :class:`ResourceModifiedError` :class`ResourceNotModifiedError` :class`ResourceExistsError`
         """
@@ -688,7 +686,7 @@ class AzureAppConfigurationClient:
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
         try:
-            response = self._impl.update_snapshot(
+            return self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
                 if_match=prep_if_match(etag, match_condition),
@@ -698,7 +696,6 @@ class AzureAppConfigurationClient:
             )
         except HttpResponseError as error:
             raise error
-        return ConfigurationSettingSnapshot._from_generated(response)
 
     @distributed_trace
     def get_snapshot(
@@ -707,18 +704,18 @@ class AzureAppConfigurationClient:
         *,
         fields: Optional[List[str]] = None,
         **kwargs
-    ) -> ConfigurationSettingSnapshot:
+    ) -> Snapshot:
         """Get a configuration setting snapshot.
 
         :param name: The name of the configuration setting snapshot to retrieve.
         :type name: str
         :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields.
-        :return: The ConfigurationSettingSnapshot returned from the service.
-        :rtype: :class:`~azure.appconfiguration.models.ConfigurationSettingSnapshot`
+        :return: The Snapshot returned from the service.
+        :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`
         """
         try:
-            response = self._impl.get_snapshot(
+            return self._impl.get_snapshot(
                 name=name,
                 if_match=None,
                 if_none_match=None,
@@ -727,20 +724,19 @@ class AzureAppConfigurationClient:
             )
         except HttpResponseError as error:
             raise error
-        return ConfigurationSettingSnapshot._from_generated(response)
 
     @distributed_trace
     def list_snapshots(
         self, *, name: Optional[str] = None, fields: Optional[List[str]] = None, status: Optional[str] = None, **kwargs
-    ) -> ItemPaged[ConfigurationSettingSnapshot]:
+    ) -> ItemPaged[Snapshot]:
         """List the configuration setting snapshots stored in the configuration service, optionally filtered by
         snapshot name and status.
 
         :keyword str name: Filter results based on snapshot name.
         :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields.
         :keyword str status: Filter results based on snapshot keys.
-        :return: An iterator of :class:`~azure.appconfiguration.models.ConfigurationSettingSnapshot`
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.ConfigurationSettingSnapshot]
+        :return: An iterator of :class:`~azure.appconfiguration.models.Snapshot`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.models.Snapshot]
         :raises: :class:`HttpResponseError`
         """
         try:
@@ -748,9 +744,6 @@ class AzureAppConfigurationClient:
                 name=name,
                 select=fields,
                 status=status,
-                cls=lambda objs: [
-                    ConfigurationSettingSnapshot._from_generated(x) for x in objs
-                ],
                 **kwargs
             )
         except HttpResponseError as error:
