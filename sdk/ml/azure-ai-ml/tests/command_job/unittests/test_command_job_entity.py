@@ -133,6 +133,7 @@ class TestCommandJobEntity:
             outputs={"best_model": {}},
             instance_count=2,
             instance_type="STANDARD_BLA",
+            locations=["westus"],
             timeout=300,
             code="./",
             queue_settings=QueueSettings(job_tier="standard", priorty="medium"),
@@ -154,7 +155,7 @@ class TestCommandJobEntity:
             environment_variables={"EVN1": "VAR1"},
             outputs={"best_model": {}},
             limits=CommandJobLimits(timeout=300),
-            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
+            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA", locations=["westus"]),
             queue_settings=QueueSettings(job_tier="standard", priorty="medium"),
             code="./",
         )

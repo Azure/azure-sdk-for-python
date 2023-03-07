@@ -10,6 +10,7 @@
 - Removed Experimental Tag from Image Metadata on Compute Instances.
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline job
+- Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
 
 ### Bugs Fixed
 
