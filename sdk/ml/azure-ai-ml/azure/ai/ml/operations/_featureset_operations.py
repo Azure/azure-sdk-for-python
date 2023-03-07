@@ -156,7 +156,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
 
         featureset_spec = self._validate_and_get_featureset_spec(featureset)
         featureset.properties["spec_version"] = "1"
-        # featureset.properties["spec_data"] = json.dumps(featureset_spec)
+        featureset.properties["spec_data"] = json.dumps(featureset_spec._to_dict())
 
         sas_uri = None
         featureset, _ = _check_and_upload_path(

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=no-member
 
 from os import PathLike
 from pathlib import Path
@@ -21,7 +20,7 @@ from .source_metadata import SourceMetadata
 from .delay_metadata import DelayMetadata
 
 
-class FeaturesetSpec:
+class FeaturesetSpec(object):
     """FeaturesetSpec for data assets."""
 
     def __init__(
