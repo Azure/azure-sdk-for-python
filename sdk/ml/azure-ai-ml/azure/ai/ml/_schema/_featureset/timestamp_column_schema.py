@@ -1,0 +1,19 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+
+from marshmallow import fields, validate, post_load
+
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+
+
+class TimestampColumnSchema(metaclass=PatchedSchemaMeta):
+    name = fields.Str()
+    format = fields.Str()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._featureset.timestamp_column import TimestampColumn
+
+        return TimestampColumn(**data)

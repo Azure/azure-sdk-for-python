@@ -16,8 +16,9 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._featurestore_entity.data_column import DataColumn
 
-
 from .feature import Feature
+from .source import Source
+from .delay import Delay
 
 
 class FeaturesetSpec:
@@ -26,12 +27,16 @@ class FeaturesetSpec:
     def __init__(
         self,
         *,
+        source: Source,
         features: List[Feature],
         index_columns: List[DataColumn],
+        temporal_join_lookback: Delay,
         **_kwargs,
     ):
+        self.source = source
         self.features = features
         self.index_columns = index_columns
+        self.temporal_join_lookback = temporal_join_lookback
 
     @classmethod
     def load(

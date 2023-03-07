@@ -393,11 +393,8 @@ def _check_and_upload_path(
             if hasattr(artifact, "path") and artifact.path is not None
             else Path(artifact.local_path)
         )
-        print("path in artifact!!", path)
         if not path.is_absolute():
-            print("path is not absolute")
             path = Path(artifact.base_path, path).resolve()
-            print("path updated with based path", path)
         uploaded_artifact = _upload_to_datastore(
             asset_operations._operation_scope,
             asset_operations._datastore_operation,
@@ -412,7 +409,6 @@ def _check_and_upload_path(
             ignore_file=getattr(artifact, "_ignore_file", None),
         )
         indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
-        print("indicator file!!", indicator_file)
         if artifact._is_anonymous:
             artifact.name, artifact.version = (
                 uploaded_artifact.name,
