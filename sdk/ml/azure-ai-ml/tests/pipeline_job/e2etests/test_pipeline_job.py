@@ -574,7 +574,12 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_parallel_job(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
         params_override = [{"name": randstr("name")}]
@@ -592,7 +597,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert len(created_job.jobs.items()) == 1
 
     def test_pipeline_job_with_multiple_parallel_job(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -638,11 +648,12 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_create_with_distribution_component(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
             ignored_query_parameters="api-version",
-        )  # call to blobstore won't always be made, depends on if the asset is already cached in assetstore
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -702,7 +713,12 @@ class TestPipelineJob(AzureRecordedTestCase):
             assert inline_component1 == inline_component2
 
     def test_pipeline_job_dependency_label_resolution(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         component_name = randstr("component_name")
         component_versions = ["foo", "bar", "baz", "foobar"]
@@ -753,7 +769,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert_job_input_output_types(job)
 
     def test_pipeline_job_with_sweep_node(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_sweep_node.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -833,7 +854,12 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_sweep_node_early_termination_policy(
         self, client: MLClient, randstr: Callable[[str], str], policy_yaml_dict: Dict[str, Any]
     ):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_sweep_node.yml"
         pipeline: PipelineJob = load_job(
@@ -858,7 +884,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         test_case_i: int,
         test_case_name: str,
     ):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         pipeline_job_path, expected_error = DATABINDING_EXPRESSION_TEST_CASES[test_case_i]
 
@@ -874,6 +905,13 @@ class TestPipelineJob(AzureRecordedTestCase):
             raise Exception("Unexpected error type {}".format(type(expected_error)))
 
     def test_pipeline_job_with_automl_regression(self, client: MLClient, randstr: Callable[[str], str]):
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
+
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -897,10 +935,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_automl_classification(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_classification.yml"
@@ -1168,10 +1207,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_automl_image_object_detection(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
-        # global header matcher in conftest isn't being applied, so calling here
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
         )
 
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml"
@@ -1283,7 +1323,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_without_setting_binding_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1305,7 +1350,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert train_job.inputs.training_data.mode is None
 
     def test_pipeline_with_only_setting_pipeline_level(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1327,7 +1377,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert train_job.inputs.training_data.mode is None
 
     def test_pipeline_with_only_setting_binding_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1351,7 +1406,12 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_with_setting_binding_node_and_pipeline_level(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1375,6 +1435,13 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_with_inline_job_setting_binding_node_and_pipeline_level(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
+
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_inline_job_setting_binding_node_and_pipeline_level.yml",
@@ -1395,7 +1462,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert train_job.inputs.training_data.mode is InputOutputModes.RO_MOUNT
 
     def test_pipeline_with_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1476,7 +1548,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert job.name == params_override[0]["name"]
 
     def test_pipeline_node_with_default_component(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("job_name")}]
         pipeline_job = load_job(
@@ -1601,7 +1678,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.version == "1"
 
     def test_pipeline_job_with_data_transfer_copy_urifolder(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1621,7 +1703,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
     def test_pipeline_job_with_data_transfer_copy_urifile(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_uri_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1666,7 +1752,12 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_inline_data_transfer_copy_2urifolder(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1691,7 +1782,12 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_inline_data_transfer_copy_mixtype_file(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_mixtype_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1857,6 +1953,13 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_data_transfer_export_sql_database_reference_component(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
+
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob_reference_component.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
         created_pipeline = assert_job_cancel(pipeline, client)
@@ -1882,7 +1985,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         client: MLClient,
         randstr: Callable[[str], str],
     ):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         register_pipeline_path = (
             "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline_register_output.yml"
@@ -1943,6 +2051,13 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     @pytest.mark.disable_mock_code_hash
     def test_register_automl_output(self, client: MLClient, randstr: Callable[[str], str]):
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
+
         register_pipeline_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/automl_regression_with_command_node_register_output.yml"
         pipeline = load_job(source=register_pipeline_path, params_override=[{"name": randstr("name")}])
         pipeline_job = assert_job_cancel(pipeline, client)

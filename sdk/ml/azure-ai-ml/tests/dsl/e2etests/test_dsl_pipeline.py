@@ -597,6 +597,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.usefixtures("mock_snapshot_hash", "mock_code_hash")    
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
@@ -1591,7 +1592,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    
+    @pytest.mark.usefixtures("mock_snapshot_hash", "mock_code_hash")    
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
         set_custom_default_matcher(
@@ -1868,7 +1869,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    
+
+    @pytest.mark.usefixtures("mock_snapshot_hash", "mock_code_hash")    
     def test_multi_parallel_components_with_file_input_pipeline_output(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:

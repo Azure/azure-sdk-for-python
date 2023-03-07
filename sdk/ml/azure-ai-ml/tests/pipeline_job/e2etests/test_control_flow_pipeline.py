@@ -205,7 +205,7 @@ class TestDoWhile(TestConditionalNodeInPipeline):
         set_bodiless_matcher()
         # global header matcher in conftest isn't being applied, so calling here
         set_custom_default_matcher(
-            excluded_headers="x-ms-meta-version", ignored_query_parameters="api-version"
+            excluded_headers="x-ms-meta-version,x-ms-meta-name", ignored_query_parameters="api-version"
         )
 
         params_override = [{"name": randstr("name")}]
