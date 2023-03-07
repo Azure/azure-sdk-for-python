@@ -105,6 +105,29 @@ class TestCommandJob(AzureRecordedTestCase):
         check_tid_in_url(client, command_job_2)
 
     @pytest.mark.e2etest
+    def test_command_job_serverless(self, randstr: Callable[[], str], client: MLClient) -> None:
+        # TODO: need to create a workspace under a e2e-testing-only subscription and resource group
+
+        job_name = randstr("job_name")
+        params_override = [{"name": job_name}]
+        job = load_job(
+            source="./tests/test_configs/command_job/command_job_test_serverless.yml",
+            params_override=params_override,
+        )
+        command_job: CommandJob = client.jobs.create_or_update(job=job)
+
+        assert command_job.status in RunHistoryConstants.IN_PROGRESS_STATUSES
+        assert command_job.environment == "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
+        assert command_job.queue_settings.job_tier == "standard"
+        check_tid_in_url(client, command_job)
+
+        command_job_2 = client.jobs.get(job_name)
+        assert command_job.name == command_job_2.name
+        assert command_job.identity.type == command_job_2.identity.type
+        assert command_job_2.environment == "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
+        check_tid_in_url(client, command_job_2)
+
+    @pytest.mark.e2etest
     def test_command_job_with_dataset_short_uri(self, randstr: Callable[[], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and resource group
 
