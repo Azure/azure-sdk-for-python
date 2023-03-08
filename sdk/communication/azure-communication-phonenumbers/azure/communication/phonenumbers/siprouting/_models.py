@@ -33,7 +33,7 @@ class SipTrunk(object):
 
 class SipTrunkRoute(object):
     """Represents a trunk route for routing calls.
-    
+
     :ivar description: Gets or sets description of the route.
     :vartype description: str
     :ivar name: Gets or sets name of the route. Required.
