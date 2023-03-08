@@ -144,13 +144,15 @@ class ModelOperations(_ScopeDependentOperations):
                         )
 
                     model_rest_obj = model._to_rest_object()
-                    self._service_client.resource_management_asset_reference.begin_import_method(
+                    result = self._service_client.resource_management_asset_reference.begin_import_method(
                         resource_group_name=self._resource_group_name,
                         registry_name=self._registry_name,
                         body=model_rest_obj,
-                    )
-                    env_rest_obj = self._get(name=model.name, version=model.version)
-                    return Model._from_rest_object(model_rest_obj)
+                    ).result()
+
+                    if not result:
+                        model_rest_obj = self._get(name=model.name, version=model.version)
+                        return Model._from_rest_object(model_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
@@ -438,6 +440,7 @@ class ModelOperations(_ScopeDependentOperations):
             )
         )
 
+    @monitor_with_activity(logger, "Model.Share", ActivityType.PUBLICAPI)
     def share(self, name, version, share_with_name, share_with_version, registry_name) -> Model:
         """Share a model asset.
 

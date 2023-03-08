@@ -118,14 +118,16 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         )
 
                     environment_rest = environment._to_rest_object()
-                    self._service_client.resource_management_asset_reference.begin_import_method(
+                    result = self._service_client.resource_management_asset_reference.begin_import_method(
                         resource_group_name=self._resource_group_name,
                         registry_name=self._registry_name,
                         body=environment_rest,
                         **self._kwargs,
-                    )
-                    env_rest_obj = self._get(name=environment.name, version=environment.version)
-                    return Environment._from_rest_object(env_rest_obj)
+                    ).result()
+
+                    if not result:
+                        env_rest_obj = self._get(name=environment.name, version=environment.version)
+                        return Environment._from_rest_object(env_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
