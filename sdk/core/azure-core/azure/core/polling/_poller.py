@@ -64,14 +64,16 @@ class PollingMethod(Generic[PollingReturnType]):
         raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
-class NoPolling(PollingMethod):
+class NoPolling(PollingMethod, Generic[PollingReturnType]):
     """An empty poller that returns the deserialized initial response."""
+
+    _deserialization_callback: Callable[[Any], PollingReturnType]
+    """Deserialization callback passed during initialization"""
 
     def __init__(self):
         self._initial_response = None
-        self._deserialization_callback = None
 
-    def initialize(self, _: Any, initial_response: Any, deserialization_callback: Callable) -> None:
+    def initialize(self, _: Any, initial_response: Any, deserialization_callback: Callable[[Any], PollingReturnType]) -> None:
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
 
@@ -92,7 +94,7 @@ class NoPolling(PollingMethod):
         """
         return True
 
-    def resource(self) -> Any:
+    def resource(self) -> PollingReturnType:
         return self._deserialization_callback(self._initial_response)
 
     def get_continuation_token(self) -> str:
@@ -130,7 +132,7 @@ class LROPoller(Generic[PollingReturnType]):
         self,
         client: Any,
         initial_response: Any,
-        deserialization_callback: Callable,
+        deserialization_callback: Callable[[Any], PollingReturnType],
         polling_method: PollingMethod[PollingReturnType],
     ) -> None:
         self._callbacks: List[Callable] = []
@@ -147,10 +149,11 @@ class LROPoller(Generic[PollingReturnType]):
 
         # Prepare thread execution
         self._thread = None
-        self._done = None
+        self._done = threading.Event()
         self._exception = None
-        if not self._polling_method.finished():
-            self._done = threading.Event()
+        if self._polling_method.finished():
+            self._done.set()
+        else:
             self._thread = threading.Thread(
                 target=with_current_context(self._start),
                 name="LROPoller({})".format(uuid.uuid4()),
@@ -266,7 +269,7 @@ class LROPoller(Generic[PollingReturnType]):
          argument, a completed LongRunningOperation.
         """
         # Still use "_done" and not "done", since CBs are executed inside the thread.
-        if self._done is None or self._done.is_set():
+        if self._done.is_set():
             func(self._polling_method)
         # Let's add them still, for consistency (if you wish to access to it for some reasons)
         self._callbacks.append(func)

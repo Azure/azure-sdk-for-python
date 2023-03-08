@@ -71,7 +71,7 @@ class AsyncNoPolling(_NoPolling):
         """
 
 
-async def async_poller(client, initial_response, deserialization_callback, polling_method):
+async def async_poller(client: Any, initial_response: Any, deserialization_callback: Callable[[Any], PollingReturnType], polling_method: AsyncPollingMethod[PollingReturnType]):
     """Async Poller for long running operations.
 
     .. deprecated:: 1.5.0
@@ -109,7 +109,7 @@ class AsyncLROPoller(Generic[PollingReturnType], Awaitable):
         self,
         client: Any,
         initial_response: Any,
-        deserialization_callback: Callable,
+        deserialization_callback: Callable[[Any], PollingReturnType],
         polling_method: AsyncPollingMethod[PollingReturnType],
     ):
         self._polling_method = polling_method
