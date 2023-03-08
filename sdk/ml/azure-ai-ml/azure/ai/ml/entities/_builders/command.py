@@ -131,6 +131,8 @@ class Command(BaseNode):
         Please see https://aka.ms/azuremlexperimental for more information.
     :type services:
         Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -157,20 +159,24 @@ class Command(BaseNode):
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         limits: Optional[CommandJobLimits] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[ManagedIdentityConfiguration,
+                  AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        distribution: Optional[Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+        distribution: Optional[Union[Dict, MpiDistribution,
+                                     TensorFlowDistribution, PyTorchDistribution]] = None,
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
         services: Optional[
-            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+            Dict[str, Union[JobService, JupyterLabJobService,
+                            SshJobService, TensorBoardJobService, VsCodeJobService]]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs,
     ):
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(attrs_to_check=locals(),
+                                attr_type_map=self._attr_type_map())
 
         # resolve normal dict to dict[str, JobService]
         services = _resolve_job_services(services)
@@ -291,7 +297,8 @@ class Command(BaseNode):
                     NestedField(UserIdentitySchema, unknown=INCLUDE),
                 ]
             )
-            value = identity_schema._deserialize(value=value, attr=None, data=None)
+            value = identity_schema._deserialize(
+                value=value, attr=None, data=None)
         self._identity = value
 
     @property
@@ -391,7 +398,8 @@ class Command(BaseNode):
             self.queue_settings.job_tier = job_tier
             self.queue_settings.priority = priority
         else:
-            self.queue_settings = QueueSettings(job_tier=job_tier, priority=priority)
+            self.queue_settings = QueueSettings(
+                job_tier=job_tier, priority=priority)
 
     def sweep(
         self,
@@ -414,7 +422,8 @@ class Command(BaseNode):
             ]
         ] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[ManagedIdentityConfiguration,
+                  AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
     ) -> Sweep:
@@ -449,13 +458,16 @@ class Command(BaseNode):
             ManagedIdentityConfiguration,
             AmlTokenConfiguration,
             UserIdentityConfiguration]
+        :param queue_settings: Queue settings for the job.
+        :type queue_settings: QueueSettings
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep
         """
         self._swept = True
         # inputs & outputs are already built in source Command obj
         # pylint: disable=abstract-class-instantiated
-        inputs, inputs_search_space = Sweep._get_origin_inputs_and_search_space(self.inputs)
+        inputs, inputs_search_space = Sweep._get_origin_inputs_and_search_space(
+            self.inputs)
         if search_space:
             inputs_search_space.update(search_space)
 
@@ -549,13 +561,15 @@ class Command(BaseNode):
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Command":
         from .command_func import command
 
-        loaded_data = load_from_dict(CommandJobSchema, data, context, additional_message, **kwargs)
+        loaded_data = load_from_dict(
+            CommandJobSchema, data, context, additional_message, **kwargs)
 
         # resources a limits properties are flatten in command() function, exact them and set separately
         resources = loaded_data.pop("resources", None)
         limits = loaded_data.pop("limits", None)
 
-        command_job = command(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+        command_job = command(
+            base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
         command_job.resources = resources
         command_job.limits = limits
@@ -566,8 +580,10 @@ class Command(BaseNode):
         obj = BaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            resources = RestJobResourceConfiguration.from_dict(
+                obj["resources"])
+            obj["resources"] = JobResourceConfiguration._from_rest_object(
+                resources)
 
         # services, sweep won't have services
         if "services" in obj and obj["services"]:
@@ -578,7 +594,8 @@ class Command(BaseNode):
                 # it's attributes of a node, but JobService._from_rest_object expect a
                 # RestJobService, so we need to convert it back. Here we convert the dict to a
                 # dummy rest object which may work as a RestJobService instead.
-                services[service_name] = from_rest_dict_to_dummy_rest_object(service)
+                services[service_name] = from_rest_dict_to_dummy_rest_object(
+                    service)
             obj["services"] = JobServiceBase._from_rest_job_services(services)
 
         # handle limits
@@ -587,11 +604,13 @@ class Command(BaseNode):
             obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
 
         if "identity" in obj and obj["identity"]:
-            obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
+            obj["identity"] = _BaseJobIdentityConfiguration._load(
+                obj["identity"])
 
         if "queue_settings" in obj and obj["queue_settings"]:
             queue_settings = RestQueueSettings.from_dict(obj["queue_settings"])
-            obj["queue_settings"] = QueueSettings._from_rest_object(queue_settings)
+            obj["queue_settings"] = QueueSettings._from_rest_object(
+                queue_settings)
 
         return obj
 
@@ -609,25 +628,33 @@ class Command(BaseNode):
             properties=rest_command_job.properties,
             command=rest_command_job.command,
             experiment_name=rest_command_job.experiment_name,
-            services=JobServiceBase._from_rest_job_services(rest_command_job.services),
+            services=JobServiceBase._from_rest_job_services(
+                rest_command_job.services),
             status=rest_command_job.status,
-            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
+            creation_context=SystemData._from_rest_object(
+                obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
             compute=rest_command_job.compute_id,
             environment=rest_command_job.environment_id,
-            distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
+            distribution=DistributionConfiguration._from_rest_object(
+                rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
+            identity=_BaseJobIdentityConfiguration._from_rest_object(
+                rest_command_job.identity)
             if rest_command_job.identity
             else None,
             environment_variables=rest_command_job.environment_variables,
-            inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
+            inputs=from_rest_inputs_to_dataset_literal(
+                rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
         )
         command_job._id = obj.id
-        command_job.resources = JobResourceConfiguration._from_rest_object(rest_command_job.resources)
-        command_job.limits = CommandJobLimits._from_rest_object(rest_command_job.limits)
-        command_job.queue_settings = QueueSettings._from_rest_object(rest_command_job.queue_settings)
+        command_job.resources = JobResourceConfiguration._from_rest_object(
+            rest_command_job.resources)
+        command_job.limits = CommandJobLimits._from_rest_object(
+            rest_command_job.limits)
+        command_job.queue_settings = QueueSettings._from_rest_object(
+            rest_command_job.queue_settings)
         command_job.component._source = (
             ComponentSource.REMOTE_WORKSPACE_JOB
         )  # This is used by pipeline job telemetries.
@@ -682,7 +709,8 @@ class Command(BaseNode):
             node.display_name = self.display_name if self.display_name != self.name else None
             node.environment = copy.deepcopy(self.environment)
             # deep copy for complex object
-            node.environment_variables = copy.deepcopy(self.environment_variables)
+            node.environment_variables = copy.deepcopy(
+                self.environment_variables)
             node.limits = copy.deepcopy(self.limits)
             node.distribution = copy.deepcopy(self.distribution)
             node.resources = copy.deepcopy(self.resources)
@@ -693,7 +721,8 @@ class Command(BaseNode):
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), "self._component"),
+            no_personal_data_message=msg.format(
+                type(Component), "self._component"),
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )
@@ -718,9 +747,11 @@ def _resolve_job_services(
     result = {}
     for name, service in services.items():
         if isinstance(service, dict):
-            service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
+            service = load_from_dict(JobServiceSchema, service, context={
+                                     BASE_PATH_CONTEXT_KEY: "."})
         elif not isinstance(
-            service, (JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService)
+            service, (JobService, JupyterLabJobService, SshJobService,
+                      TensorBoardJobService, VsCodeJobService)
         ):
             msg = f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
             raise ValidationException(
