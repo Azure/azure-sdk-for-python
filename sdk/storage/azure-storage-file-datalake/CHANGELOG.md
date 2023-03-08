@@ -1,5 +1,10 @@
 # Release History
 
+## 12.10.1 (2023-03-08)
+
+### Bugs Fixed
+- Fixed "duplicate type signatures" MyPy error.
+
 ## 12.10.0 (2023-02-22)
 
 ### Features Added
