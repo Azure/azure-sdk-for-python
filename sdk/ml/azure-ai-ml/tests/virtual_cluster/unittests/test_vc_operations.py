@@ -52,25 +52,42 @@ class TestVCOperations:
         assert mock_function.call_count == 2
 
     @patch("azure.ai.ml.operations._virtual_cluster_operations.get_virtual_cluster_by_id")
+    @patch("azure.ai.ml.operations._virtual_cluster_operations.get_generic_resource_by_id")
     def test_get(
         self,
-        mock_function,
+        mock_get_virtual_cluster_by_id,
+        mock_get_generic_resource_by_id,
         mock_vc_operation: VirtualClusterOperations,
         mock_workspace_scope: OperationScope,
         mock_credential: Mock,
     ) -> None:
-        dummy_vc = {
+        dummy_vc_1 = {
             "id": "id1",
             "name": "name1",
         }
-        mock_function.return_value = dummy_vc
+
+        dummy_vc_2 = {
+            "id": "id2",
+            "name": "name2",
+        }
+        mock_get_virtual_cluster_by_id.return_value = dummy_vc_1
+        mock_get_generic_resource_by_id.return_value = dummy_vc_2
 
         result = mock_vc_operation.get("name1")
-        assert dummy_vc == result
+        assert dummy_vc_1 == result
 
-        mock_function.assert_called_once_with(
+        mock_get_virtual_cluster_by_id.assert_called_once_with(
             name="name1",
             resource_group=mock_workspace_scope.resource_group_name,
             subscription_id=mock_workspace_scope.subscription_id,
             credential=mock_credential,
         )
+
+        result2 = mock_vc_operation.get("/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.MachineLearningServices/virtualclusters/name2")
+        assert dummy_vc_2 == result2
+
+        mock_get_generic_resource_by_id.assert_called_once_with(
+            arm_id="/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.MachineLearningServices/virtualclusters/name2",
+            credential=mock_credential,
+            subscription_id="sub-id")
+
