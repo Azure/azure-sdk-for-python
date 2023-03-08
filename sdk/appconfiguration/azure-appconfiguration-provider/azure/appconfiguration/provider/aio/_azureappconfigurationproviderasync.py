@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
 
 @overload
-async def load_provider(
+async def load(
         endpoint: str,
         credential: "AsyncTokenCredential",
         *,
@@ -47,7 +47,7 @@ async def load_provider(
     ...
 
 @overload
-async def load_provider(
+async def load(
         *,
         connection_string: str,
         selects: Optional[List[SettingSelector]] = None,
@@ -69,7 +69,7 @@ async def load_provider(
     ...
 
 
-async def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
+async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     #pylint:disable=protected-access
 
     # Start by parsing kwargs

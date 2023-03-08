@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 import asyncio
-from azure.appconfiguration.provider.aio import load_provider
+from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 import os
 from sample_utilities import get_authority, get_audience, get_credential
@@ -20,7 +20,7 @@ async def main():
     key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=credential)
     selects = {SettingSelector(key_filter="*", label_filter="prod")}
 
-    config = await load_provider(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
+    config = await load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
 
     print(config["secret"])
 

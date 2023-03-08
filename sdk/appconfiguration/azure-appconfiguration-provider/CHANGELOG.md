@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+* Renamed load_provider to load
 * Added `AzureAppConfigurationKeyVaultOptions` to take in a `client_configs` a Mapping of endpoints to client kwargs instead of taking in the whole client.
 * Removed `AzureAppConfigurationKeyVaultOptions` `secret_clients`, `client_configs` should be used instead.
 * Made key_filter and label_filter kwargs for Setting Selector

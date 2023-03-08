@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider.aio import load_provider
+from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -14,7 +14,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
 
     async def build_provider_aad(self, endpoint, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
-        return await load_provider(credential=cred, endpoint=endpoint, trim_prefixes=trim_prefixes, selects=selects)
+        return await load(credential=cred, endpoint=endpoint, trim_prefixes=trim_prefixes, selects=selects)
 
     # method: provider_creation_aad
     @app_config_decorator_async

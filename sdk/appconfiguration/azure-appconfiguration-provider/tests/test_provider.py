@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.appconfiguration.provider import (
-    load_provider,
+    load,
     SettingSelector
 )
 from devtools_testutils import (
@@ -16,7 +16,7 @@ from preparers import app_config_decorator
 class TestAppConfigurationProvider(AzureRecordedTestCase):
 
     def build_provider(self, connection_string, trim_prefixes=[], selects={SettingSelector(key_filter="*", label_filter="\0")}):
-        return load_provider(connection_string=connection_string, trim_prefixes=trim_prefixes, selects=selects)
+        return load(connection_string=connection_string, trim_prefixes=trim_prefixes, selects=selects)
 
     # method: provider_creation
     @recorded_by_proxy
