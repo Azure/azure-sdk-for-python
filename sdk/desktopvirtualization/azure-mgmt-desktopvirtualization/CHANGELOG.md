@@ -1,10 +1,10 @@
 # Release History
 
-## 1.0.0b3 (2023-03-06)
+## 1.0.0 (2023-03-06)
 
 ### other changes
 
-  - Some api_version updates
+  - First GA version
 
 ## 1.0.0b2 (2022-11-09)
 
