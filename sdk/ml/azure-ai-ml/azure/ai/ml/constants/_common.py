@@ -183,21 +183,18 @@ WORKSPACE_EXCLUSIVE_OPERATIONS = {
     "_compute_operations",
     "_datastore_operations",
     "_job_operations",
-    "_model_dataplane_operations",
     "_online_deployment_operations",
     "_online_endpoint_operations",
-    "_run_operations",
     "_schedule_operations",
 }
 WORKSPACE_OR_REGISTRY_REQUIRED_OPERATIONS = {
-    "_code_operations",
     "_component_operations",
     "_data_operations",
     "_environment_operations",
     "_model_operations",
 }
 WORKSPACE_NOT_INCLUDED_ERROR_MESSAGE = (
-    "\n\nThis operation requires that you specify a connection to a workspace. "
+    "\n\nThis operation requires that you specify a workspace. "
     "You can specify a workspace for your MLClient with these parameters:\n\n"
     "ml_client = MLClient(\n\tcredential=DefaultAzureCredential(),\n\t"
     "subscription_id='<SUBSCRIPTION_ID>',\n\tresource_group_name='<RESOURCE_GROUP>',"
@@ -207,7 +204,7 @@ WORKSPACE_NOT_INCLUDED_ERROR_MESSAGE = (
     " to learn more."
 )
 WORKSPACE_REG_NOT_INCLUDED_ERROR_MESSAGE = (
-    "\n\nThis operation requires that you specify a connection to a workspace or a registry. "
+    "\n\nThis operation requires that you specify a workspace or registry. "
     "You can specify a workspace or registry for your MLClient with these parameters:\n\n"
     "ml_client = MLClient(\n\tcredential=DefaultAzureCredential(),\n\t"
     "subscription_id='<SUBSCRIPTION_ID>',\n\tresource_group_name='<RESOURCE_GROUP>',"
