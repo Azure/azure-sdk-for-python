@@ -5,13 +5,16 @@
 # -------------------------------------------------------------------------
 
 import uuid
+import os
+from azure.communication.phonenumbers.siprouting import SipRoutingClient
+from _shared.utils import get_http_logging_policy
 
 from devtools_testutils import is_live
 
-def get_user_domain():
+def get_unique_fqdn(trunkId):
     if(is_live()):
-        return uuid.uuid4().hex + ".com"
-    return "sanitized.com"
+        return trunkId + "-" + uuid.uuid4().hex + "." + _get_root_domain()
+    return trunkId + ".sanitized.com"
 
 def assert_trunks_are_equal(response_trunks, request_trunks):
     assert len(response_trunks) == len(request_trunks), "Length of trunk list doesn't match."
@@ -34,3 +37,13 @@ def assert_routes_are_equal(response_routes, request_routes):
         assert len(request_routes[k].trunks) == len(response_routes[k].trunks), "Trunk lists length doesn't match."
         for m in range(len(request_routes[k].trunks)):
             assert request_routes[k].trunks[m] == response_routes[k].trunks[m] , "Trunk lists don't match."
+
+def setup_configuration(connection_str,trunks=[],routes=[]):
+    if is_live():
+        client = SipRoutingClient.from_connection_string(connection_str, http_logging_policy=get_http_logging_policy())
+        client.set_routes(routes)
+        client.set_trunks(trunks)
+
+
+def _get_root_domain():
+    return os.getenv('AZURE_TEST_DOMAIN')

@@ -128,7 +128,7 @@ class SipRoutingClient(object):
         if trunk is None:
             raise ValueError("Parameter 'trunk' must not be None.")
 
-        self._patch_trunks_([trunk],**kwargs)
+        self._update_trunks_([trunk],**kwargs)
 
     @distributed_trace
     def delete_trunk(
@@ -147,7 +147,7 @@ class SipRoutingClient(object):
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
 
-        self._rest_service.sip_routing.patch(
+        self._rest_service.sip_routing.update(
             body=SipConfiguration(trunks={trunk_fqdn:None}),
             **kwargs)
 
@@ -207,7 +207,7 @@ class SipRoutingClient(object):
                 config.trunks[x.fqdn] = None
 
         if len(config.trunks) > 0:
-            self._rest_service.sip_routing.patch(
+            self._rest_service.sip_routing.update(
                 body=config, **kwargs
             )
 
@@ -228,7 +228,7 @@ class SipRoutingClient(object):
         if routes is None:
             raise ValueError("Parameter 'routes' must not be None.")
 
-        self._rest_service.sip_routing.patch(
+        self._rest_service.sip_routing.update(
             body=SipConfiguration(routes=routes), **kwargs
         )
 
@@ -237,14 +237,14 @@ class SipRoutingClient(object):
             **kwargs)
         return [SipTrunk(fqdn=k,sip_signaling_port=v.sip_signaling_port) for k,v in config.trunks.items()]
 
-    def _patch_trunks_(self,
+    def _update_trunks_(self,
         trunks,  # type: List[SipTrunk]
         **kwargs  # type: Any
         ):  # type: (...) -> SipTrunk
         trunks_internal = {x.fqdn: SipTrunkInternal(sip_signaling_port=x.sip_signaling_port) for x in trunks}
         modified_config = SipConfiguration(trunks=trunks_internal)
 
-        new_config = self._rest_service.sip_routing.patch(
+        new_config = self._rest_service.sip_routing.update(
             body=modified_config, **kwargs
         )
         return [SipTrunk(fqdn=k,sip_signaling_port=v.sip_signaling_port) for k,v in new_config.trunks.items()]

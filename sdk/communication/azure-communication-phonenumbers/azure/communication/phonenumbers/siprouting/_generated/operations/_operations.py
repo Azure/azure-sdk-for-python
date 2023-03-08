@@ -56,7 +56,7 @@ def build_sip_routing_get_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sip_routing_patch_request(**kwargs: Any) -> HttpRequest:
+def build_sip_routing_update_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -149,18 +149,18 @@ class SipRoutingOperations:
         return deserialized
 
     @overload
-    def patch(
+    def update(
         self,
         body: Optional[_models.SipConfiguration] = None,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.SipConfiguration:
-        """Patches SIP configuration for resource.
+        """Updates SIP configuration for resource.
 
-        Patches SIP configuration for resource.
+        Updates SIP configuration for resource.
 
-        :param body: Sip configuration patch object. Default value is None.
+        :param body: Sip configuration update object. Default value is None.
         :type body: ~azure.communication.phonenumbers.siprouting.models.SipConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
@@ -171,14 +171,14 @@ class SipRoutingOperations:
         """
 
     @overload
-    def patch(
+    def update(
         self, body: Optional[IO] = None, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.SipConfiguration:
-        """Patches SIP configuration for resource.
+        """Updates SIP configuration for resource.
 
-        Patches SIP configuration for resource.
+        Updates SIP configuration for resource.
 
-        :param body: Sip configuration patch object. Default value is None.
+        :param body: Sip configuration update object. Default value is None.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
@@ -189,14 +189,14 @@ class SipRoutingOperations:
         """
 
     @distributed_trace
-    def patch(
+    def update(
         self, body: Optional[Union[_models.SipConfiguration, IO]] = None, **kwargs: Any
     ) -> _models.SipConfiguration:
-        """Patches SIP configuration for resource.
+        """Updates SIP configuration for resource.
 
-        Patches SIP configuration for resource.
+        Updates SIP configuration for resource.
 
-        :param body: Sip configuration patch object. Is either a SipConfiguration type or a IO type.
+        :param body: Sip configuration update object. Is either a SipConfiguration type or a IO type.
          Default value is None.
         :type body: ~azure.communication.phonenumbers.siprouting.models.SipConfiguration or IO
         :keyword content_type: Body Parameter content-type. Known values are:
@@ -231,7 +231,7 @@ class SipRoutingOperations:
             else:
                 _json = None
 
-        request = build_sip_routing_patch_request(
+        request = build_sip_routing_update_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,

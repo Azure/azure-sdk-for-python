@@ -45,14 +45,14 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="phoneNumbers[*].id", value="sanitized")
     add_body_key_sanitizer(
         json_path="phoneNumbers[*].phoneNumber", value="sanitized")
-
+    
+    add_general_regex_sanitizer(
+        regex=r"-[0-9a-fA-F]{32}\.[0-9a-zA-Z\.]*(\.com|\.net)", value=".sanitized.com")
+    
     add_general_regex_sanitizer(regex=r"[%2B\d]{10,15}", value="sanitized")
 
     add_general_regex_sanitizer(
         regex=r"phoneNumbers/[%2B\d]{10,15}", value="phoneNumbers/sanitized")
-
-    add_general_regex_sanitizer(
-        regex=r"\.[0-9a-fA-F]{32}\.com", value=".sanitized.com")
 
     add_header_regex_sanitizer(key="P3P", value="sanitized")
     add_header_regex_sanitizer(key="Set-Cookie", value="sanitized")

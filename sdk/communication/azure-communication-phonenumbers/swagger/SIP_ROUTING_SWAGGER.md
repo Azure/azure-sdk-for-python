@@ -15,7 +15,7 @@ autorest SWAGGER.md
 
 ### Settings
 ``` yaml
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/5b18d73e7737aeda98fa81e1c95c7486f72d16d4/specification/communication/data-plane/SipRouting/readme.md
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/communication/data-plane/SipRouting/readme.md
 tag: package-2023-03
 output-folder: ../azure/communication/phonenumbers/siprouting/_generated
 namespace: azure.communication.phonenumbers.siprouting
@@ -29,11 +29,11 @@ model-namespace: false
 models-mode: msrest
 ```
 
-### Remove the -Patch types and use simple types instead, to simplify user interface
+### Remove the -Update types and use simple types instead, to simplify user interface
 ``` yaml
 directive:
   from: swagger-document
-  where: $.paths.*[?(@.operationId == "SipRouting_Patch")].parameters..[?(@.description == "Sip configuration patch object.")]
+  where: $.paths.*[?(@.operationId == "SipRouting_Update")].parameters..[?(@.description == "Sip configuration update object.")]
   transform: >
     $.schema = {"$ref": "#/definitions/SipConfiguration"}
 ```
@@ -43,7 +43,7 @@ directive:
   from: swagger-document
   where: $.definitions
   transform: >
-    delete $.TrunkPatch
+    delete $.TrunkUpdate
 ```
 
 ``` yaml
@@ -51,7 +51,7 @@ directive:
   from: swagger-document
   where: $.definitions
   transform: >
-    delete $.SipConfigurationPatch
+    delete $.SipConfigurationUpdate
 ```
 
 ### Directive renaming "Trunk" model to "SipTrunkInternal"
