@@ -2,7 +2,7 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, set_custom_default_matcher
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
@@ -82,7 +82,6 @@ class TestSchedule(AzureRecordedTestCase):
         assert isinstance(job.identity, AmlTokenConfiguration)
         assert job.inputs["hello_string_top_level_input"]._data == "${{creation_context.trigger_time}}"
 
-    @pytest.mark.skip(reason="TODO (2258616): JSON token setup error for test proxy")
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
 
@@ -209,7 +208,12 @@ class TestSchedule(AzureRecordedTestCase):
         "enable_pipeline_private_preview_features",
     )
     def test_command_job_schedule(self, client: MLClient, randstr: Callable[[], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/local_cron_command_job.yml"
@@ -230,6 +234,8 @@ class TestSchedule(AzureRecordedTestCase):
         schedule_job_dict.pop("name", None)
         # add default mode for local
         schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
+        print(schedule_job_dict)
+        print(rest_schedule_job_dict)
         assert schedule_job_dict == rest_schedule_job_dict
 
     @pytest.mark.skip(reason="TODO (225960): code asset authorization failure")
