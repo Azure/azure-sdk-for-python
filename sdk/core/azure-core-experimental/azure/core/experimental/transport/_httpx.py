@@ -25,10 +25,12 @@
 # --------------------------------------------------------------------------
 import httpx
 from typing import ContextManager, Iterator, Optional
-from azure.core.pipeline.transport import HttpResponse, HttpRequest, HttpTransport
+from azure.core.pipeline.transport import HttpRequest, HttpTransport
+from azure.core.rest._http_response_impl import _HttpResponseBaseImpl
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 
-class HttpXTransportResponse(HttpResponse):
+class HttpXTransportResponse(_HttpResponseBaseImpl):
     def __init__(
         self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
     ) -> None:
@@ -81,7 +83,7 @@ class HttpXTransport(HttpTransport):
     def __exit__(self, *args) -> None:
         self.close()
 
-    def send(self, request: HttpRequest, **kwargs) -> HttpResponse:
+    def send(self, request: HttpRequest, **kwargs) -> HttpXTransportResponse:
         stream_response = kwargs.pop("stream", False)
         parameters = {
             "method": request.method,
@@ -94,11 +96,19 @@ class HttpXTransport(HttpTransport):
 
         stream_ctx: Optional[ContextManager] = None
 
-        if stream_response:
-            stream_ctx = self.client.stream(**parameters)
-            response = stream_ctx.__enter__()
-        else:
-            response = self.client.request(**parameters)
+        try:
+            if stream_response:
+                response = stream_ctx.__enter__()
+                stream_ctx = self.client.stream(**parameters)
+            else:
+                response = self.client.request(**parameters)
+        except (
+            httpx.ConnectError, 
+            httpx.ConnectTimeout,
+        ) as err:
+            error = ServiceRequestError(err, error=err)
+        except httpx.ReadTimeout:
+            error = ServiceResponseError(err, error=err)           
 
         return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
     

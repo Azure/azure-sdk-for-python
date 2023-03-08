@@ -26,10 +26,11 @@
 from collections.abc import AsyncIterator
 import httpx
 from typing import Any, ContextManager, Iterator, Optional
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest, AsyncHttpTransport
+from azure.core.pipeline.transport import HttpRequest, AsyncHttpTransport
+from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 
 
-class AsyncHttpXTransportResponse(AsyncHttpResponse):
+class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
     def __init__(self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]) -> None:
         super().__init__(request, httpx_response)
         self.status_code = httpx_response.status_code
