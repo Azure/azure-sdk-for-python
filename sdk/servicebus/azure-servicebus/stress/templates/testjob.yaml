@@ -18,6 +18,6 @@ spec:
       {{ if eq .Stress.testTarget "sbStress" }}
       command: ['bash', '-c', 'python3 test_stress_queues.py']
       {{- end -}}
-      
+
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
 {{- end -}}

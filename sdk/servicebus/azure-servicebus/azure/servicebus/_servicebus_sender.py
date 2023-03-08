@@ -278,7 +278,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         message: Union[ServiceBusMessage, ServiceBusMessageBatch],
         timeout: Optional[float] = None,
-        last_exception: Optional[Exception] = None
+        last_exception: Optional[Exception] = None  # pylint: disable=unused-argument
     ) -> None:
         self._open()
         try:

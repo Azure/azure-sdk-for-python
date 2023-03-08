@@ -1,6 +1,6 @@
 displayNames:
 matrix:
-  image: 
+  image:
     - Dockerfile
   scenarios:
     sbStress:
