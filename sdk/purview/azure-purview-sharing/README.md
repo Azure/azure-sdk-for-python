@@ -1,4 +1,4 @@
-# Azure Client Library for Python
+# Azure client library for Python
 
 Microsoft Purview Share is a fully managed cloud service.
 
