@@ -28,7 +28,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, Mod
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
@@ -57,15 +57,14 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ModelOperations(_ScopeDependentOperations):
     """ModelOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     # pylint: disable=unused-argument
@@ -78,7 +77,7 @@ class ModelOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
         self._service_client = service_client
@@ -88,7 +87,7 @@ class ModelOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    # @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self, model: Union[Model, WorkspaceAssetReference]
     ) -> Model:  # TODO: Are we going to implement job_name?
@@ -244,7 +243,7 @@ class ModelOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
         """Returns information about the specified model asset.
 
@@ -286,7 +285,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         return Model._from_rest_object(model_version_resource)
 
-    # @monitor_with_activity(logger, "Model.Download", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
         """Download files related to a model.
 
@@ -343,7 +342,7 @@ class ModelOperations(_ScopeDependentOperations):
         module_logger.info("Downloading the model %s at %s\n", path_prefix, path_file)
         storage_client.download(starts_with=path_prefix, destination=path_file)
 
-    # @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
     def archive(
         self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
     ) -> None:  # pylint:disable=unused-argument
@@ -366,7 +365,7 @@ class ModelOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
     def restore(
         self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
     ) -> None:  # pylint:disable=unused-argument
@@ -389,7 +388,7 @@ class ModelOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -484,8 +483,7 @@ class ModelOperations(_ScopeDependentOperations):
     def _get_latest_version(self, name: str) -> Model:
         """Returns the latest version of the asset with the given name.
 
-        Latest is defined as the most recently created, not the most
-        recently updated.
+        Latest is defined as the most recently created, not the most recently updated.
         """
         result = _get_latest(
             name,

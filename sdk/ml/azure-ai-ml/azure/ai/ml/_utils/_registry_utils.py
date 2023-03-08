@@ -82,7 +82,7 @@ class RegistryDiscovery:
 
 
 def get_sas_uri_for_registry_asset(service_client, name, version, resource_group, registry, body) -> str:
-    """Get sas_uri for registry asset
+    """Get sas_uri for registry asset.
 
     :param service_client: Service client
     :type service_client: AzureMachineLearningWorkspaces
@@ -120,7 +120,7 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
 def get_asset_body_for_registry_storage(
     registry_name: str, asset_type: str, asset_name: str, asset_version: str
 ) -> TemporaryDataReferenceRequestDto:
-    """Get Asset body for registry
+    """Get Asset body for registry.
 
     :param registry_name: Registry name.
     :type registry_name: str

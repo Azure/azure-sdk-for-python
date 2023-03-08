@@ -4,10 +4,10 @@
 import re
 from typing import Dict, List, Tuple, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import Mpi, PyTorch, TensorFlow
+from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import Mpi, PyTorch, TensorFlow
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
@@ -24,9 +24,8 @@ def process_sdk_component_job_io(
     io: Dict[str, Union[str, float, bool, Input]],
     io_binding_regex_list: List[str],
 ) -> Tuple[Dict[str, str], Dict[str, Union[str, float, bool, Input]]]:
-    """Separates SDK ComponentJob inputs that are data bindings (i.e. string
-    inputs prefixed with 'inputs.' or 'outputs.') and dataset and literal
-    inputs/outputs.
+    """Separates SDK ComponentJob inputs that are data bindings (i.e. string inputs prefixed with 'inputs.' or
+    'outputs.') and dataset and literal inputs/outputs.
 
     :param io: Input or output dictionary of an SDK ComponentJob
     :type io:  Dict[str, Union[str, float, bool, Input]]

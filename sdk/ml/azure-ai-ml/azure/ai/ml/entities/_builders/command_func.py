@@ -133,10 +133,12 @@ def command(
     services: Optional[
         Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
     ] = None,
+    job_tier: Optional[str] = None,
+    priority: Optional[str] = None,
     **kwargs,
 ) -> Command:
-    """Create a Command object which can be used inside dsl.pipeline as a
-    function and can also be created as a standalone command job.
+    """Create a Command object which can be used inside dsl.pipeline as a function and can also be created as a
+    standalone command job.
 
     :param name: Name of the command job or component created
     :type name: str
@@ -249,5 +251,8 @@ def command(
 
     if timeout is not None:
         command_obj.set_limits(timeout=timeout)
+
+    if job_tier is not None or priority is not None:
+        command_obj.set_queue_settings(job_tier=job_tier, priority=priority)
 
     return command_obj
