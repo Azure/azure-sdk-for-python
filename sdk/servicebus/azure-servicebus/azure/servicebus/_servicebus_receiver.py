@@ -226,35 +226,21 @@ class ServiceBusReceiver(
     def _iter_contextual_wrapper(self, max_wait_time=None):
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
         and per-iter argument passing that requires the former."""
-        # pylint: disable=protected-access
-        original_timeout = None
         while True:
-            # This is not threadsafe, but gives us a way to handle if someone passes
-            # different max_wait_times to different iterators and uses them in concert.
-            if max_wait_time:
-                # _timeout to _idle_timeout
-                original_timeout = self._handler._idle_timeout
-                self._handler._idle_timeout = max_wait_time * 1000
             try:
-                message = self._inner_next()
+                message = self._inner_next(wait_time=max_wait_time)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(self, links=links):
                     yield message
             except StopIteration:
                 break
-            finally:
-                if original_timeout:
-                    try:
-                        self._handler._timeout = original_timeout
-                    except AttributeError:  # Handler may be disposed already.
-                        pass
 
-    def _inner_next(self):
+    def _inner_next(self, wait_time=None):
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
             try:
-                return self._do_retryable_operation(self._iter_next)
+                return self._do_retryable_operation(self._iter_next, wait_time=wait_time)
             except StopIteration:
                 self._message_iter = None
                 raise
@@ -272,15 +258,14 @@ class ServiceBusReceiver(
 
     next = __next__  # for python2.7
 
-    def _iter_next(self):
+    def _iter_next(self, wait_time=None):
         try:
             self._receive_context.set()
             self._open()
-            # TODO: Add in Recieve Message Iterator
-            # if not self._message_iter:
-            #     self._message_iter = self._handler.receive_messages_iter()
-            uamqp_message = next(self._message_iter)
-            message = self._build_message(uamqp_message)
+            if not self._message_iter or wait_time:
+                self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
+            pyamqp_message = next(self._message_iter)
+            message = self._build_message(pyamqp_message)
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -375,7 +360,7 @@ class ServiceBusReceiver(
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else SenderSettleMode.Unsettled,
-            timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
+            timeout=self._max_wait_time * 1 if self._max_wait_time else 0,
             link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive
