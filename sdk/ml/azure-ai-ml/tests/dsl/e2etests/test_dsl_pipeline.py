@@ -1582,7 +1582,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         set_bodiless_matcher()
@@ -1735,7 +1736,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
         set_bodiless_matcher()
@@ -1850,7 +1852,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert expected_job == actual_job
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     def test_multi_parallel_components_with_file_input_pipeline_output(
         self, client: MLClient, randstr: Callable[[str], str]

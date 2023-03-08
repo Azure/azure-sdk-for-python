@@ -46,7 +46,8 @@ class TestConditionalNodeInPipeline(AzureRecordedTestCase):
 
 class TestIfElse(TestConditionalNodeInPipeline):
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_happy_path_if_else(self, client: MLClient, randstr: Callable[[str], str]) -> None:
@@ -83,7 +84,8 @@ class TestIfElse(TestConditionalNodeInPipeline):
         }
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     def test_if_else_one_branch(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
@@ -113,7 +115,8 @@ class TestIfElse(TestConditionalNodeInPipeline):
         }
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     def test_if_else_literal_condition(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
@@ -137,7 +140,15 @@ class TestIfElse(TestConditionalNodeInPipeline):
             },
         }
 
+    @pytest.mark.skip(reason="TODO (2283501): Failing due to Python 3.7.9 end of life warning message - environment needs to be updated")
     def test_if_else_multiple_block(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
+
         params_override = [{"name": randstr("name")}]
         my_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/if_else/multiple_block.yml",
@@ -161,6 +172,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
             "result": {"type": "command"},
         }
 
+    @pytest.mark.skip(reason="TODO (2283501): Failing due to Python 3.7.9 end of life warning message - environment needs to be updated")
     def test_if_else_single_multiple_block(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         my_job = load_job(
@@ -187,7 +199,8 @@ class TestIfElse(TestConditionalNodeInPipeline):
 
 class TestDoWhile(TestConditionalNodeInPipeline):
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     @pytest.mark.disable_mock_code_hash
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
@@ -209,7 +222,8 @@ class TestDoWhile(TestConditionalNodeInPipeline):
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
@@ -367,9 +381,8 @@ def assert_control_flow_in_pipeline_component(client, component_path, pipeline_p
 
 
 class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):
-    @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
+
+    @pytest.mark.skip(reason="TODO (2283501): Failing due to Python 3.7.9 end of life warning message - environment needs to be updated")
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_if_else(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()

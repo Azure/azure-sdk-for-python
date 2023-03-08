@@ -282,7 +282,8 @@ class TestCommandJob(AzureRecordedTestCase):
         assert command_job_resource_2.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED)
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     @pytest.mark.e2etest
     def test_command_job_dependency_label_resolution(self, randstr: Callable[[], str], client: MLClient) -> None:

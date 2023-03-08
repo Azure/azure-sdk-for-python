@@ -43,7 +43,8 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
 
 class TestIfElse(TestControlFlowPipeline):
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     @pytest.mark.usefixtures("mock_anon_component_version")
     def test_dsl_condition_pipeline(self, client: MLClient):
@@ -104,7 +105,8 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     def test_dsl_condition_pipeline_with_primitive_input(self, client: MLClient):
         set_bodiless_matcher()
@@ -150,7 +152,8 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     def test_dsl_condition_pipeline_with_one_branch(self, client: MLClient):
         set_bodiless_matcher()
@@ -338,6 +341,10 @@ class TestIfElse(TestControlFlowPipeline):
             },
         }
 
+    @pytest.mark.skipif(
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
+    )
     def test_if_else_multiple_blocks(self, client: MLClient):
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"

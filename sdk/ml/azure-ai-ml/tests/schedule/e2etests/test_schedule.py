@@ -2,7 +2,7 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, set_custom_default_matcher
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, set_custom_default_matcher, is_live
 import platform
 
 from azure.ai.ml import MLClient
@@ -83,6 +83,10 @@ class TestSchedule(AzureRecordedTestCase):
         assert isinstance(job.identity, AmlTokenConfiguration)
         assert job.inputs["hello_string_top_level_input"]._data == "${{creation_context.trigger_time}}"
 
+    @pytest.mark.skipif(
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
+    )
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):
         set_bodiless_matcher()
 
@@ -233,10 +237,9 @@ class TestSchedule(AzureRecordedTestCase):
         # pop job name, empty parameters from local dict
         schedule_job_dict.pop("parameters", None)
         schedule_job_dict.pop("name", None)
-        # add default mode for local
+        # add default mode and experimental queue_settings field for local
         schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
-        print(schedule_job_dict)
-        print(rest_schedule_job_dict)
+        schedule_job_dict["queue_settings"] = {'job_tier': 'standard'}
         assert schedule_job_dict == rest_schedule_job_dict
 
     @pytest.mark.skip(reason="TODO (225960): code asset authorization failure")

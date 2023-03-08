@@ -77,7 +77,8 @@ class TestBatchDeployment(AzureRecordedTestCase):
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
     @pytest.mark.skipif(
-        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()),
+        reason="TODO (2258630): getByHash request not matched in Windows infra test playback",
     )
     def test_batch_deployment_dependency_label_resolution(
         self,
