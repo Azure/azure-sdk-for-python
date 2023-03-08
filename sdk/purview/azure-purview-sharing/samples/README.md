@@ -22,7 +22,6 @@ The following are code samples that show common scenario operations with the Azu
     * Send a user invitation
     * Send a service invitation
     * View sent invitations
-    * Get a sent invitation
 
 * [received_shares_examples.py](https://github.com/yamanwahsheh/azure-sdk-for-python/blob/yaman/share-v2-python-tests-and-samples/sdk/purview/azure-purview-sharing/samples/received_shares_examples.py) - Examples of Received Shares:
     * Create a share client

@@ -174,18 +174,3 @@ list_request = build_sent_shares_list_invitations_request(sent_share_id=str(sent
 list_response = client.send_request(list_request)
 list = json.loads(list_response.content)['value']
 # [END view_sent_invitations]
-
-# Get a sent invitation
-# [START get_a_sent_invitation]
-from azure.purview.sharing.operations._operations import (
-    build_sent_shares_get_invitation_request
-)
-
-get_request = build_sent_shares_get_invitation_request(
-    sent_share_id=str(sent_share_id),
-    sent_share_invitation_id=str(sent_share_invitation_id),
-    content=json.dumps(sent_share_invitation))
-
-get_response = client.send_request(get_request)
-retrieved_invitation = json.loads(get_response.content)
-# [END get_a_sent_invitation]
