@@ -392,7 +392,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type share_with_version: str
         :param registry_name: Name of the destination registry.
         :type registry_name: str
-        :return: Model asset object.
+        :return: Environment asset object.
         :rtype: ~azure.ai.ml.entities.Environment
         """
 
