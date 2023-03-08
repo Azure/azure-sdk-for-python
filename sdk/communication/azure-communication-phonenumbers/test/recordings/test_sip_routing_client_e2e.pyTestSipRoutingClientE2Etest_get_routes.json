@@ -7,7 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "157",
+        "Content-Length": "137",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b4 Python/3.11.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
@@ -20,23 +20,21 @@
             "description": "Handle numbers starting with \u0027\u002B123\u0027",
             "name": "First rule",
             "numberPattern": "\\\u002B123[0-9]\u002B",
-            "trunks": [
-              "sbs1.sanitized.com"
-            ]
+            "trunks": []
           }
         ]
       },
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-05-01-preview, 2022-09-01-preview, 2023-01-01-preview, 2023-03-01",
-        "Content-Length": "254",
+        "Content-Length": "234",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "307ms"
+        "X-Processing-Time": "322ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -52,9 +50,7 @@
             "description": "Handle numbers starting with \u0027\u002B123\u0027",
             "name": "First rule",
             "numberPattern": "\\\u002B123[0-9]\u002B",
-            "trunks": [
-              "sbs1.sanitized.com"
-            ]
+            "trunks": []
           }
         ]
       }
@@ -75,14 +71,14 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-05-01-preview, 2022-09-01-preview, 2023-01-01-preview, 2023-03-01",
-        "Content-Length": "254",
+        "Content-Length": "234",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "164ms"
+        "X-Processing-Time": "184ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -98,9 +94,7 @@
             "description": "Handle numbers starting with \u0027\u002B123\u0027",
             "name": "First rule",
             "numberPattern": "\\\u002B123[0-9]\u002B",
-            "trunks": [
-              "sbs1.sanitized.com"
-            ]
+            "trunks": []
           }
         ]
       }

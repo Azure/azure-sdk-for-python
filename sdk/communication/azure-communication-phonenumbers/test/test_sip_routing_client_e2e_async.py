@@ -8,7 +8,7 @@ from azure.core.exceptions import HttpResponseError
 from phone_numbers_testcase import PhoneNumbersTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from _shared.utils import async_create_token_credential, get_http_logging_policy
-from sip_routing_helper import get_unique_fqdn, assert_trunks_are_equal, assert_routes_are_equal, setup_configuration
+from sip_routing_helper import get_unique_fqdn, assert_trunks_are_equal, assert_routes_are_equal, setup_configuration, get_agent_specific_connection_string, get_test_agent
 import os
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
@@ -16,21 +16,27 @@ from azure.communication.phonenumbers.siprouting._generated.models import SipTru
 from azure.communication.phonenumbers.siprouting._models import SipTrunk
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
+SKIP_UPDATE_TRUNKS_TESTS = os.getenv("COMMUNICATION_SKIP_TRUNKS_LIVE_TEST", "false") == "true"
+SKIP_UPDATE_TRUNKS_TESTS_REASON = "Tests containing domains sip are skipped."
+
 @pytest.mark.asyncio
 class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):   
     
     first_trunk = SipTrunk(fqdn=get_unique_fqdn("sbs1"), sip_signaling_port=1122)
     second_trunk = SipTrunk(fqdn=get_unique_fqdn("sbs2"), sip_signaling_port=1123)
     additional_trunk = SipTrunk(fqdn=get_unique_fqdn("sbs3"), sip_signaling_port=2222)
-    first_route = SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\\+123[0-9]+", trunks=[first_trunk.fqdn])
+    first_route = SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\\+123[0-9]+", trunks=[])
             
     def setup_method(self):
-        super(TestSipRoutingClientE2EAsync, self).setUp(use_dynamic_resource=True)
+        super(TestSipRoutingClientE2EAsync, self).setUp()
+        if get_test_agent():
+            self.connection_str = get_agent_specific_connection_string()
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
         )
         setup_configuration(self.connection_str,trunks=[self.first_trunk, self.second_trunk])
 
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_get_trunks(self):
         async with self._sip_routing_client:
@@ -38,6 +44,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         assert trunks is not None, "No trunks were returned."
         assert_trunks_are_equal(trunks,[self.first_trunk, self.second_trunk]), "Trunks are not equal."
     
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_get_trunks_from_managed_identity(self):
         self._sip_routing_client = self._get_sip_client_managed_identity()
@@ -63,6 +70,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         assert routes is not None, "No routes were returned."
         assert_routes_are_equal(routes,[self.first_route]), "Routes are not equal."
 
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_set_trunks(self):
         async with self._sip_routing_client:
@@ -71,6 +79,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         assert result_trunks is not None, "No trunks were returned."
         assert_trunks_are_equal(result_trunks,[self.additional_trunk]), "Trunks are not equal."
 
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_set_trunks_from_managed_identity(self):
         self._sip_routing_client = self._get_sip_client_managed_identity()
@@ -93,7 +102,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
     
     @recorded_by_proxy_async
     async def test_set_routes(self):
-        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\\+999[0-9]+", trunks=[self.second_trunk.fqdn])]
+        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\\+999[0-9]+", trunks=[])]
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes([self.first_route])
             await self._sip_routing_client.set_routes(new_routes)
@@ -103,7 +112,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
 
     @recorded_by_proxy_async
     async def test_set_routes_from_managed_identity(self):
-        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\\+999[0-9]+", trunks=[self.second_trunk.fqdn])]
+        new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\\+999[0-9]+", trunks=[])]
         self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
             await self._sip_routing_client.set_routes([self.first_route])
@@ -112,6 +121,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         assert result_routes is not None, "No routes were returned."
         assert_routes_are_equal(result_routes,new_routes), "Routes are not equal."
 
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_delete_trunk(self):
         trunk_to_delete = self.second_trunk.fqdn
@@ -120,6 +130,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
             new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk]), "Trunk was not deleted."
 
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_delete_trunk_from_managed_identity(self):
         trunk_to_delete = self.second_trunk.fqdn
@@ -129,6 +140,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
             new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk]), "Trunk was not deleted."
 
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_add_trunk(self):
         async with self._sip_routing_client:
@@ -136,6 +148,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
             new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk,self.second_trunk,self.additional_trunk])
     
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_add_trunk_from_managed_identity(self):
         self._sip_routing_client = self._get_sip_client_managed_identity()
@@ -144,6 +157,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
             new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk,self.second_trunk,self.additional_trunk])
 
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_get_trunk(self):
         async with self._sip_routing_client:
@@ -151,6 +165,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         assert trunk is not None, "No trunk was returned."
         assert_trunks_are_equal([trunk],[self.first_trunk]), "Returned trunk does not match the required trunk."
 
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_get_trunk_from_managed_identity(self):
         self._sip_routing_client = self._get_sip_client_managed_identity()
@@ -159,6 +174,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
         assert trunk is not None, "No trunk was returned."
         assert_trunks_are_equal([trunk],[self.first_trunk]), "Returned trunk does not match the required trunk."
         
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_set_trunk(self):
         modified_trunk = SipTrunk(fqdn=self.second_trunk.fqdn,sip_signaling_port=7777)
@@ -167,6 +183,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
             new_trunks = await self._sip_routing_client.list_trunks()
         assert_trunks_are_equal(new_trunks,[self.first_trunk,modified_trunk])
     
+    @pytest.mark.skipif(SKIP_UPDATE_TRUNKS_TESTS, reason=SKIP_UPDATE_TRUNKS_TESTS_REASON)
     @recorded_by_proxy_async
     async def test_set_trunk_from_managed_identity(self):
         modified_trunk = SipTrunk(fqdn=self.second_trunk.fqdn,sip_signaling_port=7777)

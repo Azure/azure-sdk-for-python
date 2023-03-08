@@ -38,12 +38,24 @@ def assert_routes_are_equal(response_routes, request_routes):
         for m in range(len(request_routes[k].trunks)):
             assert request_routes[k].trunks[m] == response_routes[k].trunks[m] , "Trunk lists don't match."
 
-def setup_configuration(connection_str,trunks=[],routes=[]):
+def setup_configuration(connection_str,skip_update_trunks=False,trunks=[],routes=[]):
     if is_live():
         client = SipRoutingClient.from_connection_string(connection_str, http_logging_policy=get_http_logging_policy())
         client.set_routes(routes)
-        client.set_trunks(trunks)
+        if not skip_update_trunks:
+            client.set_trunks(trunks)
 
+def get_test_agent():
+    return os.getenv("AZURE_TEST_AGENT","")
+
+def get_agent_specific_connection_string():
+    test_agent = get_test_agent()
+    return os.environ["COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING_SIP_" + test_agent]
 
 def _get_root_domain():
-    return os.getenv('AZURE_TEST_DOMAIN')
+    test_agent = get_test_agent()
+    if test_agent:
+        return os.getenv("AZURE_TEST_DOMAIN_" + test_agent,"testdomain.com")
+    else:
+        return os.getenv("AZURE_TEST_DOMAIN","testdomain.com")
+    

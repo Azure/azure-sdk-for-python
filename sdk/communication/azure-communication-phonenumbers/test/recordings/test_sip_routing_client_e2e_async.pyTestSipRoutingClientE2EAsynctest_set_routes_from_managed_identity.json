@@ -40,7 +40,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "157",
+        "Content-Length": "137",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b4 Python/3.11.0 (Windows-10-10.0.22621-SP0)"
       },
@@ -50,23 +50,21 @@
             "description": "Handle numbers starting with \u0027\u002B123\u0027",
             "name": "First rule",
             "numberPattern": "\\\u002B123[0-9]\u002B",
-            "trunks": [
-              "sbs1.sanitized.com"
-            ]
+            "trunks": []
           }
         ]
       },
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-05-01-preview, 2022-09-01-preview, 2023-01-01-preview, 2023-03-01",
-        "Content-Length": "254",
+        "Content-Length": "234",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "321ms"
+        "X-Processing-Time": "617ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -82,9 +80,7 @@
             "description": "Handle numbers starting with \u0027\u002B123\u0027",
             "name": "First rule",
             "numberPattern": "\\\u002B123[0-9]\u002B",
-            "trunks": [
-              "sbs1.sanitized.com"
-            ]
+            "trunks": []
           }
         ]
       }
@@ -95,7 +91,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "163",
+        "Content-Length": "143",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b4 Python/3.11.0 (Windows-10-10.0.22621-SP0)"
       },
@@ -105,23 +101,21 @@
             "description": "Handle numbers starting with \u0027\u002B999\u0027",
             "name": "Alternative rule",
             "numberPattern": "\\\u002B999[0-9]\u002B",
-            "trunks": [
-              "sbs2.sanitized.com"
-            ]
+            "trunks": []
           }
         ]
       },
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-05-01-preview, 2022-09-01-preview, 2023-01-01-preview, 2023-03-01",
-        "Content-Length": "260",
+        "Content-Length": "240",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "318ms"
+        "X-Processing-Time": "324ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -137,9 +131,7 @@
             "description": "Handle numbers starting with \u0027\u002B999\u0027",
             "name": "Alternative rule",
             "numberPattern": "\\\u002B999[0-9]\u002B",
-            "trunks": [
-              "sbs2.sanitized.com"
-            ]
+            "trunks": []
           }
         ]
       }
@@ -156,14 +148,14 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2021-05-01-preview, 2022-09-01-preview, 2023-01-01-preview, 2023-03-01",
-        "Content-Length": "260",
+        "Content-Length": "240",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "169ms"
+        "X-Processing-Time": "450ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -179,9 +171,7 @@
             "description": "Handle numbers starting with \u0027\u002B999\u0027",
             "name": "Alternative rule",
             "numberPattern": "\\\u002B999[0-9]\u002B",
-            "trunks": [
-              "sbs2.sanitized.com"
-            ]
+            "trunks": []
           }
         ]
       }

@@ -30,7 +30,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1037ms"
+        "X-Processing-Time": "1015ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -70,7 +70,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "168ms"
+        "X-Processing-Time": "173ms"
       },
       "ResponseBody": {
         "trunks": {
