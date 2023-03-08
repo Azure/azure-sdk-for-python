@@ -264,7 +264,7 @@ def analyze_dependencies() -> None:
                     for specifier in sorted(dependencies[package].keys(), key=lambda x: len(x)):
                         if specifier:
                             print(
-                                f"{dependencies[package][specifier]} {pluralize(dependencies[package][specifier], 'take', 'takes')} a dependency on specifier {specifier}"
+                                f"{dependencies[package][specifier]} {pluralize(dependencies[package][specifier], 'takes', 'take')} a dependency on specifier {specifier}"
                             )
                     print(f'Resolve conflicts in reqs for "{package}" and re-run.')
 
