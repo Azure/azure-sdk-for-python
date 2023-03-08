@@ -78,7 +78,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
@@ -94,13 +94,13 @@ class Test_retry_policy_tests(unittest.TestCase):
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
         finally:
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_resource_throttle_retry_policy_fixed_retry_after(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000)
 
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
@@ -117,13 +117,13 @@ class Test_retry_policy_tests(unittest.TestCase):
                                         connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
 
         finally:
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_resource_throttle_retry_policy_max_wait_time(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000, 3)
 
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
@@ -138,7 +138,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
         finally:
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_resource_throttle_retry_policy_query(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
@@ -150,7 +150,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         self.created_collection.create_item(body=document_definition)
 
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
@@ -169,7 +169,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
         finally:
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     @pytest.mark.xfail
     def test_default_retry_policy_for_query(self):
@@ -230,8 +230,8 @@ class Test_retry_policy_tests(unittest.TestCase):
                                 'key': 'value'}
 
         try:
-            original_execute_function = _retry_utility.ExecuteFunction
-            mf = self.MockExecuteFunctionConnectionReset(original_execute_function)
+            self.original_execute_function = _retry_utility.ExecuteFunction
+            mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
 
             created_document = {}
@@ -250,7 +250,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             mf.counter = mf.counter - 3
             self.assertEqual(mf.counter, 1)
         finally:
-            _retry_utility.ExecuteFunction = original_execute_function
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_timeout_failover_retry_policy_for_read(self):
         document_definition = {'id': 'failoverDoc',
@@ -270,8 +270,6 @@ class Test_retry_policy_tests(unittest.TestCase):
                 self.assertEqual(err.status_code, 408)
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
-
-        self.created_collection.delete_item(item=created_document, partition_key=created_document['id'])
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         response = test_config.FakeResponse({HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
