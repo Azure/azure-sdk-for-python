@@ -58,7 +58,6 @@ def _request_function(f: Callable[["HttpPipeline"], None]):
                 content=kwargs.pop("content", None),
                 data=kwargs.pop("data", None),
                 files=kwargs.pop("files", None),
-                url=kwargs.pop("url", None),
             )
 
             return self.run(request, **kwargs).http_response
