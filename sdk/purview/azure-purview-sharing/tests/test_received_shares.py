@@ -24,8 +24,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_detached_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
-        sent_share_invitation_id = uuid.uuid4()
+        sent_share_id = "6eb422c0-ebe0-4e65-a79b-b9348fae9e84"
+        sent_share_invitation_id = "0c80bdeb-7801-4220-b32f-fafea6939803"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -83,8 +83,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
-        sent_share_invitation_id = uuid.uuid4()
+        sent_share_id = "63aa0eea-72e8-4741-990e-a69a46de5054"
+        sent_share_invitation_id = "149ee1f5-a916-469e-9561-8082f4d47999"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -146,8 +146,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
-        sent_share_invitation_id = uuid.uuid4()
+        sent_share_id = "a179f15e-168a-4534-8eea-5403d0c5cbfc"
+        sent_share_invitation_id = "45501fff-f3cb-4713-9db8-9ac69518d279"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -210,8 +210,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_attach_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
-        sent_share_invitation_id = uuid.uuid4()
+        sent_share_id = "7c5d17b5-e485-4862-8079-625b6bd25bb0"
+        sent_share_invitation_id = "8bad25d9-a8c8-4c96-87a1-dfd70d1c4fb4"
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line
@@ -270,9 +270,9 @@ class TestReceivedShares(TestPurviewSharing):
 
         sink = {
             "properties": {
-                "containerName": "container" + ''.join(random.choice(string.ascii_lowercase) for i in range(26)),
-                "folder": "folder" + ''.join(random.choice(string.ascii_lowercase) for i in range(20)),
-                "mountPath": "mountPath" + ''.join(random.choice(string.ascii_lowercase) for i in range(20)),
+                "containerName": "containerellxvxonnlukvfzbwhlexfzqfs",
+                "folder": "folderpubhxhmiibnxcvqchnbi",
+                "mountPath": "mountPathciynxouybsqvfgmcfwtt",
             },
             "storeKind": "AdlsGen2Account",
             "storeReference": store_reference

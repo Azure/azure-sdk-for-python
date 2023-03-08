@@ -26,7 +26,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
+        sent_share_id = "16e39ad5-007c-493a-8acb-c8c6b483b989"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -49,8 +49,8 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share_user_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
-        sent_share_invitation_id = uuid.uuid4()
+        sent_share_id = "9765bd0c-e91b-4e64-a84c-4726532c0fc5"
+        sent_share_invitation_id = "899274a4-c5b9-4753-9b03-7a62a2b3e73a"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -64,14 +64,13 @@ class TestSentShares(TestPurviewSharing):
         assert response.status_code == 201, "Invalid Status Code " + str(response.status_code)
 
         consumerEmail = "consumer@contoso.com"
-        today=date.today()
 
         invitation = {
             "invitationKind": "User",
             "properties": {
                 "targetEmail": consumerEmail,
                 "notify": "true",
-                "expirationDate": date(today.year+1,today.month,today.day).strftime("%Y-%m-%d") + " 00:00:00"
+                "expirationDate": "2024-03-02 00:00:00"
             }
         }
 
@@ -96,7 +95,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_sent_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
+        sent_share_id = "a424360f-c966-4183-9c9f-a38b984fbac7"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -123,7 +122,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_sent_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
+        sent_share_id = "7687b479-0f21-4a13-8316-a1198f5c1d5b"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -154,7 +153,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_sent_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
+        sent_share_id = "362bfbad-3d86-41eb-95c7-61eec7eb4b61"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -183,8 +182,8 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
-        sent_share_invitation_id = uuid.uuid4()
+        sent_share_id = "f78cbff1-faa8-4541-96cc-db9f7cf1c316"
+        sent_share_invitation_id = "7733b4aa-02e0-4d32-b4ef-3f5bef527a74"
         sent_share = self.prepare_sent_share()
         
         request = build_sent_shares_create_or_replace_request(
@@ -195,12 +194,12 @@ class TestSentShares(TestPurviewSharing):
         response = client.send_request(request)
 
         assert response is not None
-        assert response.status_code == 201, "Invalid Status Code " + str(response.status_code)
+        assert response.status_code == 201, "Invalid Status Code 1 " + str(response.status_code)
 
         targetActiverDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
         targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
 
-        sent_share_invitation = {
+        invitation = {
             "invitationKind": "Service",
             "properties": {
                 "targetActiveDirectoryId": targetActiverDirectoryId,
@@ -212,12 +211,12 @@ class TestSentShares(TestPurviewSharing):
             sent_share_id=sent_share_id,
             sent_share_invitation_id=sent_share_invitation_id,
             content_type="application/json",
-            content=json.dumps(sent_share_invitation))
+            content=json.dumps(invitation))
         
         invitation_response = client.send_request(invitation_request)
 
         assert invitation_response is not None
-        assert invitation_response.status_code == 201, "Invalid status code"
+        assert invitation_response.status_code == 201, "Invalid status code 2 " + str(invitation_response.status_code)
         assert invitation_response.content is not None
 
         created_invitation = json.loads(invitation_response.content)
@@ -230,8 +229,8 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
-        sent_share_invitation_id = uuid.uuid4()
+        sent_share_id = "718ec0b3-ea73-4f29-9c0d-3cd1798044b1"
+        sent_share_invitation_id = "51b62bad-43ab-423f-9c7f-5ffd56a42b70"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -244,13 +243,13 @@ class TestSentShares(TestPurviewSharing):
         assert response is not None
         assert response.status_code == 201, "Invalid Status Code " + str(response.status_code)
 
-        targetActiverDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        targetActiveDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
         targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
 
         sent_share_invitation = {
             "invitationKind": "Service",
             "properties": {
-                "targetActiveDirectoryId": targetActiverDirectoryId,
+                "targetActiveDirectoryId": targetActiveDirectoryId,
                 "targetObjectId": targetObjectId
             }
         }
@@ -264,13 +263,13 @@ class TestSentShares(TestPurviewSharing):
         invitation_response = client.send_request(invitation_request)
 
         assert invitation_response is not None
-        assert invitation_response.status_code == 201, "Invalid status code"
+        assert invitation_response.status_code == 201, "Invalid status code " + str(invitation_response.status_code)
         assert invitation_response.content is not None
 
         created_invitation = json.loads(invitation_response.content)
 
         assert created_invitation['id'] == str(sent_share_invitation_id)
-        assert created_invitation['properties']['targetActiveDirectoryId'] == targetActiverDirectoryId
+        assert created_invitation['properties']['targetActiveDirectoryId'] == targetActiveDirectoryId
         assert created_invitation['properties']['targetObjectId'] == targetObjectId
 
         get_request = build_sent_shares_get_invitation_request(
@@ -281,20 +280,20 @@ class TestSentShares(TestPurviewSharing):
         get_response = client.send_request(get_request)
 
         assert get_response is not None
-        assert get_response.status_code == 200, "Invalid status code"
+        assert get_response.status_code == 200, "Invalid status code " + str(get_response.status_code)
 
         retrieved_invitation = json.loads(get_response.content)
 
         assert retrieved_invitation['id'] == str(sent_share_invitation_id)
-        assert retrieved_invitation['properties']['targetActiveDirectoryId'] == targetActiverDirectoryId
+        assert retrieved_invitation['properties']['targetActiveDirectoryId'] == targetActiveDirectoryId
         assert retrieved_invitation['properties']['targetObjectId'] == targetObjectId
 
     @PurviewSharingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_all_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
-        sent_share_invitation_id = uuid.uuid4()
+        sent_share_id = "477ab96b-ffda-4e45-821f-9fc60dc15da4"
+        sent_share_invitation_id = "cf0e1028-718d-43ee-a487-949bdd4d4499"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -307,13 +306,13 @@ class TestSentShares(TestPurviewSharing):
         assert response is not None
         assert response.status_code == 201, "Invalid Status Code " + str(response.status_code)
 
-        targetActiverDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        targetActiveDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
         targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
 
         sent_share_invitation = {
             "invitationKind": "Service",
             "properties": {
-                "targetActiveDirectoryId": targetActiverDirectoryId,
+                "targetActiveDirectoryId": targetActiveDirectoryId,
                 "targetObjectId": targetObjectId
             }
         }
@@ -327,13 +326,13 @@ class TestSentShares(TestPurviewSharing):
         invitation_response = client.send_request(invitation_request)
 
         assert invitation_response is not None
-        assert invitation_response.status_code == 201, "Invalid status code"
+        assert invitation_response.status_code == 201, "Invalid status code " + str(invitation_response.status_code)
         assert invitation_response.content is not None
 
         created_invitation = json.loads(invitation_response.content)
 
         assert created_invitation['id'] == str(sent_share_invitation_id)
-        assert created_invitation['properties']['targetActiveDirectoryId'] == targetActiverDirectoryId
+        assert created_invitation['properties']['targetActiveDirectoryId'] == targetActiveDirectoryId
         assert created_invitation['properties']['targetObjectId'] == targetObjectId
 
         list_request = build_sent_shares_list_invitations_request(sent_share_id=sent_share_id)
@@ -349,7 +348,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = uuid.uuid4()
+        sent_share_id = "46a8100f-5c37-4ce5-af87-3f45d9b015bf"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(

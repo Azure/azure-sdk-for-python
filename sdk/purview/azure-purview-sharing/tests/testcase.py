@@ -51,5 +51,5 @@ class TestPurviewSharing(AzureRecordedTestCase):
 PurviewSharingPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "purviewsharing",
-    purviewsharing_endpoint="https://fake_account.purview.azure.com"
+    purviewsharing_endpoint="https://fake_account.share.purview.azure.com"
 )
