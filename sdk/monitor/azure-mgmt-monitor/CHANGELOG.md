@@ -1,5 +1,91 @@
 # Release History
 
+## 6.0.0 (2023-03-08)
+
+### Features Added
+
+  - Added operation MetricDefinitionsOperations.list_at_subscription_scope
+  - Added operation MetricsOperations.list_at_subscription_scope
+  - Added operation MetricsOperations.list_at_subscription_scope_post
+  - Added operation group AzureMonitorWorkspacesOperations
+  - Added operation group MonitorOperationsOperations
+  - Added operation group TenantActionGroupsOperations
+  - Model AzureMonitorPrivateLinkScope has a new parameter system_data
+  - Model Condition has a new parameter metric_name
+  - Model DataCollectionEndpoint has a new parameter failover_configuration
+  - Model DataCollectionEndpoint has a new parameter metadata
+  - Model DataCollectionEndpoint has a new parameter metrics_ingestion
+  - Model DataCollectionEndpoint has a new parameter private_link_scoped_resources
+  - Model DataCollectionEndpointResource has a new parameter failover_configuration
+  - Model DataCollectionEndpointResource has a new parameter identity
+  - Model DataCollectionEndpointResource has a new parameter metadata
+  - Model DataCollectionEndpointResource has a new parameter metrics_ingestion
+  - Model DataCollectionEndpointResource has a new parameter private_link_scoped_resources
+  - Model DataCollectionEndpointResourceProperties has a new parameter failover_configuration
+  - Model DataCollectionEndpointResourceProperties has a new parameter metadata
+  - Model DataCollectionEndpointResourceProperties has a new parameter metrics_ingestion
+  - Model DataCollectionEndpointResourceProperties has a new parameter private_link_scoped_resources
+  - Model DataCollectionRuleAssociationMetadata has a new parameter provisioned_by_resource_id
+  - Model DataCollectionRuleDataSources has a new parameter data_imports
+  - Model DataCollectionRuleDataSources has a new parameter platform_telemetry
+  - Model DataCollectionRuleDataSources has a new parameter prometheus_forwarder
+  - Model DataCollectionRuleDataSources has a new parameter windows_firewall_logs
+  - Model DataCollectionRuleDestinations has a new parameter event_hubs
+  - Model DataCollectionRuleDestinations has a new parameter event_hubs_direct
+  - Model DataCollectionRuleDestinations has a new parameter monitoring_accounts
+  - Model DataCollectionRuleDestinations has a new parameter storage_accounts
+  - Model DataCollectionRuleDestinations has a new parameter storage_blobs_direct
+  - Model DataCollectionRuleDestinations has a new parameter storage_tables_direct
+  - Model DataCollectionRuleMetadata has a new parameter provisioned_by_resource_id
+  - Model DataCollectionRuleResource has a new parameter identity
+  - Model DataFlow has a new parameter built_in_transform
+  - Model DataSourcesSpec has a new parameter data_imports
+  - Model DataSourcesSpec has a new parameter platform_telemetry
+  - Model DataSourcesSpec has a new parameter prometheus_forwarder
+  - Model DataSourcesSpec has a new parameter windows_firewall_logs
+  - Model DestinationsSpec has a new parameter event_hubs
+  - Model DestinationsSpec has a new parameter event_hubs_direct
+  - Model DestinationsSpec has a new parameter monitoring_accounts
+  - Model DestinationsSpec has a new parameter storage_accounts
+  - Model DestinationsSpec has a new parameter storage_blobs_direct
+  - Model DestinationsSpec has a new parameter storage_tables_direct
+  - Model Metadata has a new parameter provisioned_by_resource_id
+  - Model Operation has a new parameter action_type
+  - Model Operation has a new parameter origin
+  - Model PrivateLinkResource has a new parameter required_zone_names
+  - Model ResourceForUpdate has a new parameter identity
+  - Model ScheduledQueryRuleResource has a new parameter auto_mitigate
+  - Model ScheduledQueryRuleResource has a new parameter check_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResource has a new parameter identity
+  - Model ScheduledQueryRuleResource has a new parameter is_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResource has a new parameter public_network_access
+  - Model ScheduledQueryRuleResource has a new parameter rule_resolve_configuration
+  - Model ScheduledQueryRuleResource has a new parameter skip_query_validation
+  - Model ScheduledQueryRuleResource has a new parameter system_data
+  - Model ScheduledQueryRuleResourceCollection has a new parameter next_link
+  - Model ScheduledQueryRuleResourcePatch has a new parameter auto_mitigate
+  - Model ScheduledQueryRuleResourcePatch has a new parameter check_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResourcePatch has a new parameter identity
+  - Model ScheduledQueryRuleResourcePatch has a new parameter is_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResourcePatch has a new parameter public_network_access
+  - Model ScheduledQueryRuleResourcePatch has a new parameter rule_resolve_configuration
+  - Model ScheduledQueryRuleResourcePatch has a new parameter skip_query_validation
+  - Model ScopedResource has a new parameter system_data
+  - Operation MetricsOperations.list has a new optional parameter auto_adjust_timegrain
+  - Operation MetricsOperations.list has a new optional parameter validate_dimensions
+
+### Breaking Changes
+
+  - Model AzureMonitorPrivateLinkScope has a new required parameter access_mode_settings
+  - Model Operation no longer has parameter service_specification
+  - Model OperationDisplay no longer has parameter publisher
+  - Model PrivateEndpointConnectionListResult no longer has parameter next_link
+  - Model PrivateLinkResourceListResult no longer has parameter next_link
+  - Removed operation ActionGroupsOperations.begin_create_notifications_at_resource_group_level
+  - Removed operation ActionGroupsOperations.begin_post_test_notifications
+  - Removed operation ActionGroupsOperations.get_test_notifications
+  - Removed operation ActionGroupsOperations.get_test_notifications_at_resource_group_level
+
 ## 5.0.1 (2022-09-30)
 
 ### Bugs Fixed
