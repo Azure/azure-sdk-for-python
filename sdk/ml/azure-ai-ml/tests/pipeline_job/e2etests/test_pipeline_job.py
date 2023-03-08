@@ -1770,6 +1770,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         pipeline_job = load_job(yaml_path)
         assert_job_cancel(pipeline_job, client)
 
+    def test_pipeline_job_serverless_compute_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/pipeline_with_job_tier.yml"
+        pipeline_job = load_job(yaml_path)
+        assert_job_cancel(pipeline_job, client)
+
     @pytest.mark.disable_mock_code_hash
     def test_register_automl_output(self, client: MLClient, randstr: Callable[[str], str]):
         register_pipeline_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/automl_regression_with_command_node_register_output.yml"
