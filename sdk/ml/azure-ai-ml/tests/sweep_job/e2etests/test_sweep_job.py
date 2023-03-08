@@ -2,6 +2,7 @@ import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable
+import platform
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, is_live
@@ -29,7 +30,7 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 @pytest.mark.training_experiences_test
 class TestSweepJob(AzureRecordedTestCase):
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.e2etest
     def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
@@ -53,7 +54,7 @@ class TestSweepJob(AzureRecordedTestCase):
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.e2etest
     def test_sweep_job_submit_with_inputs(self, randstr: Callable[[str], str], client: MLClient) -> None:
@@ -80,7 +81,7 @@ class TestSweepJob(AzureRecordedTestCase):
         assert "some_number" in sweep_job_resource_2.inputs
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.e2etest
     def test_sweep_job_submit_minimal(self, randstr: Callable[[str], str], client: MLClient) -> None:
@@ -102,7 +103,7 @@ class TestSweepJob(AzureRecordedTestCase):
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.e2etest
     def test_sweep_job_await_completion(self, randstr: Callable[[str], str], client: MLClient) -> None:

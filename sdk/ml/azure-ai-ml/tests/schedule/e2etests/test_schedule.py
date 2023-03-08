@@ -3,6 +3,7 @@ from typing import Callable
 import pydash
 import pytest
 from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, set_custom_default_matcher
+import platform
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations

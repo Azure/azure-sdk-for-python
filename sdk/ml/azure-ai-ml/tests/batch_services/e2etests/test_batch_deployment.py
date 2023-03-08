@@ -2,7 +2,7 @@ import uuid
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Callable
-
+import platform
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import wait_until_done
@@ -77,7 +77,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     def test_batch_deployment_dependency_label_resolution(
         self,

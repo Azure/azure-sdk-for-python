@@ -2,6 +2,7 @@ from typing import Callable
 
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+import platform
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -69,7 +70,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     def test_batch_invoke(
         self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]
@@ -149,7 +150,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         assert job
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     def test_batch_invoke_outputs(
         self,

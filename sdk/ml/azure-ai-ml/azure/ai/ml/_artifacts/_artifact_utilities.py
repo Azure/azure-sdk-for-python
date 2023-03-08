@@ -420,7 +420,7 @@ def _get_snapshot_temporary_data_reference(
 
     # make sure correct cloud endpoint is used
     location = workspace.location
-    if location == "centraluseuap": # centraluseuap is master region and aliased with a special api url
+    if location == "centraluseuap":  # centraluseuap is master region and aliased with a special api url
         service_url = "https://master.api.azureml-test.ms/"
     else:
         cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
@@ -473,7 +473,7 @@ def _get_asset_by_hash(
     location = workspace.location
 
     # make sure correct cloud endpoint is used
-    if location == "centraluseuap": # centraluseuap is master region and aliased with a special api url
+    if location == "centraluseuap":  # centraluseuap is master region and aliased with a special api url
         service_url = "https://master.api.azureml-test.ms/"
     else:
         cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]

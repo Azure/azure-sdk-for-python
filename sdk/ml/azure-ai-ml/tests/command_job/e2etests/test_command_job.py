@@ -5,6 +5,7 @@ import jwt
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import sleep_if_live, wait_until_done
+import platform
 
 from azure.ai.ml import Input, MLClient, command, load_environment, load_job
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata, _resource_to_scopes
@@ -281,7 +282,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert command_job_resource_2.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED)
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.e2etest
     def test_command_job_dependency_label_resolution(self, randstr: Callable[[], str], client: MLClient) -> None:

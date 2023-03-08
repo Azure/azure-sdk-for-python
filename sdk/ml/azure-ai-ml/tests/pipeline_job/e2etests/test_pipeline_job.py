@@ -4,6 +4,7 @@ from typing import Any, Callable, Dict
 
 import pydash
 import pytest
+import platform
 from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher, set_custom_default_matcher
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
@@ -109,7 +110,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert str(job.jobs["a"].component).endswith("/components/hello_world_asset/versions/1")
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     @pytest.mark.parametrize(
@@ -174,7 +175,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             client.jobs.create_or_update(pipeline_job)
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.usefixtures("mock_anon_component_version")
     def test_pipeline_job_with_inline_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
@@ -220,7 +221,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         self.assert_component_is_anonymous(client, created_component_id)
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     def test_pipeline_job__with_inline_component_file_in_component_folder(
         self,
@@ -310,7 +311,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         _ = client.jobs.create_or_update(pipeline_job)
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_output(self, client: MLClient, randstr: Callable[[str], str]) -> None:
@@ -385,7 +386,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert created_component._is_anonymous
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_default_datastore_compute(self, client: MLClient, randstr: Callable[[str], str]) -> None:
@@ -434,6 +435,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             (1, "helloworld_pipeline_job_with_paths"),
         ],
     )
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_command_job(
         self,
         client: MLClient,
@@ -607,7 +609,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert actual_dict == expected_dict
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.parametrize(
         "pipeline_job_path",
@@ -638,7 +640,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert len(created_job.jobs.items()) == 1
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     def test_pipeline_job_with_multiple_parallel_job(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
@@ -654,7 +656,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert len(created_job.jobs.items()) == 3
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     def test_pipeline_job_with_command_job_with_dataset_short_uri(
         self, client: MLClient, randstr: Callable[[str], str]
@@ -754,8 +756,14 @@ class TestPipelineJob(AzureRecordedTestCase):
             inline_component2 = created_job2.jobs[job_name].component
             assert inline_component1 == inline_component2
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_dependency_label_resolution(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         component_name = randstr("component_name")
         component_versions = ["foo", "bar", "baz", "foobar"]
@@ -806,7 +814,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert_job_input_output_types(job)
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     def test_pipeline_job_with_sweep_node(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
@@ -859,7 +867,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             assert loaded_value == expected_value, f"{dot_key} isn't as expected: {loaded_value} != {expected_value}"
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.parametrize(
         "policy_yaml_dict",
@@ -961,6 +969,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "automl",
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_automl_classification(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -988,6 +997,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "test_data": "${{parent.inputs.classification_test_data}}",
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_automl_forecasting(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -1016,6 +1026,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "forecasting": {"forecast_horizon": 12, "time_column_name": "DATE", "frequency": "MS"},
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_automl_text_classification(self, client: MLClient, randstr: Callable[[str], str]):
         set_bodiless_matcher()
 
@@ -1042,6 +1053,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "automl",
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_automl_text_classification_multilabel(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1073,8 +1085,14 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "automl",
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_automl_text_ner(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_ner.yml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1097,6 +1115,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "automl",
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_automl_image_multiclass_classification(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1151,6 +1170,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             ],
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_automl_image_multilabel_classification(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1256,6 +1276,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             ],
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_automl_image_instance_segmentation(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1312,6 +1333,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             ],
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_without_setting_binding_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         set_bodiless_matcher()
 
@@ -1334,8 +1356,14 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         assert train_job.inputs.training_data.mode is None
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_with_only_setting_pipeline_level(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1356,8 +1384,14 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         assert train_job.inputs.training_data.mode is None
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_with_only_setting_binding_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1378,10 +1412,16 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         assert train_job.inputs.training_data.mode is InputOutputModes.RO_MOUNT
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_with_setting_binding_node_and_pipeline_level(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1424,8 +1464,14 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         assert train_job.inputs.training_data.mode is InputOutputModes.RO_MOUNT
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_with_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1505,8 +1551,14 @@ class TestPipelineJob(AzureRecordedTestCase):
         job = assert_job_cancel(pipeline_job, client)
         assert job.name == params_override[0]["name"]
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_node_with_default_component(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         params_override = [{"name": randstr("job_name")}]
         pipeline_job = load_job(
@@ -1543,7 +1595,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_register_output_yaml(
@@ -1634,9 +1686,14 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.name == "convert_data_node_output"
         assert node_output.version == "1"
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
+    @pytest.mark.usefixtures("mock_anon_component_version", "storage_account_guid_sanitizer")
     def test_pipeline_job_with_data_transfer_copy_urifolder(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1655,9 +1712,14 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
+    @pytest.mark.usefixtures("mock_anon_component_version", "storage_account_guid_sanitizer")
     def test_pipeline_job_with_data_transfer_copy_urifile(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_uri_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1676,9 +1738,14 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
+    @pytest.mark.usefixtures("mock_anon_component_version", "storage_account_guid_sanitizer")
     def test_pipeline_job_with_data_transfer_copy_2urifolder(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1700,11 +1767,16 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
+    @pytest.mark.usefixtures("mock_anon_component_version", "storage_account_guid_sanitizer")
     def test_pipeline_job_with_inline_data_transfer_copy_2urifolder(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1726,7 +1798,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
+    @pytest.mark.usefixtures("mock_anon_component_version", "storage_account_guid_sanitizer")
     def test_pipeline_job_with_inline_data_transfer_copy_mixtype_file(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1875,8 +1947,14 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_data_transfer_export_sql_database(self, client: MLClient, randstr: Callable[[str], str]):
-        set_bodiless_matcher()
+        # call to blobstore upload won't always be made, depends on if the asset is already cached in assetstore
+        set_custom_default_matcher(
+            compare_bodies=False,
+            excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+            ignored_query_parameters="api-version",
+        )
 
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
@@ -1898,6 +1976,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "type": "data_transfer",
         }
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_with_data_transfer_export_sql_database_reference_component(
         self, client: MLClient, randstr: Callable[[str], str]
     ):

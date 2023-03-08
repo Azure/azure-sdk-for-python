@@ -2,6 +2,7 @@ import pytest
 from azure.ai.ml.dsl._group_decorator import group
 from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
+import platform
 
 from azure.ai.ml import Input, MLClient, load_component, Output
 from azure.ai.ml.dsl import pipeline
@@ -42,7 +43,7 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
 
 class TestIfElse(TestControlFlowPipeline):
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     @pytest.mark.usefixtures("mock_anon_component_version")
     def test_dsl_condition_pipeline(self, client: MLClient):
@@ -103,7 +104,7 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     def test_dsl_condition_pipeline_with_primitive_input(self, client: MLClient):
         set_bodiless_matcher()
@@ -149,7 +150,7 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
     @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
+        condition=(platform.system() == "Windows" and not is_live()), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
     )
     def test_dsl_condition_pipeline_with_one_branch(self, client: MLClient):
         set_bodiless_matcher()
