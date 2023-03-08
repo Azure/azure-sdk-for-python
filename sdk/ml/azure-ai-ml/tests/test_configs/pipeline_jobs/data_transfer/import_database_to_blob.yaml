@@ -11,6 +11,7 @@ jobs:
   snowflake_blob:
     type: data_transfer
     task: import_data
+    component: azureml:test_941060684503:1
     source:
       type: database
       query: ${{parent.inputs.query_source_snowflake}}
@@ -24,6 +25,7 @@ jobs:
   snowflake_blob_node_input:
     type: data_transfer
     task: import_data
+    component: azureml:test_941060684503:1
     source:
       type: database
       query: select * from TPCH_SF1000.PARTSUPP limit 10
