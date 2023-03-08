@@ -10,7 +10,6 @@ import time
 import datetime
 import uuid
 from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TYPE_CHECKING
-from azure.core.tracing import AbstractSpan
 
 from .._pyamqp.message import Message, BatchMessage
 from .._pyamqp.performatives import TransferFrame
@@ -53,6 +52,7 @@ from .utils import (
 )
 
 if TYPE_CHECKING:
+    from azure.core.tracing import AbstractSpan
     from ..aio._servicebus_receiver_async import (
         ServiceBusReceiver as AsyncServiceBusReceiver,
     )

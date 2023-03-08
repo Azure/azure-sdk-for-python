@@ -65,7 +65,6 @@ from .._transport import (
     _UNAVAIL,
     set_cloexec,
     AMQP_PORT,
-    TIMEOUT_INTERVAL,
 )
 from ..error import AuthenticationException, ErrorCondition
 
