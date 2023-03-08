@@ -31,8 +31,6 @@ list_detached_response = client.received_shares.list_detached(orderby="propertie
 # [START attach_a_received_share]
 import json
 
-from azure.core.exceptions import HttpResponseError
-
 consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/consumer-storage-rg/providers/Microsoft.Storage/storageAccounts/consumerstorage"
 list_detached = json.loads(list_detached_response.content)
 received_share = list_detached['value'][0]
@@ -65,7 +63,6 @@ update_response = update_request.result()
 # Get a received share
 # [START get_a_received_share]
 get_share_response = client.received_shares.get(received_share_id=received_share['id'])
-
 retrieved_share = json.loads(get_share_response)
 # [END get_a_received_share]
 

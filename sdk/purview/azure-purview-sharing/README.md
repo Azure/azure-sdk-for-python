@@ -46,61 +46,308 @@ The following section shows you how to initialize and authenticate your client a
 ### Create sent share
 
 ```python Snippet:create_a_sent_share
+import os, uuid, json
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+
+sent_share_id = uuid.uuid4()
+
+artifact = {
+    "properties": {
+        "paths": [
+            {
+                "containerName": "container-name",
+                "receiverPath": "shared-file-name.txt",
+                "senderPath": "original/file-name.txt"
+            }
+        ]
+    },
+    "storeKind": "AdlsGen2Account",
+    "storeReference": {
+        "referenceName": "/subscriptions/{subscription-id}/resourceGroups/provider-storage-rg/providers/Microsoft.Storage/storageAccounts/providerstorage",
+        "type": "ArmResourceReference"
+    }
+}
+
+sent_share = {
+    "properties": {
+        "artifact": artifact,
+        "displayName": "sample=share",
+        "description": "A sample share"
+    },
+    "shareKind": "InPlace"
+}
+
+request = client.sent_shares.begin_create_or_replace(
+    str(sent_share_id),
+    content_type="application/json",
+    content=json.dumps(sent_share))
+
+response = request.result()
 ```
 
 ### Get sent share
 
 ```python Snippet:get_a_sent_share
+import os, uuid, json
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+sent_share_id = uuid.uuid4()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+
+get_response = client.sent_shares.get(sent_share_id=str(sent_share_id))
+retrieved_sent_share = json.loads(get_response)
 ```
 
 ### List sent shares
 
 ```python Snippet:get_all_sent_shares
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+
+artifact = {
+    "properties": {
+        "paths": [
+            {
+                "containerName": "container-name",
+                "receiverPath": "shared-file-name.txt",
+                "senderPath": "original/file-name.txt"
+            }
+        ]
+    },
+    "storeKind": "AdlsGen2Account",
+    "storeReference": {
+        "referenceName": "/subscriptions/{subscription-id}/resourceGroups/provider-storage-rg/providers/Microsoft.Storage/storageAccounts/providerstorage",
+        "type": "ArmResourceReference"
+    }
+}
+
+sent_share = {
+    "properties": {
+        "artifact": artifact,
+        "displayName": "sample=share",
+        "description": "A sample share"
+    },
+    "shareKind": "InPlace"
+}
+
+list_request = client.sent_shares.list(
+    reference_name=str(sent_share["properties.artifact.storeReference.referenceName"]),
+    orderby="properties/createdAt desc")
+
+list_response = list_request.result()
 ```
 
 ### Create sent share invitation
 
 ```python Snippet:send_a_user_invitation
-```
+import os
 
-### Get sent share invitation
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+from datetime import date
 
-```python Snippet:get_a_sent_invitation
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+
+sent_share_id = uuid.uuid4()
+sent_share_invitation_id = uuid.uuid4()
+
+consumerEmail = "consumer@contoso.com"
+today = date.today()
+invitation = {
+    "invitationKind": "User",
+    "properties": {
+        "targetEmail": consumerEmail,
+        "notify": "true",
+        "expirationDate": date(today.year+1,today.month,today.day).strftime("%Y-%m-%d") + " 00:00:00"
+    }
+}
+
+invitation_request = client.sent_shares.create_invitation(
+    sent_share_id=str(sent_share_id),
+    sent_share_invitation_id=str(sent_share_invitation_id),
+    sent_share_invitation=json.dumps(invitation))
+
+invitation_response = invitation_request.result()
+created_invitation = json.loads(invitation_response)
 ```
 
 ### List sent share invitations
 
 ```python Snippet:view_sent_invitations
+import os, uuid, json
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint, credential=credential)
+
+sent_share_id = uuid.uuid4()
+
+list_request = client.sent_shares.list_invitations(sent_share_id=str(sent_share_id))
+list_response = list_request.result()
+list = json.loads(list_response)
 ```
 
 ### List detached received shares
 
 ```python Snippet:get_all_detached_received_shares
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
 ```
 
 ### Create a received share
 
 ```python Snippet:attach_a_received_share
+import os, json
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/consumer-storage-rg/providers/Microsoft.Storage/storageAccounts/consumerstorage"
+
+list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+list_detached = json.loads(list_detached_response)
+received_share = list_detached[0]
+
+store_reference = {
+    "referenceName": consumer_storage_account_resource_id,
+    "type": "ArmResourceReference"
+}
+
+sink = {
+    "properties": {
+        "containerName": "container-test",
+        "folder": "folder-test",
+        "mountPath": "mountPath-test",
+    },
+    "storeKind": "AdlsGen2Account",
+    "storeReference": store_reference
+}
+
+received_share['properties']['sink'] = sink
+
+update_request = client.received_shares.begin_create_or_replace(
+    received_share['id'],
+    content_type="application/json",
+    content=json.dumps(received_share))
+
+update_response = update_request.result()
 ```
 
 ### Get received share
 
 ```python Snippet:get_a_received_share
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+list_detached = json.loads(list_detached_response)
+received_share = list_detached[0]
+
+get_share_response = client.received_shares.get(received_share_id=received_share['id'])
+retrieved_share = json.loads(get_share_response)
 ```
 
 ### List attached received shares
 
 ```python Snippet:list_attached_received_shares
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/consumer-storage-rg/providers/Microsoft.Storage/storageAccounts/consumerstorage"
+
+list_attached_response = client.received_shares.list_attached(
+    reference_name=consumer_storage_account_resource_id,
+    orderby="properties/createdAt desc")
 ```
 
 ### Delete received share
 
 ```python Snippet:delete_a_received_share
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+delete_received_share_request = client.received_shares.begin_delete(received_share_id=received_share['id'])
+delete_received_share_response = delete_received_share_request.result()
 ```
 
 ### Delete sent share
 
 ```python Snippet:delete_a_sent_share
+import os
+
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = os.environ["ENDPOINT"]
+credential = DefaultAzureCredential()
+
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
+
+sent_share_id="885E60CB-2001-4192-B95D-B98CE316C783"
+
+delete_request = client.sent_shares.begin_delete(sent_share_id=str(sent_share_id))
+delete_response = delete_request.result()
 ```
 
 ## Troubleshooting
@@ -149,7 +396,7 @@ result = client.types.get_all_type_definitions(logging_enable=True)
 
 ## Next steps
 
-For more generic samples, see our [client docs][request_builders_and_client].
+For more generic samples, see our [samples][samples].
 
 ## Contributing
 
@@ -180,3 +427,4 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-sharing/azure/purview/sharing/samples
