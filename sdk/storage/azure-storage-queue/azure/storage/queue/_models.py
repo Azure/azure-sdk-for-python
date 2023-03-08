@@ -6,7 +6,8 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called
 
-from typing import Any, List, Self, TYPE_CHECKING, Union, Dict # pylint: disable=unused-import
+from typing import Any, List, TYPE_CHECKING, Union, Dict # pylint: disable=unused-import
+from typing_extensions import Self
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
