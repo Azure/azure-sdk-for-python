@@ -47,6 +47,7 @@ from .job_io_mixin import JobIOMixin
 from .job_limits import CommandJobLimits
 from .job_resource_configuration import JobResourceConfiguration
 from .parameterized_command import ParameterizedCommand
+from .queue_settings import QueueSettings
 
 module_logger = logging.getLogger(__name__)
 
@@ -173,6 +174,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             resources=resources._to_rest_object() if resources else None,
             limits=self.limits._to_rest_object() if self.limits else None,
             services=JobServiceBase._to_rest_job_services(self.services),
+            queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
         )
         result = JobBase(properties=properties)
         result.name = self.name
@@ -212,6 +214,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             limits=CommandJobLimits._from_rest_object(rest_command_job.limits),
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
+            queue_settings=QueueSettings._from_rest_object(rest_command_job.queue_settings),
         )
         # Handle special case of local job
         if (
@@ -275,18 +278,10 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             services=self.services,
             properties=self.properties,
             identity=self.identity,
+            queue_settings=self.queue_settings,
         )
 
     def _validate(self) -> None:
-        if self.compute is None:
-            msg = "compute is required"
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.JOB,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.MISSING_FIELD,
-            )
         if self.command is None:
             msg = "command is required"
             raise ValidationException(

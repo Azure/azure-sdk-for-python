@@ -89,6 +89,7 @@ from ._job.parameterized_command import ParameterizedCommand
 
 # Pipeline related entities goes behind component since it depends on component
 from ._job.pipeline.pipeline_job import PipelineJob, PipelineJobSettings
+from ._job.queue_settings import QueueSettings
 from ._job.resource_configuration import ResourceConfiguration
 from ._job.service_instance import ServiceInstance
 from ._job.spark_job import SparkJob
@@ -170,6 +171,7 @@ __all__ = [
     "CreatedByType",
     "ResourceConfiguration",
     "JobResourceConfiguration",
+    "QueueSettings",
     "JobService",
     "SshJobService",
     "TensorBoardJobService",
