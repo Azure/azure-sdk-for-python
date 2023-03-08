@@ -451,7 +451,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
-        self._validate_fields()
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
@@ -487,6 +486,10 @@ class Spark(BaseNode, SparkJobEntryMixin):
             )
         result.merge_with(self._validate_entry_exist(raise_error=False))
         result.merge_with(self._validate_spark_configurations(raise_error=False))
+        try:
+            self._validate_fields()
+        except ValidationException as e:
+            result.append_error(yaml_path="*", message=str(e))
         return result
 
     def _validate_spark_configurations(self, raise_error=True):
