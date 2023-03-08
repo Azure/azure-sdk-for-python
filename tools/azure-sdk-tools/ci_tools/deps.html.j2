@@ -139,19 +139,13 @@
         {% else %}
         No incompatible package dependency versions were discovered.<br/><br/>
         {% endif %}
-        {% if known %}
-        {{ known|length }} {{ pluralize(known|length,'dependency was','dependencies were') }} discovered in the <a href="#lockfile">Shared Requirements</a>.<br/>
-        {% if override_count %}
-        <strong>{{ override_count }} dependency version {{ pluralize(override_count,'override is','overrides are') }} present, causing dependency versions to differ from the version in the lockfile.</strong><br/>
-        {% endif %}
+        {% if known_reqs %}
+        {{ known_reqs|length }} {{ pluralize(known_reqs|length,'dependency was','dependencies were') }} discovered in the <a href="#lockfile">Shared Requirements</a>.<br/>
         {% if new_reqs %}
         <strong>{{ new_reqs|length }} {{ pluralize(new_reqs|length,'dependency is','dependencies are') }} missing from the shared requirements.</strong><br/>
         {% endif %}
-        {% if non_overridden_reqs_count %}
-        <strong>{{ non_overridden_reqs_count }} dependency {{ pluralize(non_overridden_reqs_count,'version does','versions do') }} not match the version in the shared requirements file.</strong><br/>
-        {% endif %}
-        {% if not new_reqs and not non_overridden_reqs_count %}
-        All declared dependency versions were validated against those in the shared requirements file.<br/>
+        {% if not new_reqs %}
+        All declared dependencies were validated against those in the shared requirements file.<br/>
         {% endif %}
         {% else %}
         <strong>No shared requirements file present in the repo, known requirements could not be validated.</strong><br/>
@@ -184,10 +178,6 @@
           <td>
             {% for package_name in packages|sort %}
             {{ package_name }}
-            {% if dep_name in overrides and requirement in overrides[dep_name] and package_name in overrides[dep_name][requirement] %}
-            <span class="dep_type">override</span>
-            {% endif %}
-            <br/>
             {% endfor %}
           </td>
         </tr>
@@ -201,43 +191,22 @@
       <table class="condensed">
         <thead>
           <tr><th colspan="3"><strong>Known Dependencies</strong></th></tr>
-          {% if known %}
-          <tr><th>Dependency</th><th>Frozen Version</th><th>Dependency State</th></tr>
+          {% if known_reqs %}
+          <tr><th>Dependency</th></tr>
           {% endif %}
         </thead>
         <tbody>
-        {% for name in known|sort %}
+        {% for name in known_reqs|sort %}
         <tr>
           <td><a href="#dep_{{ name }}">{{ name }}</a></td>
-          <td>{{ versions[0] if versions[0] else '(empty)' }}</td>
-          {% if name in missing_reqs %}
-          <td>⚠️ No packages reference this dependency</td>
-          {% elif name in changed_reqs %}
-          <td>
-            <div class="tooltip">❌ One or more packages reference a different version of this dependency
-              <span class="tooltiptext">
-              {% for spec, libs in dependencies[name]|dictsort %}
-              {% if spec != versions[0] %}
-              {% for package in libs|sort %}
-              {{ package }} ({{ spec }})
-              <br/>
-              {% endfor %}
-              {% endif %}
-              {% endfor %}
-              </span>
-            </div>
-          </td>
-          {% else %}
-          <td>✅ All packages validated against this dependency and version</td>
-          {% endif %}
         </tr>
         {% endfor %}
-        {% if not frozen %}
+        {% if not known_reqs %}
         <tr><td colspan="2">Unable to open shared_requirements.txt, shared requirements have not been validated</td></tr>
         {% endif %}
         </tbody>
       </table>
-      {% if frozen and new_reqs %}
+      {% if new_reqs %}
       <br/>
       {% for name in new_reqs|sort %}
       <table class="condensed">

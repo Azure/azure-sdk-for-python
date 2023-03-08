@@ -10,7 +10,7 @@ import os
 import re
 import sys
 import textwrap
-from typing import List, Set, Dict, Tuple
+from typing import List, Set, Dict, Tuple, Any
 
 from pkg_resources import Requirement
 from packaging.specifiers import SpecifierSet, Version
@@ -25,10 +25,8 @@ try:
 except:
     pass  # we only technically require this when outputting the rendered report
 
-# Todo: This should use a common omit logic once ci scripts are refactored into ci_tools
 
-
-def get_known_versions(package_name: str, include_local_version: bool = False) -> List[str]:
+def get_known_versions(package_name: str) -> List[str]:
     client = PyPIClient()
     return client.get_ordered_versions(package_name)
 
@@ -46,7 +44,7 @@ def locate_wheels(base_dir: str) -> str:
     return sorted(wheels)
 
 
-def record_dep(dependencies, req_name, spec, lib_name):
+def record_dep(dependencies: Dict[str, Dict[str, Any]], req_name: str, spec: str, lib_name: str) -> None:
     if not req_name in dependencies:
         dependencies[req_name] = {}
     if not spec in dependencies[req_name]:
@@ -54,7 +52,7 @@ def record_dep(dependencies, req_name, spec, lib_name):
     dependencies[req_name][spec].append(lib_name)
 
 
-def get_lib_deps(base_dir):
+def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]]]:
     packages = {}
     dependencies = {}
     for lib_dir in discover_targeted_packages("azure*", base_dir):
@@ -77,7 +75,7 @@ def get_lib_deps(base_dir):
     return packages, dependencies
 
 
-def get_wheel_deps(wheel_dir):
+def get_wheel_deps(wheel_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]]]:
     from wheel.pkginfo import read_pkg_info_bytes
     from wheel.wheelfile import WheelFile
 
@@ -106,7 +104,7 @@ def get_wheel_deps(wheel_dir):
     return packages, dependencies
 
 
-def dict_compare(d1: Dict[any, any], d2: Dict[any, any]) -> Tuple[set, set, Dict[any, tuple]]:
+def dict_compare(d1: Dict[Any, Any], d2: Dict[Any, Any]) -> Tuple[Set[Any], Set[Any], Dict[Any, Tuple]]:
     d1_keys = set(d1.keys())
     d2_keys = set(d2.keys())
     intersect_keys = d1_keys.intersection(d2_keys)
@@ -116,14 +114,14 @@ def dict_compare(d1: Dict[any, any], d2: Dict[any, any]) -> Tuple[set, set, Dict
     return added, removed, modified
 
 
-def render_report(output_path, report_context):
+def render_report(output_path: str, report_context: Dict[str, any]) -> None:
     env = Environment(loader=FileSystemLoader(os.path.dirname(os.path.realpath(__file__))))
     template = env.get_template("deps.html.j2")
     with io.open(output_path, "w", encoding="utf-8") as output:
         output.write(template.render(report_context))
 
 
-def get_dependent_packages(data_pkgs):
+def get_dependent_packages(data_pkgs) -> Set[str]:
     # Get unique set of Azure SDK packages that are added as required package
     deps = []
     for v in data_pkgs.values():
@@ -131,7 +129,7 @@ def get_dependent_packages(data_pkgs):
     return set(deps)
 
 
-def dump_packages(data_pkgs):
+def dump_packages(data_pkgs: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     dump_data = {}
     unique_dependent_packages = get_dependent_packages(data_pkgs)
     for p_name, p_data in data_pkgs.items():
@@ -140,11 +138,10 @@ def dump_packages(data_pkgs):
         # Add package if it requires other azure sdk package or if it is added as required by other sdk package
         if len(dep) > 0 or p_name in unique_dependent_packages:
             dump_data[p_id] = {"name": p_name, "version": p_data["version"], "type": "internal", "deps": dep}
-
     return dump_data
 
 
-def resolve_lib_deps(dump_data, data_pkgs, pkg_id):
+def resolve_lib_deps(dump_data: Dict[str, Dict[str, Any]], data_pkgs: Dict[str, Dict[str, Any]], pkg_id: str) -> None:
     for dep in dump_data[pkg_id]["deps"]:
         dep_req = Requirement.parse(dep["name"] + dep["version"])
         if dep["name"] in data_pkgs and data_pkgs[dep["name"]]["version"] in dep_req:
@@ -161,20 +158,13 @@ def resolve_lib_deps(dump_data, data_pkgs, pkg_id):
                     "deps": [],
                 }
 
-def check_difference(dependencies, frozen_filename: str) -> Set[str]:
-    with open(frozen_filename, "r") as f:
-        frozen_reqs = set([line.strip() for line in f.readlines()])
-
-    discovered_reqs = set(dependencies.keys())
-    difference = discovered_reqs.difference(frozen_reqs)
-
-    return difference
 
 def pluralize(data: any, singular: str, plural: str) -> str:
     if len(data) == 1 or data is None:
         return singular
     else:
         return plural
+
 
 def analyze_dependencies() -> None:
     base_dir = discover_repo_root()
@@ -184,7 +174,7 @@ def analyze_dependencies() -> None:
     Analyze dependencies in Python packages. First, all declared dependencies
     and the libraries that declare them will be discovered (visible with
     --verbose). Next, all declared dependency version specs will be analyzed to
-    ensure that none of requirements are unknown. Finally, all declared dependency
+    ensure that none of requirements conflict with any other package in the repo. Finally, all declared dependency
     version specs will be frozen to shared_requirements.txt.
     """
     )
@@ -201,6 +191,10 @@ def analyze_dependencies() -> None:
     )
     args = parser.parse_args()
 
+    incompatible, known_reqs, new_reqs, missing_reqs = [], [], [], []
+    exitcode = 0
+    frozen_filename = os.path.join(base_dir, "shared_requirements.txt")
+
     if args.out:
         try:
             from jinja2 import Environment, FileSystemLoader
@@ -215,12 +209,6 @@ def analyze_dependencies() -> None:
     else:
         all_packages, dependencies = get_lib_deps(base_dir)
 
-    incompatible = []
-    new_reqs = {}
-    known = []
-    non_overridden_reqs_count = 0
-    exitcode = 0
-    frozen_filename = os.path.join(base_dir, "shared_requirements.txt")
     packages = {k: v for k, v in all_packages.items() if not report_should_skip_lib(k)}
 
     if args.verbose:
@@ -245,9 +233,10 @@ def analyze_dependencies() -> None:
 
     ## verify dependencies
     for package in dependencies:
+        known_reqs.append(package)
         speclist = dependencies[package].keys()
-        dep_versions = get_known_versions(package)  # todo: include latest from repo as well
-        
+        dep_versions = get_known_versions(package)
+
         if package.startswith("azure"):
             # include local version if present
             if package in packages:
@@ -281,14 +270,24 @@ def analyze_dependencies() -> None:
 
     # verify requirements in shared_requirements.txt
     if os.path.exists(frozen_filename):
-        difference = check_difference(dependencies, frozen_filename)
-        new_reqs = difference
-        if difference:
-            print(f"Unknown {pluralize(difference, 'dependency', 'dependencies')} found that are not present in shared_requirements.txt. Use --verbose for details.")
+        with open(frozen_filename, "r") as f:
+            frozen_reqs = set([line.strip() for line in f.readlines()])
+
+        discovered_reqs = set(dependencies.keys())
+        # packages that are part of the dependencies and not yet in the shared_requirement.txt
+        new_reqs = discovered_reqs.difference(frozen_reqs)
+        # packages that are in the frozen list and no longer part of the discovered dependencies
+        missing_reqs = frozen_reqs.difference(discovered_reqs)
+
+        if new_reqs:
+            print(
+                f"Unknown {pluralize(new_reqs, 'dependency', 'dependencies')} found that are not present in shared_requirements.txt. Use --verbose for details."
+            )
             if args.verbose:
-                print(f"Unknown {pluralize(difference, 'dependency', 'dependencies')}: {list(difference)}")
+                print(f"Unknown {pluralize(new_reqs, 'dependency', 'dependencies')}: {list(new_reqs)}")
             exitcode = 1
     else:
+        new_reqs = set(dependencies.keys())
         print("No shared_requirements.txt file can be located to compare against existing.")
 
     if exitcode == 1:
@@ -301,14 +300,16 @@ def analyze_dependencies() -> None:
 
     if args.freeze:
         if incompatible:
-            print("Unable to freeze requirements due to incompatible specifier combination. Re-run with --verbose or see details above.")
+            print(
+                "Unable to freeze requirements due to incompatible specifier combination. Re-run with --verbose or see details above."
+            )
         else:
             frozen_reqs = list(dependencies.keys())
-            with open(frozen_filename, 'w') as f:
+            with open(frozen_filename, "w") as f:
                 f.writelines("\n".join(frozen_reqs))
-    
+
     if args.out:
-        external = [k for k in dependencies if k not in packages]
+        external = [k for k in dependencies if k not in packages and not k.startswith("azure")]
 
         def display_order(k):
             if k in incompatible:
@@ -319,21 +320,18 @@ def analyze_dependencies() -> None:
         render_report(
             args.out,
             {
-                "changed_reqs": {},
                 "curtime": datetime.utcnow(),
-                "dependencies": dependencies,
+                "dependencies": dependencies,  # dictionary that contains dependency packages and the specifiers each packages takes on them
                 "env": os.environ,
-                "external": external,
-                "known": known,
-                "frozen": {},
-                "incompatible": incompatible,  # the list of packages that caused compatibility errors
-                "missing_reqs": {},
-                "new_reqs": new_reqs,
-                "non_overridden_reqs_count": non_overridden_reqs_count,
-                "ordered_deps": sorted(dependencies.keys(), key=display_order),
-                "override_count": 0,
-                "overrides": [],
-                "packages": packages,
+                "external": external,  # list of requirements that are external
+                "known_reqs": known_reqs,  # flat list of requirements that we know of
+                "incompatible": incompatible,  # list of packages that caused compatibility errors
+                "missing_reqs": missing_reqs,  # list of packages that are in the shared_requirements file and no longer taken as dependency
+                "new_reqs": new_reqs,  # list of requirements that are new and not yet in the shared_requirements file
+                "ordered_deps": sorted(
+                    dependencies.keys(), key=display_order
+                ),  # dependencies sorted so that external / error are on top
+                "packages": packages,  # dictionary of packages that are in the repo
                 "repo_name": "azure-sdk-for-python",
             },
         )
