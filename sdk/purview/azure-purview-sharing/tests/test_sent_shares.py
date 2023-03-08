@@ -246,19 +246,9 @@ class TestSentShares(TestPurviewSharing):
         targetActiveDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
         targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
 
-        invitation = {
-            "invitationKind": "Service",
-            "properties": {
-                "targetActiveDirectoryId": targetActiveDirectoryId,
-                "targetObjectId": targetObjectId
-            }
-        }
-
         invitation_request = build_sent_shares_create_invitation_request(
             sent_share_id=sent_share_id,
-            sent_share_invitation_id=sent_share_invitation_id,
-            content_type="application/json",
-            content=json.dumps(invitation))
+            sent_share_invitation_id=sent_share_invitation_id)
         
         invitation_response = client.send_request(invitation_request)
 
