@@ -516,7 +516,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         self.test_data = test_data if test_data is not None else self.test_data
         self.test_data_size = test_data_size if test_data_size is not None else self.test_data_size
 
-    # pylint: disable=R0022
+    # pylint: disable=no-self-use
     def _validation_data_to_rest(self, rest_obj):
         """Validation data serialization.
 
