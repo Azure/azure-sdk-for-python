@@ -9,9 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
@@ -19,11 +17,10 @@ from azure.profiles.multiapiclient import MultiApiClientMixin
 
 from ._configuration import WebSiteManagementClientConfiguration
 from ._operations_mixin import WebSiteManagementClientOperationsMixin
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
 
 class _SDKClient(object):
@@ -44,9 +41,9 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Your Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).
+    :param subscription_id: Your Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -70,12 +67,12 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        api_version=None, # type: Optional[str]
-        base_url="https://management.azure.com",  # type: str
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        credential: "TokenCredential",
+        subscription_id: str,
+        api_version: Optional[str]=None,
+        base_url: str = "https://management.azure.com",
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
         self._config = WebSiteManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -193,6 +190,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import AppServiceCertificateOrdersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'app_service_certificate_orders'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -233,6 +231,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import AppServiceEnvironmentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'app_service_environments'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -273,6 +272,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import AppServicePlansOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'app_service_plans'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -286,6 +286,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2016_03_01.operations import BillingMetersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'billing_meters'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -311,6 +312,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import CertificateOrdersDiagnosticsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'certificate_orders_diagnostics'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -351,6 +353,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import CertificateRegistrationProviderOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'certificate_registration_provider'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -394,6 +397,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import CertificatesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'certificates'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -410,6 +414,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import ContainerAppsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'container_apps'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -426,6 +431,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import ContainerAppsRevisionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'container_apps_revisions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -466,6 +472,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import DeletedWebAppsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'deleted_web_apps'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -506,6 +513,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import DiagnosticsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'diagnostics'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -546,6 +554,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import DomainRegistrationProviderOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'domain_registration_provider'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -586,6 +595,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import DomainsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'domains'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -611,6 +621,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import GlobalOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'global_operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -633,6 +644,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import KubeEnvironmentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'kube_environments'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -673,6 +685,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import ProviderOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'provider'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -713,6 +726,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import RecommendationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'recommendations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -753,6 +767,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import ResourceHealthMetadataOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_health_metadata'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -787,6 +802,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import StaticSitesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'static_sites'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -827,6 +843,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import TopLevelDomainsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'top_level_domains'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -867,6 +884,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WebAppsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'web_apps'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -880,6 +898,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WorkflowRunActionRepetitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workflow_run_action_repetitions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -893,6 +912,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WorkflowRunActionRepetitionsRequestHistoriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workflow_run_action_repetitions_request_histories'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -906,6 +926,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WorkflowRunActionScopeRepetitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workflow_run_action_scope_repetitions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -919,6 +940,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WorkflowRunActionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workflow_run_actions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -932,6 +954,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WorkflowRunsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workflow_runs'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -945,6 +968,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WorkflowTriggerHistoriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workflow_trigger_histories'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -958,6 +982,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WorkflowTriggersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workflow_triggers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -971,6 +996,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WorkflowVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workflow_versions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -984,6 +1010,7 @@ class WebSiteManagementClient(WebSiteManagementClientOperationsMixin, MultiApiCl
             from .v2022_03_01.operations import WorkflowsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workflows'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

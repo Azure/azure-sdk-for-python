@@ -1,5 +1,13 @@
 # Release History
 
+## 7.1.0 (2023-03-08)
+
+### Features Added
+
+  - Added model Enum3
+  - Added model ProviderOsTypeSelected
+  - Added model ProviderStackOsType
+
 ## 7.0.0 (2022-07-04)
 
 **Features**

@@ -289,6 +289,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-machinelearningcompute msrest>=0.7.1
 #override azure-monitor-query azure-core<2.0.0,>=1.24.0
 #override azure-monitor-query typing-extensions>=4.0.1
+#override azure-mgmt-web typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-kusto typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-monitor-ingestion azure-core<2.0.0,>=1.24.0
 #override azure-monitor-ingestion typing-extensions>=4.0.1

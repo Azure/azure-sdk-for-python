@@ -31,46 +31,49 @@ from ._workflows_operations import WorkflowsOperations
 from ._workflow_runs_operations import WorkflowRunsOperations
 from ._workflow_run_actions_operations import WorkflowRunActionsOperations
 from ._workflow_run_action_repetitions_operations import WorkflowRunActionRepetitionsOperations
-from ._workflow_run_action_repetitions_request_histories_operations import WorkflowRunActionRepetitionsRequestHistoriesOperations
+from ._workflow_run_action_repetitions_request_histories_operations import (
+    WorkflowRunActionRepetitionsRequestHistoriesOperations,
+)
 from ._workflow_run_action_scope_repetitions_operations import WorkflowRunActionScopeRepetitionsOperations
 from ._workflow_triggers_operations import WorkflowTriggersOperations
 from ._workflow_trigger_histories_operations import WorkflowTriggerHistoriesOperations
 from ._workflow_versions_operations import WorkflowVersionsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AppServiceCertificateOrdersOperations',
-    'CertificateOrdersDiagnosticsOperations',
-    'CertificateRegistrationProviderOperations',
-    'DomainsOperations',
-    'TopLevelDomainsOperations',
-    'DomainRegistrationProviderOperations',
-    'AppServiceEnvironmentsOperations',
-    'AppServicePlansOperations',
-    'CertificatesOperations',
-    'ContainerAppsOperations',
-    'ContainerAppsRevisionsOperations',
-    'DeletedWebAppsOperations',
-    'DiagnosticsOperations',
-    'GlobalOperations',
-    'KubeEnvironmentsOperations',
-    'ProviderOperations',
-    'RecommendationsOperations',
-    'ResourceHealthMetadataOperations',
-    'WebSiteManagementClientOperationsMixin',
-    'StaticSitesOperations',
-    'WebAppsOperations',
-    'WorkflowsOperations',
-    'WorkflowRunsOperations',
-    'WorkflowRunActionsOperations',
-    'WorkflowRunActionRepetitionsOperations',
-    'WorkflowRunActionRepetitionsRequestHistoriesOperations',
-    'WorkflowRunActionScopeRepetitionsOperations',
-    'WorkflowTriggersOperations',
-    'WorkflowTriggerHistoriesOperations',
-    'WorkflowVersionsOperations',
+    "AppServiceCertificateOrdersOperations",
+    "CertificateOrdersDiagnosticsOperations",
+    "CertificateRegistrationProviderOperations",
+    "DomainsOperations",
+    "TopLevelDomainsOperations",
+    "DomainRegistrationProviderOperations",
+    "AppServiceEnvironmentsOperations",
+    "AppServicePlansOperations",
+    "CertificatesOperations",
+    "ContainerAppsOperations",
+    "ContainerAppsRevisionsOperations",
+    "DeletedWebAppsOperations",
+    "DiagnosticsOperations",
+    "GlobalOperations",
+    "KubeEnvironmentsOperations",
+    "ProviderOperations",
+    "RecommendationsOperations",
+    "ResourceHealthMetadataOperations",
+    "WebSiteManagementClientOperationsMixin",
+    "StaticSitesOperations",
+    "WebAppsOperations",
+    "WorkflowsOperations",
+    "WorkflowRunsOperations",
+    "WorkflowRunActionsOperations",
+    "WorkflowRunActionRepetitionsOperations",
+    "WorkflowRunActionRepetitionsRequestHistoriesOperations",
+    "WorkflowRunActionScopeRepetitionsOperations",
+    "WorkflowTriggersOperations",
+    "WorkflowTriggerHistoriesOperations",
+    "WorkflowVersionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
