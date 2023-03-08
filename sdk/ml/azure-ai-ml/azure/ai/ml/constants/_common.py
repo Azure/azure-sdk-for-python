@@ -218,6 +218,10 @@ class AzureMLResourceType:
     """Registry resource type."""
     CONNECTIONS = "connections"
     """Connections resource type."""
+    FEATURESET = "featuresets"
+    """Feature set resource type."""
+    FEATURESTORE_ENTITY = "featurestoreEntities"
+    """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
 
@@ -230,7 +234,7 @@ class AzureMLResourceType:
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURESET, FEATURESTORE_ENTITY}
 
 
 class ArmConstants:
