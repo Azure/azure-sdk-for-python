@@ -48,7 +48,13 @@ import certifi
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
-from ..constants import DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS, TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
+from ..constants import (
+    DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
+    TLS_HEADER_FRAME, WEBSOCKET_PORT,
+    AMQP_WS_SUBPROTOCOL,
+    TIMEOUT_INTERVAL,
+    READ_TIMEOUT_INTERVAL,
+)
 from .._transport import (
     AMQP_FRAME,
     get_errno,
@@ -58,7 +64,6 @@ from .._transport import (
     _UNAVAIL,
     set_cloexec,
     AMQP_PORT,
-    TIMEOUT_INTERVAL,
 )
 from ..error import AuthenticationException, ErrorCondition
 
@@ -341,7 +346,7 @@ class AsyncTransport(
             # For uamqp exception parity. Remove later when resolving issue #27128.
             exc.filename = self.sslopts
             raise exc
-        self.sock.settimeout(1)  # set socket back to non-blocking mode
+        self.sock.settimeout(READ_TIMEOUT_INTERVAL)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
         tcp_opts = {}

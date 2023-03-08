@@ -10,6 +10,7 @@
 # pylint: disable=too-many-lines
 # TODO: Check types of kwargs (issue exists for this)
 import logging
+import threading
 import queue
 import time
 import uuid
@@ -163,8 +164,9 @@ class AMQPClient(
         self._cbs_authenticator = None
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
+        self._mgmt_link_lock = threading.Lock()
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
-        self._keep_alive_interval = int(kwargs.get("keep_alive_interval") or 0)
+        self._keep_alive_interval = int(kwargs.get("keep_alive_interval", 0))
         self._keep_alive_thread = None
 
         # Connection settings
@@ -216,6 +218,20 @@ class AMQPClient(
     def __exit__(self, *args):
         """Close and destroy Client on exiting a context manager."""
         self.close()
+
+    def _keep_alive(self):
+        start_time = time.time()
+        try:
+            while self._connection and not self._shutdown:
+                current_time = time.time()
+                elapsed_time = current_time - start_time
+                if elapsed_time >= self._keep_alive_interval:
+                    _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
+                    self._connection.listen(wait=self._socket_timeout, batch=self._link.current_link_credit)
+                    start_time = current_time
+                time.sleep(1)
+        except Exception as e:  # pylint: disable=broad-except
+            _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
     def _client_ready(self):  # pylint: disable=no-self-use
         """Determine whether the client is ready to start sending and/or
@@ -306,6 +322,10 @@ class AMQPClient(
                 outgoing_window=self._outgoing_window,
             )
             self._session.begin()
+        if self._keep_alive_interval:
+            self._keep_alive_thread = threading.Thread(target=self._keep_alive)
+            self._keep_alive_thread.daemon = True
+            self._keep_alive_thread.start()
         if self._auth.auth_type == AUTH_TYPE_CBS:
             self._cbs_authenticator = CBSAuthenticator(
                 session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
@@ -339,6 +359,12 @@ class AMQPClient(
         if not self._external_connection:
             self._connection.close()
             self._connection = None
+        if self._keep_alive_thread:
+            try:
+                self._keep_alive_thread.join()
+            except RuntimeError:  # Probably thread failed to start in .open()
+                logging.debug("Keep alive thread failed to join.", exc_info=True)
+            self._keep_alive_thread = None
         self._network_trace_params["amqpConnection"] = None
         self._network_trace_params["amqpSession"] = None
 
@@ -409,16 +435,16 @@ class AMQPClient(
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop("timeout", 0)
-        try:
-            mgmt_link = self._mgmt_links[node]
-        except KeyError:
-            mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-            self._mgmt_links[node] = mgmt_link
-            mgmt_link.open()
+        with self._mgmt_link_lock:
+            try:
+                mgmt_link = self._mgmt_links[node]
+            except KeyError:
+                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                self._mgmt_links[node] = mgmt_link
+                mgmt_link.open()
 
-            while not mgmt_link.ready():
-                self._connection.listen(wait=False)
-
+        while not mgmt_link.ready():
+            self._connection.listen(wait=False)
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
             message, operation=operation, operation_type=operation_type, timeout=timeout
@@ -659,7 +685,7 @@ class SendClient(AMQPClient):
         self._do_retryable_operation(self._send_message_impl, message=message, **kwargs)
 
 
-class ReceiveClient(AMQPClient):
+class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     """
     An AMQP client for receiving messages.
     :param source: The source AMQP service endpoint. This can either be the URI as
@@ -762,6 +788,12 @@ class ReceiveClient(AMQPClient):
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
+
+        # Iterator
+        self._timeout = kwargs.pop("timeout", 0)
+        self._timeout_reached = False
+        self._last_activity_timestamp = time.time()
+
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -799,7 +831,8 @@ class ReceiveClient(AMQPClient):
         :rtype: bool
         """
         try:
-            self._link.flow()
+            if self._link.current_link_credit == 0:
+                self._link.flow()
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
@@ -816,6 +849,7 @@ class ReceiveClient(AMQPClient):
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         """
+        self._last_activity_timestamp = time.time()
         if self._message_received_callback:
             self._message_received_callback(message)
         if not self._streaming_receive:
@@ -894,6 +928,48 @@ class ReceiveClient(AMQPClient):
         :type timeout: float
         """
         return self._do_retryable_operation(self._receive_message_batch_impl, **kwargs)
+
+    def receive_messages_iter(self, timeout=None, on_message_received=None):
+        """Receive messages by generator. Messages returned in the generator have already been
+        accepted - if you wish to add logic to accept or reject messages based on custom
+        criteria, pass in a callback.
+
+        :param on_message_received: A callback to process messages as they arrive from the
+         service. It takes a single argument, a ~pyamqp.message.Message object.
+        :type on_message_received: callable[~pyamqp.message.Message]
+        """
+        self._message_received_callback = on_message_received
+        return self._message_generator(timeout=timeout)
+
+    def _message_generator(self, timeout=None):
+        """Iterate over processed messages in the receive queue.
+
+        :rtype: generator[~pyamqp.message.Message]
+        """
+        self.open()
+        self._timeout_reached = False
+        receiving = True
+        message = None
+        self._last_activity_timestamp = time.time()
+        self._timeout = timeout if timeout else self._timeout
+        try:
+            while receiving and not self._timeout_reached:
+                if self._timeout > 0:
+                    if time.time() - self._last_activity_timestamp >= self._timeout:
+                        self._timeout_reached = True
+
+                if not self._timeout_reached:
+                    receiving = self.do_work()
+
+                while not self._received_messages.empty():
+                    message = self._received_messages.get()
+                    self._last_activity_timestamp = time.time()
+                    self._received_messages.task_done()
+                    yield message
+
+        finally:
+            if self._shutdown:
+                self.close()
 
     @overload
     def settle_messages(

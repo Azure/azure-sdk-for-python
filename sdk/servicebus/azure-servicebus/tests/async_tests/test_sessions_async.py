@@ -13,7 +13,6 @@ import time
 import uuid
 from datetime import datetime, timedelta
 
-from uamqp.errors import VendorLinkDetach
 from azure.servicebus import (
     ServiceBusMessage,
     ServiceBusReceivedMessage,
@@ -47,7 +46,7 @@ _logger = get_logger(logging.DEBUG)
 
 
 class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -100,7 +99,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
 
             assert count == 3
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -139,7 +138,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     messages.append(message)
             assert len(messages) == 0
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -196,7 +195,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             with pytest.raises(OperationTimeoutError):
                 await receiver._open_with_retry()
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -217,7 +216,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             assert not receiver._running
             assert len(messages) == 0
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -256,7 +255,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                         await receiver.renew_message_lock(message)
                     await receiver.complete_message(message)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -304,7 +303,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     await receiver.complete_message(message)
             assert count == 10
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -340,7 +339,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 with pytest.raises(ServiceBusError):
                     deferred = await receiver.receive_deferred_messages(deferred_messages)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -372,7 +371,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             with pytest.raises(ValueError):
                 await receiver.complete_message(message)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -517,7 +516,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                     with pytest.raises(SessionLockLostError):
                         await receiver.complete_message(messages[2])
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -584,7 +583,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             await renewer.close()
             assert len(messages) == 2
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -877,7 +876,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
                 assert receiver.receive_messages()
                 assert not failures
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1004,7 +1003,7 @@ class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
             assert not errors
             assert len(messages) == 100
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

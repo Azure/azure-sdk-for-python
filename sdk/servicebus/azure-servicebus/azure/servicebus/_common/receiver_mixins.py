@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
-
+import time
 from .._pyamqp.endpoints import Source
 from .message import ServiceBusReceivedMessage
 from ..exceptions import _ServiceBusErrorPolicy, MessageAlreadySettled
@@ -129,8 +129,16 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
 
     def _enhanced_message_received(self, frame, message):
         # pylint: disable=protected-access
-        self._handler._was_message_received = True
+        self._handler._last_activity_timestamp = time.time()
         if self._receive_context.is_set():
             self._handler._received_messages.put((frame, message))
         else:
             self._handler.settle_messages(frame[1], 'released')
+
+    async def _enhanced_message_received_async(self, frame, message):
+        # pylint: disable=protected-access
+        self._handler._last_activity_timestamp = time.time()
+        if self._receive_context.is_set():
+            self._handler._received_messages.put((frame, message))
+        else:
+            await self._handler.settle_messages_async(frame[1], 'released')
