@@ -10,10 +10,10 @@ import os
 import re
 import sys
 import textwrap
-from typing import List
+from typing import List, Set, Dict, Tuple
 
 from pkg_resources import Requirement
-from packaging.specifiers import SpecifierSet
+from packaging.specifiers import SpecifierSet, Version
 from ci_tools.variables import discover_repo_root
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.parsing import ParsedSetup, parse_require
@@ -99,15 +99,6 @@ def get_wheel_deps(wheel_dir):
                     if spec is None:
                         spec = ""
 
-                    # spec = spec if spec is not None else ''
-                    # req_name2, spec2 = parse_req(req)
-
-                    # if(req_name != req_name2):
-                    #     breakpoint()
-
-                    # if(str(spec) != spec2):
-                    #     breakpoint()
-
                     packages[lib_name]["deps"].append({"name": req_name, "version": str(spec)})
                     record_dep(dependencies, req_name, str(spec), lib_name)
         except:
@@ -115,7 +106,7 @@ def get_wheel_deps(wheel_dir):
     return packages, dependencies
 
 
-def dict_compare(d1, d2):
+def dict_compare(d1: Dict[any, any], d2: Dict[any, any]) -> Tuple[set, set, Dict[any, tuple]]:
     d1_keys = set(d1.keys())
     d2_keys = set(d2.keys())
     intersect_keys = d1_keys.intersection(d2_keys)
@@ -170,8 +161,22 @@ def resolve_lib_deps(dump_data, data_pkgs, pkg_id):
                     "deps": [],
                 }
 
+def check_difference(dependencies, frozen_filename: str) -> Set[str]:
+    with open(frozen_filename, "r") as f:
+        frozen_reqs = set([line.strip() for line in f.readlines()])
 
-def analyze_dependencies():
+    discovered_reqs = set(dependencies.keys())
+    difference = discovered_reqs.difference(frozen_reqs)
+
+    return difference
+
+def pluralize(data: any, singular: str, plural: str) -> str:
+    if len(data) == 1 or data is None:
+        return singular
+    else:
+        return plural
+
+def analyze_dependencies() -> None:
     base_dir = discover_repo_root()
 
     parser = argparse.ArgumentParser(
@@ -210,6 +215,12 @@ def analyze_dependencies():
     else:
         all_packages, dependencies = get_lib_deps(base_dir)
 
+    incompatible = []
+    new_reqs = {}
+    known = []
+    non_overridden_reqs_count = 0
+    exitcode = 0
+    frozen_filename = os.path.join(base_dir, "shared_requirements.txt")
     packages = {k: v for k, v in all_packages.items() if not report_should_skip_lib(k)}
 
     if args.verbose:
@@ -232,39 +243,23 @@ def analyze_dependencies():
                     print("  * %s" % (lib))
             print("")
 
-    frozen_filename = os.path.join(base_dir, "shared_requirements.txt")
-
-    if os.path.exists(frozen_filename):
-        with open(frozen_filename, "r") as f:
-            frozen_reqs = set([line.strip() for line in f.readlines()])
-
-        discovered_reqs = set(dependencies.keys())
-        difference = discovered_reqs.difference(frozen_reqs)
-    else:
-        frozen_reqs = None
-        difference = None
-
-    # todo: do we need to set difference?
-
-    incompatible = []
-    missing_reqs, new_reqs, changed_reqs = {}, {}, {}
-    non_overridden_reqs_count = 0
-    exitcode = 0
-
+    ## verify dependencies
     for package in dependencies:
         speclist = dependencies[package].keys()
         dep_versions = get_known_versions(package)  # todo: include latest from repo as well
+        
+        if package.startswith("azure"):
+            # include local version if present
+            if package in packages:
+                dep_versions.append(Version(packages[package]["version"]))
+
         remaining_dep_versions = list(dep_versions)
 
         for spec in speclist:
             if not spec:
                 # package with no specifier means that any specifier will match.
                 continue
-            try:
-                spec = SpecifierSet(spec)
-            except Exception as ex:
-                print(ex)
-                breakpoint()
+            spec = SpecifierSet(spec)
 
             previous_remaining_dep_versions = list(remaining_dep_versions)
             remaining_dep_versions = [version for version in remaining_dep_versions if str(version) in spec]
@@ -278,103 +273,45 @@ def analyze_dependencies():
                         f"{package} is required in an irreconcilable combination. No available versions can be found to match the following combination of specifiers:"
                     )
                     for specifier in sorted(dependencies[package].keys(), key=lambda x: len(x)):
-                        pluralizer = "s" if len(dependencies[package][specifier]) == 1 else ""
-                        print(
-                            f"{dependencies[package][specifier]} take{pluralizer} a dependency on specifier {specifier}"
-                        )
+                        if specifier:
+                            print(
+                                f"{dependencies[package][specifier]} {pluralize(dependencies[package][specifier], 'take', 'takes')} a dependency on specifier {specifier}"
+                            )
                     print(f'Resolve conflicts in reqs for "{package}" and re-run.')
 
-    # if frozen:
-    #     flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
-    #     missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
-    #     if args.verbose and len(overrides) > 0:
-    #         print('\nThe following requirement overrides are in place:')
-    #         for overridden_req in overrides:
-    #             for spec in overrides[overridden_req]:
-    #                 libs = ', '.join(sorted(overrides[overridden_req][spec]))
-    #                 print('  * %s is allowed for %s' % (overridden_req + spec, libs))
-    #     if args.verbose and len(missing_reqs) > 0:
-    #         print('\nThe following requirements are frozen but do not exist in any current library:')
-    #         for missing_req in missing_reqs:
-    #             [spec] = frozen[missing_req]
-    #             print('  * %s' % (missing_req + spec))
-    #     if len(new_reqs) > 0:
-    #         exitcode = 1
-    #         if args.verbose:
-    #             for new_req in new_reqs:
-    #                 for spec in dependencies[new_req]:
-    #                     libs = dependencies[new_req][spec]
-    #                     print("\nRequirement '%s' is declared in the following libraries but has not been frozen:" % (new_req + spec))
-    #                     for lib in libs:
-    #                         print("  * %s" % (lib))
-    #     if len(changed_reqs) > 0:
-    #         for changed_req in changed_reqs:
-    #             frozen_specs, current_specs = changed_reqs[changed_req]
-    #             unmatched_specs = set(current_specs) - set(frozen_specs)
-    #             override_specs = overrides.get(changed_req, [])
-
-    #             for spec in unmatched_specs:
-    #                 if spec in override_specs:
-    #                     non_overridden_libs = set(dependencies[changed_req][spec]) - set(override_specs[spec])
-    #                 else:
-    #                     non_overridden_libs = dependencies[changed_req][spec]
-
-    #                 if len(non_overridden_libs) > 0:
-    #                     exitcode = 1
-    #                     non_overridden_reqs_count += 1
-    #                     if args.verbose:
-    #                         print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + spec, changed_req + frozen_specs[0]))
-    #                         for lib in non_overridden_libs:
-    #                             print("  * %s" % (lib))
-    #     if exitcode == 0:
-    #         if args.verbose:
-    #             print('')
-    #         print('All library dependencies validated against frozen requirements')
-    #     elif not args.verbose:
-    #         print('Library dependencies do not match frozen requirements, run this script with --verbose for details')
-    # elif difference:
-    #     exitcode = 1
+    # verify requirements in shared_requirements.txt
+    if os.path.exists(frozen_filename):
+        difference = check_difference(dependencies, frozen_filename)
+        new_reqs = difference
+        if difference:
+            print(f"Unknown {pluralize(difference, 'dependency', 'dependencies')} found that are not present in shared_requirements.txt. Use --verbose for details.")
+            if args.verbose:
+                print(f"Unknown {pluralize(difference, 'dependency', 'dependencies')}: {list(difference)}")
+            exitcode = 1
+    else:
+        print("No shared_requirements.txt file can be located to compare against existing.")
 
     if exitcode == 1:
         if not args.verbose:
             print(
-                "\nIncompatible dependency versions detected in libraries, run this script with --verbose for details"
+                "\nIncompatible dependency versions detected in libraries, run this script with --verbose for details."
             )
     else:
         print("\nAll library dependencies verified, no incompatible versions detected.")
 
     if args.freeze:
         if incompatible:
-            print("Unable to freeze requirements due to incompatible new specifier.")
+            print("Unable to freeze requirements due to incompatible specifier combination. Re-run with --verbose or see details above.")
         else:
-            with io.open(frozen_filename, "w", encoding="utf-8") as frozen_file:
-                for requirement in sorted(dependencies.keys()):
-                    frozen_file.write(requirement + "\n")
-            print("Current known external deps set to %s" % (frozen_filename))
-            sys.exit(0)
-
-    frozen = {}
-
-    # if there are
-    # try:
-    #     with io.open(frozen_filename, 'r', encoding='utf-8-sig') as frozen_file:
-    #         for line in frozen_file:
-    #             if line.startswith('#override'):
-    #                 _, lib_name, req_override = line.split(' ', 2)
-    #                 req_override_name, override_spec = parse_req(req_override)
-    #                 record_dep(overrides, req_override_name, override_spec, lib_name)
-    #                 override_count += 1
-    #             elif not line.startswith('#'):
-    #                 req_name, spec = parse_req(line)
-    #                 frozen[req_name] = [spec]
-    # except:
-    #     print('Unable to open shared_requirements.txt, shared requirements have not been validated')
-
+            frozen_reqs = list(dependencies.keys())
+            with open(frozen_filename, 'w') as f:
+                f.writelines("\n".join(frozen_reqs))
+    
     if args.out:
         external = [k for k in dependencies if k not in packages]
 
         def display_order(k):
-            if k in {}:
+            if k in incompatible:
                 return "a" + k if k in external else "b" + k
             else:
                 return "c" + k if k in external else "d" + k
@@ -382,14 +319,15 @@ def analyze_dependencies():
         render_report(
             args.out,
             {
-                "changed_reqs": changed_reqs,
+                "changed_reqs": {},
                 "curtime": datetime.utcnow(),
                 "dependencies": dependencies,
                 "env": os.environ,
                 "external": external,
-                "frozen": frozen,
-                "inconsistent": incompatible,  # the list of packages that caused compatibility errors
-                "missing_reqs": missing_reqs,
+                "known": known,
+                "frozen": {},
+                "incompatible": incompatible,  # the list of packages that caused compatibility errors
+                "missing_reqs": {},
                 "new_reqs": new_reqs,
                 "non_overridden_reqs_count": non_overridden_reqs_count,
                 "ordered_deps": sorted(dependencies.keys(), key=display_order),
