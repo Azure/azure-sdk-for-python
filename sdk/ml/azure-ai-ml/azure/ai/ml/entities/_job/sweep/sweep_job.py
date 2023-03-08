@@ -272,7 +272,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
-            queue_settings=properties.queue_settings
+            queue_settings=properties.queue_settings,
         )
 
     def _override_missing_properties_from_trial(self):

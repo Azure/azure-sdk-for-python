@@ -106,7 +106,7 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
             resources=self.resources,
             task_details=text_classification_multilabel,
             identity=self.identity._to_job_rest_object() if self.identity else None,
-            queue_settings=self.queue_settings
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
