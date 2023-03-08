@@ -384,7 +384,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         :param name: Name of environment asset.
         :type name: str
-        :param version: Version of model asset.
+        :param version: Version of environment asset.
         :type version: str
         :param share_with_name: Name of environment asset to share with.
         :type share_with_name: str
