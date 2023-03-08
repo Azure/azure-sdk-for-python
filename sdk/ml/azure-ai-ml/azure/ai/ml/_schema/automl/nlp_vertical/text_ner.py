@@ -8,7 +8,7 @@ from typing import Any, Dict
 
 from marshmallow import post_load
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ClassificationPrimaryMetrics, TaskType
 from azure.ai.ml._schema.automl.nlp_vertical.nlp_vertical import NlpVerticalSchema
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, fields
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -31,6 +31,5 @@ class TextNerSchema(NlpVerticalSchema):
 
     @post_load
     def make(self, data, **kwargs) -> Dict[str, Any]:
-
         data.pop("task_type")
         return data

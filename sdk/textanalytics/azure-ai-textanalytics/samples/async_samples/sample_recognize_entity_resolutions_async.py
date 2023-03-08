@@ -70,7 +70,7 @@ async def sample_recognize_entity_resolutions_async() -> None:
                           f"and ISO4217 code of '{res.iso4217}'.")
                 elif res.resolution_kind == ResolutionKind.DATE_TIME_RESOLUTION:
                     print(f"......DateTime resolution has a value of '{res.value}', a subkind of "
-                          f"'{res.datetime_subkind}', and a timex of '{res.timex}'.")
+                          f"'{res.date_time_sub_kind}', and a timex of '{res.timex}'.")
                 elif res.resolution_kind == ResolutionKind.INFORMATION_RESOLUTION:
                     print(f"......Information resolution has a value of '{res.value}' and unit of '{res.unit}'.")
                 elif res.resolution_kind == ResolutionKind.LENGTH_RESOLUTION:

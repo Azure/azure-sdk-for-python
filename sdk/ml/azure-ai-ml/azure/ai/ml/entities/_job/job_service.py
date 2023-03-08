@@ -7,8 +7,8 @@
 import logging
 from typing import Dict, Optional, Union
 from typing_extensions import Literal
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AllNodes
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
+from azure.ai.ml._restclient.v2022_12_01_preview.models import AllNodes
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobService as RestJobService
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._job.job import JobServiceTypeNames
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -150,9 +150,8 @@ class JobServiceBase(RestTranslatableMixin):
 
 @experimental
 class JobService(JobServiceBase):
-    """Basic job service configuration for backward compatibility.
-        Use JupyterLabJobService, SshJobService, TensorBoardJobService or VsCodeJobService
-        specific to your job type instead of JobService.
+    """Basic job service configuration for backward compatibility. Use JupyterLabJobService, SshJobService,
+    TensorBoardJobService or VsCodeJobService specific to your job type instead of JobService.
 
     :param endpoint: Url for endpoint.
     :type endpoint: str

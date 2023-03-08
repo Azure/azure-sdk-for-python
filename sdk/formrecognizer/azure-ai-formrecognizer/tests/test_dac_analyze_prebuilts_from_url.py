@@ -383,6 +383,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         result = poller.result()
         assert result
 
+    @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/29145")
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
