@@ -17,7 +17,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount as RestUserCreatedAcrAccount
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -26,7 +25,6 @@ from .util import _make_rest_user_storage_from_id
 
 # This exists despite not being used by the schema validator because this entire
 # class is an output only value from the API.
-@experimental
 class SystemCreatedAcrAccount:
     def __init__(
         self,
@@ -34,8 +32,7 @@ class SystemCreatedAcrAccount:
         acr_account_sku: str,
         arm_resource_id: Optional[str] = None,
     ):
-        """
-        Azure ML ACR account.
+        """Azure ML ACR account.
 
         :param acr_account_sku: The storage account service tier. Currently
             only Premium is a valid option for registries.
@@ -89,7 +86,6 @@ class SystemCreatedAcrAccount:
             return None
 
 
-@experimental
 class SystemCreatedStorageAccount:
     def __init__(
         self,
@@ -126,7 +122,6 @@ class SystemCreatedStorageAccount:
 
 
 # Per-region information for registries.
-@experimental
 class RegistryRegionDetails:
     def __init__(
         self,
@@ -135,8 +130,7 @@ class RegistryRegionDetails:
         location: Optional[str] = None,
         storage_config: Optional[Union[List[str], SystemCreatedStorageAccount]] = None,
     ):
-        """
-        Details for each region a registry is in.
+        """Details for each region a registry is in.
 
         :param acr_details: List of ACR account details. Each value can either be a
             single string representing the arm_resource_id of a user-created

@@ -890,18 +890,17 @@ class BaseResolution(_serialization.Model):
     """The abstract base class for entity resolutions.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AgeResolution, AreaResolution, BooleanResolution, CurrencyResolution, DateTimeResolution,
-    InformationResolution, LengthResolution, NumberResolution, NumericRangeResolution,
-    OrdinalResolution, SpeedResolution, TemperatureResolution, TemporalSpanResolution,
-    VolumeResolution, WeightResolution
+    AgeResolution, AreaResolution, CurrencyResolution, DateTimeResolution, InformationResolution,
+    LengthResolution, NumberResolution, NumericRangeResolution, OrdinalResolution, SpeedResolution,
+    TemperatureResolution, TemporalSpanResolution, VolumeResolution, WeightResolution
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     """
@@ -915,7 +914,7 @@ class BaseResolution(_serialization.Model):
     }
 
     _subtype_map = {
-        'resolution_kind': {'AgeResolution': 'AgeResolution', 'AreaResolution': 'AreaResolution', 'BooleanResolution': 'BooleanResolution', 'CurrencyResolution': 'CurrencyResolution', 'DateTimeResolution': 'DateTimeResolution', 'InformationResolution': 'InformationResolution', 'LengthResolution': 'LengthResolution', 'NumberResolution': 'NumberResolution', 'NumericRangeResolution': 'NumericRangeResolution', 'OrdinalResolution': 'OrdinalResolution', 'SpeedResolution': 'SpeedResolution', 'TemperatureResolution': 'TemperatureResolution', 'TemporalSpanResolution': 'TemporalSpanResolution', 'VolumeResolution': 'VolumeResolution', 'WeightResolution': 'WeightResolution'}
+        'resolution_kind': {'AgeResolution': 'AgeResolution', 'AreaResolution': 'AreaResolution', 'CurrencyResolution': 'CurrencyResolution', 'DateTimeResolution': 'DateTimeResolution', 'InformationResolution': 'InformationResolution', 'LengthResolution': 'LengthResolution', 'NumberResolution': 'NumberResolution', 'NumericRangeResolution': 'NumericRangeResolution', 'OrdinalResolution': 'OrdinalResolution', 'SpeedResolution': 'SpeedResolution', 'TemperatureResolution': 'TemperatureResolution', 'TemporalSpanResolution': 'TemporalSpanResolution', 'VolumeResolution': 'VolumeResolution', 'WeightResolution': 'WeightResolution'}
     }
 
     def __init__(
@@ -936,10 +935,10 @@ class AgeResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The Age Unit of measurement. Required. Known values are: "Unspecified", "Year",
@@ -1703,10 +1702,10 @@ class AreaResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The area Unit of measurement. Required. Known values are: "Unspecified",
@@ -1748,47 +1747,6 @@ class AreaResolution(BaseResolution, QuantityResolution):
         self.value = value
         self.resolution_kind = 'AreaResolution'  # type: str
         self.unit = unit
-
-
-class BooleanResolution(BaseResolution):
-    """A resolution for boolean expressions.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-    :vartype resolution_kind: str or
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
-    :ivar value: Required.
-    :vartype value: bool
-    """
-
-    _validation = {
-        'resolution_kind': {'required': True},
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        "resolution_kind": {"key": "resolutionKind", "type": "str"},
-        "value": {"key": "value", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: bool,
-        **kwargs
-    ):
-        """
-        :keyword value: Required.
-        :paramtype value: bool
-        """
-        super().__init__(**kwargs)
-        self.resolution_kind = 'BooleanResolution'  # type: str
-        self.value = value
 
 
 class ClassificationDocumentResult(DocumentResult):
@@ -1893,10 +1851,10 @@ class CurrencyResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar iso4217: The alphabetic code based on another ISO standard, ISO 3166, which lists the
@@ -2860,10 +2818,10 @@ class DateTimeResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar timex: An extended ISO 8601 date/time representation as described in
@@ -5614,10 +5572,10 @@ class InformationResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The information (data) Unit of measurement. Required. Known values are:
@@ -6390,10 +6348,10 @@ class LengthResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The length Unit of measurement. Required. Known values are: "Unspecified",
@@ -6652,10 +6610,10 @@ class NumberResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar number_kind: The type of the extracted number entity. Required. Known values are:
@@ -6703,10 +6661,10 @@ class NumericRangeResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar range_kind: The kind of range that the resolution object represents. Required. Known
@@ -6764,10 +6722,10 @@ class OrdinalResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar offset: The offset With respect to the reference (e.g., offset = -1 in "show me the
@@ -7985,10 +7943,10 @@ class SpeedResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The speed Unit of measurement. Required. Known values are: "Unspecified",
@@ -8227,10 +8185,10 @@ class TemperatureResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The temperature Unit of measurement. Required. Known values are: "Unspecified",
@@ -8276,10 +8234,10 @@ class TemporalSpanResolution(BaseResolution):
     All required parameters must be populated in order to send to Azure.
 
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar begin: An extended ISO 8601 date/time representation as described in
@@ -8360,10 +8318,10 @@ class VolumeResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The Volume Unit of measurement. Required. Known values are: "Unspecified",
@@ -8417,10 +8375,10 @@ class WeightResolution(BaseResolution, QuantityResolution):
     :ivar value: The numeric value that the extracted text denotes. Required.
     :vartype value: float
     :ivar resolution_kind: The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
+     "DateTimeResolution", "NumberResolution", "OrdinalResolution", "SpeedResolution",
+     "WeightResolution", "LengthResolution", "VolumeResolution", "AreaResolution", "AgeResolution",
+     "InformationResolution", "TemperatureResolution", "CurrencyResolution",
+     "NumericRangeResolution", and "TemporalSpanResolution".
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The weight Unit of measurement. Required. Known values are: "Unspecified",

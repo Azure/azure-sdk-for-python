@@ -11,7 +11,7 @@ class ContainerRegistryCredential:
     def __init__(
         self, *, location: Optional[str] = None, username: Optional[str] = None, passwords: Optional[List[str]] = None
     ):
-        """Key for ACR associated with given workspace
+        """Key for ACR associated with given workspace.
 
         :param location:  Location of the ACR
         :type location: str
@@ -28,7 +28,7 @@ class ContainerRegistryCredential:
 
 class NotebookAccessKeys:
     def __init__(self, *, primary_access_key: Optional[str] = None, secondary_access_key: Optional[str] = None):
-        """Key for notebook resource associated with given workspace
+        """Key for notebook resource associated with given workspace.
 
         :param primary_access_key:  Primary access key of notebook resource
         :type primary_access_key: str
@@ -50,7 +50,7 @@ class WorkspaceKeys:
         container_registry_credentials: Optional[ContainerRegistryCredential] = None,
         notebook_access_keys: Optional[NotebookAccessKeys] = None
     ):
-        """Workspace Keys
+        """Workspace Keys.
 
         :param user_storage_key: Key for storage account associated with given workspace
         :type user_storage_key: str
@@ -71,7 +71,6 @@ class WorkspaceKeys:
 
     @classmethod
     def _from_rest_object(cls, rest_obj: ListWorkspaceKeysResult) -> "WorkspaceKeys":
-
         if not rest_obj:
             return None
 
