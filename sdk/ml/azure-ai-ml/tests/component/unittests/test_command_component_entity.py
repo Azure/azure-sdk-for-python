@@ -1,7 +1,5 @@
 import os
-import shutil
 import sys
-import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -14,7 +12,7 @@ from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
@@ -452,6 +450,7 @@ class TestCommandComponentEntity:
             component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
 
+        print(actual_component_dict1)
         assert actual_component_dict1 == expected_rest_component, actual_component_dict1
 
         # from CLASS
@@ -480,6 +479,7 @@ class TestCommandComponentEntity:
         actual_component_dict2 = pydash.omit(
             component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
+        print(actual_component_dict2)
         assert actual_component_dict2 == expected_rest_component, actual_component_dict2
 
     def test_invalid_component_outputs(self) -> None:
