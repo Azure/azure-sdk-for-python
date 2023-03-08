@@ -31,7 +31,7 @@ class ImageLimitSettings(RestTranslatableMixin):
 
 
     .. tip::
-        It's a good practice to match max_concurrent_trials count with the number of nodes your cluster.
+        It's a good practice to match max_concurrent_trials count with the number of nodes in the cluster.
 
     .. note::
         The number of concurrent runs is gated on the resources available in the specified compute target.
