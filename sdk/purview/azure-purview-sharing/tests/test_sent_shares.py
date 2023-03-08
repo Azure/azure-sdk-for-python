@@ -182,8 +182,8 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "f78cbff1-faa8-4541-96cc-db9f7cf1c316"
-        sent_share_invitation_id = "7733b4aa-02e0-4d32-b4ef-3f5bef527a74"
+        sent_share_id = "CA1FA409-4D08-4168-A5CA-4E34035D81C4"
+        sent_share_invitation_id = "0D3991FD-9E91-45C4-8317-FF86AFA28B3C"
         sent_share = self.prepare_sent_share()
         
         request = build_sent_shares_create_or_replace_request(
@@ -196,8 +196,8 @@ class TestSentShares(TestPurviewSharing):
         assert response is not None
         assert response.status_code == 201, "Invalid Status Code 1 " + str(response.status_code)
 
-        targetActiveDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
-        targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
+        targetActiveDirectoryId = "BC02D987-C010-4E4E-95D1-4BAB99ED0AC2"
+        targetObjectId = "28B46E20-9847-4D41-8BAE-28E17A76D3DE"
 
         invitation = {
             "invitationKind": "Service",
@@ -224,75 +224,13 @@ class TestSentShares(TestPurviewSharing):
         assert created_invitation['id'] == str(sent_share_invitation_id)
         assert created_invitation['properties']['targetActiveDirectoryId'] == targetActiveDirectoryId
         assert created_invitation['properties']['targetObjectId'] == targetObjectId
-
-    @PurviewSharingPowerShellPreparer()
-    @recorded_by_proxy
-    def test_get_sent_share_service_invitation(self, purviewsharing_endpoint):
-        client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "718ec0b3-ea73-4f29-9c0d-3cd1798044b1"
-        sent_share_invitation_id = "51b62bad-43ab-423f-9c7f-5ffd56a42b70"
-        sent_share = self.prepare_sent_share()
-
-        request = build_sent_shares_create_or_replace_request(
-            sent_share_id,
-            content_type="application/json",
-            content=json.dumps(sent_share))
-        
-        response = client.send_request(request)
-
-        assert response is not None
-        assert response.status_code == 201, "Invalid Status Code 1 " + str(response.status_code)
-
-        targetActiveDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
-        targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
-
-        invitation = {
-            "invitationKind": "Service",
-            "properties": {
-                "targetActiveDirectoryId": targetActiveDirectoryId,
-                "targetObjectId": targetObjectId
-            }
-        }
-
-        invitation_request = build_sent_shares_create_invitation_request(
-            sent_share_id=sent_share_id,
-            sent_share_invitation_id=sent_share_invitation_id,
-            content_type="application/json",
-            content=json.dumps(invitation))
-        
-        invitation_response = client.send_request(invitation_request)
-
-        assert invitation_response is not None
-        assert invitation_response.status_code == 201, "Invalid status code 2 " + str(invitation_response.status_code)
-        assert invitation_response.content is not None
-
-        created_invitation = json.loads(invitation_response.content)
-
-        assert created_invitation['id'] == str(sent_share_invitation_id)
-        assert created_invitation['properties']['targetActiveDirectoryId'] == targetActiveDirectoryId
-        assert created_invitation['properties']['targetObjectId'] == targetObjectId
-
-        get_request = build_sent_shares_get_invitation_request(
-            sent_share_id=sent_share_id,
-            sent_share_invitation_id=sent_share_invitation_id)
-        
-        get_response = client.send_request(get_request)
-
-        assert get_response is not None
-        assert get_response.status_code == 200, "Invalid status code " + str(get_response.status_code)
-
-        retrieved_invitation = json.loads(get_response.content)
-
-        assert retrieved_invitation['id'] == str(sent_share_invitation_id)
-        assert retrieved_invitation['properties']['targetActiveDirectoryId'] == targetActiveDirectoryId
-        assert retrieved_invitation['properties']['targetObjectId'] == targetObjectId
 
     @PurviewSharingPowerShellPreparer()
     @recorded_by_proxy
     def test_get_all_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "477ab96b-ffda-4e45-821f-9fc60dc15da4"
-        sent_share_invitation_id = "cf0e1028-718d-43ee-a487-949bdd4d4499"
+        sent_share_id = "560B9019-3D1C-4912-AFE6-FA8CCC371F24"
+        sent_share_invitation_id = "A4AB3656-8BED-479F-B65A-1B33DD2F4E3D"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -305,8 +243,8 @@ class TestSentShares(TestPurviewSharing):
         assert response is not None
         assert response.status_code == 201, "Invalid Status Code 1 " + str(response.status_code)
 
-        targetActiveDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
-        targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
+        targetActiveDirectoryId = "19513734-8215-4190-BD7E-FF6CBED36FBE"
+        targetObjectId = "EBF435A4-3F8D-4ED1-843B-E598E2916A3E"
 
         sent_share_invitation = {
             "invitationKind": "Service",

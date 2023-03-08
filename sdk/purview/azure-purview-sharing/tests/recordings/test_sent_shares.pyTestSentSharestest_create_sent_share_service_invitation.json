@@ -225,7 +225,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/f78cbff1-faa8-4541-96cc-db9f7cf1c316?api-version=2023-02-15-preview",
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/CA1FA409-4D08-4168-A5CA-4E34035D81C4?api-version=2023-02-15-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -300,12 +300,12 @@
           "senderTenantName": "Microsoft"
         },
         "shareKind": "InPlace",
-        "id": "f78cbff1-faa8-4541-96cc-db9f7cf1c316",
+        "id": "CA1FA409-4D08-4168-A5CA-4E34035D81C4",
         "type": "SentShare"
       }
     },
     {
-      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/f78cbff1-faa8-4541-96cc-db9f7cf1c316/sentShareInvitations/7733b4aa-02e0-4d32-b4ef-3f5bef527a74?api-version=2023-02-15-preview",
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/CA1FA409-4D08-4168-A5CA-4E34035D81C4/sentShareInvitations/0D3991FD-9E91-45C4-8317-FF86AFA28B3C?api-version=2023-02-15-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -320,8 +320,8 @@
       "RequestBody": {
         "invitationKind": "Service",
         "properties": {
-          "targetActiveDirectoryId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-          "targetObjectId": "fc010728-94f6-4e9c-be3c-c08687414bd4"
+          "targetActiveDirectoryId": "BC02D987-C010-4E4E-95D1-4BAB99ED0AC2",
+          "targetObjectId": "28B46E20-9847-4D41-8BAE-28E17A76D3DE"
         }
       },
       "StatusCode": 201,
@@ -329,15 +329,15 @@
         "Content-Length": "385",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 02 Mar 2023 23:25:34 GMT",
-        "Location": "/sentShares/f78cbff1-faa8-4541-96cc-db9f7cf1c316/sentShareInvitations/7733b4aa-02e0-4d32-b4ef-3f5bef527a74/7733b4aa-02e0-4d32-b4ef-3f5bef527a74",
+        "Location": "/sentShares/CA1FA409-4D08-4168-A5CA-4E34035D81C4/sentShareInvitations/0D3991FD-9E91-45C4-8317-FF86AFA28B3C/0D3991FD-9E91-45C4-8317-FF86AFA28B3C",
         "Server": "Kestrel",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-ms-correlation-request-id": "694fd8c0-4d38-4cd3-8db2-d7f84379ef6a"
       },
       "ResponseBody": {
         "properties": {
-          "targetActiveDirectoryId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-          "targetObjectId": "fc010728-94f6-4e9c-be3c-c08687414bd4",
+          "targetActiveDirectoryId": "BC02D987-C010-4E4E-95D1-4BAB99ED0AC2",
+          "targetObjectId": "28B46E20-9847-4D41-8BAE-28E17A76D3DE",
           "shareStatus": "Detached",
           "sentAt": "2023-03-02T23:25:33.8797997Z",
           "senderName": "SyMS",
@@ -345,7 +345,7 @@
           "state": "Succeeded"
         },
         "invitationKind": "Service",
-        "id": "7733b4aa-02e0-4d32-b4ef-3f5bef527a74",
+        "id": "0D3991FD-9E91-45C4-8317-FF86AFA28B3C",
         "type": "sentShares/sentShareInvitations"
       }
     }
