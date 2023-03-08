@@ -112,6 +112,7 @@ The following sections provide several code snippets covering some of the most c
 Get the partition ids of an Event Hub.
 
 <!-- SNIPPET:connection_string_authentication.connection_string_authentication -->
+
 ```python
 import os
 from azure.eventhub import EventHubConsumerClient
@@ -128,6 +129,7 @@ consumer_client = EventHubConsumerClient.from_connection_string(
 with consumer_client:
     pass # consumer_client is now ready to be used.
 ```
+
 <!-- END SNIPPET -->
 
 ### Publish events to an Event Hub
@@ -136,6 +138,7 @@ Use the `create_batch` method on `EventHubProducerClient` to create an `EventDat
 Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 
 <!-- SNIPPET:send.send_event_data_batch -->
+
 ```python
 def send_event_data_batch(producer):
     # Without specifying partition_id or partition_key
@@ -144,6 +147,7 @@ def send_event_data_batch(producer):
     event_data_batch.add(EventData('Single message'))
     producer.send_batch(event_data_batch)
 ```
+
 <!-- END SNIPPET -->
 
 ### Consume events from an Event Hub

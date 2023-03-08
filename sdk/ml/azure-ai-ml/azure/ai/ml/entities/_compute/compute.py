@@ -62,8 +62,8 @@ class Compute(Resource, RestTranslatableMixin):
 
     @property
     def type(self) -> Optional[str]:
-        """The type of the compute, possible values are ["amlcompute",
-        "computeinstance", "virtualmachine", "kubernetes", "synapsespark"]
+        """The type of the compute, possible values are ["amlcompute", "computeinstance", "virtualmachine",
+        "kubernetes", "synapsespark"]
 
         :return: The type of the compute
         :rtype: Optional[str]
