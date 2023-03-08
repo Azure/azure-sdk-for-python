@@ -236,7 +236,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             camel_to_snake(TaskType.TEXT_CLASSIFICATION_MULTILABEL): TextClassificationMultilabelJob,
         }
 
-    def _resolve_data_inputs(self, rest_job):  # pylint: disable=R0201
+    def _resolve_data_inputs(self, rest_job):  # pylint: disable=R0022
         """Resolve JobInputs to MLTableJobInputs within data_settings.
 
         :param rest_job: The rest job object.
