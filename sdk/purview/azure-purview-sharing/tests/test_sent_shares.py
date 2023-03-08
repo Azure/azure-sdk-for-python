@@ -196,13 +196,13 @@ class TestSentShares(TestPurviewSharing):
         assert response is not None
         assert response.status_code == 201, "Invalid Status Code 1 " + str(response.status_code)
 
-        targetActiverDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        targetActiveDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
         targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
 
         invitation = {
             "invitationKind": "Service",
             "properties": {
-                "targetActiveDirectoryId": targetActiverDirectoryId,
+                "targetActiveDirectoryId": targetActiveDirectoryId,
                 "targetObjectId": targetObjectId
             }
         }
@@ -222,7 +222,7 @@ class TestSentShares(TestPurviewSharing):
         created_invitation = json.loads(invitation_response.content)
 
         assert created_invitation['id'] == str(sent_share_invitation_id)
-        assert created_invitation['properties']['targetActiveDirectoryId'] == targetActiverDirectoryId
+        assert created_invitation['properties']['targetActiveDirectoryId'] == targetActiveDirectoryId
         assert created_invitation['properties']['targetObjectId'] == targetObjectId
 
     @PurviewSharingPowerShellPreparer()
@@ -246,7 +246,7 @@ class TestSentShares(TestPurviewSharing):
         targetActiveDirectoryId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
         targetObjectId = "fc010728-94f6-4e9c-be3c-c08687414bd4"
 
-        sent_share_invitation = {
+        invitation = {
             "invitationKind": "Service",
             "properties": {
                 "targetActiveDirectoryId": targetActiveDirectoryId,
@@ -258,7 +258,7 @@ class TestSentShares(TestPurviewSharing):
             sent_share_id=sent_share_id,
             sent_share_invitation_id=sent_share_invitation_id,
             content_type="application/json",
-            content=json.dumps(sent_share_invitation))
+            content=json.dumps(invitation))
         
         invitation_response = client.send_request(invitation_request)
 
@@ -274,8 +274,7 @@ class TestSentShares(TestPurviewSharing):
 
         get_request = build_sent_shares_get_invitation_request(
             sent_share_id=sent_share_id,
-            sent_share_invitation_id=sent_share_invitation_id,
-            content=json.dumps(sent_share_invitation))
+            sent_share_invitation_id=sent_share_invitation_id)
         
         get_response = client.send_request(get_request)
 
