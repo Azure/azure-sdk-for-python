@@ -477,6 +477,7 @@ class Command(BaseNode):
             experiment_name=self.experiment_name,
             identity=self.identity if not identity else identity,
             _from_component_func=True,
+            queue_settings=self.queue_settings,
         )
         sweep_node.set_limits(
             max_total_trials=max_total_trials,
