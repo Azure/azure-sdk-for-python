@@ -15,13 +15,16 @@ from azure.ai.ml._schema._featurestore_entity.data_column_schema import DataColu
 from .source_metadata_schema import SourceMetadataSchema
 from .delay_metadata_schema import DelayMetadataSchema
 from .feature_schema import FeatureSchema
+from .feature_transformation_code_schema import FeatureTransformationCodeSchema
 
 
 class FeaturesetSpecSchema(YamlFileSchema):
-    source = NestedField(SourceMetadataSchema)
+    source = fields.Nested(SourceMetadataSchema, required=True)
+    feature_transformation_code = fields.Nested(FeatureTransformationCodeSchema, required=False)
     features = fields.List(NestedField(FeatureSchema), required=True, allow_none=False)
     index_columns = fields.List(NestedField(DataColumnSchema), required=True, allow_none=False)
-    temporal_join_lookback = NestedField(DelayMetadataSchema)
+    source_lookback = fields.Nested(DelayMetadataSchema, required=False)
+    temporal_join_lookback = fields.Nested(DelayMetadataSchema, required=False)
 
     @post_load
     def make(self, data: Dict, **kwargs):

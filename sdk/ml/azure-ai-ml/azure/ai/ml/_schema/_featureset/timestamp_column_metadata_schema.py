@@ -10,8 +10,8 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
 class TimestampColumnMetadataSchema(metaclass=PatchedSchemaMeta):
-    name = fields.Str()
-    format = fields.Str()
+    name = fields.Str(required=True)
+    format = fields.Str(required=False)
 
     @post_load
     def make(self, data, **kwargs):
