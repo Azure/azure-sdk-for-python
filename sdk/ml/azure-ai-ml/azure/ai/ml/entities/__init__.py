@@ -13,6 +13,7 @@ from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 
 from ._assets._artifacts.data import Data
+from ._assets._artifacts.featureset import Featureset
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
@@ -138,6 +139,14 @@ from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
 from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.feature_store_settings import FeatureStoreSettings
+from ._featurestore_entity.featurestore_entity import FeaturestoreEntity
+from ._featurestore_entity.data_column import DataColumn
+from ._featurestore_entity.data_column_type import DataColumnType
+from ._featureset.featureset_specification import FeaturesetSpecification
+from ._notification.notification import Notification
+from ._featureset.materialization_compute_resource import MaterializationComputeResource
+from ._featureset.materialization_settings import MaterializationSettings
+from ._featureset.materialization_type import MaterializationType
 from ._feature_store.feature_store import FeatureStore
 from ._feature_store.materialization_store import MaterializationStore
 
@@ -201,6 +210,15 @@ __all__ = [
     "WorkspaceConnection",
     "ComputeRuntime",
     "FeatureStoreSettings",
+    "Featureset",
+    "FeaturestoreEntity",
+    "MaterializationComputeResource",
+    "MaterializationSettings",
+    "MaterializationType",
+    "FeaturesetSpecification",
+    "DataColumn",
+    "DataColumnType",
+    "Notification",
     "FeatureStore",
     "MaterializationStore",
     "DiagnoseRequestProperties",

@@ -67,7 +67,7 @@ class ComputeInstanceSchema(ComputeSchema):
     idle_time_before_shutdown_minutes = ExperimentalField(fields.Int())
     custom_applications = ExperimentalField(fields.List(NestedField(CustomApplicationsSchema)))
     setup_scripts = ExperimentalField(NestedField(SetupScriptsSchema))
-    os_image_metadata = ExperimentalField(NestedField(OsImageMetadataSchema, dump_only=True))
+    os_image_metadata = NestedField(OsImageMetadataSchema, dump_only=True)
     enable_node_public_ip = fields.Bool(
         metadata={"description": "Enable or disable node public IP address provisioning."}
     )
