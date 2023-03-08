@@ -268,6 +268,7 @@ class TestReceivedShares(TestPurviewSharing):
             "type": "ArmResourceReference"
         }
 
+        # cspell:disable
         sink = {
             "properties": {
                 "containerName": "containerellxvxonnlukvfzbwhlexfzqfs",
@@ -277,6 +278,7 @@ class TestReceivedShares(TestPurviewSharing):
             "storeKind": "AdlsGen2Account",
             "storeReference": store_reference
         }
+        # cspell:enable
 
         received_share['properties']['sink'] = sink
 
