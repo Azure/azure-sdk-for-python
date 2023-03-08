@@ -28,8 +28,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Diagnostic(object):
-    """Represents a diagnostic of an asset validation error with the location
-    info."""
+    """Represents a diagnostic of an asset validation error with the location info."""
 
     def __init__(self, yaml_path: str, message: str, error_code: str):
         """Init Diagnostic.
@@ -76,9 +75,8 @@ class Diagnostic(object):
 class ValidationResult(object):
     """Represents the result of job/asset validation.
 
-    This class is used to organize and parse diagnostics from both
-    client & server side before expose them.
-    The result is immutable.
+    This class is used to organize and parse diagnostics from both client & server side before expose them. The result
+    is immutable.
     """
 
     def __init__(self):
@@ -132,7 +130,10 @@ class ValidationResult(object):
 
     @property
     def passed(self):
-        """Return whether the validation passed. If there is no error, then it passed."""
+        """Return whether the validation passed.
+
+        If there is no error, then it passed.
+        """
         return not self._errors
 
     def _to_dict(self) -> typing.Dict[str, typing.Any]:
@@ -164,6 +165,7 @@ class ValidationResult(object):
 
 class MutableValidationResult(ValidationResult):
     """Used by the client side to construct a validation result.
+
     The result is mutable and should not be exposed to the user.
     """
 
@@ -291,15 +293,12 @@ class MutableValidationResult(ValidationResult):
     def resolve_location_for_diagnostics(self, source_path: str, resolve_value: bool = False):
         """Resolve location/value for diagnostics based on the source path where the validatable object is loaded.
         Location includes local path of the exact file (can be different from the source path) & line number of the
-        invalid field.
-        Value of a diagnostic is resolved from the validatable object in transfering to a dict by default;
-        however, when the validatable object is not available for the validation result, validation result is created
-        from marshmallow.ValidationError.messages e.g., it can be resolved from the source path.
+        invalid field. Value of a diagnostic is resolved from the validatable object in transfering to a dict by
+        default; however, when the validatable object is not available for the validation result, validation result is
+        created from marshmallow.ValidationError.messages e.g., it can be resolved from the source path.
 
-        param source_path: The path of the source file.
-        type source_path: str
-        param resolve_value: Whether to resolve the value of the invalid field from source file.
-        type resolve_value: bool
+        param source_path: The path of the source file. type source_path: str param resolve_value: Whether to resolve
+        the value of the invalid field from source file. type resolve_value: bool
         """
         resolver = _YamlLocationResolver(source_path)
         for diagnostic in self._errors + self._warnings:
@@ -337,8 +336,8 @@ class MutableValidationResult(ValidationResult):
 class SchemaValidatableMixin:
     @classmethod
     def _create_empty_validation_result(cls) -> MutableValidationResult:
-        """Simply create an empty validation result to reduce
-        _ValidationResultBuilder importing, which is a private class."""
+        """Simply create an empty validation result to reduce _ValidationResultBuilder importing, which is a private
+        class."""
         return _ValidationResultBuilder.success()
 
     @classmethod
@@ -349,8 +348,7 @@ class SchemaValidatableMixin:
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:
-        """Create a schema of the resource with specific context. Should be
-        overridden by subclass.
+        """Create a schema of the resource with specific context. Should be overridden by subclass.
 
         return: The schema of the resource.
         return type: PathAwareSchema. PathAwareSchema will add marshmallow.Schema as super class on runtime.
@@ -359,9 +357,8 @@ class SchemaValidatableMixin:
 
     @property
     def __base_path_for_validation(self) -> typing.Union[str, PathLike]:
-        """Get the base path of the resource. It will try to return
-        self.base_path, then self._base_path, then Path.cwd() if above attrs
-        are non-existent or None.
+        """Get the base path of the resource. It will try to return self.base_path, then self._base_path, then
+        Path.cwd() if above attrs are non-existent or None.
 
         return type: str
         """
@@ -375,15 +372,14 @@ class SchemaValidatableMixin:
     def _get_validation_error_target(cls) -> ErrorTarget:
         """Return the error target of this resource.
 
-        Should be overridden by subclass. Value should be in ErrorTarget
-        enum.
+        Should be overridden by subclass. Value should be in ErrorTarget enum.
         """
         raise NotImplementedError()
 
     @property
     def _schema_for_validation(self) -> PathAwareSchema:
-        """Return the schema of this Resource with self._base_path as base_path
-        of Schema. Do not override this method. Override _get_schema instead.
+        """Return the schema of this Resource with self._base_path as base_path of Schema. Do not override this method.
+        Override _get_schema instead.
 
         return: The schema of the resource.
         return type: PathAwareSchema. PathAwareSchema will add marshmallow.Schema as super class on runtime.
@@ -395,9 +391,8 @@ class SchemaValidatableMixin:
         return convert_ordered_dict_to_dict(self._schema_for_validation.dump(self))
 
     def _validate(self, raise_error=False) -> MutableValidationResult:
-        """Validate the resource. If raise_error is True, raise ValidationError
-        if validation fails and log warnings if applicable; Else, return the
-        validation result.
+        """Validate the resource. If raise_error is True, raise ValidationError if validation fails and log warnings if
+        applicable; Else, return the validation result.
 
         :param raise_error: Whether to raise ValidationError if validation fails.
         :type raise_error: bool
@@ -454,9 +449,8 @@ class _ValidationResultBuilder:
     ):
         """Create a validation result with only 1 diagnostic.
 
-        param singular_error_message: diagnostic.message.
-        param yaml_path: diagnostic.yaml_path. param data:
-        serialized validation target.
+        param singular_error_message: diagnostic.message. param yaml_path: diagnostic.yaml_path. param data: serialized
+        validation target.
         """
         obj = MutableValidationResult(target_obj=data)
         if singular_error_message:
@@ -467,15 +461,12 @@ class _ValidationResultBuilder:
     def from_validation_error(
         cls, error: ValidationError, *, source_path: Optional[str] = None, error_on_unknown_field=False
     ):
-        """Create a validation result from a ValidationError, which will be
-        raised in marshmallow.Schema.load. Please use this function only for
-        exception in loading file.
+        """Create a validation result from a ValidationError, which will be raised in marshmallow.Schema.load. Please
+        use this function only for exception in loading file.
 
-        param error: ValidationError raised by marshmallow.Schema.load.
-        type error: ValidationError
-        param error_on_unknown_field: whether to raise error if there
-        are unknown field diagnostics.
-        type error_on_unknown_field: bool
+        param error: ValidationError raised by marshmallow.Schema.load. type error: ValidationError param
+        error_on_unknown_field: whether to raise error if there are unknown field diagnostics. type
+        error_on_unknown_field: bool
         """
         obj = cls.from_validation_messages(
             error.messages, data=error.data, error_on_unknown_field=error_on_unknown_field
@@ -486,17 +477,11 @@ class _ValidationResultBuilder:
 
     @classmethod
     def from_validation_messages(cls, errors: typing.Dict, data: typing.Dict, *, error_on_unknown_field: bool = False):
-        """Create a validation result from error messages, which will be
-        returned by marshmallow.Schema.validate.
+        """Create a validation result from error messages, which will be returned by marshmallow.Schema.validate.
 
-        param errors: error message returned by
-        marshmallow.Schema.validate.
-        type errors: dict
-        param data: serialized data to validate
-        type data: dict
-        param error_on_unknown_field: whether to raise error if there
-        are unknown field diagnostics.
-        type error_on_unknown_field: bool
+        param errors: error message returned by marshmallow.Schema.validate. type errors: dict param data: serialized
+        data to validate type data: dict param error_on_unknown_field: whether to raise error if there are unknown field
+        diagnostics. type error_on_unknown_field: bool
         """
         instance = MutableValidationResult(target_obj=data)
         errors = copy.deepcopy(errors)
@@ -525,9 +510,16 @@ class _ValidationResultBuilder:
                 if field in ["key", "value"]:
                     cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
                 else:
-                    path_stack.append(field)
-                    cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
-                    path_stack.pop()
+                    # Todo: Add hack logic here to deal with error message in nested TypeSensitiveUnionField in
+                    #  DataTransfer: will be a nested dict with None field as dictionary key.
+                    #  open a item to track: https://msdata.visualstudio.com/Vienna/_workitems/edit/2244262/
+                    if field is None:
+                        cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
+                    else:
+                        path_stack.append(field)
+                        cls._from_validation_messages_recursively(msgs, path_stack, instance, error_on_unknown_field)
+                        path_stack.pop()
+
         # detailed error message
         elif isinstance(errors, list) and all(isinstance(msg, str) for msg in errors):
             if cls.UNKNOWN_MESSAGE in errors and not error_on_unknown_field:

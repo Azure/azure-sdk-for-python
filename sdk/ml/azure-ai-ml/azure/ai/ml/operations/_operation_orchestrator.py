@@ -107,9 +107,8 @@ class OperationOrchestrator(object):
         register_asset: bool = True,
         sub_workspace_resource: bool = True,
     ) -> Optional[Union[str, Asset]]:
-        """This method converts AzureML Id to ARM Id. Or if the given asset is
-        entity object, it tries to register/upload the asset based on
-        register_asset and azureml_type.
+        """This method converts AzureML Id to ARM Id. Or if the given asset is entity object, it tries to
+        register/upload the asset based on register_asset and azureml_type.
 
         :param asset: The asset to resolve/register. It can be a ARM id or a entity's object.
         :type asset: Optional[Union[str, Asset]]
@@ -359,9 +358,8 @@ class OperationOrchestrator(object):
         return data_asset
 
     def _get_component_arm_id(self, component: Component) -> str:
-        """If component arm id is already resolved, return the id Or get arm id
-        via remote call, register the component if necessary, and FILL BACK the
-        arm id to component to reduce remote call."""
+        """If component arm id is already resolved, return the id Or get arm id via remote call, register the component
+        if necessary, and FILL BACK the arm id to component to reduce remote call."""
         if not component.id:
             component._id = self._component.create_or_update(
                 component, is_anonymous=True, show_progress=self._operation_config.show_progress
@@ -369,8 +367,7 @@ class OperationOrchestrator(object):
         return component.id
 
     def _resolve_name_version_from_name_label(self, aml_id: str, azureml_type: str) -> Tuple[str, Optional[str]]:
-        """Given an AzureML id of the form name@label, resolves the label to
-        the actual ID.
+        """Given an AzureML id of the form name@label, resolves the label to the actual ID.
 
         :param aml_id: AzureML id of the form name@label
         :type aml_id: str
@@ -397,9 +394,8 @@ class OperationOrchestrator(object):
 
     # pylint: disable=unused-argument
     def resolve_azureml_id(self, arm_id: Optional[str] = None, **kwargs) -> str:
-        """This function converts ARM id to name or name:version AzureML id. It
-        parses the ARM id and matches the subscription Id, resource group name
-        and workspace_name.
+        """This function converts ARM id to name or name:version AzureML id. It parses the ARM id and matches the
+        subscription Id, resource group name and workspace_name.
 
         TODO: It is debatable whether this method should be in operation_orchestrator.
 
