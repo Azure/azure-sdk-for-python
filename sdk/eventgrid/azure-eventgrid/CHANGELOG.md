@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added new enum values to `SystemEventNames` related to Azure Communication Services, DataBox and ApiManagmentGateway APIs. 
+- Added new enum values to `SystemEventNames` related to Azure Communication Services, DataBox and ApiManagementGateway APIs. 
 
 ## 4.9.1 (2022-11-08)
 
