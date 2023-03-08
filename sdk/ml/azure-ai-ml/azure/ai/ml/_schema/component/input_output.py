@@ -72,7 +72,7 @@ class PrimitiveOutputSchema(OutputPortSchema):
 
     def _serialize(self, obj, *, many: bool = False):
         """Override to add private preview hidden fields"""
-        ret = super(PrimitiveOutputSchema, self)._serialize(obj, many=many)  # pylint: disable=no-member
+        ret = super()._serialize(obj, many=many)  # pylint: disable=no-member
         # If private preview flag is not enabled, detect fields like is_control and early_available,
         # and add to the result if one or all of them exist(s).
         if not is_private_preview_enabled():
