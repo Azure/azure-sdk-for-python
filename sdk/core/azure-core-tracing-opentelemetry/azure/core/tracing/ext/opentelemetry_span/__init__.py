@@ -3,17 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
-<<<<<<< HEAD
 from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence
 import warnings
-=======
-import warnings
-from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence, cast
->>>>>>> fc625e8562 ([Core][OTel] Tracing typing updates)
 
 from opentelemetry import trace
 from opentelemetry.trace import Span, Tracer, SpanKind as OpenTelemetrySpanKind, Link as OpenTelemetryLink
-from opentelemetry.sdk.trace import ReadableSpan  # type: ignore[attr-defined]
 from opentelemetry.context import attach, detach, get_current  # type: ignore[attr-defined]
 from opentelemetry.propagate import extract, inject  # type: ignore[attr-defined]
 from opentelemetry.trace.propagation import get_current_span as get_span_from_context  # type: ignore[attr-defined]
@@ -118,7 +112,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     @property
     def kind(self) -> Optional[SpanKind]:
         """Get the span kind of this span."""
-        value = cast(ReadableSpan, self.span_instance).kind
+        value = self.span_instance.kind  # type: ignore[attr-defined]
         return (
             SpanKind.CLIENT
             if value == OpenTelemetrySpanKind.CLIENT
@@ -154,7 +148,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         if kind is None:
             raise ValueError("Kind {} is not supported in OpenTelemetry".format(value))
         try:
-            cast(ReadableSpan, self._span_instance)._kind = kind  # pylint: disable=protected-access
+            self._span_instance._kind = kind  # type: ignore[attr-defined] # pylint: disable=protected-access
         except AttributeError:
             warnings.warn(
                 """Kind must be set while creating the span for OpenTelemetry. It might be possible
