@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import cast, Dict, Generic, Optional, TypeVar, Union
+from typing import Dict, Optional, Union
 
 from azure.core.rest import HttpResponse
 
@@ -16,8 +16,6 @@ from ._generated_models import (
     RoleDefinition,
     Setting,
 )
-
-SettingValueType = TypeVar("SettingValueType", bound=Union[bool, str])
 
 
 class KeyVaultPermission(object):
@@ -171,34 +169,34 @@ class KeyVaultBackupResult(object):
         return cls(folder_url=deserialized_operation.azure_storage_blob_container_uri)
 
 
-class KeyVaultSetting(Generic[SettingValueType]):
+class KeyVaultSetting(object):
     """A Key Vault setting.
 
     :ivar str name: The name of the account setting.
-    :ivar value: The value of the pool setting. This is a boolean if `type` is SettingType.BOOLEAN, and a string
-        otherwise. If `value` is provided as a string when `type` is SettingType.BOOLEAN, the value will be converted
-        into a boolean (True if `value` is "True" (case-insensitive); False otherwise).
-    :vartype value: SettingValueType
+    :ivar value: The value of the setting.
+    :vartype value: str or bool
     :ivar type: The type specifier of the value.
-    :vartype type: SettingType or None
+    :vartype type: str or SettingType or None
     """
 
     def __init__(
         self,
         *,
         name: str,
-        value: SettingValueType,
-        type: Optional[SettingType] = None,
+        value: Union[str, bool],
+        setting_type: Optional[Union[str, SettingType]] = None,
         **kwargs,  # pylint:disable=unused-argument,redefined-builtin
     ) -> None:
         self.name = name
-        self.value = value
-        self.type = type
+        # `value` needs to be a stored as a string
+        self.value = value if isinstance(value, str) else str(value)
+        self.setting_type = setting_type.lower() if isinstance(setting_type, str) else setting_type
 
-        # If `value` was given as a string but the type is boolean, convert it to a bool
-        if isinstance(self.value, str) and self.type == SettingType.BOOLEAN:
-            self.value = cast(SettingValueType, self.value.lower() == "true")
+        # If the setting is a boolean, lower-case the string for serialization
+        if self.setting_type == SettingType.BOOLEAN:
+            self.value = self.value.lower()
 
     @classmethod
     def _from_generated(cls, setting: Setting) -> "KeyVaultSetting":
-        return cls(name=setting.name, value=cast(SettingValueType, setting.value), type=SettingType(setting.type))
+        setting_type = SettingType.BOOLEAN if setting.type == "boolean" else setting.type
+        return cls(name=setting.name, value=setting.value, setting_type=setting_type)
