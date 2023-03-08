@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 
-from azure.keyvault.administration import KeyVaultSettingsClient, SettingType
+from azure.keyvault.administration import KeyVaultSettingsClient, KeyVaultSettingType
 from azure.identity import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
@@ -37,12 +37,12 @@ credential = DefaultAzureCredential()
 client = KeyVaultSettingsClient(vault_url=MANAGED_HSM_URL, credential=credential)
 
 # First, let's fetch the settings that apply to our Managed HSM
-# Each setting has a name, value, and type (for example, SettingType.BOOLEAN)
+# Each setting has a name, value, and type (for example, KeyVaultSettingType.BOOLEAN)
 print("\n.. List Key Vault settings")
 settings = client.list_settings()
 boolean_setting = None
 for setting in settings:
-    if setting.type == SettingType.BOOLEAN:
+    if setting.type == KeyVaultSettingType.BOOLEAN:
         boolean_setting = setting
     print(f"{setting.name}: {setting.value} (type: {setting.type})")
 

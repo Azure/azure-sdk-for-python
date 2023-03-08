@@ -6,7 +6,7 @@ from typing import Dict, Optional, Union
 
 from azure.core.rest import HttpResponse
 
-from ._enums import SettingType
+from ._enums import KeyVaultSettingType
 from ._generated_models import (
     FullBackupOperation,
     Permission,
@@ -176,7 +176,7 @@ class KeyVaultSetting(object):
     :ivar value: The value of the setting.
     :vartype value: str or bool
     :ivar type: The type specifier of the value.
-    :vartype type: str or SettingType or None
+    :vartype type: str or KeyVaultSettingType or None
     """
 
     def __init__(
@@ -184,7 +184,7 @@ class KeyVaultSetting(object):
         *,
         name: str,
         value: Union[str, bool],
-        setting_type: Optional[Union[str, SettingType]] = None,
+        setting_type: Optional[Union[str, KeyVaultSettingType]] = None,
         **kwargs,  # pylint:disable=unused-argument,redefined-builtin
     ) -> None:
         self.name = name
@@ -193,10 +193,10 @@ class KeyVaultSetting(object):
         self.setting_type = setting_type.lower() if isinstance(setting_type, str) else setting_type
 
         # If the setting is a boolean, lower-case the string for serialization
-        if self.setting_type == SettingType.BOOLEAN:
+        if self.setting_type == KeyVaultSettingType.BOOLEAN:
             self.value = self.value.lower()
 
     @classmethod
     def _from_generated(cls, setting: Setting) -> "KeyVaultSetting":
-        setting_type = SettingType.BOOLEAN if setting.type == "boolean" else setting.type
+        setting_type = KeyVaultSettingType.BOOLEAN if setting.type == "boolean" else setting.type
         return cls(name=setting.name, value=setting.value, setting_type=setting_type)

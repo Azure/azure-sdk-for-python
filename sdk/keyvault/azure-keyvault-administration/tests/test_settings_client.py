@@ -4,7 +4,7 @@
 # ------------------------------------
 import pytest
 
-from azure.keyvault.administration import ApiVersion, KeyVaultSetting, KeyVaultSettingsClient, SettingType
+from azure.keyvault.administration import ApiVersion, KeyVaultSetting, KeyVaultSettingsClient, KeyVaultSettingType
 
 from devtools_testutils import recorded_by_proxy
 
@@ -44,11 +44,11 @@ class TestSettings(KeyVaultTestCase):
         assert new_updated.value != updated.value
 
 def test_setting_boolean_type_string_value():
-    """Convert successfully when a KeyVaultSetting is given a SettingType.BOOLEAN `type` and boolean string `value`"""
+    """Convert successfully when a KeyVaultSetting is given a KeyVaultSettingType.BOOLEAN `type` and boolean string `value`"""
     # Mimics what we get from KeyVaultSetting._from_generated when a service setting is True
-    true_setting = KeyVaultSetting(name="test", type=SettingType.BOOLEAN, value="true")
+    true_setting = KeyVaultSetting(name="test", type=KeyVaultSettingType.BOOLEAN, value="true")
     assert isinstance(true_setting.value, bool) and true_setting.value
 
     # If `value` is anything but "True" (case-insensitive), it should be converted to False
-    false_setting = KeyVaultSetting(name="test", type=SettingType.BOOLEAN, value="not true")
+    false_setting = KeyVaultSetting(name="test", type=KeyVaultSettingType.BOOLEAN, value="not true")
     assert isinstance(false_setting.value, bool) and not false_setting.value

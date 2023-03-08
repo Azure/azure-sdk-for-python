@@ -5,7 +5,7 @@
 import asyncio
 import os
 
-from azure.keyvault.administration import SettingType
+from azure.keyvault.administration import KeyVaultSettingType
 from azure.keyvault.administration.aio import KeyVaultSettingsClient
 from azure.identity.aio import DefaultAzureCredential
 
@@ -40,12 +40,12 @@ async def run_sample():
     client = KeyVaultSettingsClient(vault_url=MANAGED_HSM_URL, credential=credential)
 
     # First, let's fetch the settings that apply to our Managed HSM
-    # Each setting has a name, value, and type (for example, SettingType.BOOLEAN)
+    # Each setting has a name, value, and type (for example, KeyVaultSettingType.BOOLEAN)
     print("\n.. List Key Vault settings")
     settings = await client.list_settings()
     boolean_setting = None
     async for setting in settings:
-        if setting.type == SettingType.BOOLEAN:
+        if setting.type == KeyVaultSettingType.BOOLEAN:
             boolean_setting = setting
         print(f"{setting.name}: {setting.value} (type: {setting.type})")
 
