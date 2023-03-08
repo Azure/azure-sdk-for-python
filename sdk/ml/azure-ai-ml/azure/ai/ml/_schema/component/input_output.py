@@ -72,10 +72,12 @@ class PrimitiveOutputSchema(OutputPortSchema):
 
     def _serialize(self, obj, *, many: bool = False):
         """Override to add private preview hidden fields"""
+        from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe  # pylint: disable=protected-access
+
         ret = super()._serialize(obj, many=many)  # pylint: disable=no-member
-        if obj.is_control is not None and "is_control" not in ret:
+        if has_attr_safe(obj, "is_control") and obj.is_control is not None and "is_control" not in ret:
             ret["is_control"] = obj.is_control
-        if obj.early_available is not None and "early_available" not in ret:
+        if has_attr_safe(obj, "early_available") and obj.early_available is not None and "early_available" not in ret:
             ret["early_available"] = obj.early_available
         return ret
 
