@@ -221,7 +221,8 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         Latest is defined as the most recently created, not the most
         recently updated.
         """
-        latest_version = _get_latest_version_from_container(
-            name, self._container_operation, self._resource_group_name, self._workspace_name
+        container_resource = self._container_operation.get_entity(
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name, name=name
         )
+        latest_version = container_resource.properties.latest_version
         return self.get(name, version=latest_version)

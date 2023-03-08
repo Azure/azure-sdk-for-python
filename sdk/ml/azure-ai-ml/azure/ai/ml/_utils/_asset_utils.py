@@ -47,6 +47,12 @@ from azure.ai.ml._restclient.v2022_02_01_preview.operations import (  # pylint: 
     ModelContainersOperations,
     ModelVersionsOperations,
 )
+from azure.ai.ml._restclient.v2023_02_01_preview.operations import (
+    FeaturesetVersionsOperations,
+    FeaturesetContainersOperations,
+    FeaturestoreEntityVersionsOperations,
+    FeaturestoreEntityContainersOperations,
+)
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, OrderString
@@ -61,7 +67,14 @@ from azure.ai.ml.exceptions import (
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 if TYPE_CHECKING:
-    from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
+    from azure.ai.ml.operations import (
+        ComponentOperations,
+        DataOperations,
+        EnvironmentOperations,
+        ModelOperations,
+        FeaturesetOperations,
+        FeaturestoreEntityOperations,
+    )
 
 hash_type = type(hashlib.md5())  # nosec
 
@@ -821,18 +834,24 @@ def _archive_or_restore(
         "EnvironmentOperations",
         "ModelOperations",
         "ComponentOperations",
+        "FeaturesetOperations",
+        "FeaturestoreEntityOperations",
     ],
     version_operation: Union[
         "DataVersionsOperations",
         "EnvironmentVersionsOperations",
         "ModelVersionsOperations",
         "ComponentVersionsOperations",
+        "FeaturesetVersionsOperations",
+        "FeaturestoreEntityVersionsOperations",
     ],
     container_operation: Union[
         "DataContainersOperations",
         "EnvironmentContainersOperations",
         "ModelContainersOperations",
         "ComponentContainersOperations",
+        "FeaturesetContainersOperations",
+        "FeaturestoreEntityContainersOperations",
     ],
     is_archived: bool,
     name: str,
@@ -885,19 +904,29 @@ def _archive_or_restore(
             body=version_resource,
         )
     else:
-        container_resource = (
-            container_operation.get(
-                name=name,
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-            )
-            if registry_name
-            else container_operation.get(
+        container_resource = None
+        if isinstance(container_operation, FeaturesetContainersOperations) or isinstance(
+            container_operation, FeaturestoreEntityContainersOperations
+        ):
+            container_resource = container_operation.get_entity(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
             )
-        )
+        else:
+            container_resource = (
+                container_operation.get(
+                    name=name,
+                    resource_group_name=resource_group_name,
+                    registry_name=registry_name,
+                )
+                if registry_name
+                else container_operation.get(
+                    name=name,
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                )
+            )
         container_resource.properties.is_archived = is_archived
         container_operation.create_or_update(  # pylint: disable=expression-not-assigned
             name=name,
@@ -918,6 +947,8 @@ def _resolve_label_to_asset(
         "ComponentOperations",
         "EnvironmentOperations",
         "ModelOperations",
+        "FeaturesetContainersOperations",
+        "FeaturestoreEntityContainersOperations"
     ],
     name: str,
     label: str,
