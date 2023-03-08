@@ -21,7 +21,7 @@ autorest
 
 ```yaml
 package-name: "@azure-rest/purview-sharing"
-title: Purview Sharing
+title: Purview Sharing Client
 description: Purview Sharing Client
 generate-metadata: false
 license-header: MICROSOFT_MIT_NO_VERSION

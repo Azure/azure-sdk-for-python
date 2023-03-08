@@ -24,8 +24,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PurviewSharingConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for PurviewSharing.
+class PurviewSharingClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for PurviewSharingClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -41,7 +41,7 @@ class PurviewSharingConfiguration(Configuration):  # pylint: disable=too-many-in
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        super(PurviewSharingConfiguration, self).__init__(**kwargs)
+        super(PurviewSharingClientConfiguration, self).__init__(**kwargs)
         api_version: Literal["2023-02-15-preview"] = kwargs.pop("api_version", "2023-02-15-preview")
 
         if endpoint is None:

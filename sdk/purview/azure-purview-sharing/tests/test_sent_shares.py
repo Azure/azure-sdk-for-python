@@ -16,7 +16,6 @@ from azure.purview.sharing.operations._operations import (
     build_sent_shares_get_request,
     build_sent_shares_list_request,
     build_sent_shares_delete_request,
-    build_sent_shares_get_invitation_request,
     build_sent_shares_list_invitations_request
 )
 

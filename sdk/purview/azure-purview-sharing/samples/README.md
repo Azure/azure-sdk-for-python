@@ -5,11 +5,11 @@ languages:
 products:
 # Including relevant stubs from https://review.docs.microsoft.com/help/contribute/metadata-taxonomies#product
 - azure
-name: Azure.Analytics.Purview samples for python
-description: Samples for the Azure.Analytics.Purview client library.
+name: Azure.Purview.Sharing samples for python
+description: Samples for the Azure.Purview.Sharing client library.
 ---
 
-# Azure.Analytics.Purview Samples
+# Azure.Purview.Sharing Samples
 
 The following are code samples that show common scenario operations with the Azure Purview client library.
 

@@ -13,7 +13,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import PurviewSharingConfiguration
+from ._configuration import PurviewSharingClientConfiguration
 from .operations import ReceivedSharesOperations, SentSharesOperations
 
 if TYPE_CHECKING:
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PurviewSharing:  # pylint: disable=client-accepts-api-version-keyword
+class PurviewSharingClient:  # pylint: disable=client-accepts-api-version-keyword
     """Purview Sharing Client.
 
     :ivar received_shares: ReceivedSharesOperations operations
@@ -42,8 +42,8 @@ class PurviewSharing:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = PurviewSharingConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._config = PurviewSharingClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -80,7 +80,7 @@ class PurviewSharing:  # pylint: disable=client-accepts-api-version-keyword
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "PurviewSharing":
+    async def __aenter__(self) -> "PurviewSharingClient":
         await self._client.__aenter__()
         return self
 

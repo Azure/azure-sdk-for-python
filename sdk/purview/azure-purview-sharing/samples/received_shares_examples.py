@@ -13,26 +13,18 @@
 # [START create_a_received_share_client]
 import os
 
-from azure.purview.sharing import PurviewSharing
-from azure.identity import ClientSecretCredential
+from azure.purview.sharing import PurviewSharingClient
+from azure.identity import DefaultAzureCredential
 
 endpoint = os.environ["ENDPOINT"]
-tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
-client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
-secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
-credential = ClientSecretCredential(tenant_id=str(tenant_id), client_id=str(client_id), client_secret=str(secret))
+credential = DefaultAzureCredential()
 
-client = PurviewSharing(endpoint=endpoint,credential=credential)
+client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 # [END create_a_received_share_client]
 
 # Get all detached received shares
 # [START get_all_detached_received_shares]
-from azure.purview.sharing.operations._operations import (
-    build_received_shares_list_detached_request
-)
-
-list_detached_request = build_received_shares_list_detached_request(orderby="properties/createdAt desc")
-list_detached_response = client.send_request(list_detached_request)
+list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
 # [END get_all_detached_received_shares]
 
 # Attach a received share
@@ -40,9 +32,6 @@ list_detached_response = client.send_request(list_detached_request)
 import json
 
 from azure.core.exceptions import HttpResponseError
-from azure.purview.sharing.operations._operations import (
-    build_received_shares_create_or_replace_request
-)
 
 consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/consumer-storage-rg/providers/Microsoft.Storage/storageAccounts/consumerstorage"
 list_detached = json.loads(list_detached_response.content)
@@ -65,57 +54,30 @@ sink = {
 
 received_share['properties']['sink'] = sink
 
-update_request = build_received_shares_create_or_replace_request(
+update_request = client.received_shares.begin_create_or_replace(
     received_share['id'],
     content_type="application/json",
     content=json.dumps(received_share))
 
-update_response = client.send_request(update_request)
-try:
-    update_response.raise_for_status()
-except HttpResponseError as e:
-    print("Exception " + str(e))
-    print("Response " + update_response.text())
+update_response = update_request.result()
 # [END attach_a_received_share]
 
 # Get a received share
 # [START get_a_received_share]
-from azure.purview.sharing.operations._operations import (
-    build_received_shares_get_request
-)
+get_share_response = client.received_shares.get(received_share_id=received_share['id'])
 
-get_share_request = build_received_shares_get_request(received_share_id=received_share['id'])
-get_share_response = client.send_request(get_share_request)
-
-retrieved_share = json.loads(get_share_response.content)
+retrieved_share = json.loads(get_share_response)
 # [END get_a_received_share]
 
 # List attached received shares
 # [START list_attached_received_shares]
-from azure.purview.sharing.operations._operations import (
-    build_received_shares_list_attached_request
-)
-
-list_attached_request = build_received_shares_list_attached_request(
+list_attached_response = client.received_shares.list_attached(
     reference_name=consumer_storage_account_resource_id,
     orderby="properties/createdAt desc")
-
-list_attached_response = client.send_request(list_attached_request)
-list = json.loads(list_attached_response.content)['value']
 # [END list_attached_received_shares]
 
 # Delete a received share
 # [START delete_a_received_share]
-from azure.purview.sharing.operations._operations import (
-    build_received_shares_delete_request
-)
-
-delete_received_share_request = build_received_shares_delete_request(received_share_id=received_share['id'])
-delete_received_share_response = client.send_request(delete_received_share_request)
-
-try:
-    delete_received_share_response.raise_for_status()
-except HttpResponseError as e:
-    print("Exception " + str(e))
-    print("Response " + delete_received_share_response.text())
+delete_received_share_request = client.received_shares.begin_delete(received_share_id=received_share['id'])
+delete_received_share_response = delete_received_share_request.result()
 # [END delete_a_received_share]

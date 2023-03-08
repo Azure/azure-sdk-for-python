@@ -622,7 +622,7 @@ class ReceivedSharesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.purview.sharing.PurviewSharing`'s
+        :class:`~azure.purview.sharing.PurviewSharingClient`'s
         :attr:`received_shares` attribute.
     """
 
@@ -751,8 +751,9 @@ class ReceivedSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -810,8 +811,9 @@ class ReceivedSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1642,8 +1644,9 @@ class ReceivedSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1930,8 +1933,9 @@ class ReceivedSharesOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2111,8 +2115,9 @@ class ReceivedSharesOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2358,8 +2363,9 @@ class ReceivedSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2444,8 +2450,9 @@ class ReceivedSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2471,7 +2478,7 @@ class SentSharesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.purview.sharing.PurviewSharing`'s
+        :class:`~azure.purview.sharing.PurviewSharingClient`'s
         :attr:`sent_shares` attribute.
     """
 
@@ -2655,8 +2662,9 @@ class SentSharesOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2787,8 +2795,9 @@ class SentSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2844,8 +2853,9 @@ class SentSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3684,8 +3694,9 @@ class SentSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3950,8 +3961,9 @@ class SentSharesOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4062,8 +4074,9 @@ class SentSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4493,8 +4506,9 @@ class SentSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4539,8 +4553,9 @@ class SentSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4779,8 +4794,9 @@ class SentSharesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

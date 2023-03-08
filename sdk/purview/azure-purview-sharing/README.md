@@ -25,7 +25,7 @@ pip install azure-purview-sharing
 
 #### Using Azure Active Directory
 
-This document demonstrates using [DefaultAzureCredential][default_cred_ref] to authenticate via Azure Active Directory. However, any of the credentials offered by the [Azure.Identity][azure_identity] will be accepted.  See the [Azure.Identity][azure_identity] documentation for more information about other credentials.
+This document demonstrates using [DefaultAzureCredential][default_cred_ref] to authenticate via Azure Active Directory. However, any of the credentials offered by the [azure_identity][azure_identity] will be accepted.  See the [azure_identity][azure_identity] documentation for more information about other credentials.
 
 Once you have chosen and configured your credential, you can create instances of the `PurviewSharing`.
 
@@ -123,7 +123,7 @@ headers, can be enabled on a client with the `logging_enable` keyword argument:
 import sys
 import logging
 from azure.identity import DefaultAzureCredential
-from azure.purview.catalog import PurviewCatalogClient
+from azure.purview.sharing import PurviewSharingClient
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger('azure')
@@ -133,11 +133,11 @@ logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-endpoint = "https://<my-account-name>.purview.azure.com"
+endpoint = "https://<my-account-name>.share.purview.azure.com"
 credential = DefaultAzureCredential()
 
 # This client will log detailed information about its HTTP sessions, at DEBUG level
-client = PurviewCatalogClient(endpoint=endpoint, credential=credential, logging_enable=True)
+client = PurviewSharingClient(endpoint=endpoint, credential=credential, logging_enable=True)
 ```
 
 Similarly, `logging_enable` can enable detailed logging for a single `send_request` call,

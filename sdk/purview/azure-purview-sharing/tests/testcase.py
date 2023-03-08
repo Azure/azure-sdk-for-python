@@ -6,14 +6,14 @@
 # --------------------------------------------------------------------------
 import functools
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
-from azure.purview.sharing import PurviewSharing
+from azure.purview.sharing import PurviewSharingClient
 
 class TestPurviewSharing(AzureRecordedTestCase):
 
     def create_client(self, endpoint):
-        credential = self.get_credential(PurviewSharing)
+        credential = self.get_credential(PurviewSharingClient)
         return self.create_client_from_credential(
-            PurviewSharing,
+            PurviewSharingClient,
             credential=credential,
             endpoint=endpoint,
         )

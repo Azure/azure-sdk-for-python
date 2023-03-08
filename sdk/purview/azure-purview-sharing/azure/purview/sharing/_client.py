@@ -12,7 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import PurviewSharingConfiguration
+from ._configuration import PurviewSharingClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import ReceivedSharesOperations, SentSharesOperations
 
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class PurviewSharing:  # pylint: disable=client-accepts-api-version-keyword
+class PurviewSharingClient:  # pylint: disable=client-accepts-api-version-keyword
     """Purview Sharing Client.
 
     :ivar received_shares: ReceivedSharesOperations operations
@@ -42,8 +42,8 @@ class PurviewSharing:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = PurviewSharingConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._config = PurviewSharingClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -80,7 +80,7 @@ class PurviewSharing:  # pylint: disable=client-accepts-api-version-keyword
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "PurviewSharing":
+    def __enter__(self) -> "PurviewSharingClient":
         self._client.__enter__()
         return self
 
