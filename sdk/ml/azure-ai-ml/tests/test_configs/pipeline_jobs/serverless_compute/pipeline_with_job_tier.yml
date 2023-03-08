@@ -12,4 +12,3 @@ jobs:
       instance_type: Standard_D3_v2
     queue_settings:
       job_tier: standard
-      priority: medium

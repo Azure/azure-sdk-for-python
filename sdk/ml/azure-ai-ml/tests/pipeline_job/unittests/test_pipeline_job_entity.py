@@ -2036,8 +2036,8 @@ class TestPipelineJobEntity:
         assert rest_obj.properties.jobs["component"]["resources"] == expect_resource
 
     def test_pipeline_job_with_queue_settings(self) -> None:
-        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/pipeline_with_queue_settings.yml"
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/pipeline_with_job_tier.yml"
         pipeline_job = load_job(yaml_path)
         rest_obj = pipeline_job._to_rest_object()
-        expected_queue_settings = {"job_tier": "Standard", "priority": 2}
+        expected_queue_settings = {"job_tier": "Standard"}
         assert rest_obj.properties.jobs["hello_world"]["queue_settings"] == expected_queue_settings
