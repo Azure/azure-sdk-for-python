@@ -161,7 +161,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def limits(self, value: Union[Dict, TabularLimitSettings]) -> None:
         """Set the limits for the AutoML job.
 
-        :param value: Dict or TabularLimitSettings
+        :param value: typing.Dict or TabularLimitSettings
         :type value: typing.Union[typing.Dict, TabularLimitSettings]
         :raises ValidationException: Expected a dictionary for limit settings.
         """
@@ -182,7 +182,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def training(self) -> TrainingSettings:
         """Get the training settings for the AutoML job.
 
-        :return: training settings for the AutoML job
+        :return: Training settings for the AutoML job.
         :rtype: TrainingSettings
         """
         return self._training
@@ -191,7 +191,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def training(self, value: Union[Dict, TrainingSettings]) -> None:
         """Set the training settings for the AutoML job.
 
-        :param value: Dict or TrainingSettings
+        :param value: typing.Dict or TrainingSettings
         :type value: typing.Union[typing.Dict, TrainingSettings]
         :raises ValidationException: Expected a dictionary for training settings.
         """
@@ -221,7 +221,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def featurization(self, value: Union[Dict, TabularFeaturizationSettings]) -> None:
         """Set the featurization settings for the AutoML job.
 
-        :param value: Dict or TabularFeaturizationSettings
+        :param value: typing.Dict or TabularFeaturizationSettings
         :type value: typing.Union[typing.Dict, TabularFeaturizationSettings]
         :raises ValidationException: Expected a dictionary for featurization settings
         """

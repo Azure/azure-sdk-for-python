@@ -14,6 +14,14 @@ class ImageLimitSettings(RestTranslatableMixin):
 
     :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to None
     :paramtype  max_concurrent_trials: typing.Optional[int]
+
+        .. tip::
+            It's a good practice to match max_concurrent_trials count with the number of nodes in the cluster.
+
+        .. note::
+            The number of concurrent runs is gated on the resources available in the specified compute target.
+            Ensure that the compute target has the available resources for the desired concurrency.
+
     :keyword max_trials: Represents the maximum number of trials (children jobs) that would be executed in parallel.
     :paramtype  max_trials: typing.Optional[int]
     :keyword timeout_minutes: AutoML job timeout, defaults to None
@@ -27,18 +35,10 @@ class ImageLimitSettings(RestTranslatableMixin):
 
     .. remarks::
 
-        ImageLimitSettings is an optional configuration method to configure limits parameters such as timeouts etc::
+        ImageLimitSettings is an optional configuration method to configure limits parameters such as timeouts etc.
 
 
-    .. tip::
-        It's a good practice to match max_concurrent_trials count with the number of nodes in the cluster.
-
-    .. note::
-        The number of concurrent runs is gated on the resources available in the specified compute target.
-        Ensure that the compute target has the available resources for the desired concurrency.
-
-
-    **An example showing how to use set_limits() function parameters.**
+    ** Example usage **
 
     .. code-block:: python
         :caption: Configuration of ImageLimitSettings

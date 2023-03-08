@@ -24,8 +24,6 @@ from azure.ai.ml.entities._util import load_from_dict
 class ClassificationJob(AutoMLTabular):
     """Configuration for AutoML Classification Job.
 
-    Initialize a new AutoML Classification task.
-
     :keyword primary_metric: The primary metric to use for optimization, defaults to None
     :paramtype primary_metric: typing.Optional[str]
     :keyword positive_label: Positive label for binary metrics calculation, defaults to None
@@ -37,7 +35,7 @@ class ClassificationJob(AutoMLTabular):
     :keyword limits: limits settings. Defaults to None.
     :paramtype limits: typing.Optional[TabularLimitSettings]
     :keyword training: training settings. Defaults to None.
-    :paramtype training: typing.Optional[TrainingSettings]
+    :paramtype training: typing.Optional[~azure.ai.ml.entities._job.automl.training_settings.TrainingSettings]
     :return: An instance of ClassificationJob object.
     :rtype: ~azure.ai.ml.entities.automl.ClassificationJob
     :raises ValueError: If primary_metric is not a valid primary metric
@@ -105,9 +103,9 @@ class ClassificationJob(AutoMLTabular):
 
     @primary_metric.setter
     def primary_metric(self, value: Union[str, ClassificationPrimaryMetrics]):
-        """The primary metric to use for optimization.
+        """The primary metric to use for optimization setter.
 
-        :param value: The primary metric to use for optimization.
+        :param value: Primary metric to use for optimization.
         :type value: typing.Union[str, ClassificationPrimaryMetrics]
         """
         # TODO: better way to do this
@@ -122,10 +120,11 @@ class ClassificationJob(AutoMLTabular):
 
     @property
     def training(self) -> ClassificationTrainingSettings:
-        """Training settings.
+        """Training Settings for AutoML Classification Job.
 
-        :return: Training settings.
-        :rtype: ClassificationTrainingSettings
+        :return: Training settings used for AutoML Classification Job.
+        :rtype: ~azure.ai.ml.entities._job.automl.training_settings.
+            ClassificationTrainingSettings
         """
         return self._training or ClassificationTrainingSettings()
 
