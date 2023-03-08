@@ -63,11 +63,11 @@ directive:
     $["x-ms-client-name"] = "SipTrunkInternal";
 ```
 
-### Directive renaming "TrunkRoute" model to "SipTrunkRoute"
+### Directive renaming "TrunkRoute" model to "SipTrunkRouteInternal"
 ``` yaml
 directive:
   from: swagger-document
   where: "$.definitions.TrunkRoute"
   transform: >
-    $["x-ms-client-name"] = "SipTrunkRoute";
+    $["x-ms-client-name"] = "SipTrunkRouteInternal";
 ```

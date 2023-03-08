@@ -9,11 +9,11 @@ from urllib.parse import urlparse
 
 from azure.core.tracing.decorator import distributed_trace
 
-from._models import SipTrunk
+from._models import SipTrunk, SipTrunkRoute
 from ._generated.models import (
     SipConfiguration,
-    SipTrunkRoute,
-    SipTrunkInternal
+    SipTrunkInternal,
+    SipTrunkRouteInternal
 )
 from ._generated._client import SIPRoutingService
 from .._shared.utils import (
@@ -178,7 +178,7 @@ class SipRoutingClient(object):
         config = self._rest_service.sip_routing.get(
             **kwargs
         )
-        return config.routes
+        return [SipTrunkRoute(description=x.description,name=x.name,number_pattern=x.number_pattern,trunks=x.trunks) for x in config.routes]
 
     @distributed_trace
     def set_trunks(
@@ -228,8 +228,9 @@ class SipRoutingClient(object):
         if routes is None:
             raise ValueError("Parameter 'routes' must not be None.")
 
+        routes_internal = [SipTrunkRouteInternal(description=x.description,name=x.name,number_pattern=x.number_pattern,trunks=x.trunks) for x in routes]     
         self._rest_service.sip_routing.update(
-            body=SipConfiguration(routes=routes), **kwargs
+            body=SipConfiguration(routes=routes_internal), **kwargs
         )
 
     def _list_trunks_(self, **kwargs):

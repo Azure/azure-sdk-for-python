@@ -104,7 +104,8 @@ class SipConfiguration(_serialization.Model):
     :vartype trunks: dict[str,
      ~azure.communication.phonenumbers.siprouting.models.SipTrunkInternal]
     :ivar routes: Trunk routes for routing calls.
-    :vartype routes: list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRoute]
+    :vartype routes:
+     list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRouteInternal]
     """
 
     _validation = {
@@ -113,14 +114,14 @@ class SipConfiguration(_serialization.Model):
 
     _attribute_map = {
         "trunks": {"key": "trunks", "type": "{SipTrunkInternal}"},
-        "routes": {"key": "routes", "type": "[SipTrunkRoute]"},
+        "routes": {"key": "routes", "type": "[SipTrunkRouteInternal]"},
     }
 
     def __init__(
         self,
         *,
         trunks: Optional[Dict[str, "_models.SipTrunkInternal"]] = None,
-        routes: Optional[List["_models.SipTrunkRoute"]] = None,
+        routes: Optional[List["_models.SipTrunkRouteInternal"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -129,7 +130,8 @@ class SipConfiguration(_serialization.Model):
         :paramtype trunks: dict[str,
          ~azure.communication.phonenumbers.siprouting.models.SipTrunkInternal]
         :keyword routes: Trunk routes for routing calls.
-        :paramtype routes: list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRoute]
+        :paramtype routes:
+         list[~azure.communication.phonenumbers.siprouting.models.SipTrunkRouteInternal]
         """
         super().__init__(**kwargs)
         self.trunks = trunks
@@ -162,7 +164,7 @@ class SipTrunkInternal(_serialization.Model):
         self.sip_signaling_port = sip_signaling_port
 
 
-class SipTrunkRoute(_serialization.Model):
+class SipTrunkRouteInternal(_serialization.Model):
     """Represents a trunk route for routing calls.
 
     All required parameters must be populated in order to send to Azure.

@@ -12,8 +12,7 @@ from sip_routing_helper import get_unique_fqdn, assert_trunks_are_equal, assert_
 import os
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
-from azure.communication.phonenumbers.siprouting._generated.models import SipTrunkRoute
-from azure.communication.phonenumbers.siprouting._models import SipTrunk
+from azure.communication.phonenumbers.siprouting._models import SipTrunk, SipTrunkRoute
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
 SKIP_UPDATE_TRUNKS_TESTS = os.getenv("COMMUNICATION_SKIP_TRUNKS_LIVE_TEST", "false") == "true"
