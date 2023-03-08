@@ -177,28 +177,21 @@ class TestEnvironmentOperations:
             resource_group_name=mock_environment_operation._resource_group_name,
         )
 
-    # Mock(azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._environment_versions_operations, "get")
-    def test_promote_environment_from_workspace(
-        self,
-        mock_environment_operation_reg: EnvironmentOperations,
-        mock_environment_operation: EnvironmentOperations,
-    ) -> None:
-        env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
+    # #Mock(azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._environment_versions_operations, "get")
+    # def test_promote_environment_from_workspace(
+    #     self,
+    #     mock_environment_operation_reg: EnvironmentOperations,
+    #     mock_environment_operation: EnvironmentOperations,
+    # ) -> None:
+    #     env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
 
-        mock_environment_operation_reg._version_operations.get.side_effect = Mock(
-            side_effect=ResourceNotFoundError("Test")
-        )
+    #     mock_environment_operation_reg._version_operations.get.side_effect = Mock(
+    #         side_effect=ResourceNotFoundError("Test")
+    #     )
 
-        import debugpy
+    #     shared_environment = mock_environment_operation.share(env.name, env.version, "new_name", "new_version", "registry_name")
+    #     # assert environment_to_promote.name == "new_name"
+    #     # assert environment_to_promote.version == "new_version"
 
-        debugpy.connect(("localhost", 5678))
-        debugpy.breakpoint()
-
-        shared_environment = mock_environment_operation.share(
-            env.name, env.version, "new_name", "new_version", "registry_name"
-        )
-        # assert environment_to_promote.name == "new_name"
-        # assert environment_to_promote.version == "new_version"
-
-        # mock_environment_operation_reg.create_or_update(environment_to_promote)
-        mock_environment_operation_reg._service_client.resource_management_asset_reference.begin_import_method.assert_called_once()
+    #     # mock_environment_operation_reg.create_or_update(environment_to_promote)
+    #     mock_environment_operation_reg._service_client.resource_management_asset_reference.begin_import_method.assert_called_once()

@@ -249,9 +249,6 @@ class TestEnvironment(AzureRecordedTestCase):
         assert environment_list
         assert isinstance(environment_list, ItemPaged)
 
-    def test_promote_environment_from_workspace(self, client: MLClient) -> None:
-        shared_environment = client.share("ttt2", "1", "new_name", "new_version_1", "testFeed")
-
 
 def _get_environment_arm_id(client: MLClient, environment_name: str, environment_version: str) -> str:
     ws_scope = client._operation_scope

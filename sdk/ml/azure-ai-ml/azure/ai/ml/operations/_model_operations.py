@@ -442,7 +442,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Model.Share", ActivityType.PUBLICAPI)
     def share(self, name, version, share_with_name, share_with_version, registry_name) -> Model:
-        """Share a model asset.
+        """Share a model asset from workspace to registry.
 
         :param name: Name of model asset.
         :type name: str
