@@ -51,8 +51,10 @@ def _validate_spark_configurations(obj):
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if obj.executor_instances and (obj.executor_instances > obj.dynamic_allocation_max_executors or
-                                       obj.executor_instances < obj.dynamic_allocation_min_executors):
+        if obj.executor_instances and (
+            obj.executor_instances > obj.dynamic_allocation_max_executors
+            or obj.executor_instances < obj.dynamic_allocation_min_executors
+        ):
             msg = (
                 "Executor instances must be a valid non-negative integer and must be between "
                 "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
