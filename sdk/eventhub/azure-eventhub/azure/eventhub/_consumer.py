@@ -157,7 +157,7 @@ class EventHubConsumer(
             auth=auth,
             network_trace=self._client._config.network_tracing,  # pylint:disable=protected-access
             link_credit=self._prefetch,
-            link_properties=self._link_properties,
+            link_properties=dict(self._link_properties),
             timeout=self._timeout,
             idle_timeout=self._idle_timeout,
             retry_policy=self._retry_policy,
