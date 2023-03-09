@@ -17,7 +17,10 @@ from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outpu
 from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabular
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
-from azure.ai.ml.entities._job.automl.training_settings import ClassificationTrainingSettings
+from azure.ai.ml.entities._job.automl.training_settings import (  # noqa: F401 # pylint: disable=unused-import
+    ClassificationTrainingSettings,
+    TrainingSettings,
+)
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -35,7 +38,7 @@ class ClassificationJob(AutoMLTabular):
     :keyword limits: limits settings. Defaults to None.
     :paramtype limits: typing.Optional[TabularLimitSettings]
     :keyword training: training settings. Defaults to None.
-    :paramtype training: typing.Optional[~azure.ai.ml.entities._job.automl.training_settings.TrainingSettings]
+    :paramtype training: typing.Optional[TrainingSettings]
     :return: An instance of ClassificationJob object.
     :rtype: ~azure.ai.ml.entities.automl.ClassificationJob
     :raises ValueError: If primary_metric is not a valid primary metric
@@ -123,8 +126,7 @@ class ClassificationJob(AutoMLTabular):
         """Training Settings for AutoML Classification Job.
 
         :return: Training settings used for AutoML Classification Job.
-        :rtype: ~azure.ai.ml.entities._job.automl.training_settings.
-            ClassificationTrainingSettings
+        :rtype: ClassificationTrainingSettings
         """
         return self._training or ClassificationTrainingSettings()
 
