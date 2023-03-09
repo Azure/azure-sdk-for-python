@@ -4,11 +4,11 @@
 
 ### Features Added
 
-- Added new enum values to SystemEventNames related to Azure Communication Services, DataBox and ApiManagementGateway APIs.
+- Added new enum values to `SystemEventNames` related to Azure Communication Services, DataBox and ApiManagementGateway APIs.
 
 ### Bugs Fixed
 
-- SystemEventNames enums for APIManagement were incorrectly capitalized, changed Api to API.
+- `SystemEventNames` enums for APIManagement were incorrectly capitalized, changed `Api` to `API`.
 
 ## 4.9.1 (2022-11-08)
 
