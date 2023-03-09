@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Enable AAD Credentials
+    ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
+
 ### Breaking Changes
 
 ### Bugs Fixed
