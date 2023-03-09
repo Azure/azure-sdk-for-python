@@ -141,7 +141,8 @@ class StartRecordingOptions(object):
                                              recording_content_type=self.recording_content_type,
                                              recording_channel_type=self.recording_channel_type,
                                              recording_format_type=self.recording_format_type,
-                                             audio_channel_participant_ordering=audio_channel_participant_ordering_list
+                                             audio_channel_participant_ordering=audio_channel_participant_ordering_list,
+                                             recording_storage_type=self.recording_storage_type
                                              )
 
 
