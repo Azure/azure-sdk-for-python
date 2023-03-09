@@ -204,7 +204,6 @@ class TestCommandJob(AzureRecordedTestCase):
         len(new_result.inputs) == 3
         assert result.display_name == new_result.display_name
 
-    @pytest.mark.skip(reason="Task 1791832: Inefficient, causing testing pipeline to time out.")
     @pytest.mark.timeout(900)
     @pytest.mark.e2etest
     def test_command_job_local(self, randstr: Callable[[], str], client: MLClient) -> None:
@@ -217,7 +216,7 @@ class TestCommandJob(AzureRecordedTestCase):
 
         params_override = [{"name": job_name}]
         job = load_job(
-            source="./tests/test_configs/command_job/local_job.yaml",
+            source="D:/T/Git/azure-sdk-for-python/sdk/ml/azure-ai-ml/tests/test_configs/command_job/local_job.yaml",
             params_override=params_override,
         )
         command_job: CommandJob = client.jobs.create_or_update(job=job)
