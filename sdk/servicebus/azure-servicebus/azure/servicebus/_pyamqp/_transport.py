@@ -716,7 +716,11 @@ class WebSocketTransport(_AbstractTransport):
                 WebSocketTimeoutException,
                 WebSocketConnectionClosedException
             )
-
+        except ImportError:
+            raise ImportError(
+                "Please install websocket-client library to use sync websocket transport."
+            )
+        try:
             self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
@@ -741,10 +745,6 @@ class WebSocketTransport(_AbstractTransport):
             _LOGGER.info("Websocket connection failed: %r", e, extra=self.network_trace_params)
             self.close()
             raise
-        except ImportError:
-            raise ValueError(
-                "Please install websocket-client library to use websocket transport."
-            )
 
     def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""

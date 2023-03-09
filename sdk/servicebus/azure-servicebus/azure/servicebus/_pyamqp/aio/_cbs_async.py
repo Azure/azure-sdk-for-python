@@ -6,6 +6,7 @@
 
 import logging
 from datetime import datetime
+from typing import Optional
 
 from ..utils import utc_now, utc_from_timestamp
 from ._management_link_async import ManagementLink
@@ -61,8 +62,9 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         self.state = CbsState.CLOSED
         self.auth_state = CbsAuthState.IDLE
 
-    async def _put_token(self, token, token_type, audience, expires_on=None):
-        # type: (str, str, str, datetime) -> None
+    async def _put_token(
+            self, token: str, token_type: str, audience: str, expires_on: Optional[datetime] = None
+    ) -> None:
         message = Message(  # type: ignore # TODO: missing positional args header, etc.
             value=token,
             properties=Properties(message_id=self._mgmt_link.next_message_id),  # type: ignore
@@ -214,9 +216,14 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             self._token = access_token.token.decode()
         except AttributeError:
             self._token = access_token.token
+        try:
+            token_type = self._auth.token_type.decode()
+        except AttributeError:
+            token_type = self._auth.token_type
+
         self._token_put_time = int(utc_now().timestamp())
         await self._put_token(
-            self._token, self._auth.token_type, self._auth.audience, utc_from_timestamp(self._expires_on)
+            self._token, token_type, self._auth.audience, utc_from_timestamp(self._expires_on)
         )
 
     async def handle_token(self):
