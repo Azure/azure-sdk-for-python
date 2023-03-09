@@ -173,15 +173,13 @@ class KeyVaultSetting(object):
     """A Key Vault setting.
 
     :ivar str name: The name of the account setting.
-    :ivar value: The value of the account setting.
-    :vartype value: str or bool
-    :ivar type: The type specifier of the value.
-    :vartype type: str or KeyVaultSettingType or None
+    :ivar str value: The value of the account setting.
+    :ivar setting_type: The type specifier of the value.
+    :vartype setting_type: str or KeyVaultSettingType or None
     """
 
     def __init__(
         self,
-        *,
         name: str,
         value: Union[str, bool],
         setting_type: Optional[Union[str, KeyVaultSettingType]] = None,
@@ -190,7 +188,7 @@ class KeyVaultSetting(object):
         self.name = name
         self.value = value if isinstance(value, str) else str(value)  # `value` is stored as a string
         if setting_type == KeyVaultSettingType.BOOLEAN:
-            self.setting_type = KeyVaultSettingType.BOOLEAN
+            self.setting_type: Optional[Union[str, KeyVaultSettingType]] = KeyVaultSettingType.BOOLEAN
         else:
             self.setting_type = setting_type.lower() if isinstance(setting_type, str) else setting_type
 
@@ -204,12 +202,12 @@ class KeyVaultSetting(object):
             self.value = self.value.lower()
 
     def getboolean(self) -> bool:
-        """Gets the value of the account setting as a boolean if the `setting_type` is KeyVaultSettingType.BOOLEAN.
+        """Gets the account setting value as a boolean if the ``setting_type`` is ``KeyVaultSettingType.BOOLEAN``.
 
         :returns: The account setting value as a boolean.
         :rtype: bool
 
-        :raises: ValueError if the `setting_type` is not boolean or the value cannot be represented as a boolean.
+        :raises: ValueError if the ``setting_type`` is not boolean or the value cannot be represented as a boolean.
         """
         if self.setting_type == KeyVaultSettingType.BOOLEAN:
             if self.value == "true":
