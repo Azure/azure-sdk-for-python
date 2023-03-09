@@ -1,0 +1,369 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs?api-version=2023-03-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "1056",
+        "Content-Type": "application/json",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-health-insights-ClinicalMatching/1.0.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "configuration": {
+          "clinicalTrials": {
+            "registryFilters": [
+              {
+                "conditions": [
+                  "non small cell lung cancer (nsclc)"
+                ],
+                "sources": [
+                  "clinicaltrials_gov"
+                ],
+                "recruitmentStatuses": [
+                  "recruiting"
+                ],
+                "facilityLocations": [
+                  {
+                    "city": "gilbert",
+                    "state": "arizona",
+                    "country": "United States"
+                  }
+                ]
+              }
+            ]
+          },
+          "includeEvidence": true
+        },
+        "patients": [
+          {
+            "id": "patient1",
+            "info": {
+              "sex": "male",
+              "birthDate": "1961-04-25T09:54:29.5210127\u002B00:00",
+              "clinicalInfo": [
+                {
+                  "system": "http://www.nlm.nih.gov/research/umls",
+                  "code": "C0032181",
+                  "name": "Platelet count",
+                  "value": "250000"
+                },
+                {
+                  "system": "http://www.nlm.nih.gov/research/umls",
+                  "code": "C0002965",
+                  "name": "Unstable Angina",
+                  "value": "true"
+                },
+                {
+                  "system": "http://www.nlm.nih.gov/research/umls",
+                  "code": "C1522449",
+                  "name": "Radiotherapy",
+                  "value": "false"
+                },
+                {
+                  "system": "http://www.nlm.nih.gov/research/umls",
+                  "code": "C0242957",
+                  "name": "GeneOrProtein-Expression",
+                  "value": "Negative;EntityType:GENEORPROTEIN-EXPRESSION"
+                },
+                {
+                  "system": "http://www.nlm.nih.gov/research/umls",
+                  "code": "C1300072",
+                  "name": "cancer stage",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "d47aef12-2bd1-4a47-a0da-239c1de6ab2b",
+        "Content-Length": "0",
+        "Date": "Mon, 06 Mar 2023 15:34:26 GMT",
+        "Operation-Location": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs/b7263d15-e9f5-4116-ab0f-904d1a6257fa?api-version=2023-03-01-preview",
+        "Retry-After": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs/b7263d15-e9f5-4116-ab0f-904d1a6257fa?api-version=2023-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-health-insights-ClinicalMatching/1.0.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "267d83df-294e-4e41-9f72-adf13dddd464",
+        "Content-Length": "199",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 06 Mar 2023 15:34:26 GMT",
+        "Retry-After": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "jobId": "b7263d15-e9f5-4116-ab0f-904d1a6257fa",
+        "createdDateTime": "2023-03-06T15:34:26Z",
+        "expirationDateTime": "2023-03-06T16:34:26Z",
+        "lastUpdateDateTime": "2023-03-06T15:34:26Z",
+        "status": "notStarted"
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs/b7263d15-e9f5-4116-ab0f-904d1a6257fa?api-version=2023-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-health-insights-ClinicalMatching/1.0.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "26f7b342-c674-4ffb-81bb-d0c012c591bb",
+        "Content-Length": "196",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 06 Mar 2023 15:34:28 GMT",
+        "Retry-After": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "jobId": "b7263d15-e9f5-4116-ab0f-904d1a6257fa",
+        "createdDateTime": "2023-03-06T15:34:26Z",
+        "expirationDateTime": "2023-03-06T16:34:26Z",
+        "lastUpdateDateTime": "2023-03-06T15:34:26Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs/b7263d15-e9f5-4116-ab0f-904d1a6257fa?api-version=2023-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-health-insights-ClinicalMatching/1.0.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d4e95d1b-db8a-4851-bc36-a977a2b6464f",
+        "Content-Length": "196",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 06 Mar 2023 15:34:29 GMT",
+        "Retry-After": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "jobId": "b7263d15-e9f5-4116-ab0f-904d1a6257fa",
+        "createdDateTime": "2023-03-06T15:34:26Z",
+        "expirationDateTime": "2023-03-06T16:34:26Z",
+        "lastUpdateDateTime": "2023-03-06T15:34:26Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs/b7263d15-e9f5-4116-ab0f-904d1a6257fa?api-version=2023-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-health-insights-ClinicalMatching/1.0.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "e71a79a3-971e-40dd-bc82-7215eb10df98",
+        "Content-Length": "196",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 06 Mar 2023 15:34:30 GMT",
+        "Retry-After": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "jobId": "b7263d15-e9f5-4116-ab0f-904d1a6257fa",
+        "createdDateTime": "2023-03-06T15:34:26Z",
+        "expirationDateTime": "2023-03-06T16:34:26Z",
+        "lastUpdateDateTime": "2023-03-06T15:34:26Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs/b7263d15-e9f5-4116-ab0f-904d1a6257fa?api-version=2023-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-health-insights-ClinicalMatching/1.0.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "7269071d-4fc0-416a-8237-83cc30a1a1b4",
+        "Content-Length": "196",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 06 Mar 2023 15:34:31 GMT",
+        "Retry-After": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "jobId": "b7263d15-e9f5-4116-ab0f-904d1a6257fa",
+        "createdDateTime": "2023-03-06T15:34:26Z",
+        "expirationDateTime": "2023-03-06T16:34:26Z",
+        "lastUpdateDateTime": "2023-03-06T15:34:26Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs/b7263d15-e9f5-4116-ab0f-904d1a6257fa?api-version=2023-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-health-insights-ClinicalMatching/1.0.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "c4428247-7d19-4b0c-880f-080da4452b6c",
+        "Content-Length": "196",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 06 Mar 2023 15:34:33 GMT",
+        "Retry-After": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "jobId": "b7263d15-e9f5-4116-ab0f-904d1a6257fa",
+        "createdDateTime": "2023-03-06T15:34:26Z",
+        "expirationDateTime": "2023-03-06T16:34:26Z",
+        "lastUpdateDateTime": "2023-03-06T15:34:26Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs/b7263d15-e9f5-4116-ab0f-904d1a6257fa?api-version=2023-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-health-insights-ClinicalMatching/1.0.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "66e767ae-51c3-412c-a20d-24e656378cb9",
+        "Content-Length": "196",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 06 Mar 2023 15:34:34 GMT",
+        "Retry-After": "1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "jobId": "b7263d15-e9f5-4116-ab0f-904d1a6257fa",
+        "createdDateTime": "2023-03-06T15:34:26Z",
+        "expirationDateTime": "2023-03-06T16:34:26Z",
+        "lastUpdateDateTime": "2023-03-06T15:34:26Z",
+        "status": "running"
+      }
+    },
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//healthinsights/trialmatcher/jobs/b7263d15-e9f5-4116-ab0f-904d1a6257fa?api-version=2023-03-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-health-insights-ClinicalMatching/1.0.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "c1e20b50-d504-488a-8301-1bb0a7103860",
+        "Content-Length": "1038",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 06 Mar 2023 15:34:35 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "results": {
+          "patients": [
+            {
+              "id": "patient1",
+              "inferences": [
+                {
+                  "type": "trialEligibility",
+                  "evidence": [
+                    {
+                      "eligibilityCriteriaEvidence": "Inclusion: Has a radiation therapy plan approved by the central radiation therapy quality assurance vendor",
+                      "patientInfoEvidence": {
+                        "system": "http://www.nlm.nih.gov/research/umls",
+                        "code": "C1522449",
+                        "name": "Radiotherapy",
+                        "value": "false"
+                      },
+                      "importance": 0.0
+                    },
+                    {
+                      "eligibilityCriteriaEvidence": "Inclusion: Is able to receive SBRT and does not have an ultra-centrally located tumor",
+                      "patientInfoEvidence": {
+                        "system": "http://www.nlm.nih.gov/research/umls",
+                        "code": "C1522449",
+                        "name": "Radiotherapy",
+                        "value": "false"
+                      },
+                      "importance": 0.0
+                    }
+                  ],
+                  "id": "NCT03924869",
+                  "source": "clinicaltrials.gov",
+                  "value": "Ineligible",
+                  "confidenceScore": 0.0
+                }
+              ],
+              "neededClinicalInfo": []
+            }
+          ],
+          "modelVersion": "2023.130.1.0",
+          "knowledgeGraphLastUpdateDate": "01/11/2023"
+        },
+        "jobId": "b7263d15-e9f5-4116-ab0f-904d1a6257fa",
+        "createdDateTime": "2023-03-06T15:34:26Z",
+        "expirationDateTime": "2023-03-06T16:34:26Z",
+        "lastUpdateDateTime": "2023-03-06T15:34:35Z",
+        "status": "succeeded"
+      }
+    }
+  ],
+  "Variables": {}
+}

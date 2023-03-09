@@ -836,6 +836,12 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-ai-anomalydetector isodate<1.0.0,>=0.6.1
 #override azure-ai-anomalydetector azure-core<2.0.0,>=1.24.0
 #override azure-ai-anomalydetector typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-healthinsights-clinicalmatching isodate<1.0.0,>=0.6.1
+#override azure-healthinsights-cancerprofiling isodate<1.0.0,>=0.6.1
+#override azure-healthinsights-clinicalmatching azure-core<2.0.0,>=1.24.0
+#override azure-healthinsights-cancerprofiling azure-core<2.0.0,>=1.24.0
+#override azure-healthinsights-clinicalmatching typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-healthinsights-cancerprofiling typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-vmwarecloudsimple msrest>=0.7.1
 #override azure-developer-devcenter azure-core<2.0.0,>=1.24.0
 #override azure-developer-devcenter typing-extensions>=4.3.0; python_version<'3.8.0'
