@@ -493,7 +493,6 @@ class WorkspaceOperationsBase:
             materialization_identity = kwargs.get("materialization_identity", None)
             offline_store_target = kwargs.get("offline_store_target", None)
 
-            print("offline !!", offline_store_target)
             setup_materialization_store = offline_store_target and materialization_identity
 
         _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")

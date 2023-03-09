@@ -8,9 +8,10 @@
 - Added support for registering named asset from job output or node output by specifying name and version settings.
 - Added support for feature store operations
 - Removed Experimental Tag from Image Metadata on Compute Instances.
-- Added support for featureset and featurestore_entity operations.
+- Added support for feature-set and feature-store-entity operations.
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline job
+- Added support for serverless compute in command, automl and sweep job
 
 ### Bugs Fixed
 

@@ -115,6 +115,12 @@ config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_
 
 ## Next steps
 
+Check out our Django and Flask examples to see how to use the provider in a web application.
+
+### [Django](https://github.com/Azure/AppConfiguration/tree/main/examples/Python/python-django-webapp-sample)
+
+### [Flask](https://github.com/Azure/AppConfiguration/tree/main/examples/Python/python-flask-webapp-sample)
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require
