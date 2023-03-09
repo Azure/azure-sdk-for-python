@@ -13,7 +13,7 @@ from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._chat_thread_client import ChatThreadClient
 from ._shared.user_credential import CommunicationTokenCredential
 from ._generated import AzureCommunicationChatService
-# from ._generated.models import CreateChatThreadRequest
+from ._generated.models import CreateChatThreadRequest
 from ._models import (
     ChatThreadProperties,
     CreateChatThreadResult
