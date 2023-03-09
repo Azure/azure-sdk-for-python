@@ -5,7 +5,7 @@
 from enum import Enum
 from typing import Dict
 
-from azure.core import CaseInsensitiveEnumMeta
+from azure.core import CaseInsensitiveEnumMeta  # type: ignore[attr-defined]
 
 
 class OpenTelemetrySchemaVersion(
