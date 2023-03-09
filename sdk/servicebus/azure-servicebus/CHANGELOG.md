@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed a bug where asynchronous method to add distributed tracing attributes was not being awaited (Issue #28738).
 
 ### Other Changes
 

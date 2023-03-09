@@ -216,7 +216,7 @@ class ClientBaseAsync(ClientBase):
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         uamqp_transport = kwargs.get("uamqp_transport", False)
-        if uamqp_transport and not UamqpTransportAsync:
+        if uamqp_transport and UamqpTransportAsync is None:
             raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
         self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         if isinstance(credential, AzureSasCredential):

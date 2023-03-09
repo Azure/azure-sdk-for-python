@@ -481,6 +481,7 @@ class FeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DOUBLE = "Double"
     BINARY = "Binary"
     DATETIME = "Datetime"
+    BOOLEAN = "Boolean"
 
 class FeatureLags(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Flag for generating lags for the numeric features.

@@ -21,8 +21,7 @@ class EnumInput(Input):
         description=None,
         **kwargs,
     ):
-        """Initialize an enum parameter, the options of an enum parameter are
-        the enum values.
+        """Initialize an enum parameter, the options of an enum parameter are the enum values.
 
         :param enum: Enum values.
         :type Union[EnumMeta, Sequence[str]]
@@ -54,8 +53,7 @@ class EnumInput(Input):
 
     @classmethod
     def _assert_enum_valid(cls, enum):
-        """Check whether the enum is valid and return the values of the
-        enum."""
+        """Check whether the enum is valid and return the values of the enum."""
         if isinstance(enum, EnumMeta):
             enum_values = [str(option.value) for option in enum]
         elif isinstance(enum, Iterable):

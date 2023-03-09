@@ -30,7 +30,7 @@ jobs:
       learning_rate: 1.8
       learning_rate_schedule: 'time-based'
     code: ./train_src
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     command: >-
       python train.py
       --training_data ${{inputs.training_data}}
@@ -48,7 +48,7 @@ jobs:
         path: ./data
       test_data:
         path: ./data
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     code: ./score_src
     command: >-
       python score.py
@@ -62,7 +62,7 @@ jobs:
     inputs:
       scoring_result:
         path: ./data
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
     #code: ./eval_src
     command: echo "hello world"
     #command: >-
