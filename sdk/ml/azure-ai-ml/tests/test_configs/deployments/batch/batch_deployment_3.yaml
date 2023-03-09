@@ -8,7 +8,7 @@ code_configuration:
 environment:
   conda_file: ../mnist/environment/conda.yml
   image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:latest
-compute: azureml:batch-cluster
+compute: azureml:cpu-cluster
 resources:
   instance_count: 1
 max_concurrency_per_instance: 2
