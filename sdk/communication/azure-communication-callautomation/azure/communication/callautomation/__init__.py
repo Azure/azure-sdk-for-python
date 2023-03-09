@@ -8,7 +8,10 @@ from ._models import (
     RecordingStateResponse,
     StartCallRecordingRequest,
     ServerCallLocator,
-    GroupCallLocator
+    GroupCallLocator,
+    CallInvite,
+    CommunicationIdentifier,
+    CommunicationUserIdentifier
 )
 from ._events import (
     AddParticipantSucceeded,
@@ -50,6 +53,9 @@ __all__ = [
     "PlayCanceled",
     "RecognizeCompleted",
     "RecognizeCanceled",
-    "RecognizeFailed"
+    "RecognizeFailed",
+    "CallInvite",
+    "CommunicationIdentifier",
+    "CommunicationUserIdentifier"
 ]
 __version__ = VERSION
