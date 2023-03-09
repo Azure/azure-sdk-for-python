@@ -27,7 +27,7 @@ _Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For mor
 Install the Azure Service Bus client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-servicebus
+pip install azure-servicebus==7.9.0b1
 ```
 
 ### Prerequisites:

@@ -106,7 +106,7 @@ If you do not have an existing Azure account, you may sign up for a free trial o
 
 1. Install the Azure Service Bus client library for Python with [pip](https://pypi.org/project/pip/):
 ```bash
-pip install azure-servicebus==7.9.0a1
+pip install azure-servicebus==7.9.0b1
 ```
 To run samples that utilize the Azure Active Directory for authentication, please install the `azure-identity` library:
 ```bash
