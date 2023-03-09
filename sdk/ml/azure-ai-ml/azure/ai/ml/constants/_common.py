@@ -197,6 +197,9 @@ class AzureMLResourceType(object):
     SCHEDULE = "schedules"
     REGISTRY = "registries"
     CONNECTIONS = "connections"
+    FEATURE_SET = "feature_sets"
+    FEATURE_STORE_ENTITY = "feature_store_entities"
+    FEATURE_STORE = "feature_store"
 
     NAMED_TYPES = {
         JOB,
@@ -207,7 +210,7 @@ class AzureMLResourceType(object):
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
 
 
 class ArmConstants(object):
@@ -357,6 +360,9 @@ class YAMLRefDocLinks:
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
     SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
     REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
+    FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
+    FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
+    FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:

@@ -21,6 +21,7 @@ omit_fields = [
     "properties.settings",
     "properties.jobs.*._source",
     "properties.jobs.*.componentId",
+    "jobs.*.component",
 ]
 
 
@@ -117,14 +118,52 @@ class TestIfElse(TestConditionalNodeInPipeline):
             },
         }
 
-    def test_if_else_invalid_case(self, client: MLClient) -> None:
+    def test_if_else_multiple_block(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        params_override = [{"name": randstr("name")}]
         my_job = load_job(
-            "./tests/test_configs/pipeline_jobs/control_flow/if_else/invalid_binding.yml",
+            "./tests/test_configs/pipeline_jobs/control_flow/if_else/multiple_block.yml",
+            params_override=params_override,
         )
-        with pytest.raises(ValidationException) as e:
-            my_job._validate(raise_error=True)
-        assert '"path": "jobs.conditionnode.true_block",' in str(e.value)
-        assert "'true_block' of dsl.condition has invalid binding expression:" in str(e.value)
+        created_pipeline = assert_job_cancel(my_job, client)
+
+        pipeline_job_dict = created_pipeline._to_dict()
+
+        pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
+        assert pipeline_job_dict["jobs"] == {
+            "conditionnode": {
+                "condition": "${{parent.jobs.result.outputs.output}}",
+                "false_block": "${{parent.jobs.node3}}",
+                "true_block": ["${{parent.jobs.node1}}", "${{parent.jobs.node2}}"],
+                "type": "if_else",
+            },
+            "node1": {"inputs": {"component_in_number": "1"}, "type": "command"},
+            "node2": {"inputs": {"component_in_number": "2"}, "type": "command"},
+            "node3": {"inputs": {"component_in_number": "3"}, "type": "command"},
+            "result": {"type": "command"},
+        }
+
+    def test_if_else_single_multiple_block(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        params_override = [{"name": randstr("name")}]
+        my_job = load_job(
+            "./tests/test_configs/pipeline_jobs/control_flow/if_else/single_multiple_block.yml",
+            params_override=params_override,
+        )
+        created_pipeline = assert_job_cancel(my_job, client)
+
+        pipeline_job_dict = created_pipeline._to_dict()
+
+        pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
+        assert pipeline_job_dict["jobs"] == {
+            "conditionnode": {
+                "condition": "${{parent.jobs.result.outputs.output}}",
+                "true_block": ["${{parent.jobs.node1}}", "${{parent.jobs.node2}}"],
+                "type": "if_else",
+            },
+            "node1": {"inputs": {"component_in_number": "1"}, "type": "command"},
+            "node2": {"inputs": {"component_in_number": "2"}, "type": "command"},
+            "node3": {"inputs": {"component_in_number": "3"}, "type": "command"},
+            "result": {"type": "command"},
+        }
 
 
 class TestDoWhile(TestConditionalNodeInPipeline):
@@ -177,11 +216,11 @@ def assert_foreach(client: MLClient, job_name, source, expected_node, yaml_node=
     assert yaml_job_dict["jobs"]["parallel_node"] == yaml_node
 
 
-# @pytest.mark.skipif(
-#     condition=is_live(),
-#     # TODO: reopen live test when parallel_for deployed to canary
-#     reason="parallel_for is not available in canary."
-# )
+@pytest.mark.skipif(
+    condition=is_live(),
+    # TODO: reopen live test when parallel_for deployed to canary
+    reason="parallel_for is not available in canary.",
+)
 class TestParallelFor(TestConditionalNodeInPipeline):
     def test_simple_foreach_string_item(self, client: MLClient, randstr: Callable):
         source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml"

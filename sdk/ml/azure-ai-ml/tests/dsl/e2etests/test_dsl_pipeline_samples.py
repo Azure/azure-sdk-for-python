@@ -363,7 +363,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_copy_2urifolder_job_with_builder_in_pipeline(self, client: MLClient) -> None:
@@ -372,7 +372,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_copy_mixtype_job_in_pipeline(self, client: MLClient) -> None:
@@ -381,7 +381,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_copy_urifile_job_in_pipeline(self, client: MLClient) -> None:
@@ -390,7 +390,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_copy_urifolder_job_in_pipeline(self, client: MLClient) -> None:
@@ -399,7 +399,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_import_filesystem_job_in_pipeline(self, client: MLClient) -> None:
@@ -408,7 +408,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_import_sql_database_job_in_pipeline(self, client: MLClient) -> None:
@@ -417,7 +417,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_import_snowflake_database_job_in_pipeline(self, client: MLClient) -> None:
@@ -426,7 +426,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_export_sql_database_job_in_pipeline(self, client: MLClient) -> None:
@@ -435,7 +435,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_multi_job_in_pipeline(self, client: MLClient) -> None:
@@ -444,4 +444,4 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
