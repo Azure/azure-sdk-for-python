@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import unittest
 
+from typing import TYPE_CHECKING, Any, Dict, Optional  # pylint: disable=unused-import
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.callautomation import (
     CallAutomationClient,

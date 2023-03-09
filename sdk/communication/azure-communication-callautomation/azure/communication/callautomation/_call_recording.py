@@ -14,7 +14,7 @@ class CallRecording(object):
     def __init__(
             self,
             call_recording_client,  # type: CallRecordingOperations
-        ): # type: (...) -> None
+        ):
 
         self._call_recording_client = call_recording_client
 
@@ -22,8 +22,7 @@ class CallRecording(object):
         self,
         start_recording_options: StartRecordingOptions,
         **kwargs
-    ):
-        # type: (...) -> RecordingStateResponse
+    ) -> RecordingStateResponse:
         """Start recording the call.
 
         :param start_recording_options: Required.
@@ -65,7 +64,6 @@ class CallRecording(object):
         recording_id: str,
         **kwargs
     ):
-        # type: (...) -> None
         """Stop recording the call.
 
         :param recording_id: The recording id. Required.
@@ -81,7 +79,6 @@ class CallRecording(object):
         recording_id: str,
         **kwargs
     ):
-        # type: (...) -> None
         """Pause recording the call.
 
         :param recording_id: The recording id. Required.
@@ -97,7 +94,6 @@ class CallRecording(object):
         recording_id: str,
         **kwargs
     ):
-        # type: (...) -> None
         """Resume recording the call.
 
         :param recording_id: The recording id. Required.
@@ -112,8 +108,7 @@ class CallRecording(object):
         self,
         recording_id: str,
         **kwargs
-    ):
-        # type: (...) -> RecordingStateResponse
+    ) -> RecordingStateResponse:
         """Get call recording properties.
 
         :param recording_id: The recording id. Required.
