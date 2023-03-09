@@ -1,3 +1,4 @@
+import platform
 from pathlib import Path
 from typing import Callable
 
@@ -225,7 +226,6 @@ class TestCommandJob(AzureRecordedTestCase):
         )
         command_job: CommandJob = client.jobs.create_or_update(job=job)
         assert command_job.name == job_name
-        # assert command_job.environment == "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert command_job.compute == "local"
         assert command_job.environment_variables[COMMON_RUNTIME_ENV_VAR] == "true"
 
