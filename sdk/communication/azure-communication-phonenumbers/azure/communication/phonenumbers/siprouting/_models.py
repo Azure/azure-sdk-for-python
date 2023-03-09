@@ -61,7 +61,7 @@ class SipTrunkRoute(object):
     ):
         """
         :keyword description: Gets or sets description of the route.
-        :paramtype description: str
+        :paramtype description: Optional[str]
         :keyword name: Gets or sets name of the route. Required.
         :paramtype name: str
         :keyword number_pattern: Gets or sets regex number pattern for routing calls. .NET regex format
@@ -71,7 +71,7 @@ class SipTrunkRoute(object):
         :paramtype number_pattern: str
         :keyword trunks: Gets or sets list of SIP trunks for routing calls. Trunks are represented as
          FQDN.
-        :paramtype trunks: list[str]
+        :paramtype trunks: Optional[List[str]]
         """
         self.description = kwargs.get('description', None)
         self.name = kwargs.get('name', None)
