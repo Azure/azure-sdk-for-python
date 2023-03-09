@@ -5,7 +5,7 @@
 # pylint: disable=unused-argument
 
 from typing import Optional
-from azure.ai.ml.entities._featurestore_entity.data_column_type import DataColumnType
+from azure.ai.ml.entities._feature_store_entity.data_column_type import DataColumnType
 
 
 class Feature(object):

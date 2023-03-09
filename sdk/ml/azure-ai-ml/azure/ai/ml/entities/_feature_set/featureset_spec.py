@@ -13,7 +13,7 @@ from azure.ai.ml._schema._feature_set.featureset_spec_schema import FeaturesetSp
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._featurestore_entity.data_column import DataColumn
+from azure.ai.ml.entities._feature_store_entity.data_column import DataColumn
 
 from .feature import Feature
 from .source_metadata import SourceMetadata

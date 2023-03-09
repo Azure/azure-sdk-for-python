@@ -139,9 +139,9 @@ from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
 from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.feature_store_settings import FeatureStoreSettings
-from ._featurestore_entity.featurestore_entity import FeaturestoreEntity
-from ._featurestore_entity.data_column import DataColumn
-from ._featurestore_entity.data_column_type import DataColumnType
+from ._feature_store_entity.feature_store_entity import FeatureStoreEntity
+from ._feature_store_entity.data_column import DataColumn
+from ._feature_store_entity.data_column_type import DataColumnType
 from ._feature_set.featureset_specification import FeaturesetSpecification
 from ._notification.notification import Notification
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
@@ -211,7 +211,7 @@ __all__ = [
     "ComputeRuntime",
     "FeatureStoreSettings",
     "FeatureSet",
-    "FeaturestoreEntity",
+    "FeatureStoreEntity",
     "MaterializationComputeResource",
     "MaterializationSettings",
     "MaterializationType",

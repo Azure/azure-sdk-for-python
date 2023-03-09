@@ -22,7 +22,7 @@ from azure.ai.ml._utils._asset_utils import (
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities import FeaturestoreEntity
+from azure.ai.ml.entities import FeatureStoreEntity
 from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -32,7 +32,7 @@ module_logger = ops_logger.module_logger
 
 
 @experimental
-class FeaturestoreEntityOperations(_ScopeDependentOperations):
+class FeatureStoreEntityOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -41,10 +41,10 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
 
-        super(FeaturestoreEntityOperations, self).__init__(operation_scope, operation_config)
+        super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
         # ops_logger.update_info(kwargs)
-        self._operation = service_client.featurestore_entity_versions
-        self._container_operation = service_client.featurestore_entity_containers
+        self._operation = service_client.feature_store_entity_versions
+        self._container_operation = service_client.feature_store_entity_containers
         self._service_client = service_client
         self._init_kwargs = kwargs
 
@@ -52,34 +52,34 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    # @monitor_with_activity(logger, "FeaturestoreEntity.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "FeatureStoreEntity.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
         name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-    ) -> ItemPaged[FeaturestoreEntity]:
-        """List the FeaturestoreEntity assets of the workspace.
+    ) -> ItemPaged[FeatureStoreEntity]:
+        """List the FeatureStoreEntity assets of the workspace.
 
-        :param name: Name of a specific FeaturestoreEntity asset, optional.
+        :param name: Name of a specific FeatureStoreEntity asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived FeaturestoreEntity assets.
+        :param list_view_type: View type for including/excluding (for example) archived FeatureStoreEntity assets.
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
-        :return: An iterator like instance of FeaturestoreEntity objects
-        :rtype: ~azure.core.paging.ItemPaged[FeaturestoreEntity]
+        :return: An iterator like instance of FeatureStoreEntity objects
+        :rtype: ~azure.core.paging.ItemPaged[FeatureStoreEntity]
         """
         if name:
             return self._operation.list(
                 workspace_name=self._workspace_name,
                 name=name,
-                cls=lambda objs: [FeaturestoreEntity._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: [FeatureStoreEntity._from_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
         return self._container_operation.list(
             workspace_name=self._workspace_name,
-            cls=lambda objs: [FeaturestoreEntity._from_container_rest_object(obj) for obj in objs],
+            cls=lambda objs: [FeatureStoreEntity._from_container_rest_object(obj) for obj in objs],
             list_view_type=list_view_type,
             **self._scope_kwargs,
         )
@@ -93,27 +93,27 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-    # @monitor_with_activity(logger, "FeaturestoreEntity.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> FeaturestoreEntity:
-        """Get the specified FeaturestoreEntity asset.
+    # @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> FeatureStoreEntity:
+        """Get the specified FeatureStoreEntity asset.
 
-        :param name: Name of FeaturestoreEntity asset.
+        :param name: Name of FeatureStoreEntity asset.
         :type name: str
-        :param version: Version of FeaturestoreEntity asset.
+        :param version: Version of FeatureStoreEntity asset.
         :type version: str
-        :param label: Label of the FeaturestoreEntity asset. (mutually exclusive with version)
+        :param label: Label of the FeatureStoreEntity asset. (mutually exclusive with version)
         :type label: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeaturestoreEntity cannot be successfully
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureStoreEntity cannot be successfully
             identified and retrieved. Details will be provided in the error message.
-        :return: FeaturestoreEntity asset object.
-        :rtype: ~azure.ai.ml.entities.FeaturestoreEntity
+        :return: FeatureStoreEntity asset object.
+        :rtype: ~azure.ai.ml.entities.FeatureStoreEntity
         """
         try:
             if version and label:
                 msg = "Cannot specify both version and label."
                 raise ValidationException(
                     message=msg,
-                    target=ErrorTarget.FEATURESTORE_ENTITY,
+                    target=ErrorTarget.FEATURE_STORE_ENTITY,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -126,36 +126,36 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
                 msg = "Must provide either version or label."
                 raise ValidationException(
                     message=msg,
-                    target=ErrorTarget.FEATURESTORE_ENTITY,
+                    target=ErrorTarget.FEATURE_STORE_ENTITY,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.MISSING_FIELD,
                 )
-            featurestore_entity_version_resource = self._get(name, version)
-            return FeaturestoreEntity._from_rest_object(featurestore_entity_version_resource)
+            feature_store_entity_version_resource = self._get(name, version)
+            return FeatureStoreEntity._from_rest_object(feature_store_entity_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    # @monitor_with_activity(logger, "FeaturestoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, featurestore_entity: FeaturestoreEntity) -> LROPoller[FeaturestoreEntity]:
-        """Create or update FeaturestoreEntity
+    # @monitor_with_activity(logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    def begin_create_or_update(self, feature_store_entity: FeatureStoreEntity) -> LROPoller[FeatureStoreEntity]:
+        """Create or update FeatureStoreEntity
 
-        :param featurestore_entity: FeaturestoreEntity definition.
-        :type featurestore_entity: FeaturestoreEntity
-        :return: An instance of LROPoller that returns a FeaturestoreEntity.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeaturestoreEntity]
+        :param feature_store_entity: FeatureStoreEntity definition.
+        :type feature_store_entity: FeatureStoreEntity
+        :return: An instance of LROPoller that returns a FeatureStoreEntity.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStoreEntity]
         """
-        featurestore_entity_resource = FeaturestoreEntity._to_rest_object(featurestore_entity)
+        feature_store_entity_resource = FeatureStoreEntity._to_rest_object(feature_store_entity)
 
         return self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
-            name=featurestore_entity.name,
-            version=featurestore_entity.version,
-            body=featurestore_entity_resource,
+            name=feature_store_entity.name,
+            version=feature_store_entity.version,
+            body=feature_store_entity_resource,
         )
 
-    # @monitor_with_activity(logger, "FeaturestoreEntity.Archive", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         *,
@@ -164,13 +164,13 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         label: Optional[str] = None,
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
-        """Archive a FeaturestoreEntity asset.
+        """Archive a FeatureStoreEntity asset.
 
-        :param name: Name of FeaturestoreEntity asset.
+        :param name: Name of FeatureStoreEntity asset.
         :type name: str
-        :param version: Version of FeaturestoreEntity asset.
+        :param version: Version of FeatureStoreEntity asset.
         :type version: str
-        :param label: Label of the FeaturestoreEntity asset. (mutually exclusive with version)
+        :param label: Label of the FeatureStoreEntity asset. (mutually exclusive with version)
         :type label: str
         :return: None
         """
@@ -185,7 +185,7 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "FeaturestoreEntity.Restore", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "FeatureStoreEntity.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         *,
@@ -194,13 +194,13 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
         label: Optional[str] = None,
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
-        """Restore an archived FeaturestoreEntity asset.
+        """Restore an archived FeatureStoreEntity asset.
 
-        :param name: Name of FeaturestoreEntity asset.
+        :param name: Name of FeatureStoreEntity asset.
         :type name: str
-        :param version: Version of FeaturestoreEntity asset.
+        :param version: Version of FeatureStoreEntity asset.
         :type version: str
-        :param label: Label of the FeaturestoreEntity asset. (mutually exclusive with version)
+        :param label: Label of the FeatureStoreEntity asset. (mutually exclusive with version)
         :type label: str
         :return: None
         """
@@ -215,7 +215,7 @@ class FeaturestoreEntityOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    def _get_latest_version(self, name: str) -> FeaturestoreEntity:
+    def _get_latest_version(self, name: str) -> FeatureStoreEntity:
         """Returns the latest version of the asset with the given name.
 
         Latest is defined as the most recently created, not the most

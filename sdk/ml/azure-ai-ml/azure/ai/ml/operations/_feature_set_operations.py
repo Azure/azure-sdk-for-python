@@ -121,7 +121,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
                 msg = "Cannot specify both version and label."
                 raise ValidationException(
                     message=msg,
-                    target=ErrorTarget.FEATURESET,
+                    target=ErrorTarget.FEATURE_SET,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -134,7 +134,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
                 msg = "Must provide either version or label."
                 raise ValidationException(
                     message=msg,
-                    target=ErrorTarget.FEATURESET,
+                    target=ErrorTarget.FEATURE_SET,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.MISSING_FIELD,
@@ -160,7 +160,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
         sas_uri = None
         featureset, _ = _check_and_upload_path(
-            artifact=featureset, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURESET
+            artifact=featureset, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURE_SET
         )
 
         featureset_resource = FeatureSet._to_rest_object(featureset)
@@ -253,7 +253,7 @@ def validate_and_get_feature_set_spec(featureset: FeatureSet) -> FeaturesetSpec:
             message=msg,
             no_personal_data_message=msg,
             error_type=ValidationErrorType.MISSING_FIELD,
-            target=ErrorTarget.FEATURESET,
+            target=ErrorTarget.FEATURE_SET,
             error_category=ErrorCategory.USER_ERROR,
         )
 
@@ -263,7 +263,7 @@ def validate_and_get_feature_set_spec(featureset: FeatureSet) -> FeaturesetSpec:
         raise ValidationException(
             message="No such directory: {}".format(featureset_spec_path),
             no_personal_data_message="No such directory",
-            target=ErrorTarget.FEATURESET,
+            target=ErrorTarget.FEATURE_SET,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
         )

@@ -1,6 +1,6 @@
 name: test-featurestore-entity
 version: "1"
-description: Yaml load test featurestore_entity
+description: Yaml load test feature_store_entity
 index_columns:
   - name: name,
     type: string

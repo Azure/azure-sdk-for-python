@@ -11,7 +11,7 @@ from azure.ai.ml._schema.core.schema import YamlFileSchema
 from .data_column_schema import DataColumnSchema
 
 
-class FeaturestoreEntitySchema(YamlFileSchema):
+class FeatureStoreEntitySchema(YamlFileSchema):
     name = fields.Str(required=True, allow_none=False)
     version = fields.Str(required=True, allow_none=False)
     index_columns = fields.List(NestedField(DataColumnSchema), required=True, allow_none=False)

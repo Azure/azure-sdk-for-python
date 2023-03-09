@@ -10,7 +10,7 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.core.schema import YamlFileSchema
-from azure.ai.ml._schema._featurestore_entity.data_column_schema import DataColumnSchema
+from azure.ai.ml._schema._feature_store_entity.data_column_schema import DataColumnSchema
 
 from .source_metadata_schema import SourceMetadataSchema
 from .delay_metadata_schema import DelayMetadataSchema
