@@ -13,6 +13,11 @@ certain operations in the Data Plane SDK.
 names for all operations made from that client. `allow_source_trailing_dot` will apply this same rule to source files
 when performing a rename or copy operation.
 
+## 12.11.1 (2023-03-08)
+
+### Bugs Fixed
+- Fixed "duplicate type signatures" MyPy error.
+
 ## 12.11.0 (2023-02-22)
 
 ### Features Added
