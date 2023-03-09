@@ -1364,8 +1364,8 @@ class TestDSLPipelineWithSpecificNodes:
         pipeline1 = pipeline(iris_data)
         result = pipeline1._validate()
         assert (
-            "jobs.node.conf" in result.error_messages
-            and result.error_messages["jobs.node.conf"]
+            "jobs.node" in result.error_messages
+            and result.error_messages["jobs.node"]
             == "Should not specify min or max executors when dynamic allocation is disabled."
         )
 
