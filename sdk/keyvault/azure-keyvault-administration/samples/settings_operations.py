@@ -4,7 +4,7 @@
 # ------------------------------------
 import os
 
-from azure.keyvault.administration import KeyVaultSettingsClient, KeyVaultSettingType
+from azure.keyvault.administration import KeyVaultSetting, KeyVaultSettingsClient, KeyVaultSettingType
 from azure.identity import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
@@ -26,9 +26,6 @@ from azure.identity import DefaultAzureCredential
 # 2. Update a setting (update_setting)
 # ----------------------------------------------------------------------------------------------------------
 
-from dotenv import load_dotenv
-load_dotenv()
-
 MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
 
 # Instantiate an access control client that will be used to call the service.
@@ -42,19 +39,18 @@ print("\n.. List Key Vault settings")
 settings = client.list_settings()
 boolean_setting = None
 for setting in settings:
-    if setting.type == KeyVaultSettingType.BOOLEAN:
+    if setting.setting_type == KeyVaultSettingType.BOOLEAN:
         boolean_setting = setting
-    print(f"{setting.name}: {setting.value} (type: {setting.type})")
+    print(f"{setting.name}: {setting.value} (type: {setting.setting_type})")
 
 # Now, let's flip the value of a boolean setting
-# KeyVaultSettingsClient.update_setting accepts booleans and strings, so we can send True or "True", for example
 print(f"\n.. Update value of {boolean_setting.name}")
-opposite_value = not boolean_setting.value
-updated_setting = client.update_setting(boolean_setting.name, opposite_value)
+opposite_value = KeyVaultSetting(name=boolean_setting.name, value=boolean_setting.value == "false")
+updated_setting = client.update_setting(opposite_value)
 print(f"{boolean_setting.name} updated successfully.")
 print(f"Old value: {boolean_setting.value}. New value: {updated_setting.value}")
 
 # Finally, let's restore the setting's old value
 print(f"\n.. Restore original value of {boolean_setting.name}")
-client.update_setting(boolean_setting.name, boolean_setting.value)
+client.update_setting(boolean_setting)
 print(f"{boolean_setting.name} updated successfully.")

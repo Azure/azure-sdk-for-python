@@ -173,7 +173,7 @@ class KeyVaultSetting(object):
     """A Key Vault setting.
 
     :ivar str name: The name of the account setting.
-    :ivar value: The value of the setting.
+    :ivar value: The value of the account setting.
     :vartype value: str or bool
     :ivar type: The type specifier of the value.
     :vartype type: str or KeyVaultSettingType or None
@@ -191,6 +191,10 @@ class KeyVaultSetting(object):
         # `value` needs to be a stored as a string
         self.value = value if isinstance(value, str) else str(value)
         self.setting_type = setting_type.lower() if isinstance(setting_type, str) else setting_type
+
+        # If a setting type isn't provided, set it based on `value`'s type (without inferring from the value itself)
+        if self.setting_type is None:
+            self.setting_type = KeyVaultSettingType.BOOLEAN if isinstance(value, bool) else None
 
         # If the setting is a boolean, lower-case the string for serialization
         if self.setting_type == KeyVaultSettingType.BOOLEAN:

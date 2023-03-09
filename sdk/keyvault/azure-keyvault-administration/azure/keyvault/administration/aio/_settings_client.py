@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Union
-
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -63,8 +61,8 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def update_setting(self, name: str, value: Union[bool, str], **kwargs) -> KeyVaultSetting:
-        """Updates a given account setting with the provided value.
+    async def update_setting(self, setting: KeyVaultSetting, **kwargs) -> KeyVaultSetting:
+        """Updates the named account setting.
 
         :param str name: The name of the account setting to update.
         :param value: The value to set.
@@ -75,11 +73,10 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         # If `value` is a string, we should send it as-is. Booleans need to be lower-cased
-        final_value = value if isinstance(value, str) else str(value).lower()
-        parameters = UpdateSettingsRequest(value=final_value)
+        parameters = UpdateSettingsRequest(value=setting.value)
         result = await self._client.update_settings(
             vault_base_url=self._vault_url,
-            setting_name=name,
+            setting_name=setting.name,
             parameters=parameters,
             **kwargs
         )

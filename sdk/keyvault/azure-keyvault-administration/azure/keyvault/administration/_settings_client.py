@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Union
-
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
@@ -63,23 +61,21 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def update_setting(self, name: str, value: Union[bool, str], **kwargs) -> KeyVaultSetting:
-        """Updates a given account setting with the provided value.
+    def update_setting(self, setting: KeyVaultSetting, **kwargs) -> KeyVaultSetting:
+        """Updates the named account setting.
 
-        :param str name: The name of the account setting to update.
-        :param value: The value to set.
-        :type value: bool or str
+        :param setting: A :class:`~azure.keyvault.administration.KeyVaultSetting` to update. The account setting with
+            the provided name will be updated to have the provided value.
+        :type setting: ~azure.keyvault.administration.KeyVaultSetting
 
         :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        # If `value` is a string, we should send it as-is. Booleans need to be lower-cased
-        final_value = value if isinstance(value, str) else str(value).lower()
-        parameters = UpdateSettingsRequest(value=final_value)
+        parameters = UpdateSettingsRequest(value=setting.value)
         result = self._client.update_settings(
             vault_base_url=self._vault_url,
-            setting_name=name,
+            setting_name=setting.name,
             parameters=parameters,
             **kwargs
         )

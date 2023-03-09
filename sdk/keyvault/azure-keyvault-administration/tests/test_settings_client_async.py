@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-from azure.keyvault.administration import ApiVersion
+from azure.keyvault.administration import ApiVersion, KeyVaultSetting, KeyVaultSettingType
 from azure.keyvault.administration.aio import KeyVaultSettingsClient
 from devtools_testutils.aio import recorded_by_proxy_async
 
@@ -22,7 +22,7 @@ class TestSettings(KeyVaultTestCase):
         default_settings = [setting async for setting in await client.list_settings()]
         assert len(default_settings)
         for setting in default_settings:
-            assert setting.name and setting.type and setting.value is not None
+            assert setting.name and setting.setting_type and setting.value is not None
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_7_4)
@@ -30,16 +30,18 @@ class TestSettings(KeyVaultTestCase):
     @recorded_by_proxy_async
     async def test_update_settings(self, client: KeyVaultSettingsClient, **kwargs):
         setting = await client.get_setting("AllowKeyManagementOperationsThroughARM")
-        assert setting.name and setting.type and setting.value is not None
+        assert setting.name and setting.setting_type and setting.value
 
         # Set value by using a bool
-        opposite_value = not setting.value
-        updated = await client.update_setting("AllowKeyManagementOperationsThroughARM", opposite_value)
+        opposite_value = KeyVaultSetting(
+            name=setting.name, value=setting.value == "false", setting_type=KeyVaultSettingType.BOOLEAN
+        )
+        updated = await client.update_setting(opposite_value)
         assert updated.name == setting.name
-        assert updated.value != setting.value
+        assert updated.value == "true" if setting.value == "false" else updated.value == "false"
 
         # Set value by using a string
-        new_opposite = "false" if updated.value else "true"
-        new_updated = await client.update_setting("AllowKeyManagementOperationsThroughARM", new_opposite)
+        new_opposite = KeyVaultSetting(name=updated.name, value="false" if updated.value == "true" else "true")
+        new_updated = await client.update_setting(new_opposite)
         assert new_updated.name == updated.name
         assert new_updated.value != updated.value

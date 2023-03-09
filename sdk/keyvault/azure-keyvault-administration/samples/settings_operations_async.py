@@ -5,7 +5,7 @@
 import asyncio
 import os
 
-from azure.keyvault.administration import KeyVaultSettingType
+from azure.keyvault.administration import KeyVaultSetting, KeyVaultSettingType
 from azure.keyvault.administration.aio import KeyVaultSettingsClient
 from azure.identity.aio import DefaultAzureCredential
 
@@ -28,9 +28,6 @@ from azure.identity.aio import DefaultAzureCredential
 # 2. Update a setting (update_setting)
 # ----------------------------------------------------------------------------------------------------------
 
-from dotenv import load_dotenv
-load_dotenv()
-
 async def run_sample():
     MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
 
@@ -45,22 +42,24 @@ async def run_sample():
     settings = await client.list_settings()
     boolean_setting = None
     async for setting in settings:
-        if setting.type == KeyVaultSettingType.BOOLEAN:
+        if setting.setting_type == KeyVaultSettingType.BOOLEAN:
             boolean_setting = setting
-        print(f"{setting.name}: {setting.value} (type: {setting.type})")
+        print(f"{setting.name}: {setting.value} (type: {setting.setting_type})")
 
     # Now, let's flip the value of a boolean setting
-    # KeyVaultSettingsClient.update_setting accepts booleans and strings, so we can send True or "True", for example
     print(f"\n.. Update value of {boolean_setting.name}")
-    opposite_value = not boolean_setting.value
-    updated_setting = await client.update_setting(boolean_setting.name, opposite_value)
+    opposite_value = KeyVaultSetting(name=boolean_setting.name, value=boolean_setting.value == "false")
+    updated_setting = await client.update_setting(opposite_value)
     print(f"{boolean_setting.name} updated successfully.")
     print(f"Old value: {boolean_setting.value}. New value: {updated_setting.value}")
 
     # Finally, let's restore the setting's old value
     print(f"\n.. Restore original value of {boolean_setting.name}")
-    await client.update_setting(boolean_setting.name, boolean_setting.value)
+    await client.update_setting(boolean_setting)
     print(f"{boolean_setting.name} updated successfully.")
+
+    await client.close()
+    await credential.close()
 
 
 if __name__ == "__main__":
