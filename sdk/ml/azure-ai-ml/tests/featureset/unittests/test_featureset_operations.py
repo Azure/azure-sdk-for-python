@@ -11,9 +11,21 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
     FeaturesetVersionProperties,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.entities import Featureset, FeaturesetSpecification
-from azure.ai.ml.operations import FeaturesetOperations
+from azure.ai.ml.operations import FeaturesetOperations, DatastoreOperations
 from azure.core.paging import ItemPaged
+
+
+@pytest.fixture
+def mock_datastore_operation(
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
+) -> DatastoreOperations:
+    yield DatastoreOperations(
+        operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
+    )
 
 
 @pytest.fixture
@@ -21,15 +33,29 @@ def mock_featureset_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2023_02_01_preview: Mock,
+    mock_datastore_operation: Mock,
 ) -> FeaturesetOperations:
     yield FeaturesetOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2023_02_01_preview,
+        datastore_operations=mock_datastore_operation,
+    )
+
+
+# @pytest.fixture
+def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
+    return ArtifactStorageInfo(
+        name="testFileData",
+        version="3",
+        relative_path="path",
+        datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
+        container_name="containerName",
     )
 
 
 @pytest.mark.unittest
+@patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
 @patch.object(Featureset, "_from_rest_object", new=Mock())
 @patch.object(Featureset, "_from_container_rest_object", new=Mock())
 @pytest.mark.data_experiences_test
