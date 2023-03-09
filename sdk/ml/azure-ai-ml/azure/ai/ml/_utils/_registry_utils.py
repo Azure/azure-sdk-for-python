@@ -13,10 +13,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.core.exceptions import HttpResponseError
 from azure.ai.ml._azure_environments import (
-    _get_base_url_from_metadata,
-    _get_cloud_information_from_metadata,
     _get_default_cloud_name,
-    _set_cloud,
     _get_registry_discovery_endpoint_from_metadata,
 )
 

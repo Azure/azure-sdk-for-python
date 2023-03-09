@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 from typing import Any, Iterable, Optional, Union
+from contextlib import contextmanager
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._utils._registry_utils import get_registry_client
@@ -22,7 +23,6 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from contextlib import contextmanager
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -94,6 +94,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             sas_uri = None
             if self._registry_name:
+                import debugpy
+
+                debugpy.connect(("localhost", 5678))
+                debugpy.breakpoint()
                 if isinstance(environment, WorkspaceAssetReference):
                     # verify that environment is not already in registry
                     try:
@@ -430,19 +434,20 @@ class EnvironmentOperations(_ScopeDependentOperations):
         """
         rg_ = self._operation_scope._resource_group_name
         sub_ = self._operation_scope._subscription_id
+        registry_ = self._operation_scope.registry_name
         client_ = self._service_client
         environment_versions_operation_ = self._version_operations
 
         try:
-            _client, rg, sub = get_registry_client(self._service_client._config.credential, registry_name)
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
             self._operation_scope.registry_name = registry_name
-            self._operation_scope._resource_group_name = rg
-            self._operation_scope._subscription_id = sub
+            self._operation_scope._resource_group_name = _rg
+            self._operation_scope._subscription_id = _sub
             self._service_client = _client
             self._version_operations = _client.environment_versions
             yield
         finally:
-            self._operation_scope.registry_name = None
+            self._operation_scope.registry_name = registry_
             self._operation_scope._resource_group_name = rg_
             self._operation_scope._subscription_id = sub_
             self._service_client = client_

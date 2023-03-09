@@ -6,6 +6,7 @@
 
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
+from contextlib import contextmanager
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -27,7 +28,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-from contextlib import contextmanager
+
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -506,19 +507,20 @@ class ModelOperations(_ScopeDependentOperations):
         """
         rg_ = self._operation_scope._resource_group_name
         sub_ = self._operation_scope._subscription_id
+        registry_ = self._operation_scope.registry_name
         client_ = self._service_client
         model_versions_operation_ = self._model_versions_operation
 
         try:
-            _client, rg, sub = get_registry_client(self._service_client._config.credential, registry_name)
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
             self._operation_scope.registry_name = registry_name
-            self._operation_scope._resource_group_name = rg
-            self._operation_scope._subscription_id = sub
+            self._operation_scope._resource_group_name = _rg
+            self._operation_scope._subscription_id = _sub
             self._service_client = _client
             self._model_versions_operation = _client.model_versions
             yield
         finally:
-            self._operation_scope.registry_name = None
+            self._operation_scope.registry_name = registry_
             self._operation_scope._resource_group_name = rg_
             self._operation_scope._subscription_id = sub_
             self._service_client = client_
