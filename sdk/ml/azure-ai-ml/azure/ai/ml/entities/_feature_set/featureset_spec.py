@@ -18,6 +18,7 @@ from azure.ai.ml.entities._feature_store_entity.data_column import DataColumn
 from .feature import Feature
 from .source_metadata import SourceMetadata
 from .delay_metadata import DelayMetadata
+from .feature_transformation_code import FeatureTransformationCode
 
 
 class FeaturesetSpec(object):
@@ -27,14 +28,18 @@ class FeaturesetSpec(object):
         self,
         *,
         source: SourceMetadata,
+        feature_transformation_code: Optional[FeatureTransformationCode] = None,
         features: List[Feature],
         index_columns: List[DataColumn],
-        temporal_join_lookback: DelayMetadata,
+        source_lookback: Optional[DelayMetadata] = None,
+        temporal_join_lookback: Optional[DelayMetadata] = None,
         **_kwargs,
     ):
         self.source = source
+        self.feature_transformation_code = feature_transformation_code
         self.features = features
         self.index_columns = index_columns
+        self.source_lookback = source_lookback
         self.temporal_join_lookback = temporal_join_lookback
 
     @classmethod
