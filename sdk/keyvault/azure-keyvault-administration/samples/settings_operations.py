@@ -44,8 +44,9 @@ for setting in settings:
     print(f"{setting.name}: {setting.value} (type: {setting.setting_type})")
 
 # Now, let's flip the value of a boolean setting
+# The `value` property is a string, but you can get the value of a boolean setting as a bool with `getboolean`
 print(f"\n.. Update value of {boolean_setting.name}")
-opposite_value = KeyVaultSetting(name=boolean_setting.name, value=boolean_setting.value == "false")
+opposite_value = KeyVaultSetting(name=boolean_setting.name, value=not setting.getboolean())
 updated_setting = client.update_setting(opposite_value)
 print(f"{boolean_setting.name} updated successfully.")
 print(f"Old value: {boolean_setting.value}. New value: {updated_setting.value}")

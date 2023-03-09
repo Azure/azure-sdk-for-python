@@ -188,17 +188,35 @@ class KeyVaultSetting(object):
         **kwargs,  # pylint:disable=unused-argument,redefined-builtin
     ) -> None:
         self.name = name
-        # `value` needs to be a stored as a string
-        self.value = value if isinstance(value, str) else str(value)
+        self.value = value if isinstance(value, str) else str(value)  # `value` is stored as a string
         self.setting_type = setting_type.lower() if isinstance(setting_type, str) else setting_type
 
         # If a setting type isn't provided, set it based on `value`'s type (without inferring from the value itself)
         if self.setting_type is None:
-            self.setting_type = KeyVaultSettingType.BOOLEAN if isinstance(value, bool) else None
+            if isinstance(value, bool):
+                self.setting_type = KeyVaultSettingType.BOOLEAN
 
         # If the setting is a boolean, lower-case the string for serialization
         if self.setting_type == KeyVaultSettingType.BOOLEAN:
             self.value = self.value.lower()
+
+    def getboolean(self) -> bool:
+        """Gets the value of the account setting as a boolean if the `setting_type` is KeyVaultSettingType.BOOLEAN.
+
+        :returns: The account setting value as a boolean.
+        :rtype: bool
+
+        :raises: ValueError if the `setting_type` is not boolean or the value cannot be represented as a boolean.
+        """
+        if self.setting_type == KeyVaultSettingType.BOOLEAN:
+            if self.value == "true":
+                return True
+            if self.value == "false":
+                return False
+        raise ValueError(
+            'The `setting_type` of the setting must be `KeyVaultSettingType.BOOLEAN` and the `value` must be "true" '
+            'or "false" in order to use `getboolean`.'
+        )
 
     @classmethod
     def _from_generated(cls, setting: Setting) -> "KeyVaultSetting":

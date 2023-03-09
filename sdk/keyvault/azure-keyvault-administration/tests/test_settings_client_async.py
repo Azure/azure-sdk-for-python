@@ -34,14 +34,17 @@ class TestSettings(KeyVaultTestCase):
 
         # Set value by using a bool
         opposite_value = KeyVaultSetting(
-            name=setting.name, value=setting.value == "false", setting_type=KeyVaultSettingType.BOOLEAN
+            name=setting.name, value=not setting.getboolean(), setting_type=KeyVaultSettingType.BOOLEAN
         )
         updated = await client.update_setting(opposite_value)
         assert updated.name == setting.name
-        assert updated.value == "true" if setting.value == "false" else updated.value == "false"
+        if setting.getboolean():
+            assert not updated.getboolean()
+        else:
+            assert updated.getboolean()
 
         # Set value by using a string
-        new_opposite = KeyVaultSetting(name=updated.name, value="false" if updated.value == "true" else "true")
+        new_opposite = KeyVaultSetting(name=updated.name, value="false" if updated.getboolean() else "true")
         new_updated = await client.update_setting(new_opposite)
         assert new_updated.name == updated.name
         assert new_updated.value != updated.value

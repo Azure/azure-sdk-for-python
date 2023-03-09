@@ -72,7 +72,6 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        # If `value` is a string, we should send it as-is. Booleans need to be lower-cased
         parameters = UpdateSettingsRequest(value=setting.value)
         result = await self._client.update_settings(
             vault_base_url=self._vault_url,
