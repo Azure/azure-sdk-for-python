@@ -43,8 +43,8 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
 
         super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
         # ops_logger.update_info(kwargs)
-        self._operation = service_client.feature_store_entity_versions
-        self._container_operation = service_client.feature_store_entity_containers
+        self._operation = service_client.featurestore_entity_versions
+        self._container_operation = service_client.featurestore_entity_containers
         self._service_client = service_client
         self._init_kwargs = kwargs
 
