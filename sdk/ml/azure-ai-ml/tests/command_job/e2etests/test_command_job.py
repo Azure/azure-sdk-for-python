@@ -11,7 +11,7 @@ from azure.ai.ml._azure_environments import _get_base_url_from_metadata, _resour
 from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml.constants._common import COMMON_RUNTIME_ENV_VAR, LOCAL_COMPUTE_TARGET, TID_FMT, AssetTypes
-from azure.ai.ml.entities import AmlTokenConfiguration
+from azure.ai.ml.entities import AmlTokenConfiguration, QueueSettings
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.distribution import MpiDistribution
@@ -77,6 +77,37 @@ class TestCommandJob(AzureRecordedTestCase):
         assert command_job.identity.type == command_job_2.identity.type
         assert command_job_2.environment == "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert command_job_2.compute == "cpu-cluster"
+        check_tid_in_url(client, command_job_2)
+
+    @pytest.mark.e2etest
+    def test_command_job_with_singularity(self, randstr: Callable[[], str], client: MLClient) -> None:
+        job_name = randstr("job_name")
+        params_override = [{"name": job_name}]
+        job = load_job(
+            source="./tests/test_configs/command_job/command_job_singularity_test.yml",
+            params_override=params_override,
+        )
+        command_job: CommandJob = client.jobs.create_or_update(job=job)
+        assert command_job.queue_settings == QueueSettings(job_tier="premium", priority="medium")
+        assert command_job.resources.locations == ["westus", "eastus"]
+        assert command_job.name == job_name
+        assert command_job.status in RunHistoryConstants.IN_PROGRESS_STATUSES
+        assert command_job.environment == "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
+        assert (
+            command_job.compute
+            == "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc"
+        )
+        check_tid_in_url(client, command_job)
+
+        command_job_2 = client.jobs.get(job_name)
+        assert command_job.name == command_job_2.name
+        assert command_job_2.environment == "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
+        assert (
+            command_job_2.compute
+            == "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc"
+        )
+        assert command_job_2.queue_settings == command_job.queue_settings
+        assert command_job_2.resources.locations == command_job.resources.locations
         check_tid_in_url(client, command_job_2)
 
     @pytest.mark.e2etest
