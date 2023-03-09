@@ -19,7 +19,7 @@ async def main():
 
     # Connecting to Azure App Configuration using connection string and trimmed key prefixes
     trimmed = {"test."}
-    config = await load(connection_string=connection_string, trimmed_key_prefixes=trimmed)
+    config = await load(connection_string=connection_string, trim_prefixes=trimmed)
 
     print(config["message"])
 
