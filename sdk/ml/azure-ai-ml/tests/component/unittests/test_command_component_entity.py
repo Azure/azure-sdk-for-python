@@ -449,9 +449,7 @@ class TestCommandComponentEntity:
         actual_component_dict1 = pydash.omit(
             component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
-
-        print(actual_component_dict1)
-        assert actual_component_dict1 == expected_rest_component, actual_component_dict1
+        assert actual_component_dict1 == expected_rest_component
 
         # from CLASS
         component2 = CommandComponent(
@@ -479,8 +477,7 @@ class TestCommandComponentEntity:
         actual_component_dict2 = pydash.omit(
             component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
-        print(actual_component_dict2)
-        assert actual_component_dict2 == expected_rest_component, actual_component_dict2
+        assert actual_component_dict2 == expected_rest_component
 
     def test_invalid_component_outputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
