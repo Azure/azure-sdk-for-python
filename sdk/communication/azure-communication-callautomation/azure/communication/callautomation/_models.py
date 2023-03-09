@@ -81,7 +81,7 @@ class StartRecordingOptions(object):
     def __init__(
         self,
         *,
-        call_locator: ServerCallLocator | GroupCallLocator,
+        call_locator: Union[ServerCallLocator, GroupCallLocator],
         recording_state_callback_uri: Optional[str] = None,
         recording_content: Optional[Union[str,
                                                "RecordingContent"]] = None,
@@ -165,7 +165,6 @@ class RecordingStateResponse(object):
         self,
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
         self.recording_id = kwargs['recording_id']
         self.recording_state = kwargs['recording_state']
 
@@ -234,9 +233,9 @@ class CommunicationIdentifier(Protocol):
     :vartype kind: str or CommunicationIdentifierKind
     :ivar Mapping[str, Any] properties: The properties of the identifier.
     """
-    raw_id = None  # type: Optional[str]
-    kind = None  # type: Optional[Union[CommunicationIdentifierKind, str]]
-    properties = {}  # type: Mapping[str, Any]
+    raw_id: Optional[str] = None
+    kind: Optional[Union[CommunicationIdentifierKind, str]] = None
+    properties: Mapping[str, Any] = {}
 
 
 CommunicationUserProperties = TypedDict(
@@ -260,7 +259,6 @@ class CommunicationUserIdentifier(object):
     kind = CommunicationIdentifierKind.COMMUNICATION_USER
 
     def __init__(self, id, **kwargs):
-        # type: (str, Any) -> None
         self.raw_id = kwargs.get('raw_id', id)
         self.properties = CommunicationUserProperties(id=id)
 
@@ -289,7 +287,6 @@ class PhoneNumberIdentifier(object):
     kind = CommunicationIdentifierKind.PHONE_NUMBER
 
     def __init__(self, value, **kwargs):
-        # type: (str, Any) -> None
         self.raw_id = kwargs.get('raw_id')
         self.properties = PhoneNumberProperties(value=value)
         if self.raw_id is None:
@@ -318,7 +315,6 @@ class UnknownIdentifier(object):
     kind = CommunicationIdentifierKind.UNKNOWN
 
     def __init__(self, identifier):
-        # type: (str) -> None
         self.raw_id = identifier
         self.properties = {}
 
@@ -356,7 +352,6 @@ class MicrosoftTeamsUserIdentifier(object):
     kind = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
 
     def __init__(self, user_id, **kwargs):
-        # type: (str, Any) -> None
         self.raw_id = kwargs.get('raw_id')
         self.properties = MicrosoftTeamsUserProperties(
             user_id=user_id,
@@ -432,8 +427,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     )
 
 
-def serialize_identifier(identifier):
-    # type: (CommunicationIdentifier) -> Dict[str, Any]
+def serialize_identifier(identifier) -> Dict[str, Any]:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: Identifier object
@@ -451,8 +445,7 @@ def serialize_identifier(identifier):
                         identifier.__class__.__name__)
 
 
-def serialize_phone_identifier(identifier):
-    # type: (PhoneNumberIdentifier) -> PhoneNumberIdentifierModel
+def serialize_phone_identifier(identifier) -> PhoneNumberIdentifierModel:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: PhoneNumberIdentifier
@@ -472,7 +465,6 @@ def serialize_phone_identifier(identifier):
 
 
 def deserialize_identifier(identifier_model) -> CommunicationIdentifier:
-    # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
@@ -496,8 +488,7 @@ def deserialize_identifier(identifier_model) -> CommunicationIdentifier:
     return UnknownIdentifier(raw_id)
 
 
-def deserialize_phone_identifier(identifier_model) -> PhoneNumberIdentifier | None:
-    # type: (PhoneNumberIdentifierModel) -> PhoneNumberIdentifier
+def deserialize_phone_identifier(identifier_model) -> Union[PhoneNumberIdentifier, None]:
     """
     Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
 
@@ -754,8 +745,8 @@ class CallInvite(object):
         *,
         sourceCallIdNumber: Optional[PhoneNumberIdentifier] = None,
         sourceDisplayName: Optional[str] = None,
-        sipHeaders: Optional[dict[str, str]] = None,
-        voipHeaders: Optional[dict[str, str]] = None,
+        sipHeaders: Optional[Dict[str, str]] = None,
+        voipHeaders: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
