@@ -26,6 +26,7 @@ CONTAINER_REGISTRY = "container_registry"
 REPLICATION_LOCATIONS = "replication_locations"
 INTELLECTUAL_PROPERTY = "intellectual_property"
 
+
 class Registry(Resource):
     def __init__(
         self,
