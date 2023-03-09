@@ -18,6 +18,23 @@
 - Removed uAMQP from required dependencies.
 - Adding `uamqp >= 1.6.3` as an optional dependency for use with the `uamqp_transport` keyword.
 
+## 7.8.3 (2023-03-09)
+
+### Bugs Fixed
+
+- Fixed a bug where asynchronous method to add distributed tracing attributes was not being awaited (Issue #28738).
+
+## 7.8.2 (2023-01-10)
+
+### Bugs Fixed
+
+- Fixed a bug that would cause an exception when `None` was sent to `set_state` instead of clearing session state (Issue #27582).
+
+### Other Changes
+
+- Updated uAMQP dependency to 1.6.3.
+  - Added support for Python 3.11.
+
 ## 7.9.0a1 (2022-10-11)
 
 Version 7.9.0a1 is our first efforts to build an Azure Service Bus client library based on a pure Python implemented AMQP stack.
