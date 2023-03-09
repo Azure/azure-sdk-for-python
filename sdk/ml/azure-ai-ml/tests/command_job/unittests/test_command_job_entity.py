@@ -78,7 +78,7 @@ class TestCommandJobEntity:
             experiment_name="tensorflow-mnist",
             command="python train.py",
             code="./src",
-            environment="AzureML-tensorflow-2.4-ubuntu18.04-py37-cuda11-gpu:14",
+            environment="AzureML-tensorflow-2.5-ubuntu20.04-py38-cuda11-gpu:27",
             environment_variables={"FOO": "BAR"},
             compute="gpu-cluster",
         )

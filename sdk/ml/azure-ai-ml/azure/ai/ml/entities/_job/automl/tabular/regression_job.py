@@ -107,6 +107,7 @@ class RegressionJob(AutoMLTabular):
             resources=self.resources,
             task_details=regression_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -135,6 +136,7 @@ class RegressionJob(AutoMLTabular):
             "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            "queue_settings": properties.queue_settings,
         }
 
         regression_job = cls(
