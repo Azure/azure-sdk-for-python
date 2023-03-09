@@ -32,7 +32,7 @@ class TestClient(ACSIdentityTestCase):
             http_logging_policy=get_http_logging_policy()
         )
 
-    def create_client_from_managed_identity(self):
+    def create_client_from_token_credential(self):
         if not is_live():
             credential = FakeTokenCredential()
         else:
@@ -40,8 +40,8 @@ class TestClient(ACSIdentityTestCase):
         return CommunicationIdentityClient(self.endpoint, credential, http_logging_policy=get_http_logging_policy())
 
     @recorded_by_proxy
-    def test_create_user_from_managed_identity(self):
-        identity_client = self.create_client_from_managed_identity()
+    def test_create_user_from_token_credential(self):
+        identity_client = self.create_client_from_token_credential()
         user = identity_client.create_user()
 
         assert user.properties.get('id') is not None
@@ -97,8 +97,8 @@ class TestClient(ACSIdentityTestCase):
                                           ("chat&voip", [CommunicationTokenScope.VOIP, CommunicationTokenScope.CHAT])])
     @ArgumentPasser()
     @recorded_by_proxy
-    def test_get_token_from_managed_identity(self, _, scopes):
-        identity_client = self.create_client_from_managed_identity()
+    def test_get_token_from_token_credential(self, _, scopes):
+        identity_client = self.create_client_from_token_credential()
         user = identity_client.create_user()
 
         token_response = identity_client.get_token(user, scopes=scopes)
@@ -148,8 +148,8 @@ class TestClient(ACSIdentityTestCase):
         assert ex.value.message is not None
 
     @recorded_by_proxy
-    def test_revoke_tokens_from_managed_identity(self):
-        identity_client = self.create_client_from_managed_identity()
+    def test_revoke_tokens_from_token_credential(self):
+        identity_client = self.create_client_from_token_credential()
         user = identity_client.create_user()
 
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -170,8 +170,8 @@ class TestClient(ACSIdentityTestCase):
         assert token_response.token is not None
 
     @recorded_by_proxy
-    def test_delete_user_from_managed_identity(self):
-        identity_client = self.create_client_from_managed_identity()
+    def test_delete_user_from_token_credential(self):
+        identity_client = self.create_client_from_token_credential()
         user = identity_client.create_user()
 
         identity_client.delete_user(user)
@@ -230,10 +230,10 @@ class TestClient(ACSIdentityTestCase):
         assert ex is not None and ex.value is not None
 
     @recorded_by_proxy
-    def test_get_token_for_teams_user_from_managed_identity(self):
+    def test_get_token_for_teams_user_from_token_credential(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = self.create_client_from_managed_identity()
+        identity_client = self.create_client_from_token_credential()
         aad_token, user_object_id = self.generate_teams_user_aad_token()
         token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, user_object_id)
         assert token_response.token is not None

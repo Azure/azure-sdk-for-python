@@ -2222,15 +2222,15 @@ class DocumentField:
         # CurrencyValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper to_dict() method.
         if self.value_type == "currency":
-            value = self.value.to_dict()  # type: ignore
+            value = self.value.to_dict() if self.value else None  # type: ignore
         # AddressValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper to_dict() method.
         elif self.value_type == "address":
-            value = self.value.to_dict()  # type: ignore
+            value = self.value.to_dict() if self.value else None  # type: ignore
         elif isinstance(self.value, dict):
-            value = {k: v.to_dict() for k, v in self.value.items()}  # type: ignore
+            value = {k: v.to_dict() for k, v in self.value.items()} if self.value else {}  # type: ignore
         elif isinstance(self.value, list):
-            value = [v.to_dict() for v in self.value]  # type: ignore
+            value = [v.to_dict() for v in self.value] if self.value else []  # type: ignore
         return {
             "value_type": self.value_type,
             "value": value,
@@ -2257,11 +2257,13 @@ class DocumentField:
         # CurrencyValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper from_dict() method.
         if data.get("value_type", None) == "currency":
-            value = CurrencyValue.from_dict(data.get("value"))  #type: ignore
+            if value is not None:
+                value = CurrencyValue.from_dict(data.get("value"))  #type: ignore
         # AddressValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper from_dict() method.
         elif data.get("value_type", None) == "address":
-            value = AddressValue.from_dict(data.get("value"))  #type: ignore
+            if value is not None:
+                value = AddressValue.from_dict(data.get("value"))  #type: ignore
         elif isinstance(data.get("value"), dict):
             value = {k: DocumentField.from_dict(v) for k, v in data.get("value").items()}  # type: ignore
         elif isinstance(data.get("value"), list):

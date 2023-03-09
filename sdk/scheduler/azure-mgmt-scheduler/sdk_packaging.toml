@@ -5,3 +5,4 @@ package_doc_id = "scheduler"
 is_stable = true
 sample_link = ""
 title = "SchedulerManagementClient"
+auto_update = false

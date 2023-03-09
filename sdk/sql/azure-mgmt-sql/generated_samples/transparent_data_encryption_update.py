@@ -29,16 +29,16 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.transparent_data_encryptions.create_or_update(
+    response = client.transparent_data_encryptions.begin_create_or_update(
         resource_group_name="securitytde-42-rg",
         server_name="securitytde-42",
         database_name="testdb",
         tde_name="current",
         parameters={"properties": {"state": "Enabled"}},
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-02-01-preview/examples/TransparentDataEncryptionUpdate.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/TransparentDataEncryptionUpdate.json
 if __name__ == "__main__":
     main()

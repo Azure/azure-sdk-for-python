@@ -9,6 +9,17 @@ from .component import ComponentSchema
 from .import_component import AnonymousImportComponentSchema, ImportComponentFileRefField, ImportComponentSchema
 from .parallel_component import AnonymousParallelComponentSchema, ParallelComponentFileRefField, ParallelComponentSchema
 from .spark_component import AnonymousSparkComponentSchema, SparkComponentFileRefField, SparkComponentSchema
+from .data_transfer_component import (
+    AnonymousDataTransferCopyComponentSchema,
+    DataTransferCopyComponentFileRefField,
+    DataTransferCopyComponentSchema,
+    AnonymousDataTransferImportComponentSchema,
+    DataTransferImportComponentFileRefField,
+    DataTransferImportComponentSchema,
+    AnonymousDataTransferExportComponentSchema,
+    DataTransferExportComponentFileRefField,
+    DataTransferExportComponentSchema,
+)
 
 __all__ = [
     "ComponentSchema",
@@ -24,4 +35,13 @@ __all__ = [
     "AnonymousSparkComponentSchema",
     "SparkComponentFileRefField",
     "SparkComponentSchema",
+    "AnonymousDataTransferCopyComponentSchema",
+    "DataTransferCopyComponentFileRefField",
+    "DataTransferCopyComponentSchema",
+    "AnonymousDataTransferImportComponentSchema",
+    "DataTransferImportComponentFileRefField",
+    "DataTransferImportComponentSchema",
+    "AnonymousDataTransferExportComponentSchema",
+    "DataTransferExportComponentFileRefField",
+    "DataTransferExportComponentSchema",
 ]

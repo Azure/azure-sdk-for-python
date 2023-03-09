@@ -490,8 +490,8 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._client._client._pipeline._transport),
-            policies=self._client._client._pipeline._impl_policies,
-        )  # type: AsyncPipeline
+            policies=self._client._client._pipeline._impl_policies,  # type: ignore
+        )
         client = DocumentAnalysisClient(
             endpoint=self._endpoint,
             credential=self._credential,
@@ -500,7 +500,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             **kwargs
         )
         # need to share config, but can't pass as a keyword into client
-        client._client._config = self._client._client._config
+        client._client._config = self._client._config
         return client
 
     async def __aenter__(self) -> "DocumentModelAdministrationClient":

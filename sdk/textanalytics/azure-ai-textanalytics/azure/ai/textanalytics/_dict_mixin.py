@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, List, Tuple, Optional, Iterable
+from typing import Any, Tuple, Optional, Iterable
 
 
 class DictMixin:
@@ -17,7 +17,7 @@ class DictMixin:
         return str(self)
 
     def __len__(self) -> int:
-        return len(self.keys())
+        return len(self.keys())  # type: ignore
 
     def __delitem__(self, key: str) -> None:
         self.__dict__[key] = None
@@ -42,10 +42,10 @@ class DictMixin:
     def update(self, *args: Any, **kwargs: Any) -> None:
         self.__dict__.update(*args, **kwargs)
 
-    def keys(self) -> List[str]:
+    def keys(self) -> Iterable[str]:
         return [k for k in self.__dict__ if not k.startswith("_")]
 
-    def values(self) -> List[Any]:
+    def values(self) -> Iterable[Any]:
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def items(self) -> Iterable[Tuple[str, Any]]:

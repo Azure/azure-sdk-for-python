@@ -34,7 +34,7 @@ class TestComponentOperation:
             "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},
             "code_configuration": {"code": "./src", "scoring_script": "score.py"},
-            "environment": "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            "environment": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         }
         mini_batch = {
             "split_inputs": "score_input",
@@ -62,14 +62,12 @@ class TestComponentOperation:
             workspace_name=mock_component_operation._workspace_name,
         )
 
-    def test_create_autoincrement(
-        self, mock_component_operation: ComponentOperations
-    ) -> None:
+    def test_create_autoincrement(self, mock_component_operation: ComponentOperations) -> None:
         task = {
             "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},
             "code_configuration": {"code": "./src", "scoring_script": "score.py"},
-            "environment": "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            "environment": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         }
         mini_batch = {
             "split_inputs": "score_input",
@@ -83,16 +81,20 @@ class TestComponentOperation:
         )
         assert component._auto_increment_version
         with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml.operations._component_operations.Component._from_rest_object", return_value=component
-        ) , patch(
-            "azure.ai.ml.operations._component_operations._get_next_version_from_container", return_value="version"
-        ) as mock_nextver:
+            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
+            return_value=component,
+        ):
             mock_component_operation.create_or_update(component)
-            mock_nextver.assert_called_once()
+            mock_thing.assert_called_once()
 
+        mock_component_operation._container_operation.get.assert_called_once_with(
+            name=component.name,
+            resource_group_name=mock_component_operation._operation_scope.resource_group_name,
+            workspace_name=mock_component_operation._operation_scope.workspace_name,
+        )
         mock_component_operation._version_operation.create_or_update.assert_called_once_with(
             name=component.name,
-            version=mock_nextver.return_value,
+            version=mock_component_operation._container_operation.get().properties.next_version,
             body=component._to_rest_object(),
             resource_group_name=mock_component_operation._operation_scope.resource_group_name,
             workspace_name=mock_component_operation._operation_scope.workspace_name,

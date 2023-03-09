@@ -25,7 +25,7 @@ class TestClientAsync(ACSIdentityTestCase):
         return CommunicationIdentityClient.from_connection_string(self.connection_str,
                                                                   http_logging_policy=get_http_logging_policy())
 
-    def create_client_from_managed_identity(self):
+    def create_client_from_token_credential(self):
         if not is_live():
             credential = AsyncFakeCredential()
         else:
@@ -33,8 +33,8 @@ class TestClientAsync(ACSIdentityTestCase):
         return CommunicationIdentityClient(self.endpoint, credential,
                                            http_logging_policy=get_http_logging_policy())
     @recorded_by_proxy_async
-    async def test_create_user_from_managed_identity(self):
-        identity_client = self.create_client_from_managed_identity()
+    async def test_create_user_from_token_credential(self):
+        identity_client = self.create_client_from_token_credential()
         async with identity_client:
             user = await identity_client.create_user()
 
@@ -133,8 +133,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert ex.value.message is not None
 
     @recorded_by_proxy_async
-    async def test_get_token_from_managed_identity_with_scope_chat(self):
-        identity_client = self.create_client_from_managed_identity()
+    async def test_get_token_from_token_credential_with_scope_chat(self):
+        identity_client = self.create_client_from_token_credential()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -143,8 +143,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert token_response.token is not None
 
     @recorded_by_proxy_async
-    async def test_get_token_from_managed_identity_with_scope_voip(self):
-        identity_client = self.create_client_from_managed_identity()
+    async def test_get_token_from_token_credential_with_scope_voip(self):
+        identity_client = self.create_client_from_token_credential()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.VOIP])
@@ -153,8 +153,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert token_response.token is not None
 
     @recorded_by_proxy_async
-    async def test_get_token_from_managed_identity_with_scope_chat_and_voip(self):
-        identity_client = self.create_client_from_managed_identity()
+    async def test_get_token_from_token_credential_with_scope_chat_and_voip(self):
+        identity_client = self.create_client_from_token_credential()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT,
@@ -233,8 +233,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert ex.value.message is not None
 
     @recorded_by_proxy_async
-    async def test_revoke_tokens_from_managed_identity(self):
-        identity_client = self.create_client_from_managed_identity()
+    async def test_revoke_tokens_from_token_credential(self):
+        identity_client = self.create_client_from_token_credential()
         async with identity_client:
             user = await identity_client.create_user()
             token_response = await identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT])
@@ -255,8 +255,8 @@ class TestClientAsync(ACSIdentityTestCase):
         assert token_response.token is not None
 
     @recorded_by_proxy_async
-    async def test_delete_user_from_managed_identity(self):
-        identity_client = self.create_client_from_managed_identity()
+    async def test_delete_user_from_token_credential(self):
+        identity_client = self.create_client_from_token_credential()
         async with identity_client:
             user = await identity_client.create_user()
             await identity_client.delete_user(user)
@@ -319,10 +319,10 @@ class TestClientAsync(ACSIdentityTestCase):
         assert ex is not None and ex.value is not None
 
     @recorded_by_proxy_async
-    async def test_get_token_for_teams_user_from_managed_identity(self):
+    async def test_get_token_for_teams_user_from_token_credential(self):
         if self.skip_get_token_for_teams_user_test():
             return
-        identity_client = self.create_client_from_managed_identity()
+        identity_client = self.create_client_from_token_credential()
         async with identity_client:
             aad_token, user_object_id = self.generate_teams_user_aad_token()
             token_response = await identity_client.get_token_for_teams_user(aad_token, self.m365_client_id,

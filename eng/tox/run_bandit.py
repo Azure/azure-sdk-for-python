@@ -14,6 +14,10 @@ import os
 import logging
 import sys
 
+from ci_tools.environment_exclusions import (
+    is_check_enabled
+)
+from ci_tools.variables import in_ci
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -29,8 +33,15 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
     package_name = os.path.basename(os.path.abspath(args.target_package))
+
+    if in_ci():
+        if not is_check_enabled(args.target_package, "bandit"):
+            logging.info(
+                f"Package {package_name} opts-out of bandit check."
+            )
+            exit(0)
+
     try:
         check_call(
             [

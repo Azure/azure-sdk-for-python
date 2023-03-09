@@ -18,7 +18,13 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._job.job_service import (
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
@@ -124,11 +130,15 @@ def command(
     code: Optional[Union[str, os.PathLike]] = None,
     identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
     is_deterministic: bool = True,
-    services: Optional[Dict[str, JobService]] = None,
+    services: Optional[
+        Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    ] = None,
+    job_tier: Optional[str] = None,
+    priority: Optional[str] = None,
     **kwargs,
 ) -> Command:
-    """Create a Command object which can be used inside dsl.pipeline as a
-    function and can also be created as a standalone command job.
+    """Create a Command object which can be used inside dsl.pipeline as a function and can also be created as a
+    standalone command job.
 
     :param name: Name of the command job or component created
     :type name: str
@@ -215,7 +225,6 @@ def command(
             is_deterministic=is_deterministic,
             **kwargs,
         )
-
     command_obj = Command(
         component=component,
         name=name,
@@ -242,5 +251,8 @@ def command(
 
     if timeout is not None:
         command_obj.set_limits(timeout=timeout)
+
+    if job_tier is not None or priority is not None:
+        command_obj.set_queue_settings(job_tier=job_tier, priority=priority)
 
     return command_obj

@@ -267,8 +267,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._close_handler()
             raise
 
-    def _send(self, message, timeout=None, last_exception=None):
-        # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float], Exception) -> None
+    def _send(
+        self,
+        message: Union[ServiceBusMessage, ServiceBusMessageBatch],
+        timeout: Optional[float] = None,
+        last_exception: Optional[Exception] = None
+    ) -> None:
         self._open()
         default_timeout = self._handler._msg_timeout  # pylint: disable=protected-access
         try:

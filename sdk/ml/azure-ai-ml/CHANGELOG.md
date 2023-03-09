@@ -1,12 +1,45 @@
 # Release History
 
-## 1.4.0 (Unreleased)
+## 1.5.0 (Unreleased)
 
 ### Features Added
--
+- Added support for `tags` on Compute Resources.
+- Added support for promoting data asset from a workspace to a registry
+- Added support for registering named asset from job output or node output by specifying name and version settings.
+- Added support for feature store operations
+- Removed Experimental Tag from Image Metadata on Compute Instances.
+- Added support for featureset and featurestore_entity operations.
+- Added support for data binding on outputs inside dynamic arguments for dsl pipeline
+- Added support for serverless compute in pipeline job
 
 ### Bugs Fixed
--
+
+- Fix experiment name wrongly set to 'Default' when schedule existing job.
+- Error message improvement when a local path fails to match with data asset type.
+- Error message improvement when an asset does not exist in a registry
+- Fix an issue when submit spark pipeline job with referring a registered component
+
+### Other Changes
+
+- Added dependency on `azure-mgmt-resource`
+- Added dependency on `azure-mgmt-resourcegraph`
+- Update job types to use MFE Dec preview rest objects.
+- Added classifiers for Python version 3.11.
+- Added warning for reserved keywords in IO names in pipeline job nodes.
+
+## 1.4.0 (2023-02-07)
+
+### Features Added
+- Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
+- Added Custom Applications Support to Compute Instances.
+- Update data asset list, show and create operations to support data assets in registry.
+
+### Bugs Fixed
+- Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.
+- Fixed an issue that attributes with a value of `False` in `PipelineJobSettings` are not respected.
+- Fixed an issue where ignore files weren't considered during upload directory size calculations.
+- Fixed an issue where symlinks crashed upload directory size calculations.
+- Fixes a bug where enable_node_public_ip returned an improper value when fetching a Compute.
 
 ### Other Changes
 - Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights.
@@ -61,7 +94,7 @@
 ## 1.1.2 (2022-11-21)
 
 ### Features Added
-- Restored idle_time_before_shutdown property for Compute Instances. 
+- Restored idle_time_before_shutdown property for Compute Instances.
 - Deprecated idle_time_before_shutdown property in favor of idle_time_before_shutdown_minutes.
 
 ### Bugs Fixed

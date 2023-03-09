@@ -3433,8 +3433,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type scope: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is either a model type or a
-         IO type. Required.
+        :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.Deployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -3763,7 +3763,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type scope: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is either a model type or a IO type. Required.
+        :param parameters: Parameters to validate. Is either a Deployment type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.Deployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -4281,8 +4281,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is either a model type or a
-         IO type. Required.
+        :param parameters: Additional parameters supplied to the operation. Is either a
+         ScopedDeployment type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ScopedDeployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -4596,7 +4596,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is either a model type or a IO type. Required.
+        :param parameters: Parameters to validate. Is either a ScopedDeployment type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ScopedDeployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -4801,7 +4802,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is either a model type or a IO type. Required.
+        :param parameters: Parameters to validate. Is either a ScopedDeploymentWhatIf type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ScopedDeploymentWhatIf or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -5342,8 +5344,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is either a model type or a
-         IO type. Required.
+        :param parameters: Additional parameters supplied to the operation. Is either a
+         ScopedDeployment type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ScopedDeployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -5684,7 +5686,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is either a model type or a IO type. Required.
+        :param parameters: Parameters to validate. Is either a ScopedDeployment type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ScopedDeployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -5904,7 +5907,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is either a model type or a IO type. Required.
+        :param parameters: Parameters to validate. Is either a ScopedDeploymentWhatIf type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ScopedDeploymentWhatIf or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -6436,8 +6440,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is either a model type or a
-         IO type. Required.
+        :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.Deployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -6758,7 +6762,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is either a model type or a IO type. Required.
+        :param parameters: Parameters to validate. Is either a Deployment type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.Deployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -6964,7 +6968,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to What If. Is either a model type or a IO type. Required.
+        :param parameters: Parameters to What If. Is either a DeploymentWhatIf type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentWhatIf or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -7517,8 +7522,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is either a model type or a
-         IO type. Required.
+        :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.Deployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -7865,7 +7870,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is either a model type or a IO type. Required.
+        :param parameters: Parameters to validate. Is either a Deployment type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.Deployment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -8097,7 +8102,8 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is either a model type or a IO type. Required.
+        :param parameters: Parameters to validate. Is either a DeploymentWhatIf type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.DeploymentWhatIf or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -8641,8 +8647,8 @@ class ProvidersOperations:
         :param resource_provider_namespace: The namespace of the resource provider to register.
          Required.
         :type resource_provider_namespace: str
-        :param properties: The third party consent for S2S. Is either a model type or a IO type.
-         Default value is None.
+        :param properties: The third party consent for S2S. Is either a ProviderRegistrationRequest
+         type or a IO type. Default value is None.
         :type properties: ~azure.mgmt.resource.resources.v2022_09_01.models.ProviderRegistrationRequest
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -9360,8 +9366,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :param source_resource_group_name: The name of the resource group from the source subscription
          containing the resources to be moved. Required.
         :type source_resource_group_name: str
-        :param parameters: Parameters for moving resources. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters for moving resources. Is either a ResourcesMoveInfo type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ResourcesMoveInfo or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -9569,8 +9575,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :param source_resource_group_name: The name of the resource group from the source subscription
          containing the resources to be validated for move. Required.
         :type source_resource_group_name: str
-        :param parameters: Parameters for moving resources. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters for moving resources. Is either a ResourcesMoveInfo type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ResourcesMoveInfo or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -10168,8 +10174,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :type resource_name: str
         :param api_version: The API version to use for the operation. Required.
         :type api_version: str
-        :param parameters: Parameters for creating or updating the resource. Is either a model type or
-         a IO type. Required.
+        :param parameters: Parameters for creating or updating the resource. Is either a
+         GenericResource type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.GenericResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -10437,8 +10443,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :type resource_name: str
         :param api_version: The API version to use for the operation. Required.
         :type api_version: str
-        :param parameters: Parameters for updating the resource. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters for updating the resource. Is either a GenericResource type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.GenericResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -10901,8 +10907,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :type resource_id: str
         :param api_version: The API version to use for the operation. Required.
         :type api_version: str
-        :param parameters: Create or update resource parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: Create or update resource parameters. Is either a GenericResource type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.GenericResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -11115,7 +11121,8 @@ class ResourcesOperations:  # pylint: disable=too-many-public-methods
         :type resource_id: str
         :param api_version: The API version to use for the operation. Required.
         :type api_version: str
-        :param parameters: Update resource parameters. Is either a model type or a IO type. Required.
+        :param parameters: Update resource parameters. Is either a GenericResource type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.GenericResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -11367,7 +11374,7 @@ class ResourceGroupsOperations:
          that match the allowed characters. Required.
         :type resource_group_name: str
         :param parameters: Parameters supplied to the create or update a resource group. Is either a
-         model type or a IO type. Required.
+         ResourceGroup type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ResourceGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -11673,8 +11680,8 @@ class ResourceGroupsOperations:
         :param resource_group_name: The name of the resource group to update. The name is case
          insensitive. Required.
         :type resource_group_name: str
-        :param parameters: Parameters supplied to update a resource group. Is either a model type or a
-         IO type. Required.
+        :param parameters: Parameters supplied to update a resource group. Is either a
+         ResourceGroupPatchable type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ResourceGroupPatchable or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -11876,8 +11883,8 @@ class ResourceGroupsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: Parameters for exporting the template. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters for exporting the template. Is either a ExportTemplateRequest
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.ExportTemplateRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -12522,7 +12529,7 @@ class TagsOperations:
 
         :param scope: The resource scope. Required.
         :type scope: str
-        :param parameters: Is either a model type or a IO type. Required.
+        :param parameters: Is either a TagsResource type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.TagsResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -12740,7 +12747,7 @@ class TagsOperations:
 
         :param scope: The resource scope. Required.
         :type scope: str
-        :param parameters: Is either a model type or a IO type. Required.
+        :param parameters: Is either a TagsPatchResource type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.resources.v2022_09_01.models.TagsPatchResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

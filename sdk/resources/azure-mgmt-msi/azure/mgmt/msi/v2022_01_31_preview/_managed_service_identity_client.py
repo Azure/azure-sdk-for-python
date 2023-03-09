@@ -9,20 +9,25 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import ManagedServiceIdentityClientConfiguration
-from .operations import FederatedIdentityCredentialsOperations, Operations, SystemAssignedIdentitiesOperations, UserAssignedIdentitiesOperations
+from .operations import (
+    FederatedIdentityCredentialsOperations,
+    Operations,
+    SystemAssignedIdentitiesOperations,
+    UserAssignedIdentitiesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class ManagedServiceIdentityClient:
+
+class ManagedServiceIdentityClient:  # pylint: disable=client-accepts-api-version-keyword
     """The Managed Service Identity Client.
 
     :ivar system_assigned_identities: SystemAssignedIdentitiesOperations operations
@@ -36,9 +41,9 @@ class ManagedServiceIdentityClient:
     :ivar federated_identity_credentials: FederatedIdentityCredentialsOperations operations
     :vartype federated_identity_credentials:
      azure.mgmt.msi.v2022_01_31_preview.operations.FederatedIdentityCredentialsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Id of the Subscription to which the identity belongs.
+    :param subscription_id: The Id of the Subscription to which the identity belongs. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -54,19 +59,19 @@ class ManagedServiceIdentityClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = ManagedServiceIdentityClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = ManagedServiceIdentityClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.system_assigned_identities = SystemAssignedIdentitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.user_assigned_identities = UserAssignedIdentitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -74,12 +79,7 @@ class ManagedServiceIdentityClient:
             self._client, self._config, self._serialize, self._deserialize
         )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -88,7 +88,7 @@ class ManagedServiceIdentityClient:
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -101,15 +101,12 @@ class ManagedServiceIdentityClient:
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> ManagedServiceIdentityClient
+    def __enter__(self) -> "ManagedServiceIdentityClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

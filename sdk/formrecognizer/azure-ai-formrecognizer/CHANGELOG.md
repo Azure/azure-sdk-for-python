@@ -1,16 +1,25 @@
 # Release History
 
-## 3.2.1 (Unreleased)
+## 3.2.2 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
-- Corrected typing for `invoice` argument in `begin_recognize_invoices()` on async `FormRecognizerClient`.
-- Corrected typing for `form_type_confidence` property on `RecognizedForm`.
 
 ### Other Changes
+
+## 3.2.1 (2023-03-07)
+
+### Bugs Fixed
+- Corrected typing for `invoice` argument in `begin_recognize_invoices()` on async `FormRecognizerClient`.
+- Fixed issue when calling `to_dict()` on `DocumentField` where `value` is not returned for address and currency fields.
+- Corrected typing for `form_type_confidence` property on `RecognizedForm`.
+- Corrected typing for `appearance` property on `FormLine`.
+
+### Other Changes
+- Improved static typing.
 
 ## 3.2.0 (2022-09-08)
 

@@ -4,9 +4,13 @@
   - [Targeting a specific package at build queue time](#targeting-a-specific-package-at-build-queue-time)
   - [Skipping a tox test environment at build queue time](#skipping-a-tox-test-environment-at-build-queue-time)
   - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
+  - [The pyproject.toml](#the-pyprojecttoml)
   - [Environment variables important to CI](#environment-variables-important-to-ci)
+    - [Atomic Overrides](#atomic-overrides)
   - [Analyze Checks](#analyze-checks)
     - [MyPy](#mypy)
+    - [Pyright](#pyright)
+    - [Verifytypes](#verifytypes)
     - [Pylint](#pylint)
     - [Bandit](#bandit)
     - [ApiStubGen](#apistubgen)
@@ -102,6 +106,28 @@ This is the most useful skip, but the following skip variables are also supporte
 - `Skip.VerifyDependencies`
   - Omit checking that a package's dependencies are on PyPI before releasing.
 
+## The pyproject.toml
+
+Starting with [this pr](https://github.com/Azure/azure-sdk-for-python/pull/28345), which checks apply to which packages are now **established** in a `pyproject.toml`, right next to each package's `setup.py`. This not only allows devs to fine-tune which checks that are applied at a package-level, but also seriously reduces confusion as to which checks apply when.
+
+We default to **enabling** most of our checks like `pylint`, `mypy`, etc. Due to that, most `pyproject.toml` settings will likely be **disabling** checks.
+
+Here's an example:
+
+```toml
+# from sdk/core/azure-servicemanagement-legacy/pyproject.toml, which is a legacy package
+# as a result, all of these checks are disabled
+[tool.azure-sdk-build]
+mypy = false
+type_check_samples = false
+verifytypes = false
+pyright = false
+pylint = false
+black = false
+```
+
+If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
+
 ## Environment variables important to CI
 
 There are a few differences from a standard local invocation of `tox <env>`. Primarily, these differences adjust the checks to be friendly to parallel invocation. These adjustments are necessary to prevent random CI crashes.
@@ -114,23 +140,48 @@ There are a few differences from a standard local invocation of `tox <env>`. Pri
 
 The various tooling abstracted by the environments within `eng/tox/tox.ini` take the above variables into account automatically.
 
+### Atomic Overrides
+
+Packages with classifier `Development Status :: 7 - Inactive`, are **not** built by default and as such normal `checks` like `mypy` and `pylint` are also not run against them. Older "core" packages like `azure-common` and `azure-servicemanagement-legacy` are present, but excluded from the build due to this restriction.
+
+To temporarily **override** this restriction, a dev need only set the queue time variable: `ENABLE_PACKAGE_NAME`. The `-` in package names should be replaced by an `_`, as that is how the environment variable will be set on the actual CI machine anyway.
+
+- `ENABLE_AZURE_COMMON=true`
+- `ENABLE_AZURE_SERVICEMANAGEMENT_LEGACY=true`
+
+This same methodology also applies to _individual checks_ that run during various phases of CI. Developers can use a queue time variable of format `PACKAGE_NAME_CHECK=true/false`.
+
+The name that you should use is visible based on what the `tox environment` that the check refers to! Here are a few examples of enabling/disabling checks:
+
+- `AZURE_SERVICEBUS_PYRIGHT=true` <-- enable a check that normally is disabled in `pyproject.toml`
+- `AZURE_CORE_PYLINT=false` <-- disable a check that normally runs
+
 ## Analyze Checks
 
 Analyze job in both nightly CI and pull request validation pipeline runs a set of static analysis using external and internal tools. Following are the list of these static analysis.
 
 ### MyPy
 
-[`MyPy`](https://pypi.org/project/mypy/)  is a static analysis tool that runs type checking of python package. MyPy is an opt-in check for packages. Following are the steps to run `MyPy` locally for a specific package:
+[`MyPy`](https://pypi.org/project/mypy/)  is a static analysis tool that runs type checking of python package. Following are the steps to run `MyPy` locally for a specific package:
 
-1. Add the package name to the end of the [`mypy_hard_failure_packages.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tox/mypy_hard_failure_packages.py) file:
-   ```python
-   MYPY_HARD_FAILURE_OPTED = [
-      ...,
-      "azure-my-package",
-   ]
-   ```
-2. Go to root of the package
-3. Execute following command: `tox -e mypy -c ../../../eng/tox/tox.ini`
+1. Go to root of the package
+2. Execute following command: `tox -e mypy -c ../../../eng/tox/tox.ini`
+
+### Pyright
+
+[`Pyright`](https://github.com/microsoft/pyright/)  is a static analysis tool that runs type checking of python package. Following are the steps to run `pyright` locally for a specific package:
+
+1. Go to root of the package
+2. Execute following command: `tox -e pyright -c ../../../eng/tox/tox.ini`
+
+
+### Verifytypes
+
+[`Verifytypes`](https://github.com/microsoft/pyright/blob/main/docs/typed-libraries.md#verifying-type-completeness) is a feature of pyright that checks the type completeness of a python package. Following are the steps to run `verifytypes` locally for a specific package:
+
+1. Go to root of the package
+2. Execute following command: `tox -e verifytypes -c ../../../eng/tox/tox.ini`
+
 
 ### Pylint
 

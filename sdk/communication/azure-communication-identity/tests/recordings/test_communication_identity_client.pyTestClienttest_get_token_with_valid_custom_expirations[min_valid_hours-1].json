@@ -29,7 +29,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "123ms"
+        "X-Processing-Time": "83ms"
       },
       "ResponseBody": {
         "identity": {
@@ -62,7 +62,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "api-supported-versions": "2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview, 2021-11-01, 2022-06-01, 2022-10-01",
-        "Content-Length": "69",
+        "Content-Length": "68",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "MS-CV": "sanitized",
@@ -71,11 +71,11 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "182ms"
+        "X-Processing-Time": "150ms"
       },
       "ResponseBody": {
         "token": "sanitized",
-        "expiresOn": "2023-01-12T12:26:29.9106156\u002B00:00"
+        "expiresOn": "2023-01-16T14:47:57.677648\u002B00:00"
       }
     }
   ],

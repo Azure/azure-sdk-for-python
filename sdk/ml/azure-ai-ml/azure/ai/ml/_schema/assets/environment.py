@@ -75,9 +75,7 @@ class _BaseEnvironmentSchema(AssetSchema):
     )
     build = NestedField(
         BuildContextSchema,
-        metadata={
-            "description": "Docker build context to create the environment. Mutually exclusive with image"
-        },
+        metadata={"description": "Docker build context to create the environment. Mutually exclusive with image"},
     )
     image = fields.Str()
     conda_file = UnionField([fields.Raw(), fields.Str()])
@@ -101,9 +99,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         # validates that "channels" and "dependencies" are not included in the data creation.
         # These properties should only be on environment conda files not in the environment creation file
         if "channels" in data or "dependencies" in data:
-            environmentMessage = CREATE_ENVIRONMENT_ERROR_MESSAGE.format(
-                YAMLRefDocLinks.ENVIRONMENT
-            )
+            environmentMessage = CREATE_ENVIRONMENT_ERROR_MESSAGE.format(YAMLRefDocLinks.ENVIRONMENT)
             raise ValidationError(environmentMessage)
         return data
 
@@ -138,13 +134,11 @@ class EnvironmentSchema(_BaseEnvironmentSchema):
 class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
     @pre_load
     def trim_dump_only(self, data, **kwargs):
-        """trim_dump_only in PathAwareSchema removes all properties which are
-        dump only.
+        """trim_dump_only in PathAwareSchema removes all properties which are dump only.
 
-        By the time we reach this schema name and version properties are
-        removed so no warning is shown. This method overrides
-        trim_dump_only in PathAwareSchema to check for name and version
-        and raise warning if present. And then calls the it
+        By the time we reach this schema name and version properties are removed so no warning is shown. This method
+        overrides trim_dump_only in PathAwareSchema to check for name and version and raise warning if present. And then
+        calls the it
         """
         if isinstance(data, str) or data is None:
             return data

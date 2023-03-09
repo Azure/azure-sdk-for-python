@@ -17,23 +17,25 @@ from ._models_py3 import WorkbookError
 from ._models_py3 import WorkbookUpdateParameters
 from ._models_py3 import WorkbooksListResult
 
-
-from ._application_insights_management_client_enums import (
-    CategoryType,
-    SharedTypeKind,
-)
+from ._application_insights_management_client_enums import CategoryType
+from ._application_insights_management_client_enums import SharedTypeKind
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ErrorFieldContract',
-    'ErrorResponse',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'Resource',
-    'Workbook',
-    'WorkbookError',
-    'WorkbookUpdateParameters',
-    'WorkbooksListResult',
-    'CategoryType',
-    'SharedTypeKind',
+    "ErrorFieldContract",
+    "ErrorResponse",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "Resource",
+    "Workbook",
+    "WorkbookError",
+    "WorkbookUpdateParameters",
+    "WorkbooksListResult",
+    "CategoryType",
+    "SharedTypeKind",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

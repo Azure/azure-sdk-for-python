@@ -282,6 +282,12 @@ def run_test(sdk_name, service_name, sdk_folder):
     return test_result
 
 
+def clean_test_env():
+    for item in ("SSL_CERT_DIR", "REQUESTS_CA_BUNDLE"):
+        if os.getenv(item):
+            os.environ.pop(item)
+
+
 def sdk_info_from_pypi(sdk_info: List[Dict[str, str]], cli_dependency):
     all_sdk_status = []
     add_certificate()
@@ -310,6 +316,7 @@ def sdk_info_from_pypi(sdk_info: List[Dict[str, str]], cli_dependency):
             text_to_write += test_result
             all_sdk_status.append(text_to_write)
 
+    clean_test_env()
     my_print(f'total pypi package kinds: {len(all_sdk_status)}')
     return all_sdk_status
 

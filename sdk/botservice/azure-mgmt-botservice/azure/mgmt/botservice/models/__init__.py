@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AcsChatChannel
 from ._models_py3 import AlexaChannel
 from ._models_py3 import AlexaChannelProperties
 from ._models_py3 import Bot
@@ -43,8 +44,10 @@ from ._models_py3 import LineChannel
 from ._models_py3 import LineChannelProperties
 from ._models_py3 import LineRegistration
 from ._models_py3 import ListChannelWithKeysResponse
+from ._models_py3 import M365Extensions
 from ._models_py3 import MsTeamsChannel
 from ._models_py3 import MsTeamsChannelProperties
+from ._models_py3 import Omnichannel
 from ._models_py3 import OperationDisplayInfo
 from ._models_py3 import OperationEntity
 from ._models_py3 import OperationEntityListResult
@@ -60,6 +63,7 @@ from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import QnAMakerEndpointKeysRequestBody
 from ._models_py3 import QnAMakerEndpointKeysResponse
 from ._models_py3 import Resource
+from ._models_py3 import SearchAssistant
 from ._models_py3 import ServiceProvider
 from ._models_py3 import ServiceProviderParameter
 from ._models_py3 import ServiceProviderParameterMetadata
@@ -77,6 +81,10 @@ from ._models_py3 import SmsChannel
 from ._models_py3 import SmsChannelProperties
 from ._models_py3 import TelegramChannel
 from ._models_py3 import TelegramChannelProperties
+from ._models_py3 import TelephonyChannel
+from ._models_py3 import TelephonyChannelProperties
+from ._models_py3 import TelephonyChannelResourceApiConfiguration
+from ._models_py3 import TelephonyPhoneNumbers
 from ._models_py3 import WebChatChannel
 from ._models_py3 import WebChatChannelProperties
 from ._models_py3 import WebChatSite
@@ -98,6 +106,7 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AcsChatChannel",
     "AlexaChannel",
     "AlexaChannelProperties",
     "Bot",
@@ -135,8 +144,10 @@ __all__ = [
     "LineChannelProperties",
     "LineRegistration",
     "ListChannelWithKeysResponse",
+    "M365Extensions",
     "MsTeamsChannel",
     "MsTeamsChannelProperties",
+    "Omnichannel",
     "OperationDisplayInfo",
     "OperationEntity",
     "OperationEntityListResult",
@@ -152,6 +163,7 @@ __all__ = [
     "QnAMakerEndpointKeysRequestBody",
     "QnAMakerEndpointKeysResponse",
     "Resource",
+    "SearchAssistant",
     "ServiceProvider",
     "ServiceProviderParameter",
     "ServiceProviderParameterMetadata",
@@ -169,6 +181,10 @@ __all__ = [
     "SmsChannelProperties",
     "TelegramChannel",
     "TelegramChannelProperties",
+    "TelephonyChannel",
+    "TelephonyChannelProperties",
+    "TelephonyChannelResourceApiConfiguration",
+    "TelephonyPhoneNumbers",
     "WebChatChannel",
     "WebChatChannelProperties",
     "WebChatSite",

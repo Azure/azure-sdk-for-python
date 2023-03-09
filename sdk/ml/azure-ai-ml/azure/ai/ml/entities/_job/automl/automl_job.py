@@ -8,7 +8,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import TYPE, AssetTypes

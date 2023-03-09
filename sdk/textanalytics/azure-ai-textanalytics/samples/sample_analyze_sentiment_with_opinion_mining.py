@@ -42,12 +42,10 @@ OUTPUT:
     Looking at the breakdown, I can see what aspects of my hotel need improvement, and based off of both the number and content of the complaints users have made about my toilets, I need to get that fixed ASAP.
 """
 
-from __future__ import annotations
-import os
-import typing
-
 
 def sample_analyze_sentiment_with_opinion_mining() -> None:
+    import os
+    import typing
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
@@ -102,7 +100,7 @@ def sample_analyze_sentiment_with_opinion_mining() -> None:
         "\nIn order to do that, I'm going to extract targets of a negative sentiment. "
         "I'm going to map each of these targets to the mined opinion object we get back to aggregate the reviews by target. "
     )
-    target_to_complaints: dict[str, typing.Any] = {}
+    target_to_complaints: typing.Dict[str, typing.Any] = {}
 
     for document in doc_result:
         for sentence in document.sentences:

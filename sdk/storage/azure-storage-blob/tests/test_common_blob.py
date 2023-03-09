@@ -1777,7 +1777,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
         resp = blob.upload_blob(b'hello 2', length=7, lease=lease)
-        self.sleep(17)
+        self.sleep(20)
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -3257,4 +3257,30 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert blob_client.exists()
         assert blob_client.get_blob_properties().size == 0
 
-# ------------------------------------------------------------------------------
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_properties(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(blob_data)
+
+        # Assert
+        data = blob.download_blob(encoding='utf-8')
+        props = data.properties
+
+        assert data is not None
+        assert data.readall() == blob_data
+        assert props['name'] == blob_name
+        assert props['creation_time'] is not None
+        assert props['content_settings'] is not None
+        assert props['size'] == len(blob_data)
+
+    # ------------------------------------------------------------------------------
