@@ -185,7 +185,7 @@ class KeyVaultSetting(object):
         name: str,
         value: Union[str, bool],
         setting_type: Optional[Union[str, KeyVaultSettingType]] = None,
-        **kwargs,  # pylint:disable=unused-argument,redefined-builtin
+        **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         self.name = name
         self.value = value if isinstance(value, str) else str(value)  # `value` is stored as a string
