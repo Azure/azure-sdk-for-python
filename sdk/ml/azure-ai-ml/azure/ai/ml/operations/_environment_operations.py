@@ -10,6 +10,7 @@ from contextlib import contextmanager
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._utils._registry_utils import get_registry_client
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
@@ -379,6 +380,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         return Environment._from_rest_object(result)
 
     @monitor_with_activity(logger, "Environment.Share", ActivityType.PUBLICAPI)
+    @experimental
     def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Environment:
         """Share a environment asset from workspace to registry.
 

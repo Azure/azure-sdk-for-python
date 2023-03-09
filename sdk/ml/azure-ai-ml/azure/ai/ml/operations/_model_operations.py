@@ -10,6 +10,7 @@ from contextlib import contextmanager
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
     _get_default_datastore_info,
@@ -443,6 +444,7 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Model.Share", ActivityType.PUBLICAPI)
+    @experimental
     def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Model:
         """Share a model asset from workspace to registry.
 
