@@ -802,12 +802,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             )
             digest = response_headers['Docker-Content-Digest']
-            if not _validate_digest(data, digest):
-                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
+ 
         except ValueError:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.")
+            if not _validate_digest(data, digest):
+                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
             raise
+
         return digest
 
     @distributed_trace
@@ -886,12 +888,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             digest = response.http_response.headers['Docker-Content-Digest']
             manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
             manifest_stream = _serialize_manifest(manifest)
-            if not _validate_digest(manifest_stream, digest):
-                raise ValueError("The requested digest does not match the digest of the received manifest.")
         except ValueError:
             if repository is None or tag_or_digest is None:
                 raise ValueError("The parameter repository and tag_or_digest cannot be None.")
+            if not _validate_digest(manifest_stream, digest):
+                raise ValueError("The requested digest does not match the digest of the received manifest.")
             raise
+
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @overload
