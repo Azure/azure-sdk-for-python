@@ -20,7 +20,6 @@ module_logger = logging.getLogger(__name__)
 @experimental
 class QueueSettings(RestTranslatableMixin, DictMixin):
     """QueueSettings.
-
     :ivar job_tier: Enum to determine the job tier. Possible values include: "Spot", "Basic",
      "Standard", "Premium".
     :vartype job_tier: str or ~azure.mgmt.machinelearningservices.models.JobTier
@@ -41,6 +40,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
         self._validate_job_priority_name()
 
     def _to_rest_object(self) -> RestQueueSettings:
+        self._validate()
         job_tier = JobTierNames.ENTITY_TO_REST.get(self.job_tier, None) if self.job_tier else None
         priority = JobPriorityValues.ENTITY_TO_REST.get(self.priority, None) if self.priority else None
         return RestQueueSettings(job_tier=job_tier, priority=priority)
@@ -53,7 +53,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
         priority = JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None) if obj.priority else None
         return cls(job_tier=job_tier, priority=priority)
 
-    def _validate_job_tier_name(self):
+    def _validate(self):
         if self.job_tier and not self.job_tier in JobTierNames.ENTITY_TO_REST.keys():
             msg = f"job_tier should be one of " f"{JobTierNames.ALLOWED_NAMES}, but received '{self.job_tier}'."
             raise ValidationException(

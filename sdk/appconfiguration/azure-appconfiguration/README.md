@@ -59,6 +59,7 @@ Alternatively, get the connection string from the Azure Portal.
 Once you have the value of the connection string, you can create the AzureAppConfigurationClient:
 
 <!-- SNIPPET:hello_world_sample.create_app_config_client -->
+
 ```python
 import os
 from azure.appconfiguration import AzureAppConfigurationClient
@@ -67,6 +68,7 @@ CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
 # Create app config client
 client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 ```
+
 <!-- END SNIPPET -->
 
 #### Use AAD token
@@ -167,6 +169,7 @@ There are two ways to store a Configuration Setting:
 - add_configuration_setting creates a setting only if the setting does not already exist in the store.
 
 <!-- SNIPPET:hello_world_advanced_sample.create_config_setting -->
+
 ```python
 config_setting = ConfigurationSetting(
     key="MyKey",
@@ -177,16 +180,19 @@ config_setting = ConfigurationSetting(
 )
 added_config_setting = client.add_configuration_setting(config_setting)
 ```
+
 <!-- END SNIPPET -->
 
 - set_configuration_setting creates a setting if it doesn't exist or overrides an existing setting.
 
 <!-- SNIPPET:hello_world_advanced_sample.set_config_setting -->
+
 ```python
 added_config_setting.value = "new value"
 added_config_setting.content_type = "new content type"
 updated_config_setting = client.set_configuration_setting(config_setting)
 ```
+
 <!-- END SNIPPET -->
 
 ### Get a Configuration Setting
@@ -194,11 +200,13 @@ updated_config_setting = client.set_configuration_setting(config_setting)
 Get a previously stored Configuration Setting.
 
 <!-- SNIPPET:hello_world_sample.get_config_setting -->
+
 ```python
 fetched_config_setting = client.get_configuration_setting(
     key="MyKey"
 )
 ```
+
 <!-- END SNIPPET -->
 
 ### Delete a Configuration Setting
@@ -206,12 +214,14 @@ fetched_config_setting = client.get_configuration_setting(
 Delete an existing Configuration Setting.
 
 <!-- SNIPPET:hello_world_advanced_sample.delete_config_setting -->
+
 ```python
 client.delete_configuration_setting(
     key="MyKey",
     label="MyLabel",
 )
 ```
+
 <!-- END SNIPPET -->
 
 ### List Configuration Settings
@@ -219,11 +229,13 @@ client.delete_configuration_setting(
 List all configuration settings filtered with label_filter and/or key_filter.
 
 <!-- SNIPPET:hello_world_advanced_sample.list_config_setting -->
+
 ```python
 config_settings = client.list_configuration_settings(label_filter="MyLabel")
 for item in config_settings:
     print_configuration_setting(item)
 ```
+
 <!-- END SNIPPET -->
 
 ### Async APIs
@@ -232,6 +244,7 @@ Async client is supported.
 To use the async client library, import the AzureAppConfigurationClient from package azure.appconfiguration.aio instead of azure.appconfiguration
 
 <!-- SNIPPET:hello_world_sample_async.create_app_config_client -->
+
 ```python
 import os
 from azure.appconfiguration.aio import AzureAppConfigurationClient
@@ -240,27 +253,32 @@ CONNECTION_STRING = os.environ['APPCONFIGURATION_CONNECTION_STRING']
 # Create app config client
 client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 ```
+
 <!-- END SNIPPET -->
 
 This async AzureAppConfigurationClient has the same method signatures as the sync ones except that they're async.
 For instance, to retrieve a Configuration Setting asynchronously, async_client can be used:
 
 <!-- SNIPPET:hello_world_sample_async.get_config_setting -->
+
 ```python
 fetched_config_setting = await client.get_configuration_setting(
     key="MyKey"
 )
 ```
+
 <!-- END SNIPPET -->
 
 To use list_configuration_settings, call it synchronously and iterate over the returned async iterator asynchronously
 
 <!-- SNIPPET:hello_world_advanced_sample_async.list_config_setting -->
+
 ```python
 config_settings = client.list_configuration_settings(label_filter="MyLabel")
 async for item in config_settings:
     print_configuration_setting(item)
 ```
+
 <!-- END SNIPPET -->
 
 ## Troubleshooting

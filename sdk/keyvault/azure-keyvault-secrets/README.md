@@ -42,11 +42,13 @@ See [azure-identity][azure_identity] documentation for more information about ot
 After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a secret client (replacing the value of `VAULT_URL` with your vault's URL):
 
 <!-- SNIPPET:hello_world.create_secret_client -->
+
 ```python
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=VAULT_URL, credential=credential)
 ```
+
 <!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.secrets.aio`'s `SecretClient` instead.

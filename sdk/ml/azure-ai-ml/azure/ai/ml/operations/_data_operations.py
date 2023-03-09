@@ -30,7 +30,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -72,7 +72,7 @@ from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
@@ -86,7 +86,7 @@ class DataOperations(_ScopeDependentOperations):
     ):
 
         super(DataOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
@@ -97,7 +97,7 @@ class DataOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    # @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -183,7 +183,7 @@ class DataOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:
         """Get the specified data asset.
 
@@ -226,7 +226,7 @@ class DataOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    # @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:
         """Returns created or updated data asset.
 
@@ -353,6 +353,7 @@ class DataOperations(_ScopeDependentOperations):
                     )
             raise ex
 
+    @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)
     @experimental
     def import_data(self, data_import: DataImport) -> Job:
         """Returns the data import job that is creating the data asset.
@@ -391,6 +392,7 @@ class DataOperations(_ScopeDependentOperations):
         import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
         return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True)
 
+    @monitor_with_activity(logger, "Data.ShowMaterializationStatus", ActivityType.PUBLICAPI)
     @experimental
     def show_materialization_status(
         self,
@@ -411,7 +413,7 @@ class DataOperations(_ScopeDependentOperations):
         # TODO: Add back 'asset_name=name' filter once client switches to mfe 2023-02-01-preview and above
         return self._job_operation.list(job_type="Pipeline", asset_name=name, list_view_type=list_view_type)
 
-    # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
         if not data.path:
             msg = "Missing data path. Path is required for data."
@@ -473,7 +475,7 @@ class DataOperations(_ScopeDependentOperations):
             )
             return None
 
-    # @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -502,7 +504,7 @@ class DataOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
@@ -585,16 +587,16 @@ def _assert_local_path_matches_asset_type(
     # assert file system type matches asset type
     if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):
         raise ValidationException(
-            message="No such file or directory: {}".format(local_path),
-            no_personal_data_message="No such file or directory",
+            message="File path does not match asset type {}: {}".format(asset_type, local_path),
+            no_personal_data_message="File path does not match asset type {}".format(asset_type),
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
         )
     if asset_type == AssetTypes.URI_FILE and not os.path.isfile(local_path):
         raise ValidationException(
-            message="No such file or directory: {}".format(local_path),
-            no_personal_data_message="No such file or directory",
+            message="File path does not match asset type {}: {}".format(asset_type, local_path),
+            no_personal_data_message="File path does not match asset type {}".format(asset_type),
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
