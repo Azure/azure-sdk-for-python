@@ -204,7 +204,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def create_queue(
-            self, metadata: Optional[Dict[str, str]] = None,
+            self, *,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs: Any
         ) -> None:
         """Creates a new queue in the storage account.
@@ -381,8 +382,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def set_queue_access_policy(
-            self,
-            signed_identifiers: Dict[str, AccessPolicy],
+            self, signed_identifiers: Dict[str, AccessPolicy],
             **kwargs: Any
         ) -> None:
         """Sets stored access policies for the queue that may be used with Shared
@@ -442,8 +442,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def send_message(
-            self,
-            content: Any,
+            self, content: Any,
             *,
             visibility_timeout: Optional[int] = None,
             time_to_live: Optional[int] = None,
@@ -538,11 +537,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def receive_message(
-            self,
-            *,
+            self, *,
             visibility_timeout: Optional[int] = None,
             **kwargs: Any
-        ) -> QueueMessage:
+        ) -> Optional[QueueMessage]:
         """Removes one message from the front of the queue.
 
         When the message is retrieved from the queue, the response includes the message
@@ -601,8 +599,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def receive_messages(
-            self,
-            *,
+            self, *,
             messages_per_page: Optional[int] = None,
             visibility_timeout: Optional[int] = None,
             max_messages: Optional[int] = None,
@@ -644,14 +641,14 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             larger than 7 days. The visibility timeout of a message cannot be
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.
+        :keyword int max_messages:
+            An integer that specifies the maximum number of messages to retrieve from the queue.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
-        :keyword int max_messages:
-            An integer that specifies the maximum number of messages to retrieve from the queue.
         :return:
             Returns a message iterator of dict-like Message objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.queue.QueueMessage]
@@ -688,7 +685,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def update_message(
-            self, message: Any,
+            self, message: Union[str, QueueMessage],
             pop_receipt: Optional[str] = None,
             content: Optional[Any] = None,
             *,
@@ -897,7 +894,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_message(
-            self, message: Any,
+            self, message: Union[str, QueueMessage],
             pop_receipt: Optional[str] = None,
             **kwargs: Any
         ) -> None:
