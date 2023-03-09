@@ -38,7 +38,7 @@ class ClassificationJob(AutoMLTabular):
     :keyword limits: limits settings. Defaults to None.
     :paramtype limits: typing.Optional[TabularLimitSettings]
     :keyword training: training settings. Defaults to None.
-    :paramtype training: typing.Optional[~azure.ai.ml.entities._job.automl.TrainingSettings]
+    :paramtype training: typing.Optional[~azure.ai.ml.entities._job.automl.training_settings.TrainingSettings]
     :return: An instance of ClassificationJob object.
     :rtype: ~azure.ai.ml.entities.automl.ClassificationJob
     :raises ValueError: If primary_metric is not a valid primary metric
@@ -70,7 +70,7 @@ class ClassificationJob(AutoMLTabular):
         :keyword limits: limits settings. Defaults to None.
         :paramtype limits: typing.Optional[TabularLimitSettings]
         :keyword training: training settings. Defaults to None.
-        :paramtype training: typing.Optional[~azure.ai.ml.entities._job.automl.TrainingSettings]
+        :paramtype training: typing.Optional[~azure.ai.ml.entities._job.automl.training_settings.TrainingSettings]
         :return: An instance of ClassificationJob object.
         :rtype: ~azure.ai.ml.entities.automl.ClassificationJob
         :raises ValueError: If primary_metric is not a valid primary metric

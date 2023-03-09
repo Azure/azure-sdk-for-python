@@ -10,9 +10,26 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class ImageLimitSettings(RestTranslatableMixin):
-    """Limit settings for AutoML Image Verticals.
+    r"""Limit settings for AutoML Image Verticals.
 
-    :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to None
+    ImageLimitSettings is a class that contains the following parameters:  max_concurrent_trials, max_trials, and \
+    timeout_minutes. It is used to configure the limits for the AutoML job.
+
+    .. remarks::
+
+        ImageLimitSettings is an optional configuration method to configure limits parameters such as timeouts etc.
+
+            .. note::
+
+                The number of concurrent runs is gated on the resources available in the specified compute target.
+                Ensure that the compute target has the available resources for the desired concurrency.
+
+    :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to None.
+
+        .. note::
+
+            Do not set the value of max_trials as a negative integer.
+
     :paramtype  max_concurrent_trials: typing.Optional[int]
     :keyword max_trials: Represents the maximum number of trials (children jobs) that would be executed in parallel.
     :paramtype  max_trials: typing.Optional[int]
@@ -27,15 +44,7 @@ class ImageLimitSettings(RestTranslatableMixin):
 
     .. tip::
         It's a good practice to match max_concurrent_trials count with the number of nodes in the cluster.
-
-    .. note::
-        The number of concurrent runs is gated on the resources available in the specified compute target.
-        Ensure that the compute target has the available resources for the desired concurrency.
-
-    .. remarks::
-
-        ImageLimitSettings is an optional configuration method to configure limits parameters such as timeouts etc.
-
+        For example, if you have a cluster with 4 nodes, set max_concurrent_trials to 4.
 
     **Example usage**
 
@@ -59,9 +68,8 @@ class ImageLimitSettings(RestTranslatableMixin):
             max_trials=10,
             max_concurrent_trials=2,
         )
-
-
-    .. seealso:: `Azure ML code samples <https://github.com/Azure/azureml-examples/tree/main/sdk>`_
+        # Submit the AutoML job.
+        image_instance_segmentation_job.submit()
     """
 
     def __init__(
