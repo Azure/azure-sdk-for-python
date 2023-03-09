@@ -67,11 +67,11 @@ class FeatureSetOperations(_ScopeDependentOperations):
         name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
     ) -> ItemPaged[FeatureSet]:
-        """List the feature-set assets of the workspace.
+        """List the FeatureSet assets of the workspace.
 
-        :param name: Name of a specific feature-set asset, optional.
+        :param name: Name of a specific FeatureSet asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived feature-set assets.
+        :param list_view_type: View type for including/excluding (for example) archived FeatureSet assets.
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureSet objects
@@ -103,13 +103,13 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
     def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None) -> FeatureSet:
-        """Get the specified feature-set asset.
+        """Get the specified FeatureSet asset.
 
-        :param name: Name of feature-set asset.
+        :param name: Name of FeatureSet asset.
         :type name: str
-        :param version: Version of feature-set asset.
+        :param version: Version of FeatureSet asset.
         :type version: str
-        :param label: Label of the feature-set asset. (mutually exclusive with version)
+        :param label: Label of the FeatureSet asset. (mutually exclusive with version)
         :type label: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully
             identified and retrieved. Details will be provided in the error message.
@@ -248,7 +248,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 def validate_and_get_feature_set_spec(featureset: FeatureSet) -> FeaturesetSpec:
     # pylint: disable=no-member
     if not featureset.specification and not featureset.specification.path:
-        msg = "Missing feature-set spec path. Path is required for featureset."
+        msg = "Missing FeatureSet spec path. Path is required for featureset."
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,

@@ -508,19 +508,19 @@ class MLClient:
 
         self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
-        self._featuresets = FeatureSetOperations(
+        self._feature_sets = FeatureSetOperations(
             self._operation_scope,
             self._operation_config,
             self._service_client_02_2023_preview,
             self._datastores,
             **ops_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
+        self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._feature_sets)
 
-        self._featurestore_entities = FeatureStoreEntityOperations(
+        self._feature_store_entities = FeatureStoreEntityOperations(
             self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
         )
-        self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestore_entities)
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._feature_store_entities)
 
     @classmethod
     def from_config(
@@ -649,8 +649,8 @@ class MLClient:
 
     @property
     @experimental
-    def featurestores(self) -> FeatureStoreOperations:
-        """A collection of featurestore related operations.
+    def feature_stores(self) -> FeatureStoreOperations:
+        """A collection of feature-store related operations.
         :return: Featurestore operations
         :rtype: FeatureStoreOperations
         """
@@ -775,22 +775,22 @@ class MLClient:
 
     @property
     @experimental
-    def featuresets(self) -> FeatureSetOperations:
+    def feature_sets(self) -> FeatureSetOperations:
         """A collection of feature-set related operations.
 
         :return: FeatureSet operations
         :rtype: FeatureSetOperations
         """
-        return self._featuresets
+        return self._feature_sets
 
     @property
-    def featurestore_entities(self) -> FeatureStoreEntityOperations:
+    def feature_store_entities(self) -> FeatureStoreEntityOperations:
         """A collection of feature_store_entity related operations.
 
         :return: FeatureStoreEntity operations
         :rtype: FeatureStoreEntityOperations
         """
-        return self._featurestore_entities
+        return self._feature_store_entities
 
     @property
     def subscription_id(self) -> str:
