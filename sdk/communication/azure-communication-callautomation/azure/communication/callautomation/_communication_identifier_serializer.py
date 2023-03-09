@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, Any, TYPE_CHECKING
+from typing import Dict, Any, TYPE_CHECKING, Union
 
 from ._models import (
     CommunicationIdentifier,
@@ -19,8 +19,7 @@ if TYPE_CHECKING:
         CommunicationIdentifierModel, PhoneNumberIdentifierModel)
 
 
-def serialize_identifier(identifier):
-    # type: (CommunicationIdentifier) -> Dict[str, Any]
+def serialize_identifier(identifier) -> Dict[str, Any]:
     """Serialize the Communication identifier into CommunicationIdentifierModel
 
     :param identifier: Identifier object
@@ -39,7 +38,6 @@ def serialize_identifier(identifier):
 
 
 def deserialize_identifier(identifier_model) -> CommunicationIdentifier:
-    # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
@@ -63,8 +61,7 @@ def deserialize_identifier(identifier_model) -> CommunicationIdentifier:
     return UnknownIdentifier(raw_id)
 
 
-def deserialize_phone_identifier(identifier_model) -> PhoneNumberIdentifier | None:
-    # type: (PhoneNumberIdentifierModel) -> PhoneNumberIdentifier
+def deserialize_phone_identifier(identifier_model) -> Union[PhoneNumberIdentifier, None]:
     """
     Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
 

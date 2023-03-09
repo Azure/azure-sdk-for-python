@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any  # pylint: disable=unused-import
+from typing import Any, List  # pylint: disable=unused-import
 from urllib.parse import urlparse
 from azure.core.credentials import TokenCredential
 
@@ -47,7 +47,6 @@ class CallAutomationClient(object):
             credential,  # type: TokenCredential
             **kwargs  # type: Any
     ):
-        # type: (...) -> None
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -83,7 +82,7 @@ class CallAutomationClient(object):
         cls,
         conn_str,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> CallAutomationClient
+    ) -> 'CallAutomationClient' :
         endpoint, access_key = parse_connection_str(conn_str)
 
         return cls(endpoint, access_key, **kwargs)
@@ -92,7 +91,7 @@ class CallAutomationClient(object):
         self,
         call_connection_id,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> CallConnection
+    ) -> CallConnection:
 
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
@@ -107,7 +106,7 @@ class CallAutomationClient(object):
     def get_call_recording(
         self,
         **kwargs  # type: Any
-    ):  # type: (...) -> CallRecording
+    ) -> CallRecording:
 
         return CallRecording(
             self._call_recording_client,
@@ -175,7 +174,7 @@ class CallAutomationClient(object):
 
     def create_group_call(
         self,
-        targets: list[CommunicationIdentifier],
+        targets: List[CommunicationIdentifier],
         callback_url: str,
         **kwargs
     ):
