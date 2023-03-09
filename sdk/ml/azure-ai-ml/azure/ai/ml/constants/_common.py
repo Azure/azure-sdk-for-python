@@ -198,7 +198,7 @@ class AzureMLResourceType(object):
     REGISTRY = "registries"
     CONNECTIONS = "connections"
     FEATURESET = "featuresets"
-    FEATURESTORE_ENTITY = "featurestoreEntities"
+    FEATURESTORE_ENTITY = "featurestore_entities"
     FEATURE_STORE = "feature_store"
 
     NAMED_TYPES = {

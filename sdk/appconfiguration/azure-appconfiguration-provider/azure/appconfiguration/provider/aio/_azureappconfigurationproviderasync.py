@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
-from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING
+from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING, Union
 
 from azure.appconfiguration import FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
@@ -12,16 +12,17 @@ from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from .._constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_PREFIX
+from .._constants import FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_PREFIX, EMPTY_LABEL
 from .._azureappconfigurationprovider import _is_json_content_type, _get_correlation_context
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
 
 @overload
-async def load_provider(
+async def load(
         endpoint: str,
         credential: "AsyncTokenCredential",
         *,
@@ -46,7 +47,7 @@ async def load_provider(
     ...
 
 @overload
-async def load_provider(
+async def load(
         *,
         connection_string: str,
         selects: Optional[List[SettingSelector]] = None,
@@ -68,7 +69,7 @@ async def load_provider(
     ...
 
 
-async def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
+async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     #pylint:disable=protected-access
 
     # Start by parsing kwargs
@@ -76,8 +77,8 @@ async def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
     credential: Optional["AsyncTokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
-    selects: List[SettingSelector] = kwargs.pop("selects", [SettingSelector("*", "\0")])
-    trim_prefixes : List[str] = kwargs.pop("trimmed_key_prefixes", [])
+    selects: List[SettingSelector] = kwargs.pop("selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)])
+    trim_prefixes : List[str] = kwargs.pop("trim_prefixes", [])
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -100,10 +101,6 @@ async def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
     provider = _buildprovider(connection_string, endpoint, credential, key_vault_options)
 
     provider._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
-
-    if key_vault_options is not None and len(key_vault_options.secret_clients) > 0:
-        for secret_client in key_vault_options.secret_clients:
-            provider._secret_clients[secret_client.vault_url] = secret_client
 
     for select in selects:
         configurations = provider._client.list_configuration_settings(
@@ -178,14 +175,19 @@ async def _resolve_keyvault_reference(
 
     key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
-    #pylint:disable=protected-access
-    referenced_client = provider._secret_clients.get(key_vault_identifier.vault_url, None)
+    vault_url = key_vault_identifier.vault_url + "/"
 
-    if referenced_client is None and key_vault_options.credential is not None:
+    #pylint:disable=protected-access
+    referenced_client = provider._secret_clients.get(vault_url, None)
+
+    vault_config = key_vault_options.client_configs.get(vault_url, {})
+    credential = vault_config.pop("credential", key_vault_options.credential)
+
+    if referenced_client is None and credential is not None:
         referenced_client = SecretClient(
-            vault_url=key_vault_identifier.vault_url, credential=key_vault_options.credential
+            vault_url=vault_url, credential=credential, **vault_config
         )
-        provider._secret_clients[key_vault_identifier.vault_url] = referenced_client
+        provider._secret_clients[vault_url] = referenced_client
 
     if referenced_client:
         return (
@@ -202,11 +204,10 @@ async def _resolve_keyvault_reference(
             return resolved
 
     raise ValueError(
-        "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
+        "No Secret Client found for Key Vault reference %s" % (vault_url)
     )
 
-
-class AzureAppConfigurationProvider(Mapping[str, str]):
+class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
     settings from Azure App Configuration into a Python application. Enables trimming of prefixes from configuration

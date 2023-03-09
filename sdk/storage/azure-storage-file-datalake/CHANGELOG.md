@@ -7,6 +7,11 @@
 - Added support for `encryption_context`, a string value that can be passed when creating a file that will not be
 encrypted with the file. This value is returned on `download_file`, `get_file_properties` and `get_paths`.
 
+## 12.10.1 (2023-03-08)
+
+### Bugs Fixed
+- Fixed "duplicate type signatures" MyPy error.
+
 ## 12.10.0 (2023-02-22)
 
 ### Features Added
