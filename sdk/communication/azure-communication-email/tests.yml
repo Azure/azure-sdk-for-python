@@ -14,7 +14,15 @@ stages:
             - $(sub-config-communication-services-cloud-test-resources-python)
           MatrixReplace:
             - TestSamples=.*/true
-      Clouds: Public
+        PPE:
+            SubscriptionConfigurations:
+              - $(sub-config-communication-ppe-test-resources-common)
+              - $(sub-config-communication-ppe-test-resources-python)
+        Int:
+          SubscriptionConfigurations:
+            - $(sub-config-communication-int-test-resources-common)
+            - $(sub-config-communication-int-test-resources-python)
+      Clouds: Public,PPE,Int
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
