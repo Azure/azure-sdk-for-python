@@ -12,7 +12,10 @@ from ._models import (
     RecordingFormat,
     RecordingContent,
     RecordingStorage,
-    RecordingChannel
+    RecordingChannel,
+    CallInvite,
+    CommunicationIdentifier,
+    CommunicationUserIdentifier
     )
 from ._events import (
     AddParticipantSucceeded,
@@ -58,6 +61,9 @@ __all__ = [
     "PlayCanceled",
     "RecognizeCompleted",
     "RecognizeCanceled",
-    "RecognizeFailed"
+    "RecognizeFailed",
+    "CallInvite",
+    "CommunicationIdentifier",
+    "CommunicationUserIdentifier"
 ]
 __version__ = VERSION

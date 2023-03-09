@@ -2,6 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cSpell:ignore DTMF
+# cSpell:ignore Dtmf
+# cSpell:ignore dtmf
+# cSpell:ignore PSTN
 from typing import Any, List, Optional, Union, Mapping
 
 from enum import Enum, EnumMeta
@@ -520,7 +524,7 @@ class CallMediaRecognizeOptions(object):
 
     :ivar input_type: Determines the type of the recognition.
     :vartype input_type: str or ~azure.communication.callautomation.models.RecognizeInputType
-    :ivar target_participant: Target participant of DTFM tone recognition.
+    :ivar target_participant: Target participant of DTMF tone recognition.
     :vartype target_participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar initial_silence_timeout: Time to wait for first input after prompt in seconds (if any).
     :vartype initial_silence_timeout: int
@@ -553,9 +557,9 @@ class CallMediaRecognizeOptions(object):
 
 class CallMediaRecognizeDtmfOptions(CallMediaRecognizeOptions):
     """
-    The recognize configuration specific to Dtmf.
+    The recognize configuration specific to DTMF.
 
-    :ivar max_tones_to_collect: Maximum number of DTMFs to be collected.
+    :ivar max_tones_to_collect: Maximum number of DTMF to be collected.
     :vartype max_tones_to_collect: int
     :ivar inter_tone_timeout: Time to wait between DTMF inputs to stop recognizing.
     :vartype inter_tone_timeout: int
