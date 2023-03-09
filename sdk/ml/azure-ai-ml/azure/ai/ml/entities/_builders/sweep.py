@@ -110,8 +110,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Objective] = None,
-        early_termination: Optional[Union[BanditPolicy,
-                                          MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
         search_space: Optional[
             Dict[
                 str,
@@ -120,12 +119,10 @@ class Sweep(ParameterizedSweep, BaseNode):
                 ],
             ]
         ] = None,
-        inputs: Optional[Dict[str,
-                              Union[Input, str, bool, int, float]]] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration,
-                  AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs,
@@ -175,8 +172,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         search_space = {}
         for name, value in values.items():
             # If value is a SearchSpace object, directly pass it to job.search_space[name]
-            search_space[name] = self._value_type_to_class(
-                value) if isinstance(value, dict) else value
+            search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
         self._search_space = search_space
 
     @classmethod
@@ -228,8 +224,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         # hack: only early termination policy does not follow yaml schema now, should be removed after server-side made
         # the change
         if "early_termination" in rest_obj:
-            rest_obj["early_termination"] = self.early_termination._to_rest_object(
-            ).as_dict()
+            rest_obj["early_termination"] = self.early_termination._to_rest_object().as_dict()
 
         rest_obj.update(
             dict(
@@ -247,19 +242,15 @@ class Sweep(ParameterizedSweep, BaseNode):
         # the change
         if "early_termination" in obj and "policy_type" in obj["early_termination"]:
             # can't use _from_rest_object here, because obj is a dict instead of an EarlyTerminationPolicy rest object
-            obj["early_termination"]["type"] = camel_to_snake(
-                obj["early_termination"].pop("policy_type"))
+            obj["early_termination"]["type"] = camel_to_snake(obj["early_termination"].pop("policy_type"))
 
         # TODO: use cls._get_schema() to load from rest object
         from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
 
-        schema = ParameterizedSweepSchema(
-            context={BASE_PATH_CONTEXT_KEY: "./"})
-        support_data_binding_expression_for_fields(
-            schema, ["type", "component", "trial"])
+        schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
+        support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])
 
-        base_sweep = schema.load(obj, unknown=EXCLUDE,
-                                 partial=True)  # pylint: disable=no-member
+        base_sweep = schema.load(obj, unknown=EXCLUDE, partial=True)  # pylint: disable=no-member
         for key, value in base_sweep.items():
             obj[key] = value
 
@@ -278,15 +269,13 @@ class Sweep(ParameterizedSweep, BaseNode):
             return dict(componentId=trial_component_id)
         if isinstance(trial_component_id, CommandComponent):
             return trial_component_id._to_rest_object()
-        raise UserErrorException(
-            f"invalid trial in sweep node {self.name}: {str(self.trial)}")
+        raise UserErrorException(f"invalid trial in sweep node {self.name}: {str(self.trial)}")
 
     def _to_job(self) -> SweepJob:
         command = self.trial.command
         for key, _ in self.search_space.items():
             # Double curly brackets to escape
-            command = command.replace(
-                f"${{{{inputs.{key}}}}}", f"${{{{search_space.{key}}}}}")
+            command = command.replace(f"${{{{inputs.{key}}}}}", f"${{{{search_space.{key}}}}}")
 
         # TODO: raise exception when the trial is a pre-registered component
         if command != self.trial.command and isinstance(self.trial, CommandComponent):
@@ -341,8 +330,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         """
         search_space: Dict[
             str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal,
-                  QLogUniform, QNormal, QUniform, Randint, Uniform],
+            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
         ] = {}
         inputs: Dict[str, Union[Input, str, bool, int, float]] = {}
         if built_inputs is not None:
@@ -356,8 +344,7 @@ class Sweep(ParameterizedSweep, BaseNode):
                     msg = "unsupported built input type: {}: {}"
                     raise ValidationException(
                         message=msg.format(input_name, type(input_obj)),
-                        no_personal_data_message=msg.format(
-                            "[input_name]", type(input_obj)),
+                        no_personal_data_message=msg.format("[input_name]", type(input_obj)),
                         target=ErrorTarget.SWEEP_JOB,
                         error_type=ValidationErrorType.INVALID_VALUE,
                     )
@@ -386,6 +373,5 @@ class Sweep(ParameterizedSweep, BaseNode):
     def early_termination(self, value: Union[EarlyTerminationPolicy, Dict[str, Union[str, float, int, bool]]]):
         if isinstance(value, dict):
             early_termination_schema = EarlyTerminationField()
-            value = early_termination_schema._deserialize(
-                value=value, attr=None, data=None)
+            value = early_termination_schema._deserialize(value=value, attr=None, data=None)
         self._early_termination = value

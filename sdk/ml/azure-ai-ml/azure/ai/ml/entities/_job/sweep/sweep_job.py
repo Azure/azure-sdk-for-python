@@ -128,11 +128,9 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         display_name: Optional[str] = None,
         experiment_name: Optional[str] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration,
-                  AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        inputs: Optional[Dict[str,
-                              Union[Input, str, bool, int, float]]] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Output]] = None,
         compute: Optional[str] = None,
         limits: Optional[SweepJobLimits] = None,
@@ -147,8 +145,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         ] = None,
         objective: Optional[Objective] = None,
         trial: Optional[Union[CommandJob, CommandComponent]] = None,
-        early_termination: Optional[Union[BanditPolicy,
-                                          MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
     ):
@@ -185,8 +182,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     def _to_rest_object(self) -> JobBase:
         self._override_missing_properties_from_trial()
         self.trial.command = map_single_brackets_and_warn(self.trial.command)
-        search_space = {param: space._to_rest_object()
-                        for (param, space) in self.search_space.items()}
+        search_space = {param: space._to_rest_object() for (param, space) in self.search_space.items()}
 
         validate_inputs_for_command(self.trial.command, self.inputs)
         for key in search_space.keys():
@@ -194,8 +190,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
 
         trial_component = TrialComponent(
             code_id=self.trial.code,
-            distribution=self.trial.distribution._to_rest_object(
-            ) if self.trial.distribution else None,
+            distribution=self.trial.distribution._to_rest_object() if self.trial.distribution else None,
             environment_id=self.trial.environment,
             command=self.trial.command,
             environment_variables=self.trial.environment_variables,
@@ -207,18 +202,15 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             description=self.description,
             experiment_name=self.experiment_name,
             search_space=search_space,
-            sampling_algorithm=self._get_rest_sampling_algorithm(
-            ) if self.sampling_algorithm else None,
+            sampling_algorithm=self._get_rest_sampling_algorithm() if self.sampling_algorithm else None,
             limits=self.limits._to_rest_object() if self.limits else None,
-            early_termination=self.early_termination._to_rest_object(
-            ) if self.early_termination else None,
+            early_termination=self.early_termination._to_rest_object() if self.early_termination else None,
             properties=self.properties,
             compute_id=self.compute,
             objective=self.objective._to_rest_object() if self.objective else None,
             trial=trial_component,
             tags=self.tags,
-            inputs=to_rest_dataset_literal_inputs(
-                self.inputs, job_type=self.type),
+            inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
             identity=self.identity._to_job_rest_object() if self.identity else None,
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
@@ -238,12 +230,9 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "SweepJob":
-        loaded_schema = load_from_dict(
-            SweepJobSchema, data, context, additional_message, **kwargs)
-        loaded_schema["trial"] = ParameterizedCommand(
-            **(loaded_schema["trial"]))
-        sweep_job = SweepJob(
-            base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_schema)
+        loaded_schema = load_from_dict(SweepJobSchema, data, context, additional_message, **kwargs)
+        loaded_schema["trial"] = ParameterizedCommand(**(loaded_schema["trial"]))
+        sweep_job = SweepJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_schema)
         return sweep_job
 
     @classmethod
@@ -251,12 +240,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         properties: RestSweepJob = obj.properties
 
         # Unpack termination schema
-        early_termination = EarlyTerminationPolicy._from_rest_object(
-            properties.early_termination)
+        early_termination = EarlyTerminationPolicy._from_rest_object(properties.early_termination)
 
         # Unpack sampling algorithm
-        sampling_algorithm = SamplingAlgorithm._from_rest_object(
-            properties.sampling_algorithm)
+        sampling_algorithm = SamplingAlgorithm._from_rest_object(properties.sampling_algorithm)
 
         trial = ParameterizedCommand._load_from_sweep_job(obj.properties)
         # Compute also appears in both layers of the yaml, but only one of the REST.
@@ -272,8 +259,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             experiment_name=properties.experiment_name,
             services=properties.services,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(
-                obj.system_data) if obj.system_data else None,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             trial=trial,
             compute=properties.compute_id,
             sampling_algorithm=sampling_algorithm,
@@ -285,8 +271,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             objective=properties.objective,
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity)
+            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
             queue_settings=properties.queue_settings,
@@ -305,7 +290,6 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
 
         has_trial_limits_timeout = self.trial.limits and self.trial.limits.timeout
         if has_trial_limits_timeout and not self.limits:
-            self.limits = SweepJobLimits(
-                trial_timeout=self.trial.limits.timeout)
+            self.limits = SweepJobLimits(trial_timeout=self.trial.limits.timeout)
         elif has_trial_limits_timeout and not self.limits.trial_timeout:
             self.limits.trial_timeout = self.trial.limits.timeout

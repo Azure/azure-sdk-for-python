@@ -41,8 +41,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         *,
         resources: Optional[ResourceConfiguration] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration,
-                  AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
@@ -86,8 +85,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
     @classmethod
     def _load_from_rest(cls, obj: JobBase) -> "AutoMLJob":
         task_type = (
-            camel_to_snake(
-                obj.properties.task_details.task_type) if obj.properties.task_details.task_type else None
+            camel_to_snake(obj.properties.task_details.task_type) if obj.properties.task_details.task_type else None
         )
         class_type = cls._get_task_mapping().get(task_type, None)
         if class_type:
@@ -169,11 +167,9 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
     def _resolve_data_inputs(self, rest_job):  # pylint: disable=no-self-use
         """Resolve JobInputs to MLTableJobInputs within data_settings."""
         if isinstance(rest_job.training_data, Input):
-            rest_job.training_data = MLTableJobInput(
-                uri=rest_job.training_data.path)
+            rest_job.training_data = MLTableJobInput(uri=rest_job.training_data.path)
         if isinstance(rest_job.validation_data, Input):
-            rest_job.validation_data = MLTableJobInput(
-                uri=rest_job.validation_data.path)
+            rest_job.validation_data = MLTableJobInput(uri=rest_job.validation_data.path)
         if hasattr(rest_job, "test_data") and isinstance(rest_job.test_data, Input):
             rest_job.test_data = MLTableJobInput(uri=rest_job.test_data.path)
 
@@ -188,5 +184,4 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
                 type=AssetTypes.MLTABLE, path=self.validation_data.uri  # pylint: disable=no-member
             )
         if hasattr(self, "test_data") and isinstance(self.test_data, MLTableJobInput):
-            self.test_data = Input(
-                type=AssetTypes.MLTABLE, path=self.test_data.uri)  # pylint: disable=no-member
+            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri)  # pylint: disable=no-member
