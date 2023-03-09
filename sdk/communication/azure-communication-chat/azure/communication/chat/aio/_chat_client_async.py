@@ -82,8 +82,8 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            self._endpoint,
-            authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
+            credential=self._credential,
+            endpoint=self._endpoint,
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
