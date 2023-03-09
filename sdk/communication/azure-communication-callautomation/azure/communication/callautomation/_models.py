@@ -2,10 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cSpell:ignore DTMF
-# cSpell:ignore Dtmf
-# cSpell:ignore dtmf
-# cSpell:ignore PSTN
 from typing import Any, List, Optional, Union, Mapping
 
 from enum import Enum, EnumMeta

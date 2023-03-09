@@ -30,7 +30,6 @@ class CallMediaClient(object):
         call_media_operations,  # type: CallMediaOperations
         **kwargs
     ):
-        # type: (...) -> None
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
         self.call_connection_id = call_connection_id

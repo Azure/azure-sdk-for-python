@@ -16,7 +16,7 @@ class CallAutomationEventParser(object):
 
     def __init__(
         self
-    ): # type: (...) -> None
+    ):
         pass
 
     @classmethod

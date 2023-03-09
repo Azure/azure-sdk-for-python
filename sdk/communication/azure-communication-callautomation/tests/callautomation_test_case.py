@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
+from typing import TYPE_CHECKING, Any, Dict, Optional  # pylint: disable=unused-import
 from _shared.testcase import CommunicationTestCase
 from azure.communication.callautomation import CallAutomationClient
 

@@ -32,7 +32,7 @@ class CallConnection(object):
         call_connection_id,  # type: str
         call_connection_client,  # type: CallConnectionOperations
         call_media_operations,  # type: CallMediaOperations
-    ):  # type: (...) -> None
+    ):
 
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client
@@ -41,7 +41,7 @@ class CallConnection(object):
     def get_call_media(
         self,
         **kwargs  # type: Any
-    ):  # type: (...) -> CallMediaClient
+    ) -> CallMediaClient:
 
         return CallMediaClient(
             self.call_connection_id,

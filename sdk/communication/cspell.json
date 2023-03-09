@@ -1,6 +1,11 @@
 {
     "version": "0.2",
     "ignoreWords": [
-        "orgid"
+        "orgid",
+		"dtmf",
+		"Dtmf",
+		"DTMF",
+        "pstn",
+        "PSTN"
     ]
 }
