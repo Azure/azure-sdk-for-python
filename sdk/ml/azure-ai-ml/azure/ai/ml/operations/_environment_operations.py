@@ -94,10 +94,6 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
             sas_uri = None
             if self._registry_name:
-                import debugpy
-
-                debugpy.connect(("localhost", 5678))
-                debugpy.breakpoint()
                 if isinstance(environment, WorkspaceAssetReference):
                     # verify that environment is not already in registry
                     try:
