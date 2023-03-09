@@ -9,7 +9,7 @@ from typing import Any
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema import ArmVersionedStr, PatchedSchemaMeta, StringTransformedEnum, UnionField, ArmStr
+from azure.ai.ml._schema import ArmVersionedStr, PatchedSchemaMeta, StringTransformedEnum, UnionField, ArmStr, RegistryStr
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._job.job import JobType
@@ -27,8 +27,9 @@ class JobDefinitionSchema(metaclass=PatchedSchemaMeta):
     )
     component = UnionField(
         [
+            RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            PipelineComponentFileRefField(),
+            PipelineComponentFileRefField()
         ]
     )
     type = StringTransformedEnum(required=True, allowed_values=[JobType.PIPELINE])
