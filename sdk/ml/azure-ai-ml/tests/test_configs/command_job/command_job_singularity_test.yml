@@ -1,0 +1,40 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+# code: src
+command: echo "test"
+inputs:
+  cifar:
+    type: uri_folder
+    path: azureml://datastores/workspaceblobstore/paths/CIFAR-10
+  epoch: 100
+  batchsize: 64
+  workers: 1
+  lr: 0.01
+  momen: 0.9
+  prtfreq: 200
+  output: outputs
+# environment: azureml:singularity-pytorch-with-mlflow@latest
+# TODO: Can this be a non-singularity env for test purpose?
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
+compute: /subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc
+queue_settings:
+  job_tier: premium
+  priority: medium
+resources:
+  locations: ["westus", "eastus"]
+  instance_count: 2
+  instance_type: Singularity.NC6_v3
+  properties:
+    singularity: &id001
+      interactive: false
+      imageVersion: ""
+      tensorboardLogDirectory: /scratch/tensorboard_logs
+      scalePolicy:
+        autoScaleIntervalInSec: 120
+        maxInstanceTypeCount: 1
+        minInstanceTypeCount: 1
+distribution:
+  type: pytorch
+  process_count_per_instance: 1
+environment_variables:
+  JOB_EXECUTION_MODE: Basic
+  AZUREML_COMPUTE_USE_COMMON_RUNTIME: "true"
