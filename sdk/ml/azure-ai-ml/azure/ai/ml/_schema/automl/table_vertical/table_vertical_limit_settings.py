@@ -15,6 +15,7 @@ class AutoMLTableLimitsSchema(metaclass=PatchedSchemaMeta):
     exit_score = fields.Float()
     max_concurrent_trials = fields.Int()
     max_cores_per_trial = fields.Int()
+    max_nodes = fields.Int()
     max_trials = fields.Int(data_key=AutoMLConstants.MAX_TRIALS_YAML)
     timeout_minutes = fields.Int()  # type duration
     trial_timeout_minutes = fields.Int()  # type duration

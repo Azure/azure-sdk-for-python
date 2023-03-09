@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     LogVerbosity,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
@@ -25,9 +26,6 @@ from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_12_01_preview.models._azure_machine_learning_workspaces_enums import (
-    TrainingMode,
-)
 
 
 class AutoMLTabular(AutoMLVertical, ABC):
@@ -233,7 +231,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         ensemble_model_download_timeout: Optional[int] = None,
         allowed_training_algorithms: Optional[List[str]] = None,
         blocked_training_algorithms: Optional[List[str]] = None,
-        training_mode: Optional[TrainingMode] = None,
+        training_mode: Optional[Union[str, TabularTrainingMode]] = None,
     ) -> None:
         """Method to configure training related settings.
 

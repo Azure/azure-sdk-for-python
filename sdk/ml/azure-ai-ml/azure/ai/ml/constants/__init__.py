@@ -17,6 +17,7 @@ from ._job import (
     JobType,
     NlpLearningRateScheduler,
     NlpModels,
+    TabularTrainingMode,
 )
 from ._registry import AcrAccountSku, StorageAccountType
 from ._workspace import ManagedServiceIdentityType
@@ -40,4 +41,5 @@ __all__ = [
     "NlpModels",
     "NlpLearningRateScheduler",
     "Scope",
+    "TabularTrainingMode",
 ]
