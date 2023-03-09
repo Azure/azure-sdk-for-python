@@ -16,13 +16,14 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
 from azure.servicebus._common.constants import ServiceBusSubQueue
 
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer,
     CachedServiceBusSubscriptionPreparer,
     ServiceBusTopicPreparer,
-    ServiceBusSubscriptionPreparer
+    ServiceBusSubscriptionPreparer,
+    CachedServiceBusResourceGroupPreparer
 )
 from utilities import get_logger, print_message
 
@@ -32,7 +33,7 @@ _logger = get_logger(logging.DEBUG)
 class ServiceBusSubscriptionTests(AzureMgmtTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
@@ -73,7 +74,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
@@ -126,7 +127,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')

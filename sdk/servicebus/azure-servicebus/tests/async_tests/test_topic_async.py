@@ -12,7 +12,7 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
 
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
@@ -21,7 +21,8 @@ from servicebus_preparer import (
     ServiceBusNamespacePreparer,
     ServiceBusTopicPreparer,
     CachedServiceBusNamespacePreparer,
-    CachedServiceBusTopicPreparer
+    CachedServiceBusTopicPreparer,
+    CachedServiceBusResourceGroupPreparer
 )
 from utilities import get_logger, print_message
 
@@ -32,7 +33,7 @@ class ServiceBusTopicsAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     async def test_topic_by_servicebus_client_conn_str_send_basic(self, servicebus_namespace_connection_string, servicebus_topic, **kwargs):
@@ -48,7 +49,7 @@ class ServiceBusTopicsAsyncTests(AzureMgmtTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     async def test_topic_by_sas_token_credential_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, **kwargs):

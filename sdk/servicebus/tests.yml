@@ -25,6 +25,7 @@ stages:
           Location: 'centraluseuap'
         UsGov:
           SubscriptionConfiguration: $(sub-config-gov-test-resources)
+          Location: 'usgovarizona'
         China:
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
           Location: 'chinanorth2'
