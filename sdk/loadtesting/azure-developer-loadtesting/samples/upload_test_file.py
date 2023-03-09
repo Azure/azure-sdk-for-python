@@ -39,8 +39,6 @@ FILE_NAME = "my-file-id.jmx"
 
 # uploading .jmx file to a test
 resultPoller = client.begin_upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"))
-fileUploadResponse = resultPoller.get_initial_response()
-print(fileUploadResponse)
 
 # getting result of LRO poller with timeout of 600 secs
 validationResponse = resultPoller.result(600)

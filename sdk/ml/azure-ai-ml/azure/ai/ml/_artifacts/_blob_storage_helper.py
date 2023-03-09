@@ -142,11 +142,9 @@ class BlobStorageClient:
     def check_blob_exists(self) -> None:
         """Throw error if blob already exists.
 
-        Check if blob already exists in container by checking the
-        metadata for existence and confirmation data. If confirmation
-        data is missing, blob does not exist or was only partially
-        uploaded and the partial upload will be overwritten with a
-        complete upload.
+        Check if blob already exists in container by checking the metadata for existence and confirmation data. If
+        confirmation data is missing, blob does not exist or was only partially uploaded and the partial upload will be
+        overwritten with a complete upload.
         """
 
         try:
@@ -208,8 +206,7 @@ class BlobStorageClient:
         destination: str = Path.home(),
         max_concurrency: int = MAX_CONCURRENCY,
     ) -> None:
-        """Downloads all blobs inside a specified container to the destination
-        folder.
+        """Downloads all blobs inside a specified container to the destination folder.
 
         :param starts_with: Indicates the blob name starts with to search.
         :param destination: Indicates path to download in local
@@ -263,8 +260,8 @@ class BlobStorageClient:
         return [blob.name for blob in blobs]
 
     def exists(self, blobpath: str, delimeter: str = "/") -> bool:
-        """Returns whether there exists a blob named `blobpath`, or if there
-        exists a virtual directory given path delimeter `delimeter`
+        """Returns whether there exists a blob named `blobpath`, or if there exists a virtual directory given path
+        delimeter `delimeter`
 
            e.g:
                 Given blob store with blobs
