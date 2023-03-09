@@ -1,9 +1,9 @@
-import platform
 from pathlib import Path
 from typing import Callable
 
 import jwt
 import pytest
+import sys
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import sleep_if_live, wait_until_done
 
@@ -208,7 +208,7 @@ class TestCommandJob(AzureRecordedTestCase):
     @pytest.mark.timeout(900)
     @pytest.mark.e2etest
     @pytest.mark.skipif(
-        condition=platform.python_implementation == "PyPy",
+        condition=not sys.platform.startswith(("win32", "cygwin")),
         reason="Skipping for PyPy as docker installation is not supported and skipped in dev_requirement.txt",
     )
     def test_command_job_local(self, randstr: Callable[[], str], client: MLClient) -> None:
