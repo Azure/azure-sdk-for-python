@@ -35,7 +35,9 @@ def mock_feature_store_entity_operations(
 @pytest.mark.data_experiences_test
 class TestFeatureStoreEntityOperations:
     def test_list(self, mock_feature_store_entity_operations: FeatureStoreEntityOperations) -> None:
-        mock_feature_store_entity_operations._operation.list.return_value = [Mock(FeatureStoreEntity) for _ in range(10)]
+        mock_feature_store_entity_operations._operation.list.return_value = [
+            Mock(FeatureStoreEntity) for _ in range(10)
+        ]
         mock_feature_store_entity_operations._container_operation.list.return_value = [
             Mock(FeatureStoreEntity) for _ in range(10)
         ]
