@@ -57,6 +57,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
+        ops_logger.update_info(kwargs)
         super().__init__(
             operation_scope=operation_scope,
             service_client=service_client,
