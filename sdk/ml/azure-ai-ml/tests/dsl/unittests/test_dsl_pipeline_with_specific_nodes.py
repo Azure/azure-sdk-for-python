@@ -1363,8 +1363,11 @@ class TestDSLPipelineWithSpecificNodes:
 
         pipeline1 = pipeline(iris_data)
         result = pipeline1._validate()
-        assert 'jobs.node.conf' in result.error_messages and result.error_messages['jobs.node.conf'] == \
-               "Should not specify min or max executors when dynamic allocation is disabled."
+        assert (
+            "jobs.node.conf" in result.error_messages
+            and result.error_messages["jobs.node.conf"]
+            == "Should not specify min or max executors when dynamic allocation is disabled."
+        )
 
     def test_pipeline_with_spark_job(self):
         environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
