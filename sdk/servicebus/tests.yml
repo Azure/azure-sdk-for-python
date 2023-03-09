@@ -7,7 +7,7 @@ stages:
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-servicebus*
       EnvVars:
-        AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_CLIENT_ID)
+        AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
         AZURE_TENANT_ID: $(SERVICEBUS_TENANT_ID)
         AZURE_CLIENT_ID: $(SERVICEBUS_CLIENT_ID)
         AZURE_CLIENT_SECRET: $(SERVICEBUS_CLIENT_SECRET)
