@@ -588,6 +588,7 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POUND = "pound"
     ASTERISK = "asterisk"
 
+
 class RecognizeCanceled(object):
     """RecognizeCanceled.
 
