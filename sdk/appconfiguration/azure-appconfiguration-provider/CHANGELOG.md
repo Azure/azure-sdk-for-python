@@ -2,16 +2,12 @@
 
 ## 1.0.0 (2023-03-09)
 
-### Features Added
-
 ### Breaking Changes
 * Renamed load_provider to load
 * Added `AzureAppConfigurationKeyVaultOptions` to take in a `client_configs` a Mapping of endpoints to client kwargs instead of taking in the whole client.
 * Removed `AzureAppConfigurationKeyVaultOptions` `secret_clients`, `client_configs` should be used instead.
 * Made key_filter and label_filter kwargs for Setting Selector
 * Renamed `trimmed_key_prefixes` to `trim_prefixes`
-
-### Bugs Fixed
 
 ### Other Changes
 * Made EMPTY_LABEL a constant. i.e. "\0"
