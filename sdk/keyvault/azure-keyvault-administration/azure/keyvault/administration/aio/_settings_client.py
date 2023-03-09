@@ -62,11 +62,11 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_setting(self, setting: KeyVaultSetting, **kwargs) -> KeyVaultSetting:
-        """Updates the named account setting.
+        """Updates the named account setting with the provided value.
 
-        :param str name: The name of the account setting to update.
-        :param value: The value to set.
-        :type value: bool or str
+        :param setting: A :class:`~azure.keyvault.administration.KeyVaultSetting` to update. The account setting with
+            the provided name will be updated to have the provided value.
+        :type setting: ~azure.keyvault.administration.KeyVaultSetting
 
         :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting

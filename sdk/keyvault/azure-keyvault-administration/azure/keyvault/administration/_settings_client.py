@@ -62,7 +62,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
 
     @distributed_trace
     def update_setting(self, setting: KeyVaultSetting, **kwargs) -> KeyVaultSetting:
-        """Updates the named account setting.
+        """Updates the named account setting with the provided value.
 
         :param setting: A :class:`~azure.keyvault.administration.KeyVaultSetting` to update. The account setting with
             the provided name will be updated to have the provided value.

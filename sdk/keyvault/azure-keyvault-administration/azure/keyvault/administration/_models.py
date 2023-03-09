@@ -189,7 +189,10 @@ class KeyVaultSetting(object):
     ) -> None:
         self.name = name
         self.value = value if isinstance(value, str) else str(value)  # `value` is stored as a string
-        self.setting_type = setting_type.lower() if isinstance(setting_type, str) else setting_type
+        if setting_type == KeyVaultSettingType.BOOLEAN:
+            self.setting_type = KeyVaultSettingType.BOOLEAN
+        else:
+            self.setting_type = setting_type.lower() if isinstance(setting_type, str) else setting_type
 
         # If a setting type isn't provided, set it based on `value`'s type (without inferring from the value itself)
         if self.setting_type is None:
