@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._schema._featureset.featureset_spec_schema import FeaturesetSpecSchema
+from azure.ai.ml._schema._feature_set.featureset_spec_schema import FeaturesetSpecSchema
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._util import load_from_dict
@@ -21,7 +21,7 @@ from .delay_metadata import DelayMetadata
 
 
 class FeaturesetSpec(object):
-    """FeaturesetSpec for featureset."""
+    """FeaturesetSpec for feature-set."""
 
     def __init__(
         self,

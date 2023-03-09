@@ -9,12 +9,12 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
-class FeatureTransformationCodeSchema(metaclass=PatchedSchemaMeta):
-    path = fields.Str(required=False)
-    transformer_class = fields.Str(required=False)
+class TimestampColumnMetadataSchema(metaclass=PatchedSchemaMeta):
+    name = fields.Str(required=True)
+    format = fields.Str(required=False)
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._featureset.delay_metadata import DelayMetadata
+        from azure.ai.ml.entities._feature_set.timestamp_column_metadata import TimestampColumnMetadata
 
-        return DelayMetadata(**data)
+        return TimestampColumnMetadata(**data)

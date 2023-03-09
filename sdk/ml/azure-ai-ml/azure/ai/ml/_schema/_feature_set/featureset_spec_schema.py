@@ -28,6 +28,6 @@ class FeaturesetSpecSchema(YamlFileSchema):
 
     @post_load
     def make(self, data: Dict, **kwargs):
-        from azure.ai.ml.entities._featureset.featureset_spec import FeaturesetSpec
+        from azure.ai.ml.entities._feature_set.featureset_spec import FeaturesetSpec
 
         return FeaturesetSpec(**data)

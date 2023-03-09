@@ -15,7 +15,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturesetContainer,
     FeaturesetContainerProperties,
 )
-from azure.ai.ml._schema._featureset.featureset_schema import FeaturesetSchema
+from azure.ai.ml._schema._feature_set.feature_set_schema import FeatureSetSchema
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, get_arm_id_object_from_id
 from azure.ai.ml._utils._experimental import experimental
@@ -25,14 +25,14 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.entities._assets import Artifact
-from azure.ai.ml.entities._featureset.featureset_specification import FeaturesetSpecification
-from azure.ai.ml.entities._featureset.materialization_settings import MaterializationSettings
+from azure.ai.ml.entities._feature_set.featureset_specification import FeaturesetSpecification
+from azure.ai.ml.entities._feature_set.materialization_settings import MaterializationSettings
 
 from .artifact import ArtifactStorageInfo
 
 
 @experimental
-class Featureset(Artifact):
+class FeatureSet(Artifact):
     def __init__(
         self,
         *,
@@ -47,7 +47,7 @@ class Featureset(Artifact):
         properties: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
-        """Featureset
+        """FeatureSet
 
         :param name: Name of the resource.
         :type name: str
@@ -98,12 +98,12 @@ class Featureset(Artifact):
         return FeaturesetVersion(name=self.name, properties=featureset_version_properties)
 
     @classmethod
-    def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> "Featureset":
+    def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> "FeatureSet":
         if not featureset_rest_object:
             return None
         featureset_rest_object_details: FeaturesetVersionProperties = featureset_rest_object.properties
         arm_id_object = get_arm_id_object_from_id(featureset_rest_object.id)
-        featureset = Featureset(
+        featureset = FeatureSet(
             id=featureset_rest_object.id,
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
@@ -120,10 +120,10 @@ class Featureset(Artifact):
         return featureset
 
     @classmethod
-    def _from_container_rest_object(cls, rest_obj: FeaturesetContainer) -> "Featureset":
+    def _from_container_rest_object(cls, rest_obj: FeaturesetContainer) -> "FeatureSet":
         rest_object_details: FeaturesetContainerProperties = rest_obj.properties
         arm_id_object = get_arm_id_object_from_id(rest_obj.id)
-        featureset = Featureset(
+        featureset = FeatureSet(
             name=arm_id_object.asset_name,
             description=rest_object_details.description,
             tags=rest_object_details.tags,
@@ -142,19 +142,19 @@ class Featureset(Artifact):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "Featureset":
+    ) -> "FeatureSet":
         data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        loaded_schema = load_from_dict(FeaturesetSchema, data, context, **kwargs)
-        return Featureset(**loaded_schema)
+        loaded_schema = load_from_dict(FeatureSetSchema, data, context, **kwargs)
+        return FeatureSet(**loaded_schema)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return FeaturesetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return FeatureSetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
 

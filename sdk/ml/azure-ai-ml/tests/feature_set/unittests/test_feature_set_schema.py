@@ -5,19 +5,19 @@
 import yaml
 import pytest
 
-from azure.ai.ml.entities._assets._artifacts.featureset import Featureset
-from azure.ai.ml import load_featureset
+from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml import load_feature_set
 
 
 @pytest.mark.unittest
 @pytest.mark.data_experiences_test
-class TestFeaturesetSchema:
-    def test_featureset_load(self) -> None:
-        test_path = "./tests/test_configs/featureset/featureset_full.yaml"
+class TestFeatureSetSchema:
+    def test_feature_set_load(self) -> None:
+        test_path = "./tests/test_configs/feature_set/feature_set_full.yaml"
         with open(test_path, "r") as f:
             target = yaml.safe_load(f)
         with open(test_path, "r") as f:
-            featureset: Featureset = load_featureset(source=test_path)
+            featureset: FeatureSet = load_feature_set(source=test_path)
         assert featureset.name == target["name"]
         assert featureset.version == target["version"]
         assert featureset.description == target["description"]

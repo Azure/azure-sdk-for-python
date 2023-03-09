@@ -86,7 +86,7 @@ class ErrorTarget:
     SCHEDULE = "Schedule"
     REGISTRY = "Registry"
     UNKNOWN = "Unknown"
-    FEATURESET = "Featureset"
+    FEATURESET = "FeatureSet"
     FEATURESTORE_ENTITY = "FeaturestoreEntity"
 
 

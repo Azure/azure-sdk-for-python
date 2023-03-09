@@ -9,12 +9,13 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
-class TimestampColumnMetadataSchema(metaclass=PatchedSchemaMeta):
-    name = fields.Str(required=True)
-    format = fields.Str(required=False)
+class DelayMetadataSchema(metaclass=PatchedSchemaMeta):
+    days = fields.Int(required=False)
+    hours = fields.Int(required=False)
+    minutes = fields.Int(required=False)
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._featureset.timestamp_column_metadata import TimestampColumnMetadata
+        from azure.ai.ml.entities._feature_set.delay_metadata import DelayMetadata
 
-        return TimestampColumnMetadata(**data)
+        return DelayMetadata(**data)

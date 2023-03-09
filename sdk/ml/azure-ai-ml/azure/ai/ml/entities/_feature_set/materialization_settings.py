@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
 from azure.ai.ml.entities._notification.notification import Notification
-from azure.ai.ml.entities._featureset.materialization_compute_resource import MaterializationComputeResource
+from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
 from azure.ai.ml._utils._experimental import experimental
 
 

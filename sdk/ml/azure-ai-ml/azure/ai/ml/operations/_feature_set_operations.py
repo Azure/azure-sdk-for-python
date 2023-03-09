@@ -25,10 +25,10 @@ from azure.ai.ml._utils._asset_utils import (
     _get_latest_version_from_container,
     _resolve_label_to_asset,
 )
-from azure.ai.ml._utils._featureset_utils import read_featureset_metadata_contents
+from azure.ai.ml._utils._feature_set_utils import read_feature_set_metadata_contents
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._assets import Featureset
-from azure.ai.ml.entities._featureset.featureset_spec import FeaturesetSpec
+from azure.ai.ml.entities._assets import FeatureSet
+from azure.ai.ml.entities._feature_set.featureset_spec import FeaturesetSpec
 from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -38,7 +38,7 @@ module_logger = ops_logger.module_logger
 
 
 @experimental
-class FeaturesetOperations(_ScopeDependentOperations):
+class FeatureSetOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -48,7 +48,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
 
-        super(FeaturesetOperations, self).__init__(operation_scope, operation_config)
+        super(FeatureSetOperations, self).__init__(operation_scope, operation_config)
         # ops_logger.update_info(kwargs)
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
@@ -60,34 +60,34 @@ class FeaturesetOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    # @monitor_with_activity(logger, "Featureset.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "FeatureSet.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
         name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-    ) -> ItemPaged[Featureset]:
-        """List the featureset assets of the workspace.
+    ) -> ItemPaged[FeatureSet]:
+        """List the feature-set assets of the workspace.
 
-        :param name: Name of a specific featureset asset, optional.
+        :param name: Name of a specific feature-set asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived featureset assets.
+        :param list_view_type: View type for including/excluding (for example) archived feature-set assets.
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
-        :return: An iterator like instance of Featureset objects
-        :rtype: ~azure.core.paging.ItemPaged[Featureset]
+        :return: An iterator like instance of FeatureSet objects
+        :rtype: ~azure.core.paging.ItemPaged[FeatureSet]
         """
         if name:
             return self._operation.list(
                 workspace_name=self._workspace_name,
                 name=name,
-                cls=lambda objs: [Featureset._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: [FeatureSet._from_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
         return self._container_operation.list(
             workspace_name=self._workspace_name,
-            cls=lambda objs: [Featureset._from_container_rest_object(obj) for obj in objs],
+            cls=lambda objs: [FeatureSet._from_container_rest_object(obj) for obj in objs],
             list_view_type=list_view_type,
             **self._scope_kwargs,
         )
@@ -101,20 +101,20 @@ class FeaturesetOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-    # @monitor_with_activity(logger, "Featureset.Get", ActivityType.PUBLICAPI)
-    def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Featureset:
-        """Get the specified featureset asset.
+    # @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
+    def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None) -> FeatureSet:
+        """Get the specified feature-set asset.
 
-        :param name: Name of featureset asset.
+        :param name: Name of feature-set asset.
         :type name: str
-        :param version: Version of featureset asset.
+        :param version: Version of feature-set asset.
         :type version: str
-        :param label: Label of the featureset asset. (mutually exclusive with version)
+        :param label: Label of the feature-set asset. (mutually exclusive with version)
         :type label: str
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Featureset cannot be successfully
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully
             identified and retrieved. Details will be provided in the error message.
-        :return: Featureset asset object.
-        :rtype: ~azure.ai.ml.entities.Featureset
+        :return: FeatureSet asset object.
+        :rtype: ~azure.ai.ml.entities.FeatureSet
         """
         try:
             if version and label:
@@ -140,21 +140,21 @@ class FeaturesetOperations(_ScopeDependentOperations):
                     error_type=ValidationErrorType.MISSING_FIELD,
                 )
             featureset_version_resource = self._get(name, version)
-            return Featureset._from_rest_object(featureset_version_resource)
+            return FeatureSet._from_rest_object(featureset_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    # @monitor_with_activity(logger, "Featureset.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, featureset: Featureset) -> LROPoller[Featureset]:
-        """Create or update Featureset
+    # @monitor_with_activity(logger, "FeatureSet.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    def begin_create_or_update(self, featureset: FeatureSet) -> LROPoller[FeatureSet]:
+        """Create or update FeatureSet
 
-        :param featureset: Featureset definition.
-        :type featureset: Featureset
-        :return: An instance of LROPoller that returns a Featureset.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Featureset]
+        :param featureset: FeatureSet definition.
+        :type featureset: FeatureSet
+        :return: An instance of LROPoller that returns a FeatureSet.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSet]
         """
 
-        featureset_spec = validate_and_get_featureset_spec(featureset)
+        featureset_spec = validate_and_get_feature_set_spec(featureset)
         featureset.properties["spec_version"] = "1"
         featureset.properties["spec_data"] = json.dumps(featureset_spec._to_dict())
 
@@ -163,7 +163,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
             artifact=featureset, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURESET
         )
 
-        featureset_resource = Featureset._to_rest_object(featureset)
+        featureset_resource = FeatureSet._to_rest_object(featureset)
 
         return self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
@@ -173,7 +173,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
             body=featureset_resource,
         )
 
-    # @monitor_with_activity(logger, "Featureset.Archive", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         *,
@@ -182,13 +182,13 @@ class FeaturesetOperations(_ScopeDependentOperations):
         label: Optional[str] = None,
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
-        """Archive a Featureset asset.
+        """Archive a FeatureSet asset.
 
-        :param name: Name of Featureset asset.
+        :param name: Name of FeatureSet asset.
         :type name: str
-        :param version: Version of Featureset asset.
+        :param version: Version of FeatureSet asset.
         :type version: str
-        :param label: Label of the Featureset asset. (mutually exclusive with version)
+        :param label: Label of the FeatureSet asset. (mutually exclusive with version)
         :type label: str
         :return: None
         """
@@ -203,7 +203,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Featureset.Restore", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "FeatureSet.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         *,
@@ -212,13 +212,13 @@ class FeaturesetOperations(_ScopeDependentOperations):
         label: Optional[str] = None,
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
-        """Restore an archived Featureset asset.
+        """Restore an archived FeatureSet asset.
 
-        :param name: Name of Featureset asset.
+        :param name: Name of FeatureSet asset.
         :type name: str
-        :param version: Version of Featureset asset.
+        :param version: Version of FeatureSet asset.
         :type version: str
-        :param label: Label of the Featureset asset. (mutually exclusive with version)
+        :param label: Label of the FeatureSet asset. (mutually exclusive with version)
         :type label: str
         :return: None
         """
@@ -233,7 +233,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    def _get_latest_version(self, name: str) -> Featureset:
+    def _get_latest_version(self, name: str) -> FeatureSet:
         """Returns the latest version of the asset with the given name.
 
         Latest is defined as the most recently created, not the most
@@ -245,10 +245,10 @@ class FeaturesetOperations(_ScopeDependentOperations):
         return self.get(name=name, version=latest_version)
 
 
-def validate_and_get_featureset_spec(featureset: Featureset) -> FeaturesetSpec:
+def validate_and_get_feature_set_spec(featureset: FeatureSet) -> FeaturesetSpec:
     # pylint: disable=no-member
     if not featureset.specification and not featureset.specification.path:
-        msg = "Missing featureset spec path. Path is required for featureset."
+        msg = "Missing feature-set spec path. Path is required for featureset."
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
@@ -268,6 +268,6 @@ def validate_and_get_featureset_spec(featureset: Featureset) -> FeaturesetSpec:
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
         )
 
-    featureset_spec_contents = read_featureset_metadata_contents(path=featureset_spec_path)
+    featureset_spec_contents = read_feature_set_metadata_contents(path=featureset_spec_path)
     featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec")
     return FeaturesetSpec._load(featureset_spec_contents, featureset_spec_yaml_path)

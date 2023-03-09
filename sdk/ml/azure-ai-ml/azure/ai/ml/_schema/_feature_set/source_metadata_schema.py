@@ -23,6 +23,6 @@ class SourceMetadataSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data: Dict, **kwargs):
-        from azure.ai.ml.entities._featureset.source_metadata import SourceMetadata
+        from azure.ai.ml.entities._feature_set.source_metadata import SourceMetadata
 
         return SourceMetadata(**data)

@@ -72,7 +72,7 @@ from azure.ai.ml.entities import (
     Compute,
     Datastore,
     Environment,
-    Featureset,
+    FeatureSet,
     FeaturestoreEntity,
     Job,
     JobSchedule,
@@ -92,7 +92,7 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
-    FeaturesetOperations,
+    FeatureSetOperations,
     FeaturestoreEntityOperations,
     FeatureStoreOperations,
     JobOperations,
@@ -508,7 +508,7 @@ class MLClient:
 
         self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
-        self._featuresets = FeaturesetOperations(
+        self._featuresets = FeatureSetOperations(
             self._operation_scope,
             self._operation_config,
             self._service_client_02_2023_preview,
@@ -775,11 +775,11 @@ class MLClient:
 
     @property
     @experimental
-    def featuresets(self) -> FeaturesetOperations:
-        """A collection of featureset related operations.
+    def featuresets(self) -> FeatureSetOperations:
+        """A collection of feature-set related operations.
 
-        :return: Featureset operations
-        :rtype: FeaturesetOperations
+        :return: FeatureSet operations
+        :rtype: FeatureSetOperations
         """
         return self._featuresets
 
@@ -1055,7 +1055,7 @@ def _(entity: FeaturestoreEntity, operations, *args, **kwargs):
     return operations[AzureMLResourceType.FEATURESTORE_ENTITY].begin_create_or_update(entity, **kwargs)
 
 
-@_begin_create_or_update.register(Featureset)
-def _(entity: Featureset, operations, *args, **kwargs):
-    module_logger.debug("Creating or updating featureset")
+@_begin_create_or_update.register(FeatureSet)
+def _(entity: FeatureSet, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating feature-set")
     return operations[AzureMLResourceType.FEATURESET].begin_create_or_update(entity, **kwargs)

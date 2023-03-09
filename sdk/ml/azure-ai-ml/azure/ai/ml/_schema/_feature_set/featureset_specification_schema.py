@@ -14,6 +14,6 @@ class FeaturesetSpecificationSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._featureset.featureset_specification import FeaturesetSpecification
+        from azure.ai.ml.entities._feature_set.featureset_specification import FeaturesetSpecification
 
         return FeaturesetSpecification(**data)

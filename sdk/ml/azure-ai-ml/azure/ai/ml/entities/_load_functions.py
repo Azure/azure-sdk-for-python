@@ -13,7 +13,7 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._assets._artifacts.model import Model
-from azure.ai.ml.entities._assets._artifacts.featureset import Featureset
+from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
@@ -695,15 +695,15 @@ def load_feature_store(
     return load_common(FeatureStore, source, relative_origin, **kwargs)
 
 
-def load_featureset(
+def load_feature_set(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
     **kwargs,
-) -> Featureset:
-    """Construct a Featureset object from yaml file.
+) -> FeatureSet:
+    """Construct a FeatureSet object from yaml file.
 
-    :param source: The local yaml source of a Featureset object. Must be either a
+    :param source: The local yaml source of a FeatureSet object. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
         An exception is raised if the file does not exist.
@@ -718,12 +718,12 @@ def load_featureset(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Featureset cannot be successfully validated.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully validated.
         Details will be provided in the error message.
-    :return: Constructed Featureset object.
-    :rtype: Featureset
+    :return: Constructed FeatureSet object.
+    :rtype: FeatureSet
     """
-    return load_common(Featureset, source, relative_origin, **kwargs)
+    return load_common(FeatureSet, source, relative_origin, **kwargs)
 
 
 def load_featurestore_entity(

@@ -13,7 +13,7 @@ from .materialization_settings_schema import MaterializationSettingsSchema
 from .featureset_specification_schema import FeaturesetSpecificationSchema
 
 
-class FeaturesetSchema(YamlFileSchema):
+class FeatureSetSchema(YamlFileSchema):
     name = fields.Str(required=True, allow_none=False)
     version = fields.Str(required=True, allow_none=False)
     specification = NestedField(FeaturesetSpecificationSchema, required=True, allow_none=False)
