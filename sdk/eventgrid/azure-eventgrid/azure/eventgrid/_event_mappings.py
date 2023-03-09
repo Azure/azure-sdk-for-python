@@ -100,21 +100,21 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsUserDisconnectedEventName = 'Microsoft.Communication.UserDisconnected'
 
-    ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.ApiCreated'
+    ApiManagementApiCreatedEventName = 'Microsoft.ApiManagement.APICreated'
 
-    ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.ApiDeleted'
+    ApiManagementApiDeletedEventName = 'Microsoft.ApiManagement.APIDeleted'
 
-    ApiManagementApiReleaseCreatedEventName = 'Microsoft.ApiManagement.ApiReleaseCreated'
+    ApiManagementApiReleaseCreatedEventName = 'Microsoft.ApiManagement.APIReleaseCreated'
 
-    ApiManagementApiReleaseDeletedEventName = 'Microsoft.ApiManagement.ApiReleaseDeleted'
+    ApiManagementApiReleaseDeletedEventName = 'Microsoft.ApiManagement.APIReleaseDeleted'
 
-    ApiManagementApiReleaseUpdatedEventName = 'Microsoft.ApiManagement.ApiReleaseUpdated'
+    ApiManagementApiReleaseUpdatedEventName = 'Microsoft.ApiManagement.APIReleaseUpdated'
 
-    ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.ApiUpdated'
+    ApiManagementApiUpdatedEventName = 'Microsoft.ApiManagement.APIUpdated'
 
-    ApiManagementGatewayApiAddedEventName = 'Microsoft.ApiManagement.GatewayApiAdded'
+    ApiManagementGatewayApiAddedEventName = 'Microsoft.ApiManagement.GatewayAPIAdded'
 
-    ApiManagementGatewayApiRemovedEventName = 'Microsoft.ApiManagement.GatewayApiRemoved'
+    ApiManagementGatewayApiRemovedEventName = 'Microsoft.ApiManagement.GatewayAPIRemoved'
 
     ApiManagementGatewayCertificateAuthorityCreatedEventName = 'Microsoft.ApiManagement.GatewayCertificateAuthorityCreated'
 
