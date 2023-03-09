@@ -1,14 +1,14 @@
 # Release History
 
-## 4.9.2 (Unreleased)
+## 4.10.0 (2023-03-09)
 
 ### Features Added
 
-### Breaking Changes
+- Added new enum values to SystemEventNames related to Azure Communication Services, DataBox and ApiManagementGateway APIs.
 
 ### Bugs Fixed
 
-### Other Changes
+- SystemEventNames enums for APIManagement were incorrectly capitalized, changed Api to API.
 
 ## 4.9.1 (2022-11-08)
 
