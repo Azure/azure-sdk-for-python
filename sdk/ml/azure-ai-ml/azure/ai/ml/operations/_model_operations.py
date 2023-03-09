@@ -27,6 +27,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from contextlib import contextmanager
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -121,7 +122,7 @@ class ModelOperations(_ScopeDependentOperations):
             if self._registry_name:
                 # Case of copy model to registry
                 if isinstance(model, WorkspaceAssetReference):
-                    ## verify that model is not already in registry
+                    # verify that model is not already in registry
                     try:
                         self._model_versions_operation.get(
                             name=model.name,
@@ -143,11 +144,11 @@ class ModelOperations(_ScopeDependentOperations):
                             error_category=ErrorCategory.USER_ERROR,
                         )
 
-                    model_rest_obj = model._to_rest_object()
+                    model_rest = model._to_rest_object()
                     result = self._service_client.resource_management_asset_reference.begin_import_method(
                         resource_group_name=self._resource_group_name,
                         registry_name=self._registry_name,
-                        body=model_rest_obj,
+                        body=model_rest,
                     ).result()
 
                     if not result:
@@ -480,8 +481,8 @@ class ModelOperations(_ScopeDependentOperations):
             asset_id=asset_id,
         )
 
-        self._set_registry_client(registry_name)
-        return self.create_or_update(model_ref)
+        with self._set_registry_client(registry_name):
+            return self.create_or_update(model_ref)
 
     def _get_latest_version(self, name: str) -> Model:
         """Returns the latest version of the asset with the given name.
@@ -496,15 +497,29 @@ class ModelOperations(_ScopeDependentOperations):
         )
         return Model._from_rest_object(result)
 
+    @contextmanager
     def _set_registry_client(self, registry_name: str) -> None:
         """Sets the registry client for the model operations.
 
         :param registry_name: Name of the registry.
         :type registry_name: str
         """
-        _client, rg, sub = get_registry_client(self._service_client._config.credential, registry_name)
-        self._operation_scope.registry_name = registry_name
-        self._operation_scope._resource_group_name = rg
-        self._operation_scope._subscription_id = sub
-        self._service_client = _client
-        self._model_versions_operation = _client.model_versions
+        rg_ = self._operation_scope._resource_group_name
+        sub_ = self._operation_scope._subscription_id
+        client_ = self._service_client
+        model_versions_operation_ = self._model_versions_operation
+
+        try:
+            _client, rg, sub = get_registry_client(self._service_client._config.credential, registry_name)
+            self._operation_scope.registry_name = registry_name
+            self._operation_scope._resource_group_name = rg
+            self._operation_scope._subscription_id = sub
+            self._service_client = _client
+            self._model_versions_operation = _client.model_versions
+            yield
+        finally:
+            self._operation_scope.registry_name = None
+            self._operation_scope._resource_group_name = rg_
+            self._operation_scope._subscription_id = sub_
+            self._service_client = client_
+            self._model_versions_operation = model_versions_operation_

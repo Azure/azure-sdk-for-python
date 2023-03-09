@@ -22,7 +22,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-
+from contextlib import contextmanager
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -379,7 +379,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         return Environment._from_rest_object(result)
 
     @monitor_with_activity(logger, "Environment.Share", ActivityType.PUBLICAPI)
-    def share(self, name, version, share_with_name, share_with_version, registry_name) -> Environment:
+    def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Environment:
         """Share a environment asset from workspace to registry.
 
         :param name: Name of environment asset.
@@ -403,7 +403,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         workspace_guid = workspace.workspace_id
         workspace_location = workspace.location
 
-        # Get model asset ID
+        # Get environment asset ID
         asset_id = ASSET_ID_FORMAT.format(
             workspace_location,
             workspace_guid,
@@ -418,21 +418,35 @@ class EnvironmentOperations(_ScopeDependentOperations):
             asset_id=asset_id,
         )
 
-        self._set_registry_client(registry_name)
-        return self.create_or_update(environment_ref)
+        with self._set_registry_client(registry_name):
+            return self.create_or_update(environment_ref)
 
+    @contextmanager
     def _set_registry_client(self, registry_name: str) -> None:
         """Sets the registry client for the environment operations.
 
         :param registry_name: Name of the registry.
         :type registry_name: str
         """
-        _client, rg, sub = get_registry_client(self._service_client._config.credential, registry_name)
-        self._operation_scope.registry_name = registry_name
-        self._operation_scope._resource_group_name = rg
-        self._operation_scope._subscription_id = sub
-        self._service_client = _client
-        self._version_operations = _client.environment_versions
+        rg_ = self._operation_scope._resource_group_name
+        sub_ = self._operation_scope._subscription_id
+        client_ = self._service_client
+        environment_versions_operation_ = self._version_operations
+
+        try:
+            _client, rg, sub = get_registry_client(self._service_client._config.credential, registry_name)
+            self._operation_scope.registry_name = registry_name
+            self._operation_scope._resource_group_name = rg
+            self._operation_scope._subscription_id = sub
+            self._service_client = _client
+            self._version_operations = _client.environment_versions
+            yield
+        finally:
+            self._operation_scope.registry_name = None
+            self._operation_scope._resource_group_name = rg_
+            self._operation_scope._subscription_id = sub_
+            self._service_client = client_
+            self._version_operations = environment_versions_operation_
 
 
 def _preprocess_environment_name(environment_name: str) -> str:
