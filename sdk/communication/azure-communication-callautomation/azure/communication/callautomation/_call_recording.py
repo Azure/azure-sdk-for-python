@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING  # pylint: disable=unused-import
-from ._models import RecordingStateResponse, StartCallRecordingRequest
+from ._models import RecordingStateResponse, StartRecordingOptions
 
 if TYPE_CHECKING:
     from ._generated.operations import CallRecordingOperations
@@ -20,14 +20,14 @@ class CallRecording(object):
 
     def start_recording(
         self,
-        start_call_recording_request:StartCallRecordingRequest,
+        start_recording_options: StartRecordingOptions,
         **kwargs
     ):
         # type: (...) -> RecordingStateResponse
         """Start recording the call.
 
-        :param start_call_recording_request: Required.
-        :type content: StartCallRecordingRequest
+        :param start_recording_options: Required.
+        :type content: StartRecordingOptions
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
          Repeatability-Request-Id and get back an appropriate response without the server executing the
@@ -53,7 +53,7 @@ class CallRecording(object):
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
         recording_state_response = self._call_recording_client.start_recording(
-        start_call_recording = start_call_recording_request._to_generated(),
+        start_call_recording = start_recording_options._to_generated(),
         repeatability_first_sent = repeatability_first_sent,
         repeatability_request_id = repeatability_request_id,
         **kwargs)
@@ -62,7 +62,7 @@ class CallRecording(object):
 
     def stop_recording(
         self,
-        recording_id,
+        recording_id: str,
         **kwargs
     ):
         # type: (...) -> None
@@ -78,7 +78,7 @@ class CallRecording(object):
 
     def pause_recording(
         self,
-        recording_id,
+        recording_id: str,
         **kwargs
     ):
         # type: (...) -> None
@@ -94,7 +94,7 @@ class CallRecording(object):
 
     def resume_recording(
         self,
-        recording_id,
+        recording_id: str,
         **kwargs
     ):
         # type: (...) -> None
@@ -110,7 +110,7 @@ class CallRecording(object):
 
     def get_recording_properties(
         self,
-        recording_id,
+        recording_id: str,
         **kwargs
     ):
         # type: (...) -> RecordingStateResponse
