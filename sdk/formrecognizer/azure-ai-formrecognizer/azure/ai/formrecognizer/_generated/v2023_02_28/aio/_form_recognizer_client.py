@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models
 from ._configuration import FormRecognizerClientConfiguration
-from .operations import DocumentClassifiersOperations, DocumentModelsOperations, Operations, ResourceInfoOperations
+from .operations import DocumentClassifiersOperations, DocumentModelsOperations, MiscellaneousOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,14 +28,12 @@ class FormRecognizerClient:
     :ivar document_models: DocumentModelsOperations operations
     :vartype document_models:
      azure.ai.formrecognizer.v2023_02_28.aio.operations.DocumentModelsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.ai.formrecognizer.v2023_02_28.aio.operations.Operations
+    :ivar miscellaneous: MiscellaneousOperations operations
+    :vartype miscellaneous:
+     azure.ai.formrecognizer.v2023_02_28.aio.operations.MiscellaneousOperations
     :ivar document_classifiers: DocumentClassifiersOperations operations
     :vartype document_classifiers:
      azure.ai.formrecognizer.v2023_02_28.aio.operations.DocumentClassifiersOperations
-    :ivar resource_info: ResourceInfoOperations operations
-    :vartype resource_info:
-     azure.ai.formrecognizer.v2023_02_28.aio.operations.ResourceInfoOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for
@@ -65,13 +63,10 @@ class FormRecognizerClient:
         self.document_models = DocumentModelsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(
+        self.miscellaneous = MiscellaneousOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.document_classifiers = DocumentClassifiersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.resource_info = ResourceInfoOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

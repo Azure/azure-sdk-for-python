@@ -21,7 +21,7 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._document_classifiers_operations import build_build_request_initial, build_classify_document_request_initial, build_delete_request, build_get_classify_result_request, build_get_request, build_list_request
+from ...operations._document_classifiers_operations import build_build_classifier_request_initial, build_classify_document_request_initial, build_delete_classifier_request, build_get_classifier_request, build_get_classify_result_request, build_list_classifiers_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -45,7 +45,7 @@ class DocumentClassifiersOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
 
-    async def _build_initial(  # pylint: disable=inconsistent-return-statements
+    async def _build_classifier_initial(  # pylint: disable=inconsistent-return-statements
         self,
         build_request: _models.BuildDocumentClassifierRequest,
         **kwargs: Any
@@ -64,11 +64,11 @@ class DocumentClassifiersOperations:
 
         _json = self._serialize.body(build_request, 'BuildDocumentClassifierRequest')
 
-        request = build_build_request_initial(
+        request = build_build_classifier_request_initial(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._build_initial.metadata['url'],
+            template_url=self._build_classifier_initial.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -96,11 +96,11 @@ class DocumentClassifiersOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _build_initial.metadata = {'url': "/documentClassifiers:build"}  # type: ignore
+    _build_classifier_initial.metadata = {'url': "/documentClassifiers:build"}  # type: ignore
 
 
     @distributed_trace_async
-    async def begin_build(  # pylint: disable=inconsistent-return-statements
+    async def begin_build_classifier(  # pylint: disable=inconsistent-return-statements
         self,
         build_request: _models.BuildDocumentClassifierRequest,
         **kwargs: Any
@@ -136,7 +136,7 @@ class DocumentClassifiersOperations:
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._build_initial(  # type: ignore
+            raw_result = await self._build_classifier_initial(  # type: ignore
                 build_request=build_request,
                 api_version=api_version,
                 content_type=content_type,
@@ -174,10 +174,10 @@ class DocumentClassifiersOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_build.metadata = {'url': "/documentClassifiers:build"}  # type: ignore
+    begin_build_classifier.metadata = {'url': "/documentClassifiers:build"}  # type: ignore
 
     @distributed_trace
-    def list(
+    def list_classifiers(
         self,
         **kwargs: Any
     ) -> AsyncIterable[_models.GetDocumentClassifiersResponse]:
@@ -205,9 +205,9 @@ class DocumentClassifiersOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
+                request = build_list_classifiers_request(
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list_classifiers.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -219,7 +219,7 @@ class DocumentClassifiersOperations:
 
             else:
                 
-                request = build_list_request(
+                request = build_list_classifiers_request(
                     api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
@@ -265,10 +265,10 @@ class DocumentClassifiersOperations:
         return AsyncItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/documentClassifiers"}  # type: ignore
+    list_classifiers.metadata = {'url': "/documentClassifiers"}  # type: ignore
 
     @distributed_trace_async
-    async def get(
+    async def get_classifier(
         self,
         classifier_id: str,
         **kwargs: Any
@@ -296,10 +296,10 @@ class DocumentClassifiersOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DocumentClassifierDetails]
 
         
-        request = build_get_request(
+        request = build_get_classifier_request(
             classifier_id=classifier_id,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get_classifier.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -328,11 +328,11 @@ class DocumentClassifiersOperations:
 
         return deserialized
 
-    get.metadata = {'url': "/documentClassifiers/{classifierId}"}  # type: ignore
+    get_classifier.metadata = {'url': "/documentClassifiers/{classifierId}"}  # type: ignore
 
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
+    async def delete_classifier(  # pylint: disable=inconsistent-return-statements
         self,
         classifier_id: str,
         **kwargs: Any
@@ -360,10 +360,10 @@ class DocumentClassifiersOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
-        request = build_delete_request(
+        request = build_delete_classifier_request(
             classifier_id=classifier_id,
             api_version=api_version,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete_classifier.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -388,16 +388,16 @@ class DocumentClassifiersOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/documentClassifiers/{classifierId}"}  # type: ignore
+    delete_classifier.metadata = {'url': "/documentClassifiers/{classifierId}"}  # type: ignore
 
 
     async def _classify_document_initial(  # pylint: disable=inconsistent-return-statements
         self,
         classifier_id: str,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
-        classify_request: Optional[Union[IO, _models.ClassifyDocumentRequest]] = None,
+        classify_request: Optional[Union[IO, str, _models.ClassifyDocumentRequest]] = None,
         *,
-        content_type: Optional[Union[str, "_models.ContentType1"]] = "application/json",
+        content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> None:
         error_map = {
@@ -415,14 +415,13 @@ class DocumentClassifiersOperations:
         _content = None
         content_type = content_type or ""
         if content_type.split(";")[0] in ['application/json']:
-            if classify_request is not None:
-                _json = self._serialize.body(classify_request, 'ClassifyDocumentRequest')
-        elif content_type.split(";")[0] in ['application/octet-stream', 'application/pdf', 'image/bmp', 'image/heif', 'image/jpeg', 'image/png', 'image/tiff']:
+            _json = classify_request
+        elif content_type.split(";")[0] in ['application/octet-stream', 'application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/bmp', 'image/heif', 'image/jpeg', 'image/png', 'image/tiff', 'text/html']:
             _content = classify_request
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/octet-stream', 'application/pdf', 'image/bmp', 'image/heif', 'image/jpeg', 'image/png', 'image/tiff', 'application/json']".format(content_type)
+                "['application/octet-stream', 'application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/bmp', 'image/heif', 'image/jpeg', 'image/png', 'image/tiff', 'text/html', 'application/json']".format(content_type)
             )
 
         request = build_classify_document_request_initial(
@@ -468,9 +467,9 @@ class DocumentClassifiersOperations:
         self,
         classifier_id: str,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
-        classify_request: Optional[Union[IO, _models.ClassifyDocumentRequest]] = None,
+        classify_request: Optional[Union[IO, str, _models.ClassifyDocumentRequest]] = None,
         *,
-        content_type: Optional[Union[str, "_models.ContentType1"]] = "application/json",
+        content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Classify document.
@@ -483,12 +482,16 @@ class DocumentClassifiersOperations:
          None.
         :type string_index_type: str or ~azure.ai.formrecognizer.v2023_02_28.models.StringIndexType
         :param classify_request: Classify request parameters. Default value is None.
-        :type classify_request: IO or
+        :type classify_request: IO or str or
          ~azure.ai.formrecognizer.v2023_02_28.models.ClassifyDocumentRequest
         :keyword content_type: Media type of the body sent to the API. Known values are:
-         "application/octet-stream", "application/pdf", "image/bmp", "image/heif", "image/jpeg",
-         "image/png", "image/tiff", and "application/json". Default value is "application/json".
-        :paramtype content_type: str or ~azure.ai.formrecognizer.v2023_02_28.models.ContentType1
+         "application/octet-stream", "application/pdf",
+         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+         "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "image/bmp",
+         "image/heif", "image/jpeg", "image/png", "image/tiff", "text/html", and "application/json".
+         Default value is "application/json".
+        :paramtype content_type: str or ~azure.ai.formrecognizer.v2023_02_28.models.ContentType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False

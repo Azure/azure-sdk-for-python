@@ -37,6 +37,19 @@ class AddressValue(msrest.serialization.Model):
     :ivar street_address: Street-level address, excluding city, state, countryRegion, and
      postalCode.
     :vartype street_address: str
+    :ivar unit: Apartment or office number.
+    :vartype unit: str
+    :ivar city_district: Districts or boroughs within a city, such as Brooklyn in New York City or
+     City of Westminster in London.
+    :vartype city_district: str
+    :ivar state_district: Second-level administrative division used in certain locales.
+    :vartype state_district: str
+    :ivar suburb: Unofficial neighborhood name, like Chinatown.
+    :vartype suburb: str
+    :ivar house: Build name, such as World Trade Center.
+    :vartype house: str
+    :ivar level: Floor number, such as 3F.
+    :vartype level: str
     """
 
     _attribute_map = {
@@ -48,6 +61,12 @@ class AddressValue(msrest.serialization.Model):
         'postal_code': {'key': 'postalCode', 'type': 'str'},
         'country_region': {'key': 'countryRegion', 'type': 'str'},
         'street_address': {'key': 'streetAddress', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'city_district': {'key': 'cityDistrict', 'type': 'str'},
+        'state_district': {'key': 'stateDistrict', 'type': 'str'},
+        'suburb': {'key': 'suburb', 'type': 'str'},
+        'house': {'key': 'house', 'type': 'str'},
+        'level': {'key': 'level', 'type': 'str'},
     }
 
     def __init__(
@@ -61,6 +80,12 @@ class AddressValue(msrest.serialization.Model):
         postal_code: Optional[str] = None,
         country_region: Optional[str] = None,
         street_address: Optional[str] = None,
+        unit: Optional[str] = None,
+        city_district: Optional[str] = None,
+        state_district: Optional[str] = None,
+        suburb: Optional[str] = None,
+        house: Optional[str] = None,
+        level: Optional[str] = None,
         **kwargs
     ):
         """
@@ -81,6 +106,19 @@ class AddressValue(msrest.serialization.Model):
         :keyword street_address: Street-level address, excluding city, state, countryRegion, and
          postalCode.
         :paramtype street_address: str
+        :keyword unit: Apartment or office number.
+        :paramtype unit: str
+        :keyword city_district: Districts or boroughs within a city, such as Brooklyn in New York City
+         or City of Westminster in London.
+        :paramtype city_district: str
+        :keyword state_district: Second-level administrative division used in certain locales.
+        :paramtype state_district: str
+        :keyword suburb: Unofficial neighborhood name, like Chinatown.
+        :paramtype suburb: str
+        :keyword house: Build name, such as World Trade Center.
+        :paramtype house: str
+        :keyword level: Floor number, such as 3F.
+        :paramtype level: str
         """
         super(AddressValue, self).__init__(**kwargs)
         self.house_number = house_number
@@ -91,6 +129,12 @@ class AddressValue(msrest.serialization.Model):
         self.postal_code = postal_code
         self.country_region = country_region
         self.street_address = street_address
+        self.unit = unit
+        self.city_district = city_district
+        self.state_district = state_district
+        self.suburb = suburb
+        self.house = house
+        self.level = level
 
 
 class AnalyzeDocumentRequest(msrest.serialization.Model):
@@ -130,9 +174,8 @@ class AnalyzeResult(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar api_version: Required. API version used to produce this result. Known values are:
-     "2022-08-31", "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: Required. API version used to produce this result.
+    :vartype api_version: str
     :ivar model_id: Required. Document model ID used to produce this result.
     :vartype model_id: str
     :ivar string_index_type: Required. Method used to compute string offset and length. Known
@@ -183,7 +226,7 @@ class AnalyzeResult(msrest.serialization.Model):
     def __init__(
         self,
         *,
-        api_version: Union[str, "_models.ApiVersion"],
+        api_version: str,
         model_id: str,
         string_index_type: Union[str, "_models.StringIndexType"],
         content: str,
@@ -197,9 +240,8 @@ class AnalyzeResult(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword api_version: Required. API version used to produce this result. Known values are:
-         "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: Required. API version used to produce this result.
+        :paramtype api_version: str
         :keyword model_id: Required. Document model ID used to produce this result.
         :paramtype model_id: str
         :keyword string_index_type: Required. Method used to compute string offset and length. Known
@@ -976,7 +1018,7 @@ class Document(msrest.serialization.Model):
 
 
 class DocumentAnnotation(msrest.serialization.Model):
-    """An annotation object that represents visual markups in the document, such as checks ✓ and crosses X.
+    """An annotation object that represents a visual annotation in the document, such as checks ✓ and crosses X.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1111,9 +1153,8 @@ class OperationDetails(msrest.serialization.Model):
     :vartype kind: str
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
-    :ivar api_version: API version used to create this operation. Known values are: "2022-08-31",
-     "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
@@ -1156,7 +1197,7 @@ class OperationDetails(msrest.serialization.Model):
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
-        api_version: Optional[Union[str, "_models.ApiVersion"]] = None,
+        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         **kwargs
@@ -1176,9 +1217,8 @@ class OperationDetails(msrest.serialization.Model):
         :paramtype last_updated_date_time: ~datetime.datetime
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
-        :keyword api_version: API version used to create this operation. Known values are:
-         "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: API version used to create this operation.
+        :paramtype api_version: str
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -1218,9 +1258,8 @@ class DocumentClassifierBuildOperationDetails(OperationDetails):
     :vartype kind: str
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
-    :ivar api_version: API version used to create this operation. Known values are: "2022-08-31",
-     "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
@@ -1262,7 +1301,7 @@ class DocumentClassifierBuildOperationDetails(OperationDetails):
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
-        api_version: Optional[Union[str, "_models.ApiVersion"]] = None,
+        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentClassifierDetails"] = None,
@@ -1283,9 +1322,8 @@ class DocumentClassifierBuildOperationDetails(OperationDetails):
         :paramtype last_updated_date_time: ~datetime.datetime
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
-        :keyword api_version: API version used to create this operation. Known values are:
-         "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: API version used to create this operation.
+        :paramtype api_version: str
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -1313,9 +1351,8 @@ class DocumentClassifierDetails(msrest.serialization.Model):
     :vartype created_date_time: ~datetime.datetime
     :ivar expiration_date_time: Date and time (UTC) when the document classifier will expire.
     :vartype expiration_date_time: ~datetime.datetime
-    :ivar api_version: Required. API version used to create this document classifier. Known values
-     are: "2022-08-31", "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: Required. API version used to create this document classifier.
+    :vartype api_version: str
     :ivar doc_types: Required. List of document types to classify against.
     :vartype doc_types: dict[str,
      ~azure.ai.formrecognizer.v2023_02_28.models.ClassifierDocumentTypeDetails]
@@ -1343,7 +1380,7 @@ class DocumentClassifierDetails(msrest.serialization.Model):
         *,
         classifier_id: str,
         created_date_time: datetime.datetime,
-        api_version: Union[str, "_models.ApiVersion"],
+        api_version: str,
         doc_types: Dict[str, "_models.ClassifierDocumentTypeDetails"],
         description: Optional[str] = None,
         expiration_date_time: Optional[datetime.datetime] = None,
@@ -1359,9 +1396,8 @@ class DocumentClassifierDetails(msrest.serialization.Model):
         :paramtype created_date_time: ~datetime.datetime
         :keyword expiration_date_time: Date and time (UTC) when the document classifier will expire.
         :paramtype expiration_date_time: ~datetime.datetime
-        :keyword api_version: Required. API version used to create this document classifier. Known
-         values are: "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: Required. API version used to create this document classifier.
+        :paramtype api_version: str
         :keyword doc_types: Required. List of document types to classify against.
         :paramtype doc_types: dict[str,
          ~azure.ai.formrecognizer.v2023_02_28.models.ClassifierDocumentTypeDetails]
@@ -1940,9 +1976,8 @@ class DocumentModelBuildOperationDetails(OperationDetails):
     :vartype kind: str
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
-    :ivar api_version: API version used to create this operation. Known values are: "2022-08-31",
-     "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
@@ -1984,7 +2019,7 @@ class DocumentModelBuildOperationDetails(OperationDetails):
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
-        api_version: Optional[Union[str, "_models.ApiVersion"]] = None,
+        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
@@ -2005,9 +2040,8 @@ class DocumentModelBuildOperationDetails(OperationDetails):
         :paramtype last_updated_date_time: ~datetime.datetime
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
-        :keyword api_version: API version used to create this operation. Known values are:
-         "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: API version used to create this operation.
+        :paramtype api_version: str
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -2041,9 +2075,8 @@ class DocumentModelComposeOperationDetails(OperationDetails):
     :vartype kind: str
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
-    :ivar api_version: API version used to create this operation. Known values are: "2022-08-31",
-     "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
@@ -2085,7 +2118,7 @@ class DocumentModelComposeOperationDetails(OperationDetails):
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
-        api_version: Optional[Union[str, "_models.ApiVersion"]] = None,
+        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
@@ -2106,9 +2139,8 @@ class DocumentModelComposeOperationDetails(OperationDetails):
         :paramtype last_updated_date_time: ~datetime.datetime
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
-        :keyword api_version: API version used to create this operation. Known values are:
-         "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: API version used to create this operation.
+        :paramtype api_version: str
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -2142,9 +2174,8 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
     :vartype kind: str
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
-    :ivar api_version: API version used to create this operation. Known values are: "2022-08-31",
-     "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar error: Encountered error.
@@ -2186,7 +2217,7 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
         last_updated_date_time: datetime.datetime,
         resource_location: str,
         percent_completed: Optional[int] = None,
-        api_version: Optional[Union[str, "_models.ApiVersion"]] = None,
+        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         error: Optional["_models.Error"] = None,
         result: Optional["_models.DocumentModelDetails"] = None,
@@ -2207,9 +2238,8 @@ class DocumentModelCopyToOperationDetails(OperationDetails):
         :paramtype last_updated_date_time: ~datetime.datetime
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
-        :keyword api_version: API version used to create this operation. Known values are:
-         "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: API version used to create this operation.
+        :paramtype api_version: str
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -2236,9 +2266,8 @@ class DocumentModelDetails(msrest.serialization.Model):
     :vartype created_date_time: ~datetime.datetime
     :ivar expiration_date_time: Date and time (UTC) when the document model will expire.
     :vartype expiration_date_time: ~datetime.datetime
-    :ivar api_version: API version used to create this document model. Known values are:
-     "2022-08-31", "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: API version used to create this document model.
+    :vartype api_version: str
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     :ivar doc_types: Supported document types.
@@ -2268,7 +2297,7 @@ class DocumentModelDetails(msrest.serialization.Model):
         created_date_time: datetime.datetime,
         description: Optional[str] = None,
         expiration_date_time: Optional[datetime.datetime] = None,
-        api_version: Optional[Union[str, "_models.ApiVersion"]] = None,
+        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         doc_types: Optional[Dict[str, "_models.DocumentTypeDetails"]] = None,
         **kwargs
@@ -2282,9 +2311,8 @@ class DocumentModelDetails(msrest.serialization.Model):
         :paramtype created_date_time: ~datetime.datetime
         :keyword expiration_date_time: Date and time (UTC) when the document model will expire.
         :paramtype expiration_date_time: ~datetime.datetime
-        :keyword api_version: API version used to create this document model. Known values are:
-         "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: API version used to create this document model.
+        :paramtype api_version: str
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -2315,9 +2343,8 @@ class DocumentModelSummary(msrest.serialization.Model):
     :vartype created_date_time: ~datetime.datetime
     :ivar expiration_date_time: Date and time (UTC) when the document model will expire.
     :vartype expiration_date_time: ~datetime.datetime
-    :ivar api_version: API version used to create this document model. Known values are:
-     "2022-08-31", "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: API version used to create this document model.
+    :vartype api_version: str
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     """
@@ -2344,7 +2371,7 @@ class DocumentModelSummary(msrest.serialization.Model):
         created_date_time: datetime.datetime,
         description: Optional[str] = None,
         expiration_date_time: Optional[datetime.datetime] = None,
-        api_version: Optional[Union[str, "_models.ApiVersion"]] = None,
+        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -2357,9 +2384,8 @@ class DocumentModelSummary(msrest.serialization.Model):
         :paramtype created_date_time: ~datetime.datetime
         :keyword expiration_date_time: Date and time (UTC) when the document model will expire.
         :paramtype expiration_date_time: ~datetime.datetime
-        :keyword api_version: API version used to create this document model. Known values are:
-         "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: API version used to create this document model.
+        :paramtype api_version: str
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -2667,11 +2693,9 @@ class DocumentStyle(msrest.serialization.Model):
 
     :ivar is_handwritten: Is content handwritten?.
     :vartype is_handwritten: bool
-    :ivar font_family: Generic font family category. Known values are: "serif", "sansSerif",
-     "cursive", "fantasy", "monospace".
-    :vartype font_family: str or ~azure.ai.formrecognizer.v2023_02_28.models.FontFamily
-    :ivar font_name: Best matching font name.
-    :vartype font_name: str
+    :ivar similar_font_family: Visually most similar font from among the set of supported font
+     families, with fallback fonts following CSS convention (ex. 'Arial, sans-serif').
+    :vartype similar_font_family: str
     :ivar font_style: Font style. Known values are: "normal", "italic".
     :vartype font_style: str or ~azure.ai.formrecognizer.v2023_02_28.models.FontStyle
     :ivar font_weight: Font weight. Known values are: "normal", "bold".
@@ -2696,8 +2720,7 @@ class DocumentStyle(msrest.serialization.Model):
 
     _attribute_map = {
         'is_handwritten': {'key': 'isHandwritten', 'type': 'bool'},
-        'font_family': {'key': 'fontFamily', 'type': 'str'},
-        'font_name': {'key': 'fontName', 'type': 'str'},
+        'similar_font_family': {'key': 'similarFontFamily', 'type': 'str'},
         'font_style': {'key': 'fontStyle', 'type': 'str'},
         'font_weight': {'key': 'fontWeight', 'type': 'str'},
         'color': {'key': 'color', 'type': 'str'},
@@ -2712,8 +2735,7 @@ class DocumentStyle(msrest.serialization.Model):
         spans: List["_models.DocumentSpan"],
         confidence: float,
         is_handwritten: Optional[bool] = None,
-        font_family: Optional[Union[str, "_models.FontFamily"]] = None,
-        font_name: Optional[str] = None,
+        similar_font_family: Optional[str] = None,
         font_style: Optional[Union[str, "_models.FontStyle"]] = None,
         font_weight: Optional[Union[str, "_models.FontWeight"]] = None,
         color: Optional[str] = None,
@@ -2723,11 +2745,9 @@ class DocumentStyle(msrest.serialization.Model):
         """
         :keyword is_handwritten: Is content handwritten?.
         :paramtype is_handwritten: bool
-        :keyword font_family: Generic font family category. Known values are: "serif", "sansSerif",
-         "cursive", "fantasy", "monospace".
-        :paramtype font_family: str or ~azure.ai.formrecognizer.v2023_02_28.models.FontFamily
-        :keyword font_name: Best matching font name.
-        :paramtype font_name: str
+        :keyword similar_font_family: Visually most similar font from among the set of supported font
+         families, with fallback fonts following CSS convention (ex. 'Arial, sans-serif').
+        :paramtype similar_font_family: str
         :keyword font_style: Font style. Known values are: "normal", "italic".
         :paramtype font_style: str or ~azure.ai.formrecognizer.v2023_02_28.models.FontStyle
         :keyword font_weight: Font weight. Known values are: "normal", "bold".
@@ -2744,8 +2764,7 @@ class DocumentStyle(msrest.serialization.Model):
         """
         super(DocumentStyle, self).__init__(**kwargs)
         self.is_handwritten = is_handwritten
-        self.font_family = font_family
-        self.font_name = font_name
+        self.similar_font_family = similar_font_family
         self.font_style = font_style
         self.font_weight = font_weight
         self.color = color
@@ -3285,9 +3304,8 @@ class OperationSummary(msrest.serialization.Model):
     :vartype kind: str or ~azure.ai.formrecognizer.v2023_02_28.models.OperationKind
     :ivar resource_location: Required. URL of the resource targeted by this operation.
     :vartype resource_location: str
-    :ivar api_version: API version used to create this operation. Known values are: "2022-08-31",
-     "2023-02-28-preview".
-    :vartype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
     :ivar tags: A set of tags. List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
     """
@@ -3324,7 +3342,7 @@ class OperationSummary(msrest.serialization.Model):
         kind: Union[str, "_models.OperationKind"],
         resource_location: str,
         percent_completed: Optional[int] = None,
-        api_version: Optional[Union[str, "_models.ApiVersion"]] = None,
+        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
@@ -3346,9 +3364,8 @@ class OperationSummary(msrest.serialization.Model):
         :paramtype kind: str or ~azure.ai.formrecognizer.v2023_02_28.models.OperationKind
         :keyword resource_location: Required. URL of the resource targeted by this operation.
         :paramtype resource_location: str
-        :keyword api_version: API version used to create this operation. Known values are:
-         "2022-08-31", "2023-02-28-preview".
-        :paramtype api_version: str or ~azure.ai.formrecognizer.v2023_02_28.models.ApiVersion
+        :keyword api_version: API version used to create this operation.
+        :paramtype api_version: str
         :keyword tags: A set of tags. List of key-value tag attributes associated with the document
          model.
         :paramtype tags: dict[str, str]
@@ -3366,7 +3383,7 @@ class OperationSummary(msrest.serialization.Model):
 
 
 class QuotaDetails(msrest.serialization.Model):
-    """Quota details.
+    """Quota used, limit, and next reset date/time.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3421,7 +3438,8 @@ class ResourceDetails(msrest.serialization.Model):
     :ivar custom_document_models: Required. Details regarding custom document models.
     :vartype custom_document_models:
      ~azure.ai.formrecognizer.v2023_02_28.models.CustomDocumentModelsDetails
-    :ivar custom_neural_document_model_builds: Required. Quota details.
+    :ivar custom_neural_document_model_builds: Required. Quota used, limit, and next reset
+     date/time.
     :vartype custom_neural_document_model_builds:
      ~azure.ai.formrecognizer.v2023_02_28.models.QuotaDetails
     """
@@ -3447,7 +3465,8 @@ class ResourceDetails(msrest.serialization.Model):
         :keyword custom_document_models: Required. Details regarding custom document models.
         :paramtype custom_document_models:
          ~azure.ai.formrecognizer.v2023_02_28.models.CustomDocumentModelsDetails
-        :keyword custom_neural_document_model_builds: Required. Quota details.
+        :keyword custom_neural_document_model_builds: Required. Quota used, limit, and next reset
+         date/time.
         :paramtype custom_neural_document_model_builds:
          ~azure.ai.formrecognizer.v2023_02_28.models.QuotaDetails
         """

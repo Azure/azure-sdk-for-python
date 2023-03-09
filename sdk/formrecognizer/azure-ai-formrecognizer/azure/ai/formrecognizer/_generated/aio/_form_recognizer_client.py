@@ -61,8 +61,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
             None: DEFAULT_API_VERSION,
             'document_classifiers': '2023-02-28-preview',
             'document_models': '2023-02-28-preview',
-            'operations': '2023-02-28-preview',
-            'resource_info': '2023-02-28-preview',
+            'miscellaneous': '2023-02-28-preview',
             'train_custom_model_async': '2.0',
         }},
         _PROFILE_TAG + " latest"
@@ -76,7 +75,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if api_version == '2023-02-28-preview' or api_version == '2023-02-28-preview':
+        if api_version == '2023-02-28-preview':
             base_url = '{endpoint}/formrecognizer'
         elif api_version == '2.0':
             base_url = '{endpoint}/formrecognizer/v2.0'
@@ -100,15 +99,11 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         """Module depends on the API version:
 
            * 2023-02-28-preview: :mod:`v2023_02_28.models<azure.ai.formrecognizer.v2023_02_28.models>`
-           * 2023-02-28-preview: :mod:`v2023_02_28_preview.models<azure.ai.formrecognizer.v2023_02_28_preview.models>`
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
            * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
         """
         if api_version == '2023-02-28-preview':
             from ..v2023_02_28 import models
-            return models
-        elif api_version == '2023-02-28-preview':
-            from ..v2023_02_28_preview import models
             return models
         elif api_version == '2.0':
             from ..v2_0 import models
@@ -123,13 +118,10 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         """Instance depends on the API version:
 
            * 2023-02-28-preview: :class:`DocumentClassifiersOperations<azure.ai.formrecognizer.v2023_02_28.aio.operations.DocumentClassifiersOperations>`
-           * 2023-02-28-preview: :class:`DocumentClassifiersOperations<azure.ai.formrecognizer.v2023_02_28_preview.aio.operations.DocumentClassifiersOperations>`
         """
         api_version = self._get_api_version('document_classifiers')
         if api_version == '2023-02-28-preview':
             from ..v2023_02_28.aio.operations import DocumentClassifiersOperations as OperationClass
-        elif api_version == '2023-02-28-preview':
-            from ..v2023_02_28_preview.aio.operations import DocumentClassifiersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'document_classifiers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -139,47 +131,25 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         """Instance depends on the API version:
 
            * 2023-02-28-preview: :class:`DocumentModelsOperations<azure.ai.formrecognizer.v2023_02_28.aio.operations.DocumentModelsOperations>`
-           * 2023-02-28-preview: :class:`DocumentModelsOperations<azure.ai.formrecognizer.v2023_02_28_preview.aio.operations.DocumentModelsOperations>`
         """
         api_version = self._get_api_version('document_models')
         if api_version == '2023-02-28-preview':
             from ..v2023_02_28.aio.operations import DocumentModelsOperations as OperationClass
-        elif api_version == '2023-02-28-preview':
-            from ..v2023_02_28_preview.aio.operations import DocumentModelsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'document_models'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def operations(self):
+    def miscellaneous(self):
         """Instance depends on the API version:
 
-           * 2023-02-28-preview: :class:`Operations<azure.ai.formrecognizer.v2023_02_28.aio.operations.Operations>`
-           * 2023-02-28-preview: :class:`Operations<azure.ai.formrecognizer.v2023_02_28_preview.aio.operations.Operations>`
+           * 2023-02-28-preview: :class:`MiscellaneousOperations<azure.ai.formrecognizer.v2023_02_28.aio.operations.MiscellaneousOperations>`
         """
-        api_version = self._get_api_version('operations')
+        api_version = self._get_api_version('miscellaneous')
         if api_version == '2023-02-28-preview':
-            from ..v2023_02_28.aio.operations import Operations as OperationClass
-        elif api_version == '2023-02-28-preview':
-            from ..v2023_02_28_preview.aio.operations import Operations as OperationClass
+            from ..v2023_02_28.aio.operations import MiscellaneousOperations as OperationClass
         else:
-            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def resource_info(self):
-        """Instance depends on the API version:
-
-           * 2023-02-28-preview: :class:`ResourceInfoOperations<azure.ai.formrecognizer.v2023_02_28.aio.operations.ResourceInfoOperations>`
-           * 2023-02-28-preview: :class:`ResourceInfoOperations<azure.ai.formrecognizer.v2023_02_28_preview.aio.operations.ResourceInfoOperations>`
-        """
-        api_version = self._get_api_version('resource_info')
-        if api_version == '2023-02-28-preview':
-            from ..v2023_02_28.aio.operations import ResourceInfoOperations as OperationClass
-        elif api_version == '2023-02-28-preview':
-            from ..v2023_02_28_preview.aio.operations import ResourceInfoOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'resource_info'".format(api_version))
+            raise ValueError("API version {} does not have operation group 'miscellaneous'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

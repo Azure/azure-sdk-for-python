@@ -86,8 +86,7 @@
     },
     "operation_groups": {
         "document_models": "DocumentModelsOperations",
-        "operations": "Operations",
-        "document_classifiers": "DocumentClassifiersOperations",
-        "resource_info": "ResourceInfoOperations"
+        "miscellaneous": "MiscellaneousOperations",
+        "document_classifiers": "DocumentClassifiersOperations"
     }
 }

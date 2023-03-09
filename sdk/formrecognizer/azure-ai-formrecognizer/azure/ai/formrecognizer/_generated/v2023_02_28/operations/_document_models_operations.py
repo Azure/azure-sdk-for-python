@@ -120,7 +120,7 @@ def build_get_analyze_result_request(
     )
 
 
-def build_build_request_initial(
+def build_build_model_request_initial(
     *,
     json: Optional[_models.BuildDocumentModelRequest] = None,
     content: Any = None,
@@ -155,7 +155,7 @@ def build_build_request_initial(
     )
 
 
-def build_compose_request_initial(
+def build_compose_model_request_initial(
     *,
     json: Optional[_models.ComposeDocumentModelRequest] = None,
     content: Any = None,
@@ -190,7 +190,7 @@ def build_compose_request_initial(
     )
 
 
-def build_authorize_copy_request(
+def build_authorize_model_copy_request(
     *,
     json: Optional[_models.AuthorizeCopyRequest] = None,
     content: Any = None,
@@ -225,7 +225,7 @@ def build_authorize_copy_request(
     )
 
 
-def build_copy_to_request_initial(
+def build_copy_model_to_request_initial(
     model_id: str,
     *,
     json: Optional[_models.CopyAuthorization] = None,
@@ -266,7 +266,7 @@ def build_copy_to_request_initial(
     )
 
 
-def build_list_request(
+def build_list_models_request(
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -293,7 +293,7 @@ def build_list_request(
     )
 
 
-def build_get_request(
+def build_get_model_request(
     model_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -326,7 +326,7 @@ def build_get_request(
     )
 
 
-def build_delete_request(
+def build_delete_model_request(
     model_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -640,7 +640,7 @@ class DocumentModelsOperations:
     get_analyze_result.metadata = {'url': "/documentModels/{modelId}/analyzeResults/{resultId}"}  # type: ignore
 
 
-    def _build_initial(  # pylint: disable=inconsistent-return-statements
+    def _build_model_initial(  # pylint: disable=inconsistent-return-statements
         self,
         build_request: _models.BuildDocumentModelRequest,
         **kwargs: Any
@@ -659,11 +659,11 @@ class DocumentModelsOperations:
 
         _json = self._serialize.body(build_request, 'BuildDocumentModelRequest')
 
-        request = build_build_request_initial(
+        request = build_build_model_request_initial(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._build_initial.metadata['url'],
+            template_url=self._build_model_initial.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -691,11 +691,11 @@ class DocumentModelsOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _build_initial.metadata = {'url': "/documentModels:build"}  # type: ignore
+    _build_model_initial.metadata = {'url': "/documentModels:build"}  # type: ignore
 
 
     @distributed_trace
-    def begin_build(  # pylint: disable=inconsistent-return-statements
+    def begin_build_model(  # pylint: disable=inconsistent-return-statements
         self,
         build_request: _models.BuildDocumentModelRequest,
         **kwargs: Any
@@ -732,7 +732,7 @@ class DocumentModelsOperations:
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._build_initial(  # type: ignore
+            raw_result = self._build_model_initial(  # type: ignore
                 build_request=build_request,
                 api_version=api_version,
                 content_type=content_type,
@@ -770,9 +770,9 @@ class DocumentModelsOperations:
             )
         return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_build.metadata = {'url': "/documentModels:build"}  # type: ignore
+    begin_build_model.metadata = {'url': "/documentModels:build"}  # type: ignore
 
-    def _compose_initial(  # pylint: disable=inconsistent-return-statements
+    def _compose_model_initial(  # pylint: disable=inconsistent-return-statements
         self,
         compose_request: _models.ComposeDocumentModelRequest,
         **kwargs: Any
@@ -791,11 +791,11 @@ class DocumentModelsOperations:
 
         _json = self._serialize.body(compose_request, 'ComposeDocumentModelRequest')
 
-        request = build_compose_request_initial(
+        request = build_compose_model_request_initial(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._compose_initial.metadata['url'],
+            template_url=self._compose_model_initial.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -823,11 +823,11 @@ class DocumentModelsOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _compose_initial.metadata = {'url': "/documentModels:compose"}  # type: ignore
+    _compose_model_initial.metadata = {'url': "/documentModels:compose"}  # type: ignore
 
 
     @distributed_trace
-    def begin_compose(  # pylint: disable=inconsistent-return-statements
+    def begin_compose_model(  # pylint: disable=inconsistent-return-statements
         self,
         compose_request: _models.ComposeDocumentModelRequest,
         **kwargs: Any
@@ -864,7 +864,7 @@ class DocumentModelsOperations:
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._compose_initial(  # type: ignore
+            raw_result = self._compose_model_initial(  # type: ignore
                 compose_request=compose_request,
                 api_version=api_version,
                 content_type=content_type,
@@ -902,10 +902,10 @@ class DocumentModelsOperations:
             )
         return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_compose.metadata = {'url': "/documentModels:compose"}  # type: ignore
+    begin_compose_model.metadata = {'url': "/documentModels:compose"}  # type: ignore
 
     @distributed_trace
-    def authorize_copy(
+    def authorize_model_copy(
         self,
         authorize_copy_request: _models.AuthorizeCopyRequest,
         **kwargs: Any
@@ -936,11 +936,11 @@ class DocumentModelsOperations:
 
         _json = self._serialize.body(authorize_copy_request, 'AuthorizeCopyRequest')
 
-        request = build_authorize_copy_request(
+        request = build_authorize_model_copy_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.authorize_copy.metadata['url'],
+            template_url=self.authorize_model_copy.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -969,10 +969,10 @@ class DocumentModelsOperations:
 
         return deserialized
 
-    authorize_copy.metadata = {'url': "/documentModels:authorizeCopy"}  # type: ignore
+    authorize_model_copy.metadata = {'url': "/documentModels:authorizeCopy"}  # type: ignore
 
 
-    def _copy_to_initial(  # pylint: disable=inconsistent-return-statements
+    def _copy_model_to_initial(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
         copy_to_request: _models.CopyAuthorization,
@@ -992,12 +992,12 @@ class DocumentModelsOperations:
 
         _json = self._serialize.body(copy_to_request, 'CopyAuthorization')
 
-        request = build_copy_to_request_initial(
+        request = build_copy_model_to_request_initial(
             model_id=model_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._copy_to_initial.metadata['url'],
+            template_url=self._copy_model_to_initial.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1025,11 +1025,11 @@ class DocumentModelsOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    _copy_to_initial.metadata = {'url': "/documentModels/{modelId}:copyTo"}  # type: ignore
+    _copy_model_to_initial.metadata = {'url': "/documentModels/{modelId}:copyTo"}  # type: ignore
 
 
     @distributed_trace
-    def begin_copy_to(  # pylint: disable=inconsistent-return-statements
+    def begin_copy_model_to(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
         copy_to_request: _models.CopyAuthorization,
@@ -1069,7 +1069,7 @@ class DocumentModelsOperations:
         )
         cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = self._copy_to_initial(  # type: ignore
+            raw_result = self._copy_model_to_initial(  # type: ignore
                 model_id=model_id,
                 copy_to_request=copy_to_request,
                 api_version=api_version,
@@ -1108,10 +1108,10 @@ class DocumentModelsOperations:
             )
         return DocumentModelAdministrationClientLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_copy_to.metadata = {'url': "/documentModels/{modelId}:copyTo"}  # type: ignore
+    begin_copy_model_to.metadata = {'url': "/documentModels/{modelId}:copyTo"}  # type: ignore
 
     @distributed_trace
-    def list(
+    def list_models(
         self,
         **kwargs: Any
     ) -> Iterable[_models.GetDocumentModelsResponse]:
@@ -1139,9 +1139,9 @@ class DocumentModelsOperations:
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_request(
+                request = build_list_models_request(
                     api_version=api_version,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list_models.metadata['url'],
                     headers=_headers,
                     params=_params,
                 )
@@ -1153,7 +1153,7 @@ class DocumentModelsOperations:
 
             else:
                 
-                request = build_list_request(
+                request = build_list_models_request(
                     api_version=api_version,
                     template_url=next_link,
                     headers=_headers,
@@ -1199,10 +1199,10 @@ class DocumentModelsOperations:
         return ItemPaged(
             get_next, extract_data
         )
-    list.metadata = {'url': "/documentModels"}  # type: ignore
+    list_models.metadata = {'url': "/documentModels"}  # type: ignore
 
     @distributed_trace
-    def get(
+    def get_model(
         self,
         model_id: str,
         **kwargs: Any
@@ -1230,10 +1230,10 @@ class DocumentModelsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.DocumentModelDetails]
 
         
-        request = build_get_request(
+        request = build_get_model_request(
             model_id=model_id,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get_model.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1262,11 +1262,11 @@ class DocumentModelsOperations:
 
         return deserialized
 
-    get.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
+    get_model.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
 
 
     @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
+    def delete_model(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
         **kwargs: Any
@@ -1294,10 +1294,10 @@ class DocumentModelsOperations:
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
 
         
-        request = build_delete_request(
+        request = build_delete_model_request(
             model_id=model_id,
             api_version=api_version,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete_model.metadata['url'],
             headers=_headers,
             params=_params,
         )
@@ -1322,5 +1322,5 @@ class DocumentModelsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
+    delete_model.metadata = {'url': "/documentModels/{modelId}"}  # type: ignore
 
