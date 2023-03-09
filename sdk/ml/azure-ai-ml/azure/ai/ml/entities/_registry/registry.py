@@ -24,7 +24,7 @@ from .registry_support_classes import RegistryRegionDetails
 
 CONTAINER_REGISTRY = "container_registry"
 REPLICATION_LOCATIONS = "replication_locations"
-
+INTELLECTUAL_PROPERTY = "intellectual_property"
 
 class Registry(Resource):
     def __init__(
@@ -36,7 +36,7 @@ class Registry(Resource):
         tags: Optional[Dict[str, str]] = None,
         public_network_access: Optional[str] = None,
         discovery_url: Optional[str] = None,
-        intellectual_property: Optional[str] = None,
+        intellectual_property_publisher: Optional[str] = None,
         managed_resource_group: Optional[str] = None,
         mlflow_registry_uri: Optional[str] = None,
         replication_locations: List[RegistryRegionDetails],
@@ -56,8 +56,8 @@ class Registry(Resource):
         :type public_network_access: str
         :param discovery_url: Backend service base url for the registry.
         :type discovery_url: str
-        :param intellectual_property: Intellectual property publisher.
-        :type intellectual_property: str
+        :param intellectual_property_publisher: Intellectual property publisher.
+        :type intellectual_property_publisher: str
         :param managed_resource_group: Managed resource group created for the registry.
         :type managed_resource_group: str
         :param mlflow_registry_uri: Ml flow tracking uri for the registry.
@@ -75,7 +75,7 @@ class Registry(Resource):
         self.identity = identity
         self.replication_locations = replication_locations
         self.public_network_access = public_network_access
-        self.intellectual_property = intellectual_property
+        self.intellectual_property_publisher = intellectual_property_publisher
         self.managed_resource_group = managed_resource_group
         self.discovery_url = discovery_url
         self.mlflow_registry_uri = mlflow_registry_uri
@@ -162,7 +162,7 @@ class Registry(Resource):
             location=rest_obj.location,
             public_network_access=real_registry.public_network_access,
             discovery_url=real_registry.discovery_url,
-            intellectual_property=real_registry.intellectual_property_publisher,
+            intellectual_property_publisher=real_registry.intellectual_property_publisher,
             managed_resource_group=real_registry.managed_resource_group,
             mlflow_registry_uri=real_registry.ml_flow_registry_uri,
             replication_locations=replication_locations,
@@ -189,6 +189,11 @@ class Registry(Resource):
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
+        if INTELLECTUAL_PROPERTY in input:
+            intellectual_property = input.pop(INTELLECTUAL_PROPERTY)
+            publisher = intellectual_property.get("publisher", None)
+            if publisher:
+                input["intellectual_property_publisher"] = publisher
 
     def _to_rest_object(self) -> RestRegistry:
         """Build current parameterized schedule instance to a registry object before submission.
@@ -214,7 +219,7 @@ class Registry(Resource):
             properties=RegistryProperties(
                 public_network_access=self.public_network_access,
                 discovery_url=self.discovery_url,
-                intellectual_property_publisher=self.intellectual_property,
+                intellectual_property_publisher=self.intellectual_property_publisher,
                 managed_resource_group=self.managed_resource_group,
                 ml_flow_registry_uri=self.mlflow_registry_uri,
                 region_details=replication_locations,

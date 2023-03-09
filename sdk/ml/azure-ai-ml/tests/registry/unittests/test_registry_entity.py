@@ -106,7 +106,7 @@ class TestRegistryEntity:
         assert registry_entity.tags == exterior_tags
         assert registry_entity.public_network_access == pna
         assert registry_entity.discovery_url == discovery_url
-        assert registry_entity.intellectual_property == ipp
+        assert registry_entity.intellectual_property_publisher == ipp
         assert registry_entity.managed_resource_group == mrg
         assert registry_entity.mlflow_registry_uri == registry_uri
 

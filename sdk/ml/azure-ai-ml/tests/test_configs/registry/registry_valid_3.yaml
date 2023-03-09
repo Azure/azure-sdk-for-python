@@ -6,7 +6,8 @@ tags:
   other_tag: value
 location: EastUS2
 public_network_access: Disabled
-intellectual_property: registry_publisher
+intellectual_property:
+  publisher: registry_publisher
 replication_locations:
   - location: EastUS
     storage_config:
