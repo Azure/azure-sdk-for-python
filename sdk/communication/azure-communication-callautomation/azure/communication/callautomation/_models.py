@@ -27,7 +27,11 @@ from ._generated.models import (
     CallParticipant as CallParticipantRest,
     CallConnectionProperties as CallConnectionPropertiesRest,
     GetParticipantsResponse as GetParticipantsResponseRest,
-    AddParticipantResponse as AddParticipantResponseRest
+    AddParticipantResponse as AddParticipantResponseRest,
+    RecordingChannelType,
+    RecordingContentType,
+    RecordingFormatType,
+    RecordingStorageType
 )
 
 
@@ -69,21 +73,21 @@ class GroupCallLocator(object):
                            )
 
 
-class StartCallRecordingRequest(object):
+class StartRecordingOptions(object):
     def __init__(
         self,
         *,
         call_locator: ServerCallLocator | GroupCallLocator,
         recording_state_callback_uri: Optional[str] = None,
-        recording_content_type: Optional[Union[str,
-                                               "RecordingContentType"]] = None,
-        recording_channel_type: Optional[Union[str,
-                                               "RecordingChannelType"]] = None,
-        recording_format_type: Optional[Union[str,
-                                              "RecordingFormatType"]] = None,
-        audio_channel_participant_ordering: Optional[List["CommunicationIdentifierModel"]] = None,
-        recording_storage_type: Optional[Union[str,
-                                               "RecordingStorageType"]] = None,
+        recording_content: Optional[Union[str,
+                                               "RecordingContent"]] = None,
+        recording_channel: Optional[Union[str,
+                                               "RecordingChannel"]] = None,
+        recording_format: Optional[Union[str,
+                                              "RecordingFormat"]] = None,
+        audio_channel_participant_ordering: Optional[List["CommunicationIdentifier"]] = None,
+        recording_storage: Optional[Union[str,
+                                               "RecordingStorage"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -94,15 +98,15 @@ class StartCallRecordingRequest(object):
         :keyword recording_content_type: The content type of call recording. Known values are: "audio"
          and "audioVideo".
         :paramtype recording_content_type: str or
-         ~azure.communication.callautomation.models.RecordingContentType
+         ~azure.communication.callautomation.models.RecordingContent
         :keyword recording_channel_type: The channel type of call recording. Known values are: "mixed"
          and "unmixed".
         :paramtype recording_channel_type: str or
-         ~azure.communication.callautomation.models.RecordingChannelType
+         ~azure.communication.callautomation.models.RecordingChannel
         :keyword recording_format_type: The format type of call recording. Known values are: "wav",
          "mp3", and "mp4".
         :paramtype recording_format_type: str or
-         ~azure.communication.callautomation.models.RecordingFormatType
+         ~azure.communication.callautomation.models.RecordingFormat
         :keyword audio_channel_participant_ordering: The sequential order in which audio channels are
          assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not
@@ -121,20 +125,23 @@ class StartCallRecordingRequest(object):
         super().__init__(**kwargs)
         self.call_locator = call_locator
         self.recording_state_callback_uri = recording_state_callback_uri
-        self.recording_content_type = recording_content_type
-        self.recording_channel_type = recording_channel_type
-        self.recording_format_type = recording_format_type
+        self.recording_content_type = recording_content
+        self.recording_channel_type = recording_channel
+        self.recording_format_type = recording_format
         self.audio_channel_participant_ordering = audio_channel_participant_ordering
-        self.recording_storage_type = recording_storage_type
+        self.recording_storage_type = recording_storage
 
     def _to_generated(self):
+        audio_channel_participant_ordering_list:List[CommunicationIdentifierModel] = None
+        if(self.audio_channel_participant_ordering is not None):
+            audio_channel_participant_ordering_list=[serialize_identifier(identifier) for identifier in self.audio_channel_participant_ordering]
 
         return StartCallRecordingRequestRest(call_locator=self.call_locator._to_generated(),
                                              recording_state_callback_uri=self.recording_state_callback_uri,
                                              recording_content_type=self.recording_content_type,
                                              recording_channel_type=self.recording_channel_type,
                                              recording_format_type=self.recording_format_type,
-                                             audio_channel_participant_ordering=self.audio_channel_participant_ordering,
+                                             audio_channel_participant_ordering=audio_channel_participant_ordering_list,
                                              recording_storage_type=self.recording_storage_type
                                              )
 
@@ -981,3 +988,28 @@ class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "none"
     BUSY = "busy"
     FORBIDDEN = "forbidden"
+
+
+class RecordingContent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recording content type."""
+
+    AUDIO = RecordingContentType.AUDIO.value
+    AUDIO_VIDEO = RecordingContentType.AUDIO_VIDEO.value
+
+class RecordingChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recording channel type."""
+
+    MIXED = RecordingChannelType.MIXED.value
+    UNMIXED = RecordingChannelType.UNMIXED.value
+
+class RecordingFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recording format type."""
+    WAV = RecordingFormatType.WAV.value
+    MP4 = RecordingFormatType.MP4.value
+    MP3 = RecordingFormatType.MP3.value
+
+class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recording storage type."""
+
+    ACS = RecordingStorageType.ACS.value
+    BLOB_STORAGE = RecordingStorageType.BLOB_STORAGE.value

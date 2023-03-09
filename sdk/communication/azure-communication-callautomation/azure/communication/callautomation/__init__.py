@@ -6,10 +6,14 @@ from ._call_automation_client import CallAutomationClient
 from ._call_automation_event_parser import CallAutomationEventParser
 from ._models import (
     RecordingStateResponse,
-    StartCallRecordingRequest,
+    StartRecordingOptions,
     ServerCallLocator,
-    GroupCallLocator
-)
+    GroupCallLocator,
+    RecordingFormat,
+    RecordingContent,
+    RecordingStorage,
+    RecordingChannel
+    )
 from ._events import (
     AddParticipantSucceeded,
     AddParticipantFailed,
@@ -29,10 +33,14 @@ from ._events import (
 
 __all__ = [
     'CallAutomationClient',
+    'RecordingFormat',
+    'RecordingContent',
+    'RecordingStorage',
+    'RecordingChannel',
     'CallConnection',
     'CallMediaClient',
     'CallRecording',
-    "StartCallRecordingRequest",
+    "StartRecordingOptions",
     "RecordingStateResponse",
     "ServerCallLocator",
     "GroupCallLocator",
