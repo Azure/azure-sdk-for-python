@@ -221,12 +221,11 @@ class HttpSpanMixin(_MIXIN_BASE):
         self.add_attribute(self._HTTP_METHOD, request.method)
         self.add_attribute(self._HTTP_URL, request.url)
 
-        host = urlparse(request.url).netloc
-        if host:
-            host_parts = host.split(":")
-            self.add_attribute(self._NET_PEER_NAME, host_parts[0])
-            if len(host_parts) > 1 and host_parts[1] not in ["80", "443"]:
-                self.add_attribute(self._NET_PEER_PORT, int(host_parts[1]))
+        parsed_url = urlparse(request.url)
+        if parsed_url.hostname:
+            self.add_attribute(self._NET_PEER_NAME, parsed_url.hostname)
+        if parsed_url.port and parsed_url.port not in [80, 443]:
+            self.add_attribute(self._NET_PEER_PORT, parsed_url.port)
 
         user_agent = request.headers.get("User-Agent")
         if user_agent:
