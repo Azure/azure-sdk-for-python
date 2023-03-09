@@ -200,7 +200,7 @@ class PipelineComponentSchema(ComponentSchema):
         keys=fields.Str(),
         values=UnionField(
             [
-                NestedField(PrimitiveOutputSchema),
+                NestedField(PrimitiveOutputSchema, unknown=INCLUDE),
                 NestedField(OutputPortSchema),
             ]
         ),
