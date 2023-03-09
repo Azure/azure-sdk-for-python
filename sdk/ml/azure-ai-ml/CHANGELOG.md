@@ -11,6 +11,7 @@
 - Added support for featureset and featurestore_entity operations.
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline job
+- Added support for serverless compute in command, automl and sweep job
 
 ### Bugs Fixed
 
