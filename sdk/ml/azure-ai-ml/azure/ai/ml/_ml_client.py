@@ -776,7 +776,7 @@ class MLClient:
     @property
     @experimental
     def feature_sets(self) -> FeatureSetOperations:
-        """A collection of feature-set related operations.
+        """A collection of feature set related operations.
 
         :return: FeatureSet operations
         :rtype: FeatureSetOperations
@@ -785,7 +785,7 @@ class MLClient:
 
     @property
     def feature_store_entities(self) -> FeatureStoreEntityOperations:
-        """A collection of feature_store_entity related operations.
+        """A collection of feature store entity related operations.
 
         :return: FeatureStoreEntity operations
         :rtype: FeatureStoreEntityOperations
@@ -1057,5 +1057,5 @@ def _(entity: FeatureStoreEntity, operations, *args, **kwargs):
 
 @_begin_create_or_update.register(FeatureSet)
 def _(entity: FeatureSet, operations, *args, **kwargs):
-    module_logger.debug("Creating or updating feature-set")
+    module_logger.debug("Creating or updating feature_set")
     return operations[AzureMLResourceType.FEATURE_SET].begin_create_or_update(entity, **kwargs)
