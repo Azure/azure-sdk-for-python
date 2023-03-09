@@ -556,7 +556,7 @@ class TestPipelineJob:
         component: InternalComponent = load_component(test_path)
 
         @pipeline()
-        def pipeline_func(compute_name: str = "cpu-cluster", environment_name: str = "AzureML-PyTorch-1.6-GPU:1"):
+        def pipeline_func(compute_name: str = "cpu-cluster", environment_name: str = "AzureML-ACPT-pytorch-1.12-py39-cuda11.6-gpu:8"):
             node = component(
                 training_data=Input(path="./tests/test_configs/data"),
                 max_epochs=1,
