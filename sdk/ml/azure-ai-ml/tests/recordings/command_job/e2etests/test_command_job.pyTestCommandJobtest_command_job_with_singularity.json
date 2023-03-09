@@ -1,13 +1,13 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_874413610093?api-version=2023-02-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_722382385357?api-version=2023-02-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1531",
+        "Content-Length": "1041",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.8 (Windows-10-10.0.22621-SP0)"
       },
@@ -16,7 +16,7 @@
           "properties": {},
           "tags": {},
           "computeId": "/subscriptions/79a1ba0c-35bb-436b-bff2-3074d5ff1f89/resourceGroups/Runtime/providers/Microsoft.MachineLearningServices/virtualclusters/centeuapvc",
-          "displayName": "test_874413610093",
+          "displayName": "test_722382385357",
           "experimentName": "azure-sdk-for-python",
           "isArchived": false,
           "jobType": "Command",
@@ -30,40 +30,7 @@
             "JOB_EXECUTION_MODE": "Basic",
             "AZUREML_COMPUTE_USE_COMMON_RUNTIME": "true"
           },
-          "inputs": {
-            "cifar": {
-              "uri": "azureml://datastores/workspaceblobstore/paths/CIFAR-10",
-              "jobInputType": "uri_folder"
-            },
-            "epoch": {
-              "jobInputType": "literal",
-              "value": "100"
-            },
-            "batchsize": {
-              "jobInputType": "literal",
-              "value": "64"
-            },
-            "workers": {
-              "jobInputType": "literal",
-              "value": "1"
-            },
-            "lr": {
-              "jobInputType": "literal",
-              "value": "0.01"
-            },
-            "momen": {
-              "jobInputType": "literal",
-              "value": "0.9"
-            },
-            "prtfreq": {
-              "jobInputType": "literal",
-              "value": "200"
-            },
-            "output": {
-              "jobInputType": "literal",
-              "value": "outputs"
-            }
-          },
+          "inputs": {},
           "outputs": {},
           "queueSettings": {
             "jobTier": "Premium",
@@ -94,26 +61,26 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "3384",
+        "Content-Length": "2759",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Mar 2023 09:11:07 GMT",
+        "Date": "Thu, 09 Mar 2023 09:15:56 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_874413610093?api-version=2023-02-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_722382385357?api-version=2023-02-01-preview",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-fa2742dc9b13440e55a79f2f510bb68f-c60d5a78429d4aba-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-bf9fa3a5205f008a6da03f30d882ce8d-2d9aaaede86a5cc0-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a2f57250-6110-4ce5-9caa-1f7feee0b149",
+        "x-ms-correlation-request-id": "cfb0ad99-f81e-4baa-899e-1f49ae908e4b",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230309T091108Z:a2f57250-6110-4ce5-9caa-1f7feee0b149",
-        "x-request-time": "4.026"
+        "x-ms-routing-request-id": "WESTUS2:20230309T091556Z:cfb0ad99-f81e-4baa-899e-1f49ae908e4b",
+        "x-request-time": "1.714"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_874413610093",
-        "name": "test_874413610093",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_722382385357",
+        "name": "test_722382385357",
         "type": "Microsoft.MachineLearningServices/workspaces/jobs",
         "properties": {
           "description": null,
@@ -128,7 +95,7 @@
             "azureml.InstanceType": "Singularity.NC6_v3",
             "azureml.AutoScaleIntervalInSeconds": "120"
           },
-          "displayName": "test_874413610093",
+          "displayName": "test_722382385357",
           "status": "Starting",
           "experimentName": "azure-sdk-for-python",
           "services": {
@@ -144,7 +111,7 @@
             "Studio": {
               "jobServiceType": "Studio",
               "port": null,
-              "endpoint": "https://ml.azure.com/runs/test_874413610093?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "endpoint": "https://ml.azure.com/runs/test_722382385357?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,
               "errorMessage": null,
               "properties": null,
@@ -182,53 +149,11 @@
           "codeId": null,
           "command": "echo \u0022test\u0022",
           "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-          "inputs": {
-            "cifar": {
-              "description": null,
-              "uri": "azureml://datastores/workspaceblobstore/paths/CIFAR-10",
-              "mode": "ReadOnlyMount",
-              "jobInputType": "uri_folder"
-            },
-            "epoch": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "100"
-            },
-            "batchsize": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "64"
-            },
-            "workers": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "1"
-            },
-            "lr": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "0.01"
-            },
-            "momen": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "0.9"
-            },
-            "prtfreq": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "200"
-            },
-            "output": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "outputs"
-            }
-          },
+          "inputs": {},
           "outputs": {
             "default": {
               "description": null,
-              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_874413610093",
+              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_722382385357",
               "assetName": null,
               "assetVersion": null,
               "mode": "ReadWriteMount",
@@ -252,14 +177,14 @@
           }
         },
         "systemData": {
-          "createdAt": "2023-03-09T09:11:08.059902\u002B00:00",
+          "createdAt": "2023-03-09T09:15:56.6910557\u002B00:00",
           "createdBy": "Firstname Lastname",
           "createdByType": "User"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_874413610093?api-version=2023-02-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_722382385357?api-version=2023-02-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -273,11 +198,11 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Mar 2023 09:11:09 GMT",
+        "Date": "Thu, 09 Mar 2023 09:15:58 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-a3be7d7cb543de50420ff0079cab7e36-990e5f8659af6486-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-491d90530e765039d6bf7289dbfb03ed-2cccf175f18f8fe1-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
@@ -286,15 +211,15 @@
         ],
         "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "709706ef-0b1a-424d-8411-e927233f3763",
-        "x-ms-ratelimit-remaining-subscription-reads": "11998",
+        "x-ms-correlation-request-id": "8ca297d2-b5ca-445c-a8c2-56213e0fcb69",
+        "x-ms-ratelimit-remaining-subscription-reads": "11999",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20230309T091110Z:709706ef-0b1a-424d-8411-e927233f3763",
-        "x-request-time": "0.069"
+        "x-ms-routing-request-id": "WESTUS2:20230309T091558Z:8ca297d2-b5ca-445c-a8c2-56213e0fcb69",
+        "x-request-time": "0.047"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_874413610093",
-        "name": "test_874413610093",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/test_722382385357",
+        "name": "test_722382385357",
         "type": "Microsoft.MachineLearningServices/workspaces/jobs",
         "properties": {
           "description": null,
@@ -309,7 +234,7 @@
             "azureml.InstanceType": "Singularity.NC6_v3",
             "azureml.AutoScaleIntervalInSeconds": "120"
           },
-          "displayName": "test_874413610093",
+          "displayName": "test_722382385357",
           "status": "Preparing",
           "experimentName": "azure-sdk-for-python",
           "services": {
@@ -325,7 +250,7 @@
             "Studio": {
               "jobServiceType": "Studio",
               "port": null,
-              "endpoint": "https://ml.azure.com/runs/test_874413610093?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
+              "endpoint": "https://ml.azure.com/runs/test_722382385357?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,
               "errorMessage": null,
               "properties": null,
@@ -363,53 +288,11 @@
           "codeId": null,
           "command": "echo \u0022test\u0022",
           "environmentId": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-          "inputs": {
-            "cifar": {
-              "description": null,
-              "uri": "azureml://datastores/workspaceblobstore/paths/CIFAR-10",
-              "mode": "ReadOnlyMount",
-              "jobInputType": "uri_folder"
-            },
-            "epoch": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "100"
-            },
-            "batchsize": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "64"
-            },
-            "workers": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "1"
-            },
-            "lr": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "0.01"
-            },
-            "momen": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "0.9"
-            },
-            "prtfreq": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "200"
-            },
-            "output": {
-              "description": null,
-              "jobInputType": "literal",
-              "value": "outputs"
-            }
-          },
+          "inputs": {},
           "outputs": {
             "default": {
               "description": null,
-              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_874413610093",
+              "uri": "azureml://datastores/workspaceartifactstore/ExperimentRun/dcid.test_722382385357",
               "assetName": null,
               "assetVersion": null,
               "mode": "ReadWriteMount",
@@ -433,7 +316,7 @@
           }
         },
         "systemData": {
-          "createdAt": "2023-03-09T09:11:08.059902\u002B00:00",
+          "createdAt": "2023-03-09T09:15:56.6910557\u002B00:00",
           "createdBy": "Firstname Lastname",
           "createdByType": "User"
         }
@@ -441,6 +324,6 @@
     }
   ],
   "Variables": {
-    "job_name": "test_874413610093"
+    "job_name": "test_722382385357"
   }
 }

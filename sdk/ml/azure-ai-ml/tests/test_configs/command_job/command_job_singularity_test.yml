@@ -1,17 +1,7 @@
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
 # code: src
 command: echo "test"
-inputs:
-  cifar:
-    type: uri_folder
-    path: azureml://datastores/workspaceblobstore/paths/CIFAR-10
-  epoch: 100
-  batchsize: 64
-  workers: 1
-  lr: 0.01
-  momen: 0.9
-  prtfreq: 200
-  output: outputs
+
 # environment: azureml:singularity-pytorch-with-mlflow@latest
 # TODO: Can this be a non-singularity env for test purpose?
 environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
