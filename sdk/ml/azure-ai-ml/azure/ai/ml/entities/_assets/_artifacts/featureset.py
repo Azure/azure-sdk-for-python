@@ -5,18 +5,25 @@
 # pylint: disable=protected-access
 
 from os import PathLike
+from pathlib import Path
 
 from typing import Dict, List, Optional, Union
 
-
-from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturesetVersion,
     FeaturesetVersionProperties,
     FeaturesetContainer,
     FeaturesetContainerProperties,
 )
+from azure.ai.ml._schema._featureset.featureset_schema import FeaturesetSchema
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, get_arm_id_object_from_id
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    LONG_URI_FORMAT,
+    PARAMS_OVERRIDE_KEY,
+)
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._featureset.featureset_specification import FeaturesetSpecification
 from azure.ai.ml.entities._featureset.materialization_settings import MaterializationSettings
@@ -67,6 +74,7 @@ class Featureset(Artifact):
             description=description,
             tags=tags,
             properties=properties,
+            path=specification.path,
             **kwargs,
         )
         self.entities = entities
@@ -87,7 +95,7 @@ class Featureset(Artifact):
             specification=self.specification._to_rest_object(),
             stage=self.stage,
         )
-        return FeaturesetVersion(properties=featureset_version_properties)
+        return FeaturesetVersion(name=self.name, properties=featureset_version_properties)
 
     @classmethod
     def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> "Featureset":
@@ -135,12 +143,31 @@ class Featureset(Artifact):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "Featureset":
-
-        return None
+        data = data or {}
+        params_override = params_override or []
+        context = {
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            PARAMS_OVERRIDE_KEY: params_override,
+        }
+        loaded_schema = load_from_dict(FeaturesetSchema, data, context, **kwargs)
+        return Featureset(**loaded_schema)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return None
+        return FeaturesetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        pass
+
+        # if datastore_arm_id is null, capture the full_storage_path
+        if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
+            self.path = asset_artifact.full_storage_path
+        else:
+            aml_datastore_id = AMLNamedArmId(asset_artifact.datastore_arm_id)
+            self.path = LONG_URI_FORMAT.format(
+                aml_datastore_id.subscription_id,
+                aml_datastore_id.resource_group_name,
+                aml_datastore_id.workspace_name,
+                aml_datastore_id.asset_name,
+                asset_artifact.relative_path,
+            )
+            self.specification.path = self.path

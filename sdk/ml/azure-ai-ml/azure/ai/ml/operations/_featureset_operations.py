@@ -4,6 +4,9 @@
 
 # pylint: disable=protected-access
 
+import os
+import json
+from pathlib import Path
 from typing import Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -13,7 +16,8 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType, Fea
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-
+from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -21,8 +25,10 @@ from azure.ai.ml._utils._asset_utils import (
     _get_latest_version_from_container,
     _resolve_label_to_asset,
 )
+from azure.ai.ml._utils._featureset_utils import read_featureset_metadata_contents
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets import Featureset
+from azure.ai.ml.entities._featureset.featureset_spec import FeaturesetSpec
 from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -38,6 +44,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: ServiceClient022023Preview,
+        datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
 
@@ -46,6 +53,7 @@ class FeaturesetOperations(_ScopeDependentOperations):
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
         self._service_client = service_client
+        self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
 
         # Maps a label to a function which given an asset name,
@@ -145,6 +153,16 @@ class FeaturesetOperations(_ScopeDependentOperations):
         :return: An instance of LROPoller that returns a Featureset.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Featureset]
         """
+
+        featureset_spec = validate_and_get_featureset_spec(featureset)
+        featureset.properties["spec_version"] = "1"
+        featureset.properties["spec_data"] = json.dumps(featureset_spec._to_dict())
+
+        sas_uri = None
+        featureset, _ = _check_and_upload_path(
+            artifact=featureset, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURESET
+        )
+
         featureset_resource = Featureset._to_rest_object(featureset)
 
         return self._operation.begin_create_or_update(
@@ -225,3 +243,31 @@ class FeaturesetOperations(_ScopeDependentOperations):
             name, self._container_operation, self._resource_group_name, self._workspace_name
         )
         return self.get(name=name, version=latest_version)
+
+
+def validate_and_get_featureset_spec(featureset: Featureset) -> FeaturesetSpec:
+    # pylint: disable=no-member
+    if not featureset.specification and not featureset.specification.path:
+        msg = "Missing featureset spec path. Path is required for featureset."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            error_type=ValidationErrorType.MISSING_FIELD,
+            target=ErrorTarget.FEATURESET,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+    featureset_spec_path = str(featureset.specification.path)
+
+    if not os.path.isdir(featureset_spec_path):
+        raise ValidationException(
+            message="No such directory: {}".format(featureset_spec_path),
+            no_personal_data_message="No such directory",
+            target=ErrorTarget.FEATURESET,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
+        )
+
+    featureset_spec_contents = read_featureset_metadata_contents(path=featureset_spec_path)
+    featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec")
+    return FeaturesetSpec._load(featureset_spec_contents, featureset_spec_yaml_path)

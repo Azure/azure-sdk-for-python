@@ -5,17 +5,21 @@
 # pylint: disable=protected-access
 
 from os import PathLike
+from pathlib import Path
 
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturestoreEntityVersion,
     FeaturestoreEntityVersionProperties,
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
 )
+from azure.ai.ml._schema._featurestore_entity.featurestore_entity_schema import FeaturestoreEntitySchema
+from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
 from azure.ai.ml.entities._assets.asset import Asset
 from .data_column import DataColumn
@@ -30,8 +34,8 @@ class FeaturestoreEntity(Asset):
         version: str,
         index_columns: List[DataColumn],
         description: Optional[str] = None,
-        tags: Optional[Dict] = None,
-        properties: Optional[Dict] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
         """FeaturestoreEntity
@@ -41,7 +45,7 @@ class FeaturestoreEntity(Asset):
         :param version: Version of the resource.
         :type version: str
         :param index_columns: Specifies index columns.
-        :type index_columns: list[~azure.mgmt.machinelearningservices.models.IndexColumn]
+        :type index_columns: list[~azure.ai.ml.entities.DataColumn]
         :param description: Description of the resource.
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
@@ -109,9 +113,15 @@ class FeaturestoreEntity(Asset):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "FeaturestoreEntity":
-
-        return None
+        data = data or {}
+        params_override = params_override or []
+        context = {
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            PARAMS_OVERRIDE_KEY: params_override,
+        }
+        loaded_schema = load_from_dict(FeaturestoreEntitySchema, data, context, **kwargs)
+        return FeaturestoreEntity(**loaded_schema)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return None
+        return FeaturestoreEntitySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

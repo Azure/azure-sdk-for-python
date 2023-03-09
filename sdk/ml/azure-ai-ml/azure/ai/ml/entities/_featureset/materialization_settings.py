@@ -25,7 +25,7 @@ class MaterializationSettings(RestTranslatableMixin):
         online_enabled: Optional[bool] = None,
         notification: Optional[Notification] = None,
         resource: Optional[MaterializationComputeResource] = None,
-        spark_conf: Optional[Dict[str, str]] = None,
+        spark_configuration: Optional[Dict[str, str]] = None,
         **kwargs  # pylint: disable=unused-argument
     ):
 
@@ -41,8 +41,8 @@ class MaterializationSettings(RestTranslatableMixin):
         :type notification: ~azure.ai.ml.entities.Notification
         :param resource: Specifies the compute resource settings.
         :type resource: ~azure.ai.ml.entities.MaterializationComputeResource
-        :param spark_conf: Specifies the spark compute settings.
-        :type spark_conf: dict[str, str]
+        :param spark_configuration: Specifies the spark compute settings.
+        :type spark_configuration: dict[str, str]
         """
 
         self.schedule = schedule
@@ -50,7 +50,7 @@ class MaterializationSettings(RestTranslatableMixin):
         self.online_enabled = online_enabled
         self.notification = notification
         self.resource = resource
-        self.spark_conf = spark_conf
+        self.spark_configuration = spark_configuration
 
     def _to_rest_object(self) -> RestMaterializationSettings:
         store_type = None
@@ -69,7 +69,7 @@ class MaterializationSettings(RestTranslatableMixin):
             if self.notification
             else None,
             resource=self.resource._to_rest_object() if self.resource else None,  # pylint: disable=protected-access
-            spark_configuration=self.spark_conf,
+            spark_configuration=self.spark_configuration,
             store_type=store_type,
         )
 
@@ -81,7 +81,7 @@ class MaterializationSettings(RestTranslatableMixin):
             schedule=RecurrenceTrigger._from_rest_object(obj.schedule),  # pylint: disable=protected-access
             notification=Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
             resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
-            spark_conf=obj.spark_configuration,
+            spark_configuration=obj.spark_configuration,
             offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE,
             online_enabled=obj.store_type == MaterializationStoreType.ONLINE,
         )
