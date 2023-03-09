@@ -9,6 +9,7 @@
 * Added `AzureAppConfigurationKeyVaultOptions` to take in a `client_configs` a Mapping of endpoints to client kwargs instead of taking in the whole client.
 * Removed `AzureAppConfigurationKeyVaultOptions` `secret_clients`, `client_configs` should be used instead.
 * Made key_filter and label_filter kwargs for Setting Selector
+* Renamed `trimmed_key_prefixes` to `trim_prefixes`
 
 ### Bugs Fixed
 
