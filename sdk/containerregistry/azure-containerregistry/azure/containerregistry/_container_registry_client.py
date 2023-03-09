@@ -34,7 +34,6 @@ from ._models import (
     RepositoryProperties,
     ArtifactTagProperties,
     ArtifactManifestProperties,
-    DownloadBlobResult,
     DownloadManifestResult,
 )
 
@@ -898,13 +897,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobResult:
+    def download_blob(self, repository: str, digest: str, **kwargs) -> IO:
         """Download a blob that is part of an artifact to a stream.
 
         :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
-        :returns: DownloadBlobResult
-        :rtype: ~azure.containerregistry.DownloadBlobResult
+        :returns: IO
+        :rtype: IO
         :raises ValueError: If the parameter repository or digest is None.
         """
         hasher = hashlib.sha256()
@@ -934,7 +933,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if repository is None or digest is None:
                 raise ValueError("The parameter repository, digest and destination cannot be None.")
             raise
-        return DownloadBlobResult(data=data, digest=digest)
+        return data
 
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):
