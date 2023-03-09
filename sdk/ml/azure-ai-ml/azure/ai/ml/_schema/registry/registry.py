@@ -30,7 +30,7 @@ class RegistrySchema(ResourceSchema):
         casing_transform=snake_to_pascal,
     )
     replication_locations = fields.List(NestedField(RegistryRegionDetailsSchema))
-    intellectual_property_publisher = fields.Str()
+    intellectual_property = fields.Str()
     # This is an acr account which will be applied to every registryRegionArmDetail defined
     # in replication_locations. This is different from the internal swagger
     # definition, which has a per-region list of acr accounts.

@@ -12,8 +12,8 @@ tags:
 # STEP 1. reference an existing component yaml, which implement the logic
 reference: file:gpt3finetune.spec.yaml
 
-# STEP 2. Define the "Intellectual Property Publisher" for the "IP-Protected" component
-intellectual_property_publisher: Contoso
+# STEP 2. Define the "Intellectual Property" for the "IP-Protected" component
+intellectual_property: Contoso
 
 # STEP 3. Specify "Intellectual Property Protected" input and output ports, not listed ports are ip-protected
 intellectual_property_protected_inputs:
