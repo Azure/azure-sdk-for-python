@@ -8,6 +8,7 @@ from azure.ai.ml._schema.core.fields import DumpableStringField, NestedField, St
 from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
 from azure.ai.ml._schema.core.resource import ResourceSchema
 from azure.ai.ml._schema.workspace.identity import IdentitySchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
 from azure.ai.ml.constants._registry import AcrAccountSku
@@ -19,6 +20,7 @@ from .util import acr_format_validator
 
 
 # Based on 10-01-preview api
+@experimental
 class RegistrySchema(ResourceSchema):
     # Inherits name, id, tags, and description fields from ResourceSchema
 
