@@ -350,19 +350,6 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
 
     SubscriptionValidationEventName = 'Microsoft.EventGrid.SubscriptionValidationEvent'
-
-    WebAppServicePlanUpdatedEventName = 'Microsoft.Web.AppServicePlanUpdated'
-
-    WebAppUpdatedEventName = 'Microsoft.Web.AppUpdated'
-
-    WebBackupOperationCompletedEventName = 'Microsoft.Web.BackupOperationCompleted'
-
-    WebBackupOperationFailedEventName = 'Microsoft.Web.BackupOperationFailed'
-
-    WebBackupOperationStartedEventName = 'Microsoft.Web.BackupOperationStarted'
-
-    WebRestoreOperationCompletedEventName = 'Microsoft.Web.RestoreOperationCompleted'
-
     WebRestoreOperationFailedEventName = 'Microsoft.Web.RestoreOperationFailed'
 
     WebRestoreOperationStartedEventName = 'Microsoft.Web.RestoreOperationStarted'
