@@ -8,7 +8,13 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    JobBase,
+    MLTableJobInput,
+    QueueSettings,
+    ResourceConfiguration,
+    TaskType,
+)
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import TYPE, AssetTypes
@@ -43,6 +49,8 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
     :paramtype environment_variables: typing.Optional[Dict[str, str]]
     :keyword outputs: The outputs for the AutoML job, defaults to None
     :paramtype outputs: typing.Optional[Dict[str, str]]
+    :keyword queue_settings: The queue settings for the AutoML job, defaults to None
+    :paramtype queue_settings: typing.Optional[QueueSettings]
     :raises ValidationException: task type validation error
     :raises NotImplementedError: Raises NotImplementedError
     :return: An AutoML Job
@@ -56,6 +64,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity.
@@ -73,6 +82,8 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         :paramtype environment_variables: typing.Optional[Dict[str, str]]
         :keyword outputs: The outputs for the AutoML job, defaults to None
         :paramtype outputs: typing.Optional[Dict[str, str]]
+        :keyword queue_settings: The queue settings for the AutoML job, defaults to None
+        :paramtype queue_settings: typing.Optional[QueueSettings]
         :raises ValidationException: task type validation error
         :raises NotImplementedError: Raises NotImplementedError
         :return: An AutoML Job
@@ -87,6 +98,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
 
         self.resources = resources
         self.identity = identity
+        self.queue_settings = queue_settings
 
     @property
     @abstractmethod

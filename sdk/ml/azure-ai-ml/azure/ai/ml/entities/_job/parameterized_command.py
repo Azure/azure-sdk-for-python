@@ -100,5 +100,6 @@ class ParameterizedCommand:
             environment=sweep_job.trial.environment_id,
             distribution=DistributionConfiguration._from_rest_object(sweep_job.trial.distribution),
             resources=JobResourceConfiguration._from_rest_object(sweep_job.trial.resources),
+            queue_settings=QueueSettings._from_rest_object(sweep_job.queue_settings),
         )
         return parameterized_command

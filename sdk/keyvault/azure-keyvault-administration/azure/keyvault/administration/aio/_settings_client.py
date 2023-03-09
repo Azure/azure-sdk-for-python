@@ -61,20 +61,21 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def update_setting(self, name: str, value: str, **kwargs) -> KeyVaultSetting:
-        """Updates a given account setting with the provided value.
+    async def update_setting(self, setting: KeyVaultSetting, **kwargs) -> KeyVaultSetting:
+        """Updates the named account setting with the provided value.
 
-        :param str name: The name of the account setting to update.
-        :param str value: The value to set.
+        :param setting: A :class:`~azure.keyvault.administration.KeyVaultSetting` to update. The account setting with
+            the provided name will be updated to have the provided value.
+        :type setting: ~azure.keyvault.administration.KeyVaultSetting
 
         :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        parameters = UpdateSettingsRequest(value=value)
+        parameters = UpdateSettingsRequest(value=setting.value)
         result = await self._client.update_settings(
             vault_base_url=self._vault_url,
-            setting_name=name,
+            setting_name=setting.name,
             parameters=parameters,
             **kwargs
         )

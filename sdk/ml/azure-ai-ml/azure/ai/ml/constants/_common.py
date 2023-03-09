@@ -218,9 +218,9 @@ class AzureMLResourceType:
     """Registry resource type."""
     CONNECTIONS = "connections"
     """Connections resource type."""
-    FEATURESET = "featuresets"
+    FEATURE_SET = "feature_sets"
     """Feature set resource type."""
-    FEATURESTORE_ENTITY = "featurestoreEntities"
+    FEATURE_STORE_ENTITY = "feature_store_entities"
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
@@ -234,7 +234,7 @@ class AzureMLResourceType:
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURESET, FEATURESTORE_ENTITY}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
 
 
 class ArmConstants:
@@ -441,6 +441,9 @@ class YAMLRefDocLinks:
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
     SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
     REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
+    FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
+    FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
+    FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
