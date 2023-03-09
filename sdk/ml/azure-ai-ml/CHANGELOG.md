@@ -10,7 +10,7 @@
 - Removed Experimental Tag from Image Metadata on Compute Instances.
 - Added support for featureset and featurestore_entity operations.
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
-- Added support for serverless compute in pipeline job
+- Added support for serverless compute in pipeline, command, automl and sweep job
 - Added support for `job_tier` and `priority` in job
 - Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
 
