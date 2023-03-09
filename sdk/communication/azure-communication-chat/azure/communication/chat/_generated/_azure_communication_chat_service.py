@@ -7,14 +7,15 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any
 
-from azure.core import AsyncPipelineClient
+from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 
-from .._serialization import Deserializer, Serializer
+from . import models as _models
 from ._configuration import AzureCommunicationChatServiceConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import ChatOperations, ChatThreadOperations
 
 
@@ -22,37 +23,38 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     """Azure Communication Chat Service.
 
     :ivar chat_thread: ChatThreadOperations operations
-    :vartype chat_thread: azure.communication.chat.aio.operations.ChatThreadOperations
+    :vartype chat_thread: azure.communication.chat.operations.ChatThreadOperations
     :ivar chat: ChatOperations operations
-    :vartype chat: azure.communication.chat.aio.operations.ChatOperations
-    :param endpoint: The endpoint of the Azure Communication resource. Required.
-    :type endpoint: str
+    :vartype chat: azure.communication.chat.operations.ChatOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param endpoint: The endpoint of the Azure Communication resource. Required.
+    :type endpoint: str
     :keyword api_version: Api Version. Default value is "2021-09-07". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, credential: AzureKeyCredential, endpoint: str, **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = AzureCommunicationChatServiceConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._config = AzureCommunicationChatServiceConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.chat_thread = ChatThreadOperations(self._client, self._config, self._serialize, self._deserialize)
         self.chat = ChatOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client.send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -60,7 +62,7 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -71,12 +73,12 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self) -> None:
+        self._client.close()
 
-    async def __aenter__(self) -> "AzureCommunicationChatService":
-        await self._client.__aenter__()
+    def __enter__(self) -> "AzureCommunicationChatService":
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details: Any) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)

@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import ChatThreadOperations
-from ._operations import ChatOperations
+from ._chat_thread_operations import ChatThreadOperations
+from ._chat_operations import ChatOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import

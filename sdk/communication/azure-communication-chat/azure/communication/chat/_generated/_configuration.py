@@ -27,26 +27,26 @@ class AzureCommunicationChatServiceConfiguration(Configuration):  # pylint: disa
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The endpoint of the Azure Communication resource. Required.
-    :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param endpoint: The endpoint of the Azure Communication resource. Required.
+    :type endpoint: str
     :keyword api_version: Api Version. Default value is "2021-09-07". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, credential: AzureKeyCredential, endpoint: str, **kwargs: Any) -> None:
         super(AzureCommunicationChatServiceConfiguration, self).__init__(**kwargs)
         api_version: Literal["2021-09-07"] = kwargs.pop("api_version", "2021-09-07")
 
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
 
-        self.endpoint = endpoint
         self.credential = credential
+        self.endpoint = endpoint
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "azurecommunicationchatservice/{}".format(VERSION))
         self._configure(**kwargs)

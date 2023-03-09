@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import AzureCommunicationChatService
+from ._azure_communication_chat_service import AzureCommunicationChatService
 
 try:
     from ._patch import __all__ as _patch_all
