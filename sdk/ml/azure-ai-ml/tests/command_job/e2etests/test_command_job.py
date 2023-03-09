@@ -216,7 +216,7 @@ class TestCommandJob(AzureRecordedTestCase):
 
         params_override = [{"name": job_name}]
         job = load_job(
-            source="D:/T/Git/azure-sdk-for-python/sdk/ml/azure-ai-ml/tests/test_configs/command_job/local_job.yaml",
+            source="./tests/test_configs/command_job/local_job.yaml",
             params_override=params_override,
         )
         command_job: CommandJob = client.jobs.create_or_update(job=job)
