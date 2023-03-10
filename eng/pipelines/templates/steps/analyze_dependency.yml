@@ -23,9 +23,7 @@ steps:
     displayName: 'Populate Reports Staging Folder'
     condition: succeededOrFailed()
 
-  - task: PythonScript@0
+  - pwsh: |
+      sdk_analyze_deps --verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"
     displayName: 'Analyze dependencies'
-    condition: and(succeededOrFailed(),ne(variables['Skip.AnalyzeDependencies'],'true'))
-    inputs:
-     scriptPath: 'scripts/analyze_deps.py'
-     arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"'
+    condition: succeededOrFailed()

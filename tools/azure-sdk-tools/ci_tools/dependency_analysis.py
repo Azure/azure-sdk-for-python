@@ -11,6 +11,7 @@ import re
 import sys
 import textwrap
 from typing import List, Set, Dict, Tuple, Any
+from collections import Sized
 
 from pkg_resources import Requirement
 from packaging.specifiers import SpecifierSet, Version
@@ -39,15 +40,15 @@ def dump_should_skip_lib(lib_name: str) -> bool:
     return "-mgmt" in lib_name or not lib_name.startswith("azure")
 
 
-def locate_wheels(base_dir: str) -> str:
+def locate_wheels(base_dir: str) -> List[str]:
     wheels = glob.glob(os.path.join(base_dir, "*.whl"))
     return sorted(wheels)
 
 
 def record_dep(dependencies: Dict[str, Dict[str, Any]], req_name: str, spec: str, lib_name: str) -> None:
-    if not req_name in dependencies:
+    if req_name not in dependencies:
         dependencies[req_name] = {}
-    if not spec in dependencies[req_name]:
+    if spec not in dependencies[req_name]:
         dependencies[req_name][spec] = []
     dependencies[req_name][spec].append(lib_name)
 
@@ -159,7 +160,7 @@ def resolve_lib_deps(dump_data: Dict[str, Dict[str, Any]], data_pkgs: Dict[str, 
                 }
 
 
-def pluralize(data: any, singular: str, plural: str) -> str:
+def pluralize(data: Sized, singular: str, plural: str) -> str:
     if len(data) == 1 or data is None:
         return singular
     else:
@@ -250,7 +251,6 @@ def analyze_dependencies() -> None:
                 continue
             spec = SpecifierSet(spec)
 
-            previous_remaining_dep_versions = list(remaining_dep_versions)
             remaining_dep_versions = [version for version in remaining_dep_versions if str(version) in spec]
 
             if not remaining_dep_versions:
