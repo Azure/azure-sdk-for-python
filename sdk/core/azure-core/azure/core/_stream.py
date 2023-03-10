@@ -14,6 +14,9 @@ class Stream(Protocol):
     def close(self) -> None:
         pass
 
+    def __len__(self) -> int:
+        pass
+
     def __iter__(self) -> Iterator[bytes]:
         pass
 
@@ -29,6 +32,9 @@ class AsyncStream(Protocol):
     """Protocol for methods to provide async streamed responses."""
 
     async def close(self) -> None:
+        pass
+
+    def __len__(self) -> int:
         pass
 
     async def __aiter__(self) -> AsyncIterator[bytes]:
