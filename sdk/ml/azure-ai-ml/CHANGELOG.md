@@ -13,6 +13,7 @@
 - Added support for serverless compute in pipeline, command, automl and sweep job
 - Added support for `job_tier` and `priority` in job
 - Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
+- Added support for modifying SSH key values after creation on Compute Resources.
 
 ### Bugs Fixed
 
