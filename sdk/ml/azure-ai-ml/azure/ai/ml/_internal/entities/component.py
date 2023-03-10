@@ -22,7 +22,7 @@ from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
 from ...entities._assets import Code
 from ...entities._job.distribution import DistributionConfiguration
-from .._schema.component import InternalComponentSchema
+from .._schema.component import InternalComponentSchema, InternalSparkComponentSchema
 from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
@@ -314,3 +314,9 @@ class InternalComponent(Component):
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)
+
+
+class InternalSparkComponent(InternalComponent):
+    @classmethod
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+        return InternalSparkComponentSchema(context=context)

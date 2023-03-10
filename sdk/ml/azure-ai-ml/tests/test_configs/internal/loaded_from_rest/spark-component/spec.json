@@ -1,0 +1,30 @@
+{
+  "description": "Aml Spark dataset test module",
+  "version": "1",
+  "$schema": "https://componentsdk.azureedge.net/jsonschema/SparkComponent.json",
+  "display_name": "Aml Spark dataset test module",
+  "is_deterministic": true,
+  "inputs": {
+    "file_input1": {
+      "type": "path",
+      "description": "The data to be read.",
+      "optional": false
+    },
+    "file_input2": {
+      "type": "path",
+      "description": "The data to be read.",
+      "optional": false
+    }
+  },
+  "outputs": {
+    "output": {
+      "type": "path"
+    }
+  },
+  "type": "spark",
+  "entry": {
+    "file": "entry.py"
+  },
+  "args": "--file_input1 ${{inputs.file_input1}} --file_input2 ${{inputs.file_input2}} --output ${{outputs.output}}",
+  "_source": "REMOTE.WORKSPACE.COMPONENT"
+}

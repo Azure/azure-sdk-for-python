@@ -4,9 +4,9 @@
 import os.path
 
 import pydash
-from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema import AnonymousEnvironmentSchema, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField, RegistryStr
 from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, SOURCE_PATH_CONTEXT_KEY, AzureMLResourceType
 from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
@@ -163,3 +163,14 @@ class InternalComponentSchema(ComponentSchema):
         if type_label:
             data["type"] = LABELLED_RESOURCE_NAME.format(data["type"], type_label)
         return data
+
+
+class InternalSparkComponentSchema(InternalComponentSchema):
+    environment = UnionField(
+        [
+            NestedField(AnonymousEnvironmentSchema),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ],
+        allow_none=True,
+    )

@@ -19,6 +19,7 @@ from azure.ai.ml._internal.entities import (
     Scope,
     Starlite,
 )
+from azure.ai.ml._internal.entities.component import InternalSparkComponent
 from azure.ai.ml._internal.entities.node import Spark
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml.entities._component.component_factory import component_factory
@@ -37,13 +38,16 @@ def _enable_internal_components():
     create_schema_func = InternalComponent._create_schema_for_validation
     for _type in NodeType.all_values():
         # hack: internal spark is conflict with spark, so we register as INTERNAL_SPARK instead of SPARK
-        if _type == NodeType.SPARK:
-            continue
         component_factory.register_type(
             _type=_type,
             create_instance_func=lambda: InternalComponent.__new__(InternalComponent),
             create_schema_func=create_schema_func,
         )
+    component_factory.register_type(
+        _type=NodeType.INTERNAL_SPARK,
+        create_instance_func=lambda: InternalSparkComponent.__new__(InternalSparkComponent),
+        create_schema_func=InternalSparkComponent._create_schema_for_validation,
+    )
 
 
 def _register_node(_type, node_cls, schema_cls):
