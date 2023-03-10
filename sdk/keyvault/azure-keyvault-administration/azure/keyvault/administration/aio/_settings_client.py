@@ -72,8 +72,8 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        parameters = UpdateSettingsRequest(value=setting.value)
-        result = await self._client.update_settings(
+        parameters = UpdateSettingRequest(value=setting.value)
+        result = await self._client.update_setting(
             vault_base_url=self._vault_url,
             setting_name=setting.name,
             parameters=parameters,
