@@ -93,17 +93,19 @@ class ConditionNode(ControlFlowNode):
             )
 
         error_msg = (
-            "{!r} of dsl.condition node must be an instance of " f"{BaseNode}, {AutoMLJob} or {str}," "got {!r}."
+            "{!r} of dsl.condition node must be an instance of "
+            f"{BaseNode}, {AutoMLJob}, {ControlFlowNode} or {str},"
+            "got {!r}."
         )
         blocks = self.true_block if self.true_block else []
         for block in blocks:
-            if block is not None and not isinstance(block, (BaseNode, AutoMLJob, str)):
+            if block is not None and not isinstance(block, (BaseNode, AutoMLJob, ControlFlowNode, str)):
                 validation_result.append_error(
                     yaml_path="true_block", message=error_msg.format("true_block", type(block))
                 )
         blocks = self.false_block if self.false_block else []
         for block in blocks:
-            if block is not None and not isinstance(block, (BaseNode, AutoMLJob, str)):
+            if block is not None and not isinstance(block, (BaseNode, AutoMLJob, ControlFlowNode, str)):
                 validation_result.append_error(
                     yaml_path="false_block", message=error_msg.format("false_block", type(block))
                 )

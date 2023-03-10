@@ -367,3 +367,30 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
 
         my_job = my_pipeline()
         assert my_job.jobs["foreach_node"]._source == ComponentSource.DSL
+
+    def test_if_else_parallel_for(self):
+        hello_world = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml",
+        )
+        basic_component = load_component(
+            source="./tests/test_configs/components/component_with_conditional_output/spec.yaml"
+        )
+
+        @pipeline(compute="cpu-cluster")
+        def my_pipeline():
+            result = basic_component()
+
+            body1 = hello_world(component_in_path=Input(path="test_path1"))
+            node1 = parallel_for(
+                body=body1, items={"iter1": {"component_in_number": 1}, "iter2": {"component_in_number": 2}}
+            )
+
+            body2 = hello_world(component_in_path=Input(path="test_path1"))
+            node2 = parallel_for(
+                body=body2, items={"iter1": {"component_in_number": 1}, "iter2": {"component_in_number": 2}}
+            )
+
+            condition(condition=result.outputs.output, false_block=[node1, node2])
+
+        my_job = my_pipeline()
+        my_job._validate(raise_error=True)

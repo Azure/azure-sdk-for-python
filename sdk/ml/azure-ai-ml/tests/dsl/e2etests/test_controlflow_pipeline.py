@@ -357,11 +357,6 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
 
-@pytest.mark.skipif(
-    condition=is_live(),
-    # TODO: reopen live test when parallel_for deployed to canary
-    reason="parallel_for is not available in canary.",
-)
 class TestParallelForPipeline(TestControlFlowPipeline):
     def test_simple_dsl_parallel_for_pipeline(self, client: MLClient):
         hello_world_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -813,3 +808,28 @@ class TestParallelForPipeline(TestControlFlowPipeline):
             "type": "parallel_for",
             "_source": "DSL",
         }
+
+    def test_if_else_combine_parallel_for(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component_no_inputs.yml",
+        )
+        basic_component = load_component(
+            source="./tests/test_configs/components/component_with_conditional_output/spec.yaml"
+        )
+
+        @pipeline
+        def my_pipeline():
+            result = basic_component()
+
+            body1 = hello_world_component()
+            node1 = parallel_for(body=body1, items={"iter1": {}, "iter2": {}})
+
+            body2 = hello_world_component()
+            node2 = parallel_for(body=body2, items={"iter1": {}, "iter2": {}})
+
+            condition(condition=result.outputs.output, false_block=[node1, node2])
+
+        pipeline_job = my_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        with include_private_preview_nodes_in_pipeline():
+            assert_job_cancel(pipeline_job, client)

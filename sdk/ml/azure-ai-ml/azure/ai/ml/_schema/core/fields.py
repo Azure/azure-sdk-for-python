@@ -227,8 +227,9 @@ class NodeBindingStr(DataBindingStr):
             return None
 
         from azure.ai.ml.entities._builders import BaseNode
+        from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 
-        if isinstance(value, BaseNode):
+        if isinstance(value, (BaseNode, ControlFlowNode)):
             value = f"${{{{parent.jobs.{value.name}}}}}"
 
         self._validate(value)
