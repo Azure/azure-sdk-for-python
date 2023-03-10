@@ -11,19 +11,22 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessPolicyUpdateKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessPolicyUpdateKind."""
 
     ADD = "add"
     REPLACE = "replace"
     REMOVE = "remove"
 
+
 class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CertificatePermissions."""
 
     ALL = "all"
     GET = "get"
     LIST = "list"
     DELETE = "delete"
     CREATE = "create"
-    IMPORT_ENUM = "import"
+    IMPORT = "import"
     UPDATE = "update"
     MANAGECONTACTS = "managecontacts"
     GETISSUERS = "getissuers"
@@ -36,12 +39,13 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BACKUP = "backup"
     RESTORE = "restore"
 
+
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The vault's create mode to indicate whether the vault need to be recovered or not.
-    """
+    """The vault's create mode to indicate whether the vault need to be recovered or not."""
 
     RECOVER = "recover"
     DEFAULT = "default"
+
 
 class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The deletion recovery level currently in effect for the object. If it contains 'Purgeable',
@@ -54,14 +58,27 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECOVERABLE = "Recoverable"
     RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
 
+
+class Enum10(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum10."""
+
+    RESOURCE_TYPE_EQ_MICROSOFT_KEY_VAULT_VAULTS_ = "resourceType eq 'Microsoft.KeyVault/vaults'"
+
+
+class Enum11(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum11."""
+
+    TWO_THOUSAND_FIFTEEN11_01 = "2015-11-01"
+
+
 class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The elliptic curve name. For valid values, see JsonWebKeyCurveName.
-    """
+    """The elliptic curve name. For valid values, see JsonWebKeyCurveName."""
 
     P256 = "P-256"
     P384 = "P-384"
     P521 = "P-521"
     P256_K = "P-256K"
+
 
 class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The permitted JSON web key operations of the key. For more information, see
@@ -74,18 +91,20 @@ class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VERIFY = "verify"
     WRAP_KEY = "wrapKey"
     UNWRAP_KEY = "unwrapKey"
-    IMPORT_ENUM = "import"
+    IMPORT = "import"
+
 
 class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the key. For valid values, see JsonWebKeyType.
-    """
+    """The type of the key. For valid values, see JsonWebKeyType."""
 
     EC = "EC"
     EC_HSM = "EC-HSM"
     RSA = "RSA"
     RSA_HSM = "RSA-HSM"
 
+
 class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KeyPermissions."""
 
     ALL = "all"
     ENCRYPT = "encrypt"
@@ -98,12 +117,13 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LIST = "list"
     CREATE = "create"
     UPDATE = "update"
-    IMPORT_ENUM = "import"
+    IMPORT = "import"
     DELETE = "delete"
     BACKUP = "backup"
     RESTORE = "restore"
     RECOVER = "recover"
     PURGE = "purge"
+
 
 class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only
@@ -113,6 +133,7 @@ class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALLOW = "Allow"
     DENY = "Deny"
 
+
 class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tells what traffic can bypass network rules. This can be 'AzureServices' or 'None'.  If not
     specified the default is 'AzureServices'.
@@ -121,9 +142,9 @@ class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_SERVICES = "AzureServices"
     NONE = "None"
 
+
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
@@ -132,14 +153,15 @@ class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsens
     FAILED = "Failed"
     DISCONNECTED = "Disconnected"
 
+
 class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private endpoint connection status.
-    """
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
+
 
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason that a vault name could not be used. The Reason element is only returned if
@@ -149,7 +171,9 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+
 class SecretPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SecretPermissions."""
 
     ALL = "all"
     GET = "get"
@@ -161,20 +185,22 @@ class SecretPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECOVER = "recover"
     PURGE = "purge"
 
+
 class SkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SKU family name
-    """
+    """SKU family name."""
 
     A = "A"
 
+
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SKU name to specify whether the key vault is a standard vault or a premium vault.
-    """
+    """SKU name to specify whether the key vault is a standard vault or a premium vault."""
 
     STANDARD = "standard"
     PREMIUM = "premium"
 
+
 class StoragePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StoragePermissions."""
 
     ALL = "all"
     GET = "get"
@@ -192,9 +218,9 @@ class StoragePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GETSAS = "getsas"
     DELETESAS = "deletesas"
 
+
 class VaultProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the vault.
-    """
+    """Provisioning state of the vault."""
 
     SUCCEEDED = "Succeeded"
     REGISTERING_DNS = "RegisteringDns"

@@ -86,18 +86,9 @@ class AioHttpTransport(AsyncHttpTransport):
             :caption: Asynchronous transport with aiohttp.
     """
 
-    def __init__(
-        self,
-        *,
-        session: Optional[aiohttp.ClientSession] = None,
-        loop=None,
-        session_owner=True,
-        **kwargs
-    ):
+    def __init__(self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner=True, **kwargs):
         if loop and sys.version_info >= (3, 10):
-            raise ValueError(
-                "Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore"
-            )
+            raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
@@ -154,18 +145,14 @@ class AioHttpTransport(AsyncHttpTransport):
             for form_file, data in request.files.items():
                 content_type = data[2] if len(data) > 2 else None
                 try:
-                    form_data.add_field(
-                        form_file, data[1], filename=data[0], content_type=content_type
-                    )
+                    form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
                 except IndexError:
                     raise ValueError("Invalid formdata formatting: {}".format(data))
             return form_data
         return request.data
 
     @overload
-    async def send(
-        self, request: HttpRequest, **config: Any
-    ) -> Optional[AsyncHttpResponse]:
+    async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -183,9 +170,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
 
     @overload
-    async def send(
-        self, request: "RestHttpRequest", **config: Any
-    ) -> Optional["RestAsyncHttpResponse"]:
+    async def send(self, request: "RestHttpRequest", **config: Any) -> Optional["RestAsyncHttpResponse"]:
         """Send the `azure.core.rest` request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -248,12 +233,8 @@ class AioHttpTransport(AsyncHttpTransport):
         try:
             stream_response = config.pop("stream", False)
             timeout = config.pop("connection_timeout", self.connection_config.timeout)
-            read_timeout = config.pop(
-                "read_timeout", self.connection_config.read_timeout
-            )
-            socket_timeout = aiohttp.ClientTimeout(
-                sock_connect=timeout, sock_read=read_timeout
-            )
+            read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
+            socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
             result = await self.session.request(  # type: ignore
                 request.method,
                 request.url,
@@ -301,9 +282,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         on the *content-encoding* header.
     """
 
-    def __init__(
-        self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True
-    ) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, *, decompress=True) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -365,16 +344,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     """
 
     def __init__(
-        self,
-        request: HttpRequest,
-        aiohttp_response: aiohttp.ClientResponse,
-        block_size=None,
-        *,
-        decompress=True
+        self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size=None, *, decompress=True
     ) -> None:
-        super(AioHttpTransportResponse, self).__init__(
-            request, aiohttp_response, block_size=block_size
-        )
+        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
         self.headers = CIMultiDict(aiohttp_response.headers)
@@ -411,9 +383,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             except LookupError:
                 encoding = None
         if not encoding:
-            if mimetype.type == "application" and (
-                mimetype.subtype == "json" or mimetype.subtype == "rdap"
-            ):
+            if mimetype.type == "application" and (mimetype.subtype == "json" or mimetype.subtype == "rdap"):
                 # RFC 7159 states that the default encoding is UTF-8.
                 # RFC 7483 defines application/rdap+json
                 encoding = "utf-8"
@@ -458,8 +428,6 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state[
-            "internal_response"
-        ] = None  # aiohttp response are not pickable (see headers comments)
+        state["internal_response"] = None  # aiohttp response are not pickable (see headers comments)
         state["headers"] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state

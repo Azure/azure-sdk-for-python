@@ -29,6 +29,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.exceptions import DecodeError
 from utils import HTTP_REQUESTS
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_decompress_plain_no_header(http_request):
@@ -45,8 +46,9 @@ async def test_decompress_plain_no_header(http_request):
         content = b""
         async for d in data:
             content += d
-        decoded = content.decode('utf-8')
+        decoded = content.decode("utf-8")
         assert decoded == "test"
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -64,8 +66,9 @@ async def test_compress_plain_no_header(http_request):
         content = b""
         async for d in data:
             content += d
-        decoded = content.decode('utf-8')
+        decoded = content.decode("utf-8")
         assert decoded == "test"
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -84,10 +87,11 @@ async def test_decompress_compressed_no_header(http_request):
         async for d in data:
             content += d
         try:
-            decoded = content.decode('utf-8')
+            decoded = content.decode("utf-8")
             assert False
         except UnicodeDecodeError:
             pass
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -106,7 +110,7 @@ async def test_compress_compressed_no_header(http_request):
         async for d in data:
             content += d
         try:
-            decoded = content.decode('utf-8')
+            decoded = content.decode("utf-8")
             assert False
         except UnicodeDecodeError:
             pass
@@ -118,6 +122,7 @@ async def test_compress_compressed_no_header(http_request):
 async def test_decompress_plain_header(http_request):
     # expect error
     import zlib
+
     account_name = "coretests"
     account_url = "https://{}.blob.core.windows.net".format(account_name)
     url = "https://{}.blob.core.windows.net/tests/test_with_header.txt".format(account_name)
@@ -135,6 +140,7 @@ async def test_decompress_plain_header(http_request):
         except (zlib.error, DecodeError):
             pass
 
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_compress_plain_header(http_request):
@@ -151,8 +157,9 @@ async def test_compress_plain_header(http_request):
         content = b""
         async for d in data:
             content += d
-        decoded = content.decode('utf-8')
+        decoded = content.decode("utf-8")
         assert decoded == "test"
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -170,8 +177,9 @@ async def test_decompress_compressed_header(http_request):
         content = b""
         async for d in data:
             content += d
-        decoded = content.decode('utf-8')
+        decoded = content.decode("utf-8")
         assert decoded == "test"
+
 
 @pytest.mark.live_test_only
 @pytest.mark.asyncio
@@ -191,7 +199,7 @@ async def test_compress_compressed_header(http_request):
         async for d in data:
             content += d
         try:
-            decoded = content.decode('utf-8')
+            decoded = content.decode("utf-8")
             assert False
         except UnicodeDecodeError:
             pass

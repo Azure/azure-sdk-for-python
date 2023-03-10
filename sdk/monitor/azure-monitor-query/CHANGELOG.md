@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.1.2 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,15 @@
 
 ### Bugs Fixed
 
+- Fixed an inconsistent keyword argument name in the `LogsTable` constructor, changing `column_types` to `columns_types`. Note that this is a class that is typically only instantiated internally, and not by users. ([#29076](https://github.com/Azure/azure-sdk-for-python/pull/29076))
+
 ### Other Changes
+
+## 1.1.1 (2023-02-13)
+
+### Bugs Fixed
+
+- Fixed a bug where the incorrect key `time_stamp` (should be `timeStamp`) was used in the creation of `MetricValue` objects (thanks @jamespic).  ([#28777](https://github.com/Azure/azure-sdk-for-python/pull/28777))
 
 ## 1.1.0 (2023-02-07)
 

@@ -213,7 +213,7 @@ class Data(Artifact):
         # datastore_arm_id is null for registry scenario, so capture the full_storage_path
         if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
             self.path = asset_artifact.full_storage_path
-        else :
+        else:
             groups = re.search(regex, asset_artifact.datastore_arm_id)
             if groups:
                 datastore_name = groups.group(1)

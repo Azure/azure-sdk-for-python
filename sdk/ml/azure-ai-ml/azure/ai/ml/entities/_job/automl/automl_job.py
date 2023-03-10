@@ -8,7 +8,13 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    JobBase,
+    MLTableJobInput,
+    QueueSettings,
+    ResourceConfiguration,
+    TaskType,
+)
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import TYPE, AssetTypes
@@ -37,6 +43,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity.
@@ -45,6 +52,8 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         :param resources: Resource configuration for the job.
         :param identity: Identity that training job will use while running on compute.
         :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
+        :param queue_settings: Queue settings for the job.
+        :type queue_settings: QueueSettings
         :param kwargs:
         """
         kwargs[TYPE] = JobType.AUTOML
@@ -56,6 +65,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
 
         self.resources = resources
         self.identity = identity
+        self.queue_settings = queue_settings
 
     @property
     @abstractmethod

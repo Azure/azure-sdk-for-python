@@ -16,6 +16,7 @@ import sys
 
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.parsing import ParsedSetup
+from ci_tools.variables import in_ci
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -50,20 +51,26 @@ if __name__ == "__main__":
 
     top_level_module = pkg_details.namespace.split('.')[0]
 
-    if is_check_enabled(args.target_package, "pylint"):
-        try:
-            check_call(
-                [
-                    sys.executable,
-                    "-m",
-                    "pylint",
-                    "--rcfile={}".format(rcFileLocation),
-                    "--output-format=parseable",
-                    os.path.join(args.target_package, top_level_module),
-                ]
+    if in_ci():
+        if not is_check_enabled(args.target_package, "pylint"):
+            logging.info(
+                f"Package {pkg_details.name} opts-out of pylint check."
             )
-        except CalledProcessError as e:
-            logging.error(
-                "{} exited with linting error {}".format(pkg_details.name, e.returncode)
-            )
-            exit(1)
+            exit(0)
+
+    try:
+        check_call(
+            [
+                sys.executable,
+                "-m",
+                "pylint",
+                "--rcfile={}".format(rcFileLocation),
+                "--output-format=parseable",
+                os.path.join(args.target_package, top_level_module),
+            ]
+        )
+    except CalledProcessError as e:
+        logging.error(
+            "{} exited with linting error {}".format(pkg_details.name, e.returncode)
+        )
+        exit(1)

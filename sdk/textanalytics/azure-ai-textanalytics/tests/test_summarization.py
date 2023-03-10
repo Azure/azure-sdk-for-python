@@ -11,7 +11,7 @@ from devtools_testutils import recorded_by_proxy
 from azure.ai.textanalytics import (
     TextAnalyticsClient,
     ExtractSummaryResult,
-    AbstractSummaryResult
+    AbstractiveSummaryResult
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -135,14 +135,14 @@ class TestSummarization(TextAnalyticsTest):
             "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
             "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."}]
 
-        response = client.begin_abstract_summary(
+        response = client.begin_abstractive_summary(
             docs,
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
 
         for result in response:
-            assert isinstance(result, AbstractSummaryResult)
+            assert isinstance(result, AbstractiveSummaryResult)
             assert result.statistics is not None
             assert result.id is not None
             for summary in result.summaries:
@@ -174,15 +174,15 @@ class TestSummarization(TextAnalyticsTest):
             "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
             "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."}]
 
-        response = client.begin_abstract_summary(
+        response = client.begin_abstractive_summary(
             docs,
-            max_sentence_count=5,
+            sentence_count=5,
             show_stats=True,
             polling_interval=self._interval(),
         ).result()
 
         for result in response:
-            assert isinstance(result, AbstractSummaryResult)
+            assert isinstance(result, AbstractiveSummaryResult)
             assert result.statistics is not None
             assert result.id is not None
             for summary in result.summaries:

@@ -2,23 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""The tests for opencensus_span.py"""
-
-import unittest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+"""The tests for opentelemetry_span.py"""
+from unittest import mock
 
 from opentelemetry import trace
 from opentelemetry.trace import SpanKind as OpenTelemetrySpanKind
+import pytest
 
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.core.tracing import SpanKind
-import os
-
-import pytest
 
 
 class TestOpentelemetryWrapper:
@@ -40,7 +32,6 @@ class TestOpentelemetryWrapper:
                 assert wrapped_span.span_instance is trace.get_current_span()
 
             assert parent is trace.get_current_span()
-
 
     def test_span(self, tracer):
         with tracer.start_as_current_span("Root") as parent:
@@ -143,7 +134,7 @@ class TestOpentelemetryWrapper:
             wrapped_class = OpenTelemetrySpan(span=parent)
             request = mock.Mock()
             setattr(request, "method", "GET")
-            setattr(request, "url", "some url")
+            setattr(request, "url", "https://foo.bar/path")
             response = mock.Mock()
             setattr(request, "headers", {})
             setattr(response, "status_code", 200)
@@ -153,11 +144,19 @@ class TestOpentelemetryWrapper:
             assert wrapped_class.span_instance.attributes.get("component") == "http"
             assert wrapped_class.span_instance.attributes.get("http.url") == request.url
             assert wrapped_class.span_instance.attributes.get("http.status_code") == 504
-            assert wrapped_class.span_instance.attributes.get("http.user_agent") is None
+            assert wrapped_class.span_instance.attributes.get("user_agent.original") is None
+
             request.headers["User-Agent"] = "some user agent"
+            request.url = "http://foo.bar:8080/path"
             wrapped_class.set_http_attributes(request, response)
             assert wrapped_class.span_instance.attributes.get("http.status_code") == response.status_code
-            assert wrapped_class.span_instance.attributes.get("http.user_agent") == request.headers.get("User-Agent")
+            assert wrapped_class.span_instance.attributes.get("user_agent.original") == request.headers.get(
+                "User-Agent"
+            )
+
+            if wrapped_class.span_instance.attributes.get("net.peer.name"):
+                assert wrapped_class.span_instance.attributes.get("net.peer.name") == "foo.bar"
+                assert wrapped_class.span_instance.attributes.get("net.peer.port") == 8080
 
     def test_span_kind(self, tracer):
         with tracer.start_as_current_span("Root") as parent:

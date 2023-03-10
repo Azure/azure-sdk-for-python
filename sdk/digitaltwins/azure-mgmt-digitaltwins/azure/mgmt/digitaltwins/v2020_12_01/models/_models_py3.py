@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -42,7 +42,7 @@ class CheckNameRequest(_serialization.Model):
 
     type = "Microsoft.DigitalTwins/digitalTwinsInstances"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Resource name. Required.
         :paramtype name: str
@@ -76,8 +76,8 @@ class CheckNameResult(_serialization.Model):
         name_available: Optional[bool] = None,
         message: Optional[str] = None,
         reason: Optional[Union[str, "_models.Reason"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: Specifies a Boolean value that indicates if the name is available.
         :paramtype name_available: bool
@@ -135,8 +135,8 @@ class ConnectionProperties(_serialization.Model):
         private_link_service_connection_state: Optional[
             "_models.ConnectionPropertiesPrivateLinkServiceConnectionState"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint:
         :paramtype private_endpoint:
@@ -171,7 +171,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -194,7 +194,7 @@ class ConnectionPropertiesPrivateEndpoint(PrivateEndpoint):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -232,8 +232,8 @@ class ConnectionState(_serialization.Model):
         status: Union[str, "_models.PrivateLinkServiceConnectionStatus"],
         description: str,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: The status of a private endpoint connection. Required. Known values are:
          "Pending", "Approved", "Rejected", and "Disconnected".
@@ -284,8 +284,8 @@ class ConnectionPropertiesPrivateLinkServiceConnectionState(ConnectionState):
         status: Union[str, "_models.PrivateLinkServiceConnectionStatus"],
         description: str,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: The status of a private endpoint connection. Required. Known values are:
          "Pending", "Approved", "Rejected", and "Disconnected".
@@ -343,8 +343,8 @@ class DigitalTwinsResource(_serialization.Model):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.DigitalTwinsIdentity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
@@ -438,8 +438,8 @@ class DigitalTwinsDescription(DigitalTwinsResource):  # pylint: disable=too-many
         identity: Optional["_models.DigitalTwinsIdentity"] = None,
         private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
@@ -483,8 +483,8 @@ class DigitalTwinsDescriptionListResult(_serialization.Model):
         *,
         next_link: Optional[str] = None,
         value: Optional[List["_models.DigitalTwinsDescription"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of DigitalTwins description objects.
         :paramtype next_link: str
@@ -521,7 +521,7 @@ class ExternalResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -561,7 +561,7 @@ class DigitalTwinsEndpointResource(ExternalResource):
         "properties": {"key": "properties", "type": "DigitalTwinsEndpointResourceProperties"},
     }
 
-    def __init__(self, *, properties: "_models.DigitalTwinsEndpointResourceProperties", **kwargs):
+    def __init__(self, *, properties: "_models.DigitalTwinsEndpointResourceProperties", **kwargs: Any) -> None:
         """
         :keyword properties: DigitalTwinsInstance endpoint resource properties. Required.
         :paramtype properties:
@@ -590,8 +590,8 @@ class DigitalTwinsEndpointResourceListResult(_serialization.Model):
         *,
         next_link: Optional[str] = None,
         value: Optional[List["_models.DigitalTwinsEndpointResource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of DigitalTwinsInstance Endpoints.
         :paramtype next_link: str
@@ -658,8 +658,8 @@ class DigitalTwinsEndpointResourceProperties(_serialization.Model):
         authentication_type: Optional[Union[str, "_models.AuthenticationType"]] = None,
         dead_letter_secret: Optional[str] = None,
         dead_letter_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword authentication_type: Specifies the authentication type being used for connecting to
          the endpoint. Known values are: "KeyBased" and "IdentityBased".
@@ -709,7 +709,7 @@ class DigitalTwinsIdentity(_serialization.Model):
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.DigitalTwinsIdentityType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.DigitalTwinsIdentityType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The type of Managed Identity used by the DigitalTwinsInstance. Only
          SystemAssigned is supported. Known values are: "None" and "SystemAssigned".
@@ -744,8 +744,8 @@ class DigitalTwinsPatchDescription(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.DigitalTwinsIdentity"] = None,
         properties: Optional["_models.DigitalTwinsPatchProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Instance patch properties.
         :paramtype tags: dict[str, str]
@@ -773,7 +773,9 @@ class DigitalTwinsPatchProperties(_serialization.Model):
         "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
     }
 
-    def __init__(self, *, public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None, **kwargs):
+    def __init__(
+        self, *, public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword public_network_access: Public network access for the DigitalTwinsInstance. Known
          values are: "Enabled" and "Disabled".
@@ -809,7 +811,7 @@ class ErrorDefinition(_serialization.Model):
         "details": {"key": "details", "type": "[ErrorDefinition]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -828,7 +830,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDefinition"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error description.
         :paramtype error: ~azure.mgmt.digitaltwins.v2020_12_01.models.ErrorDefinition
@@ -900,8 +902,8 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
         dead_letter_secret: Optional[str] = None,
         dead_letter_uri: Optional[str] = None,
         access_key2: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword authentication_type: Specifies the authentication type being used for connecting to
          the endpoint. Known values are: "KeyBased" and "IdentityBased".
@@ -1000,8 +1002,8 @@ class EventHub(DigitalTwinsEndpointResourceProperties):
         connection_string_secondary_key: Optional[str] = None,
         endpoint_uri: Optional[str] = None,
         entity_path: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword authentication_type: Specifies the authentication type being used for connecting to
          the endpoint. Known values are: "KeyBased" and "IdentityBased".
@@ -1073,8 +1075,8 @@ class GroupIdInformation(_serialization.Model):
         *,
         properties: "_models.GroupIdInformationProperties",
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Required.
         :paramtype properties: ~azure.mgmt.digitaltwins.v2020_12_01.models.GroupIdInformationProperties
@@ -1111,8 +1113,8 @@ class GroupIdInformationPropertiesAutoGenerated(_serialization.Model):
         group_id: Optional[str] = None,
         required_members: Optional[List[str]] = None,
         required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_id: The group id.
         :paramtype group_id: str
@@ -1150,8 +1152,8 @@ class GroupIdInformationProperties(GroupIdInformationPropertiesAutoGenerated):
         group_id: Optional[str] = None,
         required_members: Optional[List[str]] = None,
         required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_id: The group id.
         :paramtype group_id: str
@@ -1176,7 +1178,7 @@ class GroupIdInformationResponse(_serialization.Model):
         "value": {"key": "value", "type": "[GroupIdInformation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.GroupIdInformation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.GroupIdInformation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of available private link resources for a Digital Twin.
         :paramtype value: list[~azure.mgmt.digitaltwins.v2020_12_01.models.GroupIdInformation]
@@ -1213,7 +1215,7 @@ class Operation(_serialization.Model):
         "is_data_action": {"key": "isDataAction", "type": "bool"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Operation properties display.
         :paramtype display: ~azure.mgmt.digitaltwins.v2020_12_01.models.OperationDisplay
@@ -1254,7 +1256,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -1264,7 +1266,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of DigitalTwins service operations. It contains a list of operations and a URL link to get the next set of results.
+    """A list of DigitalTwins service operations. It contains a list of operations and a URL link to
+    get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1284,7 +1287,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The link used to get the next page of DigitalTwins description objects.
         :paramtype next_link: str
@@ -1326,7 +1329,7 @@ class PrivateEndpointConnection(_serialization.Model):
         "properties": {"key": "properties", "type": "PrivateEndpointConnectionProperties"},
     }
 
-    def __init__(self, *, properties: "_models.PrivateEndpointConnectionProperties", **kwargs):
+    def __init__(self, *, properties: "_models.PrivateEndpointConnectionProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Required.
         :paramtype properties:
@@ -1380,8 +1383,8 @@ class PrivateEndpointConnectionProperties(ConnectionProperties):
         private_link_service_connection_state: Optional[
             "_models.ConnectionPropertiesPrivateLinkServiceConnectionState"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint:
         :paramtype private_endpoint:
@@ -1411,7 +1414,7 @@ class PrivateEndpointConnectionsResponse(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of available private link connections for a Digital Twin.
         :paramtype value: list[~azure.mgmt.digitaltwins.v2020_12_01.models.PrivateEndpointConnection]
@@ -1488,8 +1491,8 @@ class ServiceBus(DigitalTwinsEndpointResourceProperties):
         secondary_connection_string: Optional[str] = None,
         endpoint_uri: Optional[str] = None,
         entity_path: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword authentication_type: Specifies the authentication type being used for connecting to
          the endpoint. Known values are: "KeyBased" and "IdentityBased".

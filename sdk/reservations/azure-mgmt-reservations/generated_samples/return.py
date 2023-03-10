@@ -28,8 +28,8 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.return_operations.post(
-        reservation_order_id="276e7ae4-84d0-4da6-ab4b-d6b94f3557da",
+    response = client.return_operations.begin_post(
+        reservation_order_id="50000000-aaaa-bbbb-cccc-100000000004",
         body={
             "properties": {
                 "reservationToReturn": {
@@ -41,10 +41,10 @@ def main():
                 "sessionId": "10000000-aaaa-bbbb-cccc-200000000000",
             }
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/reservations/resource-manager/Microsoft.Capacity/stable/2022-03-01/examples/Return.json
+# x-ms-original-file: specification/reservations/resource-manager/Microsoft.Capacity/stable/2022-11-01/examples/Return.json
 if __name__ == "__main__":
     main()

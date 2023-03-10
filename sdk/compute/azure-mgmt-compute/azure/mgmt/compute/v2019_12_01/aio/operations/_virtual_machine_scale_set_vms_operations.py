@@ -238,7 +238,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :param vm_scale_set_vm_reimage_input: Parameters for the Reimaging Virtual machine in ScaleSet.
-         Is either a model type or a IO type. Default value is None.
+         Is either a VirtualMachineScaleSetVMReimageParameters type or a IO type. Default value is None.
         :type vm_scale_set_vm_reimage_input:
          ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetVMReimageParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -709,7 +709,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :param parameters: Parameters supplied to the Update Virtual Machine Scale Sets VM operation.
-         Is either a model type or a IO type. Required.
+         Is either a VirtualMachineScaleSetVM type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetVM or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1963,8 +1963,8 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param parameters: Parameters supplied to the Run command operation. Is either a model type or
-         a IO type. Required.
+        :param parameters: Parameters supplied to the Run command operation. Is either a
+         RunCommandInput type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2019_12_01.models.RunCommandInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.

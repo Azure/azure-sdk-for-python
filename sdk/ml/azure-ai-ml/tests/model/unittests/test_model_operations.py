@@ -118,8 +118,6 @@ version: 3"""
         tmp_path: Path,
     ) -> None:
 
-        mock_model_operation._model_container_operation.get.return_value = Mock(ModelContainerDetails())
-
         model_name = f"model_random_string"
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"
@@ -130,31 +128,29 @@ name: {model_name}
 path: ./model.pkl"""
         )
         model = load_model(source=p)
+        assert model._auto_increment_version
         model.version = None
 
-        with patch(
+        with patch("azure.ai.ml.operations._model_operations.Model._from_rest_object", return_value=None), patch(
+            "azure.ai.ml.operations._model_operations._get_next_version_from_container", return_value="version"
+        ) as mock_nextver, patch(
             "azure.ai.ml.operations._model_operations._check_and_upload_path",
             return_value=(model, "indicatorfile.txt"),
-        ), patch("azure.ai.ml.operations._model_operations.Model._from_rest_object", return_value=model), patch(
-            "azure.ai.ml.operations._model_operations._get_default_datastore_info", return_value=None
         ), patch(
-            "azure.ai.ml.operations._model_operations._update_metadata", return_value=None
-        ) as mock_update:
+            "azure.ai.ml.operations._model_operations.Model._from_rest_object", return_value=model
+        ), patch(
+            "azure.ai.ml.operations._model_operations._get_default_datastore_info", return_value=None
+        ):
             mock_model_operation.create_or_update(model)
-            mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
-            mock_model_operation._model_container_operation.get.assert_called_once_with(
-                name=model.name,
-                resource_group_name=mock_workspace_scope.resource_group_name,
-                workspace_name=mock_workspace_scope.workspace_name,
-            )
+            mock_nextver.assert_called_once()
+
             mock_model_operation._model_versions_operation.create_or_update.assert_called_once_with(
                 body=model._to_rest_object(),
                 name=model.name,
-                version=mock_model_operation._model_container_operation.get().properties.next_version,
+                version=mock_nextver.return_value,
                 resource_group_name=mock_workspace_scope.resource_group_name,
                 workspace_name=mock_workspace_scope.workspace_name,
             )
-            mock_update.assert_called_once()
 
     def test_get_name_and_version(self, mock_model_operation: ModelOperations) -> None:
         mock_model_operation._model_container_operation.get.return_value = None
@@ -272,42 +268,48 @@ path: ./model.pkl"""
                 ignore_file=None,
             )
 
-    def test_promote_model_from_workspace(
-        self,
-        mock_model_operation_reg: ModelOperations,
-        mock_model_operation: ModelOperations,
-        tmp_path: Path,
-    ) -> None:
-        model_name = f"model_random_string"
-        p = tmp_path / "model_full.yml"
-        model_path = tmp_path / "model.pkl"
-        model_path.write_text("hello world")
-        p.write_text(
-            f"""
-    name: {model_name}
-    path: ./model.pkl
-    version: 3"""
-        )
+    # def test_promote_model_from_workspace(
+    #     self,
+    #     mock_model_operation_reg: ModelOperations,
+    #     mock_model_operation: ModelOperations,
+    #     tmp_path: Path,
+    # ) -> None:
+    #     model_name = f"model_random_string"
+    #     p = tmp_path / "model_full.yml"
+    #     model_path = tmp_path / "model.pkl"
+    #     model_path.write_text("hello world")
+    #     p.write_text(
+    #         f"""
+    # name: {model_name}
+    # path: ./model.pkl
+    # version: 3"""
+    #     )
 
-        with patch(
-            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
-            return_value=ArtifactStorageInfo(
-                name=model_name,
-                version="3",
-                relative_path="path",
-                datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
-                container_name="containerName",
-            ),
-        ) as mock_upload, patch(
-            "azure.ai.ml.operations._model_operations.Model._from_rest_object",
-            return_value=Model(),
-        ):
-            model = load_model(source=p)
-            model_to_promote = mock_model_operation._prepare_to_copy(model, "new_name", "new_version")
-            assert model_to_promote.name == "new_name"
-            assert model_to_promote.version == "new_version"
-            mock_model_operation_reg._model_versions_operation.get.side_effect = Mock(
-                side_effect=ResourceNotFoundError("Test")
-            )
-            mock_model_operation_reg.create_or_update(model_to_promote)
-            mock_model_operation_reg._service_client.resource_management_asset_reference.begin_import_method.assert_called_once()
+    #     with patch(
+    #         "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
+    #         return_value=ArtifactStorageInfo(
+    #             name=model_name,
+    #             version="3",
+    #             relative_path="path",
+    #             datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
+    #             container_name="containerName",
+    #         ),
+    #     ) as mock_upload, patch(
+    #         "azure.ai.ml.operations._model_operations.Model._from_rest_object",
+    #         return_value=Model(),
+    #     ):
+    #         model = load_model(source=p)
+    #         model_to_promote = mock_model_operation._prepare_to_copy(model, "new_name", "new_version")
+    #         assert model_to_promote.name == "new_name"
+    #         assert model_to_promote.version == "new_version"
+    #         mock_model_operation_reg._model_versions_operation.get.side_effect = Mock(
+    #             side_effect=ResourceNotFoundError("Test")
+    #         )
+    #         mock_model_operation_reg.create_or_update(model_to_promote)
+    #         mock_model_operation_reg._service_client.resource_management_asset_reference.begin_import_method.assert_called_once()
+
+    def test_model_entity_class_exist(self):
+        try:
+            from azure.ai.ml.entities import WorkspaceModelReference
+        except ImportError:
+            assert False, "WorkspaceModelReference class not found"

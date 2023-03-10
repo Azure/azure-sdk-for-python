@@ -67,6 +67,7 @@ LIMITED_RESULTSET_WARNING_FORMAT = "Displaying top {} results from the list comm
 MAX_LIST_CLI_RESULTS = 50
 LOCAL_COMPUTE_TARGET = "local"
 LOCAL_COMPUTE_PROPERTY = "IsLocal"
+SERVERLESS_COMPUTE = "serverless"
 CONDA_FILE = "conda_file"
 DOCKER_FILE_NAME = "Dockerfile"
 COMPUTE_UPDATE_ERROR = (
@@ -100,6 +101,7 @@ ASSET_ID_REGEX_FORMAT = (
 )
 ASSET_ID_RESOURCE_REGEX_FORMAT = "azureml://resource[gG]roups/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 MODEL_ID_REGEX_FORMAT = "azureml://models/([^/]+)/versions/(.+)"
+DATA_ID_REGEX_FORMAT = "azureml://data/([^/]+)/versions/(.+)"
 ASSET_ID_URI_REGEX_FORMAT = "azureml://locations/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 AZUREML_CLI_SYSTEM_EXECUTED_ENV_VAR = "AZUREML_CLI_SYSTEM_EXECUTED"
 DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
@@ -194,6 +196,10 @@ class AzureMLResourceType(object):
     COMPONENT = "components"
     SCHEDULE = "schedules"
     REGISTRY = "registries"
+    CONNECTIONS = "connections"
+    FEATURE_SET = "feature_sets"
+    FEATURE_STORE_ENTITY = "feature_store_entities"
+    FEATURE_STORE = "feature_store"
 
     NAMED_TYPES = {
         JOB,
@@ -204,7 +210,7 @@ class AzureMLResourceType(object):
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
 
 
 class ArmConstants(object):
@@ -354,6 +360,9 @@ class YAMLRefDocLinks:
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
     SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
     REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
+    FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
+    FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
+    FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -581,8 +590,6 @@ class ModelType:
 
 
 class RollingRate:
-    YEAR = "year"
-    MONTH = "month"
     DAY = "day"
     HOUR = "hour"
     MINUTE = "minute"
@@ -597,3 +604,8 @@ class IdentityType:
     AML_TOKEN = "aml_token"
     USER_IDENTITY = "user_identity"
     MANAGED_IDENTITY = "managed_identity"
+
+
+class Boolean:
+    TRUE = "true"
+    FALSE = "false"

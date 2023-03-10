@@ -4,12 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import (
-    Optional,
-    Dict,
-    List,
-    TYPE_CHECKING
-)
+from typing import Optional, Dict, List
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
@@ -21,14 +16,11 @@ from .._base_client import parse_connection_str
 from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
 from .._error import _process_table_error, _reprocess_error
-from .._models import TableItem, LocationMode
+from .._models import TableItem, LocationMode, TableCorsRule, TableMetrics, TableAnalyticsLogging
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
 from ._models import TablePropertiesPaged
-
-if TYPE_CHECKING:
-    from .._models import TableCorsRule, TableMetrics, TableAnalyticsLogging
 
 
 class TableServiceClient(AsyncTablesBaseClient):
@@ -48,11 +40,11 @@ class TableServiceClient(AsyncTablesBaseClient):
     :keyword credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+        AzureSasCredential (azure-core), or AsyncTokenCredential from azure-identity.
     :paramtype credential:
         :class:`~azure.core.credentials.AzureNamedKeyCredential` or
         :class:`~azure.core.credentials.AzureSasCredential` or
-        :class:`~azure.core.credentials.TokenCredential`
+        :class:`~azure.core.credentials.AsyncTokenCredential`
     :keyword str api_version:
         The Storage API version to use for requests. Default value is '2019-02-02'.
         Setting to an older version may result in reduced feature compatibility.
@@ -146,10 +138,10 @@ class TableServiceClient(AsyncTablesBaseClient):
     async def set_service_properties(
         self,
         *,
-        analytics_logging: Optional['TableAnalyticsLogging'] = None,
-        hour_metrics: Optional['TableMetrics'] = None,
-        minute_metrics: Optional['TableMetrics'] = None,
-        cors: Optional[List['TableCorsRule']] = None,
+        analytics_logging: Optional[TableAnalyticsLogging] = None,
+        hour_metrics: Optional[TableMetrics] = None,
+        minute_metrics: Optional[TableMetrics] = None,
+        cors: Optional[List[TableCorsRule]] = None,
         **kwargs
     ) -> None:
         """Sets properties for an account's Table service endpoint,

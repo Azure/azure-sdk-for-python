@@ -22,11 +22,11 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 
-# from azure.ai.ml._telemetry import (
-#     ActivityType,
-#     monitor_with_activity,
-#     monitor_with_telemetry_mixin,
-# )
+from azure.ai.ml._telemetry import (
+    ActivityType,
+    monitor_with_activity,
+    monitor_with_telemetry_mixin,
+)
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -60,7 +60,7 @@ from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ComponentOperations(_ScopeDependentOperations):
@@ -80,7 +80,7 @@ class ComponentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._version_operation = service_client.component_versions
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations
@@ -107,7 +107,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
-    # @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Union[str, None] = None,
@@ -161,7 +161,7 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
 
@@ -221,7 +221,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @experimental
-    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
     # pylint: disable=no-self-use
     def validate(
         self,
@@ -240,7 +240,7 @@ class ComponentOperations(_ScopeDependentOperations):
         """
         return self._validate(component, raise_on_failure=raise_on_failure)
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
@@ -259,12 +259,12 @@ class ComponentOperations(_ScopeDependentOperations):
         result.resolve_location_for_diagnostics(component._source_path)
         return result
 
-    # @monitor_with_telemetry_mixin(
-    #     logger,
-    #     "Component.CreateOrUpdate",
-    #     ActivityType.PUBLICAPI,
-    #     extra_keys=["is_anonymous"],
-    # )
+    @monitor_with_telemetry_mixin(
+        logger,
+        "Component.CreateOrUpdate",
+        ActivityType.PUBLICAPI,
+        extra_keys=["is_anonymous"],
+    )
     def create_or_update(
         self, component: Union[Component, types.FunctionType], version=None, *, skip_validation: bool = False, **kwargs
     ) -> Component:
@@ -381,7 +381,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
         return component
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -408,7 +408,7 @@ class ComponentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
@@ -477,9 +477,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 not isinstance(component.environment, dict)
                 and not type(component.environment).__name__ == "InternalEnvironment"
             ):
-                component.environment = resolver(
-                    component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-                )
+                component.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
     def _resolve_arm_id_or_upload_dependencies(self, component: Component) -> None:
         if isinstance(component, AutoMLComponent):
@@ -577,6 +575,7 @@ class ComponentOperations(_ScopeDependentOperations):
         The ideal solution should be done after PRS team decides how to handle parallel.task.code
         """
         from azure.ai.ml.entities import Parallel, ParallelComponent
+
         if not isinstance(node, Parallel):
             return
         component = node._component  # pylint: disable=protected-access
@@ -592,9 +591,7 @@ class ComponentOperations(_ScopeDependentOperations):
             )
             node.task.code = component.code
         if node.task.environment:
-            node.task.environment = resolver(
-                component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT
-            )
+            node.task.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
     @classmethod
     def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
@@ -610,12 +607,12 @@ class ComponentOperations(_ScopeDependentOperations):
         # TODO: the same anonymous component with different node name will have different anonymous hash
         # as their display name will be different.
         if (
-                isinstance(component, Component)
-                # check if component is anonymous and not created based on its id. We can't directly check
-                # node._component._is_anonymous as it will be set to True on component creation,
-                # which is later than this check
-                and not component.id
-                and not component.display_name
+            isinstance(component, Component)
+            # check if component is anonymous and not created based on its id. We can't directly check
+            # node._component._is_anonymous as it will be set to True on component creation,
+            # which is later than this check
+            and not component.id
+            and not component.display_name
         ):
             component.display_name = default_name
 
@@ -634,11 +631,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 node.compute_name = resolver(node.compute_name, azureml_type=AzureMLResourceType.COMPUTE)
 
     @classmethod
-    def _divide_nodes_to_resolve_into_layers(
-        cls,
-        component: PipelineComponent,
-        extra_operations: List[Callable]
-    ):
+    def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
         """Traverse the pipeline component and divide nodes to resolve into layers.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
           A
@@ -676,7 +669,7 @@ class ComponentOperations(_ScopeDependentOperations):
             if isinstance(job_instance, BaseNode) and isinstance(job_instance._component, PipelineComponent):
                 if cur_layer + 1 == len(layers):
                     layers.append([])
-                layers[cur_layer+1].extend(job_instance.component.jobs.items())
+                layers[cur_layer + 1].extend(job_instance.component.jobs.items())
 
             if cur_layer_head == len(layers[cur_layer]):
                 cur_layer += 1
@@ -689,11 +682,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return layers
 
     def _resolve_dependencies_for_pipeline_component_jobs(
-        self,
-        component: Union[Component, str],
-        resolver: Callable,
-        *,
-        resolve_inputs: bool = True
+        self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
     ):
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
@@ -725,7 +714,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 partial(self._try_resolve_environment_for_component, resolver=resolver),
                 partial(self._try_resolve_compute_for_node, resolver=resolver),
                 # should we resolve code here after we do extra operations concurrently?
-            ]
+            ],
         )
 
         # cache anonymous component only for now

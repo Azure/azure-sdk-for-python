@@ -82,7 +82,7 @@ class LogsTable:
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.pop("name", "")
         self.columns = kwargs.pop("columns", [])
-        self.columns_types = kwargs.pop("column_types", [])
+        self.columns_types = kwargs.pop("columns_types", [])
         _rows = kwargs.pop("rows", [])
         self.rows: List[LogsTableRow] = [
             LogsTableRow(
@@ -99,7 +99,7 @@ class LogsTable:
         return cls(
             name=generated.get("name"),
             columns=[col["name"] for col in generated.get("columns", [])],
-            column_types=[col["type"] for col in generated.get("columns", [])],
+            columns_types=[col["type"] for col in generated.get("columns", [])],
             rows=generated.get("rows"),
         )
 
@@ -135,7 +135,7 @@ class MetricValue:
         if not generated:
             return cls()
         return cls(
-            timestamp=Deserializer.deserialize_iso(generated.get("time_stamp")),
+            timestamp=Deserializer.deserialize_iso(generated.get("timeStamp")),
             average=generated.get("average"),
             minimum=generated.get("minimum"),
             maximum=generated.get("maximum"),
