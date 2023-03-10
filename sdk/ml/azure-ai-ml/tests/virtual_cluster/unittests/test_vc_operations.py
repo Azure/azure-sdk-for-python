@@ -89,5 +89,6 @@ class TestVCOperations:
         mock_get_generic_resource_by_id.assert_called_once_with(
             arm_id="/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.MachineLearningServices/virtualclusters/name2",
             credential=mock_credential,
-            subscription_id="sub-id")
+            subscription_id="sub-id",
+            api_version="2021-03-01-preview")
 
