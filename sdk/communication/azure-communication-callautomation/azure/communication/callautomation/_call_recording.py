@@ -65,7 +65,7 @@ class CallRecording(object):
         self,
         recording_id: str,
         **kwargs
-    ):
+    ) -> None:
         """Stop recording the call.
 
         :param recording_id: The recording id. Required.
@@ -80,7 +80,7 @@ class CallRecording(object):
         self,
         recording_id: str,
         **kwargs
-    ):
+    ) -> None:
         """Pause recording the call.
 
         :param recording_id: The recording id. Required.
@@ -95,7 +95,7 @@ class CallRecording(object):
         self,
         recording_id: str,
         **kwargs
-    ):
+    ) -> None:
         """Resume recording the call.
 
         :param recording_id: The recording id. Required.
