@@ -5,7 +5,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -16,7 +16,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._feature_store_entity.data_column import DataColumn
 
-from .feature_metadata import FeatureMetadata
+from .feature import Feature
 from .source_metadata import SourceMetadata
 from .delay_metadata import DelayMetadata
 from .feature_transformation_code_metadata import FeatureTransformationCodeMetadata
@@ -30,18 +30,18 @@ class FeaturesetSpecMetadata(object):
         *,
         source: SourceMetadata,
         feature_transformation_code: Optional[FeatureTransformationCodeMetadata] = None,
-        features: List[FeatureMetadata],
+        features: List[Feature],
         index_columns: List[DataColumn],
         source_lookback: Optional[DelayMetadata] = None,
         temporal_join_lookback: Optional[DelayMetadata] = None,
         **_kwargs,
     ):
         self.source = source
-        self.featureTransformationCode = feature_transformation_code
+        self.feature_transformation_code = feature_transformation_code
         self.features = features
-        self.indexColumns = index_columns
-        self.sourceLookback = source_lookback
-        self.temporalJoinLookback = temporal_join_lookback
+        self.index_columns = index_columns
+        self.source_lookback = source_lookback
+        self.temporal_join_lookback = temporal_join_lookback
 
     @classmethod
     def load(

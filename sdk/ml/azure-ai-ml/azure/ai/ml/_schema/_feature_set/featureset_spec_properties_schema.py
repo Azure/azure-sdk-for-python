@@ -15,27 +15,29 @@ from .source_metadata_schema import SourceMetadataSchema
 
 
 class FeatureTransformationCodePropertiesSchema(metaclass=PatchedSchemaMeta):
-    Path = fields.Str()
-    TransformerClass = fields.Str()
+    path = fields.Str(data_key="Path")
+    transformer_class = fields.Str(data_key="TransformerClass")
 
 
 class DelayMetadataPropertiesSchema(metaclass=PatchedSchemaMeta):
-    Days = fields.Int()
-    Hours = fields.Int()
-    Minutes = fields.Int()
+    days = fields.Int(data_key="Days")
+    hours = fields.Int(data_key="Hours")
+    minutes = fields.Int(data_key="Minutes")
 
 
 class FeaturePropertiesSchema(metaclass=PatchedSchemaMeta):
-    FeatureName = fields.Str()
-    DataType = fields.Str()
-    Description = fields.Str()
-    Tags = fields.Dict(keys=fields.Str(), values=fields.Str())
+    name = fields.Str(data_key="FeatureName")
+    data_type = fields.Str(data_key="DataType")
+    description = fields.Str(data_key="Description")
+    tags = fields.Dict(keys=fields.Str(), values=fields.Str(), data_key="Tags")
 
 
 class FeaturesetSpecPropertiesSchema(YamlFileSchema):
-    source = fields.Nested(SourceMetadataSchema)
-    featureTransformationCode = fields.Nested(FeatureTransformationCodePropertiesSchema)
-    features = fields.List(NestedField(FeaturePropertiesSchema))
-    indexColumns = fields.List(NestedField(DataColumnSchema))
-    sourceLookback = fields.Nested(DelayMetadataPropertiesSchema)
-    temporalJoinLookback = fields.Nested(DelayMetadataPropertiesSchema)
+    source = fields.Nested(SourceMetadataSchema, data_key="source")
+    feature_transformation_code = fields.Nested(
+        FeatureTransformationCodePropertiesSchema, data_key="featureTransformationCode"
+    )
+    features = fields.List(NestedField(FeaturePropertiesSchema), data_key="features")
+    index_columns = fields.List(NestedField(DataColumnSchema), data_key="indexColumns")
+    source_lookback = fields.Nested(DelayMetadataPropertiesSchema, data_key="sourceLookback")
+    temporal_join_lookback = fields.Nested(DelayMetadataPropertiesSchema, data_key="temporalJoinLookback")

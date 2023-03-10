@@ -5,7 +5,7 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from .delay_metadata_schema import DelayMetadataSchema
-from .feature_metadata_schema import FeatureMetadataSchema
+from .feature_schema import FeatureSchema
 from .feature_set_schema import FeatureSetSchema
 from .featureset_spec_metadata_schema import FeaturesetSpecMetadataSchema
 from .featureset_specification_schema import FeaturesetSpecificationSchema
@@ -15,7 +15,7 @@ from .timestamp_column_metadata_schema import TimestampColumnMetadataSchema
 
 __all__ = [
     "DelayMetadataSchema",
-    "FeatureMetadataSchema",
+    "FeatureSchema",
     "FeatureSetSchema",
     "FeaturesetSpecMetadataSchema",
     "FeaturesetSpecificationSchema",
