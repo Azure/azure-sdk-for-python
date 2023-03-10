@@ -4,19 +4,7 @@
 
 ### Features Added
 
-- A new boolean keyword argument `uamqp_transport` has been added to sync and async `ServiceBusClient` constructors which indicates whether to use the `uamqp` library or the default pure Python AMQP library as the underlying transport.
-
-### Bugs Fixed
-
-- Fixed a bug where sync and async `ServiceBusAdministrationClient` expected `credential` with `get_token` method returning `AccessToken.token` of type `bytes` and not `str`, now matching the documentation.
-- Fixed a bug where `raw_amqp_message.header` and `message.header` properties on `ServiceReceivedBusMessage` were returned with `durable`, `first_acquirer`, and `priority` properties set by default, rather than the values returned by the service.
-
-### Other Changes
-
-- The `message` attribute on `ServiceBus`/`ServiceBusMessageBatch`/`ServiceBusReceivedMessage`, which previously exposed the `uamqp.Message`/`uamqp.BatchMessage`, has been deprecated.
-  - `LegacyMessage`/`LegacyBatchMessage` objects returned by the `message` attribute on `ServiceBus`/`ServiceBusMessageBatch` have been introduced to help facilitate the transition.
-- Removed uAMQP from required dependencies.
-- Adding `uamqp >= 1.6.3` as an optional dependency for use with the `uamqp_transport` keyword.
+- Iterator receiving from Service Bus entities has been added back in.
 
 ## 7.8.3 (2023-03-09)
 
