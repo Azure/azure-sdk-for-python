@@ -811,21 +811,21 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return digest
 
     @distributed_trace
-    def upload_blob(self, repository: str, data: IO, **kwargs) -> str:
+    def upload_blob(self, repository: str, data: IO, **kwargs) -> Tuple[str, str]:
         """Upload an artifact blob.
 
         :param str repository: Name of the repository.
         :param data: The blob to upload. Note: This must be a seekable stream.
         :type data: IO
-        :returns: The digest of the uploaded blob, calculated by the registry.
-        :rtype: str
+        :returns: The digest and size of the uploaded blob
+        :rtype: Tuple[str, str]
         :raises ValueError: If the parameter repository or data is None.
         """
         try:
             start_upload_response_headers = cast(Dict[str, str], self._client.container_registry_blob.start_upload(
                 repository, cls=_return_response_headers, **kwargs
             ))
-            digest, location = self._upload_blob_chunk(start_upload_response_headers['Location'], data, **kwargs)
+            digest, location, blob_size = self._upload_blob_chunk(start_upload_response_headers['Location'], data, **kwargs)
             if not _validate_digest(data, digest):
                 raise ValueError("The digest in the response does not match the digest of the uploaded blob.")
             complete_upload_response_headers = cast(
@@ -841,11 +841,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.")
             raise
-        return complete_upload_response_headers['Docker-Content-Digest']
+        return complete_upload_response_headers['Docker-Content-Digest'], blob_size
 
     def _upload_blob_chunk(self, location: str, data: IO, **kwargs) -> Tuple[str, str]:
         hasher = hashlib.sha256()
         buffer = data.read(DEFAULT_CHUNK_SIZE)
+        blob_size = len(buffer)
         while len(buffer) > 0:
             response_headers = cast(Dict[str, str], self._client.container_registry_blob.upload_chunk(
                 location,
@@ -856,7 +857,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             location = response_headers['Location']
             hasher.update(buffer)
             buffer = data.read(DEFAULT_CHUNK_SIZE)
-        return "sha256:" + hasher.hexdigest(), location
+            blob_size += len(buffer)
+        return "sha256:" + hasher.hexdigest(), location, blob_size
 
     @distributed_trace
     def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:

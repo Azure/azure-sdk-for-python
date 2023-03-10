@@ -564,11 +564,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         with self.create_registry_client(containerregistry_endpoint) as client:
             # Act
             data = open(path, "rb")
-            digest = client.upload_blob(repo, data)
+            digest, size = client.upload_blob(repo, data)
 
             # Assert
             res = client.download_blob(repo, digest)
-            assert len(res.read()) == len(data.read())
+            assert len(res.read()) == size
 
             client.delete_blob(repo, digest)
 
@@ -583,21 +583,23 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             # Test blob upload and download in equal size chunks
             blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
             data = b'\x00' * int(blob_size)
-            digest = client.upload_blob(repo, BytesIO(data))
+            digest, size = client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
 
-            stream1 = client.download_blob(repo, digest)
+            stream = client.download_blob(repo, digest)
             with open("text1.txt", "wb") as file:
-                size = file.write(stream1.read())
+                size = file.write(stream.read())
             assert size == blob_size
 
             # Test blob upload and download in unequal size chunks
             blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
             data = b'\x00' * int(blob_size)
-            digest = client.upload_blob(repo, BytesIO(data))
+            digest, size = client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
 
-            stream2 = client.download_blob(repo, digest)
+            stream = client.download_blob(repo, digest)
             with open("text2.txt", "wb") as file:
-                size = file.write(stream2.read())
+                size = file.write(stream.read())
             assert size == blob_size
 
     @acr_preparer()
