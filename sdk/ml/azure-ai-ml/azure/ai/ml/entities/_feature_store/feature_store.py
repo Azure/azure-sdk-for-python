@@ -12,7 +12,8 @@ from marshmallow import ValidationError
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
 
 from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
-from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntime
+from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+from azure.ai.ml.entities import Workspace, CustomerManagedKey, ComputeRuntime
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._utils._experimental import experimental
