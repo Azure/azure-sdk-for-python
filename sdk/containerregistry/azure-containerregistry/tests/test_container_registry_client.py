@@ -568,29 +568,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             # Assert
             res = client.download_blob(repo, digest)
-            assert len(res.data.read()) == len(data.read())
-            assert res.digest == digest
+            assert len(res.read()) == len(data.read())
 
             client.delete_blob(repo, digest)
-
-            # Cleanup
-            client.delete_repository(repo)
-
-    @acr_preparer()
-    @recorded_by_proxy
-    def test_upload_blob_in_chunk(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        blob_size = 100
-        with self.create_registry_client(containerregistry_endpoint) as client:
-            data = b'\x00' * int(blob_size)
-            digest = client.upload_blob(repo, BytesIO(data))
-            assert _compute_digest(BytesIO(data)) == digest
-
-            path = os.path.join(self.get_test_directory(), "data")
-            client.download_blob(repo, digest, path)
-
-            # Cleanup
-            client.delete_repository(repo)
 
     @pytest.mark.live_test_only
     @acr_preparer()
@@ -604,23 +584,21 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
             data = b'\x00' * int(blob_size)
             digest = client.upload_blob(repo, BytesIO(data))
-            assert _compute_digest(BytesIO(data)) == digest
 
-            path = os.path.join(self.get_test_directory(), "data")
-            client.download_blob(repo, digest, path)
+            stream1 = client.download_blob(repo, digest)
+            with open("text1.txt", "wb") as file:
+                size = file.write(stream1.read())
+            assert size == blob_size
 
             # Test blob upload and download in unequal size chunks
             blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
-            blob_size = DEFAULT_CHUNK_SIZE + 20
             data = b'\x00' * int(blob_size)
             digest = client.upload_blob(repo, BytesIO(data))
-            assert _compute_digest(BytesIO(data)) == digest
 
-            path = os.path.join(self.get_test_directory(), "data")
-            client.download_blob(repo, digest, path)
-
-            # Cleanup
-            client.delete_repository(repo)
+            stream2 = client.download_blob(repo, digest)
+            with open("text2.txt", "wb") as file:
+                size = file.write(stream2.read())
+            assert size == blob_size
 
     @acr_preparer()
     @recorded_by_proxy

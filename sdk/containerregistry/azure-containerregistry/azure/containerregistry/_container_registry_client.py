@@ -767,7 +767,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def upload_manifest(
-        self, repository: str, manifest: Union["OCIManifest", "IO"], *, tag: Optional[str] = None, **kwargs: Any
+        self, repository: str, manifest: Union[OCIManifest, IO], *, tag: Optional[str] = None, **kwargs
     ) -> str:
         """Upload a manifest for an OCI artifact.
 
@@ -801,7 +801,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             )
             digest = response_headers['Docker-Content-Digest']
- 
         except ValueError:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.")
@@ -812,8 +811,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return digest
 
     @distributed_trace
-    def upload_blob(self, repository, data, **kwargs):
-        # type: (str, IO, **Any) -> str
+    def upload_blob(self, repository: str, data: IO, **kwargs) -> str:
         """Upload an artifact blob.
 
         :param str repository: Name of the repository.
@@ -861,8 +859,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return "sha256:" + hasher.hexdigest(), location
 
     @distributed_trace
-    def download_manifest(self, repository, tag_or_digest, **kwargs):
-        # type: (str, str, **Any) -> DownloadManifestResult
+    def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:
         """Download the manifest for an OCI artifact.
 
         :param str repository: Name of the repository.
@@ -911,11 +908,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         blob_size = None
         data = BytesIO()
         try:
-            while(True):
+            while True:
                 end_range = downloaded + DEFAULT_CHUNK_SIZE
-                range = f"bytes={downloaded}-{end_range}"
+                range_header = f"bytes={downloaded}-{end_range}"
                 deserialized, headers = self._client.container_registry_blob.get_chunk(
-                    repository, digest, range, cls=_return_deserialized_and_headers, **kwargs
+                    repository, digest, range_header, cls=_return_deserialized_and_headers, **kwargs
                 )
                 if blob_size is None:
                     blob_size = headers["Content-Range"].split("/")[1]
@@ -923,7 +920,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 for chunk in deserialized:
                     data.write(chunk)
                     hasher.update(chunk)
-                if(str(downloaded) == blob_size):
+                if str(downloaded) == blob_size:
                     break
             data.seek(0)
             computed_digest = "sha256:" + hasher.hexdigest()

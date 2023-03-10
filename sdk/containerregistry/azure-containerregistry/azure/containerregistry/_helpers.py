@@ -8,7 +8,6 @@ import hashlib
 import re
 import time
 import json
-import os
 from typing import TYPE_CHECKING, Dict
 from io import BytesIO
 from urllib.parse import urlparse
