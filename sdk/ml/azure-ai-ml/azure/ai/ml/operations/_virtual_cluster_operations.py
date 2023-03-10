@@ -83,7 +83,10 @@ class VirtualClusterOperations:
             arm_id = AzureResourceId(name)
             sub_id = arm_id.subscription_id
 
-            return get_generic_resource_by_id(arm_id=name, credential=self._credentials, subscription_id=sub_id)
+            return get_generic_resource_by_id(arm_id=name,
+                                              credential=self._credentials,
+                                              subscription_id=sub_id,
+                                              api_version="2021-03-01-preview")
         except ValidationException:
             return get_virtual_cluster_by_name(
                 name=name,
