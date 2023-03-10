@@ -11,7 +11,7 @@ except ImportError:
     pass
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
-from azure.mgmt.servicebus.models import SBQueue, SBSubscription, AccessRights
+from azure.mgmt.servicebus.models import SBQueue, SBSubscription, AccessRights, SBAuthorizationRule
 
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
@@ -497,7 +497,7 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
                         group.name,
                         namespace.name,
                         name,
-                        self.access_rights
+                        SBAuthorizationRule(rights=self.access_rights)
                     )
                     break
                 except Exception as ex:
@@ -568,7 +568,7 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
                         namespace.name,
                         queue.name,
                         name,
-                        self.access_rights
+                        SBAuthorizationRule(rights=self.access_rights)
                     )
                     break
                 except Exception as ex:
