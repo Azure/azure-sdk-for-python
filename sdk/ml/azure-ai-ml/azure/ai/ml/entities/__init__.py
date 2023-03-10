@@ -149,6 +149,7 @@ from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
 from ._feature_store.feature_store import FeatureStore
 from ._feature_store.materialization_store import MaterializationStore
+from ._feature_set.feature import Feature
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -209,6 +210,7 @@ __all__ = [
     "WorkspaceKeys",
     "WorkspaceConnection",
     "ComputeRuntime",
+    "Feature",
     "FeatureStoreSettings",
     "FeatureSet",
     "FeatureStoreEntity",

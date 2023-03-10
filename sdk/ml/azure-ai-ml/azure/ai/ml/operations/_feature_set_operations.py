@@ -282,14 +282,14 @@ class FeatureSetOperations(_ScopeDependentOperations):
     def list_features(
         self,
         *,
-        name,
+        feature_set_name,
         version,
         tags: Optional[str] = None,
     ) -> ItemPaged[Feature]:
         """List features
 
-        :param name: Feature set name.
-        :type name: str
+        :param feature_set_name: Feature set name.
+        :type feature_set_name: str
         :param version: Feature set version.
         :type version: str
         :param tags: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
@@ -300,7 +300,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         features = self._operation.list_features(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
-            name=name,
+            name=feature_set_name,
             version=version,
             tags=tags,
             cls=lambda objs: [Feature._from_rest_object(obj) for obj in objs],
