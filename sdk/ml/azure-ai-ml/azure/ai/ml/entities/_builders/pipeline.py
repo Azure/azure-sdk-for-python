@@ -19,9 +19,8 @@ module_logger = logging.getLogger(__name__)
 
 
 class Pipeline(BaseNode):
-    """Base class for pipeline node, used for pipeline component version
-    consumption. You should not instantiate this class directly. Instead, you should
-    use @pipeline decorator to create a pipeline node.
+    """Base class for pipeline node, used for pipeline component version consumption. You should not instantiate this
+    class directly. Instead, you should use @pipeline decorator to create a pipeline node.
 
     You should not instantiate this class directly. Instead, you should
     create from @pipeline decorator.

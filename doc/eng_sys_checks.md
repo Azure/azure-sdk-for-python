@@ -9,6 +9,8 @@
     - [Atomic Overrides](#atomic-overrides)
   - [Analyze Checks](#analyze-checks)
     - [MyPy](#mypy)
+    - [Pyright](#pyright)
+    - [Verifytypes](#verifytypes)
     - [Pylint](#pylint)
     - [Bandit](#bandit)
     - [ApiStubGen](#apistubgen)
@@ -160,10 +162,26 @@ Analyze job in both nightly CI and pull request validation pipeline runs a set o
 
 ### MyPy
 
-[`MyPy`](https://pypi.org/project/mypy/)  is a static analysis tool that runs type checking of python package. MyPy is an opt-in check for packages. Following are the steps to run `MyPy` locally for a specific package:
+[`MyPy`](https://pypi.org/project/mypy/)  is a static analysis tool that runs type checking of python package. Following are the steps to run `MyPy` locally for a specific package:
 
 1. Go to root of the package
 2. Execute following command: `tox -e mypy -c ../../../eng/tox/tox.ini`
+
+### Pyright
+
+[`Pyright`](https://github.com/microsoft/pyright/)  is a static analysis tool that runs type checking of python package. Following are the steps to run `pyright` locally for a specific package:
+
+1. Go to root of the package
+2. Execute following command: `tox -e pyright -c ../../../eng/tox/tox.ini`
+
+
+### Verifytypes
+
+[`Verifytypes`](https://github.com/microsoft/pyright/blob/main/docs/typed-libraries.md#verifying-type-completeness) is a feature of pyright that checks the type completeness of a python package. Following are the steps to run `verifytypes` locally for a specific package:
+
+1. Go to root of the package
+2. Execute following command: `tox -e verifytypes -c ../../../eng/tox/tox.ini`
+
 
 ### Pylint
 

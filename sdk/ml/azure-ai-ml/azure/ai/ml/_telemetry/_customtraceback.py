@@ -4,8 +4,7 @@
 
 # pylint: disable=protected-access
 
-"""A file for custom traceback for removing file path from the trace for
-compliance need."""
+"""A file for custom traceback for removing file path from the trace for compliance need."""
 
 import os
 import sys
@@ -18,10 +17,9 @@ class _CustomStackSummary(traceback.StackSummary):
     def format(self):
         """Format the stack ready for printing.
 
-        Returns a list of strings ready for printing.  Each string in
-        the resulting list corresponds to a single frame from the stack.
-        Each string ends in a newline; the strings may contain internal
-        newlines as well, for those items with source text lines.
+        Returns a list of strings ready for printing.  Each string in the resulting list corresponds to a single frame
+        from the stack. Each string ends in a newline; the strings may contain internal newlines as well, for those
+        items with source text lines.
         """
         result = []
         for frame in self:
@@ -98,12 +96,10 @@ class _CustomTracebackException(traceback.TracebackException):
     def format_exception_only(self):
         """Format the exception part of the traceback.
 
-        The return value is a generator of strings, each ending in a
-        newline. Normally, the generator emits a single string; however,
-        for SyntaxError exceptions, it emits several lines that (when
-        printed) display detailed information about where the syntax
-        error occurred. The message indicating which exception occurred
-        is always the last string in the output.
+        The return value is a generator of strings, each ending in a newline. Normally, the generator emits a single
+        string; however, for SyntaxError exceptions, it emits several lines that (when printed) display detailed
+        information about where the syntax error occurred. The message indicating which exception occurred is always the
+        last string in the output.
         """
         if self.exc_type is None:
             yield traceback._format_final_exc_line(None, self._str)
@@ -146,11 +142,9 @@ def format_exc(limit=None, chain=True):
 def format_exception(etype, value, tb, limit=None, chain=True):  # pylint: disable=unused-argument
     """Format a stack trace and the exception information.
 
-    The arguments have the same meaning as the corresponding arguments
-    to print_exception().  The return value is a list of strings, each
-    ending in a newline and some containing internal newlines.  When
-    these lines are concatenated and printed, exactly the same text is
-    printed as does print_exception().
+    The arguments have the same meaning as the corresponding arguments to print_exception().  The return value is a list
+    of strings, each ending in a newline and some containing internal newlines.  When these lines are concatenated and
+    printed, exactly the same text is printed as does print_exception().
     """
     # format_exception has ignored etype for some time, and code such as cgitb
     # passes in bogus values as a result. For compatibility with such code we

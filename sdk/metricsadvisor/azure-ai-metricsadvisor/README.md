@@ -37,6 +37,7 @@ You will need two keys to authenticate the client:
 We can use the keys to create a new `MetricsAdvisorClient` or `MetricsAdvisorAdministrationClient`.
 
 <!-- SNIPPET:sample_authentication.authentication_client_with_metrics_advisor_credential -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
 
@@ -47,9 +48,11 @@ api_key = os.getenv("METRICS_ADVISOR_API_KEY")
 client = MetricsAdvisorClient(service_endpoint,
                               MetricsAdvisorKeyCredential(subscription_key, api_key))
 ```
+
 <!-- END SNIPPET -->
 
 <!-- SNIPPET:sample_authentication.administration_client_with_metrics_advisor_credential -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 
@@ -60,6 +63,7 @@ api_key = os.getenv("METRICS_ADVISOR_API_KEY")
 client = MetricsAdvisorAdministrationClient(service_endpoint,
                               MetricsAdvisorKeyCredential(subscription_key, api_key))
 ```
+
 <!-- END SNIPPET -->
 
 ## Key concepts
@@ -127,6 +131,7 @@ Metrics Advisor lets you create and subscribe to real-time alerts. These alerts 
 Metrics Advisor supports connecting different types of data sources. Here is a sample to ingest data from SQL Server.
 
 <!-- SNIPPET:sample_data_feeds.create_data_feed -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
@@ -180,6 +185,7 @@ data_feed = client.create_data_feed(
 
 return data_feed
 ```
+
 <!-- END SNIPPET -->
 
 ### Check ingestion status
@@ -187,6 +193,7 @@ return data_feed
 After we start the data ingestion, we can check the ingestion status.
 
 <!-- SNIPPET:sample_ingestion.list_data_feed_ingestion_status -->
+
 ```python
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
@@ -209,6 +216,7 @@ for status in ingestion_status:
     print("Status: {}".format(status.status))
     print("Message: {}\n".format(status.message))
 ```
+
 <!-- END SNIPPET -->
 
 ### Configure anomaly detection configuration
@@ -216,6 +224,7 @@ for status in ingestion_status:
 While a default detection configuration is automatically applied to each metric, we can tune the detection modes used on our data by creating a customized anomaly detection configuration.
 
 <!-- SNIPPET:sample_detection_configuration.create_detection_config -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
@@ -275,6 +284,7 @@ detection_config = client.create_detection_configuration(
 
 return detection_config
 ```
+
 <!-- END SNIPPET -->
 
 ### Configure alert configuration
@@ -282,6 +292,7 @@ return detection_config
 Then let's configure in which conditions an alert needs to be triggered.
 
 <!-- SNIPPET:sample_alert_configuration.create_alert_config -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import (
@@ -347,6 +358,7 @@ alert_config = client.create_alert_configuration(
 
 return alert_config
 ```
+
 <!-- END SNIPPET -->
 
 ### Query anomaly detection results
@@ -354,6 +366,7 @@ return alert_config
 We can query the alerts and anomalies.
 
 <!-- SNIPPET:sample_alert_configuration.list_alerts -->
+
 ```python
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
@@ -379,9 +392,11 @@ for result in results:
     print("Create time: {}".format(result.created_time))
 return tolist
 ```
+
 <!-- END SNIPPET -->
 
 <!-- SNIPPET:sample_alert_configuration.list_anomalies_for_alert -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
 
@@ -401,6 +416,7 @@ for result in results:
     print("Severity: {}".format(result.severity))
     print("Status: {}".format(result.status))
 ```
+
 <!-- END SNIPPET -->
 
 ### Query incidents
@@ -408,6 +424,7 @@ for result in results:
 We can query the incidents for a detection configuration.
 
 <!-- SNIPPET:sample_incidents.list_incidents_for_detection_configuration -->
+
 ```python
 import datetime
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
@@ -430,6 +447,7 @@ for result in results:
     print("Severity: {}".format(result.severity))
     print("Status: {}".format(result.status))
 ```
+
 <!-- END SNIPPET -->
 
 ### Query root causes
@@ -437,6 +455,7 @@ for result in results:
 We can also query the root causes of an incident
 
 <!-- SNIPPET:sample_incidents.list_incident_root_cause -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorClient
 
@@ -456,6 +475,7 @@ for result in results:
     print("Score: {}".format(result.score))
     print("Description: {}".format(result.description))
 ```
+
 <!-- END SNIPPET -->
 
 ### Add hooks for receiving anomaly alerts
@@ -463,6 +483,7 @@ for result in results:
 We can add some hooks so when an alert is triggered, we can get call back.
 
 <!-- SNIPPET:sample_hooks.create_hook -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential, MetricsAdvisorAdministrationClient
 from azure.ai.metricsadvisor.models import EmailNotificationHook
@@ -485,6 +506,7 @@ hook = client.create_hook(
 
 return hook
 ```
+
 <!-- END SNIPPET -->
 
 ### Async APIs
@@ -496,6 +518,7 @@ See
 for more information.
 
 <!-- SNIPPET:sample_authentication_async.authentication_client_with_metrics_advisor_credential_async -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
 from azure.ai.metricsadvisor.aio import MetricsAdvisorClient
@@ -507,9 +530,11 @@ api_key = os.getenv("METRICS_ADVISOR_API_KEY")
 client = MetricsAdvisorClient(service_endpoint,
                               MetricsAdvisorKeyCredential(subscription_key, api_key))
 ```
+
 <!-- END SNIPPET -->
 
 <!-- SNIPPET:sample_authentication_async.administration_client_with_metrics_advisor_credential_async -->
+
 ```python
 from azure.ai.metricsadvisor import MetricsAdvisorKeyCredential
 from azure.ai.metricsadvisor.aio import MetricsAdvisorAdministrationClient
@@ -521,6 +546,7 @@ api_key = os.getenv("METRICS_ADVISOR_API_KEY")
 client = MetricsAdvisorAdministrationClient(service_endpoint,
                               MetricsAdvisorKeyCredential(subscription_key, api_key))
 ```
+
 <!-- END SNIPPET -->
 
 ## Troubleshooting

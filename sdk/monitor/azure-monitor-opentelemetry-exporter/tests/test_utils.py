@@ -109,3 +109,10 @@ class TestUtils(unittest.TestCase):
     def test_get_sdk_version_prefix_windows_attach(self, mock_system, mock_getenv):
         result = _utils._get_sdk_version_prefix()
         self.assertEqual(result, "awd_")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch("azure.monitor.opentelemetry.exporter._utils.getenv", return_value="~3")
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
+    def test_get_sdk_version_prefix_unknown_attach(self, mock_system, mock_getenv):
+        result = _utils._get_sdk_version_prefix()
+        self.assertEqual(result, "ad_")
