@@ -74,7 +74,4 @@ class FeaturesetSpecMetadata(object):
         return load_from_dict(FeaturesetSpecMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs)
 
     def _to_dict(self) -> Dict:
-        return FeaturesetSpecMetadataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)
-
-    def _to_properties_dict(self) -> Dict:
         return FeaturesetSpecPropertiesSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)
