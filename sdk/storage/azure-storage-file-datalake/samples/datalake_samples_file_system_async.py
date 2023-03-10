@@ -217,6 +217,27 @@ class FileSystemSamplesAsync(object):
 
             await file_system_client.delete_file_system()
 
+    async def undelete_path_from_file_system(self):
+        from azure.storage.filedatalake.aio import FileSystemClient
+        file_system_client = FileSystemClient.from_connection_string(self.connection_string, "filesystem")
+
+        async with file_system_client:
+            await file_system_client.create_file_system()
+
+            # [START undelete_path_from_file_system]
+            # Create a file and delete it
+            file_client = await file_system_client.create_file("myfile")
+            delete_response = await file_client.delete_file()
+
+            # Restore the file
+            undelete_client = await file_system_client.undelete_path('myfile', delete_response['deletion_id'])
+
+            # Check what resource type was returned, then get properties
+            if undelete_client.is_file():
+                props = await undelete_client.get_file_properties()
+            # [END undelete_path_from_file_system]
+
+
 async def main():
     sample = FileSystemSamplesAsync()
     await sample.file_system_sample()
@@ -225,6 +246,7 @@ async def main():
     await sample.list_paths_in_file_system()
     await sample.get_file_client_from_file_system()
     await sample.create_file_from_file_system()
+    await sample.undelete_path_from_file_system()
 
 if __name__ == '__main__':
     asyncio.run(main())

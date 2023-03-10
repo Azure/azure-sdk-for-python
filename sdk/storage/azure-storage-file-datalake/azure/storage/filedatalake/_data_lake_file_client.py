@@ -119,6 +119,12 @@ class DataLakeFileClient(PathClient):
             account_url, file_system_name=file_system_name, file_path=file_path,
             credential=credential, **kwargs)
 
+    def is_directory(self) -> bool:
+        return False
+
+    def is_file(self) -> bool:
+        return True
+
     def create_file(self, content_settings=None,  # type: Optional[ContentSettings]
                     metadata=None,  # type: Optional[Dict[str, str]]
                     **kwargs):

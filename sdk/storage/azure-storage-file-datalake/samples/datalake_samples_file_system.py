@@ -209,6 +209,26 @@ class FileSystemSamples(object):
 
         file_system_client.delete_file_system()
 
+    def undelete_path_from_file_system(self):
+        from azure.storage.filedatalake import FileSystemClient
+        file_system_client = FileSystemClient.from_connection_string(self.connection_string, "filesystem")
+
+        file_system_client.create_file_system()
+
+        # [START undelete_path_from_file_system]
+        # Create a file and delete it
+        file_client = file_system_client.create_file("myfile")
+        delete_response = file_client.delete_file()
+
+        # Restore the file
+        undelete_client = file_system_client.undelete_path('myfile', delete_response['deletion_id'])
+
+        # Check what resource type was returned, then get properties
+        if undelete_client.is_file():
+            props = undelete_client.get_file_properties()
+        # [END undelete_path_from_file_system]
+
+
 if __name__ == '__main__':
     sample = FileSystemSamples()
     sample.file_system_sample()
@@ -217,3 +237,4 @@ if __name__ == '__main__':
     sample.list_paths_in_file_system()
     sample.get_file_client_from_file_system()
     sample.create_file_from_file_system()
+    sample.undelete_path_from_file_system()

@@ -881,15 +881,15 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         return quoted_path, url, undelete_source
 
-    def _undelete_path(self, deleted_path_name, deletion_id, **kwargs):
-        # type: (str, str, **Any) -> Union[DataLakeDirectoryClient, DataLakeFileClient]
+    def undelete_path(
+            self, deleted_path_name: str,
+            deletion_id: str,
+            **kwargs: Any
+        ) -> Union[DataLakeDirectoryClient, DataLakeFileClient]:
         """Restores soft-deleted path.
 
         Operation will only be successful if used within the specified number of days
         set in the delete retention policy.
-
-        .. versionadded:: 12.4.0
-            This operation was introduced in API version '2020-06-12'.
 
         :param str deleted_path_name:
             Specifies the path (file or directory) to restore.
@@ -902,6 +902,15 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system.py
+                :start-after: [START undelete_path_from_file_system]
+                :end-before: [END undelete_path_from_file_system]
+                :language: python
+                :dedent: 8
+                :caption: Undeleting a file from file system.
         """
         _, url, undelete_source = self._undelete_path_options(deleted_path_name, deletion_id)
 
