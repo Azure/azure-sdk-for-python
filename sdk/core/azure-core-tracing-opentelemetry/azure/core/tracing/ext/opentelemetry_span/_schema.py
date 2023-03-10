@@ -5,7 +5,7 @@
 from enum import Enum
 from typing import Dict
 
-from azure.core import CaseInsensitiveEnumMeta
+from azure.core import CaseInsensitiveEnumMeta  # type: ignore[attr-defined]
 
 
 class OpenTelemetrySchemaVersion(
@@ -35,7 +35,7 @@ class OpenTelemetrySchema:
 
     @classmethod
     def get_latest_version(cls) -> OpenTelemetrySchemaVersion:
-        return cls.SUPPORTED_VERSIONS[-1]
+        return OpenTelemetrySchemaVersion(cls.SUPPORTED_VERSIONS[-1])
 
     @classmethod
     def get_attribute_mappings(cls, version: OpenTelemetrySchemaVersion) -> Dict[str, str]:

@@ -104,7 +104,7 @@ class AbstractSpan(Protocol):
         :param key: The key of the key value pair
         :type key: str
         :param value: The value of the key value pair
-        :type value: str
+        :type value: Union[str, int]
         """
 
     def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
