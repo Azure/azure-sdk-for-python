@@ -33,6 +33,7 @@ setup(
     packages=find_packages(),
     long_description="Build and test tooling for the Azure SDK for Python",
     install_requires=DEPENDENCIES,
+    include_package_data=True,
     entry_points={
         "console_scripts": [
             "generate_package=packaging_tools.generate_package:generate_main",
