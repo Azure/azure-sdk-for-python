@@ -111,10 +111,12 @@ class DataLakeDirectoryClient(PathClient):
             account_url, file_system_name=file_system_name, directory_name=directory_name,
             credential=credential, **kwargs)
 
-    def is_directory(self) -> bool:
+    @staticmethod
+    def is_directory() -> bool:
         return True
 
-    def is_file(self) -> bool:
+    @staticmethod
+    def is_file() -> bool:
         return False
 
     def create_directory(self, metadata=None,  # type: Optional[Dict[str, str]]
