@@ -238,7 +238,9 @@ class FeatureSetOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             body=request_body,
-            cls=lambda response, deserialized, headers: FeatureSetMaterializationResponse._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: FeatureSetMaterializationResponse._from_rest_object(
+                deserialized
+            ),
         )
 
     # @monitor_with_activity(logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
