@@ -1,5 +1,14 @@
 # Release History
 
+## 5.2.0 (2023-03-10)
+
+### Features Added
+
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter extended_location
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter secured_vm_details
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter target_disk_network_access_settings
+  - Model RecoveryPointProperties has a new parameter is_soft_deleted
+
 ## 5.1.0 (2023-01-30)
 
 ### Features Added
