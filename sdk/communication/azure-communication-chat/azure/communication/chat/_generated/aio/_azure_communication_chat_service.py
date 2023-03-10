@@ -10,7 +10,6 @@ from copy import deepcopy
 from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models as _models
@@ -26,8 +25,6 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     :vartype chat_thread: azure.communication.chat.aio.operations.ChatThreadOperations
     :ivar chat: ChatOperations operations
     :vartype chat: azure.communication.chat.aio.operations.ChatOperations
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
     :keyword api_version: Api Version. Default value is "2021-09-07". Note that overriding this
@@ -35,9 +32,11 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: AzureKeyCredential, endpoint: str, **kwargs: Any) -> None:
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, endpoint: str, **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
-        self._config = AzureCommunicationChatServiceConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._config = AzureCommunicationChatServiceConfiguration(endpoint=endpoint, **kwargs)
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}

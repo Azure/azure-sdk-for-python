@@ -10,7 +10,6 @@ import sys
 from typing import Any
 
 from azure.core.configuration import Configuration
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 if sys.version_info >= (3, 8):
@@ -27,8 +26,6 @@ class AzureCommunicationChatServiceConfiguration(Configuration):  # pylint: disa
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
     :keyword api_version: Api Version. Default value is "2021-09-07". Note that overriding this
@@ -36,16 +33,13 @@ class AzureCommunicationChatServiceConfiguration(Configuration):  # pylint: disa
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: AzureKeyCredential, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, **kwargs: Any) -> None:
         super(AzureCommunicationChatServiceConfiguration, self).__init__(**kwargs)
         api_version: Literal["2021-09-07"] = kwargs.pop("api_version", "2021-09-07")
 
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
 
-        self.credential = credential
         self.endpoint = endpoint
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "azurecommunicationchatservice/{}".format(VERSION))
@@ -61,5 +55,3 @@ class AzureCommunicationChatServiceConfiguration(Configuration):  # pylint: disa
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
-        if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, "Authorization", **kwargs)

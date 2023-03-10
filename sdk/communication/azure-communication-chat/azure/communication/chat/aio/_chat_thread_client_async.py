@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 # pylint: disable=unused-import,ungrouped-imports
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 from datetime import datetime
+from azure.communication.chat._shared.utils import get_authentication_policy
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -97,8 +98,8 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            credential=self._credential,
             endpoint=self._endpoint,
+            authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 

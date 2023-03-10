@@ -10,7 +10,7 @@ npm install -g autorest
 ### Generation
 ```ps
 cd <swagger-folder>
-autorest SWAGGER.md
+autorest SWAGGER.md --version-tolerant=false
 ```
 
 ### Settings
@@ -30,6 +30,7 @@ no-async: false
 add-credential: false
 title: Azure Communication Chat Service
 disable-async-iterators: true
+security: Anonymous
 ```
 
 ### Rename CommunicationError to ChatError
