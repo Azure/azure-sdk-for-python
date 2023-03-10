@@ -35,7 +35,7 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._feature_set_utils import read_feature_set_metadata_contents
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets import FeatureSet
-from azure.ai.ml.entities._feature_set.featureset_spec import FeaturesetSpec
+from azure.ai.ml.entities._feature_set.featureset_spec_metadata import FeaturesetSpecMetadata
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
 from azure.ai.ml.entities._feature_set.feature_set_materialization_response import FeatureSetMaterializationResponse
 from azure.ai.ml.entities._feature_set.feature import Feature
@@ -166,7 +166,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
         featureset_spec = validate_and_get_feature_set_spec(featureset)
         featureset.properties["featureset_properties_version"] = "1"
-        featureset.properties["featureset_properties"] = json.dumps(featureset_spec._to_dict())
+        featureset.properties["featureset_properties"] = json.dumps(featureset_spec._to_properties_dict())
 
         sas_uri = None
         featureset, _ = _check_and_upload_path(
@@ -405,7 +405,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         return self.get(name=name, version=latest_version)
 
 
-def validate_and_get_feature_set_spec(featureset: FeatureSet) -> FeaturesetSpec:
+def validate_and_get_feature_set_spec(featureset: FeatureSet) -> FeaturesetSpecMetadata:
     # pylint: disable=no-member
     if not featureset.specification and not featureset.specification.path:
         msg = "Missing FeatureSet spec path. Path is required for featureset."
@@ -429,5 +429,5 @@ def validate_and_get_feature_set_spec(featureset: FeatureSet) -> FeaturesetSpec:
         )
 
     featureset_spec_contents = read_feature_set_metadata_contents(path=featureset_spec_path)
-    featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec")
-    return FeaturesetSpec._load(featureset_spec_contents, featureset_spec_yaml_path)
+    featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec.yaml")
+    return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)

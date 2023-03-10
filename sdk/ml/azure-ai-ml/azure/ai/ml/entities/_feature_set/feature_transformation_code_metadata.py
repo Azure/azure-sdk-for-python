@@ -7,7 +7,7 @@
 from typing import Optional
 
 
-class FeatureTransformationCode(object):
+class FeatureTransformationCodeMetadata(object):
     def __init__(self, *, path: str, transformer_class: Optional[str] = None, **kwargs):
-        self.path = path
-        self.transformer_class = transformer_class
+        self.Path = path
+        self.TransformerClass = transformer_class
