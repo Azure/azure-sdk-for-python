@@ -7,7 +7,7 @@ import os
 import re
 from enum import auto, Enum
 from devtools_testutils import AzureTestCase
-from azure.communication.rooms._shared.utils import parse_connection_str
+from azure.communication.callautomation._shared.utils import parse_connection_str
 from azure_devtools.scenario_tests import RecordingProcessor, ReplayableTest
 from azure_devtools.scenario_tests.utilities import is_text_payload
 

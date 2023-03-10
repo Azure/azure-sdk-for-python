@@ -12,7 +12,7 @@ refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 ### Prerequisites
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- A deployed Communication Services resource. You can use the [Azure Portal](azure_portal) or the [Azure PowerShell](azure_powershell) to set it up.
+- A deployed Communication Services resource. You can use the [Azure Portal][azure_portal] or the [Azure PowerShell][azure_powershell] to set it up.
 
 ### Installing
 Install the Azure Communication Service Call Automation SDK.

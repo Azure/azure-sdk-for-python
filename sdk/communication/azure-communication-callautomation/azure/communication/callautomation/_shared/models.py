@@ -151,7 +151,7 @@ class MicrosoftTeamsUserIdentifier(object):
     :param str user_id: Microsoft Teams user id.
     :keyword bool is_anonymous: `True` if the identifier is anonymous. Default value is `False`.
     :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
-    :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
+    :paramtype cloud: str or ~azure.communication.callautomation.CommunicationCloudEnvironment
     """
     kind = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
 
