@@ -22,7 +22,7 @@ class FeatureTransformationCodePropertiesSchema(metaclass=PatchedSchemaMeta):
 class DelayMetadataPropertiesSchema(metaclass=PatchedSchemaMeta):
     Days = fields.Int()
     Hours = fields.Int()
-    minutes = fields.Int()
+    Minutes = fields.Int()
 
 
 class FeaturePropertiesSchema(metaclass=PatchedSchemaMeta):
