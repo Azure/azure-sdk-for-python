@@ -811,7 +811,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return digest
 
     @distributed_trace
-    def upload_blob(self, repository: str, data: IO, **kwargs) -> Tuple[str, str]:
+    def upload_blob(self, repository: str, data: IO, **kwargs) -> Tuple[str, int]:
         """Upload an artifact blob.
 
         :param str repository: Name of the repository.
@@ -825,7 +825,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             start_upload_response_headers = cast(Dict[str, str], self._client.container_registry_blob.start_upload(
                 repository, cls=_return_response_headers, **kwargs
             ))
-            digest, location, blob_size = self._upload_blob_chunk(start_upload_response_headers['Location'], data, **kwargs)
+            digest, location, blob_size = self._upload_blob_chunk(
+                start_upload_response_headers['Location'], data, **kwargs
+            )
             if not _validate_digest(data, digest):
                 raise ValueError("The digest in the response does not match the digest of the uploaded blob.")
             complete_upload_response_headers = cast(
@@ -843,7 +845,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             raise
         return complete_upload_response_headers['Docker-Content-Digest'], blob_size
 
-    def _upload_blob_chunk(self, location: str, data: IO, **kwargs) -> Tuple[str, str]:
+    def _upload_blob_chunk(self, location: str, data: IO, **kwargs) -> Tuple[str, str, int]:
         hasher = hashlib.sha256()
         buffer = data.read(DEFAULT_CHUNK_SIZE)
         blob_size = len(buffer)
