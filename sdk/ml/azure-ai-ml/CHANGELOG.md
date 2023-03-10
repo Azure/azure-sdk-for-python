@@ -28,7 +28,7 @@
 - Update job types to use MFE Dec preview rest objects.
 - Added classifiers for Python version 3.11.
 - Added warning for reserved keywords in IO names in pipeline job nodes.
-- Added telemetry logging for SDK Jupyter Notebook scenarios
+- Added telemetry logging for SDK Jupyter Notebook scenarios with opt-out option (see README.md)
 
 ## 1.4.0 (2023-02-07)
 
