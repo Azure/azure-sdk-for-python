@@ -50,8 +50,6 @@ class FeatureStoreEntity(Asset):
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
         :type tags: dict[str, str]
-        :param properties: The asset property dictionary.
-        :type properties: dict[str, str]
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -60,7 +58,6 @@ class FeatureStoreEntity(Asset):
             version=version,
             description=description,
             tags=tags,
-            properties=properties,
             **kwargs,
         )
         self.index_columns = index_columns
@@ -86,7 +83,6 @@ class FeatureStoreEntity(Asset):
             index_columns=[DataColumn._from_rest_object(column) for column in rest_object_details.index_columns],
             description=rest_object_details.description,
             tags=rest_object_details.tags,
-            properties=rest_object_details.properties,
         )
         return featurestoreEntity
 
@@ -98,7 +94,6 @@ class FeatureStoreEntity(Asset):
             name=arm_id_object.asset_name,
             description=rest_object_details.description,
             tags=rest_object_details.tags,
-            properties=rest_object_details.properties,
             index_columns=[],
             version="",
         )
