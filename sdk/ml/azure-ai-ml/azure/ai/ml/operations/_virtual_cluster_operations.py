@@ -11,7 +11,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml._utils.azure_resource_utils import (
     get_virtual_clusters_from_subscriptions,
-    get_virtual_cluster_by_id,
+    get_virtual_cluster_by_name,
     get_generic_resource_by_id
 )
 from azure.ai.ml.constants._common import Scope
@@ -83,9 +83,9 @@ class VirtualClusterOperations:
             arm_id = AzureResourceId(name)
             sub_id = arm_id.subscription_id
 
-            return get_generic_resource_by_id(name, self._credentials, sub_id)
+            return get_generic_resource_by_id(arm_id=name, credential=self._credentials, subscription_id=sub_id)
         except ValidationException:
-            return get_virtual_cluster_by_id(
+            return get_virtual_cluster_by_name(
                 name=name,
                 resource_group=self._resource_group_name,
                 subscription_id=self._subscription_id,
