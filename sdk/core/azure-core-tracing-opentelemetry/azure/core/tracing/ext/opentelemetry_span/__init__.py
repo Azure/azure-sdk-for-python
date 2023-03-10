@@ -3,8 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Implements azure.core.tracing.AbstractSpan to wrap OpenTelemetry spans."""
-
+from typing import Any, ContextManager, Dict, Optional, Union, Callable, Sequence
 import warnings
+
 from opentelemetry import trace
 from opentelemetry.trace import Span, Tracer, SpanKind as OpenTelemetrySpanKind, Link as OpenTelemetryLink
 from opentelemetry.context import attach, detach, get_current
@@ -13,29 +14,21 @@ from opentelemetry.trace.propagation import get_current_span as get_span_from_co
 
 from azure.core.tracing import SpanKind, HttpSpanMixin  # pylint: disable=no-name-in-module
 
+from ._schema import OpenTelemetrySchema
 from ._version import VERSION
 
-try:
-    from typing import TYPE_CHECKING, ContextManager
-except ImportError:
-    TYPE_CHECKING = False
 
-if TYPE_CHECKING:
-    from typing import Any, Mapping, Dict, Optional, Union, Callable, Sequence
-
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-    AttributeValue = Union[
-        str,
-        bool,
-        int,
-        float,
-        Sequence[str],
-        Sequence[bool],
-        Sequence[int],
-        Sequence[float],
-    ]
-    Attributes = Optional[Dict[str, AttributeValue]]
+AttributeValue = Union[
+    str,
+    bool,
+    int,
+    float,
+    Sequence[str],
+    Sequence[bool],
+    Sequence[int],
+    Sequence[float],
+]
+Attributes = Optional[Dict[str, AttributeValue]]
 
 __version__ = VERSION
 
@@ -55,6 +48,10 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def __init__(self, span=None, name="span", **kwargs):
         # type: (Optional[Span], Optional[str], Any) -> None
         current_tracer = self.get_current_tracer()
+
+        # TODO: Once we have additional supported versions, we should add a way to specify the version.
+        self._schema_version = OpenTelemetrySchema.get_latest_version()
+        self._attribute_mappings = OpenTelemetrySchema.get_attribute_mappings(self._schema_version)
 
         ## kind
         value = kwargs.pop("kind", None)
@@ -203,6 +200,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         :param value: The value of the key value pair
         :type value: str
         """
+        key = self._attribute_mappings.get(key, key)
         self.span_instance.set_attribute(key, value)
 
     def get_trace_parent(self):

@@ -20,14 +20,10 @@ from azure.ai.ml._azure_environments import (
     _get_base_url_from_metadata,
     _get_cloud_information_from_metadata,
     _get_default_cloud_name,
-    _get_registry_discovery_endpoint_from_metadata,
     _set_cloud,
     _add_cloud_to_environments,
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
-from azure.ai.ml._restclient.registry_discovery import (
-    AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery,
-)
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
@@ -62,7 +58,7 @@ from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
-from azure.ai.ml._utils._registry_utils import RegistryDiscovery
+from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._utils.utils import _is_https_url
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import (
@@ -72,8 +68,8 @@ from azure.ai.ml.entities import (
     Compute,
     Datastore,
     Environment,
-    Featureset,
-    FeaturestoreEntity,
+    FeatureSet,
+    FeatureStoreEntity,
     Job,
     JobSchedule,
     Model,
@@ -92,8 +88,8 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
-    FeaturesetOperations,
-    FeaturestoreEntityOperations,
+    FeatureSetOperations,
+    FeatureStoreEntityOperations,
     FeatureStoreOperations,
     JobOperations,
     ModelOperations,
@@ -222,21 +218,9 @@ class MLClient:
         # the subscription, resource group, if provided, will be ignored and replaced by
         # whatever is received from the registry discovery service.
         if registry_name:
-            base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
-            kwargs_registry = {**kwargs}
-            kwargs_registry.pop("base_url", None)
-            self._service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
-                credential=self._credential, base_url=base_url, **kwargs_registry
+            self._service_client_10_2021_dataplanepreview, resource_group_name, subscription_id = get_registry_client(
+                self._credential, registry_name, **kwargs
             )
-            registry_discovery = RegistryDiscovery(
-                self._credential,
-                registry_name,
-                self._service_client_registry_discovery_client,
-                **kwargs_registry,
-            )
-            self._service_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
-            subscription_id = registry_discovery.subscription_id
-            resource_group_name = registry_discovery.resource_group
 
         self._operation_scope = OperationScope(subscription_id, resource_group_name, workspace_name, registry_name)
 
@@ -508,15 +492,19 @@ class MLClient:
 
         self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
-        self._featuresets = FeaturesetOperations(
-            self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
+        self._feature_sets = FeatureSetOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_02_2023_preview,
+            self._datastores,
+            **ops_kwargs,
         )
-        self._operation_container.add(AzureMLResourceType.FEATURESET, self._featuresets)
+        self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._feature_sets)
 
-        self._featurestore_entities = FeaturestoreEntityOperations(
+        self._feature_store_entities = FeatureStoreEntityOperations(
             self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
         )
-        self._operation_container.add(AzureMLResourceType.FEATURESTORE_ENTITY, self._featurestore_entities)
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._feature_store_entities)
 
     @classmethod
     def from_config(
@@ -645,8 +633,8 @@ class MLClient:
 
     @property
     @experimental
-    def featurestores(self) -> FeatureStoreOperations:
-        """A collection of featurestore related operations.
+    def feature_stores(self) -> FeatureStoreOperations:
+        """A collection of feature-store related operations.
         :return: Featurestore operations
         :rtype: FeatureStoreOperations
         """
@@ -771,22 +759,22 @@ class MLClient:
 
     @property
     @experimental
-    def featuresets(self) -> FeaturesetOperations:
-        """A collection of featureset related operations.
+    def feature_sets(self) -> FeatureSetOperations:
+        """A collection of feature set related operations.
 
-        :return: Featureset operations
-        :rtype: FeaturesetOperations
+        :return: FeatureSet operations
+        :rtype: FeatureSetOperations
         """
-        return self._featuresets
+        return self._feature_sets
 
     @property
-    def featurestore_entities(self) -> FeaturestoreEntityOperations:
-        """A collection of featurestore_entity related operations.
+    def feature_store_entities(self) -> FeatureStoreEntityOperations:
+        """A collection of feature store entity related operations.
 
-        :return: FeaturestoreEntity operations
-        :rtype: FeaturestoreEntityOperations
+        :return: FeatureStoreEntity operations
+        :rtype: FeatureStoreEntityOperations
         """
-        return self._featurestore_entities
+        return self._feature_store_entities
 
     @property
     def subscription_id(self) -> str:
@@ -1045,13 +1033,13 @@ def _(entity: JobSchedule, operations, *args, **kwargs):
     return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(entity, **kwargs)
 
 
-@_begin_create_or_update.register(FeaturestoreEntity)
-def _(entity: FeaturestoreEntity, operations, *args, **kwargs):
-    module_logger.debug("Creating or updating featurestore_entity")
-    return operations[AzureMLResourceType.FEATURESTORE_ENTITY].begin_create_or_update(entity, **kwargs)
+@_begin_create_or_update.register(FeatureStoreEntity)
+def _(entity: FeatureStoreEntity, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating feature_store_entity")
+    return operations[AzureMLResourceType.FEATURE_STORE_ENTITY].begin_create_or_update(entity, **kwargs)
 
 
-@_begin_create_or_update.register(Featureset)
-def _(entity: Featureset, operations, *args, **kwargs):
-    module_logger.debug("Creating or updating featureset")
-    return operations[AzureMLResourceType.FEATURESET].begin_create_or_update(entity, **kwargs)
+@_begin_create_or_update.register(FeatureSet)
+def _(entity: FeatureSet, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating feature_set")
+    return operations[AzureMLResourceType.FEATURE_SET].begin_create_or_update(entity, **kwargs)

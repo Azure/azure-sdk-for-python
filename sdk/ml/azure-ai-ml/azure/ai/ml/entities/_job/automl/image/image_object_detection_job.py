@@ -103,6 +103,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             resources=self.resources,
             task_details=image_object_detection_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -131,6 +132,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            "queue_settings": properties.queue_settings,
         }
 
         image_object_detection_job = cls(
