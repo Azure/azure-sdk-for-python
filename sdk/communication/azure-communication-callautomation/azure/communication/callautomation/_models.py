@@ -39,7 +39,6 @@ class ServerCallLocator(object):
     :ivar locator_id: The server call id.
     :vartype locator_id: str
     """
-
     def __init__(
         self,
         *,
