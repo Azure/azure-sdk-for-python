@@ -2,15 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, List, Optional, Union, Mapping
+from typing import Any, List, Optional, Union
 
-from enum import Enum, EnumMeta
-import re
-from six import with_metaclass
-try:
-    from typing import Protocol, TypedDict, Dict
-except ImportError:
-    from typing_extensions import Protocol, TypedDict
+from enum import Enum
+from typing import Dict
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -19,7 +14,6 @@ from ._generated.models import (
     StartCallRecordingRequest as StartCallRecordingRequestRest,
     RecordingContentType, RecordingChannelType, RecordingFormatType,
     CommunicationIdentifierModel,
-    PhoneNumberIdentifierModel,
     CallConnectionStateModel,
     RecordingStorageType,
     RecognizeInputType,
@@ -27,13 +21,16 @@ from ._generated.models import (
     CallParticipant as CallParticipantRest,
     CallConnectionProperties as CallConnectionPropertiesRest,
     GetParticipantsResponse as GetParticipantsResponseRest,
-    AddParticipantResponse as AddParticipantResponseRest,
-    RecordingChannelType,
-    RecordingContentType,
-    RecordingFormatType,
-    RecordingStorageType
+    AddParticipantResponse as AddParticipantResponseRest
 )
 
+from ._shared.models import (
+    CommunicationIdentifier,
+    PhoneNumberIdentifier,
+    deserialize_phone_identifier,
+    deserialize_identifier,
+    serialize_identifier
+)
 
 class ServerCallLocator(object):
     def __init__(
@@ -133,17 +130,21 @@ class StartRecordingOptions(object):
 
     def _to_generated(self):
         audio_channel_participant_ordering_list:List[CommunicationIdentifierModel] = None
-        if(self.audio_channel_participant_ordering is not None):
-            audio_channel_participant_ordering_list=[serialize_identifier(identifier) for identifier in self.audio_channel_participant_ordering]
+        if self.audio_channel_participant_ordering is not None:
+            audio_channel_participant_ordering_list=[
+                serialize_identifier(identifier) for identifier
+                in self.audio_channel_participant_ordering]
 
-        return StartCallRecordingRequestRest(call_locator=self.call_locator._to_generated(),
-                                             recording_state_callback_uri=self.recording_state_callback_uri,
-                                             recording_content_type=self.recording_content_type,
-                                             recording_channel_type=self.recording_channel_type,
-                                             recording_format_type=self.recording_format_type,
-                                             audio_channel_participant_ordering=audio_channel_participant_ordering_list,
-                                             recording_storage_type=self.recording_storage_type
-                                             )
+        return StartCallRecordingRequestRest(
+            call_locator=self.call_locator._to_generated(# pylint:disable=protected-access
+            ),
+            recording_state_callback_uri=self.recording_state_callback_uri,
+            recording_content_type=self.recording_content_type,
+            recording_channel_type=self.recording_channel_type,
+            recording_format_type=self.recording_format_type,
+            audio_channel_participant_ordering=audio_channel_participant_ordering_list,
+            recording_storage_type=self.recording_storage_type
+            )
 
 
 class RecordingStateResponse(object):
@@ -203,301 +204,6 @@ class FileSource(PlaySource):
         self.uri = kwargs['uri']
         super().__init__(play_source_id=kwargs.get('play_source_id'))
 
-
-class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Communication Identifier Kind."""
-
-    UNKNOWN = "unknown"
-    COMMUNICATION_USER = "communication_user"
-    PHONE_NUMBER = "phone_number"
-    MICROSOFT_TEAMS_USER = "microsoft_teams_user"
-
-
-class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The cloud environment that the identifier belongs to"""
-
-    PUBLIC = "PUBLIC"
-    DOD = "DOD"
-    GCCH = "GCCH"
-
-
-class CommunicationIdentifier(Protocol):
-    """Communication Identifier.
-
-    :ivar str raw_id: Optional raw ID of the identifier.
-    :ivar kind: The type of identifier.
-    :vartype kind: str or CommunicationIdentifierKind
-    :ivar Mapping[str, Any] properties: The properties of the identifier.
-    """
-    raw_id: Optional[str] = None
-    kind: Optional[Union[CommunicationIdentifierKind, str]] = None
-    properties: Mapping[str, Any] = {}
-
-
-CommunicationUserProperties = TypedDict(
-    'CommunicationUserProperties',
-    id=str
-)
-
-
-class CommunicationUserIdentifier(object):
-    """Represents a user in Azure Communication Service.
-
-    :ivar str raw_id: Optional raw ID of the identifier.
-    :ivar kind: The type of identifier.
-    :vartype kind: str or CommunicationIdentifierKind
-    :ivar Mapping[str, Any] properties: The properties of the identifier.
-     The keys in this mapping include:
-        - `id`(str): ID of the Communication user as returned from Azure Communication Identity.
-
-    :param str id: ID of the Communication user as returned from Azure Communication Identity.
-    """
-    kind = CommunicationIdentifierKind.COMMUNICATION_USER
-
-    def __init__(self, id, **kwargs):
-        self.raw_id = kwargs.get('raw_id', id)
-        self.properties = CommunicationUserProperties(id=id)
-
-    def __eq__(self, other):
-        return self.__dict__ == other.__dict__
-
-
-PhoneNumberProperties = TypedDict(
-    'PhoneNumberProperties',
-    value=str
-)
-
-
-class PhoneNumberIdentifier(object):
-    """Represents a phone number.
-
-    :ivar str raw_id: Optional raw ID of the identifier.
-    :ivar kind: The type of identifier.
-    :vartype kind: str or CommunicationIdentifierKind
-    :ivar Mapping properties: The properties of the identifier.
-     The keys in this mapping include:
-        - `value`(str): The phone number in E.164 format.
-
-    :param str value: The phone number.
-    """
-    kind = CommunicationIdentifierKind.PHONE_NUMBER
-
-    def __init__(self, value, **kwargs):
-        self.raw_id = kwargs.get('raw_id')
-        self.properties = PhoneNumberProperties(value=value)
-        if self.raw_id is None:
-            self.raw_id = _phone_number_raw_id(self)
-
-
-def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
-    value = identifier.properties['value']
-    # We just assume correct E.164 format here because
-    # validation should only happen server-side, not client-side.
-    return f'4:{value}'
-
-
-class UnknownIdentifier(object):
-    """Represents an identifier of an unknown type.
-
-    It will be encountered in communications with endpoints that are not
-    identifiable by this version of the SDK.
-
-    :ivar str raw_id: Optional raw ID of the identifier.
-    :ivar kind: The type of identifier.
-    :vartype kind: str or CommunicationIdentifierKind
-    :ivar Mapping properties: The properties of the identifier.
-    :param str identifier: The ID of the identifier.
-    """
-    kind = CommunicationIdentifierKind.UNKNOWN
-
-    def __init__(self, identifier):
-        self.raw_id = identifier
-        self.properties = {}
-
-    def __eq__(self, other):
-        return self.__dict__ == other.__dict__
-
-
-MicrosoftTeamsUserProperties = TypedDict(
-    'MicrosoftTeamsUserProperties',
-    user_id=str,
-    is_anonymous=bool,
-    cloud=Union[CommunicationCloudEnvironment, str]
-)
-
-
-class MicrosoftTeamsUserIdentifier(object):
-    """Represents an identifier for a Microsoft Teams user.
-
-    :ivar str raw_id: Optional raw ID of the identifier.
-    :ivar kind: The type of identifier.
-    :vartype kind: str or CommunicationIdentifierKind
-    :ivar Mapping properties: The properties of the identifier.
-     The keys in this mapping include:
-        - `user_id`(str): The id of the Microsoft Teams user. If the user isn't anonymous,
-          the id is the AAD object id of the user.
-        - `is_anonymous` (bool): Set this to true if the user is anonymous for example when joining
-          a meeting with a share link.
-        - `cloud` (str): Cloud environment that this identifier belongs to.
-
-    :param str user_id: Microsoft Teams user id.
-    :keyword bool is_anonymous: `True` if the identifier is anonymous. Default value is `False`.
-    :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
-    :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
-    """
-    kind = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
-
-    def __init__(self, user_id, **kwargs):
-        self.raw_id = kwargs.get('raw_id')
-        self.properties = MicrosoftTeamsUserProperties(
-            user_id=user_id,
-            is_anonymous=kwargs.get('is_anonymous', False),
-            cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.PUBLIC
-        )
-        if self.raw_id is None:
-            self.raw_id = _microsoft_teams_user_raw_id(self)
-
-
-def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
-    user_id = identifier.properties['user_id']
-    if identifier.properties['is_anonymous']:
-        return '8:teamsvisitor:{}'.format(user_id)
-    cloud = identifier.properties['cloud']
-    if cloud == CommunicationCloudEnvironment.DOD:
-        return '8:dod:{}'.format(user_id)
-    elif cloud == CommunicationCloudEnvironment.GCCH:
-        return '8:gcch:{}'.format(user_id)
-    elif cloud == CommunicationCloudEnvironment.PUBLIC:
-        return '8:orgid:{}'.format(user_id)
-    return '8:orgid:{}'.format(user_id)
-
-
-def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
-    """
-    Creates a CommunicationIdentifier from a given raw ID.
-
-    When storing raw IDs use this function to restore the identifier that was encoded in the raw ID.
-
-    :param str raw_id: A raw ID to construct the CommunicationIdentifier from.
-    """
-    if raw_id.startswith('4:'):
-        return PhoneNumberIdentifier(
-            value=raw_id[len('4:'):]
-        )
-
-    segments = raw_id.split(':', maxsplit=2)
-    if len(segments) < 3:
-        return UnknownIdentifier(identifier=raw_id)
-
-    prefix = '{}:{}:'.format(segments[0], segments[1])
-    suffix = raw_id[len(prefix):]
-    if prefix == '8:teamsvisitor:':
-        return MicrosoftTeamsUserIdentifier(
-            user_id=suffix,
-            is_anonymous=True
-        )
-    elif prefix == '8:orgid:':
-        return MicrosoftTeamsUserIdentifier(
-            user_id=suffix,
-            is_anonymous=False,
-            cloud='PUBLIC'
-        )
-    elif prefix == '8:dod:':
-        return MicrosoftTeamsUserIdentifier(
-            user_id=suffix,
-            is_anonymous=False,
-            cloud='DOD'
-        )
-    elif prefix == '8:gcch:':
-        return MicrosoftTeamsUserIdentifier(
-            user_id=suffix,
-            is_anonymous=False,
-            cloud='GCCH'
-        )
-    elif prefix in ['8:acs:', '8:spool:', '8:dod-acs:', '8:gcch-acs:']:
-        return CommunicationUserIdentifier(
-            id=raw_id
-        )
-    return UnknownIdentifier(
-        identifier=raw_id
-    )
-
-
-def serialize_identifier(identifier) -> Dict[str, Any]:
-    """Serialize the Communication identifier into CommunicationIdentifierModel
-
-    :param identifier: Identifier object
-    :type identifier: CommunicationIdentifier
-    :return: CommunicationIdentifierModel
-    """
-    try:
-        request_model = {'raw_id': identifier.raw_id}
-
-        if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
-            request_model[identifier.kind] = dict(identifier.properties)
-        return request_model
-    except AttributeError:
-        raise TypeError("Unsupported identifier type " +
-                        identifier.__class__.__name__)
-
-
-def serialize_phone_identifier(identifier) -> PhoneNumberIdentifierModel:
-    """Serialize the Communication identifier into CommunicationIdentifierModel
-
-    :param identifier: PhoneNumberIdentifier
-    :type identifier: PhoneNumberIdentifier
-    :return: PhoneNumberIdentifierModel
-    """
-    try:
-        if identifier.kind and identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
-            request_model = PhoneNumberIdentifierModel(
-                value=identifier.properties['value'])
-            return request_model
-        else:
-            raise AttributeError
-    except AttributeError:
-        raise TypeError("Unsupported identifier type " +
-                        identifier.__class__.__name__)
-
-
-def deserialize_identifier(identifier_model) -> CommunicationIdentifier:
-    """
-    Deserialize the CommunicationIdentifierModel into Communication Identifier
-
-    :param identifier_model: CommunicationIdentifierModel
-    :type identifier_model: CommunicationIdentifierModel
-    :return: CommunicationIdentifier
-    """
-    raw_id = identifier_model.raw_id
-
-    if identifier_model.communication_user:
-        return CommunicationUserIdentifier(raw_id, raw_id=raw_id)
-    if identifier_model.phone_number:
-        return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
-    if identifier_model.microsoft_teams_user:
-        return MicrosoftTeamsUserIdentifier(
-            raw_id=raw_id,
-            user_id=identifier_model.microsoft_teams_user.user_id,
-            is_anonymous=identifier_model.microsoft_teams_user.is_anonymous,
-            cloud=identifier_model.microsoft_teams_user.cloud
-        )
-    return UnknownIdentifier(raw_id)
-
-
-def deserialize_phone_identifier(identifier_model) -> Union[PhoneNumberIdentifier, None]:
-    """
-    Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
-
-    :param identifier_model: PhoneNumberIdentifierModel
-    :type identifier_model: PhoneNumberIdentifierModel
-    :return: PhoneNumberIdentifier
-    """
-    if identifier_model:
-        return PhoneNumberIdentifier(identifier_model.value)
-    else:
-        return None
-
-
 class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Voice gender type."""
 
@@ -517,7 +223,8 @@ class CallMediaRecognizeOptions(object):
     :vartype initial_silence_timeout: int
     :ivar play_prompt: The source of the audio to be played for recognition.
     :vartype play_prompt: ~azure.communication.callautomation.models.PlaySource
-    :ivar interrupt_call_media_operation: If set recognize can barge into other existing queued-up/currently-processing requests.
+    :ivar interrupt_call_media_operation: If set recognize can barge into
+     other existing queued-up/currently-processing requests.
     :vartype interrupt_call_media_operation: bool
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
@@ -833,9 +540,13 @@ class CallConnectionProperties(object):
             callback_uri=call_connection_properties_generated.callback_uri,
             media_subscription_id=call_connection_properties_generated.media_subscription_id,
             source_caller_id_number=deserialize_phone_identifier(
-                call_connection_properties_generated.source_caller_id_number) if call_connection_properties_generated.source_caller_id_number else None,
+            call_connection_properties_generated.source_caller_id_number)
+            if call_connection_properties_generated.source_caller_id_number
+            else None,
             source_display_name=call_connection_properties_generated.source_display_name,
-            source_identity=deserialize_identifier(call_connection_properties_generated.source_identity) if call_connection_properties_generated.source_identity else None)
+            source_identity=deserialize_identifier(call_connection_properties_generated.source_identity)
+            if call_connection_properties_generated.source_identity
+            else None)
 
 
 class CallParticipant(object):
@@ -861,8 +572,9 @@ class CallParticipant(object):
 
     @classmethod
     def _from_generated(cls, call_participant_generated: CallParticipantRest):
-        return cls(identifier=deserialize_identifier(call_participant_generated.identifier), is_muted=call_participant_generated.is_muted)
-
+        return cls(
+            identifier=deserialize_identifier(call_participant_generated.identifier),
+            is_muted=call_participant_generated.is_muted)
 
 class GetParticipantsResponse(object):
     """The response payload for getting participants of the call."""
@@ -886,7 +598,9 @@ class GetParticipantsResponse(object):
 
     @classmethod
     def _from_generated(cls, get_participant_response_generated: GetParticipantsResponseRest):
-        return cls(values=[CallParticipant._from_generated(participant) for participant in get_participant_response_generated.values], next_link=get_participant_response_generated.next_link)
+        return cls(values=[CallParticipant._from_generated(# pylint:disable=protected-access
+            participant) for participant in get_participant_response_generated.values],
+            next_link=get_participant_response_generated.next_link)
 
 
 class AddParticipantResponse(object):
@@ -912,7 +626,9 @@ class AddParticipantResponse(object):
 
     @classmethod
     def _from_generated(cls, add_participant_response_generated: AddParticipantResponseRest):
-        return cls(participant=CallParticipant._from_generated(add_participant_response_generated.participant), operation_context=add_participant_response_generated.operation_context)
+        return cls(participant=CallParticipant._from_generated(# pylint:disable=protected-access
+            add_participant_response_generated.participant),
+            operation_context=add_participant_response_generated.operation_context)
 
 
 class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -967,10 +683,12 @@ class MediaStreamingConfiguration(object):
         self.audio_channel_type = audio_channel_type
 
     def to_generated(self):
-        return MediaStreamingConfigurationRest(transport_url=self.transport_url,
-                                               transport_type=self.transport_type,
-                                               content_type=self.content_type,
-                                               audio_channel_type=self.audio_channel_type)
+        return MediaStreamingConfigurationRest(
+            transport_url=self.transport_url,
+            transport_type=self.transport_type,
+            content_type=self.content_type,
+            audio_channel_type=self.audio_channel_type
+            )
 
 
 class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

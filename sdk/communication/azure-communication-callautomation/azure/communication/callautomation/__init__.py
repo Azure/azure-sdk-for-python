@@ -10,16 +10,20 @@ from ._models import (
     ServerCallLocator,
     GroupCallLocator,
     CallInvite,
-    CommunicationIdentifier,
-    CommunicationUserIdentifier,
     RecordingFormat,
     RecordingContent,
     RecordingStorage,
     RecordingChannel,
-    CallInvite,
+    PlaySource,
+    FileSource,
+    CallMediaRecognizeOptions
+)
+from ._shared.models import (
     CommunicationIdentifier,
+    PhoneNumberIdentifier,
+    MicrosoftTeamsUserIdentifier,
     CommunicationUserIdentifier
-    )
+)
 from ._events import (
     AddParticipantSucceeded,
     AddParticipantFailed,
@@ -67,6 +71,11 @@ __all__ = [
     "RecognizeFailed",
     "CallInvite",
     "CommunicationIdentifier",
-    "CommunicationUserIdentifier"
+    "CommunicationUserIdentifier",
+    "PhoneNumberIdentifier",
+    "MicrosoftTeamsUserIdentifier",
+    "PlaySource",
+    "FileSource",
+    "CallMediaRecognizeOptions"
 ]
 __version__ = VERSION

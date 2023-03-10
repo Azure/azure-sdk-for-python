@@ -4,7 +4,6 @@
 # ------------------------------------
 
 import json
-from typing import cast
 from azure.communication.callautomation._generated._serialization import Deserializer
 from azure.communication.callautomation._generated import models as _models
 from ._events_mapping import get_mapping
@@ -20,8 +19,8 @@ class CallAutomationEventParser(object):
         pass
 
     @classmethod
-    def parse(cls, input):
-        parsed = cls._convert_to_nonarray_json(input)
+    def parse(cls, parse_string):
+        parsed = cls._convert_to_nonarray_json(cls, parse_string)
         event_type = ""
         if parsed['type']:
             event_type = parsed['type'].split(".")[-1]
@@ -37,10 +36,10 @@ class CallAutomationEventParser(object):
 
             # create public event class with given AutoRest deserialized event
             return event_class(deserialized)
-        else:
-            raise ValueError('Unknown event type:', event_type)
 
-    def _convert_to_nonarray_json(json_str):
+        raise ValueError('Unknown event type:', event_type)
+
+    def _convert_to_nonarray_json(self, json_str):
         json_obj = json.loads(json_str)
         if isinstance(json_obj, list):
             # If JSON object is an array, extract the first element

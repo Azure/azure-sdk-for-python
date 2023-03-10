@@ -6,4 +6,4 @@
 
 VERSION = "1.0.0b1"
 
-SDK_MONIKER = "communication-callautomation/{}".format(VERSION)
+SDK_MONIKER = f"communication-callautomation/{format(VERSION)}" # type: str

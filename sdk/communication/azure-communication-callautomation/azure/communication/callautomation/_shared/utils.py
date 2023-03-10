@@ -19,6 +19,7 @@ from azure.core.credentials import AccessToken, AzureKeyCredential
 def _convert_datetime_to_utc_int(input_datetime):
     """
     Converts DateTime in local time to the Epoch in UTC in second.
+
     :param input_datetime: Input datetime
     :type input_datetime: datetime
     :return: Integer
@@ -129,5 +130,6 @@ def get_authentication_policy(
         from .._shared.policy import HMACCredentialsPolicy
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
-    raise TypeError("Unsupported credential: {}. Use an access token string to use HMACCredentialsPolicy"
-                    "or a token credential from azure.identity".format(type(credential)))
+    raise TypeError(f"Unsupported credential: {format(type(credential))}."
+                    "Use an access token string to use HMACCredentialsPolicy"
+                    "or a token credential from azure.identity")

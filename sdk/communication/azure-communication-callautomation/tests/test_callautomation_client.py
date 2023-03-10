@@ -12,6 +12,7 @@ from azure.communication.callautomation import (
     CallInvite,
     CommunicationUserIdentifier
 )
+
 from unittest_helpers import mock_response
 
 from unittest.mock import Mock

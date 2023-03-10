@@ -52,12 +52,14 @@ class CallRecording(object):
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
         recording_state_response = self._call_recording_client.start_recording(
-        start_call_recording = start_recording_options._to_generated(),
+        start_call_recording = start_recording_options._to_generated(# pylint:disable=protected-access
+            ),
         repeatability_first_sent = repeatability_first_sent,
         repeatability_request_id = repeatability_request_id,
         **kwargs)
 
-        return RecordingStateResponse._from_generated(recording_state_response)
+        return RecordingStateResponse._from_generated(# pylint:disable=protected-access
+            recording_state_response)
 
     def stop_recording(
         self,
@@ -117,5 +119,7 @@ class CallRecording(object):
         :rtype: ~azure.communication.callautomation.models.RecordingStateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        recording_state_response = self._call_recording_client.get_recording_properties(recording_id = recording_id, **kwargs)
-        return RecordingStateResponse._from_generated(recording_state_response)
+        recording_state_response = self._call_recording_client.get_recording_properties(
+            recording_id = recording_id, **kwargs)
+        return RecordingStateResponse._from_generated(# pylint:disable=protected-access
+            recording_state_response)
