@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Iterator receiving from Service Bus entities has been added back in
+- Iterator receiving from Service Bus entities has been added back in.
 
 ## 7.8.3 (2023-03-09)
 
