@@ -9,22 +9,19 @@
       "ubuntu-20.04": {
         "OSVmImage": "MMSUbuntu20.04",
         "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-        "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "true",
-        "COMMUNICATION_SKIP_TRUNKS_LIVE_TEST": "true"
+        "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "true"
       },
       "windows-2022": {
         "OSVmImage": "MMS2022",
         "Pool": "azsdk-pool-mms-win-2022-general",
         "AZURE_TEST_AGENT": "WINDOWS_2019_PYTHON36",
-        "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false",
-        "COMMUNICATION_SKIP_TRUNKS_LIVE_TEST": "false"
+        "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
       },
       "macos-11": {
         "OSVmImage": "macos-11",
         "Pool": "Azure Pipelines",
         "AZURE_TEST_AGENT": "MACOS_1015_PYTHON37",
-        "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false",
-        "COMMUNICATION_SKIP_TRUNKS_LIVE_TEST": "false"
+        "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
       }
     },
     "PythonVersion": ["pypy3.7", "3.7", "3.8"],
@@ -41,8 +38,7 @@
           "CoverageArg": "",
           "TestSamples": "false",
           "AZURE_TEST_AGENT": "UBUNTU_2004_PYTHON39",
-          "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false",
-          "COMMUNICATION_SKIP_TRUNKS_LIVE_TEST": "false"
+          "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
         }
       }
     },
@@ -54,8 +50,7 @@
           "PythonVersion": "3.10.0",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "true",
-          "COMMUNICATION_SKIP_TRUNKS_LIVE_TEST": "true"
+          "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "true"
         }
       }
     }
