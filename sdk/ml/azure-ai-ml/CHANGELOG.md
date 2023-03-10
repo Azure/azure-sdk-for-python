@@ -12,7 +12,6 @@
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline job
 - Added support for serverless compute in command, automl and sweep job
-- Added telemetry logging for SDK Jupyter Notebook scenarios
 
 ### Bugs Fixed
 
@@ -25,9 +24,11 @@
 
 - Added dependency on `azure-mgmt-resource`
 - Added dependency on `azure-mgmt-resourcegraph`
+- Added dependency on `opencensus-ext-azure<2.0.0`
 - Update job types to use MFE Dec preview rest objects.
 - Added classifiers for Python version 3.11.
 - Added warning for reserved keywords in IO names in pipeline job nodes.
+- Added telemetry logging for SDK Jupyter Notebook scenarios
 
 ## 1.4.0 (2023-02-07)
 
