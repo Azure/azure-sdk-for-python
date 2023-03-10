@@ -251,7 +251,9 @@ def analyze_dependencies() -> None:
                 continue
             spec = SpecifierSet(spec)
 
-            remaining_dep_versions = [version for version in remaining_dep_versions if str(version) in spec]
+            remaining_dep_versions = [
+                version for version in remaining_dep_versions if spec.contains(str(version), prereleases=True)
+            ]
 
             if not remaining_dep_versions:
                 exitcode = 1
