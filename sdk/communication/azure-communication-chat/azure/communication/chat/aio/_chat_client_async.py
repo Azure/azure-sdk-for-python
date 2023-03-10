@@ -9,7 +9,6 @@ from urllib.parse import urlparse
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 from datetime import datetime
 from uuid import uuid4
-from azure.communication.chat._shared.utils import get_authentication_policy
 
 import six
 from azure.core.tracing.decorator import distributed_trace
