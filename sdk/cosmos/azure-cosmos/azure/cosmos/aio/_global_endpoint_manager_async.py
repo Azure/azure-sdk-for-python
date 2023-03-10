@@ -131,7 +131,6 @@ class _GlobalEndpointManager(object):
                     return database_account
                 except exceptions.CosmosHttpResponseError:
                     pass
-
             raise
 
     async def _GetDatabaseAccountStub(self, endpoint, **kwargs):
