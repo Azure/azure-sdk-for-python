@@ -72,8 +72,6 @@ from azure.ai.ml.entities import (
     Compute,
     Datastore,
     Environment,
-    FeatureSet,
-    FeatureStoreEntity,
     Job,
     JobSchedule,
     Model,
@@ -92,9 +90,6 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
-    FeatureSetOperations,
-    FeatureStoreEntityOperations,
-    FeatureStoreOperations,
     JobOperations,
     ModelOperations,
     OnlineDeploymentOperations,
@@ -348,15 +343,6 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
 
-        self._featurestores = FeatureStoreOperations(
-            self._operation_scope,
-            self._rp_service_client,
-            self._operation_container,
-            self._credential,
-            **app_insights_handler_kwargs,
-        )
-        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
-
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
             self._rp_service_client,
@@ -508,20 +494,6 @@ class MLClient:
 
         self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
-        self._feature_sets = FeatureSetOperations(
-            self._operation_scope,
-            self._operation_config,
-            self._service_client_02_2023_preview,
-            self._datastores,
-            **ops_kwargs,
-        )
-        self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._feature_sets)
-
-        self._feature_store_entities = FeatureStoreEntityOperations(
-            self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
-        )
-        self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._feature_store_entities)
-
     @classmethod
     def from_config(
         cls,
@@ -648,15 +620,6 @@ class MLClient:
         return self._registries
 
     @property
-    @experimental
-    def feature_stores(self) -> FeatureStoreOperations:
-        """A collection of feature-store related operations.
-        :return: Featurestore operations
-        :rtype: FeatureStoreOperations
-        """
-        return self._featurestores
-
-    @property
     def connections(self) -> WorkspaceConnectionsOperations:
         """A collection of workspace connection related operations.
 
@@ -772,25 +735,6 @@ class MLClient:
         :rtype: ScheduleOperations
         """
         return self._schedules
-
-    @property
-    @experimental
-    def feature_sets(self) -> FeatureSetOperations:
-        """A collection of feature set related operations.
-
-        :return: FeatureSet operations
-        :rtype: FeatureSetOperations
-        """
-        return self._feature_sets
-
-    @property
-    def feature_store_entities(self) -> FeatureStoreEntityOperations:
-        """A collection of feature store entity related operations.
-
-        :return: FeatureStoreEntity operations
-        :rtype: FeatureStoreEntityOperations
-        """
-        return self._feature_store_entities
 
     @property
     def subscription_id(self) -> str:
@@ -1047,15 +991,3 @@ def _(entity: BatchDeployment, operations, *args, **kwargs):
 def _(entity: JobSchedule, operations, *args, **kwargs):
     module_logger.debug("Creating or updating schedules")
     return operations[AzureMLResourceType.SCHEDULE].begin_create_or_update(entity, **kwargs)
-
-
-@_begin_create_or_update.register(FeatureStoreEntity)
-def _(entity: FeatureStoreEntity, operations, *args, **kwargs):
-    module_logger.debug("Creating or updating feature_store_entity")
-    return operations[AzureMLResourceType.FEATURE_STORE_ENTITY].begin_create_or_update(entity, **kwargs)
-
-
-@_begin_create_or_update.register(FeatureSet)
-def _(entity: FeatureSet, operations, *args, **kwargs):
-    module_logger.debug("Creating or updating feature_set")
-    return operations[AzureMLResourceType.FEATURE_SET].begin_create_or_update(entity, **kwargs)
