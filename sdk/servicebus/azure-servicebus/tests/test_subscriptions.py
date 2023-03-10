@@ -23,7 +23,8 @@ from servicebus_preparer import (
     CachedServiceBusSubscriptionPreparer,
     ServiceBusTopicPreparer,
     ServiceBusSubscriptionPreparer,
-    CachedServiceBusResourceGroupPreparer
+    CachedServiceBusResourceGroupPreparer,
+    SERVICEBUS_ENDPOINT_SUFFIX
 )
 from utilities import get_logger, print_message
 
@@ -79,7 +80,7 @@ class ServiceBusSubscriptionTests(AzureMgmtTestCase):
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     def test_subscription_by_sas_token_credential_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, servicebus_subscription, **kwargs):
-        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+        fully_qualified_namespace = f"{servicebus_namespace.name}.{SERVICEBUS_ENDPOINT_SUFFIX}"
         with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(
