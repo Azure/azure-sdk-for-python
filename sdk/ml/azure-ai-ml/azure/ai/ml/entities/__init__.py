@@ -13,7 +13,6 @@ from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 
 from ._assets._artifacts.data import Data
-from ._assets._artifacts.feature_set import FeatureSet
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
@@ -138,7 +137,6 @@ from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
 from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.feature_store_settings import FeatureStoreSettings
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
