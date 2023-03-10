@@ -9,7 +9,7 @@ Use the client library for Video Analyzer Edge to:
 - Simplify interactions with the [Microsoft Azure IoT SDKs](https://github.com/azure/azure-iot-sdks)
 - Programmatically construct pipeline topologies and live pipelines
 
-[Package (PyPI)][package] | [Product documentation][doc_product] | [Direct methods][doc_direct_methods] | [Pipelines][doc_pipelines] | [Source code][source] | [Samples][samples]
+[Package (PyPI)][package] | [Product documentation][doc_product] | [Direct methods][doc_direct_methods] | [Archived MS Docs][doc_pipelines] | [Source code][source] | [Samples][samples]
 
 ## Getting started
 
@@ -142,7 +142,7 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
-[doc_pipelines]: https://go.microsoft.com/fwlink/?linkid=2162396
+[doc_pipelines]: https://github.com/MicrosoftDocs/azure-docs/blob/4ba87bedc7b17a32903c99afb3ca4163be0dcc90/articles/azure-video-analyzer/video-analyzer-docs/overview.md
 [package]: https://aka.ms/ava/sdk/client/python
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/videoanalyzer
 [samples]: https://go.microsoft.com/fwlink/?linkid=2162278

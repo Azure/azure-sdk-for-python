@@ -264,12 +264,13 @@ ServicePreparer = functools.partial(
 ```
 
 The parameters for the `functools.partial` method are:
-* The EnvironmentVariableLoader class
-* The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
+
+- The EnvironmentVariableLoader class
+- The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
   environment variables for the appropriate values.
-* The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
+- The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
   the value being a fake value to use in recordings.
-  * These values should have the same formatting as the real values because they are used in playback mode and will need
+  - These values should have the same formatting as the real values because they are used in playback mode and will need
   to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
 
 A method that's decorated by the ServicePreparer from the example would be called with `testservice_endpoint` and

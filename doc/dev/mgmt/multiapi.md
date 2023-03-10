@@ -118,5 +118,3 @@ If this is not the same API version, then we need to bend the rules a little: we
 ## Possible improvements
 
 Current implementation assumes operation group are unique, and as discussed it's not always the case. Also, this limitation has impact on intellisense right now. Example, if a user types `compute_client.virtual_machines.` and hit the intellisense shortcut, users won't see any suggestions. It's because the `virtual_machines` property is dynamic and can change depending of dynamic configuration.
-
-To improve intellisense and allow operation level profile, the concept would be to make the [operation mixin multi-api concept](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/network/azure-mgmt-network/azure/mgmt/network/_operations_mixin.py) applicable to operation groups as well. I estimate this work to a week of dev-ish.
