@@ -26,12 +26,12 @@ class Stream(Protocol):
 
 @runtime_checkable
 class AsyncStream(Protocol):
-    """Protocol for methods to provide streamed responses."""
+    """Protocol for methods to provide async streamed responses."""
 
     async def close(self) -> None:
         pass
 
-    async def __aiter__(self) -> Iterator[bytes]:
+    async def __aiter__(self) -> AsyncIterator[bytes]:
         pass
 
     async def __aenter__(self) -> Self:
