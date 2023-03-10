@@ -196,7 +196,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         tags: Optional[Dict[str, str]] = None,
         compute_resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> LROPoller[FeatureSetMaterializationResponse]:
         """Backfill.
 
@@ -248,7 +248,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         feature_window_start_time: Optional[str] = None,
         feature_window_end_time: Optional[str] = None,
         filters: Optional[str] = None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> ItemPaged[FeatureSetMaterializationResponse]:
         """List Materialization operation.
 
