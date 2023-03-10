@@ -325,6 +325,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-machinelearningservices typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-communication-rooms azure-core<2.0.0,>=1.24.0
 #override azure-communication-rooms msrest>=0.7.1
+#override azure-communication-callautomation azure-core<2.0.0,>=1.24.0
+#override azure-communication-callautomation msrest>=0.7.1
 #override azure-communication-jobrouter azure-core<2.0.0,>=1.25.0
 #override azure-mgmt-alertsmanagement typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-communication azure-core<2.0.0,>=1.9.0

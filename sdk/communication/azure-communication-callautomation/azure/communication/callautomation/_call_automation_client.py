@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any  # pylint: disable=unused-import
+from typing import Any, List  # pylint: disable=unused-import
 from urllib.parse import urlparse
 from azure.core.credentials import TokenCredential
 
@@ -13,13 +13,11 @@ from ._api_versions import DEFAULT_VERSION
 from ._call_connection import CallConnection
 from ._call_recording import CallRecording
 from ._generated._client import AzureCommunicationCallAutomationService
+from ._shared.models import serialize_phone_identifier, serialize_identifier, CommunicationIdentifier
 from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._generated.models import (
     CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest)
-from ._models import (CallInvite, CallConnectionProperties, serialize_identifier,
-                      serialize_phone_identifier,
-                      CommunicationIdentifier)
-
+from ._models import (CallInvite, CallConnectionProperties)
 
 class CallResult(object):
     def __init__(
@@ -41,13 +39,27 @@ class CallResult(object):
 
 
 class CallAutomationClient(object):
+    """A client to interact with the AzureCommunicationService CallAutomation service.
+
+    Call Automation provides developers the ability to build server-based,
+    intelligent call workflows, and call recording for voice and PSTN channels.
+
+    :param str endpoint:
+     The endpoint of the Azure Communication resource.
+    :param ~azure.core.credentials.TokenCredential credential:
+     The credentials with which to authenticate
+
+    :keyword api_version: Azure Communication Call Automation API version.
+     Default value is "2023-01-15-preview".
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
     def __init__(
             self,
-            endpoint,  # type: str
-            credential,  # type: TokenCredential
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            endpoint: str,
+            credential: TokenCredential,
+            **kwargs
+    ) -> None:
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -59,7 +71,7 @@ class CallAutomationClient(object):
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(endpoint))
+            raise ValueError(f"Invalid URL: {format(endpoint)}")
 
         self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
@@ -81,19 +93,35 @@ class CallAutomationClient(object):
     @classmethod
     def from_connection_string(
         cls,
-        conn_str,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> CallAutomationClient
+        conn_str: str,
+        **kwargs
+    ) -> 'CallAutomationClient' :
+        """Create CallAutomation from a Connection String.
+
+        :param str conn_str:
+         A connection string to an Azure Communication Service resource.
+
+        :return: Instance of CallAutomationClient.
+        :rtype: ~azure.communication.callautomation.CallAutomationClient
+        """
         endpoint, access_key = parse_connection_str(conn_str)
 
         return cls(endpoint, access_key, **kwargs)
 
     def get_call_connection(
         self,
-        call_connection_id,  # type: str
-        **kwargs  # type: Any
-    ):  # type: (...) -> CallConnection
+        call_connection_id: str,
+        **kwargs
+    ) -> CallConnection:
+        """Get CallConnection object.
+        Only use when you already know CallConnectionId for an ongoing call.
 
+        :param str call_connection_id:
+         CallConnectionId of ongoing call.
+
+        :return: Instance of CallConnection.
+        :rtype: ~azure.communication.callautomation.CallConnection
+        """
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
 
@@ -106,9 +134,14 @@ class CallAutomationClient(object):
 
     def get_call_recording(
         self,
-        **kwargs  # type: Any
-    ):  # type: (...) -> CallRecording
+        **kwargs
+    ) -> CallRecording:
+        """Get CallRecording object.
+        For any recording related action, use this to perform actions.
 
+        :return: Instance of CallRecording.
+        :rtype: ~azure.communication.callautomation.CallRecording
+        """
         return CallRecording(
             self._call_recording_client,
             **kwargs
@@ -119,7 +152,7 @@ class CallAutomationClient(object):
         call_invite: CallInvite,
         callback_url: str,
         **kwargs
-    ):
+    ) -> CallResult:
         """
         Create a call connection request from a source identity to a target identity.
 
@@ -127,7 +160,9 @@ class CallAutomationClient(object):
         :type call_invite: CallInvite
         :param callback_url: Required. The call back url for receiving events.
         :type callback_url: str
-        :param source_caller_id_number: The source caller Id, a phone number, that's shown to the PSTN participant being invited. Required only when calling a PSTN callee.
+        :param source_caller_id_number: The source caller Id, a phone number,
+         that's shown to the PSTN participant being invited.
+         Required only when calling a PSTN callee.
         :type source_caller_id_number: PhoneNumberIdentifier
         :param source_display_name: Display name of the call if dialing out to a pstn number.
         :type source_display_name: str
@@ -167,18 +202,23 @@ class CallAutomationClient(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        result = self._client.create_call(create_call_request=create_call_request, repeatability_first_sent=repeatability_first_sent,
-                                          repeatability_request_id=repeatability_request_id,
-                                          **kwargs)
+        result = self._client.create_call(
+            create_call_request=create_call_request,
+            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=repeatability_request_id,
+            **kwargs)
 
-        return CallResult(call_connection=self.get_call_connection(result.call_connection_id), call_connection_properties=CallConnectionProperties._from_generated(result))
+        return CallResult(
+            call_connection=self.get_call_connection(result.call_connection_id),
+            call_connection_properties=CallConnectionProperties._from_generated(# pylint:disable=protected-access
+            result))
 
     def create_group_call(
         self,
-        targets: list[CommunicationIdentifier],
+        targets: List[CommunicationIdentifier],
         callback_url: str,
         **kwargs
-    ):
+    ) -> CallResult:
         """
         Create a call connection request from a source identity to a list of target identities.
 
@@ -186,7 +226,9 @@ class CallAutomationClient(object):
         :type targets: list[CommunicationIdentifier]
         :param callback_url: Required. The call back url for receiving events.
         :type callback_url: str
-        :param source_caller_id_number: The source caller Id, a phone number, that's shown to the PSTN participant being invited. Required only when calling a PSTN callee.
+        :param source_caller_id_number: The source caller Id, a phone number,
+         that's shown to the PSTN participant being invited.
+         Required only when calling a PSTN callee.
         :type source_caller_id_number: PhoneNumberIdentifier
         :param source_display_name: Display name of the call if dialing out to a pstn number.
         :type source_display_name: str
@@ -230,18 +272,23 @@ class CallAutomationClient(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        result = self._client.create_call(create_call_request=create_call_request, repeatability_first_sent=repeatability_first_sent,
-                                          repeatability_request_id=repeatability_request_id,
-                                          **kwargs)
+        result = self._client.create_call(
+            create_call_request=create_call_request,
+            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=repeatability_request_id,
+            **kwargs)
 
-        return CallResult(call_connection=self.get_call_connection(result.call_connection_id), call_connection_properties=CallConnectionProperties._from_generated(result))
+        return CallResult(
+            call_connection=self.get_call_connection(result.call_connection_id),
+            call_connection_properties=CallConnectionProperties._from_generated(# pylint:disable=protected-access
+            result))
 
     def answer_call(
         self,
         incoming_call_context: str,
         callback_url: str,
         **kwargs
-    ):
+    ) -> CallResult:
         """
         Create a call connection request from a source identity to a list of target identities.
 
@@ -251,20 +298,22 @@ class CallAutomationClient(object):
         :type callback_url: str
         :param media_streaming_configuration: Media Streaming Configuration.
         :type media_streaming_configuration: MediaStreamingConfiguration
-        :param azure_cognitive_services_endpoint_url: The endpoint URL of the Azure Cognitive Services
-        resource attached.
+        :param azure_cognitive_services_endpoint_url: The endpoint URL of
+        the Azure Cognitive Services resource attached.
         :type azure_cognitive_services_endpoint_url: str
         :param repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated unique identifier for the request. It is a version 4 (random)
+         repeatable; that is, that the client can make the request multiple times
+         with the same Repeatability-Request-Id and get back an appropriate response
+         without the server executing the request multiple times. The value of the
+         Repeatability-Request-Id is an opaque string representing a client-generated
+         unique identifier for the request. It is a version 4 (random)
          UUID. Default value is None.
         :type repeatability_request_id: str
-        :param repeatability_first_sent: If Repeatability-Request-ID header is specified, then
-         Repeatability-First-Sent header must also be specified. The value should be the date and time
-         at which the request was first created, expressed using the IMF-fixdate form of HTTP-date.
-         Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
+        :param repeatability_first_sent: If Repeatability-Request-ID header is specified,
+          then Repeatability-First-Sent header must also be specified. The value should be
+          the date and time at which the request was first created, expressed using the
+          IMF-fixdate form of HTTP-date.
+          Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
         :type repeatability_first_sent: str
         """
 
@@ -290,11 +339,16 @@ class CallAutomationClient(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        result = self._client.answer_call(answer_call_request=answer_call_request, repeatability_first_sent=repeatability_first_sent,
-                                          repeatability_request_id=repeatability_request_id,
-                                          **kwargs)
+        result = self._client.answer_call(
+            answer_call_request=answer_call_request,
+            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=repeatability_request_id,
+            **kwargs)
 
-        return CallResult(call_connection=self.get_call_connection(result.call_connection_id), call_connection_properties=CallConnectionProperties._from_generated(result))
+        return CallResult(
+            call_connection=self.get_call_connection(result.call_connection_id),
+            call_connection_properties=CallConnectionProperties._from_generated(# pylint:disable=protected-access
+            result))
 
     def redirect_call(
         self,
@@ -304,7 +358,6 @@ class CallAutomationClient(object):
     ) -> None:
         """
         Create a call connection request from a source identity to a list of target identities.
-
         :param incoming_call_context: Required. The incoming call context.
         :type incoming_call_context: str
         :param target: The target identity to redirect the call to. Required.
@@ -324,9 +377,11 @@ class CallAutomationClient(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        self._client.redirect_call(redirect_call_request=redirect_call_request, repeatability_first_sent=repeatability_first_sent,
-                                   repeatability_request_id=repeatability_request_id,
-                                   **kwargs)
+        self._client.redirect_call(
+            redirect_call_request=redirect_call_request,
+            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=repeatability_request_id,
+            **kwargs)
 
     def reject_call(
         self,
@@ -338,8 +393,8 @@ class CallAutomationClient(object):
 
         :param incoming_call_context: Required. The incoming call context.
         :type incoming_call_context: str
-        :param call_reject_reason: The rejection reason. Known values are: "none", "busy", and
-        "forbidden".
+        :param call_reject_reason: The rejection reason.
+         Known values are: "none", "busy", and "forbidden".
         :type call_reject_reason: str or CallRejectReason
         """
 
@@ -354,6 +409,8 @@ class CallAutomationClient(object):
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        self._client.reject_call(reject_call_request=reject_call_request, repeatability_first_sent=repeatability_first_sent,
-                                 repeatability_request_id=repeatability_request_id,
-                                 **kwargs)
+        self._client.reject_call(
+            reject_call_request=reject_call_request,
+            repeatability_first_sent=repeatability_first_sent,
+            repeatability_request_id=repeatability_request_id,
+            **kwargs)

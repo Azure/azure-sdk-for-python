@@ -21,7 +21,10 @@ from ._generated.models import (
     CallParticipant
 )
 
-from ._models import deserialize_identifier
+
+from ._shared.models import (
+    deserialize_identifier
+)
 
 
 class AddParticipantSucceeded(AddParticipantSucceededRest):

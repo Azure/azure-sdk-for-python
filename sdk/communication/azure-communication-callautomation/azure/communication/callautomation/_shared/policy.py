@@ -8,6 +8,7 @@ import hashlib
 import urllib
 import base64
 import hmac
+from typing import ( Union )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time

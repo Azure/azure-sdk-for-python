@@ -16,7 +16,12 @@ from ._generated.models._models import (
 from ._generated.models import PlaySourceType
 from ._models import (
     CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions,
-    PlaySource, FileSource, CommunicationIdentifier, serialize_identifier
+    PlaySource, FileSource
+)
+
+from ._shared.models import (
+    CommunicationIdentifier,
+    serialize_identifier
 )
 
 if TYPE_CHECKING:
@@ -24,13 +29,24 @@ if TYPE_CHECKING:
 
 
 class CallMediaClient(object):
-    def __init__(
+    """A client to interact with media of ongoing call.
+
+    :param str callconnectionid:
+     CallConnectionId of ongoing call.
+    :param ~azure.communication.callautomation._generated.operations.CallMediaOperations call_media_operations:
+     The REST version of media client.
+
+    :keyword api_version: Azure Communication Call Automation API version.
+     Default value is "2023-01-15-preview".
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
+    def __init__(# pylint:disable=missing-client-constructor-parameter-credential
         self,
-        call_connection_id,  # type: str
-        call_media_operations,  # type: CallMediaOperations
+        call_connection_id: str,
+        call_media_operations,   # type: CallMediaOperations
         **kwargs
-    ):
-        # type: (...) -> None
+    ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
         self.call_connection_id = call_connection_id
@@ -48,13 +64,17 @@ class CallMediaClient(object):
 
     def play_to_all(
         self,
-        play_source,
+        play_source: PlaySource,
         **kwargs
-    ):
+    ) -> None:
         """
         Play to all participants.
 
         :param play_source: A PlaySource representing the source to play.
+        :type play_source: ~azure.communication.callautomation.PlaySource
+
+        :return: None
+        :type: None
         """
         if not play_source:
             raise ValueError('play_source cannot be None.')
@@ -66,7 +86,7 @@ class CallMediaClient(object):
         play_source: PlaySource,
         play_to: List[CommunicationIdentifier],
         **kwargs
-    ):
+    ) -> None:
         """
         Play.
 
@@ -75,6 +95,8 @@ class CallMediaClient(object):
         :param play_to: Required. The targets to play to.
         :type play_to: list[~azure.communication.callautomation.models.CommunicationIdentifier]
 
+        :return: None
+        :type: None
         """
 
         if not play_source:
@@ -91,12 +113,13 @@ class CallMediaClient(object):
     def start_recognizing(
         self,
         recognize_options: CallMediaRecognizeOptions
-    ):
+    ) -> None:
         """
         Recognize tones.
 
         :param recognize_options:  Different attributes for recognize.
-        :type recognize_options: azure.communication..RecognizeOptions
+        :type recognize_options: ~azure.communication.callautomation.CallMediaRecognizeOptions
+
         :return: None
         :rtype: None
         """
@@ -133,10 +156,12 @@ class CallMediaClient(object):
 
     def cancel_all_media_operations(
         self
-    ):
+    ) -> None:
         """
         Cancels all the queued media operations.
 
+        :return: None
+        :type: None
         """
         self._call_media_operations.cancel_all_media_operations(
             self.call_connection_id)
