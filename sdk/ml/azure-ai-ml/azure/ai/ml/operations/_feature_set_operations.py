@@ -4,10 +4,10 @@
 
 # pylint: disable=protected-access
 
-from datetime import datetime
 import os
 import json
 from pathlib import Path
+from datetime import datetime
 from typing import Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -181,6 +181,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             name=featureset.name,
             version=featureset.version,
             body=featureset_resource,
+            cls=lambda response, deserialized, headers: FeatureSet._from_rest_object(deserialized),
         )
 
     # @monitor_with_activity(logger, "FeatureSet.BeginBackFill", ActivityType.PUBLICAPI)
@@ -237,6 +238,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             body=request_body,
+            cls=lambda response, deserialized, headers: FeatureSetMaterializationResponse._from_rest_object(deserialized),
         )
 
     # @monitor_with_activity(logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
