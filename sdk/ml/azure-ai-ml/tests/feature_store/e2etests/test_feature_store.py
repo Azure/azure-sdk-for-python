@@ -29,22 +29,22 @@ class TestFeatureStore:
         fs_display_name = f"{fs_name} display name"
 
         fs = FeatureStore(name=fs_name, description=fs_description, display_name=fs_display_name)
-        fs_poller = client.featurestores.begin_create(feature_store=fs)
+        fs_poller = client.feature_stores.begin_create(feature_store=fs)
         assert isinstance(fs_poller, LROPoller)
 
         create_fs = fs_poller.result()
         assert isinstance(create_fs, FeatureStore)
 
-        fs_result = client.featurestores.get(fs_name)
+        fs_result = client.feature_stores.get(fs_name)
         assert isinstance(fs_result, FeatureStore)
         assert fs_result.name == fs_name
 
-        fs_list = client.featurestores.list()
+        fs_list = client.feature_stores.list()
         assert any(fs_name == fs.name for fs in fs_list)
 
-        fs_poller = client.featurestores.begin_delete(name=fs_name, delete_dependent_resources=True)
+        fs_poller = client.feature_stores.begin_delete(name=fs_name, delete_dependent_resources=True)
         assert isinstance(fs_poller, LROPoller)
         fs_poller.result()
 
         with pytest.raises(Exception):
-            client.featurestores.get(fs_name)
+            client.feature_stores.get(fs_name)

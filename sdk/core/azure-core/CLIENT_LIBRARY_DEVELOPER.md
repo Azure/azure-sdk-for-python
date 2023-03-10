@@ -600,6 +600,9 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 | --- | --- |
 | Key Vault ([example][kv_tenant_id]) | Request access in a tenant that was discovered as part of an authentication challenge
 
+## Long-running operation (LRO) customization
+
+See [doc/dev/customize_long_running_operation.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_long_running_operation.md) for more information.
 
 [cae_doc]: https://docs.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
 [custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py
