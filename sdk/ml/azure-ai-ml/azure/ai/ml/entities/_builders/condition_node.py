@@ -126,7 +126,7 @@ class ConditionNode(ControlFlowNode):
                 lst1 = []
             if not lst2:
                 lst2 = []
-            return list(set(lst1) & set(lst2))
+            return list({n.name for n in lst1} & {n.name for n in lst2})
 
         intersection = _get_intersection(self.true_block, self.false_block)
 
@@ -143,7 +143,7 @@ class ConditionNode(ControlFlowNode):
         elif intersection:
             validation_result.append_error(
                 yaml_path="true_block",
-                message="'true_block' and 'false_block' of dsl.condition has intersection.",
+                message=f"'true_block' and 'false_block' of dsl.condition has intersection: {intersection}",
             )
 
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)

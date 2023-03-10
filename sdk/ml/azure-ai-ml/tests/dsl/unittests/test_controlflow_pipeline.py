@@ -72,6 +72,18 @@ class TestIfElseUT(TestControlFlowPipelineUT):
             pipeline_job._validate(raise_error=True)
         assert "'true_block' and 'false_block' of dsl.condition has intersection" in str(e.value)
 
+        @pipeline(compute="cpu-cluster")
+        def condition_pipeline():
+            result = basic_component()
+            node1 = hello_world_component_no_paths()
+            node2 = hello_world_component_no_paths()
+            # true block and false block has intersection
+            condition(condition=result.outputs.output, false_block=[node1], true_block=[node2])
+
+        # no error raise
+        pipeline_job = condition_pipeline()
+        pipeline_job._validate(raise_error=True)
+
 
 class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
     def test_infer_dynamic_input_type_from_mapping(self):
