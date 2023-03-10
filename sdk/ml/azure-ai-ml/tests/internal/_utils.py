@@ -180,6 +180,19 @@ PARAMETERS_TO_TEST = [
             "default_datastore": ADLS_DATA_STORE_NAME,
         },
     ),  # Ae365exepool
+    (
+        "tests/test_configs/internal/spark-component/spec.yaml",
+        {
+            "input_path": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
+        },
+        {
+            # "compute": "cpu-cluster",  # runsettings.starlite.compute
+        },  # no specific run settings
+        {
+            "default_compute": "cpu-cluster",
+            "default_datastore": ADLS_DATA_STORE_NAME,
+        },
+    ),  # SparkComponent
     # Pipeline  we can't test this because we can't create a v1.5 pipeline component in v2, instead we test v2 pipeline
     # component containing v1.5 nodes
 ]

@@ -4,16 +4,15 @@
 import os.path
 
 import pydash
-from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
-
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
-from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType, SOURCE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, SOURCE_PATH_CONTEXT_KEY, AzureMLResourceType
+from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
-from .._utils import yaml_safe_load_with_base_resolver
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils.utils import get_valid_dot_keys_with_wildcard
+from .._utils import yaml_safe_load_with_base_resolver
 from .environment import InternalEnvironmentSchema
 from .input_output import (
     InternalEnumParameterSchema,
@@ -37,6 +36,9 @@ class NodeType:
     HEMERA = "HemeraComponent"
     AE365EXEPOOL = "AE365ExePoolComponent"
     IPP = "IntellectualPropertyProtectedComponent"
+    SPARK = "spark"
+    # hack: used as key in factory create function dict to distinguish between spark and internal spark
+    INTERNAL_SPARK = "internal_spark"
 
     @classmethod
     def all_values(cls):

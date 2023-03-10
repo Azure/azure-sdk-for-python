@@ -8,8 +8,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from marshmallow import INCLUDE
-
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentContainerData,
     ComponentContainerDetails,
@@ -24,11 +22,11 @@ from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     REGISTRY_URI_FORMAT,
-    CommonYamlFields,
-    AzureMLResourceType,
     SOURCE_PATH_CONTEXT_KEY,
+    AzureMLResourceType,
+    CommonYamlFields,
 )
-from azure.ai.ml.constants._component import ComponentSource, NodeType, IOConstants
+from azure.ai.ml.constants._component import ComponentSource, IOConstants, NodeType
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -37,9 +35,10 @@ from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
 from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from marshmallow import INCLUDE
 
-from .code import ComponentIgnoreFile
 from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
+from .code import ComponentIgnoreFile
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -321,18 +320,17 @@ class Component(
 
         create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
         new_instance = create_instance_func()
+        target_schema = create_schema_func(
+            {
+                BASE_PATH_CONTEXT_KEY: base_path,
+                SOURCE_PATH_CONTEXT_KEY: yaml_path,
+                PARAMS_OVERRIDE_KEY: params_override,
+            }
+        )
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(
-                create_schema_func(
-                    {
-                        BASE_PATH_CONTEXT_KEY: base_path,
-                        SOURCE_PATH_CONTEXT_KEY: yaml_path,
-                        PARAMS_OVERRIDE_KEY: params_override,
-                    }
-                ).load(data, unknown=INCLUDE, **kwargs)
-            ),
+            **(target_schema.load(data, unknown=INCLUDE, **kwargs)),
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.

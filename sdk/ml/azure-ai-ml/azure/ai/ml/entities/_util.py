@@ -10,8 +10,6 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 from unittest import mock
 
 import msrest
-from marshmallow.exceptions import ValidationError
-
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
@@ -56,6 +54,7 @@ from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from marshmallow.exceptions import ValidationError
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -437,6 +436,18 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     # we should keep at least 1 place outside _internal to enable internal components
     # and this is the only place
     try_enable_internal_components()
+
+    # Hack: Spark component and internal spark component have the same type, so we need to check the schema
+    if (
+        _type == NodeType.SPARK
+        and schema
+        and schema.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
+        and is_internal_components_enabled()
+    ):
+        from azure.ai.ml._internal._schema.component import NodeType as InternalNodeType
+
+        return InternalNodeType.INTERNAL_SPARK
+
     # todo: refine Hard code for now to support different task type for DataTransfer component
     if _type == NodeType.DATA_TRANSFER:
         _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", " ")])
@@ -458,7 +469,7 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
             no_personal_data_message=msg,
             error_category=ErrorCategory.USER_ERROR,
         )
-    return extract_label(_type)[0]
+    return _type
 
 
 def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutput"):

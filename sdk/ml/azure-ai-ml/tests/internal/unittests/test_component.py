@@ -13,19 +13,17 @@ from zipfile import ZipFile
 import pydash
 import pytest
 import yaml
-from pytest_mock import MockFixture
-
-from azure.ai.ml._internal._utils import yaml_safe_load_with_base_resolver
-from test_utilities.utils import parse_local_path, build_temp_folder
-
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
+from azure.ai.ml._internal._utils import yaml_safe_load_with_base_resolver
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.exceptions import ValidationException
+from pytest_mock import MockFixture
+from test_utilities.utils import build_temp_folder, parse_local_path
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
 
@@ -245,6 +243,8 @@ class TestComponent:
         # code will be dumped as absolute path
         if "code" in expected_dict:
             expected_dict["code"] = parse_local_path(expected_dict["code"], entity.base_path)
+
+        expected_dict["version"] = str(expected_dict["version"])
 
         assert entity._to_dict() == expected_dict
 

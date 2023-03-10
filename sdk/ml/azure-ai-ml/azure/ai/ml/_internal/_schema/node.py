@@ -2,11 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import INCLUDE, fields, post_load, pre_dump
-
 from azure.ai.ml._schema import ArmVersionedStr, NestedField, RegistryStr, UnionField
 from azure.ai.ml._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
 from azure.ai.ml.constants._common import AzureMLResourceType
+from marshmallow import INCLUDE, fields, post_load, pre_dump
 
 from ..._schema.core.fields import DumpableEnumField
 from .component import InternalComponentSchema, NodeType
@@ -71,3 +70,7 @@ class HDInsightSchema(InternalBaseNodeSchema):
         union_fields=[fields.Dict(keys=fields.Str()), fields.Str()],
     )
     hdinsight_spark_job_name = fields.Str()
+
+
+class SparkSchema(InternalBaseNodeSchema):
+    type = DumpableEnumField(allowed_values=[NodeType.SPARK])
