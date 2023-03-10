@@ -31,8 +31,8 @@ if TYPE_CHECKING:
 class CallMediaClient(object):
     """A client to interact with media of ongoing call.
 
-    :param str callconnectionid:
-     CallConnectionId of ongoing call.
+    :param str call_connection_id:
+     Call Connection Id of ongoing call.
     :param ~azure.communication.callautomation._generated.operations.CallMediaOperations call_media_operations:
      The REST version of media client.
 
@@ -52,7 +52,8 @@ class CallMediaClient(object):
         self.call_connection_id = call_connection_id
         self._call_media_operations = call_media_operations
 
-    def _create_play_source_internal(self, play_source):
+    @staticmethod
+    def _create_play_source_internal(play_source):
         if isinstance(play_source, FileSource):
             file_source = FileSourceInternal(uri=play_source.uri)
             return PlaySourceInternal(

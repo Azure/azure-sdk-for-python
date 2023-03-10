@@ -20,7 +20,7 @@ class CallAutomationEventParser(object):
 
     @classmethod
     def parse(cls, parse_string):
-        parsed = cls._convert_to_nonarray_json(cls, parse_string)
+        parsed = cls._convert_to_nonarray_json(parse_string)
         event_type = ""
         if parsed['type']:
             event_type = parsed['type'].split(".")[-1]
@@ -39,7 +39,8 @@ class CallAutomationEventParser(object):
 
         raise ValueError('Unknown event type:', event_type)
 
-    def _convert_to_nonarray_json(self, json_str):
+    @staticmethod
+    def _convert_to_nonarray_json(json_str):
         json_obj = json.loads(json_str)
         if isinstance(json_obj, list):
             # If JSON object is an array, extract the first element

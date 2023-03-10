@@ -55,7 +55,7 @@ user = CommunicationUserIdentifier("8:acs:...")
 # make invitation
 call_invite = CallInvite(target=user)
 
-# callback url to recieve callback events
+# callback url to receive callback events
 callback_url = "https://<MY-EVENT-HANDLER-URL>/events"
 
 # send out the invitation, creating call
