@@ -56,8 +56,7 @@ sent_share = {
 
 request = client.sent_shares.begin_create_or_replace(
     str(sent_share_id),
-    content_type="application/json",
-    content=json.dumps(sent_share))
+    sent_share=sent_share)
 
 response = request.result()
 # [END create_a_sent_share]
@@ -65,7 +64,6 @@ response = request.result()
 # Get a sent share
 # [START get_a_sent_share]
 get_response = client.sent_shares.get(sent_share_id=str(sent_share_id))
-retrieved_sent_share = json.loads(get_response)
 # [END get_a_sent_share]
 
 # Delete a sent share
@@ -79,8 +77,6 @@ delete_response = delete_request.result()
 list_request = client.sent_shares.list(
     reference_name=str(sent_share["properties.artifact.storeReference.referenceName"]),
     orderby="properties/createdAt desc")
-
-list_response = list_request.result()
 # [END get_all_sent_shares]
 
 # Send a user invitation
@@ -99,13 +95,10 @@ invitation = {
     }
 }
 
-invitation_request = client.sent_shares.create_invitation(
+invitation_response = client.sent_shares.create_invitation(
     sent_share_id=str(sent_share_id),
     sent_share_invitation_id=str(sent_share_invitation_id),
-    sent_share_invitation=json.dumps(invitation))
-
-invitation_response = invitation_request.result()
-created_invitation = json.loads(invitation_response)
+    sent_share_invitation=invitation)
 # [END send_a_user_invitation]
 
 # Send a service invitation
@@ -121,18 +114,13 @@ sent_share_invitation = {
     }
 }
 
-invitation_request = client.sent_shares.create_invitation(
+invitation_response = client.sent_shares.create_invitation(
     sent_share_id=str(sent_share_id),
     sent_share_invitation_id=str(sent_share_invitation_id),
-    sent_share_invitation=json.dumps(sent_share_invitation))
-
-invitation_response = invitation_request.result()
-created_invitation = json.loads(invitation_response)
+    sent_share_invitation=sent_share_invitation)
 # [END send_a_service_invitation]
 
 # View sent invitations
 # [START view_sent_invitations]
 list_request = client.sent_shares.list_invitations(sent_share_id=str(sent_share_id))
-list_response = list_request.result()
-list = json.loads(list_response)
 # [END view_sent_invitations]

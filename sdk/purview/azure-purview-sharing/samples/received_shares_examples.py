@@ -32,8 +32,7 @@ list_detached_response = client.received_shares.list_detached(orderby="propertie
 import json
 
 consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/consumer-storage-rg/providers/Microsoft.Storage/storageAccounts/consumerstorage"
-list_detached = json.loads(list_detached_response.content)
-received_share = list_detached['value'][0]
+received_share = next(x for x in list_detached_response)
 
 store_reference = {
     "referenceName": consumer_storage_account_resource_id,
@@ -52,18 +51,14 @@ sink = {
 
 received_share['properties']['sink'] = sink
 
-update_request = client.received_shares.begin_create_or_replace(
-    received_share['id'],
-    content_type="application/json",
-    content=json.dumps(received_share))
-
-update_response = update_request.result()
+update_response = client.received_shares.begin_create_or_replace(
+    str(received_share['id']),
+    received_share=received_share)
 # [END attach_a_received_share]
 
 # Get a received share
 # [START get_a_received_share]
 get_share_response = client.received_shares.get(received_share_id=received_share['id'])
-retrieved_share = json.loads(get_share_response)
 # [END get_a_received_share]
 
 # List attached received shares
@@ -75,6 +70,5 @@ list_attached_response = client.received_shares.list_attached(
 
 # Delete a received share
 # [START delete_a_received_share]
-delete_received_share_request = client.received_shares.begin_delete(received_share_id=received_share['id'])
-delete_received_share_response = delete_received_share_request.result()
+delete_received_share_response = client.received_shares.begin_delete(received_share_id=received_share['id'])
 # [END delete_a_received_share]

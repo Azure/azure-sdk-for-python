@@ -21,6 +21,8 @@ autorest
 
 ```yaml
 package-name: "@azure-rest/purview-sharing"
+package-pprint-name: "Azure Purview Sharing"
+client-name: "PurviewSharingClient"
 title: Purview Sharing Client
 description: Purview Sharing Client
 generate-metadata: false
