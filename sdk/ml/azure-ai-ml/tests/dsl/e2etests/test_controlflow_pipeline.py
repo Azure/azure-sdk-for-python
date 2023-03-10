@@ -809,6 +809,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
             "_source": "DSL",
         }
 
+    @pytest.mark.skip("TODO: verify if supported in MT")
     def test_if_else_combine_parallel_for(self, client: MLClient):
         hello_world_component = load_component(
             source="./tests/test_configs/components/helloworld_component_no_inputs.yml",
