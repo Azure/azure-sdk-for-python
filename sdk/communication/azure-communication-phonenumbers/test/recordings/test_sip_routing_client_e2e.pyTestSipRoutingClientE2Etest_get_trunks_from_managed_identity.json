@@ -263,7 +263,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "531ms"
+        "X-Processing-Time": "528ms"
       },
       "ResponseBody": {
         "trunks": {

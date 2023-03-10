@@ -238,8 +238,8 @@
       },
       "ResponseBody": {
         "token_type": "Bearer",
-        "expires_in": 3599,
-        "ext_expires_in": 3599,
+        "expires_in": 3598,
+        "ext_expires_in": 3598,
         "access_token": "Sanitized"
       }
     },
@@ -263,7 +263,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "163ms"
+        "X-Processing-Time": "166ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -307,7 +307,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "1139ms"
+        "X-Processing-Time": "1144ms"
       },
       "ResponseBody": {
         "trunks": {
@@ -338,7 +338,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "168ms"
+        "X-Processing-Time": "169ms"
       },
       "ResponseBody": {
         "trunks": {

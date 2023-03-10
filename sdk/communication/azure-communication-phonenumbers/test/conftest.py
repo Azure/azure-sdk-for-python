@@ -47,7 +47,7 @@ def add_sanitizers(test_proxy):
         json_path="phoneNumbers[*].phoneNumber", value="sanitized")
     
     add_general_regex_sanitizer(
-        regex=r"-[0-9a-fA-F]{32}\.[0-9a-zA-Z\.]*(\.com|\.net)", value=".sanitized.com")
+        regex=r"-[0-9a-fA-F]{32}\.[0-9a-zA-Z\.]*(\.com|\.net|\.test)", value=".sanitized.com")
     
     add_general_regex_sanitizer(regex=r"[%2B\d]{10,15}", value="sanitized")
 
