@@ -136,8 +136,6 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
-from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.feature_store_settings import FeatureStoreSettings
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -197,8 +195,6 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
-    "ComputeRuntime",
-    "FeatureStoreSettings",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
