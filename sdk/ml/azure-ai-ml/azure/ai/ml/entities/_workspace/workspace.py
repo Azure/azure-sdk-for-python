@@ -29,7 +29,6 @@ class Workspace(Resource):
         self,
         *,
         name: str,
-        kind: Optional[str] = "default",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -53,8 +52,6 @@ class Workspace(Resource):
 
         :param name: Name of the workspace.
         :type name: str
-        :param kind: Kind of the workspace. Default value is 'default'
-        :type kind: str
         :param description: Description of the workspace.
         :type description: str
         :param tags: Tags of the workspace.
@@ -101,10 +98,10 @@ class Workspace(Resource):
         """
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
+        self._kind = kwargs.pop("kind", "default")
         self._feature_store_settings: Optional[_FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
-        self.kind = kind
         self.display_name = display_name
         self.location = location
         self.resource_group = resource_group
@@ -255,7 +252,7 @@ class Workspace(Resource):
             location=self.location,
             tags=self.tags,
             description=self.description,
-            kind=self.kind,
+            kind=self._kind,
             friendly_name=self.display_name,
             key_vault=self.key_vault,
             application_insights=self.application_insights,
