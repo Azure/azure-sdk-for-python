@@ -97,7 +97,9 @@ def resource_group():
     except KeyError:
         pytest.skip('AZURE_SUBSCRIPTION_ID undefined')
         return
-    resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
+    base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
+    credential_scopes = ["{}.default".format(base_url)]
+    resource_client = ResourceManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     resource_group_name = RES_GROUP_PREFIX + str(uuid.uuid4())
     parameters = {"location": LOCATION}
     expiry = datetime.datetime.utcnow() + datetime.timedelta(days=1)
@@ -122,7 +124,9 @@ def eventhub_namespace(resource_group):
     except KeyError:
         pytest.skip('AZURE_SUBSCRIPTION_ID defined')
         return
-    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
+    base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
+    credential_scopes = ["{}.default".format(base_url)]
+    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     namespace_name = NAMESPACE_PREFIX + str(uuid.uuid4())
     try:
         namespace = resource_client.namespaces.begin_create_or_update(
@@ -147,16 +151,19 @@ def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefi
     except KeyError:
         pytest.skip('AZURE_SUBSCRIPTION_ID defined')
         return
-    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID)
+    base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
+    credential_scopes = ["{}.default".format(base_url)]
+    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
     eventhub_name = EVENTHUB_PREFIX + str(uuid.uuid4())
     eventhub_ns_name, connection_string, key_name, primary_key = eventhub_namespace
+    eventhub_endpoint_suffix = os.environ.get("EVENT_HUB_ENDPOINT_SUFFIX", ".servicebus.windows.net")
     try:
         eventhub = resource_client.event_hubs.create_or_update(
             resource_group.name, eventhub_ns_name, eventhub_name, {"partition_count": PARTITION_COUNT}
         )
         live_eventhub_config = {
             'resource_group': resource_group.name,
-            'hostname': "{}.servicebus.windows.net".format(eventhub_ns_name),
+            'hostname': "{}{}".format(eventhub_ns_name, eventhub_endpoint_suffix),
             'key_name': key_name,
             'access_key': primary_key,
             'namespace': eventhub_ns_name,

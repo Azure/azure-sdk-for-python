@@ -4,14 +4,19 @@
 
 # pylint: disable=too-many-instance-attributes
 
-from typing import Dict, Optional
-
+from os import PathLike
+from pathlib import Path
+from typing import Dict, Optional, Union
 from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
+
+from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
 from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntime
+from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
 from .materialization_store import MaterializationStore
 from ._constants import OFFLINE_STORE_CONNECTION_NAME, DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
@@ -164,3 +169,24 @@ class FeatureStore(Workspace):
             identity=workspace_object.identity,
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
         )
+
+    @classmethod
+    def _load(
+        cls,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs,
+    ) -> "FeatureStore":
+        data = data or {}
+        params_override = params_override or []
+        context = {
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            PARAMS_OVERRIDE_KEY: params_override,
+        }
+        loaded_schema = load_from_dict(FeatureStoreSchema, data, context, **kwargs)
+        return FeatureStore(**loaded_schema)
+
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        return FeatureStoreSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
