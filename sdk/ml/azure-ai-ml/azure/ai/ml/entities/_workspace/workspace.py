@@ -97,8 +97,8 @@ class Workspace(Resource):
         """
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
-        self._kind = kwargs.get("kind", "default")
-        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.get("feature_store_settings", None)
+        self._kind = kwargs.pop("kind", "default")
+        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
         self.display_name = display_name
