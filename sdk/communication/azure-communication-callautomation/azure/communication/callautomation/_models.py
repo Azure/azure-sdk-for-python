@@ -33,6 +33,12 @@ from ._shared.models import (
 )
 
 class ServerCallLocator(object):
+    """
+    The locator used for joining or taking action on a server call.
+
+    :ivar locator_id: The server call id.
+    :vartype locator_id: str
+    """
     def __init__(
         self,
         *,
@@ -52,6 +58,12 @@ class ServerCallLocator(object):
 
 
 class GroupCallLocator(object):
+    """
+    The locator used for joining or taking action on a group call.
+
+    :ivar locator_id: The group call id.
+    :vartype locator_id: str
+    """
     def __init__(
         self,
         *,
