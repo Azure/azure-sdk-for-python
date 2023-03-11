@@ -6,7 +6,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class MaterializationStore:
+class _MaterializationStore:
     def __init__(self, type: str, target: str):  # pylint: disable=redefined-builtin
 
         """MaterializationStore.

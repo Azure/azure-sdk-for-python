@@ -22,7 +22,7 @@ from azure.ai.ml._utils._asset_utils import (
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
+from azure.ai.ml.entities._feature_store_entity.feature_store_entity import _FeatureStoreEntity
 from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -33,6 +33,13 @@ module_logger = ops_logger.module_logger
 
 @experimental
 class FeatureStoreEntityOperations(_ScopeDependentOperations):
+    """FeatureStoreEntityOperations.
+
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -58,7 +65,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         *,
         name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-    ) -> ItemPaged[FeatureStoreEntity]:
+    ) -> ItemPaged[_FeatureStoreEntity]:
         """List the FeatureStoreEntity assets of the workspace.
 
         :param name: Name of a specific FeatureStoreEntity asset, optional.
@@ -67,19 +74,19 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureStoreEntity objects
-        :rtype: ~azure.core.paging.ItemPaged[FeatureStoreEntity]
+        :rtype: ~azure.core.paging.ItemPaged[_FeatureStoreEntity]
         """
         if name:
             return self._operation.list(
                 workspace_name=self._workspace_name,
                 name=name,
-                cls=lambda objs: [FeatureStoreEntity._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: [_FeatureStoreEntity._from_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
         return self._container_operation.list(
             workspace_name=self._workspace_name,
-            cls=lambda objs: [FeatureStoreEntity._from_container_rest_object(obj) for obj in objs],
+            cls=lambda objs: [_FeatureStoreEntity._from_container_rest_object(obj) for obj in objs],
             list_view_type=list_view_type,
             **self._scope_kwargs,
         )
@@ -94,7 +101,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "FeatureStoreEntity.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> FeatureStoreEntity:
+    def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> _FeatureStoreEntity:
         """Get the specified FeatureStoreEntity asset.
 
         :param name: Name of FeatureStoreEntity asset.
@@ -106,7 +113,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureStoreEntity cannot be successfully
             identified and retrieved. Details will be provided in the error message.
         :return: FeatureStoreEntity asset object.
-        :rtype: ~azure.ai.ml.entities.FeatureStoreEntity
+        :rtype: ~azure.ai.ml.entities._FeatureStoreEntity
         """
         try:
             if version and label:
@@ -132,20 +139,20 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
                     error_type=ValidationErrorType.MISSING_FIELD,
                 )
             feature_store_entity_version_resource = self._get(name, version)
-            return FeatureStoreEntity._from_rest_object(feature_store_entity_version_resource)
+            return _FeatureStoreEntity._from_rest_object(feature_store_entity_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
     # @monitor_with_activity(logger, "FeatureStoreEntity.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, feature_store_entity: FeatureStoreEntity) -> LROPoller[FeatureStoreEntity]:
+    def begin_create_or_update(self, feature_store_entity: _FeatureStoreEntity) -> LROPoller[_FeatureStoreEntity]:
         """Create or update FeatureStoreEntity
 
         :param feature_store_entity: FeatureStoreEntity definition.
-        :type feature_store_entity: FeatureStoreEntity
+        :type feature_store_entity: _FeatureStoreEntity
         :return: An instance of LROPoller that returns a FeatureStoreEntity.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStoreEntity]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._FeatureStoreEntity]
         """
-        feature_store_entity_resource = FeatureStoreEntity._to_rest_object(feature_store_entity)
+        feature_store_entity_resource = _FeatureStoreEntity._to_rest_object(feature_store_entity)
 
         return self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
@@ -215,7 +222,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    def _get_latest_version(self, name: str) -> FeatureStoreEntity:
+    def _get_latest_version(self, name: str) -> _FeatureStoreEntity:
         """Returns the latest version of the asset with the given name.
 
         Latest is defined as the most recently created, not the most

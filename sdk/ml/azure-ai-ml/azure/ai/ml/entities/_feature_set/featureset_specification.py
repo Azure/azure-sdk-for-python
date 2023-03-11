@@ -10,7 +10,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class FeaturesetSpecification(RestTranslatableMixin):
+class _FeaturesetSpecification(RestTranslatableMixin):
     def __init__(self, *, path: Optional[str] = None, **kwargs):  # pylint: disable=unused-argument
         """
         :param path: Specifies the spec path.
@@ -22,7 +22,7 @@ class FeaturesetSpecification(RestTranslatableMixin):
         return RestFeaturesetSpecification(path=self.path)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetSpecification) -> "FeaturesetSpecification":
+    def _from_rest_object(cls, obj: RestFeaturesetSpecification) -> "_FeaturesetSpecification":
         if not obj:
             return None
-        return FeaturesetSpecification(path=obj.path)
+        return _FeaturesetSpecification(path=obj.path)

@@ -59,8 +59,10 @@ from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._registry_utils import get_registry_client
-from azure.ai.ml._utils.utils import _is_https_url
+from azure.ai.ml._utils.utils import _is_https_url, is_private_preview_enabled
 from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
+from azure.ai.ml.entities._feature_store_entity.feature_store_entity import _FeatureStoreEntity
 from azure.ai.ml.entities import (
     BatchDeployment,
     BatchEndpoint,
@@ -86,6 +88,9 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    FeatureSetOperations,
+    FeatureStoreEntityOperations,
+    FeatureStoreOperations,
     JobOperations,
     ModelOperations,
     OnlineDeploymentOperations,
@@ -478,6 +483,31 @@ class MLClient:
 
         self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
+        self._featurestores = FeatureStoreOperations(
+            self._operation_scope,
+            self._rp_service_client,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+
+        self._featuresets = FeatureSetOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_02_2023_preview,
+            self._datastores,
+            **ops_kwargs,
+        )
+
+        self._featurestoreentities = FeatureStoreEntityOperations(
+            self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
+        )
+
+        if is_private_preview_enabled():
+            self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
+            self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
+            self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
+
     @classmethod
     def from_config(
         cls,
@@ -602,6 +632,42 @@ class MLClient:
         :rtype: RegistryOperations
         """
         return self._registries
+
+    @property
+    @experimental
+    def _feature_stores(self) -> FeatureStoreOperations:
+        """A collection of feature-store related operations.
+        :return: Featurestore operations
+        :rtype: FeatureStoreOperations
+        """
+        if is_private_preview_enabled():
+            return self._featurestores
+        else:
+            raise Exception("feature store operations not supported")
+
+    @property
+    @experimental
+    def _feature_sets(self) -> FeatureSetOperations:
+        """A collection of feature set related operations.
+        :return: FeatureSet operations
+        :rtype: FeatureSetOperations
+        """
+        if is_private_preview_enabled():
+            return self._featuresets
+        else:
+            raise Exception("feature set operations not supported")
+
+    @property
+    @experimental
+    def _feature_store_entities(self) -> FeatureStoreEntityOperations:
+        """A collection of feature store entity related operations.
+        :return: FeatureStoreEntity operations
+        :rtype: FeatureStoreEntityOperations
+        """
+        if is_private_preview_enabled():
+            return self._featurestoreentities
+        else:
+            raise Exception("feature store entity operations not supported")
 
     @property
     def connections(self) -> WorkspaceConnectionsOperations:

@@ -10,21 +10,21 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._schedule.trigger import RecurrenceTrigger
-from azure.ai.ml.entities._notification.notification import Notification
-from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
+from azure.ai.ml.entities._notification.notification import _Notification
+from azure.ai.ml.entities._feature_set.materialization_compute_resource import _MaterializationComputeResource
 from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class MaterializationSettings(RestTranslatableMixin):
+class _MaterializationSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
         schedule: RecurrenceTrigger,
         offline_enabled: Optional[bool] = None,
         online_enabled: Optional[bool] = None,
-        notification: Optional[Notification] = None,
-        resource: Optional[MaterializationComputeResource] = None,
+        notification: Optional[_Notification] = None,
+        resource: Optional[_MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
         **kwargs  # pylint: disable=unused-argument
     ):
@@ -38,9 +38,9 @@ class MaterializationSettings(RestTranslatableMixin):
         :param online_enabled: Specifies if online store is enabled.
         :type online_enabled: bool
         :param notification: Specifies the notification details.
-        :type notification: ~azure.ai.ml.entities.Notification
+        :type notification: ~azure.ai.ml.entities._Notification
         :param resource: Specifies the compute resource settings.
-        :type resource: ~azure.ai.ml.entities.MaterializationComputeResource
+        :type resource: ~azure.ai.ml.entities._MaterializationComputeResource
         :param spark_configuration: Specifies the spark compute settings.
         :type spark_configuration: dict[str, str]
         """

@@ -137,6 +137,20 @@ from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
 
+from ._assets._artifacts.feature_set import _FeatureSet
+from ._workspace.compute_runtime import _ComputeRuntime
+from ._workspace.feature_store_settings import _FeatureStoreSettings
+from ._feature_store_entity.feature_store_entity import _FeatureStoreEntity
+from ._feature_store_entity.data_column import _DataColumn
+from ._feature_store_entity.data_column_type import _DataColumnType
+from ._feature_set.featureset_specification import _FeaturesetSpecification
+from ._feature_set.materialization_compute_resource import _MaterializationComputeResource
+from ._feature_set.materialization_settings import _MaterializationSettings
+from ._feature_set.materialization_type import _MaterializationType
+from ._feature_store.feature_store import _FeatureStore
+from ._feature_store.materialization_store import _MaterializationStore
+from ._notification.notification import _Notification
+
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
 # from ._component.import_component import ImportComponent
@@ -272,6 +286,19 @@ __all__ = [
     "AutoScaleSettings",
     "AutoPauseSettings",
     "WorkspaceModelReference",
+    "_FeatureSet",
+    "_ComputeRuntime",
+    "_FeatureStoreSettings",
+    "_FeatureStoreEntity",
+    "_DataColumn",
+    "_DataColumnType",
+    "_FeaturesetSpecification",
+    "_MaterializationComputeResource",
+    "_MaterializationSettings",
+    "_MaterializationType",
+    "_FeatureStore",
+    "_MaterializationStore",
+    "_Notification",
     # builders
     "Command",
     "Parallel",
