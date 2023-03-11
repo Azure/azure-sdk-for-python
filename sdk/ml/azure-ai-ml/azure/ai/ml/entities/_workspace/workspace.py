@@ -28,7 +28,6 @@ class Workspace(Resource):
         self,
         *,
         name: str,
-        kind: Optional[str] = "default",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -98,8 +97,8 @@ class Workspace(Resource):
         """
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
-        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.get("feature_store_settings", None)
         self._kind = kwargs.get("kind", None)
+        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.get("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
         self.display_name = display_name
@@ -238,7 +237,7 @@ class Workspace(Resource):
             location=self.location,
             tags=self.tags,
             description=self.description,
-            kind=self.kind,
+            kind=self._kind,
             friendly_name=self.display_name,
             key_vault=self.key_vault,
             application_insights=self.application_insights,
