@@ -1,0 +1,7 @@
+name: test_ws_conn_snowflake
+type: snowflake
+target: jdbc:snowflake://microsoft_partner.east-us-2.azure.snowflakecomputing.com/?db=SNOWFLAKE_SAMPLE_DATA&warehouse=AZUREMLPM_WH
+credentials:
+  type: username_password
+  username: dummy
+  password: dummy
