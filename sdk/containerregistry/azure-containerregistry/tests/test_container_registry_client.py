@@ -16,7 +16,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _compute_digest, _deserialize_manifest, DEFAULT_CHUNK_SIZE
+from azure.containerregistry._helpers import _deserialize_manifest, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -576,8 +576,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
-        # This test is failing
-        # azure.core.exceptions.ServiceResponseError: HTTPSConnectionPool(host='localhost', port=5001): Read timed out. (read timeout=300)
         repo = self.get_resource_name("repo")
         with self.create_registry_client(containerregistry_endpoint) as client:
             # Test blob upload and download in equal size chunks

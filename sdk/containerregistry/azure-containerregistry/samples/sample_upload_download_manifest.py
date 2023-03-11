@@ -17,15 +17,12 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
-
-    This sample assumes your registry has a repository "library/hello-world".
 """
 import os
 import json
 from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
+from azure.containerregistry import ContainerRegistryClient, Annotations, Descriptor, OCIManifest
 from utilities import get_authority, get_audience, get_credential
 
 
