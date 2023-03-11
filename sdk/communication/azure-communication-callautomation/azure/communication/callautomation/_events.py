@@ -28,6 +28,24 @@ from ._shared.models import (
 
 
 class AddParticipantSucceeded(AddParticipantSucceededRest):
+    """Event sent when the participant was successfully added to the call.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Result information of the event. Contains detail information of the outcome.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: participant that was added to the call.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifier
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: AddParticipantSucceededRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -40,6 +58,24 @@ class AddParticipantSucceeded(AddParticipantSucceededRest):
 
 
 class AddParticipantFailed(AddParticipantFailedRest):
+    """Event sent when the participant was not added successfully to the call.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Result information of the event. Contains detail information of the outcome.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: participant that was added to the call.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifier
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: AddParticipantFailedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -52,6 +88,20 @@ class AddParticipantFailed(AddParticipantFailedRest):
 
 
 class CallConnected(CallConnectedRest):
+    """Event sent when the call is established.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: CallConnectedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -62,6 +112,20 @@ class CallConnected(CallConnectedRest):
 
 
 class CallDisconnected(CallDisconnectedRest):
+    """Event sent when the call is terminated.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: CallDisconnectedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -72,6 +136,22 @@ class CallDisconnected(CallDisconnectedRest):
 
 
 class CallTransferAccepted(CallTransferAcceptedRest):
+    """Event sent when transfer of the call was successful.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Result information of the event. Contains detail information of the outcome.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: CallTransferAcceptedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -83,6 +163,22 @@ class CallTransferAccepted(CallTransferAcceptedRest):
 
 
 class CallTransferFailed(CallTransferFailedRest):
+    """Event sent when transfer of the call was not successful.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Result information of the event. Contains detail information of the outcome.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: CallTransferFailedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -94,6 +190,20 @@ class CallTransferFailed(CallTransferFailedRest):
 
 
 class ParticipantsUpdated(ParticipantsUpdatedRest):
+    """Event sent when a participant joins, leaves, muted or unmuted.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :vartype operation_context: str
+    :ivar participants: List of participants in the call.
+    :vartype participants: [~azure.communication.callautomation.models.CallParticipant]
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: ParticipantsUpdatedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -105,6 +215,23 @@ class ParticipantsUpdated(ParticipantsUpdatedRest):
 
 
 class RecordingStateChanged(RecordingStateChangedRest):
+    """Event sent when recording state changes.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar recording_id: recording id to be used for recording actions.
+    :vartype recording_id: str
+    :ivar state: state of the call recording.
+    :vartype state: RecordingState
+    :ivar start_date_time: time the call recording started.
+    :vartype start_date_time: startDateTime
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: RecordingStateChangedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -117,6 +244,22 @@ class RecordingStateChanged(RecordingStateChangedRest):
 
 
 class PlayCompleted(PlayCompletedRest):
+    """Event sent when media play is completed successfully.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Result information of the event. Contains detail information of the outcome.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: PlayCompletedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -128,6 +271,22 @@ class PlayCompleted(PlayCompletedRest):
 
 
 class PlayFailed(PlayFailedRest):
+    """Event sent when media play failed.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Result information of the event. Contains detail information of the outcome.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: PlayFailedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -139,6 +298,20 @@ class PlayFailed(PlayFailedRest):
 
 
 class PlayCanceled(PlayCanceledRest):
+    """Event sent when media play is cancelled.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: PlayCanceledRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -149,6 +322,31 @@ class PlayCanceled(PlayCanceledRest):
 
 
 class RecognizeCompleted(RecognizeCompletedRest):
+    """Event sent when recognize is completed successfully.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Result information of the event. Contains detail information of the outcome.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar recognition_type: Determines the sub-type of the recognize operation.
+     In case of cancel operation the this field is not set and is returned empty. Known values are:
+     "dtmf" and "choices".
+    :vartype recognition_type: str or ~azure.communication.callautomation.models.RecognitionType
+    :ivar collect_tones_result: Defines the result for RecognitionType = Dtmf.
+    :vartype collect_tones_result: ~azure.communication.callautomation.models.CollectTonesResult
+    :ivar choice_result: Defines the result for RecognitionType = Choices.
+    :vartype choice_result: ~azure.communication.callautomation.models.ChoiceResult
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: RecognizeCompletedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -163,6 +361,20 @@ class RecognizeCompleted(RecognizeCompletedRest):
 
 
 class RecognizeFailed(RecognizeFailedRest):
+    """Event sent when recognize action failed.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: RecognizeFailedRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
@@ -173,6 +385,20 @@ class RecognizeFailed(RecognizeFailedRest):
 
 
 class RecognizeCanceled(RecognizeCanceledRest):
+    """Event sent when recognize is cancelled.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also Called Skype-Chain-Id.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+    request to the response event.
+    :vartype operation_context: str
+    :ivar kind: This event kind.
+    :vartype kind: str
+    """
     def __init__(self, parent: RecognizeCanceledRest, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.call_connection_id = parent.call_connection_id
