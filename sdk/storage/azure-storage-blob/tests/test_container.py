@@ -1624,14 +1624,18 @@ class TestStorageContainer(StorageRecordedTestCase):
         v1_props = blob_client.get_blob_properties()
         blob_client.upload_blob(blob_data * 2, overwrite=True)
         v2_props = blob_client.get_blob_properties()
+        blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = blob_client.get_blob_properties()
 
         # Act
         container.delete_blob(v2_props, version_id=v1_props['version_id'])
+        container.delete_blob(v2_props)
 
         # Assert
         with pytest.raises(HttpResponseError):
             deleted = container.get_blob_client(v1_props)
             deleted.get_blob_properties()
+        assert blob_client.get_blob_properties().get("version_id") == v3_props['version_id']
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1676,8 +1680,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         assert response[1].status_code == 202
         assert blob.get_blob_properties().get("version_id") == new_blob_version_id
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy
     def test_delete_blobs_with_properties_versioning(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
@@ -2478,12 +2482,15 @@ class TestStorageContainer(StorageRecordedTestCase):
         v1_props = blob_client.get_blob_properties()
         blob_client.upload_blob(blob_data * 2, overwrite=True)
         v2_props = blob_client.get_blob_properties()
+        blob_client.upload_blob(blob_data * 3, overwrite=True)
 
         # Act
         downloaded = container.download_blob(v2_props, version_id=v1_props['version_id'])
+        downloaded2 = container.download_blob(v2_props)
 
         # Assert
         assert downloaded.readall() == blob_data
+        assert downloaded2.readall() == blob_data * 2
 
     @BlobPreparer()
     @recorded_by_proxy

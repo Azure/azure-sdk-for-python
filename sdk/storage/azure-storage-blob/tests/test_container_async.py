@@ -1612,15 +1612,19 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         v1_props = await blob_client.get_blob_properties()
         await blob_client.upload_blob(blob_data * 2, overwrite=True)
         v2_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = await blob_client.get_blob_properties()
 
         # Act
         await container.delete_blob(v2_props, version_id=v1_props['version_id'])
+        await container.delete_blob(v2_props)
 
 
         # Assert
         with pytest.raises(HttpResponseError):
             deleted = container.get_blob_client(v1_props)
             await deleted.get_blob_properties()
+        assert (await blob_client.get_blob_properties()).get("version_id") == v3_props['version_id']
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1841,8 +1845,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert response[1].status_code == 202
         assert (await blob.get_blob_properties()).get("version_id") == new_blob_version_id
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_delete_blobs_with_properties_versioning(self, **kwargs):
         set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
@@ -2364,12 +2368,15 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         v1_props = await blob_client.get_blob_properties()
         await blob_client.upload_blob(blob_data * 2, overwrite=True)
         v2_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 3, overwrite=True)
 
         # Act
         downloaded = await container.download_blob(v2_props, version_id=v1_props['version_id'])
+        downloaded2 = await container.download_blob(v2_props)
 
         # Assert
         assert (await downloaded.readall()) == blob_data
+        assert (await downloaded2.readall()) == blob_data * 2
 
     @BlobPreparer()
     @recorded_by_proxy_async

@@ -1394,7 +1394,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             try:
                 options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
                     snapshot=blob.get('snapshot'),
-                    version_id=kwargs.pop('version_id', None) or blob.get('version_id'),
+                    version_id=blob.get('version_id'),
                     delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
                     lease=blob.get('lease_id'),
                     if_modified_since=if_modified_since or blob.get('if_modified_since'),
@@ -1591,7 +1591,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 query_parameters, header_parameters = self._generate_set_tiers_subrequest_options(
                     tier=tier,
                     snapshot=blob.get('snapshot'),
-                    version_id=kwargs.pop('version_id', None) or blob.get('version_id'),
+                    version_id=blob.get('version_id'),
                     rehydrate_priority=rehydrate_priority or blob.get('rehydrate_priority'),
                     lease_access_conditions=blob.get('lease_id'),
                     if_tags=if_tags or blob.get('if_tags_match_condition'),
