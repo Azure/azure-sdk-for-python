@@ -669,6 +669,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-resourcemover typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-communication azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-storagepool typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-paloaltonetworks typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-marketplaceordering msrest>=0.7.1
 #override azure-mgmt-resourcemover msrest>=0.7.1
 #override azure-mgmt-marketplaceordering azure-mgmt-core>=1.3.2,<2.0.0
@@ -738,6 +739,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-extendedlocation typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-search msrest>=0.7.1
 #override azure-mgmt-dnsresolver azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-paloaltonetworks azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-billingbenefits typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-databricks msrest>=0.7.1
 #override azure-mgmt-search azure-mgmt-core>=1.3.2,<2.0.0
@@ -750,6 +752,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-hybridkubernetes typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-commerce azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-logz azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-paloaltonetworks msrest>=0.7.1
 #override azure-mgmt-resourceconnector typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-avs msrest>=0.7.1
 #override azure-mgmt-maps typing-extensions>=4.3.0; python_version<'3.8.0'
