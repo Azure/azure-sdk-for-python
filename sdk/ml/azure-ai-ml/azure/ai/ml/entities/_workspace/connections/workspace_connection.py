@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ConnectionAuthType,
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
@@ -22,6 +21,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
 )
 from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    ConnectionAuthType,
     AccessKeyAuthTypeWorkspaceConnectionProperties,
 )
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
