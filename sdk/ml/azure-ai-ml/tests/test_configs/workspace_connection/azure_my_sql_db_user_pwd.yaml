@@ -1,5 +1,5 @@
-name: test_ws_conn_snowflake
-type: snowflake
+name: test_ws_conn_azure_my_sql_db
+type: azure_my_sql_db
 target: dummy
 credentials:
   type: username_password
