@@ -52,8 +52,6 @@ class Workspace(Resource):
 
         :param name: Name of the workspace.
         :type name: str
-        :param kind: Kind of the workspace. Default value is 'default'
-        :type kind: str
         :param description: Description of the workspace.
         :type description: str
         :param tags: Tags of the workspace.
@@ -100,9 +98,10 @@ class Workspace(Resource):
         """
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
+        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.get("feature_store_settings", None)
+        self._kind = kwargs.get("kind", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
-        self.kind = kind
         self.display_name = display_name
         self.location = location
         self.resource_group = resource_group
@@ -116,7 +115,6 @@ class Workspace(Resource):
         self.public_network_access = public_network_access
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
-        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.get("feature_store_settings", None)
         self.managed_network = managed_network
 
     @property
