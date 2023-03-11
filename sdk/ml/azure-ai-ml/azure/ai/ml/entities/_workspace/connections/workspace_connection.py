@@ -9,7 +9,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     ConnectionAuthType,
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
@@ -17,10 +17,12 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     SASAuthTypeWorkspaceConnectionProperties,
     ServicePrincipalAuthTypeWorkspaceConnectionProperties,
     UsernamePasswordAuthTypeWorkspaceConnectionProperties,
-    AccessKeyAuthTypeWorkspaceConnectionProperties,
 )
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
+)
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    AccessKeyAuthTypeWorkspaceConnectionProperties,
 )
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._utils._experimental import experimental
@@ -55,8 +57,10 @@ class WorkspaceConnection(Resource):
         ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration
         ]
     :param type: The category of external resource for this connection.
-    :type type: The type of workspace connection, possible values are:
-        ["git", "python_feed", "container_registry", "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db", "azure_postgres_db"]
+    :type type: The type of workspace connection, possible values are: [
+        "git", "python_feed", "container_registry", "feature_store", "s3", "snowflake",
+         "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db", "azure_postgres_db"
+          ]
     """
 
     def __init__(
@@ -207,7 +211,7 @@ class WorkspaceConnection(Resource):
             creation_context=SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             type=camel_to_snake(properties.category),
             credentials=credentials,
-            metadata=properties.metadata if hasattr(properties, 'metadata') else None,
+            metadata=properties.metadata if hasattr(properties, "metadata") else None,
         )
 
         return workspace_connection

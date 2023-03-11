@@ -274,7 +274,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     ) -> None:
         wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
 
-        wps_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/snowflake_user_pwd.yaml")
+        wps_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/snowflake_user_pwd.yaml"
+        )
 
         wps_connection.name = wps_connection_name
 

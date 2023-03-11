@@ -49,7 +49,9 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfigura
 from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedIdentity as RestJobManagedIdentity
 from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
 from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
-from azure.ai.ml._restclient.v2022_12_01_preview.models import WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
+)
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
@@ -702,7 +704,9 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
         self.secret_access_key = secret_access_key
 
     def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionAccessKey:
-        return RestWorkspaceConnectionAccessKey(access_key_id=self.access_key_id, secret_access_key=self.secret_access_key)
+        return RestWorkspaceConnectionAccessKey(
+            access_key_id=self.access_key_id, secret_access_key=self.secret_access_key
+        )
 
     @classmethod
     def _from_workspace_connection_rest_object(
