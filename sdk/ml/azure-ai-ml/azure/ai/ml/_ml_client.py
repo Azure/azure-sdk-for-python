@@ -61,8 +61,6 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._utils.utils import _is_https_url, is_private_preview_enabled
 from azure.ai.ml.constants._common import AzureMLResourceType
-from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
-from azure.ai.ml.entities._feature_store_entity.feature_store_entity import _FeatureStoreEntity
 from azure.ai.ml.entities import (
     BatchDeployment,
     BatchEndpoint,
