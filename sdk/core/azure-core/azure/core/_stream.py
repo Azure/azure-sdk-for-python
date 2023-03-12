@@ -8,13 +8,10 @@ from typing_extensions import Protocol, runtime_checkable, Self
 
 
 @runtime_checkable
-class Stream(Protocol):
+class Streamable(Protocol):
     """Protocol for methods to provide streamed responses."""
 
     def close(self) -> None:
-        pass
-
-    def __len__(self) -> int:
         pass
 
     def __iter__(self) -> Iterator[bytes]:
@@ -28,13 +25,10 @@ class Stream(Protocol):
 
 
 @runtime_checkable
-class AsyncStream(Protocol):
+class AsyncStreamable(Protocol):
     """Protocol for methods to provide async streamed responses."""
 
     async def close(self) -> None:
-        pass
-
-    def __len__(self) -> int:
         pass
 
     async def __aiter__(self) -> AsyncIterator[bytes]:
