@@ -143,7 +143,7 @@ from ._workspace.feature_store_settings import _FeatureStoreSettings
 from ._feature_store_entity.feature_store_entity import _FeatureStoreEntity
 from ._feature_store_entity.data_column import _DataColumn
 from ._feature_store_entity.data_column_type import _DataColumnType
-from ._feature_set.featureset_specification import _FeaturesetSpecification
+from ._feature_set.feature_set_specification import _FeatureSetSpecification
 from ._feature_set.materialization_compute_resource import _MaterializationComputeResource
 from ._feature_set.materialization_settings import _MaterializationSettings
 from ._feature_set.materialization_type import _MaterializationType
@@ -292,7 +292,7 @@ __all__ = [
     "_FeatureStoreEntity",
     "_DataColumn",
     "_DataColumnType",
-    "_FeaturesetSpecification",
+    "_FeatureSetSpecification",
     "_MaterializationComputeResource",
     "_MaterializationSettings",
     "_MaterializationType",

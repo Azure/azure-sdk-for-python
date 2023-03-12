@@ -41,8 +41,8 @@ module_logger = ops_logger.module_logger
 
 
 @experimental
-class FeatureStoreOperations(WorkspaceOperationsBase):
-    """FeatureStoreOperations.
+class _FeatureStoreOperations(WorkspaceOperationsBase):
+    """_FeatureStoreOperations.
 
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and

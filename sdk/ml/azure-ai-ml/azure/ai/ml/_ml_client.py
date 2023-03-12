@@ -86,9 +86,6 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
-    FeatureSetOperations,
-    FeatureStoreEntityOperations,
-    FeatureStoreOperations,
     JobOperations,
     ModelOperations,
     OnlineDeploymentOperations,
@@ -98,6 +95,9 @@ from azure.ai.ml.operations import (
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
     WorkspaceOutboundRuleOperations,
+    _FeatureSetOperations,
+    _FeatureStoreEntityOperations,
+    _FeatureStoreOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -481,7 +481,7 @@ class MLClient:
 
         self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
-        self._featurestores = FeatureStoreOperations(
+        self._featurestores = _FeatureStoreOperations(
             self._operation_scope,
             self._rp_service_client,
             self._operation_container,
@@ -489,7 +489,7 @@ class MLClient:
             **app_insights_handler_kwargs,
         )
 
-        self._featuresets = FeatureSetOperations(
+        self._featuresets = _FeatureSetOperations(
             self._operation_scope,
             self._operation_config,
             self._service_client_02_2023_preview,
@@ -497,7 +497,7 @@ class MLClient:
             **ops_kwargs,
         )
 
-        self._featurestoreentities = FeatureStoreEntityOperations(
+        self._featurestoreentities = _FeatureStoreEntityOperations(
             self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
         )
 
@@ -633,39 +633,36 @@ class MLClient:
 
     @property
     @experimental
-    def _feature_stores(self) -> FeatureStoreOperations:
+    def _feature_stores(self) -> _FeatureStoreOperations:
         """A collection of feature-store related operations.
         :return: Featurestore operations
-        :rtype: FeatureStoreOperations
+        :rtype: _FeatureStoreOperations
         """
         if is_private_preview_enabled():
             return self._featurestores
-        else:
-            raise Exception("feature store operations not supported")
+        raise Exception("feature store operations not supported")
 
     @property
     @experimental
-    def _feature_sets(self) -> FeatureSetOperations:
+    def _feature_sets(self) -> _FeatureSetOperations:
         """A collection of feature set related operations.
         :return: FeatureSet operations
-        :rtype: FeatureSetOperations
+        :rtype: _FeatureSetOperations
         """
         if is_private_preview_enabled():
             return self._featuresets
-        else:
-            raise Exception("feature set operations not supported")
+        raise Exception("feature set operations not supported")
 
     @property
     @experimental
-    def _feature_store_entities(self) -> FeatureStoreEntityOperations:
+    def _feature_store_entities(self) -> _FeatureStoreEntityOperations:
         """A collection of feature store entity related operations.
         :return: FeatureStoreEntity operations
-        :rtype: FeatureStoreEntityOperations
+        :rtype: _FeatureStoreEntityOperations
         """
         if is_private_preview_enabled():
             return self._featurestoreentities
-        else:
-            raise Exception("feature store entity operations not supported")
+        raise Exception("feature store entity operations not supported")
 
     @property
     def connections(self) -> WorkspaceConnectionsOperations:

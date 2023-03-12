@@ -38,7 +38,7 @@ class _FeatureStoreEntity(Asset):
         properties: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
-        """FeatureStoreEntity
+        """_FeatureStoreEntity
 
         :param name: Name of the resource.
         :type name: str
@@ -83,7 +83,7 @@ class _FeatureStoreEntity(Asset):
         featurestoreEntity = _FeatureStoreEntity(
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
-            index_columns=[DataColumn._from_rest_object(column) for column in rest_object_details.index_columns],
+            index_columns=[_DataColumn._from_rest_object(column) for column in rest_object_details.index_columns],
             description=rest_object_details.description,
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,

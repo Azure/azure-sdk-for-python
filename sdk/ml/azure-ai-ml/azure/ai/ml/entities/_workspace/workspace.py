@@ -117,7 +117,6 @@ class Workspace(Resource):
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
 
-
     @property
     def discovery_url(self) -> str:
         """Backend service base URLs for the workspace.

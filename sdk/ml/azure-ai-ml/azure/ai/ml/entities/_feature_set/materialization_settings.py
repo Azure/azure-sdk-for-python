@@ -29,7 +29,7 @@ class _MaterializationSettings(RestTranslatableMixin):
         **kwargs  # pylint: disable=unused-argument
     ):
 
-        """MaterializationSettings.
+        """_MaterializationSettings.
 
         :param schedule: Specifies the schedule details.
         :type schedule: ~azure.ai.ml.entities.RecurrenceTrigger
@@ -74,13 +74,15 @@ class _MaterializationSettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMaterializationSettings) -> "MaterializationSettings":
+    def _from_rest_object(cls, obj: RestMaterializationSettings) -> "_MaterializationSettings":
         if not obj:
             return None
-        return MaterializationSettings(
+        return _MaterializationSettings(
             schedule=RecurrenceTrigger._from_rest_object(obj.schedule),  # pylint: disable=protected-access
-            notification=Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
-            resource=MaterializationComputeResource._from_rest_object(obj.resource),  # pylint: disable=protected-access
+            notification=_Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
+            resource=_MaterializationComputeResource._from_rest_object(  # pylint: disable=protected-access
+                obj.resource
+            ),
             spark_configuration=obj.spark_configuration,
             offline_enabled=obj.store_type == MaterializationStoreType.OFFLINE,
             online_enabled=obj.store_type == MaterializationStoreType.ONLINE,

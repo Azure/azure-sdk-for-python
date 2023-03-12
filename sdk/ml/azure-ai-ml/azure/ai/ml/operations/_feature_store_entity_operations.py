@@ -32,8 +32,8 @@ module_logger = ops_logger.module_logger
 
 
 @experimental
-class FeatureStoreEntityOperations(_ScopeDependentOperations):
-    """FeatureStoreEntityOperations.
+class _FeatureStoreEntityOperations(_ScopeDependentOperations):
+    """_FeatureStoreEntityOperations.
 
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and
@@ -48,7 +48,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
 
-        super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
+        super(_FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.featurestore_entity_versions
         self._container_operation = service_client.featurestore_entity_containers

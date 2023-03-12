@@ -25,7 +25,7 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.entities._assets import Artifact
-from azure.ai.ml.entities._feature_set.featureset_specification import _FeaturesetSpecification
+from azure.ai.ml.entities._feature_set.feature_set_specification import _FeatureSetSpecification
 from azure.ai.ml.entities._feature_set.materialization_settings import _MaterializationSettings
 
 from .artifact import ArtifactStorageInfo
@@ -39,7 +39,7 @@ class _FeatureSet(Artifact):
         name: str,
         version: str,
         entities: List[str],
-        specification: _FeaturesetSpecification,
+        specification: _FeatureSetSpecification,
         stage: Optional[str] = None,
         description: Optional[str] = None,
         materialization_settings: Optional[_MaterializationSettings] = None,
@@ -56,7 +56,7 @@ class _FeatureSet(Artifact):
         :param entities: Specifies list of entities.
         :type entities: list[str]
         :param specification: Specifies the feature spec details.
-        :type specification: ~azure.ai.ml.entities._FeaturesetSpecification
+        :type specification: ~azure.ai.ml.entities._FeatureSetSpecification
         :param description: Description of the resource.
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
@@ -114,7 +114,7 @@ class _FeatureSet(Artifact):
             materialization_settings=_MaterializationSettings._from_rest_object(
                 featureset_rest_object_details.materialization_settings
             ),
-            specification=_FeaturesetSpecification._from_rest_object(featureset_rest_object_details.specification),
+            specification=_FeatureSetSpecification._from_rest_object(featureset_rest_object_details.specification),
             stage=featureset_rest_object_details.stage,
         )
         return featureset
@@ -129,7 +129,7 @@ class _FeatureSet(Artifact):
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,
             entities=[],
-            specification=_FeaturesetSpecification(),
+            specification=_FeatureSetSpecification(),
             version="",
         )
         featureset.latest_version = rest_object_details.latest_version
