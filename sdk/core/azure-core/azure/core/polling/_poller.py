@@ -158,8 +158,12 @@ class LROPoller(Generic[PollingReturnType]):
             self._thread.daemon = True
 
     def _is_alive(self) -> bool:
-        """Check that the polling thread is active, and if not, start it."""
-        if self._thread is None:
+        """Check that the polling thread is active, and if not, start it.
+
+        :returns: Will return False in the case the no polling has been configured, or the
+         polling has already completed and the thread closed. Otherwise returns True.
+        """
+        if self._thread is None or self._done is None:  # Check both _thread and _done here to make mypy happy
             # No polling
             return False
         # Thread.is_alive() will be False in both the case that the background poller hasn't been
@@ -171,7 +175,7 @@ class LROPoller(Generic[PollingReturnType]):
         except RuntimeError:
             # Thread has already been started, so if it's no longer alive, polling has already finished.
             return self._thread.is_alive()
-        
+
     def _start(self):
         """Start the long running operation.
         On completion, runs any callbacks.
@@ -255,10 +259,10 @@ class LROPoller(Generic[PollingReturnType]):
          operation to complete (in seconds).
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
-        if not self._is_alive():
-            return
-        self._thread.join(timeout=timeout)
+        if self._is_alive():
+            self._thread.join(timeout=timeout)
         try:
+            # This will be None if poller is configured for NoPolling.
             # Let's handle possible None in forgiveness here
             # https://github.com/python/mypy/issues/8165
             raise self._exception  # type: ignore
@@ -283,8 +287,8 @@ class LROPoller(Generic[PollingReturnType]):
         # Still use "_done" and not "done", since CBs are executed inside the thread.
         if not self._is_alive() or self._done.is_set():
             func(self._polling_method)
-        # Let's add them still, for consistency (if you wish to access to it for some reasons)
-        self._callbacks.append(func)
+        else:
+            self._callbacks.append(func)
 
     def remove_done_callback(self, func: Callable) -> None:
         """Remove a callback from the long running operation.
