@@ -12,20 +12,20 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml._utils._experimental import experimental
 
-from .materialization_type import MaterializationType
+from .materialization_type import _MaterializationType
 
-FeaturestoreJobTypeMap: Dict[str, MaterializationType] = {
-    "BackfillMaterialization": MaterializationType.BackfillMaterialization,
-    "RecurrentMaterialization": MaterializationType.RecurrentMaterialization,
+FeaturestoreJobTypeMap: Dict[str, _MaterializationType] = {
+    "BackfillMaterialization": _MaterializationType.BackfillMaterialization,
+    "RecurrentMaterialization": _MaterializationType.RecurrentMaterialization,
 }
 
 
 @experimental
-class FeatureSetMaterializationResponse(RestTranslatableMixin):
+class _FeatureSetMaterializationResponse(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        type: Union[MaterializationType, str],  # pylint: disable=redefined-builtin
+        type: Union[_MaterializationType, str],  # pylint: disable=redefined-builtin
         feature_window_start_time: Optional[Union[str, datetime]],
         feature_window_end_time: Optional[Union[str, datetime]],
         name: Optional[str],
@@ -47,10 +47,10 @@ class FeatureSetMaterializationResponse(RestTranslatableMixin):
         self.tags = tags
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetJob) -> "FeatureSetMaterializationResponse":
+    def _from_rest_object(cls, obj: RestFeaturesetJob) -> "_FeatureSetMaterializationResponse":
         if not obj:
             return None
-        return FeatureSetMaterializationResponse(
+        return _FeatureSetMaterializationResponse(
             type=FeaturestoreJobTypeMap.get(obj.type, obj.type),
             feature_window_start_time=obj.feature_window.feature_window_start,
             feature_window_end_time=obj.feature_window.feature_window_end,

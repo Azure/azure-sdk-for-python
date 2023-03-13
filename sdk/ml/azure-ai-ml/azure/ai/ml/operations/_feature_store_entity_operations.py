@@ -160,7 +160,7 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
             name=feature_store_entity.name,
             version=feature_store_entity.version,
             body=feature_store_entity_resource,
-            cls=lambda response, deserialized, headers: FeatureStoreEntity._from_rest_object(deserialized),
+            cls=lambda response, deserialized, headers: _FeatureStoreEntity._from_rest_object(deserialized),
         )
 
     # @monitor_with_activity(logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)

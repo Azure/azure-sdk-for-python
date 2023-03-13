@@ -12,9 +12,11 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._feature_store_entity.data_column_type import _DataColumnType
+from azure.ai.ml._utils._experimental import experimental
 
 
-class Feature(RestTranslatableMixin):
+@experimental
+class _Feature(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -30,8 +32,8 @@ class Feature(RestTranslatableMixin):
         self.tags = tags
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeature) -> "Feature":
-        return Feature(
+    def _from_rest_object(cls, obj: RestFeature) -> "_Feature":
+        return _Feature(
             name=obj.feature_name,
             data_type=obj.data_type,
             description=obj.description,

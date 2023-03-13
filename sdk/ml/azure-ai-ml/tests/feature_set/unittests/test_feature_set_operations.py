@@ -15,7 +15,8 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._feature_set.feature_set_materialization_response import FeatureSetMaterializationResponse
+from azure.ai.ml.entities._feature_set.feature_set_materialization_response import _FeatureSetMaterializationResponse
+from azure.ai.ml.entities._feature_set.feature import _Feature
 from azure.ai.ml.operations import _FeatureSetOperations, DatastoreOperations
 from azure.ai.ml.entities import _FeatureSet, _FeatureSetSpecification
 from azure.ai.ml.operations import _FeatureSetOperations, DatastoreOperations
@@ -64,7 +65,7 @@ def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
 @patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
 @patch.object(_FeatureSet, "_from_rest_object", new=Mock())
 @patch.object(_FeatureSet, "_from_container_rest_object", new=Mock())
-@patch.object(FeatureSetMaterializationResponse, "_from_rest_object", new=Mock())
+@patch.object(_FeatureSetMaterializationResponse, "_from_rest_object", new=Mock())
 @patch.object(_Feature, "_from_rest_object", new=Mock())
 @pytest.mark.data_experiences_test
 class TestFeatureSetOperations:

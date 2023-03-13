@@ -37,8 +37,8 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets import _FeatureSet
 from azure.ai.ml.entities._feature_set.featureset_spec_metadata import FeaturesetSpecMetadata
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import _MaterializationComputeResource
-from azure.ai.ml.entities._feature_set.feature_set_materialization_response import FeatureSetMaterializationResponse
-from azure.ai.ml.entities._feature_set.feature import Feature
+from azure.ai.ml.entities._feature_set.feature_set_materialization_response import _FeatureSetMaterializationResponse
+from azure.ai.ml.entities._feature_set.feature import _Feature
 from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -205,7 +205,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         compute_resource: Optional[_MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
-    ) -> LROPoller[FeatureSetMaterializationResponse]:
+    ) -> LROPoller[_FeatureSetMaterializationResponse]:
         """Backfill.
 
         :param name: Feature set name. This is case-sensitive.
@@ -226,7 +226,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         :type compute_resource: ~azure.ai.ml.entities.MaterializationComputeResource
         :param spark_configuration: Specifies the spark compute settings.
         :type spark_configuration: dict[str, str]
-        :return: An instance of LROPoller that returns FeatureSetMaterializationResponse
+        :return: An instance of LROPoller that returns _FeatureSetMaterializationResponse
         """
 
         request_body: FeaturesetVersionBackfillRequest = FeaturesetVersionBackfillRequest(
@@ -245,7 +245,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             body=request_body,
-            cls=lambda response, deserialized, headers: FeatureSetMaterializationResponse._from_rest_object(
+            cls=lambda response, deserialized, headers: _FeatureSetMaterializationResponse._from_rest_object(
                 deserialized
             ),
         )
@@ -260,7 +260,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         feature_window_end_time: Optional[str] = None,
         filters: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
-    ) -> ItemPaged[FeatureSetMaterializationResponse]:
+    ) -> ItemPaged[_FeatureSetMaterializationResponse]:
         """List Materialization operation.
 
         :param name: Feature set name.
@@ -273,8 +273,8 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         :type feature_window_end_time: datetime
         :param filters: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
         :type filters: str
-        :return: An iterator like instance of FeatureSetMaterializationResponse objects
-        :rtype: ~azure.core.paging.ItemPaged[FeatureSetMaterializationResponse]
+        :return: An iterator like instance of _FeatureSetMaterializationResponse objects
+        :rtype: ~azure.core.paging.ItemPaged[_FeatureSetMaterializationResponse]
         """
 
         materialization_jobs = self._operation.list_materialization_jobs(
@@ -285,7 +285,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
             filters=filters,
             feature_window_start=feature_window_start_time,
             feature_window_end=feature_window_end_time,
-            cls=lambda objs: [FeatureSetMaterializationResponse._from_rest_object(obj) for obj in objs],
+            cls=lambda objs: [_FeatureSetMaterializationResponse._from_rest_object(obj) for obj in objs],
         )
         return materialization_jobs
 
@@ -296,7 +296,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         feature_set_name,
         version,
         tags: Optional[str] = None,
-    ) -> ItemPaged[Feature]:
+    ) -> ItemPaged[_Feature]:
         """List features
 
         :param feature_set_name: Feature set name.
@@ -306,7 +306,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         :param tags: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
         :type tags: str
         :return: An iterator like instance of Feature objects
-        :rtype: ~azure.core.paging.ItemPaged[Feature]
+        :rtype: ~azure.core.paging.ItemPaged[_Feature]
         """
         features = self._operation.list_features(
             resource_group_name=self._resource_group_name,
@@ -314,12 +314,12 @@ class _FeatureSetOperations(_ScopeDependentOperations):
             name=feature_set_name,
             version=version,
             tags=tags,
-            cls=lambda objs: [Feature._from_rest_object(obj) for obj in objs],
+            cls=lambda objs: [_Feature._from_rest_object(obj) for obj in objs],
         )
         return features
 
     # @monitor_with_activity(logger, "FeatureSet.GetFeature", ActivityType.INTERNALCALL)
-    def get_feature(self, *, feature_set_name, version, feature_name) -> "Feature":
+    def get_feature(self, *, feature_set_name, version, feature_name) -> "_Feature":
         """Get Feature
 
         :param feature_set_name: Feature set name.
@@ -331,7 +331,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         :param tags: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
         :type tags: str
         :return: Feature object
-        :rtype: ~azure.ai.ml.entities.Feature
+        :rtype: ~azure.ai.ml.entities._Feature
         """
         request_body = GetFeatureRequest(feature_name=feature_name)
         feature = self._operation.get_feature(
@@ -342,7 +342,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
             body=request_body,
         )
 
-        return Feature._from_rest_object(feature)
+        return _Feature._from_rest_object(feature)
 
     # @monitor_with_activity(logger, "FeatureSet.Archive", ActivityType.PUBLICAPI)
     def archive(
