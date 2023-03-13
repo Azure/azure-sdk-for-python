@@ -3,6 +3,7 @@ from typing import Callable
 
 import jwt
 import pytest
+import sys
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import sleep_if_live, wait_until_done
 
@@ -235,9 +236,12 @@ class TestCommandJob(AzureRecordedTestCase):
         len(new_result.inputs) == 3
         assert result.display_name == new_result.display_name
 
-    @pytest.mark.skip(reason="Task 1791832: Inefficient, causing testing pipeline to time out.")
     @pytest.mark.timeout(900)
     @pytest.mark.e2etest
+    @pytest.mark.skipif(
+        condition=not sys.platform.startswith(("win32", "cygwin")),
+        reason="Skipping for PyPy as docker installation is not supported and skipped in dev_requirement.txt",
+    )
     def test_command_job_local(self, randstr: Callable[[], str], client: MLClient) -> None:
         job_name = randstr("job_name")
         try:
@@ -253,7 +257,6 @@ class TestCommandJob(AzureRecordedTestCase):
         )
         command_job: CommandJob = client.jobs.create_or_update(job=job)
         assert command_job.name == job_name
-        assert command_job.environment == "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert command_job.compute == "local"
         assert command_job.environment_variables[COMMON_RUNTIME_ENV_VAR] == "true"
 

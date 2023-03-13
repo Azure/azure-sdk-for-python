@@ -1,7 +1,3 @@
-## IMPORTANT: this file and accompanying assets are the source for snippets in https://docs.microsoft.com/azure/machine-learning!
-## Please reach out to the Azure ML docs & samples team before editing for the first time.
-
-# <component>
 name: taxi_feature_engineering
 display_name: TaxiFeatureEngineering
 version: 1
@@ -13,9 +9,8 @@ outputs:
   transformed_data:
     type: uri_folder
 code: ./transform_src
-environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cuda11-gpu:3
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
 command: >-
   python transform.py
   --clean_data ${{inputs.clean_data}}
   --transformed_data ${{outputs.transformed_data}}
-# </component>

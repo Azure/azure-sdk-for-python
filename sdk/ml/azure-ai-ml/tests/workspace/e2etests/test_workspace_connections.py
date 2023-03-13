@@ -7,7 +7,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_workspace_connection
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection
 
@@ -263,6 +263,94 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             client.connections.get(name=wps_connection_name)
 
         connection_list = client.connections.list(connection_type=ConnectionCategory.FEATURE_STORE)
+
+        for conn in connection_list:
+            print(conn)
+
+    def test_workspace_connections_create_update_and_delete_snowflake_user_pwd(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+    ) -> None:
+        wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
+
+        wps_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/snowflake_user_pwd.yaml"
+        )
+
+        wps_connection.name = wps_connection_name
+
+        wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
+
+        assert wps_connection.name == wps_connection_name
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert wps_connection.type == camel_to_snake(ConnectionCategory.SNOWFLAKE)
+        assert wps_connection.metadata is None
+
+        wps_connection.credentials.username = "dummy"
+        wps_connection.credentials.password = "dummy"
+        wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
+
+        assert wps_connection.name == wps_connection_name
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert wps_connection.type == camel_to_snake(ConnectionCategory.SNOWFLAKE)
+
+        wps_connection = client.connections.get(name=wps_connection_name)
+        assert wps_connection.name == wps_connection_name
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert wps_connection.type == camel_to_snake(ConnectionCategory.SNOWFLAKE)
+        assert wps_connection.metadata is None
+
+        client.connections.delete(name=wps_connection_name)
+
+        with pytest.raises(Exception):
+            client.connections.get(name=wps_connection_name)
+
+        connection_list = client.connections.list(connection_type=camel_to_snake(ConnectionCategory.SNOWFLAKE))
+
+        for conn in connection_list:
+            print(conn)
+
+    def test_workspace_connections_create_update_and_delete_s3_access_key(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+    ) -> None:
+        wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
+
+        wps_connection = load_workspace_connection(
+            source="./tests/test_configs/workspace_connection/s3_access_key.yaml"
+        )
+
+        wps_connection.name = wps_connection_name
+
+        wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
+
+        assert wps_connection.name == wps_connection_name
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.ACCESS_KEY)
+        assert wps_connection.type == camel_to_snake(ConnectionCategory.S3)
+        assert wps_connection.metadata is None
+
+        wps_connection.credentials.access_key_id = "dummy"
+        wps_connection.credentials.secret_access_key = "dummy"
+        wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
+
+        assert wps_connection.name == wps_connection_name
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.ACCESS_KEY)
+        assert wps_connection.type == camel_to_snake(ConnectionCategory.S3)
+
+        wps_connection = client.connections.get(name=wps_connection_name)
+        assert wps_connection.name == wps_connection_name
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.ACCESS_KEY)
+        assert wps_connection.type == camel_to_snake(ConnectionCategory.S3)
+        assert wps_connection.metadata is None
+
+        client.connections.delete(name=wps_connection_name)
+
+        with pytest.raises(Exception):
+            client.connections.get(name=wps_connection_name)
+
+        connection_list = client.connections.list(connection_type=camel_to_snake(ConnectionCategory.S3))
 
         for conn in connection_list:
             print(conn)
