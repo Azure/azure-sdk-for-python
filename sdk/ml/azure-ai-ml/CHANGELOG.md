@@ -25,9 +25,11 @@
 
 - Added dependency on `azure-mgmt-resource`
 - Added dependency on `azure-mgmt-resourcegraph`
+- Added dependency on `opencensus-ext-azure<2.0.0`
 - Update job types to use MFE Dec preview rest objects.
 - Added classifiers for Python version 3.11.
 - Added warning for reserved keywords in IO names in pipeline job nodes.
+- Added telemetry logging for SDK Jupyter Notebook scenarios with opt-out option (see README.md)
 
 ## 1.4.0 (2023-02-07)
 
