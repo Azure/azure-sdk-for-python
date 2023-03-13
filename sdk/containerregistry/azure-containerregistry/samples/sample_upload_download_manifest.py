@@ -70,14 +70,14 @@ class UploadDownloadManifest(object):
             download_manifest_result = client.download_manifest(repository_name, digest)
             downloaded_manifest = download_manifest_result.manifest
             download_manifest_stream = download_manifest_result.data
-            print(download_manifest_stream.read())
+            print(b"".join(download_manifest_stream))
             # Download the layers
             for layer in downloaded_manifest.layers:
-                downloaded_layer = client.download_blob(repository_name, layer.digest)
-                print(downloaded_layer.read())
+                with client.download_blob(repository_name, layer.digest) as layer_stream:
+                    print(b"".join(layer_stream))
             # Download the config
-            downloaded_config = client.download_blob(repository_name, downloaded_manifest.config.digest)
-            print(downloaded_config.read())
+            with client.download_blob(repository_name, downloaded_manifest.config.digest) as config_stream:
+                print(b"".join(config_stream))
 
             # Delete the layers
             for layer in downloaded_manifest.layers:
