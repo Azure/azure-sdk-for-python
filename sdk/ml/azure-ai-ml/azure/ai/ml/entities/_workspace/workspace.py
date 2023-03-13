@@ -19,6 +19,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .customer_managed_key import CustomerManagedKey
+from .feature_store_settings import FeatureStoreSettings
 from .networking import ManagedNetwork
 
 
@@ -27,6 +28,7 @@ class Workspace(Resource):
         self,
         *,
         name: str,
+        kind: Optional[str] = "default",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -50,6 +52,8 @@ class Workspace(Resource):
 
         :param name: Name of the workspace.
         :type name: str
+        :param kind: Kind of the workspace. Default value is 'default'
+        :type kind: str
         :param description: Description of the workspace.
         :type description: str
         :param tags: Tags of the workspace.
@@ -98,6 +102,7 @@ class Workspace(Resource):
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
+        self.kind = kind
         self.display_name = display_name
         self.location = location
         self.resource_group = resource_group
@@ -111,6 +116,7 @@ class Workspace(Resource):
         self.public_network_access = public_network_access
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
+        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.get("feature_store_settings", None)
         self.managed_network = managed_network
 
     @property
@@ -169,7 +175,6 @@ class Workspace(Resource):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> "Workspace":
-
         if not rest_obj:
             return None
         customer_managed_key = (
@@ -206,6 +211,7 @@ class Workspace(Resource):
             name=rest_obj.name,
             id=rest_obj.id,
             description=rest_obj.description,
+            kind=rest_obj.kind.lower() if rest_obj.kind else None,
             tags=rest_obj.tags,
             location=rest_obj.location,
             resource_group=group,
@@ -226,6 +232,7 @@ class Workspace(Resource):
         )
 
     def _to_rest_object(self) -> RestWorkspace:
+
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
             if self.identity
@@ -233,6 +240,7 @@ class Workspace(Resource):
             location=self.location,
             tags=self.tags,
             description=self.description,
+            kind=self.kind,
             friendly_name=self.display_name,
             key_vault=self.key_vault,
             application_insights=self.application_insights,

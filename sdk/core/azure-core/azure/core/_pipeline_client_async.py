@@ -182,14 +182,8 @@ class AsyncPipelineClient(
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(    # pylint: disable=no-self-use
-        self,
-        config: Configuration,
-        *,
-        policies=None,
-        per_call_policies=None,
-        per_retry_policies=None,
-        **kwargs
+    def _build_pipeline(  # pylint: disable=no-self-use
+        self, config: Configuration, *, policies=None, per_call_policies=None, per_retry_policies=None, **kwargs
     ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         transport = kwargs.get("transport")
         per_call_policies = per_call_policies or []
@@ -259,13 +253,9 @@ class AsyncPipelineClient(
 
             transport = AioHttpTransport(**kwargs)
 
-        return AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType](
-            transport, policies
-        )
+        return AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType](transport, policies)
 
-    async def _make_pipeline_call(
-        self, request: HTTPRequestType, **kwargs
-    ) -> AsyncHTTPResponseType:
+    async def _make_pipeline_call(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = await self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         if return_pipeline_response:
