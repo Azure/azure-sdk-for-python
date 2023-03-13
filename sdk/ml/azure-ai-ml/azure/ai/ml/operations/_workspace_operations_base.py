@@ -318,10 +318,10 @@ class WorkspaceOperationsBase:
             _set_val(param["description"], workspace.description)
         _set_val(param["location"], workspace.location)
 
-        if not workspace._kind:
+        if not workspace.kind:
             _set_val(param["kind"], "default")
         else:
-            _set_val(param["kind"], workspace._kind)
+            _set_val(param["kind"], workspace.kind)
 
         _set_val(param["resourceGroupName"], workspace.resource_group)
 
@@ -489,7 +489,7 @@ class WorkspaceOperationsBase:
             _set_val(param["online_store_connection_name"], "")
 
         setup_materialization_store = False
-        if workspace._kind and workspace._kind.lower() == "featurestore":
+        if workspace.kind and workspace.kind.lower() == "featurestore":
             materialization_identity = kwargs.get("materialization_identity", None)
             offline_store_target = kwargs.get("offline_store_target", None)
 
