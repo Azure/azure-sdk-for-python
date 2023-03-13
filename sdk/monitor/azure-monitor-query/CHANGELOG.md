@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an inconsistent keyword argument name in the `LogsTable` constructor, changing `column_types` to `columns_types`. Note that this is a class that is typically only instantiated internally, and not by users. ([#29076](https://github.com/Azure/azure-sdk-for-python/pull/29076))
+
 ### Other Changes
 
 ## 1.1.1 (2023-02-13)

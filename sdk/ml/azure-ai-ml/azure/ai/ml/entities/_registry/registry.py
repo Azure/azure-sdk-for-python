@@ -25,6 +25,7 @@ from .registry_support_classes import RegistryRegionDetails
 
 CONTAINER_REGISTRY = "container_registry"
 REPLICATION_LOCATIONS = "replication_locations"
+INTELLECTUAL_PROPERTY = "intellectual_property"
 
 
 @experimental
@@ -191,6 +192,11 @@ class Registry(Resource):
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
+        if INTELLECTUAL_PROPERTY in input:
+            intellectual_property = input.pop(INTELLECTUAL_PROPERTY)
+            publisher = intellectual_property.get("publisher", None)
+            if publisher:
+                input["intellectual_property_publisher"] = publisher
 
     def _to_rest_object(self) -> RestRegistry:
         """Build current parameterized schedule instance to a registry object before submission.

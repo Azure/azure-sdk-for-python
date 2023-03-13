@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,too-many-lines
+# pylint: disable=protected-access
 import copy
 import decimal
 import hashlib
@@ -119,9 +119,8 @@ def float_to_str(f):
 
 
 def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
-    """Creates an HttpPipeline that reuses the same configuration as the
-    supplied pipeline (including the transport), but overwrites the
-    retry policy
+    """Creates an HttpPipeline that reuses the same configuration as the supplied pipeline (including the transport),
+    but overwrites the retry policy.
 
     Args:
         requests_pipeline (HttpPipeline): Pipeline to base new one off of.
@@ -155,7 +154,7 @@ def download_text_from_url(
     requests_pipeline: HttpPipeline,
     timeout: Optional[Union[float, Tuple[float, float]]] = None,
 ) -> str:
-    """Downloads the content from an URL
+    """Downloads the content from an URL.
 
     Args:
         source_uri (str): URI to download
@@ -312,16 +311,14 @@ def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
 
 
 def dump_yaml(*args, **kwargs):
-    """A thin wrapper over yaml.dump which forces `OrderedDict`s to be
-    serialized as mappings
+    """A thin wrapper over yaml.dump which forces `OrderedDict`s to be serialized as mappings.
 
     Otherwise behaves identically to yaml.dump
     """
 
     class OrderedDumper(yaml.Dumper):
-        """A modified yaml serializer that forces pyyaml to represent
-        an OrderedDict as a mapping instead of a sequence.
-        """
+        """A modified yaml serializer that forces pyyaml to represent an OrderedDict as a mapping instead of a
+        sequence."""
 
     OrderedDumper.add_representer(OrderedDict, yaml.representer.SafeRepresenter.represent_dict)
     return yaml.dump(*args, Dumper=OrderedDumper, **kwargs)
@@ -505,7 +502,6 @@ def validate_ml_flow_folder(path: str, model_type: string) -> None:
 
 # modified from: https://stackoverflow.com/a/33245493/8093897
 def is_valid_uuid(test_uuid: str) -> bool:
-
     try:
         uuid_obj = UUID(test_uuid, version=4)
     except ValueError:
@@ -583,7 +579,6 @@ def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
 # Allows to use a modified client with a provided url
 @contextmanager
 def modified_operation_client(operation_to_modify, url_to_use):
-
     original_api_base_url = None
     try:
         # Modify the operation
@@ -661,8 +656,7 @@ def map_single_brackets_and_warn(command: str):
 
 
 def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], exclude_keys=None) -> Dict:
-    """Convert all keys of a nested dictionary according to the passed
-    casing_transform function."""
+    """Convert all keys of a nested dictionary according to the passed casing_transform function."""
     transformed_dict = {}
     for key in data.keys():
         # Modify the environment_variables separately: don't transform values in environment_variables.
@@ -729,14 +723,11 @@ def get_list_view_type(include_archived: bool, archived_only: bool) -> ListViewT
 def is_data_binding_expression(
     value: str, binding_prefix: Union[str, List[str]] = "", is_singular: bool = True
 ) -> bool:
-    """Check if a value is a data-binding expression with specific binding
-    target(prefix). Note that the function will return False if the value is
-    not a str. For example, if binding_prefix is ["parent", "jobs"], then
-    input_value is a data-binding expression only if the binding target starts
-    with "parent.jobs", like "${{parent.jobs.xxx}}" if is_singular is False,
-    return True even if input_value includes non-binding part or multiple
-    binding targets, like "${{parent.jobs.xxx}}_extra" and
-    "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}".
+    """Check if a value is a data-binding expression with specific binding target(prefix). Note that the function will
+    return False if the value is not a str. For example, if binding_prefix is ["parent", "jobs"], then input_value is a
+    data-binding expression only if the binding target starts with "parent.jobs", like "${{parent.jobs.xxx}}" if
+    is_singular is False, return True even if input_value includes non-binding part or multiple binding targets, like
+    "${{parent.jobs.xxx}}_extra" and "${{parent.jobs.xxx}}_{{parent.jobs.xxx}}".
 
     :param value: Value to check.
     :param binding_prefix: Prefix to check for.
@@ -749,9 +740,8 @@ def is_data_binding_expression(
 def get_all_data_binding_expressions(
     value: str, binding_prefix: Union[str, List[str]] = "", is_singular: bool = True
 ) -> List[str]:
-    """Get all data-binding expressions in a value with specific binding
-    target(prefix). Note that the function will return an empty list if the
-    value is not a str.
+    """Get all data-binding expressions in a value with specific binding target(prefix). Note that the function will
+    return an empty list if the value is not a str.
 
     :param value: Value to extract.
     :param binding_prefix: Prefix to filter.
@@ -785,8 +775,8 @@ def is_internal_components_enabled():
 
 
 def try_enable_internal_components(*, force=False):
-    """Try to enable internal components for the current process.
-    This is the only function outside _internal that references _internal
+    """Try to enable internal components for the current process. This is the only function outside _internal that
+    references _internal.
 
     :param force: Force enable internal components even if enabled before.
     """
@@ -797,8 +787,7 @@ def try_enable_internal_components(*, force=False):
 
 
 def is_valid_node_name(name):
-    """Return True if the string is a valid Python identifier in lower ASCII
-    range, False otherwise.
+    """Return True if the string is a valid Python identifier in lower ASCII range, False otherwise.
 
     The regular expression match pattern is r"^[a-z_][a-z0-9_]*".
     """
@@ -872,8 +861,7 @@ def _is_user_error_from_status_code(http_status_code):
 def _str_to_bool(s):
     """Returns True if literal 'true' is passed, otherwise returns False.
 
-    Can be used as a type for argument in argparse, return argument's
-    boolean value according to it's literal value.
+    Can be used as a type for argument in argparse, return argument's boolean value according to it's literal value.
     """
     if not isinstance(s, str):
         return False
@@ -881,8 +869,7 @@ def _str_to_bool(s):
 
 
 def _is_user_error_from_exception_type(e: Union[Exception, None]):
-    """Determine whether if an exception is user error from it's exception
-    type."""
+    """Determine whether if an exception is user error from it's exception type."""
     # Connection error happens on user's network failure, should be user error.
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
@@ -996,8 +983,3 @@ def get_valid_dot_keys_with_wildcard(
     """
     left_reversed_parts = dot_key_wildcard.split(".")[::-1]
     return _get_valid_dot_keys_with_wildcard_impl(left_reversed_parts, root, validate_func=validate_func)
-
-
-def replace_between(s: str, start: str, end: str, replace: str) -> str:
-    """Replace string between two substrings."""
-    return start + replace + s[s.find(end) - 1 + len(end) :]

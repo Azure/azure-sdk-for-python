@@ -542,7 +542,6 @@ class ResolutionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity resolution object kind.
     """
 
-    BOOLEAN_RESOLUTION = "BooleanResolution"
     DATE_TIME_RESOLUTION = "DateTimeResolution"
     NUMBER_RESOLUTION = "NumberResolution"
     ORDINAL_RESOLUTION = "OrdinalResolution"

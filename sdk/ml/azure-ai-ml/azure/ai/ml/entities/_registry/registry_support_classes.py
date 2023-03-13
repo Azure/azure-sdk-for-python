@@ -34,8 +34,7 @@ class SystemCreatedAcrAccount:
         acr_account_sku: str,
         arm_resource_id: Optional[str] = None,
     ):
-        """
-        Azure ML ACR account.
+        """Azure ML ACR account.
 
         :param acr_account_sku: The storage account service tier. Currently
             only Premium is a valid option for registries.
@@ -135,8 +134,7 @@ class RegistryRegionDetails:
         location: Optional[str] = None,
         storage_config: Optional[Union[List[str], SystemCreatedStorageAccount]] = None,
     ):
-        """
-        Details for each region a registry is in.
+        """Details for each region a registry is in.
 
         :param acr_details: List of ACR account details. Each value can either be a
             single string representing the arm_resource_id of a user-created

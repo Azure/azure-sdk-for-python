@@ -85,6 +85,7 @@ To use an [API key][cognitive_authentication_api_key] as the `credential` parame
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
 
 <!-- SNIPPET:sample_authentication.create_dt_client_with_key -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import DocumentTranslationClient
@@ -94,6 +95,7 @@ key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
 document_translation_client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 ```
+
 <!-- END SNIPPET -->
 
 #### Create the client with an Azure Active Directory credential
@@ -113,6 +115,7 @@ Once completed, set the values of the client ID, tenant ID, and client secret of
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
 <!-- SNIPPET:sample_authentication.create_dt_client_with_aad -->
+
 ```python
 """DefaultAzureCredential will use the values from these environment
 variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
@@ -125,6 +128,7 @@ credential = DefaultAzureCredential()
 
 document_translation_client = DocumentTranslationClient(endpoint, credential)
 ```
+
 <!-- END SNIPPET -->
 
 ## Key concepts
@@ -166,6 +170,7 @@ poller = document_translation_client.begin_translation("<sas_url_to_source>", "<
 2) Or multiple different sources can be provided each with their own targets.
 
 <!-- SNIPPET:sample_translate_multiple_inputs.multiple_translation -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -231,6 +236,7 @@ for document in result:
     elif document.error:
         print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
+
 <!-- END SNIPPET -->
 
 > Note: the target_url for each target language must be unique.
@@ -301,6 +307,7 @@ for document in result:
 Begin translating with documents in multiple source containers to multiple target containers in different languages.
 
 <!-- SNIPPET:sample_translate_multiple_inputs.multiple_translation -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -366,6 +373,7 @@ for document in result:
     elif document.error:
         print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 ```
+
 <!-- END SNIPPET -->
 
 ### List translation operations
@@ -373,6 +381,7 @@ for document in result:
 Enumerate over the translation operations submitted for the resource.
 
 <!-- SNIPPET:sample_list_translations.list_translations -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import DocumentTranslationClient
@@ -397,6 +406,7 @@ for operation in operations:
     print(f"{operation.documents_succeeded_count} succeeded")
     print(f"{operation.documents_canceled_count} canceled\n")
 ```
+
 <!-- END SNIPPET -->
 
 To see how to use the Document Translation client library with Azure Storage Blob to upload documents, create SAS tokens

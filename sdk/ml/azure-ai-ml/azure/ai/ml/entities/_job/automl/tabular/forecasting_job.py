@@ -6,9 +6,9 @@
 
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_12_01_preview.models import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -407,6 +407,7 @@ class ForecastingJob(AutoMLTabular):
             resources=self.resources,
             task_details=forecasting_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -435,6 +436,7 @@ class ForecastingJob(AutoMLTabular):
             "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            "queue_settings": properties.queue_settings,
         }
 
         forecasting_job = cls(
