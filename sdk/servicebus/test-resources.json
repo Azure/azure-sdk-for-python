@@ -18,7 +18,7 @@
     },
     "serviceBusEndpointSuffix": {
       "type": "string",
-      "defaultValue": "servicebus.windows.net",
+      "defaultValue": ".servicebus.windows.net",
       "metadata": {
           "description": "The url suffix to use when creating eventhubs connection strings."
       }
@@ -206,7 +206,7 @@
     },
     "SERVICEBUS_FULLY_QUALIFIED_NAMESPACE": {
       "type": "string",
-      "value": "[concat(variables('serviceBusNamespace'), '.', parameters('serviceBusEndpointSuffix'))]"
+      "value": "[concat(variables('serviceBusNamespace'), parameters('serviceBusEndpointSuffix'))]"
     },
     "SERVICEBUS_TOPIC_NAME": {
       "type": "string",

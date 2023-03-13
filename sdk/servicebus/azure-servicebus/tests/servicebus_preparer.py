@@ -192,7 +192,7 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             )
         else:
             self.resource = FakeResource(name=name, id=name)
-            self.connection_string = f"Endpoint=sb://{name}.{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
+            self.connection_string = f"Endpoint=sb://{name}{SERVICEBUS_ENDPOINT_SUFFIX}/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
             self.key_name = SERVICEBUS_DEFAULT_AUTH_RULE_NAME
             self.primary_key = 'ZmFrZV9hY29jdW50X2tleQ=='
         return {

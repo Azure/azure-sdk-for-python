@@ -279,8 +279,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             assert queue.default_message_time_to_live == datetime.timedelta(minutes=11)
             assert queue.duplicate_detection_history_time_window == datetime.timedelta(minutes=12)
             assert queue.enable_batched_operations == True
-            assert queue.forward_dead_lettered_messages_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
-            assert queue.forward_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            assert queue.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            assert queue.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
             assert queue.enable_express == True
             assert queue.enable_partitioning == True
             assert queue.lock_duration == datetime.timedelta(seconds=13)
@@ -298,8 +298,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             assert queue2.enable_batched_operations == True
             assert queue2.enable_express == True
             assert queue2.enable_partitioning == True
-            assert queue2.forward_dead_lettered_messages_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
-            assert queue2.forward_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            assert queue2.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            assert queue2.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
             assert queue2.lock_duration == datetime.timedelta(seconds=13)
             assert queue2.max_delivery_count == 14
             assert queue2.max_size_in_megabytes % 3072 == 0
@@ -441,8 +441,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             await mgmt_service.update_queue(queue_description)
 
             queue_description = await mgmt_service.get_queue(queue_name)
-            assert queue_description.forward_dead_lettered_messages_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
-            assert queue_description.forward_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            assert queue_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            assert queue_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
 
             # Update forwarding settings with None.
             queue_description.forward_to = None
@@ -464,8 +464,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             queue_description.lock_duration = datetime.timedelta(seconds=13)
             queue_description.max_delivery_count = 14
             queue_description.max_size_in_megabytes = 3072
-            queue_description.forward_to = f"sb://{servicebus_fully_qualified_namespace}.{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
-            queue_description.forward_dead_lettered_messages_to = f"sb://{servicebus_fully_qualified_namespace}.{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
+            queue_description.forward_to = f"sb://{servicebus_fully_qualified_namespace}{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
+            queue_description.forward_dead_lettered_messages_to = f"sb://{servicebus_fully_qualified_namespace}{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
             #queue_description.requires_duplicate_detection = True # Read only
             #queue_description.requires_session = True # Cannot be changed after creation
 
@@ -482,9 +482,9 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             assert queue_description.lock_duration == datetime.timedelta(seconds=13)
             assert queue_description.max_delivery_count == 14
             assert queue_description.max_size_in_megabytes == 3072
-            assert queue_description.forward_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
+            assert queue_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
-            assert queue_description.forward_dead_lettered_messages_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
+            assert queue_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
 
@@ -691,8 +691,8 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             queue_description_dict["lock_duration"] = datetime.timedelta(seconds=13)
             queue_description_dict["max_delivery_count"] = 14
             queue_description_dict["max_size_in_megabytes"] = 3072
-            queue_description_dict["forward_to"] = f"sb://{servicebus_fully_qualified_namespace}.{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
-            queue_description_dict["forward_dead_lettered_messages_to"] = f"sb://{servicebus_fully_qualified_namespace}.{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
+            queue_description_dict["forward_to"] = f"sb://{servicebus_fully_qualified_namespace}{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
+            queue_description_dict["forward_dead_lettered_messages_to"] = f"sb://{servicebus_fully_qualified_namespace}{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
             #queue_description_dict["requires_duplicate_detection"] = True # Read only
             #queue_description_dict["requires_session"] = True # Cannot be changed after creation
 
@@ -709,9 +709,9 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
             assert queue_description.lock_duration == datetime.timedelta(seconds=13)
             assert queue_description.max_delivery_count == 14
             assert queue_description.max_size_in_megabytes == 3072
-            assert queue_description.forward_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
+            assert queue_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
-            assert queue_description.forward_dead_lettered_messages_to.endswith(f".{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
+            assert queue_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
             #assert queue_description.requires_duplicate_detection == True
             #assert queue_description.requires_session == True
 
