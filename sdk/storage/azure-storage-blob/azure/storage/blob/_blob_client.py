@@ -777,7 +777,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             'config': self._config,
             'start_range': offset,
             'end_range': length,
-            'version_id': kwargs.pop('version_id', None),
+            'version_id': kwargs.pop('version_id', None) or self.version_id,
             'validate_content': validate_content,
             'encryption_options': {
                 'required': self.require_encryption,
@@ -1097,7 +1097,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         options = self._generic_delete_blob_options(delete_snapshots, **kwargs)
         options['snapshot'] = self.snapshot
-        options['version_id'] = kwargs.pop('version_id', None)
+        options['version_id'] = kwargs.pop('version_id', None) or self.version_id
         options['blob_delete_type'] = kwargs.pop('blob_delete_type', None)
         return options
 
@@ -1231,9 +1231,11 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
+        version_id = kwargs.pop('version_id', None) or self.version_id
         try:
             self._client.blob.get_properties(
                 snapshot=self.snapshot,
+                version_id=version_id,
                 **kwargs)
             return True
         # Encrypted with CPK
@@ -2403,6 +2405,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        version_id = kwargs.pop('version_id', None) or self.version_id
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
         if self.snapshot and kwargs.get('version_id'):
@@ -2414,6 +2417,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 lease_access_conditions=access_conditions,
+                version_id=version_id,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -2964,7 +2968,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = self._set_blob_tags_options(tags=tags, **kwargs)
+        version_id = kwargs.pop('version_id', None) or self.version_id
+        options = self._set_blob_tags_options(tags=tags, version_id=version_id, **kwargs)
         try:
             return self._client.blob.set_tags(**options)
         except HttpResponseError as error:
@@ -2976,7 +2981,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         mod_conditions = get_modify_conditions(kwargs)
 
         options = {
-            'version_id': kwargs.pop('version_id', None),
+            'version_id': kwargs.pop('version_id', None) or self.version_id,
             'snapshot': self.snapshot,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,

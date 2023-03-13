@@ -3283,4 +3283,48 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert props['content_settings'] is not None
         assert props['size'] == len(blob_data)
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_blob_version_id_operations(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        self._setup(versioned_storage_account_name, versioned_storage_account_key)
+        container = self.bsc.get_container_client(self.container_name)
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = b'abc'
+        blob_client = container.get_blob_client(blob_name)
+        tags_a = {"color": "red"}
+        tags_b = {"color": "yellow"}
+        tags_c = {"color": "orange"}
+
+        blob_client.upload_blob(blob_data, overwrite=True)
+        v1_props = blob_client.get_blob_properties()
+        v1_blob = BlobClient(self.bsc.url, container_name=self.container_name, blob_name=blob_name,
+                             version_id=v1_props['version_id'], credential=versioned_storage_account_key)
+        blob_client.upload_blob(blob_data * 2, overwrite=True)
+        v2_props = blob_client.get_blob_properties()
+        v2_blob = container.get_blob_client(v2_props)
+        blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = blob_client.get_blob_properties()
+
+        v1_blob.set_standard_blob_tier(StandardBlobTier.Cool)
+        v1_blob.set_blob_tags(tags_a)
+        v2_blob.set_standard_blob_tier(StandardBlobTier.Cool, version_id=v3_props['version_id'])
+        v1_blob.set_blob_tags(tags_c, version_id=v3_props['version_id'])
+        v2_blob.set_standard_blob_tier(StandardBlobTier.Hot)
+        v2_blob.set_blob_tags(tags_b)
+
+        # Assert
+        assert (v1_blob.download_blob()).readall() == blob_data
+        assert (v2_blob.download_blob()).readall() == blob_data * 2
+        assert (v1_blob.download_blob(version_id=v3_props['version_id'])).readall() == blob_data * 3
+        assert v1_blob.get_blob_tags() == tags_a
+        assert v2_blob.get_blob_tags() == tags_b
+        assert v2_blob.get_blob_tags(version_id=v3_props['version_id']) == tags_c
+        v1_blob.delete_blob(version_id=v2_props['version_id'])
+        assert v1_blob.exists() is True
+        assert v1_blob.exists(version_id=v2_props['version_id']) is False
+        assert blob_client.exists() is True
+
     # ------------------------------------------------------------------------------

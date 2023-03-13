@@ -670,9 +670,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
+        version_id = kwargs.pop('version_id', None) or self.version_id
         try:
             await self._client.blob.get_properties(
                 snapshot=self.snapshot,
+                version_id=version_id,
                 **kwargs)
             return True
         # Encrypted with CPK
@@ -1559,6 +1561,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
+        version_id = kwargs.pop('version_id', None) or self.version_id
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
         try:
@@ -1567,6 +1570,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 timeout=kwargs.pop('timeout', None),
                 modified_access_conditions=mod_conditions,
                 lease_access_conditions=access_conditions,
+                version_id=version_id,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -1934,7 +1938,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = self._set_blob_tags_options(tags=tags, **kwargs)
+        version_id = kwargs.pop('version_id', None) or self.version_id
+        options = self._set_blob_tags_options(tags=tags, version_id=version_id, **kwargs)
         try:
             return await self._client.blob.set_tags(**options)
         except HttpResponseError as error:
