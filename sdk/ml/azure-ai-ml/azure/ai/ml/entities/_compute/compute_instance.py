@@ -239,7 +239,7 @@ class ComputeInstance(Compute):
             subnet_resource = None
 
         ssh_settings = None
-        if self.ssh_public_access_enabled is not None:
+        if self.ssh_public_access_enabled is not None or self.ssh_settings is not None:
             ssh_settings = CiSShSettings()
             ssh_settings.ssh_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
             ssh_settings.admin_public_key = (
