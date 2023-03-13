@@ -3,9 +3,10 @@
 ## 2.0.0-beta.1 (Unreleased)
 
 ### Features Added
+- Added support for a new communication identifier `MicrosoftBotIdentifier`.
 
 ### Breaking Changes
-- Added support for a new communication identifier `MicrosoftBotIdentifier`.
+- Introduction of `MicrosoftBotIdentifier` is a breaking change. It will affect code that relied on using `UnknownIdentifier` with a raw_id starting with `28:` 
 
 ### Bugs Fixed
 
