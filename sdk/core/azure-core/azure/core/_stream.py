@@ -3,39 +3,41 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Iterator, AsyncIterator
+from typing import (
+    Iterable,
+    AsyncIterable,
+    ContextManager,
+    AsyncContextManager,
+    Generic,
+    TypeVar
+)
 from typing_extensions import Protocol, runtime_checkable, Self
 
 
+StreamContentType = TypeVar("StreamContentType")
+
+
 @runtime_checkable
-class Streamable(Protocol):
+class Streamable(
+    Iterable[StreamContentType],
+    ContextManager[Self],
+    Generic[StreamContentType],
+    Protocol
+):
     """Protocol for methods to provide streamed responses."""
 
     def close(self) -> None:
         pass
 
-    def __iter__(self) -> Iterator[bytes]:
-        pass
-
-    def __enter__(self) -> Self:
-        pass
-
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
-        pass
-
 
 @runtime_checkable
-class AsyncStreamable(Protocol):
+class AsyncStreamable(
+    AsyncIterable[StreamContentType],
+    AsyncContextManager[Self],
+    Generic[StreamContentType],
+    Protocol
+):
     """Protocol for methods to provide async streamed responses."""
 
     async def close(self) -> None:
-        pass
-
-    async def __aiter__(self) -> AsyncIterator[bytes]:
-        pass
-
-    async def __aenter__(self) -> Self:
-        pass
-
-    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         pass
