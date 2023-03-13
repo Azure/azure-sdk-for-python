@@ -40,6 +40,8 @@ class InternalSparkComponent(
         # environment.setter has been overridden in ParameterizedSpark, so we need to pop it out here
         environment = kwargs.pop("environment", None)
         InternalComponent.__init__(self, **kwargs)
+        # Pop it to avoid passing multiple values for code in ParameterizedSpark.__init__
+        kwargs.pop("code", None)
         ParameterizedSpark.__init__(
             self,
             code=self.code,
@@ -121,11 +123,17 @@ class InternalSparkComponent(
 
     def _to_dict(self) -> Dict:
         result = super()._to_dict()
-        if "py_files" in result:
-            result["pyFiles"] = result.pop("py_files")
-        # if "environment" in result:
-        #     internal_environment = InternalEnvironment(conda=result["environment"]["conda_file"])
-        #     result["environment"] = {
-        #         "conda_dependencies": convert_ordered_dict_to_dict(internal_environment.conda_dependencies.to_dict())
-        #     }
+        return result
+
+    def _to_rest_object(self):
+        result = super()._to_rest_object()
+        if "pyFiles" in result.properties.component_spec:
+            result.properties.component_spec["py_files"] = result.properties.component_spec.pop("pyFiles")
+        return result
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj) -> Dict:
+        if "py_files" in obj.properties.component_spec:
+            obj.properties.component_spec["pyFiles"] = obj.properties.component_spec.pop("py_files")
+        result = super()._from_rest_object_to_init_params(obj)
         return result

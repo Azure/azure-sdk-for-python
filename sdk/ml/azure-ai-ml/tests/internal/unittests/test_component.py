@@ -262,6 +262,8 @@ class TestComponent:
 
         expected_rest_object = copy.deepcopy(expected_dict)
         expected_rest_object["_source"] = "YAML.COMPONENT"
+        if entity.type == "spark":
+            expected_rest_object["py_files"] = expected_rest_object.pop("pyFiles")
         rest_obj = entity._to_rest_object()
         assert rest_obj.properties.component_spec == expected_rest_object
 

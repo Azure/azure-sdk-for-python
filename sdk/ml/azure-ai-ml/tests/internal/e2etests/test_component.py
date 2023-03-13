@@ -9,7 +9,7 @@ import pydash
 import pytest
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._internal.entities import InternalComponent
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase
 
 from .._utils import PARAMETERS_TO_TEST
 
