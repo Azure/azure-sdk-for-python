@@ -1,7 +1,7 @@
 import json
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 from unittest.mock import patch
 
 import pytest
@@ -41,11 +41,13 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
 from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake, to_iso_duration_format_mins
+from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants, AutoMLTransformerParameterKeys
 from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
@@ -449,3 +451,38 @@ class TestAutoMLTabularSchema:
         assert isinstance(
             obj.properties.task_details.n_cross_validations, CustomNCrossValidations
         ), "N cross validations not an object of CustomNCrossValidations"
+
+    @pytest.mark.parametrize(
+        "yaml_path, max_nodes, training_mode, is_error",
+        [
+            ("./tests/test_configs/automl_job/automl_job_mock_regression.yaml", None, None, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_regression_auto_mode.yaml", 4, TabularTrainingMode.AUTO, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_regression_distributed_mode.yaml", 4, TabularTrainingMode.DISTRIBUTED, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_regression_non_distributed_mode.yaml", 4, TabularTrainingMode.NON_DISTRIBUTED, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_regression_invalid_mode.yaml", None, None, True),
+            ("./tests/test_configs/automl_job/automl_job_mock_classification.yaml", None, None, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_classification_auto_mode.yaml", 4, TabularTrainingMode.AUTO, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_classification_distributed_mode.yaml", 4, TabularTrainingMode.DISTRIBUTED, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_classification_non_distributed_mode.yaml", None, TabularTrainingMode.NON_DISTRIBUTED, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_classification_invalid_mode.yaml", None, None, True),
+            ("./tests/test_configs/automl_job/automl_job_mock_forecasting.yaml", None, None, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_forecasting_auto_mode.yaml", 4, TabularTrainingMode.AUTO, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_forecasting_distributed_mode.yaml", 4, TabularTrainingMode.DISTRIBUTED, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_forecasting_non_distributed_mode.yaml", None, TabularTrainingMode.NON_DISTRIBUTED, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_forecasting_invalid_mode.yaml", None, None, True),
+        ]
+    )
+    def test_tabular_training_modes_and_max_nodes(
+        self,
+        yaml_path: str,
+        max_nodes: Optional[int],
+        training_mode: Optional[TabularTrainingMode],
+        is_error: bool,
+    ):
+        if is_error:
+            with pytest.raises(ValidationError):
+                loaded_job = load_job(Path(yaml_path))
+        else:
+            loaded_job = load_job(Path(yaml_path))
+            assert loaded_job.training.training_mode == training_mode, "Training mode initialized incorrectly"
+            assert loaded_job.limits.max_nodes == max_nodes, "Max nodes initialized incorrectly"
