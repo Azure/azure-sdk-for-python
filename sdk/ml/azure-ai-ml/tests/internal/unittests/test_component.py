@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import copy
 import enum
+import json
 import os
 import shutil
 import tempfile
@@ -246,6 +247,17 @@ class TestComponent:
 
         expected_dict["version"] = str(expected_dict["version"])
 
+        if entity.type == "spark":
+            expected_dict["jars"] = [expected_dict["jars"]]
+            expected_dict["pyFiles"] = [expected_dict["pyFiles"]]
+            expected_dict["environment"] = {
+                "conda": {
+                    "dependencies": ["python=3.8", {"pip": ["azureml-core==1.44.0", "shrike==1.31.2"]}],
+                    "name": "component_env",
+                },
+                "os": "Linux",
+            }
+
         assert entity._to_dict() == expected_dict
 
         expected_rest_object = copy.deepcopy(expected_dict)
@@ -257,7 +269,15 @@ class TestComponent:
         for input_port in expected_dict.get("inputs", {}).values():
             if input_port["type"] == "String":
                 input_port["type"] = input_port["type"].lower()
-        assert InternalComponent._from_rest_object(rest_obj)._to_dict() == expected_dict
+
+        try:
+            from_rest_entity = InternalComponent._from_rest_object(rest_obj)
+        except Exception as e:
+            raise RuntimeError(
+                "Failed to load component from rest object:\n{}\n"
+                "Full error message:\n{}".format(json.dumps(rest_obj.as_dict(), indent=4), e)
+            )
+        assert from_rest_entity._to_dict() == expected_dict
         result = entity._validate()
         assert result._to_dict() == {"result": "Succeeded"}
 

@@ -5,16 +5,22 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._internal._schema.component import InternalSparkComponentSchema
 from azure.ai.ml._internal.entities import InternalComponent
+from azure.ai.ml._internal.entities.environment import InternalEnvironment
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import SparkJobEntry
+from azure.ai.ml.constants._job.job import RestSparkConfKey
+from azure.ai.ml.entities import Environment, SparkJobEntry
+from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
+from azure.ai.ml.entities._job.spark_job_entry_mixin import SparkJobEntryMixin
 from marshmallow import Schema
 
 
-class InternalSparkComponent(InternalComponent):  # pylint: disable=too-many-instance-attributes
+class InternalSparkComponent(
+    InternalComponent, ParameterizedSpark, SparkJobEntryMixin
+):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         entry: Union[Dict[str, str], SparkJobEntry, None] = None,
-        pyFiles: Optional[List[str]] = None,
+        py_files: Optional[List[str]] = None,
         jars: Optional[List[str]] = None,
         files: Optional[List[str]] = None,
         archives: Optional[List[str]] = None,
@@ -30,23 +36,96 @@ class InternalSparkComponent(InternalComponent):  # pylint: disable=too-many-ins
         args: Optional[Dict] = None,
         **kwargs,
     ):
-        super().__init__(**kwargs)
-        self.entry = entry
-        self.pyFiles = pyFiles
-        self.jars = jars
-        self.files = files
-        self.archives = archives
-        self.driver_cores = driver_cores
-        self.driver_memory = driver_memory
-        self.executor_cores = executor_cores
-        self.executor_memory = executor_memory
-        self.executor_instances = executor_instances
-        self.dynamic_allocation_enabled = dynamic_allocation_enabled
-        self.dynamic_allocation_min_executors = dynamic_allocation_min_executors
-        self.dynamic_allocation_max_executors = dynamic_allocation_max_executors
+        SparkJobEntryMixin.__init__(self, entry=entry, **kwargs)
+        # environment.setter has been overridden in ParameterizedSpark, so we need to pop it out here
+        environment = kwargs.pop("environment", None)
+        InternalComponent.__init__(self, **kwargs)
+        ParameterizedSpark.__init__(
+            self,
+            code=self.code,
+            entry=entry,
+            py_files=py_files,
+            jars=jars,
+            files=files,
+            archives=archives,
+            conf=conf,
+            environment=environment,
+            args=args,
+            **kwargs,
+        )
+        # For pipeline spark job, we also allow user to set driver_cores, driver_memory and so on by setting conf.
+        # If root level fields are not set by user, we promote conf setting to root level to facilitate subsequent
+        # verification. This usually happens when we use to_component(SparkJob) or builder function spark() as a node
+        # in pipeline sdk
+        conf = conf or {}
+        self.driver_cores = driver_cores or conf.get(RestSparkConfKey.DRIVER_CORES, None)
+        self.driver_memory = driver_memory or conf.get(RestSparkConfKey.DRIVER_MEMORY, None)
+        self.executor_cores = executor_cores or conf.get(RestSparkConfKey.EXECUTOR_CORES, None)
+        self.executor_memory = executor_memory or conf.get(RestSparkConfKey.EXECUTOR_MEMORY, None)
+        self.executor_instances = executor_instances or conf.get(RestSparkConfKey.EXECUTOR_INSTANCES, None)
+        self.dynamic_allocation_enabled = dynamic_allocation_enabled or conf.get(
+            RestSparkConfKey.DYNAMIC_ALLOCATION_ENABLED, None
+        )
+        self.dynamic_allocation_min_executors = dynamic_allocation_min_executors or conf.get(
+            RestSparkConfKey.DYNAMIC_ALLOCATION_MIN_EXECUTORS, None
+        )
+        self.dynamic_allocation_max_executors = dynamic_allocation_max_executors or conf.get(
+            RestSparkConfKey.DYNAMIC_ALLOCATION_MAX_EXECUTORS, None
+        )
+
         self.conf = conf
         self.args = args
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return InternalSparkComponentSchema(context=context)
+
+    @property
+    def environment(self):
+        if self._environment is None or isinstance(self._environment, str):
+            return None
+        if isinstance(self._environment, InternalEnvironment):
+            return self._environment
+        if isinstance(self._environment, Environment):
+            return InternalEnvironment(conda=self._environment.conda_file, os=self._environment.os_type)
+        raise ValueError(f"Unsupported environment type: {type(self._environment)}")
+
+    @environment.setter
+    def environment(self, value):
+        if value is None or isinstance(value, (str, Environment, InternalEnvironment)):
+            self._environment = value
+        elif isinstance(value, dict):
+            self._environment = InternalEnvironment(**value)
+        else:
+            raise ValueError(f"Unsupported environment type: {type(value)}")
+
+    @property
+    def jars(self):
+        return self._jars
+
+    @jars.setter
+    def jars(self, value):
+        if isinstance(value, str):
+            value = [value]
+        self._jars = value
+
+    @property
+    def py_files(self):
+        return self._py_files
+
+    @py_files.setter
+    def py_files(self, value):
+        if isinstance(value, str):
+            value = [value]
+        self._py_files = value
+
+    def _to_dict(self) -> Dict:
+        result = super()._to_dict()
+        if "py_files" in result:
+            result["pyFiles"] = result.pop("py_files")
+        # if "environment" in result:
+        #     internal_environment = InternalEnvironment(conda=result["environment"]["conda_file"])
+        #     result["environment"] = {
+        #         "conda_dependencies": convert_ordered_dict_to_dict(internal_environment.conda_dependencies.to_dict())
+        #     }
+        return result

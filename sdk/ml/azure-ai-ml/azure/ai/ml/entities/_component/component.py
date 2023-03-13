@@ -375,7 +375,7 @@ class Component(
         # maybe override serialization method for name field?
         from azure.ai.ml.entities._component.component_factory import component_factory
 
-        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec)
+        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec, for_load=True)
 
         instance = create_instance_func()
         instance.__init__(**instance._from_rest_object_to_init_params(obj))

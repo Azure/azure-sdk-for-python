@@ -11,6 +11,7 @@ from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, SOURCE_PATH_CO
 from azure.ai.ml.constants._component import NodeType as PublicNodeType
 from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
+from ..._schema.job.parameterized_spark import SparkConfSchema, SparkEntryClassSchema, SparkEntryFileSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils.utils import get_valid_dot_keys_with_wildcard
 from .._utils import yaml_safe_load_with_base_resolver
@@ -174,9 +175,38 @@ class InternalSparkComponentSchema(InternalComponentSchema):
 
     environment = UnionField(
         [
+            NestedField(InternalEnvironmentSchema),
             NestedField(AnonymousEnvironmentSchema),
             RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
         ],
         allow_none=True,
     )
+
+    jars = UnionField(
+        [
+            fields.List(fields.Str()),
+            fields.Str(),
+        ],
+        required=True,
+    )
+    py_files = UnionField(
+        [
+            fields.List(fields.Str()),
+            fields.Str(),
+        ],
+        required=True,
+        data_key="pyFiles",
+        attribute="py_files",
+    )
+
+    entry = UnionField(
+        [NestedField(SparkEntryFileSchema), NestedField(SparkEntryClassSchema)],
+        required=True,
+        metadata={"description": "Entry."},
+    )
+
+    files = fields.List(fields.Str(required=True))
+    archives = fields.List(fields.Str(required=True))
+    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    args = fields.Str(metadata={"description": "Command Line arguments."})
