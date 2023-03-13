@@ -29,6 +29,7 @@ extends:
   parameters:
     ServiceDirectory: ml
     ValidateFormatting: true
+    TestTimeoutInMinutes: 75
     TestProxy: true
     Artifacts:
     - name: azure-ai-ml
