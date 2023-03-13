@@ -29,18 +29,17 @@ from azure.storage.blob import BlobServiceClient
 
 connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
+
 def shared_transport():
     # [START shared_transport]
     shared_transport = RequestsTransport()
     with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
-            connection_string,
-            transport=shared_transport,
-            session_owner=False)
+            connection_string, transport=shared_transport, session_owner=False
+        )
         blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string,
-            transport=shared_transport,
-            session_owner=False)
+            connection_string, transport=shared_transport, session_owner=False
+        )
         containers1 = blob_service_client1.list_containers()
         for contain in containers1:
             print(contain.name)
@@ -53,20 +52,19 @@ def shared_transport():
 def shared_transport_with_pooling():
     # [START shared_transport_with_pooling]
     import requests
+
     session = requests.Session()
     adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
     shared_transport = RequestsTransport(session=session)
     with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
-            connection_string,
-            transport=shared_transport,
-            session_owner=False)
+            connection_string, transport=shared_transport, session_owner=False
+        )
         blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string,
-            transport=shared_transport,
-            session_owner=False)
+            connection_string, transport=shared_transport, session_owner=False
+        )
         containers1 = blob_service_client1.list_containers()
         for contain in containers1:
             print(contain.name)
@@ -76,6 +74,6 @@ def shared_transport_with_pooling():
     # [END shared_transport_with_pooling]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     shared_transport()
     shared_transport_with_pooling()

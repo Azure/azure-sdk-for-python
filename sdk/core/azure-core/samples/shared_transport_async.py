@@ -30,18 +30,17 @@ from azure.storage.blob.aio import BlobServiceClient
 
 connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
+
 async def shared_transport_async():
     # [START shared_transport_async]
     shared_transport = AioHttpTransport()
     async with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
-            connection_string,
-            transport=shared_transport,
-            session_owner=False)
+            connection_string, transport=shared_transport, session_owner=False
+        )
         blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string,
-            transport=shared_transport,
-            session_owner=False)
+            connection_string, transport=shared_transport, session_owner=False
+        )
         containers1 = blob_service_client1.list_containers()
         async for contain in containers1:
             print(contain.name)
@@ -54,18 +53,17 @@ async def shared_transport_async():
 async def shared_transport_async_with_pooling():
     # [START shared_transport_async_with_pooling]
     import aiohttp
+
     conn = aiohttp.TCPConnector(limit=100)
     session = aiohttp.ClientSession(connector=conn)
     shared_transport = AioHttpTransport(session=session)
     async with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
-            connection_string,
-            transport=shared_transport,
-            session_owner=False)
+            connection_string, transport=shared_transport, session_owner=False
+        )
         blob_service_client2 = BlobServiceClient.from_connection_string(
-            connection_string,
-            transport=shared_transport,
-            session_owner=False)
+            connection_string, transport=shared_transport, session_owner=False
+        )
         containers1 = blob_service_client1.list_containers()
         async for contain in containers1:
             print(contain.name)
@@ -75,6 +73,6 @@ async def shared_transport_async_with_pooling():
     # [END shared_transport_async_with_pooling]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(shared_transport_async())
     asyncio.run(shared_transport_async_with_pooling())
