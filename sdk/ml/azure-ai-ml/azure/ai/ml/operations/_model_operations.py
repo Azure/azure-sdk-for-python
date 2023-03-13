@@ -92,7 +92,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
-        self, model: Union[Model, WorkspaceAssetReference]
+        self, model: Union[Model, WorkspaceAssetReference], **kwargs
     ) -> Model:  # TODO: Are we going to implement job_name?
         """Returns created or updated model asset.
 
@@ -169,8 +169,9 @@ class ModelOperations(_ScopeDependentOperations):
                     module_logger.debug("Getting the existing asset name: %s, version: %s", model.name, model.version)
                     return self.get(name=model.name, version=model.version)
 
+            show_progress = kwargs.pop("show_progress", True)
             model, indicator_file = _check_and_upload_path(
-                artifact=model, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.MODEL
+                artifact=model, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.MODEL, show_progress=show_progress
             )
 
             model.path = resolve_short_datastore_url(model.path, self._operation_scope)

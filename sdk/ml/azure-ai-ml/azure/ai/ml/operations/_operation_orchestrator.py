@@ -256,7 +256,7 @@ class OperationOrchestrator(object):
         try:
             self._validate_datastore_name(code_asset.path)
             if register_asset:
-                code_asset = self._code_assets.create_or_update(code_asset)
+                code_asset = self._code_assets.create_or_update(code_asset, show_progress=self._operation_config.show_progress)
                 return code_asset.id
             uploaded_code_asset, _ = _check_and_upload_path(
                 artifact=code_asset,
@@ -286,7 +286,7 @@ class OperationOrchestrator(object):
         if register_asset:
             if environment.id:
                 return environment.id
-            env_response = self._environments.create_or_update(environment)
+            env_response = self._environments.create_or_update(environment, show_progress=self._operation_config.show_progress)
             return env_response.id
         environment = _check_and_upload_env_build_context(
             environment=environment, operations=self._environments, show_progress=self._operation_config.show_progress
@@ -306,7 +306,7 @@ class OperationOrchestrator(object):
             if register_asset:
                 if model.id:
                     return model.id
-                return self._model.create_or_update(model).id
+                return self._model.create_or_update(model, show_progress=self._operation_config.show_progress).id
             uploaded_model, _ = _check_and_upload_path(
                 artifact=model,
                 asset_operations=self._model,
@@ -335,7 +335,7 @@ class OperationOrchestrator(object):
         self._validate_datastore_name(data_asset.path)
 
         if register_asset:
-            return self._data.create_or_update(data_asset).id
+            return self._data.create_or_update(data_asset, show_progress=self._operation_config.show_progress).id
         data_asset, _ = _check_and_upload_path(
             artifact=data_asset,
             asset_operations=self._data,

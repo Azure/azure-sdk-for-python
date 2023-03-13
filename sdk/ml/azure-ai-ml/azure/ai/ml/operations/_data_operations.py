@@ -227,7 +227,7 @@ class DataOperations(_ScopeDependentOperations):
             log_and_raise_error(ex)
 
     @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, data: Data) -> Data:
+    def create_or_update(self, data: Data, **kwargs) -> Data:
         """Returns created or updated data asset.
 
         If not already in storage, asset will be uploaded to the workspace's blob storage.
@@ -300,8 +300,9 @@ class DataOperations(_ScopeDependentOperations):
             if referenced_uris:
                 data._referenced_uris = referenced_uris
 
+            show_progress = kwargs.pop("show_progress", True)
             data, _ = _check_and_upload_path(
-                artifact=data, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.DATA
+                artifact=data, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.DATA, show_progress=show_progress
             )
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version

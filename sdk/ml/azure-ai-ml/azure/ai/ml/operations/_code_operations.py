@@ -63,7 +63,7 @@ class CodeOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "Code.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, code: Code) -> Code:
+    def create_or_update(self, code: Code, **kwargs) -> Code:
         """Returns created or updated code asset.
 
         If not already in storage, asset will be uploaded to the workspace's default datastore.
@@ -92,8 +92,9 @@ class CodeOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
+            show_progress = kwargs.pop("show_progress", True)
             code, _ = _check_and_upload_path(
-                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
+                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE, show_progress=show_progress
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,
