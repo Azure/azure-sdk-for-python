@@ -1383,9 +1383,9 @@ class TestPipelineJobEntity:
         job = load_job(test_path)
         result = job._validate()
         assert (
-            "jobs.hello_world.conf" in result.error_messages
+            "jobs.hello_world" in result.error_messages
             and "Should not specify min or max executors when dynamic allocation is disabled."
-            == result.error_messages["jobs.hello_world.conf"]
+            == result.error_messages["jobs.hello_world"]
         )
 
     def test_spark_node_in_pipeline_with_invalid_code(

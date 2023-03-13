@@ -16,12 +16,12 @@ from azure.ai.ml.entities._assets.environment import BuildContext
 @pytest.mark.production_experiences_test
 class TestEnvironmentEntity:
     def test_eq_neq(self) -> None:
-        environment = Environment(name="name", version="16", image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04")
+        environment = Environment(name="name", version="16", image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04")
         same_environment = Environment(name=environment.name, version=environment.version, image=environment.image)
         diff_environment = Environment(
             name=environment.name,
             version=environment.version,
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.05",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.05",
         )
 
         assert environment.image == same_environment.image
@@ -33,7 +33,7 @@ class TestEnvironmentEntity:
         env = Environment(
             name="name",
             version="16",
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04",
             properties={"key": "value"},
         )
         diff_env = Environment(
@@ -111,16 +111,16 @@ class TestEnvironmentEntity:
 
         env_no_inference_config = Environment(
             conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1",
         )
 
         env_with_inference_config = Environment(
             conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04:20230227.v1",
             inference_config=inference_conf_obj,
         )
 
         assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
         assert env_no_inference_config.version != env_with_inference_config.version
-        assert env_no_inference_config.version == "71fccbc128a554b5c3e23330ded8963b"
-        assert env_with_inference_config.version == "f223fcd33d34c386cf763b856300f3ce"
+        assert env_no_inference_config.version == "00b3749100a718714b17f57de1ae61fa"
+        assert env_with_inference_config.version == "935315c7d8de8e0972f0460960727a17"

@@ -9,6 +9,9 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 def _validate_spark_configurations(obj):
+    # skip validation when component of node is from remote
+    if hasattr(obj, "component") and isinstance(obj.component, str):
+        return
     if obj.dynamic_allocation_enabled in ["True", "true", True]:
         if (
             obj.driver_cores is None
@@ -51,9 +54,7 @@ def _validate_spark_configurations(obj):
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if obj.executor_instances is None:
-            obj.executor_instances = obj.dynamic_allocation_min_executors
-        elif (
+        if obj.executor_instances and (
             obj.executor_instances > obj.dynamic_allocation_max_executors
             or obj.executor_instances < obj.dynamic_allocation_min_executors
         ):

@@ -1,7 +1,5 @@
 import os
-import shutil
 import sys
-import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -14,7 +12,7 @@ from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
@@ -419,7 +417,6 @@ class TestCommandComponentEntity:
         assert not validation_result.passed
         assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
-    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_primitive_output(self):
         expected_rest_component = {
             "command": "echo Hello World",
@@ -452,7 +449,6 @@ class TestCommandComponentEntity:
         actual_component_dict1 = pydash.omit(
             component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
-
         assert actual_component_dict1 == expected_rest_component
 
         # from CLASS
@@ -483,7 +479,6 @@ class TestCommandComponentEntity:
         )
         assert actual_component_dict2 == expected_rest_component
 
-    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_invalid_component_outputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
         component = load_component(yaml_path)

@@ -131,6 +131,8 @@ class Command(BaseNode):
         Please see https://aka.ms/azuremlexperimental for more information.
     :type services:
         Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -355,6 +357,7 @@ class Command(BaseNode):
         *,
         instance_type: Optional[Union[str, List[str]]] = None,
         instance_count: Optional[int] = None,
+        locations: Optional[List[str]] = None,
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
@@ -364,6 +367,8 @@ class Command(BaseNode):
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
+        if locations is not None:
+            self.resources.locations = locations
         if instance_type is not None:
             self.resources.instance_type = instance_type
         if instance_count is not None:
@@ -416,6 +421,7 @@ class Command(BaseNode):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
     ) -> Sweep:
         """Turn the command into a sweep node with extra sweep run setting. The command component in current Command
         node will be used as its trial component. A command node can sweep for multiple times, and the generated sweep
@@ -448,6 +454,8 @@ class Command(BaseNode):
             ManagedIdentityConfiguration,
             AmlTokenConfiguration,
             UserIdentityConfiguration]
+        :param queue_settings: Queue settings for the job.
+        :type queue_settings: QueueSettings
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep
         """
@@ -477,6 +485,7 @@ class Command(BaseNode):
             experiment_name=self.experiment_name,
             identity=self.identity if not identity else identity,
             _from_component_func=True,
+            queue_settings=self.queue_settings if queue_settings is None else queue_settings,
         )
         sweep_node.set_limits(
             max_total_trials=max_total_trials,
