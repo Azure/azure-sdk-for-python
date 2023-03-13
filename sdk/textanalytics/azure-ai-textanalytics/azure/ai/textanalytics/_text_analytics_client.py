@@ -1788,15 +1788,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         .. versionadded:: 2022-10-01-preview
             The *dynamic_classification* client method.
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_dynamic_classification.py
-                :start-after: [START dynamic_classification]
-                :end-before: [END dynamic_classification]
-                :language: python
-                :dedent: 4
-                :caption: Perform dynamic classification on a batch of documents.
         """
 
         language_arg = language if language is not None else self._default_language
