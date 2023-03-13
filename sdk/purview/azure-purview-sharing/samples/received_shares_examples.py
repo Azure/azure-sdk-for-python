@@ -29,8 +29,6 @@ list_detached_response = client.received_shares.list_detached(orderby="propertie
 
 # Attach a received share
 # [START attach_a_received_share]
-import json
-
 consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/consumer-storage-rg/providers/Microsoft.Storage/storageAccounts/consumerstorage"
 received_share = next(x for x in list_detached_response)
 

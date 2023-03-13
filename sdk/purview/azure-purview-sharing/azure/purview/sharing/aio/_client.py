@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 
 class PurviewSharingClient:  # pylint: disable=client-accepts-api-version-keyword
-    """Purview Sharing Client.
+    """Creates a data plane client for Purview Share.
 
     :ivar received_shares: ReceivedSharesOperations operations
     :vartype received_shares: azure.purview.sharing.aio.operations.ReceivedSharesOperations

@@ -24,7 +24,7 @@ client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 
 # Create a sent share
 # [START create_a_sent_share]
-import uuid, json
+import uuid
 
 sent_share_id = uuid.uuid4()
 

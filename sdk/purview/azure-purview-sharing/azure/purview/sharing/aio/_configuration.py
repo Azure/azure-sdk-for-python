@@ -53,7 +53,7 @@ class PurviewSharingClientConfiguration(Configuration):  # pylint: disable=too-m
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://purview.azure.net/.default"])
-        kwargs.setdefault("sdk_moniker", "@azure-rest/purview-sharing/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "purview-sharing/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
