@@ -234,8 +234,11 @@ class TestMachineLearningClient:
     @patch("azure.ai.ml._ml_client.ComputeOperations", Mock())
     @patch("azure.ai.ml._ml_client.DatastoreOperations", Mock())
     @patch("azure.ai.ml._ml_client.JobOperations", Mock())
+    @patch("azure.ai.ml._ml_client.WorkspaceOperations", Mock())
+    @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())
     @patch("azure.ai.ml._ml_client.ModelOperations", Mock())
     @patch("azure.ai.ml._ml_client.DataOperations", Mock())
+    @patch("azure.ai.ml._ml_client.CodeOperations", Mock())
     @patch("azure.ai.ml._ml_client.EnvironmentOperations", Mock())
     @patch("azure.ai.ml._ml_client.ComponentOperations", Mock())
     @patch("azure.ai.ml._ml_client.OnlineEndpointOperations", Mock())
@@ -527,6 +530,83 @@ class TestMachineLearningClient:
         assert ml_client._base_url == "https://test.management.azure.com"
         assert _get_default_cloud_name() == "test_cloud"
 
+    def test_enable_telemetry(self) -> None:
+        subscription_id = "fake-sub-id"
+        resource_group_name = "fake-rg-name"
+
+        client = MLClient(
+            credential=DefaultAzureCredential(),
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+        )
+
+        assert client.jobs._enable_telemetry  # By default enable_telemetry is True
+        assert client.data._enable_telemetry
+        assert client.models._enable_telemetry
+
+        enable_telemetry = client.jobs._enable_telemetry
+
+        # confirm that telemetry is DISABLED when not in jupyter notebook even with enable_telemetry=True
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
+            properties = {
+                "subscription_id": subscription_id,
+                "resource_group_name": resource_group_name,
+            }
+            handler = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
+            assert enable_telemetry
+            assert isinstance(handler, logging.NullHandler)
+
+        # confirm that telemetry is ENABLED when in jupyter notebook and enable_telemetry=True
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
+            properties = {
+                "subscription_id": subscription_id,
+                "resource_group_name": resource_group_name,
+            }
+            handler = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
+            assert enable_telemetry
+            assert isinstance(handler, AzureMLSDKLogHandler)
+
+        client = MLClient(
+            credential=DefaultAzureCredential(),
+            subscription_id="fake-sub-id",
+            resource_group_name="fake-rg-name",
+            enable_telemetry=False,
+        )
+
+        assert not client.jobs._enable_telemetry
+        assert not client.data._enable_telemetry
+        assert not client.models._enable_telemetry
+
+        enable_telemetry = client.jobs._enable_telemetry
+
+        # confirm that telemetry is DISABLED when not in jupyter notebook and enable_telemetry=False
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
+            properties = {
+                "subscription_id": subscription_id,
+                "resource_group_name": resource_group_name,
+            }
+            handler = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
+            assert not enable_telemetry
+            assert isinstance(handler, logging.NullHandler)
+
+        # confirm that telemetry is DISABLED when in jupyter notebook and enable_telemetry=False
+        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
+            properties = {
+                "subscription_id": subscription_id,
+                "resource_group_name": resource_group_name,
+            }
+            handler = get_appinsights_log_handler(
+                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
+            )
+            assert not enable_telemetry
+            assert isinstance(handler, logging.NullHandler)
+
     @pytest.mark.parametrize(
         "args, kwargs, ops_name, create_method_name",
         [
@@ -624,80 +704,3 @@ class TestMachineLearningClient:
                 *args, **kwargs
             )
         assert "This operation requires that you specify a workspace" in str(ex.value)
-
-    def test_enable_telemetry(self) -> None:
-        subscription_id = "fake-sub-id"
-        resource_group_name = "fake-rg-name"
-
-        client = MLClient(
-            credential=DefaultAzureCredential(),
-            subscription_id=subscription_id,
-            resource_group_name=resource_group_name,
-        )
-
-        assert client.jobs._enable_telemetry  # By default enable_telemetry is True
-        assert client.data._enable_telemetry
-        assert client.models._enable_telemetry
-
-        enable_telemetry = client.jobs._enable_telemetry
-
-        # confirm that telemetry is DISABLED when not in jupyter notebook even with enable_telemetry=True
-        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
-            properties = {
-                "subscription_id": subscription_id,
-                "resource_group_name": resource_group_name,
-            }
-            handler = get_appinsights_log_handler(
-                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
-            )
-            assert enable_telemetry
-            assert isinstance(handler, logging.NullHandler)
-
-        # confirm that telemetry is ENABLED when in jupyter notebook and enable_telemetry=True
-        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
-            properties = {
-                "subscription_id": subscription_id,
-                "resource_group_name": resource_group_name,
-            }
-            handler = get_appinsights_log_handler(
-                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
-            )
-            assert enable_telemetry
-            assert isinstance(handler, AzureMLSDKLogHandler)
-
-        client = MLClient(
-            credential=DefaultAzureCredential(),
-            subscription_id="fake-sub-id",
-            resource_group_name="fake-rg-name",
-            enable_telemetry=False,
-        )
-
-        assert not client.jobs._enable_telemetry
-        assert not client.data._enable_telemetry
-        assert not client.models._enable_telemetry
-
-        enable_telemetry = client.jobs._enable_telemetry
-
-        # confirm that telemetry is DISABLED when not in jupyter notebook and enable_telemetry=False
-        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
-            properties = {
-                "subscription_id": subscription_id,
-                "resource_group_name": resource_group_name,
-            }
-            handler = get_appinsights_log_handler(
-                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
-            )
-            assert not enable_telemetry
-            assert isinstance(handler, logging.NullHandler)
-
-        # confirm that telemetry is DISABLED when in jupyter notebook and enable_telemetry=False
-        with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
-            properties = {
-                "subscription_id": subscription_id,
-                "resource_group_name": resource_group_name,
-            }
-            handler = get_appinsights_log_handler(
-                USER_AGENT, **{"properties": properties}, enable_telemetry=enable_telemetry
-            )
-            assert not enable_telemetry
-            assert isinstance(handler, logging.NullHandler)
