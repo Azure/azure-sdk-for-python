@@ -22,7 +22,6 @@
     }
   },
   "type": "spark",
-  "environment": "azureml:/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk-test-master/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/environments/CliV2AnonymousEnvironment/versions/6efb4967af524e324816635d7197e5ee",
   "jars": [
     "scalaproj.jar"
   ],

@@ -179,9 +179,9 @@ class InternalSparkComponentSchema(InternalComponentSchema):
         [
             # unlike other internal component, internal spark component do not use internal environment schema
             NestedField(AnonymousEnvironmentSchema),
-            NestedField(InternalEnvironmentSchema),
             RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+            NestedField(InternalEnvironmentSchema),
         ],
         allow_none=True,
     )

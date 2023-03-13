@@ -230,6 +230,12 @@ def get_expected_runsettings_items(runsettings_dict, client=None):
         "executor_cores": "spark.executor.cores",
         "executor_instances": "spark.executor.instances",
     }
+    # hack: spark component settings will be set to conf
+    if all(key in expected_values for key in conf_key_map):
+        for dot_key in conf_key_map:
+            conf[conf_key_map[dot_key]] = expected_values.pop(dot_key)
+        expected_values["conf"] = conf
+
     for dot_key in expected_values:
         # hack: mini_batch_size will be transformed into str
         if dot_key == "mini_batch_size":
@@ -246,13 +252,6 @@ def get_expected_runsettings_items(runsettings_dict, client=None):
                 f"workspaces/{client.workspace_name}/"
                 f"computes/{expected_values[dot_key]}"
             )
-        # hack: spark component settings will be set to conf
-        if dot_key in conf_key_map:
-            conf[conf_key_map[dot_key]] = expected_values[dot_key]
-    if conf:
-        expected_values["conf"] = conf
-        for dot_key in conf_key_map:
-            expected_values.pop(dot_key, None)
     return expected_values.items()
 
 

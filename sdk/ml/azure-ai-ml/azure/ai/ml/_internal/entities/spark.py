@@ -48,10 +48,10 @@ class InternalSparkComponent(
         environment = kwargs.pop("environment", None)
         InternalComponent.__init__(self, **kwargs)
         # Pop it to avoid passing multiple values for code in ParameterizedSpark.__init__
-        kwargs.pop("code", None)
+        code = kwargs.pop("code", None)
         ParameterizedSpark.__init__(
             self,
-            code=self.code,
+            code=self.base_path,
             entry=entry,
             py_files=py_files,
             jars=jars,
@@ -62,6 +62,7 @@ class InternalSparkComponent(
             args=args,
             **kwargs,
         )
+        self.code = code
         # For pipeline spark job, we also allow user to set driver_cores, driver_memory and so on by setting conf.
         # If root level fields are not set by user, we promote conf setting to root level to facilitate subsequent
         # verification. This usually happens when we use to_component(SparkJob) or builder function spark() as a node

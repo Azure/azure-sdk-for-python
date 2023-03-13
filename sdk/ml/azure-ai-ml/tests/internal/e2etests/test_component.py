@@ -105,6 +105,9 @@ class TestComponent(AzureRecordedTestCase):
             if expected_dict["type"] == "DataTransferComponent" and "datatransfer" not in expected_dict:
                 expected_dict["datatransfer"] = {"allow_overwrite": "True"}
 
+            # skip environment in arm string
+            if "environment" in loaded_dict and isinstance(loaded_dict["environment"], str):
+                omit_fields.append("environment")
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)
 
