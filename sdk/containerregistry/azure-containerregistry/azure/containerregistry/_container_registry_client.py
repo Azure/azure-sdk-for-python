@@ -963,7 +963,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
     @distributed_trace
-    def delete_blob(self, repository, tag_or_digest, **kwargs):
+    def delete_blob(self, repository, digest, **kwargs):
         # type: (str, str, **Any) -> None
         """Delete a blob. If the blob cannot be found or a response status code of
         404 is returned an error will not be raised.
@@ -983,7 +983,4 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
             client.delete_blob("my_repository", "my_tag_or_digest")
         """
-        if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
-
-        self._client.container_registry_blob.delete_blob(repository, tag_or_digest, **kwargs)
+        self._client.container_registry_blob.delete_blob(repository, digest, **kwargs)
