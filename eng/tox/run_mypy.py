@@ -33,9 +33,16 @@ if __name__ == "__main__":
         required=True,
     )
 
+    parser.add_argument(
+        "--next",
+        default=False,
+        help="Next version of mypy is being tested.",
+        required=False 
+    )
+
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
-    if in_ci():
+    if not args.next and in_ci():
         if not is_check_enabled(args.target_package, "mypy", True) or is_typing_ignored(package_name):
             logging.info(
                 f"Package {package_name} opts-out of mypy check. See https://aka.ms/python/typing-guide for information."
@@ -62,7 +69,7 @@ if __name__ == "__main__":
     except CalledProcessError as src_err:
         src_code_error = src_err
 
-    if in_ci() and not is_check_enabled(args.target_package, "type_check_samples", True):
+    if not args.next and in_ci() and not is_check_enabled(args.target_package, "type_check_samples", True):
         logging.info(
             f"Package {package_name} opts-out of mypy check on samples."
         )

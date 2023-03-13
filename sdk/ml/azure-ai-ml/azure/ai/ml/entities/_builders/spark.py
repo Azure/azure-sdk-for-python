@@ -53,7 +53,11 @@ from marshmallow import INCLUDE, Schema
 
 from ..._schema import NestedField, PathAwareSchema, UnionField
 from .._job.pipeline._io import NodeOutput
-from .._job.spark_helpers import _validate_compute_or_resources, _validate_input_output_mode
+from .._job.spark_helpers import (
+    _validate_compute_or_resources,
+    _validate_input_output_mode,
+    _validate_spark_configurations,
+)
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
@@ -448,7 +452,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
-        self._validate_fields()
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
@@ -483,85 +486,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
             )
         result.merge_with(self._validate_entry_exist(raise_error=False))
-        result.merge_with(self._validate_spark_configurations(raise_error=False))
+        try:
+            self._validate_fields()
+        except ValidationException as e:
+            result.append_error(yaml_path="*", message=str(e))
         return result
-
-    def _validate_spark_configurations(self, raise_error=True):
-        validation_result = self._create_empty_validation_result()
-        # skip validation when component of node is from remote
-        if hasattr(self, "component") and isinstance(self.component, str):
-            return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
-        if str(self.dynamic_allocation_enabled).lower() == "true":
-            if (
-                self.driver_cores is None
-                or self.driver_memory is None
-                or self.executor_cores is None
-                or self.executor_memory is None
-            ):
-                msg = (
-                    "spark.driver.cores, spark.driver.memory, spark.executor.cores and spark.executor.memory are "
-                    "mandatory fields."
-                )
-                validation_result.append_error(
-                    yaml_path="conf",
-                    message=msg,
-                )
-            if self.dynamic_allocation_min_executors is None or self.dynamic_allocation_max_executors is None:
-                msg = (
-                    "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors are required "
-                    "when dynamic allocation is enabled."
-                )
-                validation_result.append_error(
-                    yaml_path="conf",
-                    message=msg,
-                )
-            if (
-                not self.dynamic_allocation_min_executors > 0
-                and self.dynamic_allocation_min_executors <= self.dynamic_allocation_max_executors
-            ):
-                msg = (
-                    "Dynamic min executors should be bigger than 0 and min executors should be equal or less than "
-                    "max executors."
-                )
-                validation_result.append_error(
-                    yaml_path="conf",
-                    message=msg,
-                )
-            if self.executor_instances and (
-                self.executor_instances > self.dynamic_allocation_max_executors
-                or self.executor_instances < self.dynamic_allocation_min_executors
-            ):
-                msg = (
-                    "Executor instances must be a valid non-negative integer and must be between "
-                    "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
-                )
-                validation_result.append_error(
-                    yaml_path="conf",
-                    message=msg,
-                )
-        else:
-            if (
-                self.driver_cores is None
-                or self.driver_memory is None
-                or self.executor_cores is None
-                or self.executor_memory is None
-                or self.executor_instances is None
-            ):
-                msg = (
-                    "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
-                    "spark.executor.instances are mandatory fields."
-                )
-                validation_result.append_error(
-                    yaml_path="conf",
-                    message=msg,
-                )
-            if self.dynamic_allocation_min_executors is not None or self.dynamic_allocation_max_executors is not None:
-                msg = "Should not specify min or max executors when dynamic allocation is disabled."
-                validation_result.append_error(
-                    yaml_path="conf",
-                    message=msg,
-                )
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
 
     def _validate_entry_exist(self, raise_error=False) -> MutableValidationResult:
         is_remote_code = isinstance(self.code, str) and (
@@ -602,6 +531,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
     def _validate_fields(self) -> None:
         _validate_compute_or_resources(self.compute, self.resources)
         _validate_input_output_mode(self.inputs, self.outputs)
+        _validate_spark_configurations(self)
         self._validate_entry()
 
         if self.args:
