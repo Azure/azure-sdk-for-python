@@ -97,6 +97,10 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit `bandit` checks in `analyze` job.
 - `Skip.Pylint`
   - Omit linting checks in `analyze` job.
+- `Skip.VerifyTypes`
+  - Omit `VerifyTypes` check in `analyze` job.
+- `Skip.Pyright`
+  - Omit `Pyright` check in `analyze` job.
 - `Skip.BreakingChanges`
   - Don't verify if a changeset includes breaking changes.
 - `Skip.MyPy`

@@ -28,7 +28,7 @@ def _get_sdk_version_prefix():
     is_attach_enabled = getenv("ApplicationInsightsAgent_EXTENSION_VERSION") == "~3"
     sdk_version_prefix = ''
     if is_on_app_service and is_attach_enabled:
-        os = None
+        os = ''
         system = platform.system()
         if system == "Linux":
             os = 'l'

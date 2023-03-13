@@ -104,8 +104,8 @@ class WorkspaceOperationsBase:
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
             )
-            workspace.feature_store_settings = (
-                workspace.feature_store_settings or existing_workspace.feature_store_settings
+            workspace._feature_store_settings = (
+                workspace._feature_store_settings or existing_workspace._feature_store_settings
             )
             return self.begin_update(
                 workspace,
@@ -217,7 +217,7 @@ class WorkspaceOperationsBase:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        feature_store_settings = kwargs.get("feature_store_settings", workspace.feature_store_settings)
+        feature_store_settings = kwargs.get("feature_store_settings", workspace._feature_store_settings)
         if feature_store_settings:
             feature_store_settings = feature_store_settings._to_rest_object()
 
@@ -476,14 +476,14 @@ class WorkspaceOperationsBase:
         if workspace.primary_user_assigned_identity:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
 
-        if workspace.feature_store_settings:
+        if workspace._feature_store_settings:
             _set_val(
-                param["spark_runtime_version"], workspace.feature_store_settings.compute_runtime.spark_runtime_version
+                param["spark_runtime_version"], workspace._feature_store_settings.compute_runtime.spark_runtime_version
             )
             _set_val(
                 param["offline_store_connection_name"],
-                workspace.feature_store_settings.offline_store_connection_name
-                if workspace.feature_store_settings.offline_store_connection_name
+                workspace._feature_store_settings.offline_store_connection_name
+                if workspace._feature_store_settings.offline_store_connection_name
                 else "",
             )
             _set_val(param["online_store_connection_name"], "")
@@ -493,7 +493,6 @@ class WorkspaceOperationsBase:
             materialization_identity = kwargs.get("materialization_identity", None)
             offline_store_target = kwargs.get("offline_store_target", None)
 
-            print("offline !!", offline_store_target)
             setup_materialization_store = offline_store_target and materialization_identity
 
         _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")
