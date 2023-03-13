@@ -15,8 +15,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class DockerfileResolver(object):
-    """Represents the contents of a Dockerfile and handles writing the
-    Dockerfile to User's system.
+    """Represents the contents of a Dockerfile and handles writing the Dockerfile to User's system.
 
     :param docker_base_image: name of local endpoint
     :type docker_base_image: str
@@ -69,8 +68,7 @@ class DockerfileResolver(object):
         return self._local_dockerfile_path
 
     def __str__(self) -> str:
-        """Override DockerfileResolver str() built-in func to return the
-        Dockerfile contents as a string.
+        """Override DockerfileResolver str() built-in func to return the Dockerfile contents as a string.
 
         :return: str
         """
@@ -140,8 +138,7 @@ class DockerfileResolver(object):
             )
 
     def write_file(self, directory_path: str, file_prefix: Optional[str] = None) -> None:
-        """Writes this Dockerfile to a file in provided directory and file name
-        prefix.
+        """Writes this Dockerfile to a file in provided directory and file name prefix.
 
         :param directory_path: absolute path of local directory to write Dockerfile.
         :type directory_path: str

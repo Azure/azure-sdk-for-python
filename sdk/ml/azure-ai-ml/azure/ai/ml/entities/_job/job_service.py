@@ -150,9 +150,8 @@ class JobServiceBase(RestTranslatableMixin):
 
 @experimental
 class JobService(JobServiceBase):
-    """Basic job service configuration for backward compatibility.
-        Use JupyterLabJobService, SshJobService, TensorBoardJobService or VsCodeJobService
-        specific to your job type instead of JobService.
+    """Basic job service configuration for backward compatibility. Use JupyterLabJobService, SshJobService,
+    TensorBoardJobService or VsCodeJobService specific to your job type instead of JobService.
 
     :param endpoint: Url for endpoint.
     :type endpoint: str

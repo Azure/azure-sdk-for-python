@@ -12,7 +12,7 @@ jobs:
   s3_blob:
     type: data_transfer
     task: import_data
-    component: azureml://registries/azureml-dev/components/import_data_file_system/versions/0.0.1
+    component: azureml://registries/azureml-preview/components/import_data_file_system/versions/0.0.1
     source:
       type: file_system
       path: ${{parent.inputs.path_source_s3}}
@@ -25,7 +25,7 @@ jobs:
   s3_blob_input:
     type: data_transfer
     task: import_data
-    component: azureml://registries/azureml-dev/components/import_data_file_system/versions/0.0.1
+    component: azureml://registries/azureml-preview/components/import_data_file_system/versions/0.0.1
     source:
       type: file_system
       path: test1/*

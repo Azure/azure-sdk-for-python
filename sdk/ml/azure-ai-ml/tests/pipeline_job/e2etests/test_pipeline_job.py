@@ -1452,7 +1452,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_data_transfer_copy_urifolder(self, client: MLClient, randstr: Callable[[str], str]):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1470,7 +1470,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_data_transfer_copy_urifile(self, client: MLClient, randstr: Callable[[str], str]):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_uri_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1488,7 +1488,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_data_transfer_copy_2urifolder(self, client: MLClient, randstr: Callable[[str], str]):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1511,7 +1511,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     ):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1534,7 +1534,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     ):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_mixtype_files.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1556,7 +1556,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_data_transfer_import_filesystem(self, client: MLClient, randstr: Callable[[str], str]):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/import_file_system_to_blob.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1588,7 +1588,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             "./tests/test_configs/pipeline_jobs/data_transfer/" "import_file_system_to_blob_reference_component.yaml"
         )
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1616,7 +1616,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_data_transfer_import_sql_database(self, client: MLClient, randstr: Callable[[str], str]):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/import_sql_database_to_blob.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1640,7 +1640,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     ):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/import_database_to_blob.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1667,7 +1667,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_with_data_transfer_export_sql_database(self, client: MLClient, randstr: Callable[[str], str]):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1690,7 +1690,7 @@ class TestPipelineJob(AzureRecordedTestCase):
     ):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob_reference_component.yaml"
         pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
-        created_pipeline = assert_job_cancel(pipeline, client)
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
         pipeline_dict = created_pipeline._to_rest_object().as_dict()
         fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
 
@@ -1747,17 +1747,26 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     @pytest.mark.skipif(condition=not is_live(), reason="Task 2177353: component version changes across tests.")
     @pytest.mark.parametrize(
-        "yaml_path",
+        "test_path",
         [
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/command/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/sweep/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/pipeline/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/automl/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/parallel/pipeline.yml",
-            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/spark/pipeline.yml",
+            "command/pipeline_serverless_compute.yml",
+            "command/node_serverless_compute.yml",
+            "command/node_serverless_compute_no_default.yml",
+            "sweep/pipeline_serverless_compute.yml",
+            "sweep/node_serverless_compute.yml",
+            "sweep/node_serverless_compute_no_default.yml",
+            "pipeline/pipeline_serverless_compute.yml",
+            "pipeline/node_serverless_compute.yml",
+            "automl/pipeline_with_instance_type.yml",
+            "automl/pipeline_without_instance_type.yml",
+            "automl/pipeline_with_instance_type_no_default.yml",
+            "parallel/pipeline_serverless_compute.yml",
+            "spark/pipeline_serverless_compute.yml",
+            "spark/node_serverless_compute_no_default.yml",
         ],
     )
-    def test_serverless_compute_in_pipeline(self, client: MLClient, yaml_path: str) -> None:
+    def test_serverless_compute_in_pipeline(self, client: MLClient, test_path: str) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/" + test_path
         pipeline_job = load_job(yaml_path)
         assert_job_cancel(pipeline_job, client)
 

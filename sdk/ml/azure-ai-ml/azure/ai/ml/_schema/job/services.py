@@ -31,9 +31,8 @@ class JobServiceBaseSchema(PathAwareSchema):
 
 
 class JobServiceSchema(JobServiceBaseSchema):
-    """This is to support tansformation of job services passed as dict type and
-    internal job services like Custom, Tracking, Studio set by the system.
-    """
+    """This is to support tansformation of job services passed as dict type and internal job services like Custom,
+    Tracking, Studio set by the system."""
 
     job_service_type = UnionField(
         [

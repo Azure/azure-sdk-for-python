@@ -15,7 +15,7 @@ jobs:
   blob_azuresql:
     type: data_transfer
     task: export_data
-    component: azureml://registries/azureml-dev/components/export_data_database/versions/0.0.1
+    component: azureml://registries/azureml-preview/components/export_data_database/versions/0.0.1
     inputs:
       source: ${{parent.inputs.cosmos_folder}}
     sink:
@@ -26,7 +26,7 @@ jobs:
   blob_azuresql_node_input:
     type: data_transfer
     task: export_data
-    component: azureml://registries/azureml-dev/components/export_data_database/versions/0.0.1
+    component: azureml://registries/azureml-preview/components/export_data_database/versions/0.0.1
     inputs:
       source:
         type: uri_file

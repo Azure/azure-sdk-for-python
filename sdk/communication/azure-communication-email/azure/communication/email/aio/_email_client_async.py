@@ -138,7 +138,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
                             "name": "str"  # Name of the attachment. Required.
                         }
                     ],
-                    "disableUserEngagementTracking": bool,  # Optional. Indicates whether user
+                    "userEngagementTrackingDisabled": bool,  # Optional. Indicates whether user
                       engagement tracking should be disabled for this request if the resource-level
                       user engagement tracking setting was already enabled in the control plane.
                     "headers": {
