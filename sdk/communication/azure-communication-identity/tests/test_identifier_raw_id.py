@@ -508,6 +508,29 @@ class IdentifierRawIdTest(unittest.TestCase):
             is_global=True,
             cloud=CommunicationCloudEnvironment.GCCH
         )
+        assert MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+        ) == MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.PUBLIC
+        )
+        assert MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=False,
+        ) == MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=False,
+            cloud=CommunicationCloudEnvironment.PUBLIC
+        )
+        assert MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+        ) == MicrosoftBotIdentifier(
+            bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+            is_global=False,
+            cloud=CommunicationCloudEnvironment.PUBLIC
+        )
 
         # MicrosoftBotIdentifiers are not equal.
         assert MicrosoftBotIdentifier(
