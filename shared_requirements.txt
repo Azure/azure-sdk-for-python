@@ -363,6 +363,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-purview-workflow azure-core<2.0.0,>=1.24.0
 #override azure-purview-workflow typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-purview-sharing azure-core<2.0.0,>=1.24.0
+#override azure-purview-sharing isodate<1.0.0,>=0.6.1
+#override azure-purview-sharing typing-extensions>=4.3.0
 #override azure-mgmt-loadtesting msrest>=0.7.1
 #override azure-mgmt-storage typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-purview-scanning azure-core<2.0.0,>=1.18.0
