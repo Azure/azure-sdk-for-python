@@ -68,7 +68,7 @@ from .._base_handler import (
 )
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
-from ._generated._service_bus_management_client import (
+from ._generated._client import (
     ServiceBusManagementClient as ServiceBusManagementClientImpl,
 )
 from . import _constants as constants
@@ -119,11 +119,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
         self._config = ServiceBusManagementClientConfiguration(
-            self._endpoint, api_version=api_version, **kwargs
+            self._endpoint, credential=self._credential, api_version=api_version, **kwargs
         )
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(
-            endpoint=fully_qualified_namespace, pipeline=self._pipeline
+            endpoint=fully_qualified_namespace, credential=self._credential, pipeline=self._pipeline
         )
 
     def __enter__(self):
@@ -1269,8 +1269,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.NamespaceProperties
         """
-        entry_el = self._impl.namespace.get(api_version=self._api_version, **kwargs)  # type: ignore
-        namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
+        namespace_entry = self._impl.namespace.get(**kwargs)  # type: ignore
+        #namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
         return NamespaceProperties._from_internal_entity(
             namespace_entry.title, namespace_entry.content.namespace_properties
         )

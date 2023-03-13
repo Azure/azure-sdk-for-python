@@ -11,7 +11,7 @@ from datetime import datetime
 import warnings
 from typing import Optional, Any, Tuple, cast, Mapping, Union, Dict, List
 
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 import uamqp
 
 from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
