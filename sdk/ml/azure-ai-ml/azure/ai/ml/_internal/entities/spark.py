@@ -12,6 +12,7 @@ from ...entities._job.parameterized_spark import DUMMY_IMAGE, ParameterizedSpark
 from ...entities._job.spark_job_entry_mixin import SparkJobEntryMixin
 from .._schema.component import InternalSparkComponentSchema
 from ..entities import InternalComponent
+from .environment import InternalEnvironment
 
 
 class InternalSparkComponent(
@@ -99,7 +100,20 @@ class InternalSparkComponent(
         if value is None or isinstance(value, (str, Environment)):
             self._environment = value
         elif isinstance(value, dict):
-            self._environment = Environment(**value)
+            internal_environment = InternalEnvironment(**value)
+            internal_environment.resolve(self.base_path)
+            self._environment = Environment(
+                name=internal_environment.name,
+                version=internal_environment.version,
+            )
+            if internal_environment.conda:
+                self._environment.conda_file = {
+                    "dependencies": internal_environment.conda[InternalEnvironment.CONDA_DEPENDENCIES]
+                }
+            if internal_environment.docker:
+                self._environment.image = internal_environment.docker["image"]
+            # we suppose that loaded internal spark component won't be used to create another internal spark component
+            # so the environment construction here can be simplified
         else:
             raise ValueError(f"Unsupported environment type: {type(value)}")
 

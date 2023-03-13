@@ -8,16 +8,19 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
+from marshmallow import INCLUDE
+
+from ..._restclient.v2022_05_01.models import (
     ComponentContainerData,
     ComponentContainerDetails,
     ComponentVersionData,
     ComponentVersionDetails,
 )
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.component import ComponentSchema
-from azure.ai.ml._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
-from azure.ai.ml.constants._common import (
+from ..._schema import PathAwareSchema
+from ..._schema.component import ComponentSchema
+from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
+from ..._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
+from ...constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
@@ -26,18 +29,15 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     CommonYamlFields,
 )
-from azure.ai.ml.constants._component import ComponentSource, IOConstants, NodeType
-from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._assets.asset import Asset
-from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
-from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from marshmallow import INCLUDE
-
-from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
+from ...constants._component import ComponentSource, IOConstants, NodeType
+from ...entities._assets import Code
+from ...entities._assets.asset import Asset
+from ...entities._inputs_outputs import Input, Output
+from ...entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from ...entities._system_data import SystemData
+from ...entities._util import find_type_in_override
+from ...entities._validation import MutableValidationResult, SchemaValidatableMixin
+from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .code import ComponentIgnoreFile
 
 # pylint: disable=protected-access, redefined-builtin
@@ -318,23 +318,25 @@ class Component(
 
         from azure.ai.ml.entities._component.component_factory import component_factory
 
-        create_instance_func, create_schema_func = component_factory.get_create_funcs(
+        create_instance_func, _ = component_factory.get_create_funcs(
             data,
             for_load=True,
         )
         new_instance = create_instance_func()
+        init_kwargs = new_instance._load_with_schema(  # pylint: disable=protected-access
+            data,
+            context={
+                BASE_PATH_CONTEXT_KEY: base_path,
+                SOURCE_PATH_CONTEXT_KEY: yaml_path,
+                PARAMS_OVERRIDE_KEY: params_override,
+            },
+            unknown=INCLUDE,
+            **kwargs,
+        )
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(
-                create_schema_func(
-                    {
-                        BASE_PATH_CONTEXT_KEY: base_path,
-                        SOURCE_PATH_CONTEXT_KEY: yaml_path,
-                        PARAMS_OVERRIDE_KEY: params_override,
-                    }
-                ).load(data, unknown=INCLUDE, **kwargs)
-            ),
+            **init_kwargs,
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
@@ -399,9 +401,7 @@ class Component(
 
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
-        init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
-            rest_component_version.component_spec, unknown=INCLUDE
-        )
+        init_kwargs = cls._load_with_schema(rest_component_version.component_spec, unknown=INCLUDE)
         init_kwargs.update(
             dict(
                 id=obj.id,
@@ -414,6 +414,7 @@ class Component(
         )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
+        # note that there is an issue that environment == {} will always be true, so use isinstance here
         return {k: v for k, v in init_kwargs.items() if v is not None and not (isinstance(v, dict) and not v)}
 
     def _get_anonymous_hash(self) -> str:

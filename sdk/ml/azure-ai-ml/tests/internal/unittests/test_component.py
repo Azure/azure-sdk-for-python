@@ -18,6 +18,7 @@ from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal._utils import yaml_safe_load_with_base_resolver
 from azure.ai.ml._internal.entities.component import InternalComponent
+from azure.ai.ml._internal.entities.spark import InternalSparkComponent
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
@@ -954,3 +955,34 @@ class TestComponent:
             "version": "0.10",  # previously this is 0.1
             "datatransfer": {"cloud_type": "aether"},
         }
+
+    def test_load_from_internal_spark_component(self):
+        yaml_path = PARAMETERS_TO_TEST[9][0]
+        origin_component: InternalSparkComponent = load_component(source=yaml_path)
+        base_rest_object = origin_component._to_rest_object()
+        base_component: InternalSparkComponent = Component._from_rest_object(base_rest_object)
+        expected_dict = base_component._to_dict()
+
+        treat_rest_object = origin_component._to_rest_object()
+        treat_rest_object.properties.component_spec["environment"] = {
+            "os": "Linux",
+            "conda": {
+                "conda_dependencies": [
+                    "python=3.8",
+                    {
+                        "pip": [
+                            "azureml-core==1.44.0",
+                            "shrike==1.31.2",
+                        ],
+                    },
+                ],
+            },
+        }
+        treat_component: InternalSparkComponent = Component._from_rest_object(treat_rest_object)
+
+        for component in (base_component, treat_component, origin_component):
+            assert isinstance(component, InternalSparkComponent)
+
+        expected_dict["environment"]["version"] = treat_component.environment.version
+        del expected_dict["environment"]["conda_file"]["name"]
+        assert treat_component._to_dict() == expected_dict

@@ -6,28 +6,25 @@
 
 from typing import Any, Callable, Dict, Optional, Tuple
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
-from azure.ai.ml._utils.utils import is_internal_components_enabled
-from azure.ai.ml.constants._common import (
-    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
-    SOURCE_PATH_CONTEXT_KEY,
-    CommonYamlFields,
-)
-from azure.ai.ml.constants._component import DataTransferTaskType, NodeType
-from azure.ai.ml.entities._component.automl_component import AutoMLComponent
-from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._component.datatransfer_component import (
+from marshmallow import Schema
+
+from ..._restclient.v2022_05_01.models import ComponentVersionData
+from ..._utils.utils import is_internal_components_enabled
+from ...constants._common import AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
+from ...constants._component import DataTransferTaskType, NodeType
+from ...entities._component.automl_component import AutoMLComponent
+from ...entities._component.command_component import CommandComponent
+from ...entities._component.component import Component
+from ...entities._component.datatransfer_component import (
     DataTransferCopyComponent,
     DataTransferExportComponent,
     DataTransferImportComponent,
 )
-from azure.ai.ml.entities._component.import_component import ImportComponent
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._util import get_type_from_spec
-from marshmallow import Schema
+from ...entities._component.import_component import ImportComponent
+from ...entities._component.parallel_component import ParallelComponent
+from ...entities._component.pipeline_component import PipelineComponent
+from ...entities._component.spark_component import SparkComponent
+from ...entities._util import get_type_from_spec
 
 
 class _ComponentFactory:
