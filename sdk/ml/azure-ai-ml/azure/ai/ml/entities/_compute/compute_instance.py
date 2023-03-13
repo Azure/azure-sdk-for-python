@@ -28,7 +28,6 @@ from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
