@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 )
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._feature_store_entity.data_column_type import DataColumnType
+from azure.ai.ml.entities._feature_store_entity.data_column_type import _DataColumnType
 
 
 class Feature(RestTranslatableMixin):
@@ -19,7 +19,7 @@ class Feature(RestTranslatableMixin):
         self,
         *,
         name: str,
-        data_type: DataColumnType,
+        data_type: _DataColumnType,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs

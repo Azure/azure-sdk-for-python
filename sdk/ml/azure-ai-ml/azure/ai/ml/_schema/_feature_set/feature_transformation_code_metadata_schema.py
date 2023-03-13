@@ -15,8 +15,6 @@ class FeatureTransformationCodeMetadataSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.feature_transformation_code_metadata import (
-            FeatureTransformationCodeMetadata,
-        )
+        from azure.ai.ml.entities._feature_set.feature_transformation_code import FeatureTransformationCode
 
-        return FeatureTransformationCodeMetadata(**data)
+        return FeatureTransformationCode(**data)

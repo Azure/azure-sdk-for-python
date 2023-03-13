@@ -24,9 +24,6 @@ from .entities._load_functions import (
     load_data,
     load_datastore,
     load_environment,
-    load_feature_set,
-    load_feature_store,
-    load_feature_store_entity,
     load_job,
     load_model,
     load_online_deployment,
@@ -34,6 +31,9 @@ from .entities._load_functions import (
     load_registry,
     load_workspace,
     load_workspace_connection,
+    _load_feature_set,
+    _load_feature_store,
+    _load_feature_store_entity,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -60,15 +60,15 @@ __all__ = [
     "load_datastore",
     "load_model",
     "load_environment",
-    "load_feature_set",
-    "load_feature_store",
-    "load_feature_store_entity",
     "load_job",
     "load_online_deployment",
     "load_online_endpoint",
     "load_workspace",
     "load_registry",
     "load_workspace_connection",
+    "_load_feature_set",
+    "_load_feature_store",
+    "_load_feature_store_entity",
 ]
 
 __version__ = VERSION

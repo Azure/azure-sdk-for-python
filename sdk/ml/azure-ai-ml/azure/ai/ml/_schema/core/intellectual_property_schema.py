@@ -2,12 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from enum import Enum
-
+from marshmallow import fields
+from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class _MaterializationType(Enum):
-    RecurrentMaterialization = 1
-    BackfillMaterialization = 2
+class IntellectualPropertySchema(metaclass=PatchedSchemaMeta):
+
+    publisher = fields.Str()

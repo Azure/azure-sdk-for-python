@@ -19,6 +19,6 @@ class NotificationSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._notification.notification import Notification
+        from azure.ai.ml.entities._notification.notification import _Notification
 
-        return Notification(**data)
+        return _Notification(**data)
