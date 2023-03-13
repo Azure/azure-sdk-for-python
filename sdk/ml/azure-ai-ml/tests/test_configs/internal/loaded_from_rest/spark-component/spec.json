@@ -22,9 +22,15 @@
     }
   },
   "type": "spark",
+  "jars": [
+    "scalaproj.jar"
+  ],
   "entry": {
     "file": "entry.py"
   },
   "args": "--file_input1 ${{inputs.file_input1}} --file_input2 ${{inputs.file_input2}} --output ${{outputs.output}}",
-  "_source": "REMOTE.WORKSPACE.COMPONENT"
+  "_source": "REMOTE.WORKSPACE.COMPONENT",
+  "py_files": [
+    "utils.zip"
+  ]
 }
