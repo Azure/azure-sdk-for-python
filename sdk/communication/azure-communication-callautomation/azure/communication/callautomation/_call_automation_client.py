@@ -19,6 +19,7 @@ from ._generated.models import (
     CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest)
 from ._models import (CallInvite, CallConnectionProperties)
 
+
 class CallResult(object):
     def __init__(
         self,
@@ -38,6 +39,14 @@ class CallResult(object):
         self.call_connection_properties = call_connection_properties
 
 
+class CreateCallResult(CallResult):
+    pass
+
+
+class AnswerCallResult(CallResult):
+    pass
+
+
 class CallAutomationClient(object):
     """A client to interact with the AzureCommunicationService CallAutomation service.
 
@@ -54,6 +63,7 @@ class CallAutomationClient(object):
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
+
     def __init__(
             self,
             endpoint: str,
@@ -95,14 +105,14 @@ class CallAutomationClient(object):
         cls,
         conn_str: str,
         **kwargs
-    ) -> 'CallAutomationClient' :
+    ) -> 'CallAutomationClient':
         """Create CallAutomation from a Connection String.
 
         :param str conn_str:
          A connection string to an Azure Communication Service resource.
 
         :return: Instance of CallAutomationClient.
-        :rtype: ~azure.communication.callautomation.CallAutomationClient
+        :rtype: CallAutomationClient
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -149,17 +159,17 @@ class CallAutomationClient(object):
 
     def create_call(
         self,
-        call_invite: CallInvite,
-        callback_url: str,
+        target: CallInvite,
+        callback_uri: str,
         **kwargs
-    ) -> CallResult:
+    ) -> CreateCallResult:
         """
         Create a call connection request from a source identity to a target identity.
 
-        :param call_invite: Required. Call invitee's information.
-        :type call_invite: CallInvite
-        :param callback_url: Required. The call back url for receiving events.
-        :type callback_url: str
+        :param target: Required. Call invitee's information.
+        :type target: CallInvite
+        :param callback_uri: Required. The call back uri for receiving events.
+        :type callback_uri: str
         :param source_caller_id_number: The source caller Id, a phone number,
          that's shown to the PSTN participant being invited.
          Required only when calling a PSTN callee.
@@ -175,22 +185,23 @@ class CallAutomationClient(object):
         :param azure_cognitive_services_endpoint_url: The identifier of the Cognitive Service resource
      assigned to this call.
         :type azure_cognitive_services_endpoint_url: str
-
+        :return: Instance of CreateCallResult.
+        :rtype: CreateCallResult
         """
 
-        if not call_invite:
-            raise ValueError('call_invite cannot be None.')
-        if not callback_url:
-            raise ValueError('callback_url cannot be None.')
+        if not target:
+            raise ValueError('target cannot be None.')
+        if not callback_uri:
+            raise ValueError('callback_uri cannot be None.')
 
         media_streaming_config = kwargs.pop(
             "media_streaming_configuration", None)
         create_call_request = CreateCallRequest(
-            targets=[serialize_identifier(call_invite.target)],
-            callback_uri=callback_url,
+            targets=[serialize_identifier(target.target)],
+            callback_uri=callback_uri,
             source_caller_id_number=serialize_phone_identifier(
-                call_invite.sourceCallIdNumber) if call_invite.sourceCallIdNumber else None,
-            source_display_name=call_invite.sourceDisplayName,
+                target.sourceCallIdNumber) if target.sourceCallIdNumber else None,
+            source_display_name=target.sourceDisplayName,
             source_identity=serialize_identifier(
                 self.source_identity) if self.source_identity else None,
             operation_context=kwargs.pop("operation_context", None),
@@ -208,24 +219,25 @@ class CallAutomationClient(object):
             repeatability_request_id=repeatability_request_id,
             **kwargs)
 
-        return CallResult(
-            call_connection=self.get_call_connection(result.call_connection_id),
-            call_connection_properties=CallConnectionProperties._from_generated(# pylint:disable=protected-access
-            result))
+        return CreateCallResult(
+            call_connection=self.get_call_connection(
+                result.call_connection_id),
+            call_connection_properties=CallConnectionProperties._from_generated(  # pylint:disable=protected-access
+                result))
 
     def create_group_call(
         self,
         targets: List[CommunicationIdentifier],
-        callback_url: str,
+        callback_uri: str,
         **kwargs
-    ) -> CallResult:
+    ) -> CreateCallResult:
         """
         Create a call connection request from a source identity to a list of target identities.
 
         :param targets: Required. A list of targets.
         :type targets: list[CommunicationIdentifier]
-        :param callback_url: Required. The call back url for receiving events.
-        :type callback_url: str
+        :param callback_uri: Required. The call back uri for receiving events.
+        :type callback_uri: str
         :param source_caller_id_number: The source caller Id, a phone number,
          that's shown to the PSTN participant being invited.
          Required only when calling a PSTN callee.
@@ -241,13 +253,14 @@ class CallAutomationClient(object):
         :param azure_cognitive_services_endpoint_url: The identifier of the Cognitive Service resource
      assigned to this call.
         :type azure_cognitive_services_endpoint_url: str
-
+        :return: Instance of CreateCallResult.
+        :rtype: CreateCallResult
         """
 
         if not targets:
             raise ValueError('targets cannot be None.')
-        if not callback_url:
-            raise ValueError('callback_url cannot be None.')
+        if not callback_uri:
+            raise ValueError('callback_uri cannot be None.')
 
         caller_id_number = kwargs.pop("source_caller_id_number", None)
         media_streaming_config = kwargs.pop(
@@ -256,7 +269,7 @@ class CallAutomationClient(object):
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(identifier)
                      for identifier in targets],
-            callback_uri=callback_url,
+            callback_uri=callback_uri,
             source_caller_id_number=serialize_phone_identifier(
                 caller_id_number) if caller_id_number else None,
             source_display_name=kwargs.pop("source_display_name", None),
@@ -278,27 +291,28 @@ class CallAutomationClient(object):
             repeatability_request_id=repeatability_request_id,
             **kwargs)
 
-        return CallResult(
-            call_connection=self.get_call_connection(result.call_connection_id),
-            call_connection_properties=CallConnectionProperties._from_generated(# pylint:disable=protected-access
-            result))
+        return CreateCallResult(
+            call_connection=self.get_call_connection(
+                result.call_connection_id),
+            call_connection_properties=CallConnectionProperties._from_generated(  # pylint:disable=protected-access
+                result))
 
     def answer_call(
         self,
         incoming_call_context: str,
-        callback_url: str,
+        callback_uri: str,
         **kwargs
-    ) -> CallResult:
+    ) -> AnswerCallResult:
         """
         Create a call connection request from a source identity to a list of target identities.
 
         :param incoming_call_context: Required. The incoming call context.
         :type incoming_call_context: str
-        :param callback_url: Required. The call back url for receiving events.
-        :type callback_url: str
+        :param callback_uri: Required. The call back uri for receiving events.
+        :type callback_uri: str
         :param media_streaming_configuration: Media Streaming Configuration.
         :type media_streaming_configuration: MediaStreamingConfiguration
-        :param azure_cognitive_services_endpoint_url: The endpoint URL of
+        :param azure_cognitive_services_endpoint_url: The endpoint uri of
         the Azure Cognitive Services resource attached.
         :type azure_cognitive_services_endpoint_url: str
         :param repeatability_request_id: If specified, the client directs that the request is
@@ -315,19 +329,21 @@ class CallAutomationClient(object):
           IMF-fixdate form of HTTP-date.
           Example: Sun, 06 Nov 1994 08:49:37 GMT. Default value is None.
         :type repeatability_first_sent: str
+        :return: Instance of AnswerCallResult.
+        :rtype: AnswerCallResult
         """
 
         if not incoming_call_context:
             raise ValueError('incoming_call_context cannot be None.')
-        if not callback_url:
-            raise ValueError('callback_url cannot be None.')
+        if not callback_uri:
+            raise ValueError('callback_uri cannot be None.')
 
         media_streaming_config = kwargs.pop(
             "media_streaming_configuration", None)
 
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
-            callback_uri=callback_url,
+            callback_uri=callback_uri,
             media_streaming_configuration=media_streaming_config.to_generated(
             ) if media_streaming_config else None,
             azure_cognitive_services_endpoint_url=kwargs.pop(
@@ -345,10 +361,11 @@ class CallAutomationClient(object):
             repeatability_request_id=repeatability_request_id,
             **kwargs)
 
-        return CallResult(
-            call_connection=self.get_call_connection(result.call_connection_id),
-            call_connection_properties=CallConnectionProperties._from_generated(# pylint:disable=protected-access
-            result))
+        return AnswerCallResult(
+            call_connection=self.get_call_connection(
+                result.call_connection_id),
+            call_connection_properties=CallConnectionProperties._from_generated(  # pylint:disable=protected-access
+                result))
 
     def redirect_call(
         self,
@@ -357,11 +374,14 @@ class CallAutomationClient(object):
         **kwargs
     ) -> None:
         """
-        Create a call connection request from a source identity to a list of target identities.
+        Redirect a call to a specific target.
+
         :param incoming_call_context: Required. The incoming call context.
         :type incoming_call_context: str
         :param target: The target identity to redirect the call to. Required.
         :type target: CallInvite
+        :return: None
+        :rtype: None
         """
 
         if not incoming_call_context:
@@ -396,6 +416,8 @@ class CallAutomationClient(object):
         :param call_reject_reason: The rejection reason.
          Known values are: "none", "busy", and "forbidden".
         :type call_reject_reason: str or CallRejectReason
+        :return: None
+        :rtype: None
         """
 
         if not incoming_call_context:
