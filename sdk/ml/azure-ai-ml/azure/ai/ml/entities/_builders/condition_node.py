@@ -121,29 +121,4 @@ class ConditionNode(ControlFlowNode):
                         message=f"'{name}' of dsl.condition has invalid binding expression: {block}, {error_tail}",
                     )
 
-        def _get_intersection(lst1, lst2):
-            if not lst1:
-                lst1 = []
-            if not lst2:
-                lst2 = []
-            return list({n.name for n in lst1} & {n.name for n in lst2})
-
-        intersection = _get_intersection(self.true_block, self.false_block)
-
-        if not self.true_block and not self.false_block:
-            validation_result.append_error(
-                yaml_path="true_block",
-                message="'true_block' and 'false_block' of dsl.condition node cannot both be empty.",
-            )
-        elif self.true_block is self.false_block:
-            validation_result.append_error(
-                yaml_path="true_block",
-                message="'true_block' and 'false_block' of dsl.condition node cannot be the same object.",
-            )
-        elif intersection:
-            validation_result.append_error(
-                yaml_path="true_block",
-                message=f"'true_block' and 'false_block' of dsl.condition has intersection: {intersection}",
-            )
-
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
