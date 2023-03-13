@@ -156,8 +156,22 @@ class LROPoller(Generic[PollingReturnType]):
                 name="LROPoller({})".format(uuid.uuid4()),
             )
             self._thread.daemon = True
-            self._thread.start()
 
+    def _is_alive(self) -> bool:
+        """Check that the polling thread is active, and if not, start it."""
+        if self._thread is None:
+            # No polling
+            return False
+        # Thread.is_alive() will be False in both the case that the background poller hasn't been
+        # started, or it has already completed. The quickest way to determine which is to just
+        # attempt to start it again.
+        try:
+            self._thread.start()
+            return True
+        except RuntimeError:
+            # Thread has already been started, so if it's no longer alive, polling has already finished.
+            return self._thread.is_alive()
+        
     def _start(self):
         """Start the long running operation.
         On completion, runs any callbacks.
@@ -217,6 +231,7 @@ class LROPoller(Generic[PollingReturnType]):
         :returns: The current status string
         :rtype: str
         """
+        self._is_alive()
         return self._polling_method.status()
 
     def result(self, timeout: Optional[float] = None) -> PollingReturnType:
@@ -240,7 +255,7 @@ class LROPoller(Generic[PollingReturnType]):
          operation to complete (in seconds).
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
-        if self._thread is None:
+        if not self._is_alive():
             return
         self._thread.join(timeout=timeout)
         try:
@@ -256,7 +271,7 @@ class LROPoller(Generic[PollingReturnType]):
         :returns: 'True' if the process has completed, else 'False'.
         :rtype: bool
         """
-        return self._thread is None or not self._thread.is_alive()
+        return not self._is_alive()
 
     def add_done_callback(self, func: Callable) -> None:
         """Add callback function to be run once the long running operation
@@ -266,7 +281,7 @@ class LROPoller(Generic[PollingReturnType]):
          argument, a completed LongRunningOperation.
         """
         # Still use "_done" and not "done", since CBs are executed inside the thread.
-        if self._done is None or self._done.is_set():
+        if not self._is_alive() or self._done.is_set():
             func(self._polling_method)
         # Let's add them still, for consistency (if you wish to access to it for some reasons)
         self._callbacks.append(func)
