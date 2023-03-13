@@ -34,6 +34,7 @@ from ._generated.models import (
 if TYPE_CHECKING:
     from ._generated.operations import CallConnectionOperations, CallMediaOperations
 
+
 class CallConnection(object):
     def __init__(
         self,
@@ -65,7 +66,7 @@ class CallConnection(object):
         :return: CallConnectionProperties
         :type: CallConnectionProperties
         """
-        return CallConnectionProperties._from_generated(# pylint:disable=protected-access
+        return CallConnectionProperties._from_generated(  # pylint:disable=protected-access
             self._call_connection_client.get_call(call_connection_id=self.call_connection_id, **kwargs))
 
     def hang_up(self, is_for_everyone: bool, **kwargs) -> None:
@@ -114,7 +115,7 @@ class CallConnection(object):
         :type participant_raw_id: str
         :return: CallParticipant
         """
-        return CallParticipant._from_generated(# pylint:disable=protected-access
+        return CallParticipant._from_generated(  # pylint:disable=protected-access
             self._call_connection_client.get_participant(self.call_connection_id, participantMri, **kwargs))
 
     def list_participants(self, **kwargs) -> GetParticipantsResponse:
@@ -128,7 +129,7 @@ class CallConnection(object):
         :type participant_raw_id: str
         :return: GetParticipantsResponse
         """
-        return GetParticipantsResponse._from_generated(# pylint:disable=protected-access
+        return GetParticipantsResponse._from_generated(  # pylint:disable=protected-access
             self._call_connection_client.get_participants(self.call_connection_id, **kwargs))
 
     def transfer_call_to_participant(self, target: CallInvite, **kwargs: Any) -> TransferCallResponse:
@@ -158,7 +159,7 @@ class CallConnection(object):
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target.target),
             transferee_caller_id=serialize_identifier(
-            target.sourceCallIdNumber) if target.sourceCallIdNumber else None,
+                target.sourceCallIdNumber) if target.sourceCallIdNumber else None,
             custom_context=user_custom_context, operation_context=kwargs.pop("operation_context", None))
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
@@ -170,7 +171,7 @@ class CallConnection(object):
 
     def add_participant(self, participant: CallInvite, **kwargs: Any) -> AddParticipantResponse:
         """
-        Add participants to the call.
+        Add a participant to the call.
 
         :param participant: The participant being added. Required.
         :type participant: CallInvite
@@ -200,25 +201,25 @@ class CallConnection(object):
         add_participant_request = AddParticipantRequest(
             participant_to_add=serialize_identifier(participant.target),
             source_caller_id_number=serialize_phone_identifier(
-            participant.sourceCallIdNumber) if participant.sourceCallIdNumber else None,
+                participant.sourceCallIdNumber) if participant.sourceCallIdNumber else None,
             source_display_name=participant.sourceDisplayName,
             custom_context=user_custom_context,
             invitation_timeout_in_seconds=kwargs.pop(
-            "invitation_timeout_in_seconds", None),
+                "invitation_timeout_in_seconds", None),
             operation_context=kwargs.pop("operation_context", None))
         repeatability_request_id = kwargs.pop("repeatability_request_id", None)
         repeatability_first_sent = kwargs.pop("repeatability_first_sent", None)
 
-        return AddParticipantResponse._from_generated(# pylint:disable=protected-access
+        return AddParticipantResponse._from_generated(  # pylint:disable=protected-access
             self._call_connection_client.add_participant(
-            self.call_connection_id,
-            add_participant_request,
-            repeatability_first_sent=repeatability_first_sent,
-            repeatability_request_id=repeatability_request_id))
+                self.call_connection_id,
+                add_participant_request,
+                repeatability_first_sent=repeatability_first_sent,
+                repeatability_request_id=repeatability_request_id))
 
     def remove_participant(self, participant: CommunicationIdentifier, **kwargs: Any) -> RemoveParticipantResponse:
         """
-        Add participants to the call.
+        Remove a participant from the call.
 
         :param participant: The participant being removed. Required.
         :type participant: CallInvite

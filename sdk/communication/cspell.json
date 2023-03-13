@@ -6,6 +6,7 @@
 		"Dtmf",
 		"DTMF",
         "pstn",
-        "PSTN"
+        "PSTN",
+        "unmuted"
     ]
 }
