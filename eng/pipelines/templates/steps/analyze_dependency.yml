@@ -21,9 +21,9 @@ steps:
       mkdir "$(Build.ArtifactStagingDirectory)/reports"
       Copy-Item -Path "$(Build.SourcesDirectory)/eng/common/InterdependencyGraph.html" -Destination "$(Build.ArtifactStagingDirectory)/reports/InterdependencyGraph.html"
     displayName: 'Populate Reports Staging Folder'
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(),ne(variables['Skip.AnalyzeDependencies'],'true'))
 
   - pwsh: |
       sdk_analyze_deps --verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"
     displayName: 'Analyze dependencies'
-    condition: succeededOrFailed()
+    condition: and(succeededOrFailed(),ne(variables['Skip.AnalyzeDependencies'],'true'))
