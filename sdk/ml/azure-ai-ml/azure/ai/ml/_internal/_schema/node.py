@@ -70,7 +70,3 @@ class HDInsightSchema(InternalBaseNodeSchema):
         union_fields=[fields.Dict(keys=fields.Str()), fields.Str()],
     )
     hdinsight_spark_job_name = fields.Str()
-
-
-class SparkSchema(InternalBaseNodeSchema):
-    type = DumpableEnumField(allowed_values=[NodeType.SPARK])

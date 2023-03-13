@@ -318,19 +318,23 @@ class Component(
 
         from azure.ai.ml.entities._component.component_factory import component_factory
 
-        create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
-        new_instance = create_instance_func()
-        target_schema = create_schema_func(
-            {
-                BASE_PATH_CONTEXT_KEY: base_path,
-                SOURCE_PATH_CONTEXT_KEY: yaml_path,
-                PARAMS_OVERRIDE_KEY: params_override,
-            }
+        create_instance_func, create_schema_func = component_factory.get_create_funcs(
+            data,
+            for_load=True,
         )
+        new_instance = create_instance_func()
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(target_schema.load(data, unknown=INCLUDE, **kwargs)),
+            **(
+                create_schema_func(
+                    {
+                        BASE_PATH_CONTEXT_KEY: base_path,
+                        SOURCE_PATH_CONTEXT_KEY: yaml_path,
+                        PARAMS_OVERRIDE_KEY: params_override,
+                    }
+                ).load(data, unknown=INCLUDE, **kwargs)
+            ),
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.

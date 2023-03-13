@@ -6,12 +6,12 @@
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, Optional, Union
 from uuid import UUID
 
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import Component, SparkJobEntry
+from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import MutableValidationResult
@@ -22,7 +22,7 @@ from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
 from ...entities._assets import Code
 from ...entities._job.distribution import DistributionConfiguration
-from .._schema.component import InternalComponentSchema, InternalSparkComponentSchema
+from .._schema.component import InternalComponentSchema
 from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
@@ -96,21 +96,6 @@ class InternalComponent(Component):
         ae365exepool: Optional[Dict] = None,
         launcher: Optional[Dict] = None,
         datatransfer: Optional[Dict] = None,
-        entry: Union[Dict[str, str], SparkJobEntry, None] = None,
-        pyFiles: Optional[List[str]] = None,
-        jars: Optional[List[str]] = None,
-        files: Optional[List[str]] = None,
-        archives: Optional[List[str]] = None,
-        driver_cores: Optional[int] = None,
-        driver_memory: Optional[str] = None,
-        executor_cores: Optional[int] = None,
-        executor_memory: Optional[str] = None,
-        executor_instances: Optional[int] = None,
-        dynamic_allocation_enabled: Optional[bool] = None,
-        dynamic_allocation_min_executors: Optional[int] = None,
-        dynamic_allocation_max_executors: Optional[int] = None,
-        conf: Optional[Dict[str, str]] = None,
-        args: Optional[Dict] = None,
         **kwargs,
     ):
         type, self._type_label = parse_name_label(type)
@@ -151,21 +136,6 @@ class InternalComponent(Component):
         self.ae365exepool = ae365exepool
         self.launcher = launcher
         self.datatransfer = datatransfer
-        self.entry = entry
-        self.pyFiles = pyFiles
-        self.jars = jars
-        self.files = files
-        self.archives = archives
-        self.driver_cores = driver_cores
-        self.driver_memory = driver_memory
-        self.executor_cores = executor_cores
-        self.executor_memory = executor_memory
-        self.executor_instances = executor_instances
-        self.dynamic_allocation_enabled = dynamic_allocation_enabled
-        self.dynamic_allocation_min_executors = dynamic_allocation_min_executors
-        self.dynamic_allocation_max_executors = dynamic_allocation_max_executors
-        self.conf = conf
-        self.args = args
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -314,9 +284,3 @@ class InternalComponent(Component):
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)
-
-
-class InternalSparkComponent(InternalComponent):
-    @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
-        return InternalSparkComponentSchema(context=context)

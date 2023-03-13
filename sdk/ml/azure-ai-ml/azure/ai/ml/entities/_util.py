@@ -436,18 +436,6 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     # we should keep at least 1 place outside _internal to enable internal components
     # and this is the only place
     try_enable_internal_components()
-
-    # Hack: Spark component and internal spark component have the same type, so we need to check the schema
-    if (
-        _type == NodeType.SPARK
-        and schema
-        and schema.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
-        and is_internal_components_enabled()
-    ):
-        from azure.ai.ml._internal._schema.component import NodeType as InternalNodeType
-
-        return InternalNodeType.INTERNAL_SPARK
-
     # todo: refine Hard code for now to support different task type for DataTransfer component
     if _type == NodeType.DATA_TRANSFER:
         _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", " ")])

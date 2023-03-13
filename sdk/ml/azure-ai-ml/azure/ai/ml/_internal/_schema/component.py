@@ -8,6 +8,7 @@ from azure.ai.ml._schema import AnonymousEnvironmentSchema, NestedField, StringT
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField, RegistryStr
 from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, SOURCE_PATH_CONTEXT_KEY, AzureMLResourceType
+from azure.ai.ml.constants._component import NodeType as PublicNodeType
 from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
 from ..._utils._arm_id_utils import parse_name_label
@@ -36,9 +37,7 @@ class NodeType:
     HEMERA = "HemeraComponent"
     AE365EXEPOOL = "AE365ExePoolComponent"
     IPP = "IntellectualPropertyProtectedComponent"
-    SPARK = "spark"
-    # hack: used as key in factory create function dict to distinguish between spark and internal spark
-    INTERNAL_SPARK = "internal_spark"
+    INTERNAL_SPARK = "InternalSpark"
 
     @classmethod
     def all_values(cls):
@@ -166,6 +165,13 @@ class InternalComponentSchema(ComponentSchema):
 
 
 class InternalSparkComponentSchema(InternalComponentSchema):
+    # type field is required for registration
+    type = StringTransformedEnum(
+        allowed_values=PublicNodeType.SPARK,
+        casing_transform=lambda x: parse_name_label(x)[0].lower(),
+        pass_original=True,
+    )
+
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),

@@ -6,7 +6,7 @@
 
 from azure.ai.ml._internal._schema.command import CommandSchema, DistributedSchema, ParallelSchema
 from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal._schema.node import HDInsightSchema, InternalBaseNodeSchema, ScopeSchema, SparkSchema
+from azure.ai.ml._internal._schema.node import HDInsightSchema, InternalBaseNodeSchema, ScopeSchema
 from azure.ai.ml._internal.entities import (
     Command,
     DataTransfer,
@@ -19,8 +19,7 @@ from azure.ai.ml._internal.entities import (
     Scope,
     Starlite,
 )
-from azure.ai.ml._internal.entities.component import InternalSparkComponent
-from azure.ai.ml._internal.entities.node import Spark
+from azure.ai.ml._internal.entities.spark import InternalSparkComponent
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml.entities._component.component_factory import component_factory
 from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
@@ -37,7 +36,6 @@ def _set_registered(value: bool):
 def _enable_internal_components():
     create_schema_func = InternalComponent._create_schema_for_validation
     for _type in NodeType.all_values():
-        # hack: internal spark is conflict with spark, so we register as INTERNAL_SPARK instead of SPARK
         component_factory.register_type(
             _type=_type,
             create_instance_func=lambda: InternalComponent.__new__(InternalComponent),
@@ -79,5 +77,4 @@ def enable_internal_components_in_pipeline(*, force=False):
     _register_node(NodeType.SCOPE, Scope, ScopeSchema)
     _register_node(NodeType.PARALLEL, Parallel, ParallelSchema)
     _register_node(NodeType.HDI, HDInsight, HDInsightSchema)
-    _register_node(NodeType.INTERNAL_SPARK, Spark, SparkSchema)
     _set_registered(True)
