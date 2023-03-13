@@ -172,7 +172,7 @@ class ArmDeploymentExecutor(object):
             arm_id_obj.asset_type = (
                 arm_id_obj.asset_type
                 if not arm_id_obj.provider_namespace_with_type == "OperationalInsightsworkspaces"
-                else "logAnalytics"
+                else "LogAnalytics"
             )
             deployment_message = deployment_message_mapping[arm_id_obj.asset_type].format(f"{resource_name} ")
             if target_resource.resource_name not in self._resources_being_deployed.keys():
