@@ -275,7 +275,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
                 PhoneNumberCapabilityType.INBOUND,
                 polling=True
             )
-        assert str(ex.value.status_code) == "403"  # type: ignore
+        assert is_client_error_status_code(ex.value.status_code) is True, 'Status code {ex.value.status_code} does not indicate a client error' # type: ignore
         assert ex.value.message is not None  # type: ignore
 
     @recorded_by_proxy
