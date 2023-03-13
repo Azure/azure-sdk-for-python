@@ -38,7 +38,7 @@ module_logger = ops_logger.module_logger
 
 
 @experimental
-class _FeatureSetOperations(_ScopeDependentOperations):
+class FeatureSetOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -48,7 +48,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
 
-        super(_FeatureSetOperations, self).__init__(operation_scope, operation_config)
+        super(FeatureSetOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
