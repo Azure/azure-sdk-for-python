@@ -44,6 +44,12 @@
     "applicationInsightsName": {
         "value": ""
     },
+    "logAnalyticsName": {
+        "value": ""
+    },
+    "logAnalyticsArmId": {
+        "value": ""
+    },
     "applicationInsightsResourceGroupName": {
         "value": ""
     },

@@ -168,6 +168,12 @@ class ArmDeploymentExecutor(object):
             resource_name = (
                 f"{arm_id_obj.asset_name} {arm_id_obj.asset_version if hasattr(arm_id_obj,'asset_version') else ''}"
             )
+            # do swap on asset_type to avoid collision with workspaces asset_type in arm id
+            arm_id_obj.asset_type = (
+                arm_id_obj.asset_type
+                if not arm_id_obj.provider_namespace_with_type == "OperationalInsightsworkspaces"
+                else "logAnalytics"
+            )
             deployment_message = deployment_message_mapping[arm_id_obj.asset_type].format(f"{resource_name} ")
             if target_resource.resource_name not in self._resources_being_deployed.keys():
                 self._resources_being_deployed[target_resource.resource_name] = (
