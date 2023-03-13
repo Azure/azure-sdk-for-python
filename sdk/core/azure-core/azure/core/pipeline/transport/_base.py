@@ -429,6 +429,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
 
         :rtype: iterator[bytes]
         """
+        raise NotImplementedError("stream_download is not implemented.")
 
     def parts(self) -> Iterator["HttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
@@ -462,7 +463,7 @@ class _HttpClientTransportResponse(_HttpResponseBase):
         return self.data
 
 
-class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):
+class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):  # pylint: disable=abstract-method
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
