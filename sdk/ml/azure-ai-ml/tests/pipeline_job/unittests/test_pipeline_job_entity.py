@@ -9,7 +9,7 @@ from pytest_mock import MockFixture
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, dsl, load_component, load_job
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase as RestJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
@@ -1381,9 +1381,12 @@ class TestPipelineJobEntity:
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
         job = load_job(test_path)
-        with pytest.raises(ValidationException) as ve:
-            job._to_rest_object().as_dict()
-            assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
+        result = job._validate()
+        assert (
+            "jobs.hello_world" in result.error_messages
+            and "Should not specify min or max executors when dynamic allocation is disabled."
+            == result.error_messages["jobs.hello_world"]
+        )
 
     def test_spark_node_in_pipeline_with_invalid_code(
         self,
@@ -1399,6 +1402,39 @@ class TestPipelineJobEntity:
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_git_code.yml"
         job = load_job(test_path)
         job._validate()
+
+    def test_spark_node_with_remote_component_in_pipeline(
+        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+    ):
+        test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/kmeans_sample/pipeline.yml"
+
+        job = load_job(test_path)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, Spark)
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+        result = job._validate()
+        assert result.passed is True
+        rest_job_dict = job._to_rest_object().as_dict()
+        actual_dict = rest_job_dict["properties"]["jobs"]["kmeans_cluster"]
+
+        expected_dict = {
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "componentId": "",
+            "computeId": "",
+            "identity": {"identity_type": "Managed"},
+            "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+            "name": "kmeans_cluster",
+            "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "type": "spark",
+        }
+        assert actual_dict == expected_dict
 
     def test_infer_pipeline_output_type_as_node_type(
         self,

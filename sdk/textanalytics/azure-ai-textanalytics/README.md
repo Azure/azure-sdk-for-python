@@ -14,7 +14,6 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 - Custom Text Classification
 - Extractive Text Summarization
 - Abstractive Text Summarization
-- Dynamic Classification
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][language_product_documentation] | [Samples][ta_samples]
 
@@ -56,6 +55,7 @@ pip install azure-ai-textanalytics --pre
 ```
 
 <!-- SNIPPET:sample_authentication.create_ta_client_with_key -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -65,6 +65,7 @@ key = os.environ["AZURE_LANGUAGE_KEY"]
 
 text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 ```
+
 <!-- END SNIPPET -->
 
 > Note that `5.2.X` and newer targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
@@ -74,7 +75,7 @@ This table shows the relationship between SDK versions and supported API version
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.3.0b1 - Latest beta release | 3.0, 3.1, 2022-05-01, 2022-10-01-preview (default) |
+| 5.3.0b2 - Latest beta release | 3.0, 3.1, 2022-05-01, 2022-10-01-preview (default) |
 | 5.2.X - Latest stable release | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0  | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
@@ -108,6 +109,7 @@ Once you have the value for the API key, you can pass it as a string into an ins
 to authenticate the client:
 
 <!-- SNIPPET:sample_authentication.create_ta_client_with_key -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -117,6 +119,7 @@ key = os.environ["AZURE_LANGUAGE_KEY"]
 
 text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 ```
+
 <!-- END SNIPPET -->
 
 #### Create a TextAnalyticsClient with an Azure Active Directory Credential
@@ -143,6 +146,7 @@ AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 Use the returned token credential to authenticate the client:
 
 <!-- SNIPPET:sample_authentication.create_ta_client_with_aad -->
+
 ```python
 import os
 from azure.ai.textanalytics import TextAnalyticsClient
@@ -153,6 +157,7 @@ credential = DefaultAzureCredential()
 
 text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
 ```
+
 <!-- END SNIPPET -->
 
 ## Key concepts
@@ -253,13 +258,13 @@ The following section provides several code snippets covering some of the most c
 - [Custom Multi Label Classification][multi_label_classify_sample]
 - [Extractive Summarization][extract_summary_sample]
 - [Abstractive Summarization][abstractive_summary_sample]
-- [Dynamic Classification][dynamic_classification_sample]
 
 ### Analyze Sentiment
 
 [analyze_sentiment][analyze_sentiment] looks at its input text and determines whether its sentiment is positive, negative, neutral or mixed. It's response includes per-sentence sentiment analysis and confidence scores.
 
 <!-- SNIPPET:sample_analyze_sentiment.analyze_sentiment -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -290,6 +295,7 @@ for idx, doc in enumerate(docs):
     print(f"Document text: {documents[idx]}")
     print(f"Overall sentiment: {doc.sentiment}")
 ```
+
 <!-- END SNIPPET -->
 
 The returned response is a heterogeneous list of result and error objects: list[[AnalyzeSentimentResult][analyze_sentiment_result], [DocumentError][document_error]]
@@ -301,6 +307,7 @@ Please refer to the service documentation for a conceptual discussion of [sentim
 [recognize_entities][recognize_entities] recognizes and categories entities in its input text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
 
 <!-- SNIPPET:sample_recognize_entities.recognize_entities -->
+
 ```python
 import os
 import typing
@@ -338,6 +345,7 @@ for organization, reviews in organization_to_reviews.items():
         )
     )
 ```
+
 <!-- END SNIPPET -->
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeEntitiesResult][recognize_entities_result], [DocumentError][document_error]]
@@ -352,6 +360,7 @@ determining whether an occurrence of the word Mars refers to the planet, or to t
 Roman god of war). Recognized entities are associated with URLs to a well-known knowledge base, like Wikipedia.
 
 <!-- SNIPPET:sample_recognize_linked_entities.recognize_linked_entities -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -387,6 +396,7 @@ for doc in docs:
         if entity.data_source == "Wikipedia":
             entity_to_url[entity.name] = entity.url
 ```
+
 <!-- END SNIPPET -->
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizeLinkedEntitiesResult][recognize_linked_entities_result], [DocumentError][document_error]]
@@ -400,6 +410,7 @@ and [supported types][linked_entities_categories].
 Social Security Numbers, bank account information, credit card numbers, and more.
 
 <!-- SNIPPET:sample_recognize_pii_entities.recognize_pii_entities -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -432,6 +443,7 @@ for idx, doc in enumerate(docs):
             entity.text, entity.category
         ))
 ```
+
 <!-- END SNIPPET -->
 
 The returned response is a heterogeneous list of result and error objects: list[[RecognizePiiEntitiesResult][recognize_pii_entities_result], [DocumentError][document_error]]
@@ -445,6 +457,7 @@ Note: The Recognize PII Entities service is available in API version v3.1 and ne
 [extract_key_phrases][extract_key_phrases] determines the main talking points in its input text. For example, for the input text "The food was delicious and there were wonderful staff", the API returns: "food" and "wonderful staff".
 
 <!-- SNIPPET:sample_extract_key_phrases.extract_key_phrases -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -478,6 +491,7 @@ for idx, doc in enumerate(result):
             ", ".join(doc.key_phrases)
         ))
 ```
+
 <!-- END SNIPPET -->
 
 The returned response is a heterogeneous list of result and error objects: list[[ExtractKeyPhrasesResult][extract_key_phrases_result], [DocumentError][document_error]]
@@ -489,6 +503,7 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 [detect_language][detect_language] determines the language of its input text, including the confidence score of the predicted language.
 
 <!-- SNIPPET:sample_detect_language.detect_language -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -519,6 +534,7 @@ for idx, doc in enumerate(reviewed_docs):
         idx, doc.primary_language.name, doc.primary_language.iso6391_name
     ))
 ```
+
 <!-- END SNIPPET -->
 
 The returned response is a heterogeneous list of result and error objects: list[[DetectLanguageResult][detect_language_result], [DocumentError][document_error]]
@@ -531,6 +547,7 @@ and [language and regional support][language_and_regional_support].
 [Long-running operation](#long-running-operations) [begin_analyze_healthcare_entities][analyze_healthcare_entities] extracts entities recognized within the healthcare domain, and identifies relationships between entities within the input document and links to known sources of information in various well known databases, such as UMLS, CHV, MSH, etc.
 
 <!-- SNIPPET:sample_analyze_healthcare_entities.analyze_healthcare_entities -->
+
 ```python
 import os
 import typing
@@ -592,6 +609,7 @@ dosage_of_medication_relations = [
     for entity_relation in doc.entity_relations if entity_relation.relation_type == HealthcareEntityRelation.DOSAGE_OF_MEDICATION
 ]
 ```
+
 <!-- END SNIPPET -->
 
 Note: Healthcare Entities Analysis is only available with API version v3.1 and newer.
@@ -613,6 +631,7 @@ Note: Healthcare Entities Analysis is only available with API version v3.1 and n
 - Abstractive Summarization (API version 2022-10-01-preview and newer)
 
 <!-- SNIPPET:sample_analyze_actions.analyze -->
+
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
@@ -713,6 +732,7 @@ for doc, action_results in zip(documents, document_results):
 
     print("------------------------------------------")
 ```
+
 <!-- END SNIPPET -->
 
 The returned response is an object encapsulating multiple iterables, each representing results of individual analyses.
@@ -795,7 +815,6 @@ Common scenarios
 - Custom Multi Label Classification: [sample_multi_label_classify.py][multi_label_classify_sample] ([async_version][multi_label_classify_sample_async])
 - Extractive text summarization: [sample_extract_summary.py][extract_summary_sample] ([async version][extract_summary_sample_async])
 - Abstractive text summarization: [sample_abstractive_summary.py][abstractive_summary_sample] ([async version][abstractive_summary_sample_async])
-- Dynamic Classification: [sample_dynamic_classification.py][dynamic_classification_sample] ([async_version][dynamic_classification_sample_async])
 
 Advanced scenarios
 
@@ -904,8 +923,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
 [abstractive_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_abstractive_summary.py
 [abstractive_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_abstractive_summary_async.py
-[dynamic_classification_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamic_classification.py
-[dynamic_classification_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamic_classification_async.py
 [recognize_entity_resolutions_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_entity_resolutions.py
 [recognize_entity_resolutions_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entity_resolutions_async.py
 [cla]: https://cla.microsoft.com

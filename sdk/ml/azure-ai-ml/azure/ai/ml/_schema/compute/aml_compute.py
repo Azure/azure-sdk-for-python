@@ -8,9 +8,9 @@ from marshmallow import fields
 from marshmallow.decorators import post_load
 
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml.constants._compute import ComputeTier, ComputeType
+from azure.ai.ml.constants._compute import ComputeTier, ComputeType, ComputeSizeTier
 
-from ..core.fields import NestedField, StringTransformedEnum
+from ..core.fields import NestedField, StringTransformedEnum, UnionField
 from .compute import ComputeSchema, IdentitySchema, NetworkSettingsSchema
 
 
@@ -28,7 +28,12 @@ class AmlComputeSshSettingsSchema(metaclass=PatchedSchemaMeta):
 
 class AmlComputeSchema(ComputeSchema):
     type = StringTransformedEnum(allowed_values=[ComputeType.AMLCOMPUTE], required=True)
-    size = fields.Str()
+    size = UnionField(
+        union_fields=[
+            fields.Str(metadata={"arm_type": ComputeSizeTier.AML_COMPUTE_DEDICATED, "tier": ComputeTier.DEDICATED}),
+            fields.Str(metadata={"arm_type": ComputeSizeTier.AML_COMPUTE_LOWPRIORITY, "tier": ComputeTier.LOWPRIORITY}),
+        ],
+    )
     tier = StringTransformedEnum(allowed_values=[ComputeTier.LOWPRIORITY, ComputeTier.DEDICATED])
     min_instances = fields.Int()
     max_instances = fields.Int()

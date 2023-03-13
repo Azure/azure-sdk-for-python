@@ -1,0 +1,327 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_866622857454?api-version=2022-12-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "151",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "authType": "UsernamePassword",
+          "category": "Snowflake",
+          "target": "dummy",
+          "credentials": {
+            "username": "dummy",
+            "password": "dummy"
+          }
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 11 Mar 2023 19:02:57 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-3e0a39c3e56d79697e46151fd1480fe2-dbafce57bbb8bb33-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "47d6abc9-ca41-4a3d-a9f5-016916c069a4",
+        "x-ms-ratelimit-remaining-subscription-writes": "1191",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230311T190258Z:47d6abc9-ca41-4a3d-a9f5-016916c069a4",
+        "x-request-time": "0.184"
+      },
+      "ResponseBody": {
+        "tags": null,
+        "location": null,
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_866622857454",
+        "name": "e2etest_wps_conn_test_866622857454",
+        "type": "Microsoft.MachineLearningServices/workspaces/connections",
+        "properties": {
+          "authType": "UsernamePassword",
+          "credentials": null,
+          "category": "Snowflake",
+          "expiryTime": null,
+          "target": "dummy",
+          "metadata": null
+        },
+        "systemData": null
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_866622857454?api-version=2022-12-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "151",
+        "Content-Type": "application/json",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "authType": "UsernamePassword",
+          "category": "Snowflake",
+          "target": "dummy",
+          "credentials": {
+            "username": "dummy",
+            "password": "dummy"
+          }
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 11 Mar 2023 19:02:57 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-aa507da2122da5bfeb4433dddd45c9ae-63f1249db40e0903-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "01e337de-6dfe-4074-9eba-66f6f74ce3f4",
+        "x-ms-ratelimit-remaining-subscription-writes": "1190",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230311T190258Z:01e337de-6dfe-4074-9eba-66f6f74ce3f4",
+        "x-request-time": "0.185"
+      },
+      "ResponseBody": {
+        "tags": null,
+        "location": null,
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_866622857454",
+        "name": "e2etest_wps_conn_test_866622857454",
+        "type": "Microsoft.MachineLearningServices/workspaces/connections",
+        "properties": {
+          "authType": "UsernamePassword",
+          "credentials": null,
+          "category": "Snowflake",
+          "expiryTime": null,
+          "target": "dummy",
+          "metadata": null
+        },
+        "systemData": null
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_866622857454?api-version=2022-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 11 Mar 2023 19:02:57 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-d0c98792f597ecd4ce3a574a64509bac-777d71b7b5294683-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "41c95ad4-1c08-4989-bcfa-ec190e16e873",
+        "x-ms-ratelimit-remaining-subscription-reads": "11987",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230311T190258Z:41c95ad4-1c08-4989-bcfa-ec190e16e873",
+        "x-request-time": "0.017"
+      },
+      "ResponseBody": {
+        "tags": null,
+        "location": null,
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_866622857454",
+        "name": "e2etest_wps_conn_test_866622857454",
+        "type": "Microsoft.MachineLearningServices/workspaces/connections",
+        "properties": {
+          "authType": "UsernamePassword",
+          "credentials": null,
+          "category": "Snowflake",
+          "expiryTime": null,
+          "target": "dummy",
+          "metadata": null
+        },
+        "systemData": null
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_866622857454?api-version=2022-12-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Sat, 11 Mar 2023 19:02:58 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-4e77ec54dd5e08f39bd1d11f2f7ba3dd-c61dabd166a4143a-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "5cdf3e9b-0d35-4757-955d-5b95e3f7ccfa",
+        "x-ms-ratelimit-remaining-subscription-deletes": "14995",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230311T190259Z:5cdf3e9b-0d35-4757-955d-5b95e3f7ccfa",
+        "x-request-time": "0.197"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/e2etest_wps_conn_test_866622857454?api-version=2022-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "687",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 11 Mar 2023 19:02:58 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Vary": "Accept-Encoding",
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "a0a3a40e-f6d4-49f2-a77b-39c199670909",
+        "x-ms-ratelimit-remaining-subscription-reads": "11986",
+        "x-ms-response-type": "error",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230311T190259Z:a0a3a40e-f6d4-49f2-a77b-39c199670909",
+        "x-request-time": "0.022"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "UserError",
+          "severity": null,
+          "message": "Connection e2etest_wps_conn_test_866622857454 can\u0027t be found in this workspace",
+          "messageFormat": null,
+          "messageParameters": null,
+          "referenceCode": null,
+          "detailsUri": null,
+          "target": null,
+          "details": [],
+          "innerError": {
+            "code": "NotFoundError",
+            "innerError": null
+          },
+          "debugInfo": null,
+          "additionalInfo": null
+        },
+        "correlation": {
+          "operation": "c0e874dcabf01bface559f623023e2a4",
+          "request": "70bf8ee49b47e4e1"
+        },
+        "environment": "master",
+        "location": "westus2",
+        "time": "2023-03-11T19:02:59.314461\u002B00:00",
+        "componentName": "account-rp"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections?category=Snowflake\u0026api-version=2022-12-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Sat, 11 Mar 2023 19:02:58 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
+        "Server-Timing": "traceparent;desc=\u002200-97b30769f80c16eef4f7aafa57d5bc4f-3565f71bacd05b23-01\u0022",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "x-aml-cluster": "vienna-test-westus2-01",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "06277f4a-2dcd-49b6-848e-498186aad884",
+        "x-ms-ratelimit-remaining-subscription-reads": "11985",
+        "x-ms-response-type": "standard",
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230311T190259Z:06277f4a-2dcd-49b6-848e-498186aad884",
+        "x-request-time": "0.011"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "tags": null,
+            "location": null,
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/my_snowflake_connection",
+            "name": "my_snowflake_connection",
+            "type": "Microsoft.MachineLearningServices/workspaces/connections",
+            "properties": {
+              "authType": "UsernamePassword",
+              "credentials": null,
+              "category": "Snowflake",
+              "expiryTime": null,
+              "target": "jdbc:snowflake://microsoft_partner.east-us-2.azure.snowflakecomputing.com/?db=SNOWFLAKE_SAMPLE_DATA\u0026warehouse=AZUREMLPM_WH",
+              "metadata": null
+            },
+            "systemData": null
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {
+    "wps_connection_name": "test_866622857454"
+  }
+}
