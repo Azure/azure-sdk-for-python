@@ -331,6 +331,7 @@ class Component(
                 PARAMS_OVERRIDE_KEY: params_override,
             },
             unknown=INCLUDE,
+            raise_original_exception=True,
             **kwargs,
         )
         new_instance.__init__(

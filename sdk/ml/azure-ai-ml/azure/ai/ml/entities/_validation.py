@@ -347,7 +347,7 @@ class SchemaValidatableMixin:
         return cls._create_schema_for_validation(context={BASE_PATH_CONTEXT_KEY: base_path or Path.cwd()})
 
     @classmethod
-    def _load_with_schema(cls, data, *, context=None, **kwargs):
+    def _load_with_schema(cls, data, *, context=None, raise_original_exception=False, **kwargs):
         if context is None:
             schema = cls._create_schema_for_validation_with_base_path()
         else:
@@ -356,6 +356,8 @@ class SchemaValidatableMixin:
         try:
             return schema.load(data, **kwargs)
         except ValidationError as e:
+            if raise_original_exception:
+                raise e
             msg = "Trying to load data with schema failed. Data:\n%s\nError: %s" % (
                 json.dumps(data, indent=4) if isinstance(data, dict) else data,
                 json.dumps(e.messages, indent=4),
