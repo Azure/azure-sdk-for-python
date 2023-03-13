@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from ._generated.operations import CallMediaOperations
 
 
-class CallMediaClient(object):
+class CallMedia(object):
     """A client to interact with media of ongoing call.
 
     :param str call_connection_id:

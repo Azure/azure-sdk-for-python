@@ -1,8 +1,12 @@
 from ._version import VERSION
 from ._call_connection import CallConnection
-from ._call_media import CallMediaClient
+from ._call_media import CallMedia
 from ._call_recording import CallRecording
-from ._call_automation_client import CallAutomationClient
+from ._call_automation_client import (
+    CallAutomationClient,
+    AnswerCallResult,
+    CreateCallResult
+)
 from ._call_automation_event_parser import CallAutomationEventParser
 from ._models import (
     RecordingStateResponse,
@@ -16,7 +20,13 @@ from ._models import (
     RecordingChannel,
     PlaySource,
     FileSource,
-    CallMediaRecognizeOptions
+    CallMediaRecognizeOptions,
+    CallConnectionProperties,
+    CallParticipant,
+    CallMediaRecognizeDtmfOptions,
+    Gender,
+    DtmfTone,
+    CallRejectReason
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -40,6 +50,13 @@ from ._events import (
     RecognizeCanceled,
     RecognizeFailed
 )
+from ._generated.models import (
+    GetParticipantsResponse,
+    TransferCallResponse,
+    AddParticipantResponse,
+    CustomContext,
+    RemoveParticipantResponse
+)
 
 __all__ = [
     'CallAutomationClient',
@@ -48,7 +65,7 @@ __all__ = [
     'RecordingStorage',
     'RecordingChannel',
     'CallConnection',
-    'CallMediaClient',
+    'CallMedia',
     'CallRecording',
     "StartRecordingOptions",
     "RecordingStateResponse",
@@ -76,6 +93,19 @@ __all__ = [
     "MicrosoftTeamsUserIdentifier",
     "PlaySource",
     "FileSource",
-    "CallMediaRecognizeOptions"
+    "CallMediaRecognizeOptions",
+    "CallMediaRecognizeDtmfOptions",
+    "AnswerCallResult",
+    "CreateCallResult",
+    "CallConnectionProperties",
+    "CallParticipant",
+    "GetParticipantsResponse",
+    "TransferCallResponse",
+    "AddParticipantResponse",
+    "CustomContext",
+    "RemoveParticipantResponse",
+    "Gender",
+    "DtmfTone",
+    "CallRejectReason"
 ]
 __version__ = VERSION

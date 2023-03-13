@@ -6,7 +6,7 @@
 
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
-from ._call_media import CallMediaClient
+from ._call_media import CallMedia
 
 from ._models import (
     CallConnectionProperties,
@@ -50,9 +50,9 @@ class CallConnection(object):
     def get_call_media(
         self,
         **kwargs  # type: Any
-    ) -> CallMediaClient:
+    ) -> CallMedia:
 
-        return CallMediaClient(
+        return CallMedia(
             self.call_connection_id,
             self._call_media_operations,
             **kwargs
