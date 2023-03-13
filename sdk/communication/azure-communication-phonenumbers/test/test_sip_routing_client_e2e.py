@@ -21,7 +21,7 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
     first_route = SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\\+123[0-9]+", trunks=[])
 
     def setup_method(self):
-        super(TestSipRoutingClientE2E, self).setUp()
+        super(TestSipRoutingClientE2E, self).setUp(use_dynamic_resource = True)
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
             )
@@ -32,7 +32,7 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         trunks = self._sip_routing_client.list_trunks()
         assert trunks is not None, "No trunks were returned."
         assert_trunks_are_equal(trunks,[self.first_trunk,self.second_trunk])
-    
+
     @recorded_by_proxy
     def test_get_trunks_from_managed_identity(self, **kwargs):
         client = self._get_sip_client_managed_identity()

@@ -25,7 +25,7 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
     first_route = SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\\+123[0-9]+", trunks=[])
             
     def setup_method(self):
-        super(TestSipRoutingClientE2EAsync, self).setUp()
+        super(TestSipRoutingClientE2EAsync, self).setUp(use_dynamic_resource = True)
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
         )
