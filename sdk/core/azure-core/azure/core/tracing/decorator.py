@@ -29,7 +29,7 @@ import functools
 
 from typing import Callable, Any, TypeVar, overload, Optional
 from typing_extensions import ParamSpec
-from .common import change_context, get_function_and_class_name
+from .common import change_context, get_function_and_class_name, _get_module_info, _AZ_TRACING_NAMESPACE_KEY
 from . import SpanKind as _SpanKind
 from ..settings import settings
 
@@ -79,9 +79,15 @@ def distributed_trace(__func: Optional[Callable[P, T]] = None, **kwargs: Any):  
             if merge_span and not passed_in_parent:
                 return func(*args, **kwargs)
 
+            module_name, module_version, resource_provider = _get_module_info(func)
+
             with change_context(passed_in_parent):
                 name = name_of_span or get_function_and_class_name(func, *args)
-                with span_impl_type(name=name, kind=kind) as span:
+                with span_impl_type(
+                    name=name, kind=kind, library_name=module_name, library_version=module_version
+                ) as span:
+                    if resource_provider:
+                        span.add_attribute(_AZ_TRACING_NAMESPACE_KEY, resource_provider)
                     for key, value in tracing_attributes.items():
                         span.add_attribute(key, value)
                     return func(*args, **kwargs)

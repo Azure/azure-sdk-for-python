@@ -13,6 +13,7 @@ import requests
 
 
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+from azure.core.tracing.ext.opentelemetry_span._schema import OpenTelemetrySchema
 from azure.core.tracing import SpanKind
 
 
@@ -191,6 +192,18 @@ class TestOpentelemetryWrapper:
                 requests.get("https://www.foo.bar/third")
                 assert len(exporter.get_finished_spans()) == 3
             assert len(exporter.get_finished_spans()) == 4
+
+    def test_span_tracer_instrumentation_scope(self, tracer):
+        with tracer.start_as_current_span(name="parent"):
+            name, version = "foo.bar.baz", "1.0.0"
+            wrapped_span = OpenTelemetrySpan(library_name=name, library_version=version)
+
+            scope = wrapped_span.span_instance.instrumentation_scope
+            assert scope.name == name
+            assert scope.version == version
+
+            schema_version = OpenTelemetrySchema.get_latest_version()
+            assert scope.schema_url == f"https://opentelemetry.io/schemas/{schema_version}"
 
     def test_start_finish(self, tracer):
         with tracer.start_as_current_span("Root") as parent:

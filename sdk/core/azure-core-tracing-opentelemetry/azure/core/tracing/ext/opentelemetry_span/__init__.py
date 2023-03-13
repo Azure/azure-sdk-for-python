@@ -58,6 +58,10 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :paramtype kind: ~azure.core.tracing.SpanKind
     :keyword links: The list of links to be added to the span.
     :paramtype links: list[~azure.core.tracing.Link]
+    :keyword library_name: The name or identifier of the library that created the span.
+    :paramtype library_name: Optional[str]
+    :keyword library_version: The version of the library that created the span.
+    :paramtype library_version: Optional[str]
     """
 
     def __init__(self, span: Optional[Span] = None, name: str = "span", **kwargs: Any) -> None:
@@ -104,8 +108,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             self._context_tokens.append(context.attach(context.set_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY, True)))
 
         current_tracer = trace.get_tracer(
-            __name__,
-            __version__,
+            kwargs.pop("library_name", None) or __name__,
+            kwargs.pop("library_version", None),
             schema_url=OpenTelemetrySchema.get_schema_url(self._schema_version),
         )
 

@@ -25,7 +25,9 @@
 # --------------------------------------------------------------------------
 """Common functions shared by both the sync and the async decorators."""
 from contextlib import contextmanager
-from typing import Any, Optional, Callable, Type, Generator
+from functools import lru_cache
+import sys
+from typing import Any, Optional, Callable, Type, Generator, Tuple
 import warnings
 
 from ._abstract_span import AbstractSpan
@@ -36,6 +38,29 @@ __all__ = [
     "change_context",
     "with_current_context",
 ]
+
+_AZ_TRACING_NAMESPACE_KEY = "az.namespace"
+
+
+@lru_cache(maxsize=128)
+def _get_module_info(func: Callable) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    module_parts = func.__module__.split(".")
+    # Traverse backwards through module name until we find a _version module.
+    for i in range(len(module_parts), 0, -1):
+        try:
+            module_name = ".".join(module_parts[:i])
+            version_module = f"{module_name}._version"
+            if version_module in sys.modules:
+                module = sys.modules[version_module]
+
+                version = module.VERSION if hasattr(module, "VERSION") else None
+                package_name = module.PACKAGE_NAME if hasattr(module, "PACKAGE_NAME") else module_name
+                resource_provider = module.RESOURCE_PROVIDER if hasattr(module, "RESOURCE_PROVIDER") else None
+
+                return package_name, version, resource_provider
+        except Exception:  # pylint: disable=broad-except
+            pass
+    return None, None, None
 
 
 def get_function_and_class_name(func: Callable, *args) -> str:

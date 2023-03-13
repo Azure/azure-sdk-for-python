@@ -32,6 +32,7 @@ from typing import TYPE_CHECKING, Optional, Union, Tuple
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
+from azure.core.tracing.common import _AZ_TRACING_NAMESPACE_KEY
 
 if TYPE_CHECKING:
     # the HttpRequest and HttpResponse related type ignores stem from this issue: #5796
@@ -94,7 +95,22 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             namer = ctxt.pop("network_span_namer", self._network_span_namer)
             span_name = namer(request.http_request)
 
-            span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
+            # Make sure instrumentation scope of parent is propagated to child span if available.
+            current_span = span_impl_type.get_current_span()
+            name, version, namespace = None, None, None
+            try:
+                name, version = current_span.instrumentation_scope.name, current_span.instrumentation_scope.version
+            except AttributeError:
+                _LOGGER.warning("Unable to get instrumentation scope name and version")
+
+            try:
+                namespace = current_span.attributes.get(_AZ_TRACING_NAMESPACE_KEY)
+            except AttributeError:
+                pass
+
+            span = span_impl_type(name=span_name, kind=SpanKind.CLIENT, library_name=name, library_version=version)
+            if namespace:
+                span.add_attribute(_AZ_TRACING_NAMESPACE_KEY, namespace)
             for attr, value in self._tracing_attributes.items():
                 span.add_attribute(attr, value)
             span.start()

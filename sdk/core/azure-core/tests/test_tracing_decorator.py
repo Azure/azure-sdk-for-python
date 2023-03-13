@@ -9,9 +9,11 @@ try:
 except ImportError:
     import mock
 
+import sys
 import time
 
 import pytest
+from azure.core import VERSION
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
@@ -97,6 +99,20 @@ def test_get_function_and_class_name(http_request):
     client = MockClient(http_request)
     assert common.get_function_and_class_name(client.get_foo, client) == "MockClient.get_foo"
     assert common.get_function_and_class_name(random_function) == "random_function"
+
+
+def test_get_module_info():
+    # Use arbitrary function in azure-core.
+    func = common.get_function_and_class_name
+    module_name, module_version, resource_provider = common._get_module_info(func)
+    assert module_name == "azure.core"
+    assert module_version == VERSION
+    assert resource_provider is None
+
+    module_name, module_version, resource_provider = common._get_module_info(random_function)
+    assert module_name is None
+    assert module_version is None
+    assert resource_provider is None
 
 
 @pytest.mark.usefixtures("fake_span")
