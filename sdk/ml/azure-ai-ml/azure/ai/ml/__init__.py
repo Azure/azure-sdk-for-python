@@ -31,9 +31,6 @@ from .entities._load_functions import (
     load_registry,
     load_workspace,
     load_workspace_connection,
-    _load_feature_set,
-    _load_feature_store,
-    _load_feature_store_entity,
 )
 
 module_logger = logging.getLogger(__name__)
