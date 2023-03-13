@@ -29,7 +29,6 @@ from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
@@ -243,23 +242,15 @@ class ComputeInstance(Compute):
             subnet_resource = ResourceId(id=self.subnet)
         else:
             subnet_resource = None
-        if self.ssh_public_access_enabled and not (self.ssh_settings and self.ssh_settings.ssh_key_value):
-            msg = "ssh_key_value is required when ssh_public_access_enabled = True."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPUTE,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+
         ssh_settings = None
-        if self.ssh_settings and self.ssh_settings.ssh_key_value:
-            ssh_settings = CiSShSettings(
-                admin_public_key=self.ssh_settings.ssh_key_value,
+        if self.ssh_public_access_enabled is not None or self.ssh_settings is not None:
+            ssh_settings = CiSShSettings()
+            ssh_settings.ssh_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
+            ssh_settings.admin_public_key = (
+                self.ssh_settings.ssh_key_value if self.ssh_settings and self.ssh_settings.ssh_key_value else None
             )
-            if self.ssh_public_access_enabled is not None:
-                ssh_settings.ssh_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
-            else:
-                ssh_settings.ssh_public_access = "NotSpecified"
+
         personal_compute_instance_settings = None
         if self.create_on_behalf_of:
             personal_compute_instance_settings = PersonalComputeInstanceSettings(
