@@ -8,16 +8,21 @@ from marshmallow import Schema
 from ..._schema import PathAwareSchema
 from ...constants._job.job import RestSparkConfKey
 from ...entities import Environment, SparkJobEntry
-from ...entities._job.parameterized_spark import ParameterizedSpark
+from ...entities._job.parameterized_spark import DUMMY_IMAGE, ParameterizedSpark
 from ...entities._job.spark_job_entry_mixin import SparkJobEntryMixin
 from .._schema.component import InternalSparkComponentSchema
 from ..entities import InternalComponent
-from ..entities.environment import InternalEnvironment
 
 
 class InternalSparkComponent(
     InternalComponent, ParameterizedSpark, SparkJobEntryMixin
 ):  # pylint: disable=too-many-instance-attributes
+    """Internal Spark Component
+    This class is used to handle internal spark component.
+    It can be loaded from internal spark component yaml or from rest object of an internal spark component.
+    But after loaded, its structure will be the same as spark component.
+    """
+
     def __init__(
         self,
         entry: Union[Dict[str, str], SparkJobEntry, None] = None,
@@ -85,20 +90,16 @@ class InternalSparkComponent(
 
     @property
     def environment(self):
-        if self._environment is None or isinstance(self._environment, str):
-            return None
-        if isinstance(self._environment, InternalEnvironment):
-            return self._environment
-        if isinstance(self._environment, Environment):
-            return InternalEnvironment(conda=self._environment.conda_file, os=self._environment.os_type)
-        raise ValueError(f"Unsupported environment type: {type(self._environment)}")
+        if isinstance(self._environment, Environment) and self._environment.image is None:
+            return Environment(conda_file=self._environment.conda_file, image=DUMMY_IMAGE)
+        return self._environment
 
     @environment.setter
     def environment(self, value):
-        if value is None or isinstance(value, (str, Environment, InternalEnvironment)):
+        if value is None or isinstance(value, (str, Environment)):
             self._environment = value
         elif isinstance(value, dict):
-            self._environment = InternalEnvironment(**value)
+            self._environment = Environment(**value)
         else:
             raise ValueError(f"Unsupported environment type: {type(value)}")
 

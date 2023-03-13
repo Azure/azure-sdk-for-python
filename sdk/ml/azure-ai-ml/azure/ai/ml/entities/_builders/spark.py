@@ -10,8 +10,6 @@ from os import PathLike, path
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from marshmallow import INCLUDE, Schema
-
 from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfiguration
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as JobBaseData
 from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJob as RestSparkJob
@@ -51,13 +49,11 @@ from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntryType
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
 from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from marshmallow import INCLUDE, Schema
 
 from ..._schema import NestedField, PathAwareSchema, UnionField
 from .._job.pipeline._io import NodeOutput
-from .._job.spark_helpers import (
-    _validate_compute_or_resources,
-    _validate_input_output_mode,
-)
+from .._job.spark_helpers import _validate_compute_or_resources, _validate_input_output_mode
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
@@ -173,6 +169,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         # init mark for _AttrDict
         self._init = True
+        SparkJobEntryMixin.__init__(self, entry=entry)
         self.conf = conf
         self.driver_cores = driver_cores
         self.driver_memory = driver_memory
@@ -387,7 +384,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
-            "component": (str, SparkComponent),
+            # "component": (str, SparkComponent),
             "environment": (str, Environment),
             "resources": (dict, SparkResourceConfiguration),
             "code": (str, PathLike),

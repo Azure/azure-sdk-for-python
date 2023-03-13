@@ -251,13 +251,14 @@ class TestComponent:
             expected_dict["jars"] = [expected_dict["jars"]]
             expected_dict["pyFiles"] = [expected_dict["pyFiles"]]
             expected_dict["environment"] = {
-                "conda": {
+                "conda_file": {
                     "dependencies": ["python=3.8", {"pip": ["azureml-core==1.44.0", "shrike==1.31.2"]}],
                     "name": "component_env",
                 },
-                "os": "Linux",
+                "image": "conda/miniconda3",
+                "name": "CliV2AnonymousEnvironment",
+                "version": entity.environment.version,
             }
-
         assert entity._to_dict() == expected_dict
 
         expected_rest_object = copy.deepcopy(expected_dict)

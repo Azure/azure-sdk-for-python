@@ -38,7 +38,7 @@ class NodeType:
     HEMERA = "HemeraComponent"
     AE365EXEPOOL = "AE365ExePoolComponent"
     IPP = "IntellectualPropertyProtectedComponent"
-    # internal spake component got a type value conflict with 3P spark component
+    # internal spake component got a type value conflict with spark component
     # this enum is used to identify its create_function in factories
     SPARK = "DummySpark"
 
@@ -177,7 +177,7 @@ class InternalSparkComponentSchema(InternalComponentSchema):
 
     environment = UnionField(
         [
-            NestedField(InternalEnvironmentSchema),
+            # unlike other internal component, internal spark component do not use internal environment schema
             NestedField(AnonymousEnvironmentSchema),
             RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),

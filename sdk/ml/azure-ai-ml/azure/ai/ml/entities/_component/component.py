@@ -414,7 +414,7 @@ class Component(
         )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
-        return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
+        return {k: v for k, v in init_kwargs.items() if v is not None and not (isinstance(v, dict) and not v)}
 
     def _get_anonymous_hash(self) -> str:
         """Return the name of anonymous component.
