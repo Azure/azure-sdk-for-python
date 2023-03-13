@@ -100,7 +100,7 @@ class _ComponentFactory:
             ):
                 from azure.ai.ml._internal._schema.node import NodeType as InternalNodeType
 
-                _type = InternalNodeType.INTERNAL_SPARK
+                _type = InternalNodeType.SPARK
 
         create_instance_func = self._create_instance_funcs[_type]
         create_schema_func = self._create_schema_funcs[_type]

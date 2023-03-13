@@ -3,15 +3,16 @@
 # ---------------------------------------------------------
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._internal._schema.component import InternalSparkComponentSchema
-from azure.ai.ml._internal.entities import InternalComponent
-from azure.ai.ml._internal.entities.environment import InternalEnvironment
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.constants._job.job import RestSparkConfKey
-from azure.ai.ml.entities import Environment, SparkJobEntry
-from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
-from azure.ai.ml.entities._job.spark_job_entry_mixin import SparkJobEntryMixin
 from marshmallow import Schema
+
+from ..._schema import PathAwareSchema
+from ...constants._job.job import RestSparkConfKey
+from ...entities import Environment, SparkJobEntry
+from ...entities._job.parameterized_spark import ParameterizedSpark
+from ...entities._job.spark_job_entry_mixin import SparkJobEntryMixin
+from .._schema.component import InternalSparkComponentSchema
+from ..entities import InternalComponent
+from ..entities.environment import InternalEnvironment
 
 
 class InternalSparkComponent(

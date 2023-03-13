@@ -5,9 +5,9 @@
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import FILE_PREFIX
-from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
+from ..._utils.utils import load_yaml
+from ...constants._common import FILE_PREFIX
+from ...entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 
 class InternalEnvironment:

@@ -4,16 +4,16 @@
 import os.path
 
 import pydash
-from azure.ai.ml._schema import AnonymousEnvironmentSchema, NestedField, StringTransformedEnum, UnionField
-from azure.ai.ml._schema.component.component import ComponentSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField, RegistryStr
-from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, SOURCE_PATH_CONTEXT_KEY, AzureMLResourceType
-from azure.ai.ml.constants._component import NodeType as PublicNodeType
 from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
+from ..._schema import AnonymousEnvironmentSchema, NestedField, StringTransformedEnum, UnionField
+from ..._schema.component.component import ComponentSchema
+from ..._schema.core.fields import ArmVersionedStr, CodeField, RegistryStr
 from ..._schema.job.parameterized_spark import SparkConfSchema, SparkEntryClassSchema, SparkEntryFileSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils.utils import get_valid_dot_keys_with_wildcard
+from ...constants._common import LABELLED_RESOURCE_NAME, SOURCE_PATH_CONTEXT_KEY, AzureMLResourceType
+from ...constants._component import NodeType as PublicNodeType
 from .._utils import yaml_safe_load_with_base_resolver
 from .environment import InternalEnvironmentSchema
 from .input_output import (
@@ -38,7 +38,9 @@ class NodeType:
     HEMERA = "HemeraComponent"
     AE365EXEPOOL = "AE365ExePoolComponent"
     IPP = "IntellectualPropertyProtectedComponent"
-    INTERNAL_SPARK = "InternalSpark"
+    # internal spake component got a type value conflict with 3P spark component
+    # this enum is used to identify its create_function in factories
+    SPARK = "DummySpark"
 
     @classmethod
     def all_values(cls):
