@@ -488,7 +488,7 @@ def _generate_storage(name: str, resources_being_deployed: dict) -> str:
 
 
 def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
-    log_analytics = get_name_for_dependent_resource(name, "logalytics")
+    log_analytics = get_name_for_dependent_resource(name, "logalytics")  # cspell:disable-line
     resources_being_deployed[log_analytics] = (
         ArmConstants.LOG_ANALYTICS,
         None,
