@@ -29,7 +29,6 @@ from azure.ai.ml._utils._feature_set_utils import read_feature_set_metadata_cont
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets import _FeatureSet
 from azure.ai.ml.entities._feature_set.featureset_spec import FeaturesetSpec
-from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 
@@ -37,7 +36,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class _FeatureSetOperations(_ScopeDependentOperations):
     """_FeatureSetOperations.
 

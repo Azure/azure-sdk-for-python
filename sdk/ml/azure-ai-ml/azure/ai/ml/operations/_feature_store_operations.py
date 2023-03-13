@@ -24,7 +24,6 @@ from azure.ai.ml.entities import (
     IdentityConfiguration,
     WorkspaceConnection,
 )
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.entities._feature_store._constants import (
     OFFLINE_STORE_CONNECTION_NAME,
@@ -40,7 +39,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class _FeatureStoreOperations(WorkspaceOperationsBase):
     """_FeatureStoreOperations.
 
