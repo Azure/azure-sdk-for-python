@@ -1,6 +1,6 @@
 # Release History
 
-## 1.5.0 (Unreleased)
+## 1.5.0 (2023-03-20)
 
 ### Features Added
 - Added support for `tags` on Compute Resources.
