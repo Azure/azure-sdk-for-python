@@ -215,7 +215,7 @@ class TestWorkspaceOperation:
             "azure.ai.ml.operations._workspace_operations_base.get_resource_group_location", return_value="random_name"
         )
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.get_default_log_analytics_arm_id",
+            "azure.ai.ml.operations._workspace_operations_base.get_log_analytics_arm_id",
             return_value=("random_id", True),
         )
         mock_workspace_operation_base._populate_arm_paramaters(workspace=Workspace(name="name"))
