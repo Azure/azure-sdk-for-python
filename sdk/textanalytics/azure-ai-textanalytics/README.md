@@ -15,7 +15,12 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 - Extractive Text Summarization
 - Abstractive Text Summarization
 
-[Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][language_product_documentation] | [Samples][ta_samples]
+[Source code][source_code]
+| [Package (PyPI)][ta_pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-textanalytics/)
+| [API reference documentation][ta_ref_docs]
+| [Product documentation][language_product_documentation]
+| [Samples][ta_samples]
 
 ## Getting started
 

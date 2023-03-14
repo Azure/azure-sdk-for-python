@@ -4,6 +4,7 @@ The Azure Identity library provides [Azure Active Directory (Azure AD)](https://
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-identity/)
 | [API reference documentation][ref_docs]
 | [Azure AD documentation](https://learn.microsoft.com/azure/active-directory/)
 
