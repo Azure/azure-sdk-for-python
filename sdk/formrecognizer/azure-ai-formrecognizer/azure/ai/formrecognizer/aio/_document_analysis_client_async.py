@@ -216,9 +216,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/TODO.py
-                :start-after: [START TODO]
-                :end-before: [END TODO]
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_classify_document_async.py
+                :start-after: [START classify_document_async]
+                :end-before: [END classify_document_async]
                 :language: python
                 :dedent: 4
                 :caption: Classify a document. For more samples see the `samples` folder.
