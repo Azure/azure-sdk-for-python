@@ -146,8 +146,8 @@ additional questions or comments.
 [package]: https://aka.ms/ava/sdk/client/python
 [source]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/videoanalyzer
 [samples]: https://go.microsoft.com/fwlink/?linkid=2162278
-[doc_product]: https://go.microsoft.com/fwlink/?linkid=2162396
-[doc_direct_methods]: https://go.microsoft.com/fwlink/?linkid=2162396
+[doc_product]: https://github.com/MicrosoftDocs/azure-docs/blob/4ba87bedc7b17a32903c99afb3ca4163be0dcc90/articles/azure-video-analyzer/video-analyzer-docs/overview.md
+[doc_direct_methods]: https://github.com/MicrosoftDocs/azure-docs/blob/4ba87bedc7b17a32903c99afb3ca4163be0dcc90/articles/azure-video-analyzer/video-analyzer-docs/overview.md
 [iot-device-sdk]: https://pypi.org/project/azure-iot-device/
 [iot-hub-sdk]: https://pypi.org/project/azure-iot-hub/
 [github-page-issues]: https://github.com/Azure/azure-sdk-for-python/issues
