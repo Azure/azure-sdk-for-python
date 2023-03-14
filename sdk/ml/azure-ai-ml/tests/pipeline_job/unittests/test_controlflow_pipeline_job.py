@@ -26,24 +26,24 @@ class TestIfElseUI(TestControlFlowPipelineJobUT):
         [
             # None true & None false
             (
-                ValidationException,
+                ValidationError,
                 "./tests/test_configs/pipeline_jobs/invalid/if_else/none_true_none_false.yml",
-                "of dsl.condition node cannot both be empty",
-                '"path": "jobs.conditionnode.true_block",',
+                "True block and false block cannot be empty at the same time.",
+                "",
             ),
             # None true & empty false
             (
-                ValidationException,
+                ValidationError,
                 "./tests/test_configs/pipeline_jobs/invalid/if_else/none_true_empty_false.yml",
-                "of dsl.condition node cannot both be empty",
-                '"path": "jobs.conditionnode.true_block",',
+                "True block and false block cannot be empty at the same time.",
+                "",
             ),
             # true & false intersection
             (
-                ValidationException,
+                ValidationError,
                 "./tests/test_configs/pipeline_jobs/invalid/if_else/true_false_intersection.yml",
-                "of dsl.condition has intersection",
-                '"path": "jobs.conditionnode.true_block",',
+                "True block and false block cannot contain same nodes:",
+                "",
             ),
             # invalid binding
             (
