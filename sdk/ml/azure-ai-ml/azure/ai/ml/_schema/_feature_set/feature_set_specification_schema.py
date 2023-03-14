@@ -9,11 +9,11 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
-class FeaturesetSpecificationSchema(metaclass=PatchedSchemaMeta):
+class FeatureSetSpecificationSchema(metaclass=PatchedSchemaMeta):
     path = fields.Str(required=True, allow_none=False)
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.featureset_specification import FeaturesetSpecification
+        from azure.ai.ml.entities._feature_set.feature_set_specification import _FeatureSetSpecification
 
-        return FeaturesetSpecification(**data)
+        return _FeatureSetSpecification(**data)

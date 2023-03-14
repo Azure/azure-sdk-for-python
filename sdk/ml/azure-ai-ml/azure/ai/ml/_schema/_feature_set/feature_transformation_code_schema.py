@@ -15,6 +15,6 @@ class FeatureTransformationCodeSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.delay_metadata import DelayMetadata
+        from azure.ai.ml.entities._feature_set.feature_transformation_code import FeatureTransformationCode
 
-        return DelayMetadata(**data)
+        return FeatureTransformationCode(**data)
