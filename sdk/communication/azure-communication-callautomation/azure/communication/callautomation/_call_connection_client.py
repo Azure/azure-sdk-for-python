@@ -6,7 +6,7 @@
 
 from typing import TYPE_CHECKING, Any, Optional  # pylint: disable=unused-import
 
-from ._call_media import CallMediaClient
+from ._call_media_client import CallMediaClient
 
 from ._models import (
     CallConnectionProperties,
@@ -35,10 +35,10 @@ if TYPE_CHECKING:
     from ._generated.operations import CallConnectionOperations, CallMediaOperations
 
 
-class CallConnection(object):
-    def __init__(
+class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
+    def __init__(# pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self,
-        call_connection_id,  # type: str
+        call_connection_id: str,
         call_connection_client,  # type: CallConnectionOperations
         call_media_operations,  # type: CallMediaOperations
     ):
@@ -53,7 +53,7 @@ class CallConnection(object):
     ) -> CallMediaClient:
         """
         Initializes an instance of the CallMediaClient.
-        
+
         :return: CallMediaClient
         :type: CallMediaClient
         """

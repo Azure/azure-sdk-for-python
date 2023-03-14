@@ -10,12 +10,16 @@ from ._models import RecordingStateResponse, StartRecordingOptions
 if TYPE_CHECKING:
     from ._generated.operations import CallRecordingOperations
 
-class CallRecording(object):
-    def __init__(
-            self,
-            call_recording_client,  # type: CallRecordingOperations
-        ):
+class CallRecordingClient(object): # pylint: disable=client-accepts-api-version-keyword
+    """A client for the recording of ongoing call.
 
+    :param ~azure.communication.callautomation._generated.operations.CallRecordingOperations call_recording_client:
+     The REST version of call recording client.
+    """
+    def __init__(# pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+            self,
+            call_recording_client # type: CallRecordingOperations
+    ) -> None:
         self._call_recording_client = call_recording_client
 
     def start_recording(

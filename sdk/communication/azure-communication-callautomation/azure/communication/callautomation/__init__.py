@@ -1,7 +1,7 @@
 from ._version import VERSION
-from ._call_connection import CallConnection
-from ._call_media import CallMedia
-from ._call_recording import CallRecording
+from ._call_connection_client import CallConnectionClient
+from ._call_media_client import CallMediaClient
+from ._call_recording_client import CallRecordingClient
 from ._call_automation_client import (
     CallAutomationClient,
     AnswerCallResult,
@@ -64,9 +64,9 @@ __all__ = [
     'RecordingContent',
     'RecordingStorage',
     'RecordingChannel',
-    'CallConnection',
-    'CallMedia',
-    'CallRecording',
+    'CallConnectionClient',
+    'CallMediaClient',
+    'CallRecordingClient',
     "StartRecordingOptions",
     "RecordingStateResponse",
     "ServerCallLocator",

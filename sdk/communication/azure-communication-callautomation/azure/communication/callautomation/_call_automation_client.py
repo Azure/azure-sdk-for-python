@@ -10,8 +10,8 @@ from azure.core.credentials import TokenCredential
 
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
-from ._call_connection import CallConnection
-from ._call_recording import CallRecording
+from ._call_connection_client import CallConnectionClient
+from ._call_recording_client import CallRecordingClient
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.models import serialize_phone_identifier, serialize_identifier, CommunicationIdentifier
 from ._shared.utils import get_authentication_policy, parse_connection_str
@@ -24,13 +24,13 @@ class CallResult(object):
     def __init__(
         self,
         *,
-        call_connection: CallConnection,
+        call_connection: CallConnectionClient,
         call_connection_properties: CallConnectionProperties,
         **kwargs: Any
     ) -> None:
         """
         :keyword call_connection: Call connection. Required.
-        :type call_connection: CallConnection
+        :type call_connection: CallConnectionClient
         :keyword call_connection_properties: Properties of the call connection
         :type call_connection_properties: CallConnectionProperties
         """
@@ -122,20 +122,20 @@ class CallAutomationClient(object):
         self,
         call_connection_id: str,
         **kwargs
-    ) -> CallConnection:
-        """Get CallConnection object.
+    ) -> CallConnectionClient:
+        """Get CallConnectionClient object.
         Only use when you already know CallConnectionId for an ongoing call.
 
         :param str call_connection_id:
          CallConnectionId of ongoing call.
 
-        :return: Instance of CallConnection.
-        :rtype: ~azure.communication.callautomation.CallConnection
+        :return: Instance of CallConnectionClient.
+        :rtype: ~azure.communication.callautomation.CallConnectionClient
         """
         if not call_connection_id:
             raise ValueError("call_connection_id can not be None")
 
-        return CallConnection(
+        return CallConnectionClient(
             call_connection_id,
             self._call_connection_client,
             self._call_media,
@@ -145,14 +145,14 @@ class CallAutomationClient(object):
     def get_call_recording(
         self,
         **kwargs
-    ) -> CallRecording:
-        """Get CallRecording object.
+    ) -> CallRecordingClient:
+        """Get CallRecordingClient object.
         For any recording related action, use this to perform actions.
 
-        :return: Instance of CallRecording.
-        :rtype: ~azure.communication.callautomation.CallRecording
+        :return: Instance of CallRecordingClient.
+        :rtype: ~azure.communication.callautomation.CallRecordingClient
         """
-        return CallRecording(
+        return CallRecordingClient(
             self._call_recording_client,
             **kwargs
         )
