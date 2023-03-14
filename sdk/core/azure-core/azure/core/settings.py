@@ -107,7 +107,7 @@ def convert_logging(value: Union[str, int]) -> int:
     return level
 
 
-def get_opencensus_span() -> Optional[Type[AbstractSpan]]:
+def _get_opencensus_span() -> Optional[Type[AbstractSpan]]:
     """Returns the OpenCensusSpan if the opencensus tracing plugin is installed else returns None"""
     try:
         from azure.core.tracing.ext.opencensus_span import (  # pylint:disable=redefined-outer-name
@@ -119,7 +119,7 @@ def get_opencensus_span() -> Optional[Type[AbstractSpan]]:
         return None
 
 
-def get_opentelemetry_span() -> Optional[Type[AbstractSpan]]:
+def _get_opentelemetry_span() -> Optional[Type[AbstractSpan]]:
     """Returns the OpenTelemetrySpan if the opentelemetry tracing plugin is installed else returns None"""
     try:
         from azure.core.tracing.ext.opentelemetry_span import (  # pylint:disable=redefined-outer-name
@@ -131,21 +131,21 @@ def get_opentelemetry_span() -> Optional[Type[AbstractSpan]]:
         return None
 
 
-def get_opencensus_span_if_opencensus_is_imported() -> Optional[Type[AbstractSpan]]:
+def _get_opencensus_span_if_opencensus_is_imported() -> Optional[Type[AbstractSpan]]:
     if "opencensus" not in sys.modules:
         return None
-    return get_opencensus_span()
+    return _get_opencensus_span()
 
 
-def get_opentelemetry_span_if_opentelemetry_is_imported() -> Optional[Type[AbstractSpan]]:
+def _get_opentelemetry_span_if_opentelemetry_is_imported() -> Optional[Type[AbstractSpan]]:
     if "opentelemetry" not in sys.modules:
         return None
-    return get_opentelemetry_span()
+    return _get_opentelemetry_span()
 
 
 _tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
-    "opencensus": get_opencensus_span,
-    "opentelemetry": get_opentelemetry_span,
+    "opencensus": _get_opencensus_span,
+    "opentelemetry": _get_opentelemetry_span,
 }
 
 
@@ -165,7 +165,9 @@ def convert_tracing_impl(value: Union[str, Type[AbstractSpan]]) -> Optional[Type
 
     """
     if value is None:
-        return get_opentelemetry_span_if_opentelemetry_is_imported() or get_opencensus_span_if_opencensus_is_imported()
+        return (
+            _get_opentelemetry_span_if_opentelemetry_is_imported() or _get_opencensus_span_if_opencensus_is_imported()
+        )
 
     if not isinstance(value, str):
         value = cast(Type[AbstractSpan], value)
