@@ -11,20 +11,19 @@ from uuid import UUID
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import Component
-from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml.entities._validation import MutableValidationResult
-
 from ... import Input, Output
+from ..._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
+from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
+from ...entities import Component
 from ...entities._assets import Code
 from ...entities._job.distribution import DistributionConfiguration
+from ...entities._system_data import SystemData
+from ...entities._util import convert_ordered_dict_to_dict
+from ...entities._validation import MutableValidationResult
 from .._schema.component import InternalComponentSchema
-from ._additional_includes import _AdditionalIncludes, ADDITIONAL_INCLUDES_SUFFIX
+from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
 from .code import InternalCode, InternalComponentIgnoreFile

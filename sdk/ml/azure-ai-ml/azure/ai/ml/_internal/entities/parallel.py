@@ -8,10 +8,10 @@ from typing import List, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal.entities import Command
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import BatchRetrySettings
+from ..._schema import PathAwareSchema
+from ...entities import BatchRetrySettings
+from .._schema.component import NodeType
+from ..entities import Command
 
 
 class Parallel(Command):
