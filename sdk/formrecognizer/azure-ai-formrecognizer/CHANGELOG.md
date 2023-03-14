@@ -5,6 +5,7 @@
 ### Features Added
 - Added new `features` kwarg on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
 - Added new `AnalysisFeature` enum with optional document analysis feature to enable.
+- Added the following optional properties on `DocumentStyle` class: `similar_font_family`, `font_style`, `font_weight`, `color`, `background_color`.
 
 ### Breaking Changes
 
