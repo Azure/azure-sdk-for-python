@@ -3,6 +3,7 @@
 ## 3.3.0b1 (Unreleased)
 
 ### Features Added
+- Added `begin_classify_document()` and `begin_classify_document_from_url()` methods on `DocumentAnalysisClient`.
 
 ### Breaking Changes
 
