@@ -22,10 +22,6 @@ class TranslatorCredential:
         self.key = key
         self.region = region
 
-class TranslatorCustomEndpoint:
-    def __init__(self, endpoint: str) -> None:
-        self.endpoint = endpoint
-
 class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
     def __init__(self, credential: TranslatorCredential):
         self.credential = credential
@@ -35,8 +31,7 @@ class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.credential.region
 
 class TextTranslationClient(ServiceClientGenerated):
-    def __init__(self, endpoint: str, credential: AzureKeyCredential | TokenCredential | TranslatorCredential, **kwargs):
-
+    def __init__(self, endpoint: str | None, credential: AzureKeyCredential | TokenCredential | TranslatorCredential, **kwargs):
         if isinstance(credential, TranslatorCredential):
             if not kwargs.get("authentication_policy"):
                 kwargs["authentication_policy"] = TranslatorAuthenticationPolicy(credential)
@@ -49,15 +44,18 @@ class TextTranslationClient(ServiceClientGenerated):
             if not kwargs.get("authentication_policy"):
                 kwargs["authentication_policy"] = AzureKeyCredentialPolicy(name="Ocp-Apim-Subscription-Key", credential=credential)
 
+        if not endpoint:
+            endpoint = "https://api.cognitive.microsofttranslator.com"
+
         translator_endpoint: str = ""
-        if isinstance(endpoint, str):
+        if "cognitiveservices" in endpoint:
+            translator_endpoint = endpoint + "/translator/text/v3.0"
+        else:
             translator_endpoint = endpoint
-        if isinstance(endpoint, TranslatorCustomEndpoint):
-            translator_endpoint = endpoint.endpoint + "/translator/text/v3.0"
 
         super().__init__(
             endpoint=translator_endpoint,
             **kwargs
         )
 
-__all__ = ["TextTranslationClient", "TranslatorCredential", "TranslatorCustomEndpoint"]
+__all__ = ["TextTranslationClient", "TranslatorCredential"]
