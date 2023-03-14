@@ -17,7 +17,8 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.entities._feature_set.feature_set_materialization_response import _FeatureSetMaterializationResponse
 from azure.ai.ml.entities._feature_set.feature import _Feature
-from azure.ai.ml.operations import _FeatureSetOperations, DatastoreOperations
+from azure.ai.ml.operations import DatastoreOperations
+from azure.ai.ml.operations._feature_set_operations import _FeatureSetOperations
 from azure.ai.ml.entities import _FeatureSet, _FeatureSetSpecification
 from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml.operations._feature_set_operations import _FeatureSetOperations
