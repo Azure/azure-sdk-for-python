@@ -9,7 +9,12 @@ securely store and control access to tokens, passwords, certificates, API keys,
 and other secrets
 - Vault administration ([azure-keyvault-administration](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration)) - role-based access control (RBAC), and vault-level backup and restore options
 
-[Source code][library_src] | [Package (PyPI)][pypi_package_certificates] | [API reference documentation][reference_docs] | [Product documentation][azure_keyvault] | [Samples][certificates_samples]
+[Source code][library_src]
+| [Package (PyPI)][pypi_package_certificates]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-keyvault/)
+| [API reference documentation][reference_docs]
+| [Product documentation][azure_keyvault]
+| [Samples][certificates_samples]
 
 ## _Disclaimer_
 
