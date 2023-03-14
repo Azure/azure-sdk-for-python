@@ -12,7 +12,12 @@ create, store, and control access to the keys used to encrypt your data
 create, manage, and deploy public and private SSL/TLS certificates
 - Vault administration ([azure-keyvault-administration](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration)) - role-based access control (RBAC), and vault-level backup and restore options
 
-[Source code][library_src] | [Package (PyPI)][pypi_package_secrets] | [API reference documentation][reference_docs] | [Product documentation][azure_keyvault] | [Samples][secret_samples]
+[Source code][library_src]
+| [Package (PyPI)][pypi_package_secrets]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-keyvault/)
+| [API reference documentation][reference_docs]
+| [Product documentation][azure_keyvault]
+| [Samples][secret_samples]
 
 ## _Disclaimer_
 
