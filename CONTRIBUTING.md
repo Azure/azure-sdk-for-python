@@ -107,7 +107,7 @@ Mypy install and run.
 ```
 
 #### `sphinx` environment
-Generate shpinx doc for this package.
+Generate sphinx doc for this package.
 
 ```
 \> tox -e sphinx -c <path to tox.ini>

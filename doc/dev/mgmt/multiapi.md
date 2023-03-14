@@ -1,6 +1,6 @@
 # Multi-api packaging and ARM SDK
 
-Several SDKs on this repository are able to support multi-api in a single package. If you're a SDK maintener, this documentation explains the rational of it, and the technical details.
+Several SDKs on this repository are able to support multi-api in a single package. If you're a SDK maintainer, this documentation explains the rational of it, and the technical details.
 
 ## Overview and rationale
 
@@ -10,7 +10,7 @@ It means a given specific package is able to do calls to several different API v
 
 ### Why would I need to call anything else than the latest API version?
 
-Because there is different flavors of Azure that are not necessarly provided with the same set of API versions. For example Azure Governement, Azure Stack usually needs a few months to get the latest available API version.
+Because there is different flavors of Azure that are not necessarily provided with the same set of API versions. For example Azure Government, Azure Stack usually needs a few months to get the latest available API version.
 
 ### Why a multi-api package?
 
@@ -66,7 +66,7 @@ Main design guidelines:
 - For people that want a specific API version for a specific need, specifying API version should be possible
   e.g. `client = ComputeManagementClient(credentials, sub_id, api_version='2018-06-01')`
 - For people who target a single Azure Profile, specifying it should be be possible
-  e.g. `client = ComputeManagementClient(credentials, sub_id, profile=KnownProfile.v2018_06_01_bybrid)`
+  e.g. `client = ComputeManagementClient(credentials, sub_id, profile=KnownProfile.v2018_06_01_hybrid)`
 
 The first condition has impact on models loading, by default they should load the latest API vesion transparently:
 ```python
