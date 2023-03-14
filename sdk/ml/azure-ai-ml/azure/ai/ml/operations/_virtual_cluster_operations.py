@@ -12,7 +12,7 @@ from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml._utils.azure_resource_utils import (
     get_virtual_clusters_from_subscriptions,
     get_virtual_cluster_by_name,
-    get_generic_resource_by_id
+    get_generic_resource_by_id,
 )
 from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.exceptions import UserErrorException
@@ -79,14 +79,13 @@ class VirtualClusterOperations:
         :rtype: Dict
         """
 
-        try :
+        try:
             arm_id = AzureResourceId(name)
             sub_id = arm_id.subscription_id
 
-            return get_generic_resource_by_id(arm_id=name,
-                                              credential=self._credentials,
-                                              subscription_id=sub_id,
-                                              api_version="2021-03-01-preview")
+            return get_generic_resource_by_id(
+                arm_id=name, credential=self._credentials, subscription_id=sub_id, api_version="2021-03-01-preview"
+            )
         except ValidationException:
             return get_virtual_cluster_by_name(
                 name=name,

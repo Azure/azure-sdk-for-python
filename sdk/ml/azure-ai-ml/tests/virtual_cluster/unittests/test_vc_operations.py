@@ -56,7 +56,7 @@ class TestVCOperations:
     def test_get(
         self,
         mock_get_virtual_cluster_by_name,
-        mock_get_generic_resource_by_id, # Note the mocks are in reverse order of the patch decorators.
+        mock_get_generic_resource_by_id,  # Note the mocks are in reverse order of the patch decorators.
         mock_vc_operation: VirtualClusterOperations,
         mock_workspace_scope: OperationScope,
         mock_credential: Mock,
@@ -83,12 +83,14 @@ class TestVCOperations:
             credential=mock_credential,
         )
 
-        result2 = mock_vc_operation.get("/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.MachineLearningServices/virtualclusters/name2")
+        result2 = mock_vc_operation.get(
+            "/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.MachineLearningServices/virtualclusters/name2"
+        )
         assert dummy_vc_2 == result2
 
         mock_get_generic_resource_by_id.assert_called_once_with(
             arm_id="/subscriptions/sub-id/resourceGroups/rg/providers/Microsoft.MachineLearningServices/virtualclusters/name2",
             credential=mock_credential,
             subscription_id="sub-id",
-            api_version="2021-03-01-preview")
-
+            api_version="2021-03-01-preview",
+        )
