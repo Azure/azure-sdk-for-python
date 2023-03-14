@@ -25,12 +25,12 @@
 # --------------------------------------------------------------------------
 from collections.abc import AsyncIterator
 import httpx
-from typing import Any, ContextManager, Iterator, Optional
-from azure.core.pipeline.transport import HttpRequest, AsyncHttpTransport
-from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
+from typing import ContextManager, Optional
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest, AsyncHttpTransport
 
 
-class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
+class AsyncHttpXTransportResponse(AsyncHttpResponse):
     def __init__(self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]) -> None:
         super().__init__(request, httpx_response)
         self.status_code = httpx_response.status_code
@@ -100,11 +100,23 @@ class AsyncHttpXTransport(AsyncHttpTransport):
 
         stream_ctx: Optional[ContextManager] = None
 
-        if stream_response:
-            req = self.client.build_request(**parameters)
-            response = await self.client.send(req, stream=stream_response)
-            #stream_ctx = response.iter_bytes()
-        else:
-            response = await self.client.request(**parameters)
+        try:
+            if stream_response:
+                req = self.client.build_request(**parameters)
+                response = await self.client.send(req, stream=stream_response)
+                #stream_ctx = response.iter_bytes()
+            else:
+                response = await self.client.request(**parameters)
+        except (
+            httpx.ReadTimeout,
+            httpx.ProtocolError,
+            ) as err:
+            error = ServiceResponseError(err, error=err)
+        except httpx.RequestError as err:
+            error = ServiceRequestError(err, error=err)
+
+        if error:
+            raise error
+
 
         return AsyncHttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)

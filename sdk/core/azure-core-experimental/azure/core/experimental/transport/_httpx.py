@@ -25,12 +25,11 @@
 # --------------------------------------------------------------------------
 import httpx
 from typing import ContextManager, Iterator, Optional
-from azure.core.pipeline.transport import HttpRequest, HttpTransport
-from azure.core.rest._http_response_impl import _HttpResponseBaseImpl
+from azure.core.pipeline.transport import HttpResponse, HttpRequest, HttpTransport
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 
-class HttpXTransportResponse(_HttpResponseBaseImpl):
+class HttpXTransportResponse(HttpResponse):
     def __init__(
         self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
     ) -> None:
@@ -103,12 +102,15 @@ class HttpXTransport(HttpTransport):
             else:
                 response = self.client.request(**parameters)
         except (
-            httpx.ConnectError, 
-            httpx.ConnectTimeout,
-        ) as err:
+            httpx.ReadTimeout,
+            httpx.ProtocolError,
+         ) as err:
+            error = ServiceResponseError(err, error=err)
+        except httpx.RequestError as err:
             error = ServiceRequestError(err, error=err)
-        except httpx.ReadTimeout:
-            error = ServiceResponseError(err, error=err)           
+
+        if error:
+            raise error
 
         return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
     
