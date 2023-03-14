@@ -26,3 +26,10 @@ class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnu
     PUBLIC = "public"
     DOD = "dod"
     GCCH = "gcch"
+
+
+class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Retention Policy Type."""
+
+    BASED_ON_THREAD_CREATION_DATE = "basedOnThreadCreationDate"
+    """Thread retention policy based on thread creation date."""

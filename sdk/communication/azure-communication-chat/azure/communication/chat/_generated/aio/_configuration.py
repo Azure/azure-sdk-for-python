@@ -28,14 +28,14 @@ class AzureCommunicationChatServiceConfiguration(Configuration):  # pylint: disa
 
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2021-09-07". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-07-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
         super(AzureCommunicationChatServiceConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2021-09-07"] = kwargs.pop("api_version", "2021-09-07")
+        api_version: Literal["2023-07-01-preview"] = kwargs.pop("api_version", "2023-07-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

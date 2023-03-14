@@ -27,8 +27,8 @@ class AzureCommunicationChatService:  # pylint: disable=client-accepts-api-versi
     :vartype chat: azure.communication.chat.aio.operations.ChatOperations
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2021-09-07". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-07-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

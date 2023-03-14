@@ -203,6 +203,8 @@ class ChatThreadProperties(object):
     :vartype created_on: ~datetime.datetime
     :ivar created_by: the chat thread owner.
     :vartype created_by: CommunicationIdentifier
+    :ivar retention_policy: Data retention policy for auto deletion.
+    :vartype retention_policy: ~azure.communication.chat.models.RetentionPolicy
     """
 
     # pylint:disable=protected-access
@@ -216,6 +218,7 @@ class ChatThreadProperties(object):
         self.topic = kwargs.get('topic', None)
         self.created_on = kwargs['created_on']
         self.created_by = kwargs['created_by']
+        self.retention_policy = kwargs['retention_policy']
 
     @classmethod
     def _from_generated(cls, chat_thread):
@@ -228,7 +231,8 @@ class ChatThreadProperties(object):
             id=chat_thread.id,
             topic=chat_thread.topic,
             created_on=chat_thread.created_on,
-            created_by=created_by
+            created_by=created_by,
+            retention_policy=chat_thread.retention_policy
         )
 
 

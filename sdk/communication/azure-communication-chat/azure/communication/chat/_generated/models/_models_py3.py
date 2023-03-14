@@ -66,6 +66,67 @@ class AddChatParticipantsResult(_serialization.Model):
         self.invalid_participants = None
 
 
+class RetentionPolicy(_serialization.Model):
+    """Data retention policy for auto deletion.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BasedOnThreadCreationDateRetentionPolicy
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar policy_type: Retention Policy Type. Required. "basedOnThreadCreationDate"
+    :vartype policy_type: str or ~azure.communication.chat.models.PolicyType
+    """
+
+    _validation = {
+        "policy_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "policy_type": {"key": "policyType", "type": "str"},
+    }
+
+    _subtype_map = {"policy_type": {"basedOnThreadCreationDate": "BasedOnThreadCreationDateRetentionPolicy"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.policy_type: Optional[str] = None
+
+
+class BasedOnThreadCreationDateRetentionPolicy(RetentionPolicy):
+    """Thread retention policy based on thread creation date.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar policy_type: Retention Policy Type. Required. "basedOnThreadCreationDate"
+    :vartype policy_type: str or ~azure.communication.chat.models.PolicyType
+    :ivar days_after_creation: Indicates how many days after the thread creation the thread will be
+     deleted. Only 90 is accepted for now. Required.
+    :vartype days_after_creation: int
+    """
+
+    _validation = {
+        "policy_type": {"required": True},
+        "days_after_creation": {"required": True},
+    }
+
+    _attribute_map = {
+        "policy_type": {"key": "policyType", "type": "str"},
+        "days_after_creation": {"key": "daysAfterCreation", "type": "int"},
+    }
+
+    def __init__(self, *, days_after_creation: int, **kwargs: Any) -> None:
+        """
+        :keyword days_after_creation: Indicates how many days after the thread creation the thread will
+         be deleted. Only 90 is accepted for now. Required.
+        :paramtype days_after_creation: int
+        """
+        super().__init__(**kwargs)
+        self.policy_type: str = "basedOnThreadCreationDate"
+        self.days_after_creation = days_after_creation
+
+
 class ChatError(_serialization.Model):
     """The Communication Services error.
 
@@ -535,6 +596,8 @@ class ChatThreadItem(_serialization.Model):
     :ivar last_message_received_on: The timestamp when the last message arrived at the server. The
      timestamp is in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype last_message_received_on: ~datetime.datetime
+    :ivar retention_policy: Data retention policy for auto deletion.
+    :vartype retention_policy: ~azure.communication.chat.models.RetentionPolicy
     """
 
     _validation = {
@@ -548,6 +611,7 @@ class ChatThreadItem(_serialization.Model):
         "topic": {"key": "topic", "type": "str"},
         "deleted_on": {"key": "deletedOn", "type": "iso-8601"},
         "last_message_received_on": {"key": "lastMessageReceivedOn", "type": "iso-8601"},
+        "retention_policy": {"key": "retentionPolicy", "type": "RetentionPolicy"},
     }
 
     def __init__(
@@ -556,6 +620,7 @@ class ChatThreadItem(_serialization.Model):
         id: str,  # pylint: disable=redefined-builtin
         topic: str,
         deleted_on: Optional[datetime.datetime] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -566,12 +631,15 @@ class ChatThreadItem(_serialization.Model):
         :keyword deleted_on: The timestamp when the chat thread was deleted. The timestamp is in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype deleted_on: ~datetime.datetime
+        :keyword retention_policy: Data retention policy for auto deletion.
+        :paramtype retention_policy: ~azure.communication.chat.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.id = id
         self.topic = topic
         self.deleted_on = deleted_on
         self.last_message_received_on = None
+        self.retention_policy = retention_policy
 
 
 class ChatThreadProperties(_serialization.Model):
@@ -595,6 +663,8 @@ class ChatThreadProperties(_serialization.Model):
     :ivar deleted_on: The timestamp when the chat thread was deleted. The timestamp is in RFC3339
      format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype deleted_on: ~datetime.datetime
+    :ivar retention_policy: Data retention policy for auto deletion.
+    :vartype retention_policy: ~azure.communication.chat.models.RetentionPolicy
     """
 
     _validation = {
@@ -613,6 +683,7 @@ class ChatThreadProperties(_serialization.Model):
             "type": "CommunicationIdentifierModel",
         },
         "deleted_on": {"key": "deletedOn", "type": "iso-8601"},
+        "retention_policy": {"key": "retentionPolicy", "type": "RetentionPolicy"},
     }
 
     def __init__(
@@ -623,6 +694,7 @@ class ChatThreadProperties(_serialization.Model):
         created_on: datetime.datetime,
         created_by_communication_identifier: "_models.CommunicationIdentifierModel",
         deleted_on: Optional[datetime.datetime] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -642,6 +714,8 @@ class ChatThreadProperties(_serialization.Model):
         :keyword deleted_on: The timestamp when the chat thread was deleted. The timestamp is in
          RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
         :paramtype deleted_on: ~datetime.datetime
+        :keyword retention_policy: Data retention policy for auto deletion.
+        :paramtype retention_policy: ~azure.communication.chat.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.id = id
@@ -649,6 +723,7 @@ class ChatThreadProperties(_serialization.Model):
         self.created_on = created_on
         self.created_by_communication_identifier = created_by_communication_identifier
         self.deleted_on = deleted_on
+        self.retention_policy = retention_policy
 
 
 class ChatThreadsItemCollection(_serialization.Model):
@@ -797,6 +872,8 @@ class CreateChatThreadRequest(_serialization.Model):
     :vartype topic: str
     :ivar participants: Participants to be added to the chat thread.
     :vartype participants: list[~azure.communication.chat.models.ChatParticipant]
+    :ivar retention_policy: Data retention policy for auto deletion.
+    :vartype retention_policy: ~azure.communication.chat.models.RetentionPolicy
     """
 
     _validation = {
@@ -806,20 +883,29 @@ class CreateChatThreadRequest(_serialization.Model):
     _attribute_map = {
         "topic": {"key": "topic", "type": "str"},
         "participants": {"key": "participants", "type": "[ChatParticipant]"},
+        "retention_policy": {"key": "retentionPolicy", "type": "RetentionPolicy"},
     }
 
     def __init__(
-        self, *, topic: str, participants: Optional[List["_models.ChatParticipant"]] = None, **kwargs: Any
+        self,
+        *,
+        topic: str,
+        participants: Optional[List["_models.ChatParticipant"]] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword topic: The chat thread topic. Required.
         :paramtype topic: str
         :keyword participants: Participants to be added to the chat thread.
         :paramtype participants: list[~azure.communication.chat.models.ChatParticipant]
+        :keyword retention_policy: Data retention policy for auto deletion.
+        :paramtype retention_policy: ~azure.communication.chat.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.topic = topic
         self.participants = participants
+        self.retention_policy = retention_policy
 
 
 class CreateChatThreadResult(_serialization.Model):
@@ -1091,16 +1177,28 @@ class UpdateChatThreadRequest(_serialization.Model):
 
     :ivar topic: Chat thread topic.
     :vartype topic: str
+    :ivar retention_policy: Data retention policy for auto deletion.
+    :vartype retention_policy: ~azure.communication.chat.models.RetentionPolicy
     """
 
     _attribute_map = {
         "topic": {"key": "topic", "type": "str"},
+        "retention_policy": {"key": "retentionPolicy", "type": "RetentionPolicy"},
     }
 
-    def __init__(self, *, topic: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        topic: Optional[str] = None,
+        retention_policy: Optional["_models.RetentionPolicy"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword topic: Chat thread topic.
         :paramtype topic: str
+        :keyword retention_policy: Data retention policy for auto deletion.
+        :paramtype retention_policy: ~azure.communication.chat.models.RetentionPolicy
         """
         super().__init__(**kwargs)
         self.topic = topic
+        self.retention_policy = retention_policy

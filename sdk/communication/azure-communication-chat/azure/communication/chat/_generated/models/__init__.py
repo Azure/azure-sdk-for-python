@@ -8,6 +8,7 @@
 
 from ._models_py3 import AddChatParticipantsRequest
 from ._models_py3 import AddChatParticipantsResult
+from ._models_py3 import BasedOnThreadCreationDateRetentionPolicy
 from ._models_py3 import ChatError
 from ._models_py3 import ChatMessage
 from ._models_py3 import ChatMessageContent
@@ -26,6 +27,7 @@ from ._models_py3 import CreateChatThreadRequest
 from ._models_py3 import CreateChatThreadResult
 from ._models_py3 import MicrosoftTeamsUserIdentifierModel
 from ._models_py3 import PhoneNumberIdentifierModel
+from ._models_py3 import RetentionPolicy
 from ._models_py3 import SendChatMessageRequest
 from ._models_py3 import SendChatMessageResult
 from ._models_py3 import SendReadReceiptRequest
@@ -35,6 +37,7 @@ from ._models_py3 import UpdateChatThreadRequest
 
 from ._azure_communication_chat_service_enums import ChatMessageType
 from ._azure_communication_chat_service_enums import CommunicationCloudEnvironmentModel
+from ._azure_communication_chat_service_enums import PolicyType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -42,6 +45,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AddChatParticipantsRequest",
     "AddChatParticipantsResult",
+    "BasedOnThreadCreationDateRetentionPolicy",
     "ChatError",
     "ChatMessage",
     "ChatMessageContent",
@@ -60,6 +64,7 @@ __all__ = [
     "CreateChatThreadResult",
     "MicrosoftTeamsUserIdentifierModel",
     "PhoneNumberIdentifierModel",
+    "RetentionPolicy",
     "SendChatMessageRequest",
     "SendChatMessageResult",
     "SendReadReceiptRequest",
@@ -68,6 +73,7 @@ __all__ = [
     "UpdateChatThreadRequest",
     "ChatMessageType",
     "CommunicationCloudEnvironmentModel",
+    "PolicyType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

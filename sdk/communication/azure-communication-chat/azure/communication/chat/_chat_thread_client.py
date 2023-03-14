@@ -174,6 +174,29 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
             **kwargs)
 
     @distributed_trace
+    def update_retention_policy(
+        self,
+        retention_policy=None,  # type: Optional[str]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Updates a thread's properties.
+
+        :keyword retention_policy: Data retention policy for auto deletion.
+        :paramtype retention_policy: ~azure.communication.chat.models.RetentionPolicy
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+        
+        """
+
+        update_retention_topic_request = UpdateChatThreadRequest(retention_policy=retention_policy)
+        return self._client.chat_thread.update_chat_thread_properties(
+            chat_thread_id=self._thread_id,
+            update_chat_thread_request=update_retention_topic_request,
+            **kwargs)
+
+    @distributed_trace
     def send_read_receipt(
         self,
         message_id,  # type: str
