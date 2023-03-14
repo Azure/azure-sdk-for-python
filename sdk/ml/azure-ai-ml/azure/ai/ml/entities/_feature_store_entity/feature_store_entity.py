@@ -35,7 +35,6 @@ class _FeatureStoreEntity(Asset):
         index_columns: List[_DataColumn],
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
         """_FeatureStoreEntity
