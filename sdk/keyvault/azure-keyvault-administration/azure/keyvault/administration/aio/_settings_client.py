@@ -11,7 +11,7 @@ from .._models import KeyVaultSetting
 
 
 class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
-    """Provides methods to update, get, and list settings for an Azure Key Vault.
+    """Provides methods to update, get, and list Managed HSM account settings.
 
     :param str vault_url: URL of the vault on which the client will operate. This is also called the vault's "DNS Name".
         You should validate that this URL references a valid Key Vault or Managed HSM resource.

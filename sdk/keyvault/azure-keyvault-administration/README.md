@@ -73,6 +73,22 @@ client = KeyVaultBackupClient(
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultBackupClient` instead.
 
+#### Create a KeyVaultSettingsClient
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a settings client (replacing the value of `vault_url` with your Managed HSM's URL):
+```python
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultSettingsClient
+
+credential = DefaultAzureCredential()
+
+client = KeyVaultSettingsClient(
+    vault_url="https://my-managed-hsm-name.managedhsm.azure.net/",
+    credential=credential
+)
+```
+
+> **NOTE:** For an asynchronous client, import `azure.keyvault.administration.aio`'s `KeyVaultSettingsClient` instead.
+
 ## Key concepts
 
 ### Role definition
@@ -88,6 +104,10 @@ A `KeyVaultAccessControlClient` manages role definitions and role assignments.
 
 ### KeyVaultBackupClient
 A `KeyVaultBackupClient` performs full key backups, full key restores, and selective key restores.
+
+### KeyVaultSettingsClient
+
+A `KeyVaultSettingsClient` manages Managed HSM account settings.
 
 ## Examples
 This section contains code snippets covering common tasks:
@@ -311,6 +331,8 @@ Several samples are available in the Azure SDK for Python GitHub repository. The
 | [access_control_operations_async.py][access_control_operations_async_sample] | create/update/delete role definitions and role assignments with an async client |
 | [backup_restore_operations.py][backup_operations_sample] | full backup and restore |
 | [backup_restore_operations_async.py][backup_operations_async_sample] | full backup and restore with an async client |
+| [settings_operations.py][settings_operations_sample] | list and update Key Vault settings |
+| [settings_operations_async.py][settings_operations_async_sample] | list and update Key Vault settings with an async client |
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].
@@ -366,6 +388,9 @@ contact opencode@microsoft.com with any additional questions or comments.
 [pypi_package_administration]: https://pypi.org/project/azure-keyvault-administration
 
 [reference_docs]: https://aka.ms/azsdk/python/keyvault-administration/docs
+
+[settings_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations.py
+[settings_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations_async.py
 
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Fkeyvault%2Fazure-keyvault-administration%2FREADME.png)
