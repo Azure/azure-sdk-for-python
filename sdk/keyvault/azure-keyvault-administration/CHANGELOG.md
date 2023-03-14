@@ -18,8 +18,8 @@
 - The `SettingType` enum has been renamed to `KeyVaultSettingType`
 
 ### Other Changes
-- (From 4.3.0b1) Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 - Key Vault API version `7.4` is now the default
+- (From 4.3.0b1) Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 - (From 4.3.0b1) Updated minimum `azure-core` version to 1.24.0
 - (From 4.3.0b1) Dropped `msrest` requirement
 - (From 4.3.0b1) Dropped `six` requirement

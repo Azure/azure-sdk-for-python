@@ -14,8 +14,8 @@
 - Removed support for octet key pair (OKP) keys and operations
 
 ### Other Changes
-- (From 4.8.0b1) Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 - Key Vault API version `7.4` is now the default
+- (From 4.8.0b1) Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 - (From 4.8.0b1) Updated minimum `azure-core` version to 1.24.0
 - (From 4.8.0b1) Updated minimum `msrest` version to 0.7.1
 - (From 4.8.0b2) Dropped `msrest` requirement
