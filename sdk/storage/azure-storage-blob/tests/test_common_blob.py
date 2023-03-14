@@ -1199,6 +1199,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
             # Restore blob with undelete
             blob.undelete_blob()
+            self.sleep(5)
             blob_list = list(container.list_blobs(include='deleted'))
 
             # Assert
@@ -1298,6 +1299,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
             # Restore snapshots with undelete
             blob.undelete_blob()
+            self.sleep(5)
             blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
 
             # Assert
