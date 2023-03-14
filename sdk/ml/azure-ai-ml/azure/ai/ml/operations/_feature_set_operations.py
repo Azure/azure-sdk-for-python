@@ -27,9 +27,8 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._feature_set_utils import read_feature_set_metadata_contents
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._assets import FeatureSet
+from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
 from azure.ai.ml.entities._feature_set.featureset_spec import FeaturesetSpec
-from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 
@@ -37,8 +36,14 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
-class FeatureSetOperations(_ScopeDependentOperations):
+class _FeatureSetOperations(_ScopeDependentOperations):
+    """_FeatureSetOperations.
+
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -48,7 +53,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
 
-        super(FeatureSetOperations, self).__init__(operation_scope, operation_config)
+        super(_FeatureSetOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
@@ -66,7 +71,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         *,
         name: Optional[str] = None,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-    ) -> ItemPaged[FeatureSet]:
+    ) -> ItemPaged[_FeatureSet]:
         """List the FeatureSet assets of the workspace.
 
         :param name: Name of a specific FeatureSet asset, optional.
@@ -75,19 +80,19 @@ class FeatureSetOperations(_ScopeDependentOperations):
         Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of FeatureSet objects
-        :rtype: ~azure.core.paging.ItemPaged[FeatureSet]
+        :rtype: ~azure.core.paging.ItemPaged[_FeatureSet]
         """
         if name:
             return self._operation.list(
                 workspace_name=self._workspace_name,
                 name=name,
-                cls=lambda objs: [FeatureSet._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: [_FeatureSet._from_rest_object(obj) for obj in objs],
                 list_view_type=list_view_type,
                 **self._scope_kwargs,
             )
         return self._container_operation.list(
             workspace_name=self._workspace_name,
-            cls=lambda objs: [FeatureSet._from_container_rest_object(obj) for obj in objs],
+            cls=lambda objs: [_FeatureSet._from_container_rest_object(obj) for obj in objs],
             list_view_type=list_view_type,
             **self._scope_kwargs,
         )
@@ -102,7 +107,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None) -> FeatureSet:
+    def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None) -> _FeatureSet:
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
@@ -114,7 +119,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully
             identified and retrieved. Details will be provided in the error message.
         :return: FeatureSet asset object.
-        :rtype: ~azure.ai.ml.entities.FeatureSet
+        :rtype: ~azure.ai.ml.entities._FeatureSet
         """
         try:
             if version and label:
@@ -140,18 +145,18 @@ class FeatureSetOperations(_ScopeDependentOperations):
                     error_type=ValidationErrorType.MISSING_FIELD,
                 )
             featureset_version_resource = self._get(name, version)
-            return FeatureSet._from_rest_object(featureset_version_resource)
+            return _FeatureSet._from_rest_object(featureset_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
     # @monitor_with_activity(logger, "FeatureSet.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
-    def begin_create_or_update(self, featureset: FeatureSet) -> LROPoller[FeatureSet]:
+    def begin_create_or_update(self, featureset: _FeatureSet) -> LROPoller[_FeatureSet]:
         """Create or update FeatureSet
 
         :param featureset: FeatureSet definition.
         :type featureset: FeatureSet
         :return: An instance of LROPoller that returns a FeatureSet.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSet]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._FeatureSet]
         """
 
         featureset_spec = validate_and_get_feature_set_spec(featureset)
@@ -163,7 +168,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             artifact=featureset, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURE_SET
         )
 
-        featureset_resource = FeatureSet._to_rest_object(featureset)
+        featureset_resource = _FeatureSet._to_rest_object(featureset)
 
         return self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
@@ -233,7 +238,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    def _get_latest_version(self, name: str) -> FeatureSet:
+    def _get_latest_version(self, name: str) -> _FeatureSet:
         """Returns the latest version of the asset with the given name.
 
         Latest is defined as the most recently created, not the most
@@ -245,10 +250,10 @@ class FeatureSetOperations(_ScopeDependentOperations):
         return self.get(name=name, version=latest_version)
 
 
-def validate_and_get_feature_set_spec(featureset: FeatureSet) -> FeaturesetSpec:
+def validate_and_get_feature_set_spec(featureset: _FeatureSet) -> FeaturesetSpec:
     # pylint: disable=no-member
-    if not featureset.specification and not featureset.specification.path:
-        msg = "Missing FeatureSet spec path. Path is required for featureset."
+    if not (featureset.specification and featureset.specification.path):
+        msg = "Missing FeatureSet specification path. Path is required for feature set."
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
