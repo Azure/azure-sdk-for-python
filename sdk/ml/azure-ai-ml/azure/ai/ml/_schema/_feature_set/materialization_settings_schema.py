@@ -17,9 +17,9 @@ class MaterializationComputeResourceSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
+        from azure.ai.ml.entities._feature_set.materialization_compute_resource import _MaterializationComputeResource
 
-        return MaterializationComputeResource(instance_type=data.pop("instance_type"), **data)
+        return _MaterializationComputeResource(instance_type=data.pop("instance_type"), **data)
 
 
 class MaterializationSettingsSchema(metaclass=PatchedSchemaMeta):
@@ -32,6 +32,6 @@ class MaterializationSettingsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.materialization_settings import MaterializationSettings
+        from azure.ai.ml.entities._feature_set.materialization_settings import _MaterializationSettings
 
-        return MaterializationSettings(**data)
+        return _MaterializationSettings(**data)
