@@ -90,14 +90,14 @@ class SipRoutingClient(object):
         self,
         trunk_fqdn,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> Optional[SipTrunk]
+    ):  # type: (...) -> SipTrunk
         """Retrieve a single SIP trunk.
 
         :param trunk_fqdn: FQDN of the desired SIP trunk.
         :type trunk_fqdn: str
-        :returns: SIP trunk with specified trunk_fqdn. If it doesn't exist, returns None.
-        :rtype: ~azure.communication.siprouting.models.SipTrunk or None
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, LookupError
+        :returns: SIP trunk with specified trunk_fqdn. If it doesn't exist, throws KeyError.
+        :rtype: ~azure.communication.siprouting.models.SipTrunk
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, KeyError
         """
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
@@ -105,11 +105,8 @@ class SipRoutingClient(object):
         config = self._rest_service.sip_routing.get(
             **kwargs)
 
-        if trunk_fqdn in config.trunks:
-            trunk = config.trunks[trunk_fqdn]
-            return SipTrunk(fqdn=trunk_fqdn,sip_signaling_port=trunk.sip_signaling_port)
-
-        return None
+        trunk = config.trunks[trunk_fqdn]
+        return SipTrunk(fqdn=trunk_fqdn,sip_signaling_port=trunk.sip_signaling_port)
 
     @distributed_trace
     def set_trunk(

@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core.exceptions import HttpResponseError
+import pytest
 from phone_numbers_testcase import PhoneNumbersTestCase
 from _shared.utils import create_token_credential, get_http_logging_policy
 from sip_routing_helper import get_unique_fqdn, assert_trunks_are_equal, assert_routes_are_equal, setup_configuration
 from devtools_testutils import recorded_by_proxy
-import os
 
 from azure.communication.phonenumbers.siprouting import SipRoutingClient, SipTrunk, SipTrunkRoute
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
@@ -139,6 +139,11 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         trunk = client.get_trunk(self.first_trunk.fqdn)
         assert trunk is not None, "No trunk was returned."
         trunk == self.first_trunk
+
+    @recorded_by_proxy
+    def test_get_trunk_not_existing_throws(self, **kwargs):
+        with pytest.raises(KeyError):
+            self._sip_routing_client.get_trunk("non-existing.fqdn.test")
 
     @recorded_by_proxy
     def test_set_trunk(self, **kwargs):

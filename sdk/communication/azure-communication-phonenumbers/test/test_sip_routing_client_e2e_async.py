@@ -9,7 +9,6 @@ from phone_numbers_testcase import PhoneNumbersTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from _shared.utils import async_create_token_credential, get_http_logging_policy
 from sip_routing_helper import get_unique_fqdn, assert_trunks_are_equal, assert_routes_are_equal, setup_configuration
-import os
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 from azure.communication.phonenumbers.siprouting._models import SipTrunk, SipTrunkRoute
@@ -158,6 +157,11 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
             trunk = await self._sip_routing_client.get_trunk(self.first_trunk.fqdn)
         assert trunk is not None, "No trunk was returned."
         assert_trunks_are_equal([trunk],[self.first_trunk]), "Returned trunk does not match the required trunk."
+
+    @recorded_by_proxy_async
+    async def test_get_trunk_not_existing_throws(self, **kwargs):
+        with pytest.raises(KeyError):
+            await self._sip_routing_client.get_trunk("non-existing.fqdn.test")
         
     @recorded_by_proxy_async
     async def test_set_trunk(self):
