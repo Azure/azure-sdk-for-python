@@ -95,14 +95,14 @@ from azure.ai.ml.operations import (
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
     WorkspaceOutboundRuleOperations,
-    _FeatureSetOperations,
-    _FeatureStoreEntityOperations,
-    _FeatureStoreOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.operations._schedule_operations import ScheduleOperations
+from azure.ai.ml.operations._feature_set_operations import _FeatureSetOperations
+from azure.ai.ml.operations._feature_store_operations import _FeatureStoreOperations
+from azure.ai.ml.operations._feature_store_entity_operations import _FeatureStoreEntityOperations
 
 module_logger = logging.getLogger(__name__)
 
@@ -351,7 +351,7 @@ class MLClient:
         self._workspace_connections = WorkspaceConnectionsOperations(
             self._operation_scope,
             self._operation_config,
-            self._rp_service_client_2022_01_01_preview,
+            self._rp_service_client,
             self._operation_container,
             self._credential,
         )

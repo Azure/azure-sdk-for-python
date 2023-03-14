@@ -6,7 +6,7 @@ import yaml
 import pytest
 
 from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
-from azure.ai.ml import _load_feature_set
+from azure.ai.ml.entities._load_functions import _load_feature_set
 
 
 @pytest.mark.unittest

@@ -23,7 +23,6 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import _FeatureStoreEntity
-from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 
@@ -31,7 +30,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class _FeatureStoreEntityOperations(_ScopeDependentOperations):
     """_FeatureStoreEntityOperations.
 

@@ -34,12 +34,11 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._feature_set_utils import read_feature_set_metadata_contents
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._assets import _FeatureSet
+from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
 from azure.ai.ml.entities._feature_set.featureset_spec_metadata import FeaturesetSpecMetadata
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import _MaterializationComputeResource
 from azure.ai.ml.entities._feature_set.feature_set_materialization_response import _FeatureSetMaterializationResponse
 from azure.ai.ml.entities._feature_set.feature import _Feature
-from azure.ai.ml._utils._experimental import experimental
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
 
@@ -47,7 +46,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class _FeatureSetOperations(_ScopeDependentOperations):
     """_FeatureSetOperations.
 

@@ -19,7 +19,8 @@ from azure.ai.ml.entities._feature_set.feature_set_materialization_response impo
 from azure.ai.ml.entities._feature_set.feature import _Feature
 from azure.ai.ml.operations import _FeatureSetOperations, DatastoreOperations
 from azure.ai.ml.entities import _FeatureSet, _FeatureSetSpecification
-from azure.ai.ml.operations import _FeatureSetOperations, DatastoreOperations
+from azure.ai.ml.operations import DatastoreOperations
+from azure.ai.ml.operations._feature_set_operations import _FeatureSetOperations
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 

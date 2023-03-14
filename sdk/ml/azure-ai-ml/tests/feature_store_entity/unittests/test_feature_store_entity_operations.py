@@ -12,7 +12,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities import _FeatureStoreEntity, _DataColumn, _DataColumnType
-from azure.ai.ml.operations import _FeatureStoreEntityOperations
+from azure.ai.ml.operations._feature_store_entity_operations import _FeatureStoreEntityOperations
 from azure.core.paging import ItemPaged
 
 
