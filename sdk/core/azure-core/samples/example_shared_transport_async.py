@@ -1,28 +1,24 @@
-# --------------------------------------------------------------------------
-#
+# coding: utf-8
+
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
-# The MIT License (MIT)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the ""Software""), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
 # --------------------------------------------------------------------------
+
+"""
+FILE: example_shared_transport_async.py
+
+DESCRIPTION:
+    This sample demonstrates how to share transport connections between multiple async clients.
+
+USAGE:
+    python example_shared_transport_async.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_STORAGE_CONNECTION_STRING - the endpoint of your Azure Metrics Advisor service
+"""
+
 import os
 import asyncio
 from azure.core.pipeline.transport import AioHttpTransport
@@ -36,7 +32,9 @@ async def shared_transport_async():
     shared_transport = AioHttpTransport()
     async with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
-            connection_string, transport=shared_transport, session_owner=False
+            connection_string,
+            transport=shared_transport,
+            session_owner=False   # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
         )
         blob_service_client2 = BlobServiceClient.from_connection_string(
             connection_string, transport=shared_transport, session_owner=False
