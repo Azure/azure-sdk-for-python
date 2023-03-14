@@ -211,6 +211,117 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             **kwargs
         )
 
+    @distributed_trace_async
+    async def begin_classify_document(
+        self, classifier_id: str, document: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[AnalyzeResult]:
+        """Classify a document using a document classifier
+
+        :param str classifier_id: A unique document classifier identifier can be passed in as a string.
+        :param document: File stream or bytes. For service supported file types, see:
+            https://aka.ms/azsdk/formrecognizer/supportedfiles.
+        :type document: bytes or IO[bytes]
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_classify_document_async.py
+                :start-after: [START classify_document_async]
+                :end-before: [END classify_document_async]
+                :language: python
+                :dedent: 4
+                :caption: Classify a document. For more samples see the `samples` folder.
+        """
+
+        cls = kwargs.pop("cls", self._analyze_document_callback)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        if continuation_token is not None:
+            return await self._client.document_classifiers.begin_classify_document(  # type: ignore
+                classifier_id=classifier_id,
+                content_type="application/octet-stream",
+                string_index_type="unicodeCodePoint",
+                classify_request=document,  # type: ignore
+                continuation_token=continuation_token,
+                cls=cls,
+                **kwargs
+            )
+
+        if not classifier_id:
+            raise ValueError("classifier_id cannot be None or empty.")
+
+        return await self._client.document_classifiers.begin_classify_document(  # type: ignore
+            classifier_id=classifier_id,
+            content_type="application/octet-stream",
+            string_index_type="unicodeCodePoint",
+            classify_request=document,  # type: ignore
+            cls=cls,
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def begin_classify_document_from_url(
+        self, classifier_id: str, document_url: str, **kwargs: Any
+    ) -> AsyncLROPoller[AnalyzeResult]:
+        """Classify a given document with a document classifier.
+        The input must be the location (URL) of the document to be classified.
+
+        :param str classifier_id: A unique document classifier identifier can be passed in as a string.
+        :param str document_url: The URL of the document to classify. The input must be a valid, properly
+            encoded  (i.e. encode special characters, such as empty spaces), and publicly accessible URL
+            of one of the supported formats: https://aka.ms/azsdk/formrecognizer/supportedfiles.
+        :return: An instance of an AsyncLROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/async_samples/TODO.py
+                :start-after: [START TODO]
+                :end-before: [END TODO]
+                :language: python
+                :dedent: 4
+                :caption: Classify a document. For more samples see the `samples` folder.
+        """
+
+        cls = kwargs.pop("cls", self._analyze_document_callback)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        # continuation token requests do not perform the same value checks as
+        # regular analysis requests
+        if continuation_token is not None:
+            return await self._client.document_classifiers.begin_classify_document(  # type: ignore
+                classifier_id=classifier_id,
+                content_type="application/octet-stream",
+                string_index_type="unicodeCodePoint",
+                classify_request={"urlSource": document_url},  # type: ignore
+                continuation_token=continuation_token,
+                cls=cls,
+                **kwargs
+            )
+
+        if not classifier_id:
+            raise ValueError("classifier_id cannot be None or empty.")
+
+        if not isinstance(document_url, str):
+            raise ValueError(
+                "'document_url' needs to be of type 'str'. "
+                "Please see `begin_classify_document()` to pass a byte stream."
+            )
+
+        return await self._client.document_classifiers.begin_classify_document(  # type: ignore
+            classifier_id=classifier_id,
+            content_type="application/octet-stream",
+            string_index_type="unicodeCodePoint",
+            classify_request={"urlSource": document_url},  # type: ignore
+            cls=cls,
+            **kwargs
+        )
+
     async def __aenter__(self) -> "DocumentAnalysisClient":
         await self._client.__aenter__()
         return self
