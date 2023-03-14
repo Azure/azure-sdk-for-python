@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Iterable
 from unittest.mock import Mock, patch
 
@@ -9,13 +10,20 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
     FeaturesetContainerProperties,
     FeaturesetVersion,
     FeaturesetVersionProperties,
+    FeaturesetJobArmPaginatedResult,
+    FeatureArmPaginatedResult,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from azure.ai.ml.entities._feature_set.feature_set_materialization_response import _FeatureSetMaterializationResponse
+from azure.ai.ml.entities._feature_set.feature import _Feature
+from azure.ai.ml.operations import DatastoreOperations
+from azure.ai.ml.operations._feature_set_operations import _FeatureSetOperations
 from azure.ai.ml.entities import _FeatureSet, _FeatureSetSpecification
 from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml.operations._feature_set_operations import _FeatureSetOperations
 from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 
 
 @pytest.fixture
@@ -59,6 +67,8 @@ def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
 @patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
 @patch.object(_FeatureSet, "_from_rest_object", new=Mock())
 @patch.object(_FeatureSet, "_from_container_rest_object", new=Mock())
+@patch.object(_FeatureSetMaterializationResponse, "_from_rest_object", new=Mock())
+@patch.object(_Feature, "_from_rest_object", new=Mock())
 @pytest.mark.data_experiences_test
 class TestFeatureSetOperations:
     def test_list(self, mock_feature_set_operations: _FeatureSetOperations) -> None:
@@ -90,6 +100,36 @@ class TestFeatureSetOperations:
         with pytest.raises(Exception) as ex:
             mock_feature_set_operations.get(name=name)
         assert "At least one required parameter is missing" in str(ex.value)
+
+    def test_begin_backfill(self, mock_feature_set_operations: _FeatureSetOperations) -> None:
+        mock_feature_set_operations._operation.begin_backfill.return_value = LROPoller
+        mock_feature_set_operations.begin_backfill(
+            name="random_name",
+            version="1",
+            feature_window_start_time=datetime(2023, 1, 1),
+            feature_window_end_time=datetime(2023, 1, 2),
+        )
+        mock_feature_set_operations._operation.begin_backfill.assert_called_once()
+
+    def test_list_materialization_operation(self, mock_feature_set_operations: _FeatureSetOperations) -> None:
+        mock_feature_set_operations._operation.list_materialization_jobs.return_value = [
+            Mock(FeaturesetJobArmPaginatedResult) for _ in range(10)
+        ]
+        result = mock_feature_set_operations.list_materialization_operation(name="random_name", version="1")
+        assert isinstance(result, Iterable)
+        mock_feature_set_operations._operation.list_materialization_jobs.assert_called_once()
+
+    def test_list_features(self, mock_feature_set_operations: _FeatureSetOperations) -> None:
+        mock_feature_set_operations._operation.list_features.return_value = [
+            Mock(FeatureArmPaginatedResult) for _ in range(10)
+        ]
+        result = mock_feature_set_operations.list_features(feature_set_name="random_name", version="1")
+        assert isinstance(result, Iterable)
+        mock_feature_set_operations._operation.list_features.assert_called_once()
+
+    def test_get_feature(self, mock_feature_set_operations: _FeatureSetOperations) -> None:
+        mock_feature_set_operations.get_feature(feature_set_name="random_name", version="1", feature_name="test")
+        mock_feature_set_operations._operation.get_feature.assert_called_once()
 
     def test_archive_version(self, mock_feature_set_operations: _FeatureSetOperations):
         name = "random_name"

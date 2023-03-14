@@ -9,12 +9,14 @@ from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
-class FeatureTransformationCodeSchema(metaclass=PatchedSchemaMeta):
+class FeatureTransformationCodeMetadataSchema(metaclass=PatchedSchemaMeta):
     path = fields.Str(required=False)
     transformer_class = fields.Str(required=False)
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.feature_transformation_code import FeatureTransformationCode
+        from azure.ai.ml.entities._feature_set.feature_transformation_code_metadata import (
+            FeatureTransformationCodeMetadata,
+        )
 
-        return FeatureTransformationCode(**data)
+        return FeatureTransformationCodeMetadata(**data)

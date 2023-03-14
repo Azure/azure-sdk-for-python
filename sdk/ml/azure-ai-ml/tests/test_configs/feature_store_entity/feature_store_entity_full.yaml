@@ -8,5 +8,3 @@ index_columns:
     type: integer
 tags:
   t1: v1
-properties:
-  p1: v1

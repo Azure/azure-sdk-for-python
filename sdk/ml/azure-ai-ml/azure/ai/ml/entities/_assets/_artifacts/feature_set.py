@@ -44,7 +44,6 @@ class _FeatureSet(Artifact):
         description: Optional[str] = None,
         materialization_settings: Optional[_MaterializationSettings] = None,
         tags: Optional[Dict] = None,
-        properties: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
         """FeatureSet
@@ -61,8 +60,6 @@ class _FeatureSet(Artifact):
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
         :type tags: dict[str, str]
-        :param properties: The asset property dictionary.
-        :type properties: dict[str, str]
         :param materialization_settings: Specifies the materialization settings.
         :type materialization_settings: ~azure.ai.ml.entities._MaterializationSettings
         :param kwargs: A dictionary of additional configuration parameters.
@@ -73,7 +70,6 @@ class _FeatureSet(Artifact):
             version=version,
             description=description,
             tags=tags,
-            properties=properties,
             path=specification.path,
             **kwargs,
         )
@@ -109,7 +105,6 @@ class _FeatureSet(Artifact):
             version=arm_id_object.asset_version,
             description=featureset_rest_object_details.description,
             tags=featureset_rest_object_details.tags,
-            properties=featureset_rest_object_details.properties,
             entities=featureset_rest_object_details.entities,
             materialization_settings=_MaterializationSettings._from_rest_object(
                 featureset_rest_object_details.materialization_settings
@@ -127,7 +122,6 @@ class _FeatureSet(Artifact):
             name=arm_id_object.asset_name,
             description=rest_object_details.description,
             tags=rest_object_details.tags,
-            properties=rest_object_details.properties,
             entities=[],
             specification=_FeatureSetSpecification(),
             version="",
