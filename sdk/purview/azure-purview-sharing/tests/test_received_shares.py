@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import uuid, json
+import json
 
 from testcase import TestPurviewSharing, PurviewSharingPowerShellPreparer
 from devtools_testutils import recorded_by_proxy
