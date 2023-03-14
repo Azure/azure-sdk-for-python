@@ -7,7 +7,7 @@ import pytest
 
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import _FeatureStoreEntity
 
-from azure.ai.ml import _load_feature_store_entity
+from azure.ai.ml.entities._load_functions import _load_feature_store_entity
 
 
 @pytest.mark.unittest

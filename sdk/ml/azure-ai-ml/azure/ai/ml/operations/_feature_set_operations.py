@@ -27,7 +27,7 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._feature_set_utils import read_feature_set_metadata_contents
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._assets import _FeatureSet
+from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
 from azure.ai.ml.entities._feature_set.featureset_spec import FeaturesetSpec
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
