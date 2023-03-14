@@ -149,7 +149,9 @@ class TestAutoMLRegression:
         assert original_obj.training.allowed_training_algorithms == [
             RegressionModels.LIGHT_GBM,
         ], "Allowed models not set correctly"
-        assert original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED, "Training mode not set correctly"
+        assert (
+            original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED
+        ), "Training mode not set correctly"
         assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
 
     def test_regression_task_auto_mode(self):

@@ -53,7 +53,7 @@ class TestLimitSettings:
 
     def _get_rest_obj(self, scenario):
         rest_objs = {
-            "default":  RestTabularLimitSettings(
+            "default": RestTabularLimitSettings(
                 enable_early_termination=True,
                 exit_score=0.5,
                 max_concurrent_trials=10,
@@ -72,7 +72,7 @@ class TestLimitSettings:
                 timeout="PT10H",
                 trial_timeout="PT20M",
                 max_nodes=4,
-            )
+            ),
         }
         return rest_objs[scenario]
 

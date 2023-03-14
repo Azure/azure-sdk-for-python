@@ -94,7 +94,12 @@ class TestAutoMLClassification:
             identity=identity,
         )  # type: ClassificationJob
         # classification_task.set_limits(timeout=60, max_trials=100, max_concurrent_trials=4)
-        classification_job.limits = {"timeout_minutes": 60, "max_trials": 100, "max_concurrent_trials": 4, "max_nodes": 4}
+        classification_job.limits = {
+            "timeout_minutes": 60,
+            "max_trials": 100,
+            "max_concurrent_trials": 4,
+            "max_nodes": 4,
+        }
         classification_job.set_training(
             allowed_training_algorithms=[ClassificationModels.LIGHT_GBM],
             training_mode=TabularTrainingMode.DISTRIBUTED,
@@ -146,7 +151,9 @@ class TestAutoMLClassification:
         assert original_obj.training.allowed_training_algorithms == [
             ClassificationModels.LIGHT_GBM
         ], "Allowed models not set correctly"
-        assert original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED, "Training mode not set correctly"
+        assert (
+            original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED
+        ), "Training mode not set correctly"
         assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
 
     def test_classification_task_auto_mode(self):
@@ -168,7 +175,12 @@ class TestAutoMLClassification:
             identity=identity,
         )  # type: ClassificationJob
         # classification_task.set_limits(timeout=60, max_trials=100, max_concurrent_trials=4)
-        classification_job.limits = {"timeout_minutes": 60, "max_trials": 100, "max_concurrent_trials": 4, "max_nodes": 4}
+        classification_job.limits = {
+            "timeout_minutes": 60,
+            "max_trials": 100,
+            "max_concurrent_trials": 4,
+            "max_nodes": 4,
+        }
         classification_job.set_training(
             allowed_training_algorithms=[ClassificationModels.LIGHT_GBM],
             training_mode=TabularTrainingMode.AUTO,

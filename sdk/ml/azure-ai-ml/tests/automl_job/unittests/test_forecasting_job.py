@@ -182,7 +182,9 @@ class TestAutoMLForecasting:
 
         original_obj = ForecastingJob._from_rest_object(rest_obj)  # deserialize from rest object
         assert forecasting_job == original_obj, "Conversion to/from rest object failed"
-        assert original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED, "Training mode not set correctly"
+        assert (
+            original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED
+        ), "Training mode not set correctly"
         assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
 
     def test_forecasting_task_auto_mode(self):

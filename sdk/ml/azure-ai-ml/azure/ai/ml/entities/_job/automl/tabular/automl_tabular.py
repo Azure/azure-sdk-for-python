@@ -440,9 +440,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
         self._training.allowed_training_algorithms = allowed_training_algorithms
         self._training.blocked_training_algorithms = blocked_training_algorithms
-        self._training.training_mode = (
-            training_mode if training_mode is not None else self._training.training_mode
-        )
+        self._training.training_mode = training_mode if training_mode is not None else self._training.training_mode
 
     def set_featurization(
         self,

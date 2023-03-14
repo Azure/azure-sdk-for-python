@@ -87,9 +87,11 @@ class TrainingSettings(RestTranslatableMixin):
         elif hasattr(TabularTrainingMode, camel_to_snake(value).upper()):
             self._training_mode = TabularTrainingMode[camel_to_snake(value).upper()]
         else:
-            supported_values = ", ".join([f"\"{camel_to_snake(mode.value)}\"" for mode in TabularTrainingMode])
-            msg = (f"Unsupported training mode: {value}. Supported values are- {supported_values}. "
-                   "Or you can use azure.ai.ml.constants.TabularTrainingMode enum.")
+            supported_values = ", ".join([f'"{camel_to_snake(mode.value)}"' for mode in TabularTrainingMode])
+            msg = (
+                f"Unsupported training mode: {value}. Supported values are- {supported_values}. "
+                "Or you can use azure.ai.ml.constants.TabularTrainingMode enum."
+            )
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
