@@ -20,8 +20,8 @@ else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 
-class TranslatorClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for TranslatorClient.
+class TextTranslationClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for TextTranslationClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -35,7 +35,7 @@ class TranslatorClientConfiguration(Configuration):  # pylint: disable=too-many-
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        super(TranslatorClientConfiguration, self).__init__(**kwargs)
+        super(TextTranslationClientConfiguration, self).__init__(**kwargs)
         api_version: Literal["3.0"] = kwargs.pop("api_version", "3.0")
 
         if endpoint is None:

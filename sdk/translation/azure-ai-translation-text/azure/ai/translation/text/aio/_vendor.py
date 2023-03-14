@@ -8,7 +8,7 @@
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from ._configuration import TranslatorClientConfiguration
+from ._configuration import TextTranslationClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -17,10 +17,10 @@ if TYPE_CHECKING:
     from .._serialization import Deserializer, Serializer
 
 
-class TranslatorClientMixinABC(ABC):
+class TextTranslationClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "AsyncPipelineClient"
-    _config: TranslatorClientConfiguration
+    _config: TextTranslationClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

@@ -16,10 +16,10 @@ from ._models import DictionaryExampleTextElement
 from ._models import DictionaryLookupElement
 from ._models import DictionaryTranslation
 from ._models import ErrorDetails
+from ._models import ErrorResponse
 from ._models import Example
 from ._models import GetLanguagesResult
 from ._models import InputTextElement
-from ._models import MtErrorResponse
 from ._models import SentenceLength
 from ._models import SourceDictionaryLanguage
 from ._models import SourceText
@@ -50,10 +50,10 @@ __all__ = [
     "DictionaryLookupElement",
     "DictionaryTranslation",
     "ErrorDetails",
+    "ErrorResponse",
     "Example",
     "GetLanguagesResult",
     "InputTextElement",
-    "MtErrorResponse",
     "SentenceLength",
     "SourceDictionaryLanguage",
     "SourceText",

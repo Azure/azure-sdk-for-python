@@ -554,6 +554,37 @@ class ErrorDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class ErrorResponse(_model_base.Model):
+    """Representation of the Error Response from Translator Service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar error: Error details. Required.
+    :vartype error: ~azure.ai.translation.text.models.ErrorDetails
+    """
+
+    error: "_models.ErrorDetails" = rest_field()
+    """Error details. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: "_models.ErrorDetails",
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class Example(_model_base.Model):
     """Dictionary Example.
 
@@ -650,37 +681,6 @@ class GetLanguagesResult(_model_base.Model):
         translation: Optional[Dict[str, "_models.TranslationLanguage"]] = None,
         transliteration: Optional[Dict[str, "_models.TransliterationLanguage"]] = None,
         dictionary: Optional[Dict[str, "_models.SourceDictionaryLanguage"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class MtErrorResponse(_model_base.Model):
-    """Representation of the Error Response from Translator Service.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar error: Error details. Required.
-    :vartype error: ~azure.ai.translation.text.models.ErrorDetails
-    """
-
-    error: "_models.ErrorDetails" = rest_field()
-    """Error details. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error: "_models.ErrorDetails",
     ):
         ...
 
