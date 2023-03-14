@@ -32,7 +32,7 @@ module_logger = ops_logger.module_logger
 
 
 @experimental
-class FeatureStoreEntityOperations(_ScopeDependentOperations):
+class _FeatureStoreEntityOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
@@ -41,7 +41,7 @@ class FeatureStoreEntityOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
 
-        super(FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
+        super(_FeatureStoreEntityOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.featurestore_entity_versions
         self._container_operation = service_client.featurestore_entity_containers

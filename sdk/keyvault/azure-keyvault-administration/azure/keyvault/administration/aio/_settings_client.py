@@ -5,7 +5,7 @@
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._generated_models import UpdateSettingsRequest
+from .._generated_models import UpdateSettingRequest
 from .._internal import AsyncKeyVaultClientBase
 from .._models import KeyVaultSetting
 
@@ -37,7 +37,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        result = await self._client.get_setting_value(vault_base_url=self._vault_url, setting_name=name, **kwargs)
+        result = await self._client.get_setting(vault_base_url=self._vault_url, setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
     @distributed_trace_async
@@ -72,8 +72,8 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        parameters = UpdateSettingsRequest(value=setting.value)
-        result = await self._client.update_settings(
+        parameters = UpdateSettingRequest(value=setting.value)
+        result = await self._client.update_setting(
             vault_base_url=self._vault_url,
             setting_name=setting.name,
             parameters=parameters,
