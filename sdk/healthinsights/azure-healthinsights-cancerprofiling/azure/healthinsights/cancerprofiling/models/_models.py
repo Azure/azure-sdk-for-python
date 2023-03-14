@@ -127,9 +127,9 @@ class DocumentContent(_model_base.Model):
     """
 
     source_type: Union[str, "_models.DocumentContentSourceType"] = rest_field(name="sourceType")
-    """The type of the content's source. In case the source type is 'inline', the content is given as a string (for
-    instance, text). In case the source type is 'reference', the content is given as a URI. Required. Known values
-    are: \"inline\" and \"reference\". """
+    """The type of the content's source.
+In case the source type is 'inline', the content is given as a string (for instance, text).
+In case the source type is 'reference', the content is given as a URI. Required. Known values are: \"inline\" and \"reference\"."""
     value: str = rest_field()
     """The content of the document, given either inline (as a string) or as a reference (URI). Required. """
 
@@ -347,10 +347,8 @@ class OncoPhenotypeInference(_model_base.Model):
     :vartype case_id: str
     """
 
-    type: Union[str, "_models.OncoPhenotypeInferenceType"] = rest_field() # pylint: disable=redefined-builtin
-    """The type of the Onco Phenotype inference. Required. Known values are: \"tumorSite\", \"histology\",
-    \"clinicalStageT\", \"clinicalStageN\", \"clinicalStageM\", \"pathologicStageT\", \"pathologicStageN\",
-    and \"pathologicStageM\". """
+    type: Union[str, "_models.OncoPhenotypeInferenceType"] = rest_field()
+    """The type of the Onco Phenotype inference. Required. Known values are: \"tumorSite\", \"histology\", \"clinicalStageT\", \"clinicalStageN\", \"clinicalStageM\", \"pathologicStageT\", \"pathologicStageN\", and \"pathologicStageM\"."""
     value: str = rest_field()
     """The value of the inference, as relevant for the given inference type. Required. """
     description: Optional[str] = rest_field()
@@ -366,7 +364,7 @@ class OncoPhenotypeInference(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.OncoPhenotypeInferenceType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.OncoPhenotypeInferenceType"],
         value: str,
         description: Optional[str] = None,
         confidence_score: Optional[float] = None,
@@ -415,8 +413,7 @@ class OncoPhenotypeModelConfiguration(_model_base.Model):
 This could be used if only part of the Onco Phenotype inferences are required.
 If this list is omitted or empty, the model will return all the inference types. """
     check_for_cancer_case: bool = rest_field(name="checkForCancerCase", default=False)
-    """An indication whether to perform a preliminary step on the patient's documents to determine whether they
-    relate to a Cancer case. """
+    """An indication whether to perform a preliminary step on the patient's documents to determine whether they relate to a Cancer case. """
 
     @overload
     def __init__(
@@ -511,8 +508,7 @@ class OncoPhenotypeResult(_model_base.Model):
     last_update_date_time: datetime.datetime = rest_field(name="lastUpdateDateTime", readonly=True)
     """The date and time when the processing job was last updated. Required. """
     status: Union[str, "_models.JobStatus"] = rest_field(readonly=True)
-    """The status of the processing job. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
-    \"failed\", and \"partiallyCompleted\". """
+    """The status of the processing job. Required. Known values are: \"notStarted\", \"running\", \"succeeded\", \"failed\", and \"partiallyCompleted\"."""
     errors: Optional[List["_models.Error"]] = rest_field(readonly=True)
     """An array of errors, if any errors occurred during the processing job. """
     results: Optional["_models.OncoPhenotypeResults"] = rest_field(readonly=True)
@@ -583,12 +579,10 @@ class PatientDocument(_model_base.Model):
     :vartype content: ~azure.healthinsights.cancerprofiling.models.DocumentContent
     """
 
-    type: Union[str, "_models.DocumentType"] = rest_field() # pylint: disable=redefined-builtin
-    """The type of the patient document, such as 'note' (text document) or 'fhirBundle' (FHIR JSON document).
-    Required. Known values are: \"note\", \"fhirBundle\", \"dicom\", and \"genomicSequencing\". """
+    type: Union[str, "_models.DocumentType"] = rest_field()
+    """The type of the patient document, such as 'note' (text document) or 'fhirBundle' (FHIR JSON document). Required. Known values are: \"note\", \"fhirBundle\", \"dicom\", and \"genomicSequencing\"."""
     clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = rest_field(name="clinicalType")
-    """The type of the clinical document. Known values are: \"consultation\", \"dischargeSummary\",
-    \"historyAndPhysical\", \"procedure\", \"progress\", \"imaging\", \"laboratory\", and \"pathology\". """
+    """The type of the clinical document. Known values are: \"consultation\", \"dischargeSummary\", \"historyAndPhysical\", \"procedure\", \"progress\", \"imaging\", \"laboratory\", and \"pathology\"."""
     id: str = rest_field()
     """A given identifier for the document. Has to be unique across all documents for a single patient. Required. """
     language: Optional[str] = rest_field()
@@ -602,7 +596,7 @@ class PatientDocument(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.DocumentType"], # pylint: disable=redefined-builtin
+        type: Union[str, "_models.DocumentType"],
         id: str,  # pylint: disable=redefined-builtin
         content: "_models.DocumentContent",
         clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = None,

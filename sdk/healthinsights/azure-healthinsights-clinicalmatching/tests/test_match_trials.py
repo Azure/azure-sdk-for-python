@@ -46,7 +46,7 @@ class TestMatchTrials(AzureRecordedTestCase):
                                 {
                                     "city": "gilbert",
                                     "state": "arizona",
-                                    "country": "United States"
+                                    "countryOrRegion": "United States"
                                 }
                             ]
                         }
