@@ -114,6 +114,7 @@ class CachedNodeResolver(object):
         registry_name: Optional[str],
     ) -> str:
         """Get a hash for used client.
+
         Works for both workspace client and registry client.
         """
         object_hash = hashlib.sha256()
@@ -151,8 +152,9 @@ class CachedNodeResolver(object):
     @staticmethod
     def _get_in_memory_hash_for_component(component: Component) -> str:
         """Get a hash for a component.
-        This function assumes that there is no change in code folder among hash calculations,
-        which is true during resolution of 1 root pipeline component/job.
+
+        This function assumes that there is no change in code folder among hash calculations, which is true during
+        resolution of 1 root pipeline component/job.
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -176,8 +178,9 @@ class CachedNodeResolver(object):
     @staticmethod
     def _get_on_disk_hash_for_component(component: Component, in_memory_hash: str) -> str:
         """Get a hash for a component.
-        This function will calculate the hash based on the component's code folder if the component has code,
-        so it's unique even if code folder is changed.
+
+        This function will calculate the hash based on the component's code folder if the component has code, so it's
+        unique even if code folder is changed.
         """
         if not isinstance(component, Component):
             # this shouldn't happen; handle it in case invalid call is made outside this class
@@ -275,9 +278,9 @@ class CachedNodeResolver(object):
                 self._save_to_on_disk_cache(cache_content.on_disk_hash, cache_content.arm_id)
 
     def _prepare_items_to_resolve(self):
-        """Pop all nodes in self._nodes_to_resolve to prepare cache contents to resolve and nodes to resolve.
-        Nodes in self._nodes_to_resolve will be grouped by component hash and saved to a dict of list.
-        Distinct dependent components not in current cache will be saved to a list.
+        """Pop all nodes in self._nodes_to_resolve to prepare cache contents to resolve and nodes to resolve. Nodes in
+        self._nodes_to_resolve will be grouped by component hash and saved to a dict of list. Distinct dependent
+        components not in current cache will be saved to a list.
 
         :return: a tuple of (dict of nodes to resolve, list of cache contents to resolve)
         """
@@ -300,9 +303,8 @@ class CachedNodeResolver(object):
         return dict_of_nodes_to_resolve, cache_contents_to_resolve
 
     def _resolve_cache_contents_from_disk(self, cache_contents_to_resolve: List[_CacheContent]) -> List[_CacheContent]:
-        """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return
-        unresolved cache contents.
-        """
+        """Check on-disk cache to resolve cache contents in cache_contents_to_resolve and return unresolved cache
+        contents."""
         # Note that we should recalculate the hash based on code for local cache, as
         # we can't assume that the code folder won't change among dependency resolution
         for cache_content in cache_contents_to_resolve:
@@ -328,6 +330,7 @@ class CachedNodeResolver(object):
 
     def _resolve_nodes(self):
         """Processing logic of self.resolve_nodes.
+
         Should not be called in subgraph creation.
         """
         dict_of_nodes_to_resolve, cache_contents_to_resolve = self._prepare_items_to_resolve()
@@ -357,8 +360,10 @@ class CachedNodeResolver(object):
         self._nodes_to_resolve.append(node)
 
     def resolve_nodes(self):
-        """Resolve all dependent components with resolver and set resolved component arm id back to newly
-        registered nodes. Registered nodes will be cleared after resolution.
+        """Resolve all dependent components with resolver and set resolved component arm id back to newly registered
+        nodes.
+
+        Registered nodes will be cleared after resolution.
         """
         if not self._nodes_to_resolve:
             return

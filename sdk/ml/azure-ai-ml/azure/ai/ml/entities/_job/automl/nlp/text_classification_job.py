@@ -6,10 +6,10 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase, TaskType
-from azure.ai.ml._restclient.v2022_12_01_preview.models import TextClassification as RestTextClassification
-from azure.ai.ml._restclient.v2022_12_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TextClassification as RestTextClassification
+from azure.ai.ml._restclient.v2023_02_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
@@ -107,6 +107,7 @@ class TextClassificationJob(AutoMLNLPJob):
             resources=self.resources,
             task_details=text_classification,
             identity=self.identity._to_ob_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -162,6 +163,7 @@ class TextClassificationJob(AutoMLNLPJob):
             identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            queue_settings=properties.queue_settings,
         )
 
         text_classification_job._restore_data_inputs()

@@ -9,13 +9,14 @@ from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SweepJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import SweepJob
 from azure.ai.ml.entities._assets import Environment
 
 from ..._schema import NestedField, UnionField
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
 from .distribution import DistributionConfiguration, MpiDistribution, PyTorchDistribution, TensorFlowDistribution
 from .job_resource_configuration import JobResourceConfiguration
+from .queue_settings import QueueSettings
 
 module_logger = logging.getLogger(__name__)
 
@@ -25,8 +26,7 @@ OLD_INPUT_BINDING_PREFIX = "AZURE_ML_INPUT"
 
 
 class ParameterizedCommand:
-    """Command component that contains the training command and supporting
-    parameters for the command.
+    """Command component that contains the training command and supporting parameters for the command.
 
     :param command: Command to be executed in training.
     :type command: str
@@ -50,6 +50,7 @@ class ParameterizedCommand:
         environment_variables: Optional[Dict] = None,
         distribution: Optional[Union[dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
         environment: Optional[Union[Environment, str]] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -59,6 +60,7 @@ class ParameterizedCommand:
         self.environment = environment
         self.distribution: Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = distribution
         self.resources = resources
+        self.queue_settings = queue_settings
 
     @property
     def distribution(
@@ -98,5 +100,6 @@ class ParameterizedCommand:
             environment=sweep_job.trial.environment_id,
             distribution=DistributionConfiguration._from_rest_object(sweep_job.trial.distribution),
             resources=JobResourceConfiguration._from_rest_object(sweep_job.trial.resources),
+            queue_settings=QueueSettings._from_rest_object(sweep_job.queue_settings),
         )
         return parameterized_command

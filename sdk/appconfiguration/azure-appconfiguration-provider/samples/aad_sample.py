@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 from azure.appconfiguration.provider import (
-    load_provider,
+    load,
     SettingSelector
 )
 import os
@@ -17,19 +17,19 @@ audience = get_audience(authority)
 credential = get_credential(authority)
 
 # Connecting to Azure App Configuration using AAD
-config = load_provider(endpoint=endpoint, credential=credential)
+config = load(endpoint=endpoint, credential=credential)
 
 print(config["message"])
 
-# Connecting to Azure App Configuration using AAD and trimmed key prefixes
+# Connecting to Azure App Configuration using AAD and trim key prefixes
 trimmed = {"test."}
-config = load_provider(endpoint=endpoint, credential=credential, trimmed_key_prefixes=trimmed)
+config = load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed)
 
 print(config["message"])
 
 # Connection to Azure App Configuration using SettingSelector
-selects = {SettingSelector("message*", "\0")}
-config = load_provider(endpoint=endpoint, credential=credential, selects=selects)
+selects = {SettingSelector(key_filter="message*")}
+config = load(endpoint=endpoint, credential=credential, selects=selects)
 
 print("message found: " + str("message" in config))
 print("test.message found: " + str("test.message" in config))

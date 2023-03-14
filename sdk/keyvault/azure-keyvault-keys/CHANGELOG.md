@@ -3,6 +3,7 @@
 ## 4.8.0b3 (Unreleased)
 
 ### Features Added
+- Added support for service API version `7.4`
 - Clients each have a `send_request` method that can be used to send custom requests using the
   client's existing pipeline ([#25172](https://github.com/Azure/azure-sdk-for-python/issues/25172))
 
