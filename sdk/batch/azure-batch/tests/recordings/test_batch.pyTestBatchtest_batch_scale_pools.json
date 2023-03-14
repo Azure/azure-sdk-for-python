@@ -1,0 +1,3796 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/enableautoscale?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "90",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Mon, 13 Mar 2023 20:29:32 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT06M00S"
+      },
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "Content-Length": "364",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:02 GMT",
+        "request-id": "25b9b7bf-9cae-4887-8b38-381e52450f1f",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element",
+        "code": "OperationTimedOut",
+        "message": {
+          "lang": "en-US",
+          "value": "Operation could not be completed within the specified time.\nRequestId:25b9b7bf-9cae-4887-8b38-381e52450f1f\nTime:2023-03-13T20:30:02.6338945Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/enableautoscale?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "90",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Mon, 13 Mar 2023 20:29:32 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT06M00S"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/enableautoscale",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "60e48816-8ee6-446d-9510-eaf2ec447f88",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/evaluateautoscale?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "47",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "autoScaleFormula": "$TargetDedicatedNodes=3"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceId": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/evaluateautoscale",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "befb4775-e675-4678-8c73-24dba0f8fcce",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.AutoScaleRun",
+        "timestamp": "2023-03-13T20:30:20.8666883Z",
+        "results": "$TargetDedicatedNodes=3;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "20f2b63f-b4d4-4ecb-86f0-e4f9c6afd1f4",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:30:26 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:25 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "36bc76ac-39a5-4602-96f8-cf908fc6447a",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:30:31 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:30 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "44951703-946d-4a23-8868-fd1c8ae01dfd",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:30:36 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:35 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "5ea8e1b0-a3ba-46c4-9a68-486bfa435828",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:30:41 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:40 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "5b87f8c9-c52d-4bac-be24-6c4eac38f60c",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:30:46 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:45 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "53791e12-ecab-4da4-a322-bdcebc542fc9",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:30:51 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:50 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "ed1ff2ba-afb8-4609-923d-7b7dc7c7f082",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:30:56 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:30:55 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "ca8b4d99-0fd3-4f78-b378-e7adca253975",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:01 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:01 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "f23d8deb-92e6-4f0d-bb9e-54efec9839bb",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:07 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:07 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "0265448f-5b04-4565-8ff8-163c2b1fa30c",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:12 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:12 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "dca204ff-857c-4f88-855f-3dc55aec8d82",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:17 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:17 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "6f420489-046a-43ba-b463-cb5a30367d1b",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:22 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:22 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "b7b615cb-981b-4557-822f-b67d3e060d7c",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:27 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:27 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "f1fb5edd-a042-4be8-8172-9e01ab317c30",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:32 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:32 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "38031acb-8b4e-47c8-8124-150ae5ed3944",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:37 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:37 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "80171a65-df9b-4f27-b4df-505bb34790ab",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:42 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:42 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "6eee4ebc-70b1-495e-b642-296283312b0b",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:48 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:47 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "949114c1-1a56-41d1-a053-9f45b8b082f3",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:53 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:52 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "3de4c86a-13bb-47e4-a510-dda49fd065f6",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:31:58 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:31:57 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "6305220f-b415-466d-ae2b-ad2259a0dd2f",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:03 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:02 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "d323f996-24e2-4502-aafe-3b26d6966e7d",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:08 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:07 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "cc6fbd27-5260-435b-9c60-c12d8657a741",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:13 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:12 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "49df9e73-685c-43bf-9033-af8345437708",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:18 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:18 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "c22a1523-755e-4a2f-a08f-73da8141f927",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:23 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:23 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "f89a05f9-ea60-4b8d-ad56-a63e23457cb9",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:29 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:28 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "486e2988-4e89-4b2d-966c-cddf8e0e1e6a",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:34 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:33 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "3adb2705-d2aa-4a68-a59a-2c293e8973f4",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:39 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:38 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "5ac3da37-a5b2-46be-909c-c724d937edb7",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:44 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:43 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "8a99994c-f32e-418f-b115-aba2df1c0848",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:49 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:48 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "994f8c97-937c-4f01-8268-b346c7c1015a",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:30:20.7113952Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "ETag": "0x8DB2401C420E2E0",
+        "Last-Modified": "Mon, 13 Mar 2023 20:30:20 GMT",
+        "request-id": "b765c6b1-d106-4967-9d3a-0422fcdcd226",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB2401C420E2E0",
+        "lastModified": "2023-03-13T20:30:20.7113952Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "steady",
+        "allocationStateTransitionTime": "2023-03-13T20:32:53.1524363Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": true,
+        "autoScaleFormula": "$TargetDedicatedNodes=2",
+        "autoScaleEvaluationInterval": "PT6M",
+        "autoScaleRun": {
+          "timestamp": "2023-03-13T20:30:20.7113952Z",
+          "results": "$TargetDedicatedNodes=2;$TargetLowPriorityNodes=0;$NodeDeallocationOption=requeue"
+        },
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/disableautoscale?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/disableautoscale",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "4746f7fb-ebe2-480b-a2ec-c382c60f076b",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "c1dccafa-726c-4fa7-bfbd-1bd848ebd9dc",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB24022005AD01",
+        "lastModified": "2023-03-13T20:32:54.8834561Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:32:54.8834561Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:00 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:32:59 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "3e911349-4319-41cd-90d5-476861b48770",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB24022005AD01",
+        "lastModified": "2023-03-13T20:32:54.8834561Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:32:54.8834561Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:05 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:05 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "143476e7-88a7-42ed-88de-420601e2b1af",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB24022005AD01",
+        "lastModified": "2023-03-13T20:32:54.8834561Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:32:54.8834561Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:10 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:10 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "72eaa652-b4e4-4612-af4f-017f26816ce4",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB24022005AD01",
+        "lastModified": "2023-03-13T20:32:54.8834561Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:32:54.8834561Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:15 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:15 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "7fc35f26-cba6-401f-a040-0c1226bf9261",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB24022005AD01",
+        "lastModified": "2023-03-13T20:32:54.8834561Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:32:54.8834561Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:20 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:19 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "0eb57080-2b4d-4848-8b47-dc8edc8f691b",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB24022005AD01",
+        "lastModified": "2023-03-13T20:32:54.8834561Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:32:54.8834561Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:25 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:24 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "1096969a-e62b-4f78-9f59-7e1a68ae61d5",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB24022005AD01",
+        "lastModified": "2023-03-13T20:32:54.8834561Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:32:54.8834561Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:30 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:30 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "83d5e2c3-f4e3-409d-85b2-07e5bf9363e3",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB24022005AD01",
+        "lastModified": "2023-03-13T20:32:54.8834561Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:32:54.8834561Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "ETag": "0x8DB24022005AD01",
+        "Last-Modified": "Mon, 13 Mar 2023 20:32:54 GMT",
+        "request-id": "57942af2-88b0-48e8-ae98-bbeb4a6280ce",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB24022005AD01",
+        "lastModified": "2023-03-13T20:32:54.8834561Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "steady",
+        "allocationStateTransitionTime": "2023-03-13T20:33:34.1529865Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 2,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/resize?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "56",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "targetDedicatedNodes": 0,
+        "targetLowPriorityNodes": 2
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/resize",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "b1ae868e-e0a6-436a-b736-e1c5c085d90b",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/stopresize?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d/stopresize",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "76694d51-829a-4f42-91dd-541126ae0246",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "5993b11d-c0be-4ac7-829f-347115874ed5",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:41 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:41 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "5ff2a59f-1175-45f1-8bbe-d97fe47cb79c",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:46 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:46 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "ec228d87-405a-476e-a087-3a371af09635",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:51 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:51 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "f835badf-aaf3-427b-be08-9065fef18219",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:33:56 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:33:56 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "711ee398-399b-4be7-a466-fcc099bc12ea",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:34:01 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:34:01 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "bbfbf490-40e7-4729-a50f-5e703b8f388e",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:34:07 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:34:06 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "544dc43f-f543-4ad5-8f81-b49f8324ac33",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:34:12 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:34:11 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "2bf9e776-21dd-4eb0-b3e2-ae00059b3893",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:34:17 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:34:16 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "1e98b820-2e45-420a-a4e5-009e148fc90f",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:34:22 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:34:22 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "668a12a3-2402-47bf-b8ae-b52d08b5c3cd",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "stopping",
+        "allocationStateTransitionTime": "2023-03-13T20:33:36.3260168Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:34:27 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:34:27 GMT",
+        "ETag": "0x8DB240238A4192F",
+        "Last-Modified": "Mon, 13 Mar 2023 20:33:36 GMT",
+        "request-id": "e8c57154-8a24-437b-b47f-4888fa0896ff",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "2b9b1f4d",
+        "displayName": "test_pool",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/pools/2b9b1f4d",
+        "eTag": "0x8DB240238A4192F",
+        "lastModified": "2023-03-13T20:33:36.1870127Z",
+        "creationTime": "2023-03-13T20:29:31.8567413Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:29:31.8567413Z",
+        "allocationState": "steady",
+        "allocationStateTransitionTime": "2023-03-13T20:34:27.5557047Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 2,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 2,
+        "resizeErrors": [
+          {
+            "code": "ResizeStopped",
+            "message": "Desired number of dedicated nodes could not be allocated due to a stop resize operation"
+          },
+          {
+            "code": "ResizeStopped",
+            "message": "Desired number of low priority nodes could not be allocated due to a stop resize operation"
+          }
+        ],
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "userAccounts": [
+          {
+            "name": "task-user",
+            "elevationLevel": "admin"
+          }
+        ],
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        },
+        "currentNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/lifetimepoolstats?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:34:27 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:34:27 GMT",
+        "request-id": "ccd85972-1926-4fe9-a3dd-62f77b51396e",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#poolstats/@Element",
+        "url": "https://batch2b9b1f4d.eastus.batch.azure.com/lifetimepoolstats",
+        "usageStats": {
+          "startTime": "2023-03-13T20:29:14.2196092Z",
+          "lastUpdateTime": "2023-03-13T20:29:14.2196092Z",
+          "dedicatedCoreTime": "PT0S"
+        },
+        "resourceStats": {
+          "startTime": "2023-03-13T20:29:14.2196092Z",
+          "diskReadIOps": "0",
+          "diskWriteIOps": "0",
+          "lastUpdateTime": "2023-03-13T20:29:14.2196092Z",
+          "avgCPUPercentage": 0.0,
+          "avgMemoryGiB": 0.0,
+          "peakMemoryGiB": 0.0,
+          "avgDiskGiB": 0.0,
+          "peakDiskGiB": 0.0,
+          "diskReadGiB": 0.0,
+          "diskWriteGiB": 0.0,
+          "networkReadGiB": 0.0,
+          "networkWriteGiB": 0.0
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch2b9b1f4d.eastus.batch.azure.com/poolusagemetrics?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:34:27 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:34:27 GMT",
+        "request-id": "98652f26-6471-463d-a33b-09c6b8331502",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch2b9b1f4d.eastus.batch.azure.com/$metadata#poolusagemetrics",
+        "value": []
+      }
+    }
+  ],
+  "Variables": {}
+}

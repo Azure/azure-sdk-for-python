@@ -1,0 +1,162 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://batch4bf31faf.eastus.batch.azure.com/certificates?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "2272",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Sat, 11 Mar 2023 02:35:48 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "thumbprint": "cff2ab63c8c955aaf71989efa641b906558d9fb7",
+        "thumbprintAlgorithm": "sha1",
+        "data": "MIIGMQIBAzCCBe0GCSqGSIb3DQEHAaCCBd4EggXaMIIF1jCCA8AGCSqGSIb3DQEHAaCCA7EEggOtMIIDqTCCA6UGCyqGSIb3DQEMCgECoIICtjCCArIwHAYKKoZIhvcNAQwBAzAOBAhyd3xCtln3iQICB9AEggKQhe5P10V9iV1BsDlwWT561Yu2hVq3JT8ae/ebx1ZR/gMApVereDKkS9Zg4vFyssusHebbK5pDpU8vfAqle0TM4m7wGsRj453ZorSPUfMpHvQnAOn\u002B2pEpWdMThU7xvZ6DVpwhDOQk9166z\u002BKnKdHGuJKh4haMT7Rw/6xZ1rsBt2423cwTrQVMQyACrEkianpuujubKltN99qRoFAxhQcnYE2KlYKw7lRcExq6mDSYAyk5xJZ1ZFdLj6MAryZroQit/0g5eyhoNEKwWbi8px5j71pRTf7yjN\u002BdeMGQKwbGl\u002B3OgaL1UZ5fCjypbVL60kpIBxLZwIJ7p3jJ\u002Bq9pbq9zSdzshPYor5lxyUfXqaso/0/91ayNoBzg4hQGh618PhFI6RMGjwkzhB9xk74iweJ9HQyIHf8yx2RCSI22JuCMitPMWSGvOszhbNx3AEDLuiiAOHg391mprEtKZguOIr9LrJwem/YmcHbwyz5YAbZmiseKPkllfC7dafFfCFEkj6R2oegIsZo0pEKYisAXBqT0g\u002B6/jGwuhlZcBo0f7UIZm88iA3MrJCjlXEgV5OcQdoWj\u002Bhq0lKEdnhtCKr03AIfukN6\u002B4vjjarZeW1bs0swq0l3XFf5RHa11otshMS4mpewshB9iO9MuKWpRxuxeng4PlKZ/zuBqmPeUrjJ9454oK35Pq\u002Bdghfemt7AUpBH/KycDNIZgfdEWUZrRKBGnc519C\u002BRTqxyt5hWL18nJk4LvSd3QKlJ1iyJxClhhb/NWEzPqNdyA5cxen\u002B2T9bd/EqJ2KzRv5/BPVwTQkHH9W/TZElFyvFfOFIW2\u002B03RKbVGw72Mr/0xKZ\u002BawAnEfoU\u002BSL/2Gj2m6PHkqFX2sOCi/tN9EA4xgdswEwYJKoZIhvcNAQkVMQYEBAEAAAAwXQYJKwYBBAGCNxEBMVAeTgBNAGkAYwByAG8AcwBvAGYAdAAgAFMAdAByAG8AbgBnACAAQwByAHkAcAB0AG8AZwByAGEAcABoAGkAYwAgAFAAcgBvAHYAaQBkAGUAcjBlBgkqhkiG9w0BCRQxWB5WAFAAdgBrAFQAbQBwADoANABjAGUANgAwADQAZABhAC0AMAA2ADgAMQAtADQANAAxADUALQBhADIAYwBhAC0ANQA3ADcAMwAwADgAZQA2AGQAOQBhAGMwggIOBgkqhkiG9w0BBwGgggH/BIIB\u002BzCCAfcwggHzBgsqhkiG9w0BDAoBA6CCAcswggHHBgoqhkiG9w0BCRYBoIIBtwSCAbMwggGvMIIBXaADAgECAhAdka3aTQsIsUphgIXGUmeRMAkGBSsOAwIdBQAwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3kwHhcNMTYwMTAxMDcwMDAwWhcNMTgwMTAxMDcwMDAwWjASMRAwDgYDVQQDEwdub2Rlc2RrMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5fhcxbJHxxBEIDzVOMc56s04U6k4GPY7yMR1m\u002BrBGVRiAyV4RjY6U936dqXHCVD36ps2Q0Z\u002BOeEgyCInkIyVeB1EwXcToOcyeS2YcUb0vRWZDouC3tuFdHwiK1Ed5iW/LksmXDotyV7kpqzaPhOFiMtBuMEwNJcPge9k17hRgRQIDAQABo0swSTBHBgNVHQEEQDA\u002BgBAS5AktBh0dTwCNYSHcFmRjoRgwFjEUMBIGA1UEAxMLUm9vdCBBZ2VuY3mCEAY3bACqAGSKEc\u002B41KpcNfQwCQYFKw4DAh0FAANBAHl2M97QbpzdnwO5HoRBsiEExOcLTNg\u002BGKCr7HUsbzfvrUivw\u002BJLL7qjHAIc5phnK\u002BF5bQ8HKe0L9YXBSKl\u002BfvwxFTATBgkqhkiG9w0BCRUxBgQEAQAAADA7MB8wBwYFKw4DAhoEFGVtyGMqiBd32fGpzlGZQoRM6UQwBBTI0YHFFqTS4Go8CoLgswn29EiuUQICB9A=",
+        "certificateFormat": "pfx",
+        "password": "nodesdk"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch4bf31faf.eastus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)",
+        "DataServiceVersion": "3.0",
+        "Date": "Sat, 11 Mar 2023 02:35:48 GMT",
+        "Location": "https://batch4bf31faf.eastus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)",
+        "request-id": "aac152ad-1e0e-4a8a-a323-8279c748ed27",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch4bf31faf.eastus.batch.azure.com/certificates?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sat, 11 Mar 2023 02:35:48 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sat, 11 Mar 2023 02:35:48 GMT",
+        "request-id": "0bad40a1-86b8-4c95-980b-197a36e67024",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4bf31faf.eastus.batch.azure.com/$metadata#certificates",
+        "value": [
+          {
+            "thumbprint": "cff2ab63c8c955aaf71989efa641b906558d9fb7",
+            "thumbprintAlgorithm": "sha1",
+            "url": "https://batch4bf31faf.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)",
+            "state": "active",
+            "stateTransitionTime": "2023-03-11T02:35:48.7735986Z",
+            "publicData": "MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd\u002BnalxwlQ9\u002BqbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq\u002Bx1LG83761Ir8PiSy\u002B6oxwCHOaYZyvheW0PByntC/WFwUipfn78"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batch4bf31faf.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sat, 11 Mar 2023 02:35:49 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sat, 11 Mar 2023 02:35:48 GMT",
+        "request-id": "79ffb19b-f246-47c5-949e-08137ed702aa",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4bf31faf.eastus.batch.azure.com/$metadata#certificates/@Element",
+        "thumbprint": "cff2ab63c8c955aaf71989efa641b906558d9fb7",
+        "thumbprintAlgorithm": "sha1",
+        "url": "https://batch4bf31faf.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)",
+        "state": "active",
+        "stateTransitionTime": "2023-03-11T02:35:48.7735986Z",
+        "publicData": "MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd\u002BnalxwlQ9\u002BqbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq\u002Bx1LG83761Ir8PiSy\u002B6oxwCHOaYZyvheW0PByntC/WFwUipfn78"
+      }
+    },
+    {
+      "RequestUri": "https://batch4bf31faf.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)/canceldelete?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "ocp-date": "Sat, 11 Mar 2023 02:35:49 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 409,
+      "ResponseHeaders": {
+        "Content-Length": "355",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sat, 11 Mar 2023 02:35:48 GMT",
+        "request-id": "42f5a28c-4fb7-4932-a55f-e74539a8b652",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4bf31faf.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element",
+        "code": "CertificateStateActive",
+        "message": {
+          "lang": "en-US",
+          "value": "The specified certificate is in active state.\nRequestId:42f5a28c-4fb7-4932-a55f-e74539a8b652\nTime:2023-03-11T02:35:49.0924221Z"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch4bf31faf.eastus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2022-10-01.16.0",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "ocp-date": "Sat, 11 Mar 2023 02:35:49 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "DataServiceVersion": "3.0",
+        "Date": "Sat, 11 Mar 2023 02:35:48 GMT",
+        "request-id": "ac34ce3a-2ebc-4995-8d6d-ef3be617f2e8",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

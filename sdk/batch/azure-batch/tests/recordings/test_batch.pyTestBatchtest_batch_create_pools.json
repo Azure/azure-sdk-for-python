@@ -1,0 +1,2077 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/supportedimages?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:06 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:06 GMT",
+        "request-id": "ca8ff330-a45e-401d-ac22-1d879363f7f0",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#supportedimages",
+        "value": [
+          {
+            "imageReference": {
+              "publisher": "almalinux",
+              "offer": "almalinux",
+              "sku": "8_4",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.el 8",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "almalinux",
+              "offer": "almalinux",
+              "sku": "8_4-gen2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.el 8",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "almalinux",
+              "offer": "almalinux",
+              "sku": "8_5",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.el 8",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "almalinux",
+              "offer": "almalinux",
+              "sku": "8_5-gen2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.el 8",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "almalinux",
+              "offer": "almalinux-hpc",
+              "sku": "8_5-hpc",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.el 8",
+            "capabilities": [
+              "SupportsRDMAOnly",
+              "IntelMPIRuntimeInstalled"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "almalinux",
+              "offer": "almalinux-hpc",
+              "sku": "8_5-hpc-gen2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.el 8",
+            "capabilities": [
+              "SupportsRDMAOnly",
+              "IntelMPIRuntimeInstalled",
+              "Generation2VMImage"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "batch",
+              "offer": "rendering-centos73",
+              "sku": "rendering",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "batch",
+              "offer": "rendering-windows2016",
+              "sku": "rendering",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "canonical",
+              "offer": "0001-com-ubuntu-server-focal",
+              "sku": "20_04-lts",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.ubuntu 20.04",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "canonical",
+              "offer": "0001-com-ubuntu-server-focal",
+              "sku": "20_04-lts-gen2",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.ubuntu 20.04",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "canonical",
+              "offer": "0001-com-ubuntu-server-jammy",
+              "sku": "22_04-lts",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.ubuntu 22.04",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "canonical",
+              "offer": "0001-com-ubuntu-server-jammy",
+              "sku": "22_04-lts-gen2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.ubuntu 22.04",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "canonical",
+              "offer": "ubuntuserver",
+              "sku": "18.04-lts",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+            "batchSupportEndOfLife": "2023-05-30T00:00:00Z",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "canonical",
+              "offer": "ubuntuserver",
+              "sku": "18_04-lts-gen2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "batchSupportEndOfLife": "2023-05-30T00:00:00Z",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "debian",
+              "offer": "debian-10",
+              "sku": "10",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.debian 10",
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoft-azure-batch",
+              "offer": "centos-container",
+              "sku": "7-9",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "capabilities": [
+              "DockerCompatible",
+              "NvidiaTeslaDriverInstalled",
+              "NvidiaGridDriverInstalled"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoft-azure-batch",
+              "offer": "centos-container-rdma",
+              "sku": "7-9",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "capabilities": [
+              "DockerCompatible",
+              "NvidiaTeslaDriverInstalled",
+              "SupportsRDMAOnly",
+              "IntelMPIRuntimeInstalled"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoft-azure-batch",
+              "offer": "ubuntu-server-container",
+              "sku": "20-04-lts",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.ubuntu 20.04",
+            "capabilities": [
+              "DockerCompatible",
+              "NvidiaTeslaDriverInstalled",
+              "NvidiaGridDriverInstalled"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoft-azure-batch",
+              "offer": "ubuntu-server-container-rdma",
+              "sku": "20-04-lts",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.ubuntu 20.04",
+            "capabilities": [
+              "DockerCompatible",
+              "NvidiaTeslaDriverInstalled",
+              "SupportsRDMAOnly",
+              "IntelMPIRuntimeInstalled"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoft-dsvm",
+              "offer": "dsvm-win-2019",
+              "sku": "winserver-2019",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoft-dsvm",
+              "offer": "ubuntu-1804",
+              "sku": "1804",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+            "capabilities": [
+              "NvidiaTeslaDriverInstalled"
+            ],
+            "batchSupportEndOfLife": "2023-05-30T00:00:00Z",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoft-dsvm",
+              "offer": "ubuntu-hpc",
+              "sku": "1804",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+            "capabilities": [
+              "SupportsRDMAOnly",
+              "Generation2VMImage",
+              "IntelMPIRuntimeInstalled"
+            ],
+            "batchSupportEndOfLife": "2023-05-30T00:00:00Z",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoft-dsvm",
+              "offer": "ubuntu-hpc",
+              "sku": "2004",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.ubuntu 20.04",
+            "capabilities": [
+              "DockerCompatible",
+              "SupportsRDMAOnly",
+              "Generation2VMImage",
+              "IntelMPIRuntimeInstalled"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftcblmariner",
+              "offer": "cbl-mariner",
+              "sku": "cbl-mariner-2",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.mariner 2.0",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftcblmariner",
+              "offer": "cbl-mariner",
+              "sku": "cbl-mariner-2-gen2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.mariner 2.0",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2008-r2-sp1",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2008-r2-sp1-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2012-datacenter",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2012-datacenter-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2012-r2-datacenter",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2012-r2-datacenter-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2016-datacenter",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2016-datacenter-gensecond",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2016-datacenter-gs",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2016-datacenter-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2016-datacenter-smalldisk-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2016-datacenter-with-containers",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "DockerCompatible"
+            ],
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2016-datacenter-with-containers-gs",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "DockerCompatible"
+            ],
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-core",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-core-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-core-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-core-smalldisk-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-core-with-containers",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "DockerCompatible"
+            ],
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-core-with-containers-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "DockerCompatible",
+              "Generation2VMImage"
+            ],
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-core-with-containers-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "DockerCompatible"
+            ],
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-gensecond",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-gs",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-smalldisk-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-with-containers",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "DockerCompatible"
+            ],
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-with-containers-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "DockerCompatible",
+              "Generation2VMImage"
+            ],
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-with-containers-gs",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "DockerCompatible"
+            ],
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2019-datacenter-with-containers-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "DockerCompatible"
+            ],
+            "batchSupportEndOfLife": "2022-09-30T00:00:00Z",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2022-datacenter",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2022-datacenter-core",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2022-datacenter-core-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2022-datacenter-core-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2022-datacenter-core-smalldisk-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2022-datacenter-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2022-datacenter-smalldisk",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "microsoftwindowsserver",
+              "offer": "windowsserver",
+              "sku": "2022-datacenter-smalldisk-g2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.windows amd64",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "windows"
+          },
+          {
+            "imageReference": {
+              "publisher": "openlogic",
+              "offer": "centos",
+              "sku": "7_9",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "openlogic",
+              "offer": "centos",
+              "sku": "7_9-gen2",
+              "version": "latest"
+            },
+            "verificationType": "verified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "capabilities": [
+              "Generation2VMImage"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "openlogic",
+              "offer": "centos-hpc",
+              "sku": "7_9",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "capabilities": [
+              "SupportsRDMAOnly",
+              "IntelMPIRuntimeInstalled"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "openlogic",
+              "offer": "centos-hpc",
+              "sku": "7_9-gen2",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "capabilities": [
+              "SupportsRDMAOnly",
+              "IntelMPIRuntimeInstalled",
+              "Generation2VMImage"
+            ],
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "oracle",
+              "offer": "oracle-linux",
+              "sku": "7.4",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "oracle",
+              "offer": "oracle-linux",
+              "sku": "78",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "oracle",
+              "offer": "oracle-linux",
+              "sku": "81",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.el 8",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "xilinx",
+              "offer": "xilinx_alveo_u250_deployment_vm_centos78_032321",
+              "sku": "xilinx_alveo_u250_deployment_vm_centos78_032321",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.centos 7",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "xilinx",
+              "offer": "xilinx_alveo_u250_deployment_vm_ubuntu1804_032321",
+              "sku": "xilinx_alveo_u250_deployment_vm_ubuntu_1804_032321",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+            "batchSupportEndOfLife": "2023-05-30T00:00:00Z",
+            "osType": "linux"
+          },
+          {
+            "imageReference": {
+              "publisher": "xilinx",
+              "offer": "xilinx_alveo_u250_deployment_vm_ubuntu2004_062421",
+              "sku": "xilinx_alveo_u250_deployment_vm_ubuntu_2004_062421",
+              "version": "latest"
+            },
+            "verificationType": "unverified",
+            "nodeAgentSKUId": "batch.node.ubuntu 20.04",
+            "osType": "linux"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "568",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:07 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "id": "batch_iaas_4c281fb9",
+        "vmSize": "standard_d2_v2",
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2016-Datacenter-smalldisk"
+          },
+          "nodeAgentSKUId": "batch.node.windows amd64",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": true
+          }
+        },
+        "taskSchedulingPolicy": {
+          "nodeFillType": "pack"
+        },
+        "userAccounts": [
+          {
+            "name": "test-user-1",
+            "password": "kt#_gahr!@aGERDXA"
+          },
+          {
+            "name": "test-user-2",
+            "password": "kt#_gahr!@aGERDXA",
+            "elevationLevel": "admin"
+          }
+        ],
+        "targetNodeCommunicationMode": "classic"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_iaas_4c281fb9",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:06 GMT",
+        "ETag": "0x8DB228D052FC3C0",
+        "Last-Modified": "Sun, 12 Mar 2023 00:02:07 GMT",
+        "Location": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_iaas_4c281fb9",
+        "request-id": "8ca1d619-890a-4dea-99ea-a059937f4c73",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/nodecounts?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:07 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:06 GMT",
+        "request-id": "8aed7b8b-084f-4176-ba06-dae8d0b36370",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#poolnodecounts",
+        "value": [
+          {
+            "poolId": "batch_iaas_4c281fb9",
+            "dedicated": {
+              "creating": 0,
+              "idle": 0,
+              "leavingPool": 0,
+              "offline": 0,
+              "preempted": 0,
+              "rebooting": 0,
+              "reimaging": 0,
+              "running": 0,
+              "starting": 0,
+              "startTaskFailed": 0,
+              "unusable": 0,
+              "unknown": 0,
+              "waitingForStartTask": 0,
+              "total": 0
+            },
+            "lowPriority": {
+              "creating": 0,
+              "idle": 0,
+              "leavingPool": 0,
+              "offline": 0,
+              "preempted": 0,
+              "rebooting": 0,
+              "reimaging": 0,
+              "running": 0,
+              "starting": 0,
+              "startTaskFailed": 0,
+              "unusable": 0,
+              "unknown": 0,
+              "waitingForStartTask": 0,
+              "total": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "408",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "id": "batch_network_4c281fb9",
+        "vmSize": "standard_d2_v2",
+        "networkConfiguration": {
+          "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "845",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:06 GMT",
+        "request-id": "f0dc0d41-bea1-459e-bc88-e7e479890356",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element",
+        "code": "InvalidPropertyValue",
+        "message": {
+          "lang": "en-US",
+          "value": "The value provided for one of the properties in the request body is invalid.\nRequestId:f0dc0d41-bea1-459e-bc88-e7e479890356\nTime:2023-03-12T00:02:07.8186776Z"
+        },
+        "values": [
+          {
+            "key": "PropertyName",
+            "value": "subnetId"
+          },
+          {
+            "key": "PropertyValue",
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"
+          },
+          {
+            "key": "Reason",
+            "value": "The specified subnetId is in a different subscription and cannot be used with the current Batch account in subscription 00000000-0000-0000-0000-000000000000"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "338",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "id": "batch_image_4c281fb9",
+        "vmSize": "standard_d2_v2",
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "virtualMachineImageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/gallery/FakeGallery/images/FakeImage/versions/version"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "1209",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:06 GMT",
+        "request-id": "1cc0ef7a-5cef-48ff-a950-058279392902",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element",
+        "code": "InvalidPropertyValue",
+        "message": {
+          "lang": "en-US",
+          "value": "The value provided for one of the properties in the request body is invalid.\nRequestId:1cc0ef7a-5cef-48ff-a950-058279392902\nTime:2023-03-12T00:02:07.8976803Z"
+        },
+        "values": [
+          {
+            "key": "PropertyName",
+            "value": "virtualMachineImageId"
+          },
+          {
+            "key": "PropertyValue",
+            "value": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/gallery/FakeGallery/images/FakeImage/versions/version"
+          },
+          {
+            "key": "Reason",
+            "value": "The specified resource id must be of the format /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/images/{imageName}, /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}, or /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "313",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "id": "batch_disk_4c281fb9",
+        "vmSize": "standard_d2_v2",
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+          "dataDisks": [
+            {
+              "lun": 1,
+              "diskSizeGB": 50
+            }
+          ]
+        },
+        "targetNodeCommunicationMode": "classic"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_disk_4c281fb9",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:07 GMT",
+        "ETag": "0x8DB228D058B0369",
+        "Last-Modified": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "Location": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_disk_4c281fb9",
+        "request-id": "164818d6-4112-4bd8-9dbb-aeea48174ff1",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_disk_4c281fb9?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:07 GMT",
+        "ETag": "0x8DB228D058B0369",
+        "Last-Modified": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "request-id": "f7b9719a-1dfa-4dbc-af02-39a519c43ee7",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "batch_disk_4c281fb9",
+        "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_disk_4c281fb9",
+        "eTag": "0x8DB228D058B0369",
+        "lastModified": "2023-03-12T00:02:08.1786729Z",
+        "creationTime": "2023-03-12T00:02:08.1786729Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-12T00:02:08.1786729Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-12T00:02:08.1786729Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+          "dataDisks": [
+            {
+              "lun": 1,
+              "caching": "none",
+              "diskSizeGB": 50,
+              "storageAccountType": "standard_lrs"
+            }
+          ]
+        },
+        "targetNodeCommunicationMode": "classic"
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "348",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "id": "batch_app_4c281fb9",
+        "vmSize": "standard_d2_v2",
+        "applicationLicenses": [
+          "maya"
+        ],
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+          "dataDisks": [
+            {
+              "lun": 1,
+              "diskSizeGB": 50
+            }
+          ]
+        },
+        "targetNodeCommunicationMode": "simplified"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_app_4c281fb9",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:07 GMT",
+        "ETag": "0x8DB228D05C74963",
+        "Last-Modified": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "Location": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_app_4c281fb9",
+        "request-id": "5763bdd6-6be9-44d7-8638-0e78d3024b56",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_app_4c281fb9?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:07 GMT",
+        "ETag": "0x8DB228D05C74963",
+        "Last-Modified": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "request-id": "fbc4d5d2-993f-43f2-a5d1-5aa3821009db",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "batch_app_4c281fb9",
+        "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_app_4c281fb9",
+        "eTag": "0x8DB228D05C74963",
+        "lastModified": "2023-03-12T00:02:08.5736803Z",
+        "creationTime": "2023-03-12T00:02:08.5736803Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-12T00:02:08.5736803Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-12T00:02:08.5736803Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+          "dataDisks": [
+            {
+              "lun": 1,
+              "caching": "none",
+              "diskSizeGB": 50,
+              "storageAccountType": "standard_lrs"
+            }
+          ]
+        },
+        "applicationLicenses": [
+          "maya"
+        ],
+        "targetNodeCommunicationMode": "simplified"
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "288",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:09 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "id": "batch_ade_4c281fb9",
+        "vmSize": "standard_d2_v2",
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS"
+          },
+          "diskEncryptionConfiguration": {
+            "targets": [
+              "temporarydisk"
+            ]
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_ade_4c281fb9",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "ETag": "0x8DB228D05FE5F1D",
+        "Last-Modified": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "Location": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_ade_4c281fb9",
+        "request-id": "cdf6f953-0395-41aa-a5e6-f5de69ee700a",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_ade_4c281fb9?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:09 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "ETag": "0x8DB228D05FE5F1D",
+        "Last-Modified": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "request-id": "9dc4e8af-b7c8-449f-ae6b-612cf7099e77",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "batch_ade_4c281fb9",
+        "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_ade_4c281fb9",
+        "eTag": "0x8DB228D05FE5F1D",
+        "lastModified": "2023-03-12T00:02:08.9346845Z",
+        "creationTime": "2023-03-12T00:02:08.9346845Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-12T00:02:08.9346845Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-12T00:02:08.9346845Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Spread"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "18.04-LTS",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+          "diskEncryptionConfiguration": {
+            "targets": [
+              "temporarydisk"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:09 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "request-id": "4f58775b-3b99-4000-a314-590788093478",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#pools",
+        "value": [
+          {
+            "id": "batch_ade_4c281fb9",
+            "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_ade_4c281fb9",
+            "eTag": "0x8DB228D05FE5F1D",
+            "lastModified": "2023-03-12T00:02:08.9346845Z",
+            "creationTime": "2023-03-12T00:02:08.9346845Z",
+            "state": "active",
+            "stateTransitionTime": "2023-03-12T00:02:08.9346845Z",
+            "allocationState": "resizing",
+            "allocationStateTransitionTime": "2023-03-12T00:02:08.9346845Z",
+            "vmSize": "standard_d2_v2",
+            "resizeTimeout": "PT15M",
+            "currentDedicatedNodes": 0,
+            "targetDedicatedNodes": 0,
+            "currentLowPriorityNodes": 0,
+            "targetLowPriorityNodes": 0,
+            "enableAutoScale": false,
+            "enableInterNodeCommunication": false,
+            "taskSlotsPerNode": 1,
+            "taskSchedulingPolicy": {
+              "nodeFillType": "Spread"
+            },
+            "virtualMachineConfiguration": {
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest"
+              },
+              "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+              "diskEncryptionConfiguration": {
+                "targets": [
+                  "temporarydisk"
+                ]
+              }
+            }
+          },
+          {
+            "id": "batch_app_4c281fb9",
+            "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_app_4c281fb9",
+            "eTag": "0x8DB228D05C74963",
+            "lastModified": "2023-03-12T00:02:08.5736803Z",
+            "creationTime": "2023-03-12T00:02:08.5736803Z",
+            "state": "active",
+            "stateTransitionTime": "2023-03-12T00:02:08.5736803Z",
+            "allocationState": "resizing",
+            "allocationStateTransitionTime": "2023-03-12T00:02:08.5736803Z",
+            "vmSize": "standard_d2_v2",
+            "resizeTimeout": "PT15M",
+            "currentDedicatedNodes": 0,
+            "targetDedicatedNodes": 0,
+            "currentLowPriorityNodes": 0,
+            "targetLowPriorityNodes": 0,
+            "enableAutoScale": false,
+            "enableInterNodeCommunication": false,
+            "taskSlotsPerNode": 1,
+            "taskSchedulingPolicy": {
+              "nodeFillType": "Spread"
+            },
+            "virtualMachineConfiguration": {
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest"
+              },
+              "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+              "dataDisks": [
+                {
+                  "lun": 1,
+                  "caching": "none",
+                  "diskSizeGB": 50,
+                  "storageAccountType": "standard_lrs"
+                }
+              ]
+            },
+            "applicationLicenses": [
+              "maya"
+            ],
+            "targetNodeCommunicationMode": "simplified"
+          },
+          {
+            "id": "batch_disk_4c281fb9",
+            "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_disk_4c281fb9",
+            "eTag": "0x8DB228D058B0369",
+            "lastModified": "2023-03-12T00:02:08.1786729Z",
+            "creationTime": "2023-03-12T00:02:08.1786729Z",
+            "state": "active",
+            "stateTransitionTime": "2023-03-12T00:02:08.1786729Z",
+            "allocationState": "resizing",
+            "allocationStateTransitionTime": "2023-03-12T00:02:08.1786729Z",
+            "vmSize": "standard_d2_v2",
+            "resizeTimeout": "PT15M",
+            "currentDedicatedNodes": 0,
+            "targetDedicatedNodes": 0,
+            "currentLowPriorityNodes": 0,
+            "targetLowPriorityNodes": 0,
+            "enableAutoScale": false,
+            "enableInterNodeCommunication": false,
+            "taskSlotsPerNode": 1,
+            "taskSchedulingPolicy": {
+              "nodeFillType": "Spread"
+            },
+            "virtualMachineConfiguration": {
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest"
+              },
+              "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+              "dataDisks": [
+                {
+                  "lun": 1,
+                  "caching": "none",
+                  "diskSizeGB": 50,
+                  "storageAccountType": "standard_lrs"
+                }
+              ]
+            },
+            "targetNodeCommunicationMode": "classic"
+          },
+          {
+            "id": "batch_iaas_4c281fb9",
+            "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_iaas_4c281fb9",
+            "eTag": "0x8DB228D052FC3C0",
+            "lastModified": "2023-03-12T00:02:07.5806656Z",
+            "creationTime": "2023-03-12T00:02:07.5806656Z",
+            "state": "active",
+            "stateTransitionTime": "2023-03-12T00:02:07.5806656Z",
+            "allocationState": "resizing",
+            "allocationStateTransitionTime": "2023-03-12T00:02:07.5806656Z",
+            "vmSize": "standard_d2_v2",
+            "resizeTimeout": "PT15M",
+            "currentDedicatedNodes": 0,
+            "targetDedicatedNodes": 0,
+            "currentLowPriorityNodes": 0,
+            "targetLowPriorityNodes": 0,
+            "enableAutoScale": false,
+            "enableInterNodeCommunication": false,
+            "userAccounts": [
+              {
+                "name": "test-user-1",
+                "elevationLevel": "nonadmin",
+                "windowsUserConfiguration": {
+                  "loginMode": "batch"
+                }
+              },
+              {
+                "name": "test-user-2",
+                "elevationLevel": "admin",
+                "windowsUserConfiguration": {
+                  "loginMode": "batch"
+                }
+              }
+            ],
+            "taskSlotsPerNode": 1,
+            "taskSchedulingPolicy": {
+              "nodeFillType": "Pack"
+            },
+            "virtualMachineConfiguration": {
+              "imageReference": {
+                "publisher": "MicrosoftWindowsServer",
+                "offer": "WindowsServer",
+                "sku": "2016-Datacenter-smalldisk",
+                "version": "latest"
+              },
+              "nodeAgentSKUId": "batch.node.windows amd64",
+              "windowsConfiguration": {
+                "enableAutomaticUpdates": true
+              }
+            },
+            "targetNodeCommunicationMode": "classic"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:09 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "request-id": "a22cf147-ee21-47af-ac08-f79e8af34e39",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#pools",
+        "value": [
+          {
+            "id": "batch_ade_4c281fb9",
+            "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_ade_4c281fb9",
+            "eTag": "0x8DB228D05FE5F1D",
+            "lastModified": "2023-03-12T00:02:08.9346845Z",
+            "creationTime": "2023-03-12T00:02:08.9346845Z",
+            "state": "active",
+            "stateTransitionTime": "2023-03-12T00:02:08.9346845Z",
+            "allocationState": "resizing",
+            "allocationStateTransitionTime": "2023-03-12T00:02:08.9346845Z",
+            "vmSize": "standard_d2_v2",
+            "resizeTimeout": "PT15M",
+            "currentDedicatedNodes": 0,
+            "targetDedicatedNodes": 0,
+            "currentLowPriorityNodes": 0,
+            "targetLowPriorityNodes": 0,
+            "enableAutoScale": false,
+            "enableInterNodeCommunication": false,
+            "taskSlotsPerNode": 1,
+            "taskSchedulingPolicy": {
+              "nodeFillType": "Spread"
+            },
+            "virtualMachineConfiguration": {
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest"
+              },
+              "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+              "diskEncryptionConfiguration": {
+                "targets": [
+                  "temporarydisk"
+                ]
+              }
+            }
+          }
+        ],
+        "odata.nextLink": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2:M7BPxyjSKjxT8so4AP2k0upEFJGrTSuaPxZNCtIhX9AY6SqH1owyFoFD3BNZ601qt03lWuDJI1OXDwrqKTs8CyCmw2hqs8EAITt7oGzZIfXhzD^gmCmbFRzOgBUXO7CVNRnG5La93quj9gjcNuXVqYCRROvh7fNqL4GSvhzeMlg3Grqe90My^HIIS/HOyeTHvQSxiwC3PZuXrXG7h/N7C/nOwwflqMiZmS2kyTxUNpI4rHzhmOCXWln/Ua665/eGO4fF3tHVel5I4CNpQgibGPm4L4/N0^z5hHzSmaQcQGI=:1$1"
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2:M7BPxyjSKjxT8so4AP2k0upEFJGrTSuaPxZNCtIhX9AY6SqH1owyFoFD3BNZ601qt03lWuDJI1OXDwrqKTs8CyCmw2hqs8EAITt7oGzZIfXhzD%5EgmCmbFRzOgBUXO7CVNRnG5La93quj9gjcNuXVqYCRROvh7fNqL4GSvhzeMlg3Grqe90My%5EHIIS/HOyeTHvQSxiwC3PZuXrXG7h/N7C/nOwwflqMiZmS2kyTxUNpI4rHzhmOCXWln/Ua665/eGO4fF3tHVel5I4CNpQgibGPm4L4/N0%5Ez5hHzSmaQcQGI=:1$1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:09 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "request-id": "92b419b3-8237-48e2-abd4-d100a0d658f7",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#pools",
+        "value": [
+          {
+            "id": "batch_app_4c281fb9",
+            "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_app_4c281fb9",
+            "eTag": "0x8DB228D05C74963",
+            "lastModified": "2023-03-12T00:02:08.5736803Z",
+            "creationTime": "2023-03-12T00:02:08.5736803Z",
+            "state": "active",
+            "stateTransitionTime": "2023-03-12T00:02:08.5736803Z",
+            "allocationState": "resizing",
+            "allocationStateTransitionTime": "2023-03-12T00:02:08.5736803Z",
+            "vmSize": "standard_d2_v2",
+            "resizeTimeout": "PT15M",
+            "currentDedicatedNodes": 0,
+            "targetDedicatedNodes": 0,
+            "currentLowPriorityNodes": 0,
+            "targetLowPriorityNodes": 0,
+            "enableAutoScale": false,
+            "enableInterNodeCommunication": false,
+            "taskSlotsPerNode": 1,
+            "taskSchedulingPolicy": {
+              "nodeFillType": "Spread"
+            },
+            "virtualMachineConfiguration": {
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest"
+              },
+              "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+              "dataDisks": [
+                {
+                  "lun": 1,
+                  "caching": "none",
+                  "diskSizeGB": 50,
+                  "storageAccountType": "standard_lrs"
+                }
+              ]
+            },
+            "applicationLicenses": [
+              "maya"
+            ],
+            "targetNodeCommunicationMode": "simplified"
+          }
+        ],
+        "odata.nextLink": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2:ru2B/STrT2gku2w5VnMha6z0yzdW^j5L5bQ^GA2tMjS8jn2MLgCS6^oOYNty0lwc/FzAfSFHAxdksQUYGsGrD9vZIY81tznSEgGvkBXfIRnCD9z5wP3l7L1ncsTme9w6GtUdI22ylll9AHWyRfzo6QvGfE4UxYROhTln2k3p2KV43uuGbsnLhLaL/7R1^Lji^o7qSaE/b^bUvsnnNZsU6pQrgRSWBLJrlQS9mlFmk86K6JYOdmA/jteK865ijyWWQhimuzn9GSYo6HJSRgZ08yXi0SShHwOuTN7U6QDbp1U=:1$1"
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2:ru2B/STrT2gku2w5VnMha6z0yzdW%5Ej5L5bQ%5EGA2tMjS8jn2MLgCS6%5EoOYNty0lwc/FzAfSFHAxdksQUYGsGrD9vZIY81tznSEgGvkBXfIRnCD9z5wP3l7L1ncsTme9w6GtUdI22ylll9AHWyRfzo6QvGfE4UxYROhTln2k3p2KV43uuGbsnLhLaL/7R1%5ELji%5Eo7qSaE/b%5EbUvsnnNZsU6pQrgRSWBLJrlQS9mlFmk86K6JYOdmA/jteK865ijyWWQhimuzn9GSYo6HJSRgZ08yXi0SShHwOuTN7U6QDbp1U=:1$1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:09 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "request-id": "855176f0-e583-462d-8c79-731f160b99e3",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#pools",
+        "value": [
+          {
+            "id": "batch_disk_4c281fb9",
+            "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_disk_4c281fb9",
+            "eTag": "0x8DB228D058B0369",
+            "lastModified": "2023-03-12T00:02:08.1786729Z",
+            "creationTime": "2023-03-12T00:02:08.1786729Z",
+            "state": "active",
+            "stateTransitionTime": "2023-03-12T00:02:08.1786729Z",
+            "allocationState": "resizing",
+            "allocationStateTransitionTime": "2023-03-12T00:02:08.1786729Z",
+            "vmSize": "standard_d2_v2",
+            "resizeTimeout": "PT15M",
+            "currentDedicatedNodes": 0,
+            "targetDedicatedNodes": 0,
+            "currentLowPriorityNodes": 0,
+            "targetLowPriorityNodes": 0,
+            "enableAutoScale": false,
+            "enableInterNodeCommunication": false,
+            "taskSlotsPerNode": 1,
+            "taskSchedulingPolicy": {
+              "nodeFillType": "Spread"
+            },
+            "virtualMachineConfiguration": {
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest"
+              },
+              "nodeAgentSKUId": "batch.node.ubuntu 18.04",
+              "dataDisks": [
+                {
+                  "lun": 1,
+                  "caching": "none",
+                  "diskSizeGB": 50,
+                  "storageAccountType": "standard_lrs"
+                }
+              ]
+            },
+            "targetNodeCommunicationMode": "classic"
+          }
+        ],
+        "odata.nextLink": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2:YDPpjjhPpaeWg/qFLLC32URFtVhEej8qrBY0xyv9Tl9fiOfJ8KtyByJ55A2EzP29G6cHtIsElY1zUHapFOyekHEOp7VkTjP8VASRL0sKljdP/zu/GjSH/GYcC45chHFBo6PMLqnj1eZF3tnW5ncffRmukzpM2qk5Qu^b06B4^uXOFqeK/zHKRMejEOAeYToTp4wFD23epGUgCtt9UuzqZ46rKKxQKWQtEYSxo9PO7kOqAspAqRy3J8rSAPNQ8gPQbYHc122ovgbLLURdwe5f3XaqrvdvFToC01haSsI468E=:1$1"
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026maxresults=1\u0026$skiptoken=WATV2:YDPpjjhPpaeWg/qFLLC32URFtVhEej8qrBY0xyv9Tl9fiOfJ8KtyByJ55A2EzP29G6cHtIsElY1zUHapFOyekHEOp7VkTjP8VASRL0sKljdP/zu/GjSH/GYcC45chHFBo6PMLqnj1eZF3tnW5ncffRmukzpM2qk5Qu%5Eb06B4%5EuXOFqeK/zHKRMejEOAeYToTp4wFD23epGUgCtt9UuzqZ46rKKxQKWQtEYSxo9PO7kOqAspAqRy3J8rSAPNQ8gPQbYHc122ovgbLLURdwe5f3XaqrvdvFToC01haSsI468E=:1$1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:09 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "request-id": "a135ac3d-9a91-40fc-ab19-9b2331b3c711",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#pools",
+        "value": [
+          {
+            "id": "batch_iaas_4c281fb9",
+            "url": "https://batch4c281fb9.eastus.batch.azure.com/pools/batch_iaas_4c281fb9",
+            "eTag": "0x8DB228D052FC3C0",
+            "lastModified": "2023-03-12T00:02:07.5806656Z",
+            "creationTime": "2023-03-12T00:02:07.5806656Z",
+            "state": "active",
+            "stateTransitionTime": "2023-03-12T00:02:07.5806656Z",
+            "allocationState": "steady",
+            "allocationStateTransitionTime": "2023-03-12T00:02:09.2636876Z",
+            "vmSize": "standard_d2_v2",
+            "resizeTimeout": "PT15M",
+            "currentDedicatedNodes": 0,
+            "targetDedicatedNodes": 0,
+            "currentLowPriorityNodes": 0,
+            "targetLowPriorityNodes": 0,
+            "enableAutoScale": false,
+            "enableInterNodeCommunication": false,
+            "userAccounts": [
+              {
+                "name": "test-user-1",
+                "elevationLevel": "nonadmin",
+                "windowsUserConfiguration": {
+                  "loginMode": "batch"
+                }
+              },
+              {
+                "name": "test-user-2",
+                "elevationLevel": "admin",
+                "windowsUserConfiguration": {
+                  "loginMode": "batch"
+                }
+              }
+            ],
+            "taskSlotsPerNode": 1,
+            "taskSchedulingPolicy": {
+              "nodeFillType": "Pack"
+            },
+            "virtualMachineConfiguration": {
+              "imageReference": {
+                "publisher": "MicrosoftWindowsServer",
+                "offer": "WindowsServer",
+                "sku": "2016-Datacenter-smalldisk",
+                "version": "latest"
+              },
+              "nodeAgentSKUId": "batch.node.windows amd64",
+              "windowsConfiguration": {
+                "enableAutomaticUpdates": true
+              }
+            },
+            "targetNodeCommunicationMode": "classic"
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batch4c281fb9.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0\u0026$filter=startswith%28id%2C%27batch_app_%27%29\u0026$select=id%2Cstate\u0026$expand=stats",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Sun, 12 Mar 2023 00:02:09 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Sun, 12 Mar 2023 00:02:08 GMT",
+        "request-id": "668c9272-a39d-4253-9fdb-a92e20dc1fe9",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch4c281fb9.eastus.batch.azure.com/$metadata#pools",
+        "value": [
+          {
+            "id": "batch_app_4c281fb9",
+            "state": "active"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

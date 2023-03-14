@@ -1,0 +1,131 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://batch56e27a4.eastus.batch.azure.com/pools?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "587",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Mon, 13 Mar 2023 20:11:27 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "id": "batch_iaas_56e27a4",
+        "vmSize": "standard_d2_v2",
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2016-Datacenter-smalldisk"
+          },
+          "nodeAgentSKUId": "batch.node.windows amd64",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": true
+          }
+        },
+        "taskSchedulingPolicy": {
+          "nodeFillType": "pack"
+        },
+        "mountConfiguration": [
+          {
+            "azureBlobFileSystemConfiguration": {
+              "accountName": "test",
+              "containerName": "https://test.blob.core.windows.net:443/test-container",
+              "relativeMountPath": "foo",
+              "accountKey": "fake_account_key"
+            }
+          }
+        ]
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batch56e27a4.eastus.batch.azure.com/pools/batch_iaas_56e27a4",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:11:28 GMT",
+        "ETag": "0x8DB23FF21611BDC",
+        "Last-Modified": "Mon, 13 Mar 2023 20:11:28 GMT",
+        "Location": "https://batch56e27a4.eastus.batch.azure.com/pools/batch_iaas_56e27a4",
+        "request-id": "b5b338da-56af-4d2e-97d7-7280a575f591",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batch56e27a4.eastus.batch.azure.com/pools/batch_iaas_56e27a4?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 13 Mar 2023 20:11:28 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 13 Mar 2023 20:11:28 GMT",
+        "ETag": "0x8DB23FF21611BDC",
+        "Last-Modified": "Mon, 13 Mar 2023 20:11:28 GMT",
+        "request-id": "fc227e34-e9c0-4798-bfad-9564c64f653d",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batch56e27a4.eastus.batch.azure.com/$metadata#pools/@Element",
+        "id": "batch_iaas_56e27a4",
+        "url": "https://batch56e27a4.eastus.batch.azure.com/pools/batch_iaas_56e27a4",
+        "eTag": "0x8DB23FF21611BDC",
+        "lastModified": "2023-03-13T20:11:28.6702044Z",
+        "creationTime": "2023-03-13T20:11:28.6702044Z",
+        "state": "active",
+        "stateTransitionTime": "2023-03-13T20:11:28.6702044Z",
+        "allocationState": "resizing",
+        "allocationStateTransitionTime": "2023-03-13T20:11:28.6702044Z",
+        "vmSize": "standard_d2_v2",
+        "resizeTimeout": "PT15M",
+        "currentDedicatedNodes": 0,
+        "targetDedicatedNodes": 0,
+        "currentLowPriorityNodes": 0,
+        "targetLowPriorityNodes": 0,
+        "enableAutoScale": false,
+        "enableInterNodeCommunication": false,
+        "taskSlotsPerNode": 1,
+        "taskSchedulingPolicy": {
+          "nodeFillType": "Pack"
+        },
+        "virtualMachineConfiguration": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2016-Datacenter-smalldisk",
+            "version": "latest"
+          },
+          "nodeAgentSKUId": "batch.node.windows amd64",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": true
+          }
+        },
+        "mountConfiguration": [
+          {
+            "azureBlobFileSystemConfiguration": {
+              "accountName": "test",
+              "containerName": "https://test.blob.core.windows.net:443/test-container",
+              "relativeMountPath": "foo"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
