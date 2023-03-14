@@ -108,7 +108,7 @@ from devtools_testutils import (
 class ExampleStorageTestCase(AzureTestCase):
 
     @ResourceGroupPreparer()
-    @StorageAcountPreparer()
+    @StorageAccountPreparer()
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         account_url = self.account_url(storage_account, "table")
         client = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
@@ -142,7 +142,7 @@ from devtools_testutils import (
 class ExampleStorageTestCase(AzureTestCase):
 
     @CachedResourceGroupPreparer(name_prefix="storagetest")
-    @CachedStorageAcountPreparer(name_prefix="storagetest")
+    @CachedStorageAccountPreparer(name_prefix="storagetest")
     def test_create_table(self, resource_group, location, storage_account, storage_account_key):
         account_url = self.account_url(storage_account, "table")
         client = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)
@@ -153,7 +153,7 @@ class ExampleStorageTestCase(AzureTestCase):
         assert valid_table_name == table.table_name
 
     @CachedResourceGroupPreparer(name_prefix="storagetest")
-    @CachedStorageAcountPreparer(name_prefix="storagetest")
+    @CachedStorageAccountPreparer(name_prefix="storagetest")
     def test_create_table_if_exists (self, resource_group, location, storage_account, storage_account_key):
         account_url = self.account_url(storage_account, "table")
         client = self.create_client_from_credential(TableServiceClient, storage_account_key, account_url=account_url)

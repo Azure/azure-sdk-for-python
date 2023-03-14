@@ -68,7 +68,7 @@ Main design guidelines:
 - For people who target a single Azure Profile, specifying it should be be possible
   e.g. `client = ComputeManagementClient(credentials, sub_id, profile=KnownProfile.v2018_06_01_hybrid)`
 
-The first condition has impact on models loading, by default they should load the latest API vesion transparently:
+The first condition has impact on models loading, by default they should load the latest API version transparently:
 ```python
 # Loads the latest version of the model
 from azure.mgmt.compute.models import VirtualMachineCreateParameter
