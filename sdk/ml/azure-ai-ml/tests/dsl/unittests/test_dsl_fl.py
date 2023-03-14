@@ -303,7 +303,7 @@ class TestDSLPipeline:
         local_ds_name = "local_datastore"
         orch_ds_name = "orchestrator_datastore"
         def try_anchor():
-            return FLScatterGather._anchor_step_in_silo(
+            return FLScatterGather._anchor_step(
                 pipeline_step=executed_command_component,
                 compute=compute_name,
                 internal_datastore=local_ds_name,
@@ -353,7 +353,7 @@ class TestDSLPipeline:
         local_ds_name = "local_datastore"
         orch_ds_name = "orchestrator_datastore"
         executed_pipeline = test_pipeline_func(x= Input(type="uri_folder", mode="mount", path="hello"))
-        FLScatterGather._anchor_step_in_silo(
+        FLScatterGather._anchor_step(
             pipeline_step=executed_pipeline,
             compute=compute_name,
             internal_datastore=local_ds_name,

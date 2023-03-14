@@ -197,7 +197,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             for v, k in executed_silo_component.inputs.items():
                 if v in silo_config.inputs and k.type == "uri_folder":
                     k.mode = "ro_mount"
-            FLScatterGather._anchor_step_in_silo(
+            FLScatterGather._anchor_step(
                 pipeline_step=executed_silo_component,
                 compute=silo_config.compute,
                 internal_datastore=silo_config.datastore,
@@ -239,13 +239,13 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         if self.aggregation_compute is not None and self.aggregation_datastore is not None:
             # internal merge component is also siloed to wherever the aggregation component lives.
             for executed_merge_component in merge_comp_mapping.values():
-                FLScatterGather._anchor_step_in_silo(
+                FLScatterGather._anchor_step(
                      pipeline_step=executed_merge_component,
                      compute=self.aggregation_compute,
                      internal_datastore=self.aggregation_datastore,
                      orchestrator_datastore=self.aggregation_datastore
                 )     
-            FLScatterGather._anchor_step_in_silo(
+            FLScatterGather._anchor_step(
                 pipeline_step=executed_aggregation_component,
                 compute=self.aggregation_compute,
                 internal_datastore=self.aggregation_datastore,
@@ -330,7 +330,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
     # TODO 2293705: Add anchoring for more resource types.
     @classmethod
-    def _anchor_step_in_silo(
+    def _anchor_step(
             cls,
             pipeline_step,
             compute,
@@ -370,7 +370,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 # The outputs of this sub-component are a deep copy of the outputs of this step
                 # This is dangerous, and we need to make sure they both use the same datastore,
                 # so we keep datastore types idendical across this recursive call.
-                cls._anchor_step_in_silo(
+                cls._anchor_step(
                     pipeline_step.component,
                     compute,
                     internal_datastore=internal_datastore,
@@ -389,7 +389,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     job = pipeline_step.jobs[job_key]
                     # replace orchestrator with internal datastore, jobs components should either use the local datastore
                     # or have already had their outputs re-assigned 
-                    cls._anchor_step_in_silo(
+                    cls._anchor_step(
                         job,
                         compute,
                         internal_datastore=internal_datastore,

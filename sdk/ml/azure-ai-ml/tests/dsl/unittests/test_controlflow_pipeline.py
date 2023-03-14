@@ -202,7 +202,6 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         rest_job = my_job._to_rest_object().as_dict()
         rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
         assert rest_items == '{"iter1": {"component_in_number": 1}, "iter2": {"component_in_number": 2}}'
-        import pdb; pdb.set_trace()
 
         # binding items
         @pipeline
