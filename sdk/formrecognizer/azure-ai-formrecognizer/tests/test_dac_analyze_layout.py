@@ -7,9 +7,9 @@
 import pytest
 import functools
 from devtools_testutils import recorded_by_proxy
+from azure.core.exceptions import HttpResponseError
 from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import AnalyzeResultOperation
-from azure.ai.formrecognizer import DocumentAnalysisClient
-from azure.ai.formrecognizer import AnalyzeResult
+from azure.ai.formrecognizer import AnalysisFeature, AnalyzeResult, DocumentAnalysisClient
 from preparers import FormRecognizerPreparer
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -20,6 +20,21 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDACAnalyzeLayout(FormRecognizerTest):
+
+    @skip_flaky_test
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
+    def test_layout_incorrect_feature_format(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            document = fd.read()
+
+        with pytest.raises(HttpResponseError):
+            poller = client.begin_analyze_document(
+                "prebuilt-layout",
+                document,
+                features=AnalysisFeature.OCR_FONT
+            )
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -37,7 +52,11 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
             responses.append(analyze_result)
             responses.append(extracted_layout)
 
-        poller = client.begin_analyze_document("prebuilt-layout", document, cls=callback)
+        poller = client.begin_analyze_document(
+            "prebuilt-layout",
+            document,
+            features=[AnalysisFeature.OCR_FONT],
+            cls=callback)
         result = poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
