@@ -4,9 +4,10 @@
 
 # pylint: disable=unused-argument,no-self-use
 
-from azure.ai.ml._schema.core.fields import NestedField, PathAwareSchema
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, PathAwareSchema
 
 from ..job.job_limits import SweepJobLimitsSchema
+from ..queue_settings import QueueSettingsSchema
 from .sweep_fields_provider import EarlyTerminationField, SamplingAlgorithmField, SearchSpaceField
 from .sweep_objective import SweepObjectiveSchema
 
@@ -26,3 +27,4 @@ class ParameterizedSweepSchema(PathAwareSchema):
         SweepJobLimitsSchema,
         required=True,
     )
+    queue_settings = ExperimentalField(NestedField(QueueSettingsSchema))

@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 """Contains entities and SDK objects for Azure Machine Learning SDKv2.
 
-Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing
-model, runs and run output/logging etc.
+Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing model, runs
+and run output/logging etc.
 """
 # pylint: disable=naming-mismatch
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
@@ -51,6 +51,7 @@ from ._credentials import (
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
+from ._data_import.data_import import DataImport
 from ._datastore.datastore import Datastore
 from ._deployment.batch_deployment import BatchDeployment
 from ._deployment.batch_job import BatchJob
@@ -87,6 +88,7 @@ from ._job.parameterized_command import ParameterizedCommand
 
 # Pipeline related entities goes behind component since it depends on component
 from ._job.pipeline.pipeline_job import PipelineJob, PipelineJobSettings
+from ._job.queue_settings import QueueSettings
 from ._job.resource_configuration import ResourceConfiguration
 from ._job.service_instance import ServiceInstance
 from ._job.spark_job import SparkJob
@@ -156,6 +158,7 @@ __all__ = [
     "CreatedByType",
     "ResourceConfiguration",
     "JobResourceConfiguration",
+    "QueueSettings",
     "JobService",
     "SshJobService",
     "TensorBoardJobService",
@@ -205,6 +208,7 @@ __all__ = [
     "PrivateEndpointDestination",
     "EndpointConnection",
     "CustomerManagedKey",
+    "DataImport",
     "Datastore",
     "AzureDataLakeGen1Datastore",
     "AzureBlobDatastore",

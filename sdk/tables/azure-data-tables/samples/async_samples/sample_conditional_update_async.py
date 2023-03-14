@@ -80,7 +80,7 @@ class ConditionalUpdateSamples(object):
             # Update an existing entity by replacing all of its properties with those specified.
             # This operation will only succeed if the entity has not been modified since we last retrieved the Etag.
             try:
-                table_client.update_entity(entity=self.entity2, mode=UpdateMode.REPLACE, match_condition=MatchConditions.IfNotModified, etag=metadata2["etag"])
+                await table_client.update_entity(entity=self.entity2, mode=UpdateMode.REPLACE, match_condition=MatchConditions.IfNotModified, etag=metadata2["etag"])
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
             entity3 = await table_client.get_entity(partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"])

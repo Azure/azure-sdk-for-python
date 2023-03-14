@@ -54,11 +54,9 @@ class ExternalDataType(object):
 
 
 class DataTransferBuiltinComponentUri(object):
-    # todo: need update
-    IMPORT_DATABASE = "azureml://registries/import_database"
-    IMPORT_FILE_SYSTEM = "azureml://registries/import_file_system"
-    EXPORT_DATABASE = "azureml://registries/export_database"
-    EXPORT_FILE_SYSTEM = "azureml://registries/export_file_system"
+    IMPORT_DATABASE = "azureml://registries/azureml-preview/components/import_data_database/versions/0.0.1"
+    IMPORT_FILE_SYSTEM = "azureml://registries/azureml-preview/components/import_data_file_system/versions/0.0.1"
+    EXPORT_DATABASE = "azureml://registries/azureml-preview/components/export_data_database/versions/0.0.1"
 
 
 class ComponentSource:

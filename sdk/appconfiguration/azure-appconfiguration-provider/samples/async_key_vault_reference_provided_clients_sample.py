@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 import asyncio
-from azure.appconfiguration.provider.aio import load_provider
+from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 from azure.keyvault.secrets.aio import SecretClient
 import os
@@ -20,9 +20,9 @@ async def main():
 
     # Connection to Azure App Configuration using AAD with Provided Client
     secret_client = SecretClient(vault_url=key_vault_uri, credential=credential)
-    selects = {SettingSelector("*", "prod")}
+    selects = {SettingSelector(key_filter="*", label_filter="prod")}
     key_vault_options = AzureAppConfigurationKeyVaultOptions(secret_clients=[secret_client])
-    config = await load_provider(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
+    config = await load(endpoint=endpoint, credential=credential, key_vault_options=key_vault_options, selects=selects)
 
     print(config["secret"])
 

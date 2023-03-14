@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0 (2023-01-23)
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2023-03-07)
 
 ### Breaking Changes
 - moved all operations under `azure.developer.loadtesting.LoadTestingClient.test_run` to `azure.developer.loadtesting.LoadTestRunClient` 

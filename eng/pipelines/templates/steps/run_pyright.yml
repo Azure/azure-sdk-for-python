@@ -14,12 +14,12 @@ steps:
     displayName: 'Use Python 3.7'
     inputs:
      versionSpec: '3.7'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
+    condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
 
   - script: |
       pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
+    condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
 
   - task: PythonScript@0
     displayName: 'Run Pyright'
@@ -43,4 +43,4 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="verifytypes"
         --disablecov
-    condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
+    condition: and(succeededOrFailed(), ne(variables['Skip.Verifytypes'],'true'))

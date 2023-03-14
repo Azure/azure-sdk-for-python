@@ -85,18 +85,28 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         elif isinstance(io_dict, FileSystem):
             component_io = FileSystem()
         else:
-            data_type = io_dict.get("type", None)
-            if data_type == ExternalDataType.DATABASE:
-                component_io = Database()
-            elif data_type == ExternalDataType.FILE_SYSTEM:
-                component_io = FileSystem()
+            if isinstance(io_dict, dict):
+                data_type = io_dict.get("type", None)
+                if data_type == ExternalDataType.DATABASE:
+                    component_io = Database()
+                elif data_type == ExternalDataType.FILE_SYSTEM:
+                    component_io = FileSystem()
+                else:
+                    msg = "Type in source or sink only support {} and {}, currently got {}."
+                    raise ValidationException(
+                        message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
+                        no_personal_data_message=msg.format(
+                            ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
+                        ),
+                        target=ErrorTarget.COMPONENT,
+                        error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.INVALID_VALUE,
+                    )
             else:
-                msg = "Source or sink only support type {} and {}, currently got {}."
+                msg = "Source or sink only support dict, Database and FileSystem"
                 raise ValidationException(
-                    message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
-                    no_personal_data_message=msg.format(
-                        ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
-                    ),
+                    message=msg,
+                    no_personal_data_message=msg,
                     target=ErrorTarget.COMPONENT,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -107,7 +117,6 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 
 class DataTransferCopyComponent(DataTransferComponent):
     """DataTransfer copy component version, used to define a data transfer component.
-
 
     :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
     :type task: str
@@ -153,11 +162,6 @@ class DataTransferCopyComponent(DataTransferComponent):
 
     def _customized_validate(self):
         validation_result = super(DataTransferCopyComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_copy())
-        return validation_result
-
-    def _validate_copy(self):
-        validation_result = self._create_empty_validation_result()
         validation_result.merge_with(self._validate_input_output_mapping())
         return validation_result
 
@@ -194,13 +198,12 @@ class DataTransferCopyComponent(DataTransferComponent):
                     )
             else:
                 msg = "Inputs must be set in task {}."
-                validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path="outputs")
+                validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path="inputs")
         return validation_result
 
 
 class DataTransferImportComponent(DataTransferComponent):
     """DataTransfer import component version, used to define a data transfer component.
-
 
     :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
     :type task: str
@@ -234,10 +237,20 @@ class DataTransferImportComponent(DataTransferComponent):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
 
+    def __call__(self, *args, **kwargs):
+        """Call ComponentVersion as a function and get a Component object."""
+
+        msg = "DataTransfer component is not callable for import task."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMPONENT,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
 
 class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
     """DataTransfer export component version, used to define a data transfer component.
-
 
     :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
     :type task: str
@@ -268,3 +281,14 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)
+
+    def __call__(self, *args, **kwargs):
+        """Call ComponentVersion as a function and get a Component object."""
+
+        msg = "DataTransfer component is not callable for export task."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMPONENT,
+            error_category=ErrorCategory.USER_ERROR,
+        )

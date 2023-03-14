@@ -6,7 +6,7 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
@@ -125,7 +125,6 @@ def assert_component_basic_workflow(
     "mock_asset_name",
     "mock_component_hash",
     "enable_environment_id_arm_expansion",
-    "mock_snapshot_hash",
 )
 @pytest.mark.pipeline_test
 class TestComponent(AzureRecordedTestCase):
@@ -163,12 +162,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="component_name",
         )
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_parallel_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/ParallelComponent.json",
             "description": "parallel component for batch score",
@@ -243,12 +237,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="registry_component_name",
         )
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        set_bodiless_matcher()
-
         expected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json",
             "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
@@ -280,6 +269,7 @@ class TestComponent(AzureRecordedTestCase):
     def test_datatransfer_copy_urifolder_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "data_copy_mode": "merge_with_overwrite",
             "display_name": "Data Transfer Component copy-files",
             "type": "data_transfer",
             "task": "copy_data",
@@ -300,6 +290,7 @@ class TestComponent(AzureRecordedTestCase):
     def test_datatransfer_copy_urifile_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "data_copy_mode": "fail_if_conflict",
             "display_name": "Data Transfer Component copy uri files",
             "type": "data_transfer",
             "task": "copy_data",
@@ -322,6 +313,7 @@ class TestComponent(AzureRecordedTestCase):
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
             "display_name": "Data Transfer Component merge-files",
             "type": "data_transfer",
+            "data_copy_mode": "merge_with_overwrite",
             "task": "copy_data",
             "inputs": {
                 "folder1": {"type": "uri_folder", "optional": False},
@@ -345,6 +337,7 @@ class TestComponent(AzureRecordedTestCase):
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
             "display_name": "Data Transfer Component merge mix type files",
             "type": "data_transfer",
+            "data_copy_mode": "merge_with_overwrite",
             "task": "copy_data",
             "inputs": {
                 "input1": {"type": "uri_file", "optional": False},
@@ -619,12 +612,7 @@ class TestComponent(AzureRecordedTestCase):
         tensorflow_component_resource = client.components.create_or_update(component_entity)
         assert tensorflow_component_resource.distribution.__dict__ == tensorflow_distribution(has_strs=True)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_command_component_create_autoincrement(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        set_bodiless_matcher()
-
         component_name = randstr("component_name")
         params_override = [{"name": component_name}]
         path = "./tests/test_configs/components/component_no_version.yml"
@@ -718,7 +706,6 @@ class TestComponent(AzureRecordedTestCase):
             sleep_if_live(5)
             assert client.components.get(name, label="latest").version == version
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_anonymous_registration_from_load_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_resource = client.components.create_or_update(command_component, is_anonymous=True)
@@ -805,9 +792,6 @@ class TestComponent(AzureRecordedTestCase):
             "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
         }
 
-    @pytest.mark.skip(
-        reason="TODO (2234965) User/tenant/subscription is not allowed to access registry sdk-test to re-record",
-    )
     @pytest.mark.skipif(
         condition=not is_live(),
         reason="registry test, may fail in playback mode during retrieving registry client",
@@ -973,7 +957,6 @@ class TestComponent(AzureRecordedTestCase):
             node = default_component()
             assert node._to_rest_object()["componentId"] == default_component.id
 
-    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_command_component_with_properties_e2e_flow(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(
             source="./tests/test_configs/components/helloworld_component_with_properties.yml",

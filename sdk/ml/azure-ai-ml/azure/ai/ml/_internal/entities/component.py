@@ -34,8 +34,8 @@ from .node import InternalBaseNode
 
 class InternalComponent(Component):
     # pylint: disable=too-many-instance-attributes, too-many-locals
-    """Base class for internal component version, used to define an internal
-    component. Recommended to create instance with component_factory.
+    """Base class for internal component version, used to define an internal component. Recommended to create instance
+    with component_factory.
 
     :param name: Name of the resource.
     :type name: str
@@ -212,8 +212,8 @@ class InternalComponent(Component):
         code_path: Union[str, PathLike],
         ignore_file: IgnoreFile,
     ) -> str:
-        """Get the snapshot id of a component with specific working directory in ml-components.
-        Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
+        """Get the snapshot id of a component with specific working directory in ml-components. Use this as the name of
+        code asset to reuse steps in a pipeline job from ml-components runs.
 
         :param code_path: The path of the working directory.
         :type code_path: str
@@ -228,8 +228,8 @@ class InternalComponent(Component):
     @contextmanager
     def _resolve_local_code(self) -> Optional[Code]:
         """Try to create a Code object pointing to local code and yield it.
-        If there is no local code to upload, yield None.
-        Otherwise, yield a Code object pointing to the code.
+
+        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
         """
         # an internal component always has a default local code of its base path
         # otherwise, if there is no local code, yield super()._resolve_local_code() and return early
