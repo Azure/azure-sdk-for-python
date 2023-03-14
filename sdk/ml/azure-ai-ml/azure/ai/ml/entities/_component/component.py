@@ -323,20 +323,25 @@ class Component(
             for_load=True,
         )
         new_instance = create_instance_func()
-        init_kwargs = new_instance._load_with_schema(  # pylint: disable=protected-access
-            data,
-            context={
-                BASE_PATH_CONTEXT_KEY: base_path,
-                SOURCE_PATH_CONTEXT_KEY: yaml_path,
-                PARAMS_OVERRIDE_KEY: params_override,
-            },
-            unknown=INCLUDE,
-            raise_original_exception=True,
-            **kwargs,
+        # specific keys must be popped before loading with schema using kwargs
+        init_kwargs = {
+            "yaml_str": kwargs.pop("yaml_str", None),
+            "_source": kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
+        }
+        init_kwargs.update(
+            new_instance._load_with_schema(  # pylint: disable=protected-access
+                data,
+                context={
+                    BASE_PATH_CONTEXT_KEY: base_path,
+                    SOURCE_PATH_CONTEXT_KEY: yaml_path,
+                    PARAMS_OVERRIDE_KEY: params_override,
+                },
+                unknown=INCLUDE,
+                raise_original_exception=True,
+                **kwargs,
+            )
         )
         new_instance.__init__(
-            yaml_str=kwargs.pop("yaml_str", None),
-            _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
             **init_kwargs,
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
