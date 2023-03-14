@@ -5,8 +5,10 @@ from enum import Enum
 
 # pylint: disable=unused-import
 from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
+
 # pylint: disable=unused-import
 from azure.ai.ml._restclient.v2022_12_01_preview.models import TrainingMode as TabularTrainingMode
+
 
 class AutoMLConstants:
     # The following are fields found in the yaml for AutoML Job
