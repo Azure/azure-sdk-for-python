@@ -6,6 +6,7 @@ azure-core
 six
 isodate
 azure-appconfiguration
+#override azure-mgmt-applicationinsights msrest>=0.7.1
 azure-keyvault-secrets
 cryptography
 msrestazure
@@ -31,12 +32,14 @@ pyjwt
 azure-storage-blob
 azure-storage-file-share
 azure-storage-file-datalake
+#override azure-mgmt-applicationinsights typing-extensions>=4.3.0; python_version<'3.8.0'
 pydash
 azure-mgmt-resourcegraph
 azure-mgmt-resource
 fixedint
 opentelemetry-sdk
 azure-nspkg
+#override azure-mgmt-applicationinsights azure-mgmt-core>=1.3.2,<2.0.0
 azure-ai-nspkg
 azure-cognitiveservices-nspkg
 azure-mgmt-nspkg
