@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import uuid, json, string, random
+import uuid, json
 
 from testcase import TestPurviewSharing, PurviewSharingPowerShellPreparer
 from devtools_testutils import recorded_by_proxy
@@ -24,8 +24,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_detached_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "6eb422c0-ebe0-4e65-a79b-b9348fae9e84"
-        sent_share_invitation_id = "0c80bdeb-7801-4220-b32f-fafea6939803"
+        sent_share_id = "1c63a285-4649-4a5b-b9aa-6e9c356f70fc"
+        sent_share_invitation_id = "4d4f6be0-addd-4d5b-98be-ed09c38cdf49"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -83,8 +83,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "63aa0eea-72e8-4741-990e-a69a46de5054"
-        sent_share_invitation_id = "149ee1f5-a916-469e-9561-8082f4d47999"
+        sent_share_id = "1060e96e-a2df-483d-9919-317a3ab4ef49"
+        sent_share_invitation_id = "5bf02e34-ae34-48e5-8cc6-13aec7f15cd2"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -146,8 +146,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "a179f15e-168a-4534-8eea-5403d0c5cbfc"
-        sent_share_invitation_id = "45501fff-f3cb-4713-9db8-9ac69518d279"
+        sent_share_id = "50244d25-4359-4310-97be-99b1569ebcb4"
+        sent_share_invitation_id = "2c1560f9-7390-450d-b2ac-12cdaa94bb75"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -210,8 +210,8 @@ class TestReceivedShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_attach_received_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "7c5d17b5-e485-4862-8079-625b6bd25bb0"
-        sent_share_invitation_id = "8bad25d9-a8c8-4c96-87a1-dfd70d1c4fb4"
+        sent_share_id = "0c2a884a-5b4c-4b41-b4f8-d364d20c4ae1"
+        sent_share_invitation_id = "1118c292-a591-4b46-875b-2332e7a3d2b3"
         sent_share = self.prepare_sent_share()
 
         # cspell:disable-next-line

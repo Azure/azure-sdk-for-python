@@ -25,7 +25,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "16e39ad5-007c-493a-8acb-c8c6b483b989"
+        sent_share_id = "80084f86-e411-4447-82d3-a98a84651bf8"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -48,8 +48,8 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share_user_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "9765bd0c-e91b-4e64-a84c-4726532c0fc5"
-        sent_share_invitation_id = "899274a4-c5b9-4753-9b03-7a62a2b3e73a"
+        sent_share_id = "9e27ea94-c7dd-4e45-9564-30e280c37d1e"
+        sent_share_invitation_id = "9fb3755e-2f13-4cea-9b65-e45ed9a3dd01"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -94,7 +94,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_sent_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "a424360f-c966-4183-9c9f-a38b984fbac7"
+        sent_share_id = "8b3af6c7-1935-4ae9-8940-46373253520c"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -121,7 +121,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_sent_shares(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "7687b479-0f21-4a13-8316-a1198f5c1d5b"
+        sent_share_id = "37003772-812b-4b69-bea5-5c0a17163df5"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -152,7 +152,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_sent_share(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "362bfbad-3d86-41eb-95c7-61eec7eb4b61"
+        sent_share_id = "a5fbfbe0-6303-4924-b9be-885d7e3af97f"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -181,8 +181,8 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_create_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "CA1FA409-4D08-4168-A5CA-4E34035D81C4"
-        sent_share_invitation_id = "0D3991FD-9E91-45C4-8317-FF86AFA28B3C"
+        sent_share_id = "81f34fe1-9bf1-4e9c-aff5-8687fe0a37c7"
+        sent_share_invitation_id = "d1dfa155-70a9-4397-96ff-594159dc3fa8"
         sent_share = self.prepare_sent_share()
         
         request = build_sent_shares_create_or_replace_request(
@@ -195,8 +195,8 @@ class TestSentShares(TestPurviewSharing):
         assert response is not None
         assert response.status_code == 201, "Invalid Status Code 1 " + str(response.status_code)
 
-        targetActiveDirectoryId = "BC02D987-C010-4E4E-95D1-4BAB99ED0AC2"
-        targetObjectId = "28B46E20-9847-4D41-8BAE-28E17A76D3DE"
+        targetActiveDirectoryId = "bc02d987-c010-4e4e-95d1-4bab99ed0ac2"
+        targetObjectId = "28b46e20-9847-4d41-8bae-28e17a76d3de"
 
         invitation = {
             "invitationKind": "Service",
@@ -228,8 +228,8 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_get_all_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "560B9019-3D1C-4912-AFE6-FA8CCC371F24"
-        sent_share_invitation_id = "A4AB3656-8BED-479F-B65A-1B33DD2F4E3D"
+        sent_share_id = "57734197-13dd-45f0-aa78-082bb55ed768"
+        sent_share_invitation_id = "8c35d372-a90d-4e5b-93cc-c18ad525bb44"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
@@ -242,8 +242,8 @@ class TestSentShares(TestPurviewSharing):
         assert response is not None
         assert response.status_code == 201, "Invalid Status Code 1 " + str(response.status_code)
 
-        targetActiveDirectoryId = "19513734-8215-4190-BD7E-FF6CBED36FBE"
-        targetObjectId = "EBF435A4-3F8D-4ED1-843B-E598E2916A3E"
+        targetActiveDirectoryId = "19513734-8215-4190-bd7e-ff6cbed36fbe"
+        targetObjectId = "ebf435a4-3f8d-4ed1-843b-e598e2916a3e"
 
         sent_share_invitation = {
             "invitationKind": "Service",
@@ -284,7 +284,7 @@ class TestSentShares(TestPurviewSharing):
     @recorded_by_proxy
     def test_delete_sent_share_service_invitation(self, purviewsharing_endpoint):
         client = self.create_client(endpoint=purviewsharing_endpoint)
-        sent_share_id = "46a8100f-5c37-4ce5-af87-3f45d9b015bf"
+        sent_share_id = "050bd22d-a09e-47d0-ac20-367266ffaa54"
         sent_share = self.prepare_sent_share()
 
         request = build_sent_shares_create_or_replace_request(
