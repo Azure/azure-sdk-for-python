@@ -22,5 +22,5 @@ They are not intended to be run as standalone application, but show you how thes
 
 These are some code snippets that show the way in which end users can customize the behavior.
 
-[shared_transport.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/shared_transport.py) - samples of how to use a shared sync transport
-[shared_transport_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/shared_transport_async.py) - samples of how to use a shared async transport
+[shared_transport.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/example_shared_transport.py) - samples of how to use a shared sync transport
+[shared_transport_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samples/example_shared_transport_async.py) - samples of how to use a shared async transport
