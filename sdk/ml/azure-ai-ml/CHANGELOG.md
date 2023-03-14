@@ -1,5 +1,18 @@
 # Release History
 
+## 1.6.0 (Unreleased)
+
+### Features Added
+- 
+
+### Bugs Fixed
+
+- Fixed issue where show_progress=False was not being respected for uploads when set via MLClient
+
+### Other Changes
+
+- 
+
 ## 1.5.0 (Unreleased)
 
 ### Features Added
