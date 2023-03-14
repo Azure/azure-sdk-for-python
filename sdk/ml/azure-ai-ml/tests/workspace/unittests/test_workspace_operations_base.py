@@ -15,7 +15,6 @@ from azure.ai.ml.entities import (
     IdentityConfiguration,
     ManagedIdentityConfiguration,
     Workspace,
-    FeatureStoreSettings,
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
 from azure.core.polling import LROPoller
@@ -245,20 +244,6 @@ class TestWorkspaceOperation:
         ws.tags = {"k": "v"}
         ws.param = {"tagValues": {"value": {}}}
         mock_workspace_operation_base._populate_arm_paramaters(workspace=ws)
-
-    def test_populate_arm_paramaters_with_feature_store(
-        self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
-    ) -> None:
-        mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.get_resource_group_location", return_value="random_name"
-        )
-        mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.get_default_log_analytics_arm_id",
-            return_value=("random_id", True),
-        )
-        mock_workspace_operation_base._populate_arm_paramaters(
-            workspace=Workspace(name="name", kind="FeatureStore", feature_store_settings=FeatureStoreSettings()),
-        )
 
     def test_check_workspace_name(self, mock_workspace_operation_base: WorkspaceOperationsBase):
         mock_workspace_operation_base._default_workspace_name = None

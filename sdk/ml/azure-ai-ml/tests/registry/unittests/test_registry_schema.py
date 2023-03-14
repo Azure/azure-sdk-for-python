@@ -26,7 +26,7 @@ class TestRegistrySchema:
             assert registry["tags"] == {"purpose": "testing", "other_tag": "value"}
             assert registry["location"] == "EastUS2"
             assert registry["public_network_access"] == PublicNetworkAccess.DISABLED
-            assert registry["intellectual_property_publisher"] == "registry_publisher"
+            assert registry["intellectual_property"]["publisher"] == "registry_publisher"
             assert (
                 registry["container_registry"]
                 == "/subscriptions/sub_id/resourceGroups/some_rg/providers/Microsoft.ContainerRegistry/registries/acr_id"
