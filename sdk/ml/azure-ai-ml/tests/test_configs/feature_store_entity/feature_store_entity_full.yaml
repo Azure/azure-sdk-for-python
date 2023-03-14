@@ -1,0 +1,12 @@
+name: test-featurestore-entity
+version: "1"
+description: Yaml load test feature_store_entity
+index_columns:
+  - name: name,
+    type: string
+  - name: id,
+    type: integer
+tags:
+  t1: v1
+properties:
+  p1: v1

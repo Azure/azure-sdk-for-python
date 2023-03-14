@@ -16,13 +16,13 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
+from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
 from azure.ai.ml.entities import (
-    FeatureStore,
-    FeatureStoreSettings,
     ManagedIdentityConfiguration,
     IdentityConfiguration,
     WorkspaceConnection,
-    MaterializationStore,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import Scope
@@ -41,8 +41,8 @@ module_logger = ops_logger.module_logger
 
 
 @experimental
-class FeatureStoreOperations(WorkspaceOperationsBase):
-    """FeatureStoreOperations.
+class _FeatureStoreOperations(WorkspaceOperationsBase):
+    """_FeatureStoreOperations.
 
     You should not instantiate this class directly. Instead, you should
     create an MLClient instance that instantiates it for you and
@@ -57,6 +57,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
+        ops_logger.update_info(kwargs)
         super().__init__(
             operation_scope=operation_scope,
             service_client=service_client,
