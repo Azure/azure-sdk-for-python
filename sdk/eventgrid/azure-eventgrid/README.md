@@ -53,6 +53,7 @@ With the `azure-identity` package, you can seamlessly authorize requests in both
 For example, you can use `DefaultAzureCredential` to construct a client which will authenticate using Azure Active Directory:
 
 <!-- SNIPPET:sample_authentication.client_auth_with_token_cred -->
+
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
@@ -61,6 +62,7 @@ credential = DefaultAzureCredential()
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 client = EventGridPublisherClient(endpoint, credential)
 ```
+
 <!-- END SNIPPET -->
 
 #### Looking up the endpoint
@@ -75,6 +77,7 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 > **Note:** The Access Key may be found in the azure portal in the "Access Keys" menu of the Event Grid Topic resource.  They may also be obtained via the azure CLI, or the `azure-mgmt-eventgrid` library. A guide for getting access keys can be found [here](https://docs.microsoft.com/azure/event-grid/get-access-keys).
 
 <!-- SNIPPET:sample_authentication.client_auth_with_key_cred -->
+
 ```python
 import os
 from azure.eventgrid import EventGridPublisherClient
@@ -86,6 +89,7 @@ endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 credential = AzureKeyCredential(topic_key)
 client = EventGridPublisherClient(endpoint, credential)
 ```
+
 <!-- END SNIPPET -->
 
 > **Note:** A client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-send-using-sas] ([async_version][python-eg-sample-send-using-sas-async]).

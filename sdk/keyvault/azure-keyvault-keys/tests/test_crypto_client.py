@@ -46,7 +46,7 @@ from _keys_test_case import KeysTestCase
 NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator()
-only_7_4_hsm = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4_PREVIEW_1])
+only_7_4_hsm = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4])
 only_hsm = get_decorator(only_hsm=True)
 only_vault_latest = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
 no_get = get_decorator(permissions=NO_GET)
