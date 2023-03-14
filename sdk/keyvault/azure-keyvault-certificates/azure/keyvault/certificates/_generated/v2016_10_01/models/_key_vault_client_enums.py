@@ -23,31 +23,31 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     the system can purge the key, at the end of the retention interval.
     """
 
-    #: Soft-delete is not enabled for this vault. A DELETE operation results in immediate and
-    #: irreversible data loss.
     PURGEABLE = "Purgeable"
-    #: Soft-delete is enabled for this vault; A privileged user may trigger an immediate, irreversible
-    #: deletion(purge) of a deleted entity.
+    """Soft-delete is not enabled for this vault. A DELETE operation results in immediate and
+    #: irreversible data loss."""
     RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
-    #: Soft-delete is enabled for this vault and purge has been disabled. A deleted entity will remain
-    #: in this state until recovered, or the end of the retention interval.
+    """Soft-delete is enabled for this vault; A privileged user may trigger an immediate, irreversible
+    #: deletion(purge) of a deleted entity."""
     RECOVERABLE = "Recoverable"
-    #: Soft-delete is enabled for this vault, and the subscription is protected against immediate
-    #: deletion.
+    """Soft-delete is enabled for this vault and purge has been disabled. A deleted entity will remain
+    #: in this state until recovered, or the end of the retention interval."""
     RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
+    """Soft-delete is enabled for this vault, and the subscription is protected against immediate
+    #: deletion."""
 
 
 class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Elliptic curve name. For valid values, see JsonWebKeyCurveName."""
 
-    #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
     P256 = "P-256"
-    #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
+    """The NIST P-256 elliptic curve, AKA SECG curve SECP256R1."""
     P384 = "P-384"
-    #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
+    """The NIST P-384 elliptic curve, AKA SECG curve SECP384R1."""
     P521 = "P-521"
-    #: The SECG SECP256K1 elliptic curve.
+    """The NIST P-521 elliptic curve, AKA SECG curve SECP521R1."""
     SECP256_K1 = "SECP256K1"
+    """The SECG SECP256K1 elliptic curve."""
 
 
 class JsonWebKeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):

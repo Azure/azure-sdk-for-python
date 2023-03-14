@@ -22,30 +22,30 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
 from azure.ai.ml.entities._assets.asset import Asset
-from .data_column import DataColumn
+from .data_column import _DataColumn
 
 
 @experimental
-class FeatureStoreEntity(Asset):
+class _FeatureStoreEntity(Asset):
     def __init__(
         self,
         *,
         name: str,
         version: str,
-        index_columns: List[DataColumn],
+        index_columns: List[_DataColumn],
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
-        """FeatureStoreEntity
+        """_FeatureStoreEntity
 
         :param name: Name of the resource.
         :type name: str
         :param version: Version of the resource.
         :type version: str
         :param index_columns: Specifies index columns.
-        :type index_columns: list[~azure.ai.ml.entities.DataColumn]
+        :type index_columns: list[~azure.ai.ml.entities._DataColumn]
         :param description: Description of the resource.
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
@@ -77,13 +77,13 @@ class FeatureStoreEntity(Asset):
         return FeaturestoreEntityVersion(properties=feature_store_entity_version_properties)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: FeaturestoreEntityVersion) -> "FeatureStoreEntity":
+    def _from_rest_object(cls, rest_obj: FeaturestoreEntityVersion) -> "_FeatureStoreEntity":
         rest_object_details: FeaturestoreEntityVersionProperties = rest_obj.properties
         arm_id_object = get_arm_id_object_from_id(rest_obj.id)
-        featurestoreEntity = FeatureStoreEntity(
+        featurestoreEntity = _FeatureStoreEntity(
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
-            index_columns=[DataColumn._from_rest_object(column) for column in rest_object_details.index_columns],
+            index_columns=[_DataColumn._from_rest_object(column) for column in rest_object_details.index_columns],
             description=rest_object_details.description,
             tags=rest_object_details.tags,
             properties=rest_object_details.properties,
@@ -91,10 +91,10 @@ class FeatureStoreEntity(Asset):
         return featurestoreEntity
 
     @classmethod
-    def _from_container_rest_object(cls, rest_obj: FeaturestoreEntityContainer) -> "FeatureStoreEntity":
+    def _from_container_rest_object(cls, rest_obj: FeaturestoreEntityContainer) -> "_FeatureStoreEntity":
         rest_object_details: FeaturestoreEntityContainerProperties = rest_obj.properties
         arm_id_object = get_arm_id_object_from_id(rest_obj.id)
-        featurestoreEntity = FeatureStoreEntity(
+        featurestoreEntity = _FeatureStoreEntity(
             name=arm_id_object.asset_name,
             description=rest_object_details.description,
             tags=rest_object_details.tags,
@@ -112,7 +112,7 @@ class FeatureStoreEntity(Asset):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "FeatureStoreEntity":
+    ) -> "_FeatureStoreEntity":
         data = data or {}
         params_override = params_override or []
         context = {
@@ -120,7 +120,7 @@ class FeatureStoreEntity(Asset):
             PARAMS_OVERRIDE_KEY: params_override,
         }
         loaded_schema = load_from_dict(FeatureStoreEntitySchema, data, context, **kwargs)
-        return FeatureStoreEntity(**loaded_schema)
+        return _FeatureStoreEntity(**loaded_schema)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

@@ -44,8 +44,8 @@ def build_create_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,7 +54,7 @@ def build_create_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
         "key-name": _SERIALIZER.url("key_name", key_name, "str", pattern=r"^[0-9a-zA-Z-]+$"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -71,8 +71,8 @@ def build_import_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -81,7 +81,7 @@ def build_import_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
         "key-name": _SERIALIZER.url("key_name", key_name, "str", pattern=r"^[0-9a-zA-Z-]+$"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -98,7 +98,7 @@ def build_delete_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -107,7 +107,7 @@ def build_delete_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
         "key-name": _SERIALIZER.url("key_name", key_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -122,8 +122,8 @@ def build_update_key_request(key_name: str, key_version: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_update_key_request(key_name: str, key_version: str, **kwargs: Any) -> 
         "key-version": _SERIALIZER.url("key_version", key_version, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -150,7 +150,7 @@ def build_get_key_request(key_name: str, key_version: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_get_key_request(key_name: str, key_version: str, **kwargs: Any) -> Htt
         "key-version": _SERIALIZER.url("key_version", key_version, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -175,7 +175,7 @@ def build_get_key_versions_request(key_name: str, *, maxresults: Optional[int] =
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -184,7 +184,7 @@ def build_get_key_versions_request(key_name: str, *, maxresults: Optional[int] =
         "key-name": _SERIALIZER.url("key_name", key_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if maxresults is not None:
@@ -201,7 +201,7 @@ def build_get_keys_request(*, maxresults: Optional[int] = None, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,7 +222,7 @@ def build_backup_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -231,7 +231,7 @@ def build_backup_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
         "key-name": _SERIALIZER.url("key_name", key_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -246,8 +246,8 @@ def build_restore_key_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -268,8 +268,8 @@ def build_encrypt_request(key_name: str, key_version: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -279,7 +279,7 @@ def build_encrypt_request(key_name: str, key_version: str, **kwargs: Any) -> Htt
         "key-version": _SERIALIZER.url("key_version", key_version, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -296,8 +296,8 @@ def build_decrypt_request(key_name: str, key_version: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -307,7 +307,7 @@ def build_decrypt_request(key_name: str, key_version: str, **kwargs: Any) -> Htt
         "key-version": _SERIALIZER.url("key_version", key_version, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -324,8 +324,8 @@ def build_sign_request(key_name: str, key_version: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -335,7 +335,7 @@ def build_sign_request(key_name: str, key_version: str, **kwargs: Any) -> HttpRe
         "key-version": _SERIALIZER.url("key_version", key_version, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -352,8 +352,8 @@ def build_verify_request(key_name: str, key_version: str, **kwargs: Any) -> Http
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -363,7 +363,7 @@ def build_verify_request(key_name: str, key_version: str, **kwargs: Any) -> Http
         "key-version": _SERIALIZER.url("key_version", key_version, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -380,8 +380,8 @@ def build_wrap_key_request(key_name: str, key_version: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -391,7 +391,7 @@ def build_wrap_key_request(key_name: str, key_version: str, **kwargs: Any) -> Ht
         "key-version": _SERIALIZER.url("key_version", key_version, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -408,8 +408,8 @@ def build_unwrap_key_request(key_name: str, key_version: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -419,7 +419,7 @@ def build_unwrap_key_request(key_name: str, key_version: str, **kwargs: Any) -> 
         "key-version": _SERIALIZER.url("key_version", key_version, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -436,7 +436,7 @@ def build_get_deleted_keys_request(*, maxresults: Optional[int] = None, **kwargs
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -457,7 +457,7 @@ def build_get_deleted_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -466,7 +466,7 @@ def build_get_deleted_key_request(key_name: str, **kwargs: Any) -> HttpRequest:
         "key-name": _SERIALIZER.url("key_name", key_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -481,7 +481,7 @@ def build_purge_deleted_key_request(key_name: str, **kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -490,7 +490,7 @@ def build_purge_deleted_key_request(key_name: str, **kwargs: Any) -> HttpRequest
         "key-name": _SERIALIZER.url("key_name", key_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -505,7 +505,7 @@ def build_recover_deleted_key_request(key_name: str, **kwargs: Any) -> HttpReque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
+    api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -514,7 +514,7 @@ def build_recover_deleted_key_request(key_name: str, **kwargs: Any) -> HttpReque
         "key-name": _SERIALIZER.url("key_name", key_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -605,8 +605,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param key_name: The name for the new key. The system will generate the version name for the
          new key. Required.
         :type key_name: str
-        :param parameters: The parameters to create a key. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to create a key. Is either a KeyCreateParameters type or a IO
+         type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeyCreateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -627,9 +627,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyBundle]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -653,9 +653,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -673,7 +673,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    create_key.metadata = {"url": "/keys/{key-name}/create"}  # type: ignore
+    create_key.metadata = {"url": "/keys/{key-name}/create"}
 
     @overload
     def import_key(
@@ -754,8 +754,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type vault_base_url: str
         :param key_name: Name for the imported key. Required.
         :type key_name: str
-        :param parameters: The parameters to import a key. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to import a key. Is either a KeyImportParameters type or a IO
+         type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeyImportParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -776,9 +776,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyBundle]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -802,9 +802,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -822,7 +822,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    import_key.metadata = {"url": "/keys/{key-name}"}  # type: ignore
+    import_key.metadata = {"url": "/keys/{key-name}"}
 
     @distributed_trace
     def delete_key(self, vault_base_url: str, key_name: str, **kwargs: Any) -> _models.DeletedKeyBundle:
@@ -853,8 +853,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeletedKeyBundle]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        cls: ClsType[_models.DeletedKeyBundle] = kwargs.pop("cls", None)
 
         request = build_delete_key_request(
             key_name=key_name,
@@ -867,9 +867,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -887,7 +887,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    delete_key.metadata = {"url": "/keys/{key-name}"}  # type: ignore
+    delete_key.metadata = {"url": "/keys/{key-name}"}
 
     @overload
     def update_key(
@@ -981,8 +981,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type key_name: str
         :param key_version: The version of the key to update. Required.
         :type key_version: str
-        :param parameters: The parameters of the key to update. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters of the key to update. Is either a KeyUpdateParameters type or
+         a IO type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeyUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1003,9 +1003,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyBundle]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1030,9 +1030,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1050,7 +1050,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    update_key.metadata = {"url": "/keys/{key-name}/{key-version}"}  # type: ignore
+    update_key.metadata = {"url": "/keys/{key-name}/{key-version}"}
 
     @distributed_trace
     def get_key(self, vault_base_url: str, key_name: str, key_version: str, **kwargs: Any) -> _models.KeyBundle:
@@ -1083,8 +1083,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyBundle]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        cls: ClsType[_models.KeyBundle] = kwargs.pop("cls", None)
 
         request = build_get_key_request(
             key_name=key_name,
@@ -1098,9 +1098,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1118,7 +1118,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    get_key.metadata = {"url": "/keys/{key-name}/{key-version}"}  # type: ignore
+    get_key.metadata = {"url": "/keys/{key-name}/{key-version}"}
 
     @distributed_trace
     def get_key_versions(
@@ -1133,8 +1133,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type vault_base_url: str
         :param key_name: The name of the key. Required.
         :type key_name: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyItem or the result of cls(response)
@@ -1144,8 +1149,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyListResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        cls: ClsType[_models.KeyListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1170,7 +1175,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1189,7 +1194,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 request.method = "GET"
             return request
 
@@ -1197,13 +1202,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
             deserialized = self._deserialize("KeyListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1217,7 +1222,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return ItemPaged(get_next, extract_data)
 
-    get_key_versions.metadata = {"url": "/keys/{key-name}/versions"}  # type: ignore
+    get_key_versions.metadata = {"url": "/keys/{key-name}/versions"}
 
     @distributed_trace
     def get_keys(
@@ -1232,8 +1237,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either KeyItem or the result of cls(response)
@@ -1243,8 +1253,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyListResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        cls: ClsType[_models.KeyListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1268,7 +1278,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1287,7 +1297,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 request.method = "GET"
             return request
 
@@ -1295,13 +1305,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
             deserialized = self._deserialize("KeyListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1315,7 +1325,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return ItemPaged(get_next, extract_data)
 
-    get_keys.metadata = {"url": "/keys"}  # type: ignore
+    get_keys.metadata = {"url": "/keys"}
 
     @distributed_trace
     def backup_key(self, vault_base_url: str, key_name: str, **kwargs: Any) -> _models.BackupKeyResult:
@@ -1353,8 +1363,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BackupKeyResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        cls: ClsType[_models.BackupKeyResult] = kwargs.pop("cls", None)
 
         request = build_backup_key_request(
             key_name=key_name,
@@ -1367,9 +1377,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1387,7 +1397,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    backup_key.metadata = {"url": "/keys/{key-name}/backup"}  # type: ignore
+    backup_key.metadata = {"url": "/keys/{key-name}/backup"}
 
     @overload
     def restore_key(
@@ -1473,8 +1483,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param parameters: The parameters to restore the key. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters to restore the key. Is either a KeyRestoreParameters type or
+         a IO type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeyRestoreParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1495,9 +1505,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyBundle]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyBundle] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1520,9 +1530,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1540,7 +1550,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    restore_key.metadata = {"url": "/keys/restore"}  # type: ignore
+    restore_key.metadata = {"url": "/keys/restore"}
 
     @overload
     def encrypt(
@@ -1646,8 +1656,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for the encryption operation. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters for the encryption operation. Is either a
+         KeyOperationsParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeyOperationsParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1668,9 +1678,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyOperationResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1695,9 +1705,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1715,7 +1725,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    encrypt.metadata = {"url": "/keys/{key-name}/{key-version}/encrypt"}  # type: ignore
+    encrypt.metadata = {"url": "/keys/{key-name}/{key-version}/encrypt"}
 
     @overload
     def decrypt(
@@ -1815,8 +1825,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for the decryption operation. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters for the decryption operation. Is either a
+         KeyOperationsParameters type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeyOperationsParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1837,9 +1847,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyOperationResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1864,9 +1874,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1884,7 +1894,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    decrypt.metadata = {"url": "/keys/{key-name}/{key-version}/decrypt"}  # type: ignore
+    decrypt.metadata = {"url": "/keys/{key-name}/{key-version}/decrypt"}
 
     @overload
     def sign(
@@ -1975,8 +1985,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for the signing operation. Is either a model type or a IO
-         type. Required.
+        :param parameters: The parameters for the signing operation. Is either a KeySignParameters type
+         or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeySignParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1997,9 +2007,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyOperationResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2024,9 +2034,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2044,7 +2054,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    sign.metadata = {"url": "/keys/{key-name}/{key-version}/sign"}  # type: ignore
+    sign.metadata = {"url": "/keys/{key-name}/{key-version}/sign"}
 
     @overload
     def verify(
@@ -2141,8 +2151,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for verify operations. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters for verify operations. Is either a KeyVerifyParameters type
+         or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeyVerifyParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2163,9 +2173,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyVerifyResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyVerifyResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2190,9 +2200,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2210,7 +2220,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    verify.metadata = {"url": "/keys/{key-name}/{key-version}/verify"}  # type: ignore
+    verify.metadata = {"url": "/keys/{key-name}/{key-version}/verify"}
 
     @overload
     def wrap_key(
@@ -2310,8 +2320,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for wrap operation. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters for wrap operation. Is either a KeyOperationsParameters type
+         or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeyOperationsParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2332,9 +2342,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyOperationResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2359,9 +2369,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2379,7 +2389,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    wrap_key.metadata = {"url": "/keys/{key-name}/{key-version}/wrapkey"}  # type: ignore
+    wrap_key.metadata = {"url": "/keys/{key-name}/{key-version}/wrapkey"}
 
     @overload
     def unwrap_key(
@@ -2473,8 +2483,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type key_name: str
         :param key_version: The version of the key. Required.
         :type key_version: str
-        :param parameters: The parameters for the key operation. Is either a model type or a IO type.
-         Required.
+        :param parameters: The parameters for the key operation. Is either a KeyOperationsParameters
+         type or a IO type. Required.
         :type parameters: ~azure.keyvault.v7_1.models.KeyOperationsParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2495,9 +2505,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyOperationResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KeyOperationResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2522,9 +2532,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2542,7 +2552,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    unwrap_key.metadata = {"url": "/keys/{key-name}/{key-version}/unwrapkey"}  # type: ignore
+    unwrap_key.metadata = {"url": "/keys/{key-name}/{key-version}/unwrapkey"}
 
     @distributed_trace
     def get_deleted_keys(
@@ -2558,8 +2568,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param maxresults: Maximum number of results to return in a page. If not specified the service
-         will return up to 25 results. Default value is None.
+        :param maxresults: Specifies the maximum number of results to return in a page. Setting
+         maxresults to a value less than 1 or greater than 25 results in error response code 400 (Bad
+         Request). If there are additional results to return, then the service returns a nextLink
+         containing a skip token for pagination. In certain cases, the service might return fewer
+         results than specified by maxresults (even 0 results) and also return a nextLink. Clients
+         should not make any assumptions on the minimum number of results per page, and should enumerate
+         all pages until the nextLink becomes null. Default value is None.
         :type maxresults: int
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DeletedKeyItem or the result of cls(response)
@@ -2569,8 +2584,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeletedKeyListResult]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        cls: ClsType[_models.DeletedKeyListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2594,7 +2609,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2613,7 +2628,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
                 request.method = "GET"
             return request
 
@@ -2621,13 +2636,13 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
             deserialized = self._deserialize("DeletedKeyListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2641,7 +2656,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return ItemPaged(get_next, extract_data)
 
-    get_deleted_keys.metadata = {"url": "/deletedkeys"}  # type: ignore
+    get_deleted_keys.metadata = {"url": "/deletedkeys"}
 
     @distributed_trace
     def get_deleted_key(self, vault_base_url: str, key_name: str, **kwargs: Any) -> _models.DeletedKeyBundle:
@@ -2671,8 +2686,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DeletedKeyBundle]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        cls: ClsType[_models.DeletedKeyBundle] = kwargs.pop("cls", None)
 
         request = build_get_deleted_key_request(
             key_name=key_name,
@@ -2685,9 +2700,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2705,7 +2720,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    get_deleted_key.metadata = {"url": "/deletedkeys/{key-name}"}  # type: ignore
+    get_deleted_key.metadata = {"url": "/deletedkeys/{key-name}"}
 
     @distributed_trace
     def purge_deleted_key(  # pylint: disable=inconsistent-return-statements
@@ -2737,8 +2752,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_purge_deleted_key_request(
             key_name=key_name,
@@ -2751,9 +2766,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2767,7 +2782,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         if cls:
             return cls(pipeline_response, None, {})
 
-    purge_deleted_key.metadata = {"url": "/deletedkeys/{key-name}"}  # type: ignore
+    purge_deleted_key.metadata = {"url": "/deletedkeys/{key-name}"}
 
     @distributed_trace
     def recover_deleted_key(self, vault_base_url: str, key_name: str, **kwargs: Any) -> _models.KeyBundle:
@@ -2798,8 +2813,8 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "7.1"))  # type: Literal["7.1"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.KeyBundle]
+        api_version: Literal["7.1"] = kwargs.pop("api_version", _params.pop("api-version", "7.1"))
+        cls: ClsType[_models.KeyBundle] = kwargs.pop("cls", None)
 
         request = build_recover_deleted_key_request(
             key_name=key_name,
@@ -2812,9 +2827,9 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         path_format_arguments = {
             "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2832,4 +2847,4 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         return deserialized
 
-    recover_deleted_key.metadata = {"url": "/deletedkeys/{key-name}/recover"}  # type: ignore
+    recover_deleted_key.metadata = {"url": "/deletedkeys/{key-name}/recover"}
