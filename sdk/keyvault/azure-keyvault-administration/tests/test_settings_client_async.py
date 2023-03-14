@@ -10,7 +10,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from _async_test_case import KeyVaultSettingsClientPreparer, get_decorator
 from _shared.test_case_async import KeyVaultTestCase
 
-only_7_4 = get_decorator(api_versions=[ApiVersion.V7_4_PREVIEW_1])
+only_7_4 = get_decorator(api_versions=[ApiVersion.V7_4])
 
 
 class TestSettings(KeyVaultTestCase):

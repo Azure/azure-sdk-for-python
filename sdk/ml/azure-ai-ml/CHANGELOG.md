@@ -11,6 +11,7 @@
 - Added support for serverless compute in pipeline, command, automl and sweep job
 - Added support for `job_tier` and `priority` in job
 - Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
+- Added support for modifying SSH key values after creation on Compute Resources.
 - Added WorkspaceConnection types `s3`, `snowflake`, `azure_sql_db`, `azure_synapse_analytics`, `azure_my_sql_db`, `azure_postgres_db`
 - Added WorkspaceConnection auth type `access_key` for `s3`
 
@@ -25,9 +26,11 @@
 
 - Added dependency on `azure-mgmt-resource`
 - Added dependency on `azure-mgmt-resourcegraph`
+- Added dependency on `opencensus-ext-azure<2.0.0`
 - Update job types to use MFE Dec preview rest objects.
 - Added classifiers for Python version 3.11.
 - Added warning for reserved keywords in IO names in pipeline job nodes.
+- Added telemetry logging for SDK Jupyter Notebook scenarios with opt-out option (see README.md)
 
 ## 1.4.0 (2023-02-07)
 
