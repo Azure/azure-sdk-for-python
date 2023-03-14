@@ -116,6 +116,20 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         """
         workspace_name = self._check_workspace_name(name)
         return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
+    
+    def provision_network(
+        self,
+        workspace_name: Optional[str] = None,
+        spark_enabled: Optional[bool] = False,
+        **kwargs: Dict
+    ):
+        workspace_name = self._check_workspace_name(workspace_name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+        # TODO regenerate 2022-12-01-preview rest client based on swagger change for provision network command
+        # TODO work w Zhida to make sure swagger changes are merged into swagger repo as well
+        # TODO call new operation provision network
+        # obj = self._operation.provisions(resource_group, workspace_name)
+
 
     @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
