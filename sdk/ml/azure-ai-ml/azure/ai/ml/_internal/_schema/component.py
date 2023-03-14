@@ -191,14 +191,12 @@ class InternalSparkComponentSchema(InternalComponentSchema):
             fields.List(fields.Str()),
             fields.Str(),
         ],
-        required=True,
     )
     py_files = UnionField(
         [
             fields.List(fields.Str()),
             fields.Str(),
         ],
-        required=True,
         data_key="pyFiles",
         attribute="py_files",
     )
