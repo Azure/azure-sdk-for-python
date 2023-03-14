@@ -73,7 +73,7 @@ class TestAutoMLClassification:
             ClassificationModels.LOGISTIC_REGRESSION
         ], "Blocked models not set correctly"
         assert original_obj.training.training_mode == None, "Training mode not set correctly"
-        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
+        assert original_obj.limits.max_nodes == 1, "Max nodes not set correctly"
 
     def test_classification_task_distributed_mode(self):
         # Create AutoML Classification Task
@@ -154,7 +154,7 @@ class TestAutoMLClassification:
         assert (
             original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED
         ), "Training mode not set correctly"
-        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
+        assert original_obj.limits.max_nodes == 1, "Max nodes not set correctly"
 
     def test_classification_task_auto_mode(self):
         # Create AutoML Classification Task

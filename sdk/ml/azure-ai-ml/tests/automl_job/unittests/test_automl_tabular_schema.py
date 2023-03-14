@@ -455,7 +455,7 @@ class TestAutoMLTabularSchema:
     @pytest.mark.parametrize(
         "yaml_path, max_nodes, training_mode, is_error",
         [
-            ("./tests/test_configs/automl_job/automl_job_mock_regression.yaml", None, None, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_regression.yaml", 1, None, False),
             (
                 "./tests/test_configs/automl_job/automl_job_mock_regression_auto_mode.yaml",
                 4,
@@ -474,8 +474,8 @@ class TestAutoMLTabularSchema:
                 TabularTrainingMode.NON_DISTRIBUTED,
                 False,
             ),
-            ("./tests/test_configs/automl_job/automl_job_mock_regression_invalid_mode.yaml", None, None, True),
-            ("./tests/test_configs/automl_job/automl_job_mock_classification.yaml", None, None, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_regression_invalid_mode.yaml", 1, None, True),
+            ("./tests/test_configs/automl_job/automl_job_mock_classification.yaml", 1, None, False),
             (
                 "./tests/test_configs/automl_job/automl_job_mock_classification_auto_mode.yaml",
                 4,
@@ -490,12 +490,12 @@ class TestAutoMLTabularSchema:
             ),
             (
                 "./tests/test_configs/automl_job/automl_job_mock_classification_non_distributed_mode.yaml",
-                None,
+                1,
                 TabularTrainingMode.NON_DISTRIBUTED,
                 False,
             ),
             ("./tests/test_configs/automl_job/automl_job_mock_classification_invalid_mode.yaml", None, None, True),
-            ("./tests/test_configs/automl_job/automl_job_mock_forecasting.yaml", None, None, False),
+            ("./tests/test_configs/automl_job/automl_job_mock_forecasting.yaml", 1, None, False),
             (
                 "./tests/test_configs/automl_job/automl_job_mock_forecasting_auto_mode.yaml",
                 4,
@@ -510,7 +510,7 @@ class TestAutoMLTabularSchema:
             ),
             (
                 "./tests/test_configs/automl_job/automl_job_mock_forecasting_non_distributed_mode.yaml",
-                None,
+                1,
                 TabularTrainingMode.NON_DISTRIBUTED,
                 False,
             ),

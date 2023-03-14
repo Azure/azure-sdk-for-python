@@ -86,7 +86,7 @@ class TestAutoMLForecasting:
         assert original_obj.validation_data.type == AssetTypes.MLTABLE, "Test data type not set correctly"
         assert original_obj.validation_data.path == "https://foo/bar/valid.csv", "Test data path not set correctly"
         assert original_obj.training.training_mode == None, "Training mode not set correctly"
-        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
+        assert original_obj.limits.max_nodes == 1, "Max nodes not set correctly"
 
     def test_forecasting_task_distributed_mode(self):
         # Create AutoML Forecasting Task
@@ -185,7 +185,7 @@ class TestAutoMLForecasting:
         assert (
             original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED
         ), "Training mode not set correctly"
-        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
+        assert original_obj.limits.max_nodes == 1, "Max nodes not set correctly"
 
     def test_forecasting_task_auto_mode(self):
         # Create AutoML Forecasting Task
