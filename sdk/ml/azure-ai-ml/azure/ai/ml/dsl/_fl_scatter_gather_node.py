@@ -3,19 +3,20 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 
+from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
-from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities import CommandComponent
 from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 def fl_scatter_gather(
     *,
     silo_configs: List[FederatedLearningSilo],
-    silo_component: Component,
-    aggregation_component: Component,
+    silo_component: Union[PipelineJob, CommandComponent],
+    aggregation_component: Union[PipelineJob, CommandComponent],
     aggregation_compute: str = None,
     aggregation_datastore: str = None,
     shared_silo_kwargs: Optional[Dict] = None,
@@ -23,21 +24,56 @@ def fl_scatter_gather(
     silo_to_aggregation_argument_map: Optional[Dict] = None,
     aggregation_to_silo_argument_map: Optional[Dict] = None,
     max_iterations: int = 1,
-    _pass_iteration_to_components: bool = False,
-    _pass_index_to_silo_components: bool = False,
     _create_default_mappings_if_needed: bool = False,
     **kwargs,
 ):
-    """
-    param silo_component: A component which contains the steps that will be run multiple
+    """A federated learning scatter-gather subgraph node. It's assumed that this will be used inside of
+    a @pipeline-decorated function in order to create a subgraph which will:
+        - Execute a specified pipeline step multiple times (the silo step), with each execution using slightly
+            different inputs, datatstores, and computes based on an inputted config.
+        - Merge the outputs of the multiple silo steps into a single input for another step (the aggregation step),
+            which will then process the values into a single unified result.
+        - With the process above being a 'scatter gather' sequence, iterate and perform the scatter gather 
+            a number of times according to the max_iterations input, with the output of any given iteration's
+            aggregation step being fed back into the silo steps of the subsequent iteration.
+        - Return the outputs of the last iteration's aggregation step as the node's final output.
+
+    The process of assigning computes, datastores, and inputs to steps is called 'anchoring'. The following
+    details of the anchoring process should be noted:
+        - Computes will always be overridden to their respective compute.
+        - The paths of 'internal' outputs for silo steps (i.e. a component output that becomes an input for another
+            component within the silo step) are anchored to that silo's datastore. All other outputs are anchored
+            to the aggregation datastore.
+        - Some steps are automatically created by this node to merge inputs from the silo steps to the aggregation
+            step. These steps are anchored in the same manner as the aggregation step.
+        - Datastore anchoring ONLY occurs if an output's path value is empty. If a path already exists, it will NOT
+            try to replace it.
+
+    The process of trimming down inputs from the silo steps to a single input for the aggregate step has some
+    caveats:
+        - Only silo outputs of type mltable and uri_folder are supported.
+        - Both the above output types become an mltable which mounts all the silo step outputs as sub-folders.
+
+    The expected use case of this node is shown in the following code snippet:
+        ```
+        @pipeline()
+        def fl_pipeline():
+            fl_node = fl_scatter_gather(**many_inputs)
+            return {"pipeline_output" : fl_node.outputs["aggregated_model"]}
+
+        submitted_pipeline_job = my_mlclient.jobs.create_or_update(fl_pipeline(), experiment_name="example_fl_pipeline")
+        ```
+    
+    param silo_component: A pipeline step that will be run multiple
         times across different silos, as specified by the silo_configs input. In a typical
-        horizontal federated learning context, this component is what will perform actual model
-        training.
-    type silo_component: Component
-    param aggregation_component: A component which receives inputs from the myriad executed silo components,
+        horizontal federated learning context, this step is what will perform model
+        training using siloed subsets of data. Can be either a sub-pipelineJob, or a command component
+    type silo_component: Union[PipelineJob, CommandComponent]
+    param aggregation_component: A pipeline step which receives inputs from the myriad executed silo components,
         and does something with them. In a typical horizontal federated learning context, this component
         will merge the models that were independently trained on each silo's data in a single model.
-    type aggregation_component: Component
+        Can be either a sub-pipelineJob, or a command component
+    type aggregation_component: Union[PipelineJob, CommandComponent]
         param silo_configs: A list of FederatedLearningSilo objects, which contain the necessary data
         to reconfigure components to run on specific computes and datastores, while also targeting
         specific inputs located on the aforementioned datastores.
@@ -56,11 +92,9 @@ def fl_scatter_gather(
     type max_iterations: int
     """
     # Private kwargs:
-    # _pass_iteration_to_components: to be changed
-    # _pass_index_to_silo_components: to be changed
     # _create_default_mappings_if_needed: if true, then try to automatically create i/o mappings if they're unset.
 
-    # Like most nodes, this is just a wrapper around a node builder entity initializer.
+    # Like other DSL nodes, this is just a wrapper around a node builder entity initializer.
     return FLScatterGather(
         silo_configs=silo_configs,
         silo_component=silo_component,
@@ -72,8 +106,6 @@ def fl_scatter_gather(
         silo_to_aggregation_argument_map=silo_to_aggregation_argument_map,
         aggregation_to_silo_argument_map=aggregation_to_silo_argument_map,
         max_iterations=max_iterations,
-        pass_iteration_to_components=_pass_iteration_to_components,
-        pass_index_to_silo_components=_pass_index_to_silo_components,
         create_default_mappings_if_needed=_create_default_mappings_if_needed,
         **kwargs,
     )
