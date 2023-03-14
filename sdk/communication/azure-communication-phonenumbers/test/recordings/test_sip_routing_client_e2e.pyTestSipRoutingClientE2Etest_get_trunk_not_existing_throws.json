@@ -6,7 +6,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "0",
+        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b4 Python/3.11.0 (Windows-10-10.0.22621-SP0)",
         "x-ms-content-sha256": "sanitized",
         "x-ms-date": "sanitized",
@@ -23,7 +23,7 @@
         "Strict-Transport-Security": "max-age=2592000",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "165ms"
+        "X-Processing-Time": "674ms"
       },
       "ResponseBody": {
         "trunks": {
