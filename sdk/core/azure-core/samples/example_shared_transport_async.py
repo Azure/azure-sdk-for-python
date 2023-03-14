@@ -34,7 +34,7 @@ async def shared_transport_async():
         blob_service_client1 = BlobServiceClient.from_connection_string(
             connection_string,
             transport=shared_transport,
-            session_owner=False   # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
+            session_owner=False,  # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
         )
         blob_service_client2 = BlobServiceClient.from_connection_string(
             connection_string, transport=shared_transport, session_owner=False
