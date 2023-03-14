@@ -7,18 +7,17 @@
 from typing import TYPE_CHECKING  # pylint: disable=unused-import
 from ._models import RecordingStateResponse, StartRecordingOptions
 
-if TYPE_CHECKING:
-    from ._generated.operations import CallRecordingOperations
+from ._generated.operations import CallRecordingOperations
 
 class CallRecordingClient(object): # pylint: disable=client-accepts-api-version-keyword
-    """A client for the recording of ongoing call.
+    """A client to interact with recording of ongoing call.
 
     :param ~azure.communication.callautomation._generated.operations.CallRecordingOperations call_recording_client:
-     The REST version of call recording client.
+     The REST version of recording client.
     """
     def __init__(# pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
-            self,
-            call_recording_client # type: CallRecordingOperations
+        self,
+        call_recording_client: CallRecordingOperations
     ) -> None:
         self._call_recording_client = call_recording_client
 

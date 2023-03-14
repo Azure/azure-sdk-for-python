@@ -19,10 +19,9 @@ from ._models import (
     PlaySource, FileSource
 )
 
-from ._shared.models import (
-    CommunicationIdentifier,
-    serialize_identifier
-)
+from ._shared.models import CommunicationIdentifier
+
+from ._communication_identifier_serializer import serialize_identifier
 
 if TYPE_CHECKING:
     from ._generated.operations import CallMediaOperations
@@ -44,7 +43,7 @@ class CallMediaClient(object):
     def __init__(# pylint:disable=missing-client-constructor-parameter-credential
         self,
         call_connection_id: str,
-        call_media_operations,   # type: CallMediaOperations
+        call_media_operations, # type: CallMediaOperations
         **kwargs
     ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)

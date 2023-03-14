@@ -13,7 +13,8 @@ from ._api_versions import DEFAULT_VERSION
 from ._call_connection_client import CallConnectionClient
 from ._call_recording_client import CallRecordingClient
 from ._generated._client import AzureCommunicationCallAutomationService
-from ._shared.models import serialize_phone_identifier, serialize_identifier, CommunicationIdentifier
+from ._shared.models import CommunicationIdentifier
+from ._communication_identifier_serializer import serialize_phone_identifier, serialize_identifier
 from ._shared.utils import get_authentication_policy, parse_connection_str
 from ._generated.models import (
     CreateCallRequest, AnswerCallRequest, RedirectCallRequest, RejectCallRequest)

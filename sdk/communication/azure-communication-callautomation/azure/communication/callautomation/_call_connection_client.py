@@ -16,10 +16,11 @@ from ._models import (
     AddParticipantResponse
 )
 
-from ._shared.models import (
-    CommunicationIdentifier,
-    serialize_identifier,
-    serialize_phone_identifier
+from ._shared.models import CommunicationIdentifier
+
+from ._communication_identifier_serializer import (
+    serialize_phone_identifier,
+    serialize_identifier
 )
 
 from ._generated.models import (
@@ -36,12 +37,21 @@ if TYPE_CHECKING:
 
 
 class CallConnectionClient(object): # pylint: disable=client-accepts-api-version-keyword
+    """A client to interact with media of ongoing call.
+
+    :param str call_connection_id:
+     Call Connection Id of ongoing call.
+    :param ~azure.communication.callautomation._generated.operations.CallConnectionOperations call_connection_client:
+     The REST version of call connection client.
+    :param ~azure.communication.callautomation._generated.operations.CallMediaOperations call_media_operations:
+     The REST version of media client.
+    """
     def __init__(# pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self,
         call_connection_id: str,
         call_connection_client,  # type: CallConnectionOperations
         call_media_operations,  # type: CallMediaOperations
-    ):
+    ) -> None:
 
         self.call_connection_id = call_connection_id
         self._call_connection_client = call_connection_client

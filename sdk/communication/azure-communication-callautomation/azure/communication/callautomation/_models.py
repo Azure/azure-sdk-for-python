@@ -27,6 +27,9 @@ from ._generated.models import (
 from ._shared.models import (
     CommunicationIdentifier,
     PhoneNumberIdentifier,
+)
+
+from ._communication_identifier_serializer import (
     deserialize_phone_identifier,
     deserialize_identifier,
     serialize_identifier

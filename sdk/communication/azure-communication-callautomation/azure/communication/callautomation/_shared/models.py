@@ -4,19 +4,17 @@
 # ------------------------------------
 # pylint: skip-file
 
-from enum import Enum
+from enum import Enum, EnumMeta
+import re
 from six import with_metaclass
-from typing import Mapping, Optional, Union, Dict, Any
+from typing import Mapping, Optional, Union, Any
 try:
     from typing import Protocol, TypedDict
 except ImportError:
     from typing_extensions import Protocol, TypedDict
 
-from .._generated.models import (
-    CommunicationIdentifierModel,
-    PhoneNumberIdentifierModel
-)
 from azure.core import CaseInsensitiveEnumMeta
+
 
 class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Communication Identifier Kind."""
@@ -26,12 +24,14 @@ class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, E
     PHONE_NUMBER = "phone_number"
     MICROSOFT_TEAMS_USER = "microsoft_teams_user"
 
+
 class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The cloud environment that the identifier belongs to"""
 
     PUBLIC = "PUBLIC"
     DOD = "DOD"
     GCCH = "GCCH"
+
 
 class CommunicationIdentifier(Protocol):
     """Communication Identifier.
@@ -50,6 +50,7 @@ CommunicationUserProperties = TypedDict(
     'CommunicationUserProperties',
     id=str
 )
+
 
 class CommunicationUserIdentifier(object):
     """Represents a user in Azure Communication Service.
@@ -73,10 +74,12 @@ class CommunicationUserIdentifier(object):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
+
 PhoneNumberProperties = TypedDict(
     'PhoneNumberProperties',
     value=str
 )
+
 
 class PhoneNumberIdentifier(object):
     """Represents a phone number.
@@ -99,11 +102,13 @@ class PhoneNumberIdentifier(object):
         if self.raw_id is None:
             self.raw_id = _phone_number_raw_id(self)
 
+
 def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
     value = identifier.properties['value']
     # We just assume correct E.164 format here because
     # validation should only happen server-side, not client-side.
     return f'4:{value}'
+
 
 class UnknownIdentifier(object):
     """Represents an identifier of an unknown type.
@@ -127,12 +132,14 @@ class UnknownIdentifier(object):
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
+
 MicrosoftTeamsUserProperties = TypedDict(
     'MicrosoftTeamsUserProperties',
     user_id=str,
     is_anonymous=bool,
     cloud=Union[CommunicationCloudEnvironment, str]
 )
+
 
 class MicrosoftTeamsUserIdentifier(object):
     """Represents an identifier for a Microsoft Teams user.
@@ -166,6 +173,7 @@ class MicrosoftTeamsUserIdentifier(object):
         if self.raw_id is None:
             self.raw_id = _microsoft_teams_user_raw_id(self)
 
+
 def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
     user_id = identifier.properties['user_id']
     if identifier.properties['is_anonymous']:
@@ -178,6 +186,7 @@ def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> st
     elif cloud == CommunicationCloudEnvironment.PUBLIC:
         return '8:orgid:{}'.format(user_id)
     return '8:orgid:{}'.format(user_id)
+
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     """
@@ -228,77 +237,3 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     return UnknownIdentifier(
         identifier=raw_id
     )
-
-def serialize_identifier(identifier):
-    # type: (CommunicationIdentifier) -> Dict[str, Any]
-    """Serialize the Communication identifier into CommunicationIdentifierModel
-
-    :param identifier: Identifier object
-    :type identifier: CommunicationIdentifier
-    :return: CommunicationIdentifierModel
-    """
-    try:
-        request_model = {'raw_id': identifier.raw_id}
-
-        if identifier.kind and identifier.kind != CommunicationIdentifierKind.UNKNOWN:
-            request_model[identifier.kind] = dict(identifier.properties)
-        return request_model
-    except AttributeError:
-        raise TypeError("Unsupported identifier type " +
-                        identifier.__class__.__name__)
-
-def serialize_phone_identifier(identifier):
-    # type: (PhoneNumberIdentifier) -> PhoneNumberIdentifierModel
-    """Serialize the Communication identifier into CommunicationIdentifierModel
-
-    :param identifier: PhoneNumberIdentifier
-    :type identifier: PhoneNumberIdentifier
-    :return: PhoneNumberIdentifierModel
-    """
-    try:
-        if identifier.kind and identifier.kind == CommunicationIdentifierKind.PHONE_NUMBER:
-            request_model = PhoneNumberIdentifierModel(
-                value=identifier.properties['value'])
-            return request_model
-        else:
-            raise AttributeError
-    except AttributeError:
-        raise TypeError("Unsupported identifier type " +
-                        identifier.__class__.__name__)
-
-def deserialize_identifier(identifier_model):
-    # type: (CommunicationIdentifierModel) -> CommunicationIdentifier
-    """
-    Deserialize the CommunicationIdentifierModel into Communication Identifier
-
-    :param identifier_model: CommunicationIdentifierModel
-    :type identifier_model: CommunicationIdentifierModel
-    :return: CommunicationIdentifier
-    """
-    raw_id = identifier_model.raw_id
-
-    if identifier_model.communication_user:
-        return CommunicationUserIdentifier(raw_id, raw_id=raw_id)
-    if identifier_model.phone_number:
-        return PhoneNumberIdentifier(identifier_model.phone_number.value, raw_id=raw_id)
-    if identifier_model.microsoft_teams_user:
-        return MicrosoftTeamsUserIdentifier(
-            raw_id=raw_id,
-            user_id=identifier_model.microsoft_teams_user.user_id,
-            is_anonymous=identifier_model.microsoft_teams_user.is_anonymous,
-            cloud=identifier_model.microsoft_teams_user.cloud
-        )
-    return UnknownIdentifier(raw_id)
-
-def deserialize_phone_identifier(identifier_model) -> Union[PhoneNumberIdentifier, None]:
-    """
-    Deserialize the PhoneNumberIdentifierModel into PhoneNumberIdentifier
-
-    :param identifier_model: PhoneNumberIdentifierModel
-    :type identifier_model: PhoneNumberIdentifierModel
-    :return: PhoneNumberIdentifier
-    """
-    if identifier_model:
-        return PhoneNumberIdentifier(identifier_model.value)
-    else:
-        return None

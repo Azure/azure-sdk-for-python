@@ -21,11 +21,7 @@ from ._generated.models import (
     CallParticipant
 )
 
-
-from ._shared.models import (
-    deserialize_identifier
-)
-
+from ._communication_identifier_serializer import deserialize_identifier
 
 class AddParticipantSucceeded(AddParticipantSucceededRest):
     """Event sent when the participant was successfully added to the call.
