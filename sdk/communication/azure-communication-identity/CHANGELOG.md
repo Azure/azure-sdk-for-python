@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0-beta.1 (Unreleased)
+## 2.0.0b1 (Unreleased)
 
 ### Features Added
 - Added support for a new communication identifier `MicrosoftBotIdentifier`.

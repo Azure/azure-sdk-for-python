@@ -231,7 +231,7 @@ class MicrosoftBotIdentifier(object):
     :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
     :vartype kind: str or CommunicationIdentifierKind
-    :ivar Mapping properties: The properties of the identifier.
+    :ivar MicrosoftBotProperties: The properties of the identifier.
      The keys in this mapping include:
         - `bot_id`(str): The id of the Microsoft bot.
         - `is_global` (bool): Set this to true if the bot is global.

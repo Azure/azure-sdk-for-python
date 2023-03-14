@@ -575,6 +575,18 @@ class IdentifierRawIdTest(unittest.TestCase):
             identifier='48:ag08-global:01234567-89ab-cdef-0123-456789abcdef'
         )
 
+def test_default_cloud_for_bot_identifier_is_public():
+    bot = MicrosoftBotIdentifier(
+        bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130',
+        is_global=True)
+
+    assert bot.properties['cloud'] == CommunicationCloudEnvironment.PUBLIC
+
+def test_default_is_global_for_bot_identifier_is_false():
+    bot = MicrosoftBotIdentifier(bot_id='45ab2481-1c1c-4005-be24-0ffb879b1130')
+
+    assert bot.properties['is_global'] is False
+
 
 def _assert_raw_id(identifier, want):
     # type: (CommunicationIdentifier, str) -> None
