@@ -7,10 +7,9 @@ from typing import Callable, Dict, List
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
-
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._internal.entities import InternalComponent
+from devtools_testutils import AzureRecordedTestCase
 
 from .._utils import PARAMETERS_TO_TEST
 
@@ -85,8 +84,6 @@ class TestComponent(AzureRecordedTestCase):
         randstr: Callable[[str], str],
         yaml_path: str,
     ) -> None:
-        if "ae365" not in yaml_path:
-            return
         omit_fields = ["id", "creation_context", "code", "name"]
         component_name = randstr("component_name")
 
@@ -108,6 +105,9 @@ class TestComponent(AzureRecordedTestCase):
             if expected_dict["type"] == "DataTransferComponent" and "datatransfer" not in expected_dict:
                 expected_dict["datatransfer"] = {"allow_overwrite": "True"}
 
+            # skip environment in arm string
+            if "environment" in loaded_dict and isinstance(loaded_dict["environment"], str):
+                omit_fields.append("environment")
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)
 

@@ -27,7 +27,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
-    V7_4_PREVIEW_1 = "7.4-preview.1"
+    V7_4 = "7.4"
     V7_3 = "7.3"
     V7_2 = "7.2"
     V7_1 = "7.1"
@@ -35,7 +35,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2016_10_01 = "2016-10-01"
 
 
-DEFAULT_VERSION = ApiVersion.V7_4_PREVIEW_1
+DEFAULT_VERSION = ApiVersion.V7_4
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False

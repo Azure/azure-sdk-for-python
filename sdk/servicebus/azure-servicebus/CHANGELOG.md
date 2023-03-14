@@ -1,15 +1,20 @@
 # Release History
 
-## 7.8.3 (Unreleased)
+## 7.8.4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
-- Fixed a bug where asynchronous method to add distributed tracing attributes was not being awaited (Issue #28738).
 
 ### Other Changes
+
+## 7.8.3 (2023-03-09)
+
+### Bugs Fixed
+
+- Fixed a bug where asynchronous method to add distributed tracing attributes was not being awaited (Issue #28738).
 
 ## 7.8.2 (2023-01-10)
 

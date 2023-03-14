@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
 from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -24,8 +25,10 @@ from .registry_support_classes import RegistryRegionDetails
 
 CONTAINER_REGISTRY = "container_registry"
 REPLICATION_LOCATIONS = "replication_locations"
+INTELLECTUAL_PROPERTY = "intellectual_property"
 
 
+@experimental
 class Registry(Resource):
     def __init__(
         self,
@@ -189,6 +192,11 @@ class Registry(Resource):
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
+        if INTELLECTUAL_PROPERTY in input:
+            intellectual_property = input.pop(INTELLECTUAL_PROPERTY)
+            publisher = intellectual_property.get("publisher", None)
+            if publisher:
+                input["intellectual_property_publisher"] = publisher
 
     def _to_rest_object(self) -> RestRegistry:
         """Build current parameterized schedule instance to a registry object before submission.
