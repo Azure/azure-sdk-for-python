@@ -985,7 +985,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         task = client.task.get(batch_job.id, task_param.id)
         assert isinstance(task,  models.BatchTask)
         assert task.container_settings.image_name ==  'windows_container:latest'
-        assert task.container_settings.registry.user_name ==  'username'
+        assert task.container_settings.registry.username ==  'username'
 
         # Test Create Task with Run-As-User
         task_param = models.BatchTask(
@@ -996,7 +996,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         client.task.add(batch_job.id, task_param)
         task = client.task.get(batch_job.id, task_param.id)
         assert isinstance(task,  models.BatchTask)
-        assert task.user_identity.user_name ==  'task-user'
+        assert task.user_identity.username ==  'task-user'
 
         # Test Add Task Collection
         tasks = []
