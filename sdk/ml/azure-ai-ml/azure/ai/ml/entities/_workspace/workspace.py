@@ -13,14 +13,14 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import FeatureStoreSetti
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .customer_managed_key import CustomerManagedKey
-from .feature_store_settings import FeatureStoreSettings
+from .feature_store_settings import _FeatureStoreSettings
 from .networking import ManagedNetwork
 
 
@@ -29,7 +29,6 @@ class Workspace(Resource):
         self,
         *,
         name: str,
-        kind: Optional[str] = "default",
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -46,7 +45,6 @@ class Workspace(Resource):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
-        feature_store_settings: Optional[FeatureStoreSettings] = None,
         **kwargs,
     ):
 
@@ -54,8 +52,6 @@ class Workspace(Resource):
 
         :param name: Name of the workspace.
         :type name: str
-        :param kind: Kind of the workspace. Default value is 'default'
-        :type kind: str
         :param description: Description of the workspace.
         :type description: str
         :param tags: Tags of the workspace.
@@ -97,16 +93,15 @@ class Workspace(Resource):
         :type primary_user_assigned_identity: str
         :param managed_network: workspace's Managed Network configuration
         :type managed_network: ManagedNetwork
-        :param feature_store_settings: Settings for feature store type workspace.
-        :type feature_store_settings: FeatureStoreSettings
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
+        self._kind = kwargs.pop("kind", "default")
+        self._feature_store_settings: Optional[_FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
-        self.kind = kind
         self.display_name = display_name
         self.location = location
         self.resource_group = resource_group
@@ -120,7 +115,6 @@ class Workspace(Resource):
         self.public_network_access = public_network_access
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
-        self.feature_store_settings = feature_store_settings
         self.managed_network = managed_network
 
     @property
@@ -212,8 +206,12 @@ class Workspace(Resource):
                 rest_obj.identity
             )
         feature_store_settings = None
-        if rest_obj.feature_store_settings and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings):
-            feature_store_settings = FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
+        if (
+            is_private_preview_enabled()
+            and rest_obj.feature_store_settings
+            and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings)
+        ):
+            feature_store_settings = _FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
                 rest_obj.feature_store_settings
             )
         return Workspace(
@@ -243,8 +241,8 @@ class Workspace(Resource):
 
     def _to_rest_object(self) -> RestWorkspace:
         feature_store_Settings = None
-        if self.feature_store_settings:
-            feature_store_Settings = self.feature_store_settings._to_rest_object()  # pylint: disable=protected-access
+        if is_private_preview_enabled() and self._feature_store_settings:
+            feature_store_Settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
 
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
@@ -253,7 +251,7 @@ class Workspace(Resource):
             location=self.location,
             tags=self.tags,
             description=self.description,
-            kind=self.kind,
+            kind=self._kind,
             friendly_name=self.display_name,
             key_vault=self.key_vault,
             application_insights=self.application_insights,
@@ -264,8 +262,8 @@ class Workspace(Resource):
             image_build_compute=self.image_build_compute,
             public_network_access=self.public_network_access,
             primary_user_assigned_identity=self.primary_user_assigned_identity,
-            feature_store_settings=feature_store_Settings,
             managed_network=self.managed_network._to_rest_object()  # pylint: disable=protected-access
             if self.managed_network
             else None,  # pylint: disable=protected-access
+            feature_store_Settings=feature_store_Settings,
         )

@@ -18,7 +18,7 @@ from azure.ai.ml import (
     spark,
 )
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration, QueueSettings
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import (
     JobService,
@@ -680,6 +680,26 @@ class TestCommandFunction:
         rest_dict = command_node._to_rest_object()
         assert rest_dict["resources"] == {"instance_type": "STANDARD_D2"}
 
+    def test_queue_settings(self, test_command_params):
+        expected_queue_settings = {"job_tier": "Standard", "priority": 2}
+        test_command_params.update(
+            {
+                "queue_settings": QueueSettings(job_tier="standard", priority="medium"),
+            }
+        )
+        command_node = command(**test_command_params)
+        rest_dict = command_node._to_rest_object()
+        assert rest_dict["queue_settings"] == expected_queue_settings
+
+        test_command_params.update(
+            {
+                "queue_settings": dict(job_tier="standard", priority="medium"),
+            }
+        )
+        command_node = command(**test_command_params)
+        rest_dict = command_node._to_rest_object()
+        assert rest_dict["queue_settings"] == expected_queue_settings
+
     def test_to_component_input(self):
         # test literal input
         literal_input_2_expected_type = {
@@ -735,7 +755,7 @@ class TestCommandFunction:
         )
         result = node._validate()
         message = "Should not specify min or max executors when dynamic allocation is disabled."
-        assert "conf" in result.error_messages and message == result.error_messages["conf"]
+        assert "*" in result.error_messages and message == result.error_messages["*"]
 
     def test_executor_instances_is_mandatory_when_dynamic_allocation_disabled(self):
         node = spark(
@@ -752,7 +772,7 @@ class TestCommandFunction:
             "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
             "spark.executor.instances are mandatory fields."
         )
-        assert "conf" in result.error_messages and message == result.error_messages["conf"]
+        assert "*" in result.error_messages and message == result.error_messages["*"]
 
     def test_executor_instances_is_specified_as_min_executor_if_unset(self):
         node = spark(
@@ -789,7 +809,7 @@ class TestCommandFunction:
             "Executor instances must be a valid non-negative integer and must be between "
             "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
         )
-        assert "conf" in result.error_messages and message == result.error_messages["conf"]
+        assert "*" in result.error_messages and message == result.error_messages["*"]
 
     def test_spark_job_with_additional_conf(self):
         node = spark(

@@ -6,6 +6,15 @@ stages:
       ServiceDirectory: eventhub
       TestTimeoutInMinutes: 240
       BuildTargetingString: azure-eventhub*
+      SupportedClouds: 'Public,UsGov,China'
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
+          Location: 'chinanorth2'
       MatrixReplace:
         - TestSamples=.*/true
       MatrixFilters:
@@ -14,15 +23,9 @@ stages:
         AZURE_STORAGE_DATA_LAKE_ENABLED_CONN_STR: $(python-eh-livetest-event-hub-storage-data-lake-enabled-conn-str)
         IOTHUB_CONNECTION_STR: $(python-eh-livetest-event-hub-iothub-connection-str)
         IOTHUB_DEVICE: $(python-eh-livetest-event-hub-iothub-device)
-        AZURE_CLIENT_ID: $(python-eh-livetest-event-hub-aad-client-id)
-        AZURE_TENANT_ID: $(python-eh-livetest-event-hub-aad-tenant-id)
-        AZURE_CLIENT_SECRET: $(python-eh-livetest-event-hub-aad-secret)
-        AZURE_SUBSCRIPTION_ID: $(python-eh-livetest-event-hub-subscription-id)
+        AZURE_CLIENT_ID: $(EVENTHUB_CLIENT_ID)
+        AZURE_TENANT_ID: $(EVENTHUB_TENANT_ID)
+        AZURE_CLIENT_SECRET: $(EVENTHUB_CLIENT_SECRET)
+        AZURE_SUBSCRIPTION_ID: $(EVENTHUB_SUBSCRIPTION_ID)
         AZURE_COSMOS_CONN_STR: $(python-eventhub-livetest-cosmos-conn-str)
       Clouds: 'Public,Canary'
-      CloudConfig:
-        Public:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-        Canary:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          Location: 'eastus2euap'

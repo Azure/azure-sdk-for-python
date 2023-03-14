@@ -6,6 +6,7 @@ from typing import Dict, Optional, Type, Union
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job_limits import SweepJobLimits
+from ..queue_settings import QueueSettings
 from .early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -70,11 +71,13 @@ class ParameterizedSweep:
                 ],
             ]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination
         self._limits = limits
         self.search_space = search_space
+        self.queue_settings = queue_settings
 
         if isinstance(objective, Dict):
             self.objective = Objective(**objective)
