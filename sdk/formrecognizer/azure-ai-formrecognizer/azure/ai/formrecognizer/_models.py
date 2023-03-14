@@ -161,6 +161,20 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_country_region
     return None
 
+
+class AnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Document analysis features to enable."""
+
+    #: Perform OCR at a higher resolution to handle documents with fine print.
+    OCR_HIGH_RESOLUTION = "ocr.highResolution"
+    #: Enable the detection of mathematical expressions the document.
+    OCR_FORMULA = "ocr.formula"
+    #: Enable the recognition of various font styles.
+    OCR_FONT = "ocr.font"
+    #: Enable extraction of additional fields via the queryFields query parameter.
+    QUERY_FIELDS_PREMIUM = "queryFields.premium"
+
+
 class ModelBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used when building custom models.
 
