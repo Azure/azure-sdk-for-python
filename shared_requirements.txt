@@ -38,10 +38,7 @@ fixedint
 opentelemetry-sdk
 azure-nspkg
 azure-ai-nspkg
-#override azure-mgmt-nginx typing-extensions>=4.3.0; python_version<'3.8.0'
-#override azure-mgmt-nginx msrest>=0.7.1
 azure-cognitiveservices-nspkg
-#override azure-mgmt-nginx azure-mgmt-core>=1.3.2,<2.0.0
 azure-mgmt-nspkg
 azure-mixedreality-authentication
 azure-schemaregistry
