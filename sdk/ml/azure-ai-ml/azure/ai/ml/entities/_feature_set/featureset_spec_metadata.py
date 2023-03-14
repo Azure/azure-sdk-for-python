@@ -5,11 +5,12 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._schema._feature_set.featureset_spec_schema import FeaturesetSpecSchema
+from azure.ai.ml._schema._feature_set.featureset_spec_metadata_schema import FeaturesetSpecMetadataSchema
+from azure.ai.ml._schema._feature_set.featureset_spec_properties_schema import FeaturesetSpecPropertiesSchema
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._util import load_from_dict
@@ -18,17 +19,17 @@ from azure.ai.ml.entities._feature_store_entity.data_column import _DataColumn
 from .feature import _Feature
 from .source_metadata import SourceMetadata
 from .delay_metadata import DelayMetadata
-from .feature_transformation_code import FeatureTransformationCode
+from .feature_transformation_code_metadata import FeatureTransformationCodeMetadata
 
 
-class FeaturesetSpec(object):
-    """FeaturesetSpec for feature-set."""
+class FeaturesetSpecMetadata(object):
+    """FeaturesetSpecMetadata for feature-set."""
 
     def __init__(
         self,
         *,
         source: SourceMetadata,
-        feature_transformation_code: Optional[FeatureTransformationCode] = None,
+        feature_transformation_code: Optional[FeatureTransformationCodeMetadata] = None,
         features: List[_Feature],
         index_columns: List[_DataColumn],
         source_lookback: Optional[DelayMetadata] = None,
@@ -47,14 +48,14 @@ class FeaturesetSpec(object):
         cls,
         yaml_path: Union[PathLike, str],
         **kwargs,
-    ) -> "FeaturesetSpec":
-        """Construct an FeaturesetSpec object from yaml file.
+    ) -> "FeaturesetSpecMetadata":
+        """Construct an FeaturesetSpecMetadata object from yaml file.
 
         :param yaml_path: Path to a local file as the source.
         :type PathLike | str
 
-        :return: Constructed FeaturesetSpec object.
-        :rtype: FeaturesetSpec
+        :return: Constructed FeaturesetSpecMetadata object.
+        :rtype: FeaturesetSpecMetadata
         """
         yaml_dict = load_yaml(yaml_path)
         return cls._load(yaml_data=yaml_dict, yaml_path=yaml_path, **kwargs)
@@ -65,12 +66,12 @@ class FeaturesetSpec(object):
         yaml_data: Optional[Dict],
         yaml_path: Optional[Union[PathLike, str]],
         **kwargs,
-    ) -> "FeaturesetSpec":
+    ) -> "FeaturesetSpecMetadata":
         yaml_data = yaml_data or {}
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
         }
-        return load_from_dict(FeaturesetSpecSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs)
+        return load_from_dict(FeaturesetSpecMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs)
 
     def _to_dict(self) -> Dict:
-        return FeaturesetSpecSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)
+        return FeaturesetSpecPropertiesSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)

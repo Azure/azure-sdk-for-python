@@ -29,6 +29,7 @@
 - Error message improvement when a local path fails to match with data asset type.
 - Error message improvement when an asset does not exist in a registry
 - Fix an issue when submit spark pipeline job with referring a registered component
+- Fix an issue that prevented Job.download from downloading the output of a BatchJob
 
 ### Other Changes
 

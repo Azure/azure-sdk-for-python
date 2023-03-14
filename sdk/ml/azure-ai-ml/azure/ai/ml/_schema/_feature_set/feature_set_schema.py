@@ -21,5 +21,4 @@ class FeatureSetSchema(YamlFileSchema):
     stage = fields.Str()
     description = fields.Str()
     tags = fields.Dict(keys=fields.Str(), values=fields.Str())
-    properties = fields.Dict(keys=fields.Str(), values=fields.Str())
     materialization_settings = NestedField(MaterializationSettingsSchema)

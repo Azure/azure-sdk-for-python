@@ -14,7 +14,12 @@ and other secrets
 ([azure-keyvault-certificates](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates)) -
 create, manage, and deploy public and private SSL/TLS certificates
 
-[Source code][library_src] | [Package (PyPI)][pypi_package_administration] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][administration_samples]
+[Source code][library_src]
+| [Package (PyPI)][pypi_package_administration]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-keyvault/)
+| [API reference documentation][reference_docs]
+| [Product documentation][keyvault_docs]
+| [Samples][administration_samples]
 
 ## _Disclaimer_
 
