@@ -302,7 +302,11 @@ class DataOperations(_ScopeDependentOperations):
 
             show_progress = kwargs.pop("show_progress", True)
             data, _ = _check_and_upload_path(
-                artifact=data, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.DATA, show_progress=show_progress
+                artifact=data,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.DATA,
+                show_progress=show_progress,
             )
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version

@@ -94,7 +94,11 @@ class CodeOperations(_ScopeDependentOperations):
                 )
             show_progress = kwargs.pop("show_progress", True)
             code, _ = _check_and_upload_path(
-                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE, show_progress=show_progress
+                artifact=code,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.CODE,
+                show_progress=show_progress,
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,

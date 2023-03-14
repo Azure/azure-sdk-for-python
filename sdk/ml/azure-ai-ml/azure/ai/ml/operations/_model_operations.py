@@ -171,7 +171,11 @@ class ModelOperations(_ScopeDependentOperations):
 
             show_progress = kwargs.pop("show_progress", True)
             model, indicator_file = _check_and_upload_path(
-                artifact=model, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.MODEL, show_progress=show_progress
+                artifact=model,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.MODEL,
+                show_progress=show_progress,
             )
 
             model.path = resolve_short_datastore_url(model.path, self._operation_scope)

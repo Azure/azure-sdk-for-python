@@ -256,7 +256,9 @@ class OperationOrchestrator(object):
         try:
             self._validate_datastore_name(code_asset.path)
             if register_asset:
-                code_asset = self._code_assets.create_or_update(code_asset, show_progress=self._operation_config.show_progress)
+                code_asset = self._code_assets.create_or_update(
+                    code_asset, show_progress=self._operation_config.show_progress
+                )
                 return code_asset.id
             uploaded_code_asset, _ = _check_and_upload_path(
                 artifact=code_asset,
@@ -286,7 +288,9 @@ class OperationOrchestrator(object):
         if register_asset:
             if environment.id:
                 return environment.id
-            env_response = self._environments.create_or_update(environment, show_progress=self._operation_config.show_progress)
+            env_response = self._environments.create_or_update(
+                environment, show_progress=self._operation_config.show_progress
+            )
             return env_response.id
         environment = _check_and_upload_env_build_context(
             environment=environment, operations=self._environments, show_progress=self._operation_config.show_progress
