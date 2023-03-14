@@ -156,7 +156,7 @@ class UnknownIdentifier(object):
         self.properties = {}
 
     def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+        return self.raw_id == other.raw_id
 
 
 MicrosoftTeamsUserProperties = TypedDict(
