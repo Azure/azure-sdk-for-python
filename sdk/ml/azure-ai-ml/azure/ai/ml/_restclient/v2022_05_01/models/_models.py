@@ -348,7 +348,6 @@ class AKS(Compute, AKSSchema):
         super(AKS, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'AKS'  # type: str
-        self.compute_type = 'AKS'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -483,7 +482,6 @@ class AksComputeSecrets(ComputeSecrets, AksComputeSecretsProperties):
         self.user_kube_config = kwargs.get('user_kube_config', None)
         self.admin_kube_config = kwargs.get('admin_kube_config', None)
         self.image_pull_secret_name = kwargs.get('image_pull_secret_name', None)
-        self.compute_type = 'AKS'  # type: str
         self.compute_type = 'AKS'  # type: str
 
 
@@ -725,7 +723,6 @@ class AmlCompute(Compute, AmlComputeSchema):
         """
         super(AmlCompute, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
-        self.compute_type = 'AmlCompute'  # type: str
         self.compute_type = 'AmlCompute'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -4014,7 +4011,6 @@ class ComputeInstance(Compute, ComputeInstanceSchema):
         super(ComputeInstance, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'ComputeInstance'  # type: str
-        self.compute_type = 'ComputeInstance'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -4709,10 +4705,6 @@ class ComputeResource(Resource, ComputeResourceSchema):
         self.name = None
         self.type = None
         self.system_data = None
-        self.identity = kwargs.get('identity', None)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
 
 
 class ComputeSchedules(msrest.serialization.Model):
@@ -5101,7 +5093,6 @@ class CustomModelJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'custom_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'custom_model'  # type: str
 
 
 class JobOutput(msrest.serialization.Model):
@@ -5191,7 +5182,6 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'custom_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'custom_model'  # type: str
 
 
 class DatabricksSchema(msrest.serialization.Model):
@@ -5297,7 +5287,6 @@ class Databricks(Compute, DatabricksSchema):
         super(Databricks, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'Databricks'  # type: str
-        self.compute_type = 'Databricks'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -5364,7 +5353,6 @@ class DatabricksComputeSecrets(ComputeSecrets, DatabricksComputeSecretsPropertie
         """
         super(DatabricksComputeSecrets, self).__init__(**kwargs)
         self.databricks_access_token = kwargs.get('databricks_access_token', None)
-        self.compute_type = 'Databricks'  # type: str
         self.compute_type = 'Databricks'  # type: str
 
 
@@ -5721,7 +5709,6 @@ class DataLakeAnalytics(Compute, DataLakeAnalyticsSchema):
         """
         super(DataLakeAnalytics, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
-        self.compute_type = 'DataLakeAnalytics'  # type: str
         self.compute_type = 'DataLakeAnalytics'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -7398,7 +7385,6 @@ class HDInsight(Compute, HDInsightSchema):
         super(HDInsight, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'HDInsight'  # type: str
-        self.compute_type = 'HDInsight'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -7841,7 +7827,6 @@ class Kubernetes(Compute, KubernetesSchema):
         """
         super(Kubernetes, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
-        self.compute_type = 'Kubernetes'  # type: str
         self.compute_type = 'Kubernetes'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -8853,7 +8838,6 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'mlflow_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'mlflow_model'  # type: str
 
 
 class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
@@ -8901,7 +8885,6 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'mlflow_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'mlflow_model'  # type: str
 
 
 class MLTableData(DataVersionBaseDetails):
@@ -9019,7 +9002,6 @@ class MLTableJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'mltable'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'mltable'  # type: str
 
 
 class MLTableJobOutput(JobOutput, AssetJobOutput):
@@ -9067,7 +9049,6 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'mltable'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'mltable'  # type: str
 
 
 class ModelContainerData(Resource):
@@ -13357,7 +13338,6 @@ class TritonModelJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'triton_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'triton_model'  # type: str
 
 
 class TritonModelJobOutput(JobOutput, AssetJobOutput):
@@ -13405,7 +13385,6 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'triton_model'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'triton_model'  # type: str
 
 
 class TruncationSelectionPolicy(EarlyTerminationPolicy):
@@ -13650,7 +13629,6 @@ class UriFileJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'uri_file'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'uri_file'  # type: str
 
 
 class UriFileJobOutput(JobOutput, AssetJobOutput):
@@ -13698,7 +13676,6 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'uri_file'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'uri_file'  # type: str
 
 
 class UriFolderDataVersion(DataVersionBaseDetails):
@@ -13810,7 +13787,6 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         self.uri = kwargs['uri']
         self.job_input_type = 'uri_folder'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_input_type = 'uri_folder'  # type: str
 
 
 class UriFolderJobOutput(JobOutput, AssetJobOutput):
@@ -13858,7 +13834,6 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
         self.uri = kwargs.get('uri', None)
         self.job_output_type = 'uri_folder'  # type: str
         self.description = kwargs.get('description', None)
-        self.job_output_type = 'uri_folder'  # type: str
 
 
 class Usage(msrest.serialization.Model):
@@ -14218,7 +14193,6 @@ class VirtualMachine(Compute, VirtualMachineSchema):
         super(VirtualMachine, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
         self.compute_type = 'VirtualMachine'  # type: str
-        self.compute_type = 'VirtualMachine'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = kwargs.get('description', None)
@@ -14375,7 +14349,6 @@ class VirtualMachineSecrets(ComputeSecrets, VirtualMachineSecretsSchema):
         """
         super(VirtualMachineSecrets, self).__init__(**kwargs)
         self.administrator_account = kwargs.get('administrator_account', None)
-        self.compute_type = 'VirtualMachine'  # type: str
         self.compute_type = 'VirtualMachine'  # type: str
 
 

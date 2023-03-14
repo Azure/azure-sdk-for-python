@@ -334,7 +334,6 @@ class AksComputeSecrets(ComputeSecrets, AksComputeSecretsProperties):
         self.admin_kube_config = admin_kube_config
         self.image_pull_secret_name = image_pull_secret_name
         self.compute_type = 'AKS'  # type: str
-        self.compute_type = 'AKS'  # type: str
 
 
 class AksNetworkingConfiguration(msrest.serialization.Model):
@@ -1562,11 +1561,6 @@ class ComputeResource(Resource, Components1D3SwueSchemasComputeresourceAllof1):
         self.id = None
         self.name = None
         self.type = None
-        self.identity = identity
-        self.location = location
-        self.tags = tags
-        self.sku = sku
-        self.system_data = None
 
 
 class ComputeSchedules(msrest.serialization.Model):
@@ -1953,7 +1947,6 @@ class DatabricksComputeSecrets(ComputeSecrets, DatabricksComputeSecretsPropertie
         """
         super(DatabricksComputeSecrets, self).__init__(databricks_access_token=databricks_access_token, **kwargs)
         self.databricks_access_token = databricks_access_token
-        self.compute_type = 'Databricks'  # type: str
         self.compute_type = 'Databricks'  # type: str
 
 
@@ -3305,7 +3298,6 @@ class Kubernetes(Compute, KubernetesSchema):
         """
         super(Kubernetes, self).__init__(compute_location=compute_location, description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
-        self.compute_type = 'Kubernetes'  # type: str
         self.compute_type = 'Kubernetes'  # type: str
         self.compute_location = compute_location
         self.provisioning_state = None

@@ -69,10 +69,8 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             'data_container': '1.5.0',
             'data_references': '2021-10-01-dataplanepreview',
             'data_version': '1.5.0',
-            'dataset_containers': '2021-10-01',
             'dataset_controller_v2': '1.5.0',
             'dataset_v2': '1.5.0',
-            'dataset_versions': '2021-10-01',
             'datasets_v1': '1.5.0',
             'delete': 'v1.0',
             'events': 'v1.0',
@@ -122,14 +120,15 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
            * v1.0: :mod:`registry_discovery.models<azure.mgmt.machinelearningservices.registry_discovery.models>`
            * v1.0: :mod:`runhistory.models<azure.mgmt.machinelearningservices.runhistory.models>`
            * 2020-09-01-dataplanepreview: :mod:`v2020_09_01_dataplanepreview.models<azure.mgmt.machinelearningservices.v2020_09_01_dataplanepreview.models>`
-           * 2021-10-01: :mod:`v2021_10_01.models<azure.mgmt.machinelearningservices.v2021_10_01.models>`
            * 2021-10-01-dataplanepreview: :mod:`v2021_10_01_dataplanepreview.models<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.models>`
            * 2022-01-01-preview: :mod:`v2022_01_01_preview.models<azure.mgmt.machinelearningservices.v2022_01_01_preview.models>`
            * 2022-02-01-preview: :mod:`v2022_02_01_preview.models<azure.mgmt.machinelearningservices.v2022_02_01_preview.models>`
            * 2022-05-01: :mod:`v2022_05_01.models<azure.mgmt.machinelearningservices.v2022_05_01.models>`
-           * 2022-06-01-preview: :mod:`v2022_06_01_preview.models<azure.mgmt.machinelearningservices.v2022_06_01_preview.models>`
            * 2022-10-01: :mod:`v2022_10_01.models<azure.mgmt.machinelearningservices.v2022_10_01.models>`
            * 2022-10-01-preview: :mod:`v2022_10_01_preview.models<azure.mgmt.machinelearningservices.v2022_10_01_preview.models>`
+           * 2022-12-01-preview: :mod:`v2022_12_01_preview.models<azure.mgmt.machinelearningservices.v2022_12_01_preview.models>`
+           * 2023-02-01-preview: :mod:`v2023_02_01_preview.models<azure.mgmt.machinelearningservices.v2023_02_01_preview.models>`
+           * 2023-04-01-preview: :mod:`v2023_04_01_preview.models<azure.mgmt.machinelearningservices.v2023_04_01_preview.models>`
         """
         if api_version == '1.5.0':
             from .dataset_dataplane import models
@@ -146,9 +145,6 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         elif api_version == '2020-09-01-dataplanepreview':
             from .v2020_09_01_dataplanepreview import models
             return models
-        elif api_version == '2021-10-01':
-            from .v2021_10_01 import models
-            return models
         elif api_version == '2021-10-01-dataplanepreview':
             from .v2021_10_01_dataplanepreview import models
             return models
@@ -161,14 +157,20 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         elif api_version == '2022-05-01':
             from .v2022_05_01 import models
             return models
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview import models
-            return models
         elif api_version == '2022-10-01':
             from .v2022_10_01 import models
             return models
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview import models
+            return models
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview import models
+            return models
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview import models
+            return models
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -202,26 +204,29 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def batch_deployments(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`BatchDeploymentsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.BatchDeploymentsOperations>`
            * 2022-02-01-preview: :class:`BatchDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.BatchDeploymentsOperations>`
            * 2022-05-01: :class:`BatchDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.BatchDeploymentsOperations>`
-           * 2022-06-01-preview: :class:`BatchDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.BatchDeploymentsOperations>`
            * 2022-10-01: :class:`BatchDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.BatchDeploymentsOperations>`
            * 2022-10-01-preview: :class:`BatchDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.BatchDeploymentsOperations>`
+           * 2022-12-01-preview: :class:`BatchDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.BatchDeploymentsOperations>`
+           * 2023-02-01-preview: :class:`BatchDeploymentsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.BatchDeploymentsOperations>`
+           * 2023-04-01-preview: :class:`BatchDeploymentsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.BatchDeploymentsOperations>`
         """
         api_version = self._get_api_version('batch_deployments')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import BatchDeploymentsOperations as OperationClass
-        elif api_version == '2022-02-01-preview':
+        if api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import BatchDeploymentsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import BatchDeploymentsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import BatchDeploymentsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import BatchDeploymentsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import BatchDeploymentsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import BatchDeploymentsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import BatchDeploymentsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import BatchDeploymentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'batch_deployments'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -230,26 +235,29 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def batch_endpoints(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`BatchEndpointsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.BatchEndpointsOperations>`
            * 2022-02-01-preview: :class:`BatchEndpointsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.BatchEndpointsOperations>`
            * 2022-05-01: :class:`BatchEndpointsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.BatchEndpointsOperations>`
-           * 2022-06-01-preview: :class:`BatchEndpointsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.BatchEndpointsOperations>`
            * 2022-10-01: :class:`BatchEndpointsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.BatchEndpointsOperations>`
            * 2022-10-01-preview: :class:`BatchEndpointsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.BatchEndpointsOperations>`
+           * 2022-12-01-preview: :class:`BatchEndpointsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.BatchEndpointsOperations>`
+           * 2023-02-01-preview: :class:`BatchEndpointsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.BatchEndpointsOperations>`
+           * 2023-04-01-preview: :class:`BatchEndpointsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.BatchEndpointsOperations>`
         """
         api_version = self._get_api_version('batch_endpoints')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import BatchEndpointsOperations as OperationClass
-        elif api_version == '2022-02-01-preview':
+        if api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import BatchEndpointsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import BatchEndpointsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import BatchEndpointsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import BatchEndpointsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import BatchEndpointsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import BatchEndpointsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import BatchEndpointsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import BatchEndpointsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'batch_endpoints'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -284,29 +292,32 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def code_containers(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.CodeContainersOperations>`
            * 2021-10-01-dataplanepreview: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.CodeContainersOperations>`
            * 2022-02-01-preview: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.CodeContainersOperations>`
            * 2022-05-01: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.CodeContainersOperations>`
-           * 2022-06-01-preview: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.CodeContainersOperations>`
            * 2022-10-01: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.CodeContainersOperations>`
            * 2022-10-01-preview: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.CodeContainersOperations>`
+           * 2022-12-01-preview: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.CodeContainersOperations>`
+           * 2023-02-01-preview: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.CodeContainersOperations>`
+           * 2023-04-01-preview: :class:`CodeContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.CodeContainersOperations>`
         """
         api_version = self._get_api_version('code_containers')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import CodeContainersOperations as OperationClass
-        elif api_version == '2021-10-01-dataplanepreview':
+        if api_version == '2021-10-01-dataplanepreview':
             from .v2021_10_01_dataplanepreview.operations import CodeContainersOperations as OperationClass
         elif api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import CodeContainersOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import CodeContainersOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import CodeContainersOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import CodeContainersOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import CodeContainersOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import CodeContainersOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import CodeContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import CodeContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'code_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -315,29 +326,32 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def code_versions(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.CodeVersionsOperations>`
            * 2021-10-01-dataplanepreview: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.CodeVersionsOperations>`
            * 2022-02-01-preview: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.CodeVersionsOperations>`
            * 2022-05-01: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.CodeVersionsOperations>`
-           * 2022-06-01-preview: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.CodeVersionsOperations>`
            * 2022-10-01: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.CodeVersionsOperations>`
            * 2022-10-01-preview: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.CodeVersionsOperations>`
+           * 2022-12-01-preview: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.CodeVersionsOperations>`
+           * 2023-02-01-preview: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.CodeVersionsOperations>`
+           * 2023-04-01-preview: :class:`CodeVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.CodeVersionsOperations>`
         """
         api_version = self._get_api_version('code_versions')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import CodeVersionsOperations as OperationClass
-        elif api_version == '2021-10-01-dataplanepreview':
+        if api_version == '2021-10-01-dataplanepreview':
             from .v2021_10_01_dataplanepreview.operations import CodeVersionsOperations as OperationClass
         elif api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import CodeVersionsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import CodeVersionsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import CodeVersionsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import CodeVersionsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import CodeVersionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import CodeVersionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import CodeVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import CodeVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'code_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -346,29 +360,32 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def component_containers(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.ComponentContainersOperations>`
            * 2021-10-01-dataplanepreview: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.ComponentContainersOperations>`
            * 2022-02-01-preview: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.ComponentContainersOperations>`
            * 2022-05-01: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.ComponentContainersOperations>`
-           * 2022-06-01-preview: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.ComponentContainersOperations>`
            * 2022-10-01: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.ComponentContainersOperations>`
            * 2022-10-01-preview: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.ComponentContainersOperations>`
+           * 2022-12-01-preview: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.ComponentContainersOperations>`
+           * 2023-02-01-preview: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.ComponentContainersOperations>`
+           * 2023-04-01-preview: :class:`ComponentContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.ComponentContainersOperations>`
         """
         api_version = self._get_api_version('component_containers')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import ComponentContainersOperations as OperationClass
-        elif api_version == '2021-10-01-dataplanepreview':
+        if api_version == '2021-10-01-dataplanepreview':
             from .v2021_10_01_dataplanepreview.operations import ComponentContainersOperations as OperationClass
         elif api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import ComponentContainersOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import ComponentContainersOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import ComponentContainersOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import ComponentContainersOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import ComponentContainersOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import ComponentContainersOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import ComponentContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import ComponentContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'component_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -377,29 +394,32 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def component_versions(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.ComponentVersionsOperations>`
            * 2021-10-01-dataplanepreview: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.ComponentVersionsOperations>`
            * 2022-02-01-preview: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.ComponentVersionsOperations>`
            * 2022-05-01: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.ComponentVersionsOperations>`
-           * 2022-06-01-preview: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.ComponentVersionsOperations>`
            * 2022-10-01: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.ComponentVersionsOperations>`
            * 2022-10-01-preview: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.ComponentVersionsOperations>`
+           * 2022-12-01-preview: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.ComponentVersionsOperations>`
+           * 2023-02-01-preview: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.ComponentVersionsOperations>`
+           * 2023-04-01-preview: :class:`ComponentVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.ComponentVersionsOperations>`
         """
         api_version = self._get_api_version('component_versions')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import ComponentVersionsOperations as OperationClass
-        elif api_version == '2021-10-01-dataplanepreview':
+        if api_version == '2021-10-01-dataplanepreview':
             from .v2021_10_01_dataplanepreview.operations import ComponentVersionsOperations as OperationClass
         elif api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import ComponentVersionsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import ComponentVersionsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import ComponentVersionsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import ComponentVersionsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import ComponentVersionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import ComponentVersionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import ComponentVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import ComponentVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'component_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -408,16 +428,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def compute(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`ComputeOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.ComputeOperations>`
            * 2022-01-01-preview: :class:`ComputeOperations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.ComputeOperations>`
            * 2022-05-01: :class:`ComputeOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.ComputeOperations>`
            * 2022-10-01: :class:`ComputeOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.ComputeOperations>`
            * 2022-10-01-preview: :class:`ComputeOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.ComputeOperations>`
+           * 2022-12-01-preview: :class:`ComputeOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.ComputeOperations>`
+           * 2023-02-01-preview: :class:`ComputeOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.ComputeOperations>`
+           * 2023-04-01-preview: :class:`ComputeOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.ComputeOperations>`
         """
         api_version = self._get_api_version('compute')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import ComputeOperations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import ComputeOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import ComputeOperations as OperationClass
@@ -425,6 +445,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import ComputeOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import ComputeOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import ComputeOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import ComputeOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import ComputeOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'compute'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -462,9 +488,11 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
            * 2021-10-01-dataplanepreview: :class:`DataContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.DataContainersOperations>`
            * 2022-02-01-preview: :class:`DataContainersOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.DataContainersOperations>`
            * 2022-05-01: :class:`DataContainersOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.DataContainersOperations>`
-           * 2022-06-01-preview: :class:`DataContainersOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.DataContainersOperations>`
            * 2022-10-01: :class:`DataContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.DataContainersOperations>`
            * 2022-10-01-preview: :class:`DataContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.DataContainersOperations>`
+           * 2022-12-01-preview: :class:`DataContainersOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.DataContainersOperations>`
+           * 2023-02-01-preview: :class:`DataContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.DataContainersOperations>`
+           * 2023-04-01-preview: :class:`DataContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.DataContainersOperations>`
         """
         api_version = self._get_api_version('data_containers')
         if api_version == '2021-10-01-dataplanepreview':
@@ -473,12 +501,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_02_01_preview.operations import DataContainersOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import DataContainersOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import DataContainersOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import DataContainersOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import DataContainersOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import DataContainersOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import DataContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import DataContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -516,9 +548,11 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
            * 2021-10-01-dataplanepreview: :class:`DataVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.DataVersionsOperations>`
            * 2022-02-01-preview: :class:`DataVersionsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.DataVersionsOperations>`
            * 2022-05-01: :class:`DataVersionsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.DataVersionsOperations>`
-           * 2022-06-01-preview: :class:`DataVersionsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.DataVersionsOperations>`
            * 2022-10-01: :class:`DataVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.DataVersionsOperations>`
            * 2022-10-01-preview: :class:`DataVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.DataVersionsOperations>`
+           * 2022-12-01-preview: :class:`DataVersionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.DataVersionsOperations>`
+           * 2023-02-01-preview: :class:`DataVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.DataVersionsOperations>`
+           * 2023-04-01-preview: :class:`DataVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.DataVersionsOperations>`
         """
         api_version = self._get_api_version('data_versions')
         if api_version == '2021-10-01-dataplanepreview':
@@ -527,27 +561,18 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_02_01_preview.operations import DataVersionsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import DataVersionsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import DataVersionsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import DataVersionsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import DataVersionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import DataVersionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import DataVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import DataVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_versions'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def dataset_containers(self):
-        """Instance depends on the API version:
-
-           * 2021-10-01: :class:`DatasetContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.DatasetContainersOperations>`
-        """
-        api_version = self._get_api_version('dataset_containers')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import DatasetContainersOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'dataset_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -577,19 +602,6 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def dataset_versions(self):
-        """Instance depends on the API version:
-
-           * 2021-10-01: :class:`DatasetVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.DatasetVersionsOperations>`
-        """
-        api_version = self._get_api_version('dataset_versions')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import DatasetVersionsOperations as OperationClass
-        else:
-            raise ValueError("API version {} does not have operation group 'dataset_versions'".format(api_version))
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
     def datasets_v1(self):
         """Instance depends on the API version:
 
@@ -606,26 +618,29 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def datastores(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`DatastoresOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.DatastoresOperations>`
            * 2022-02-01-preview: :class:`DatastoresOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.DatastoresOperations>`
            * 2022-05-01: :class:`DatastoresOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.DatastoresOperations>`
-           * 2022-06-01-preview: :class:`DatastoresOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.DatastoresOperations>`
            * 2022-10-01: :class:`DatastoresOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.DatastoresOperations>`
            * 2022-10-01-preview: :class:`DatastoresOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.DatastoresOperations>`
+           * 2022-12-01-preview: :class:`DatastoresOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.DatastoresOperations>`
+           * 2023-02-01-preview: :class:`DatastoresOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.DatastoresOperations>`
+           * 2023-04-01-preview: :class:`DatastoresOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.DatastoresOperations>`
         """
         api_version = self._get_api_version('datastores')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import DatastoresOperations as OperationClass
-        elif api_version == '2022-02-01-preview':
+        if api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import DatastoresOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import DatastoresOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import DatastoresOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import DatastoresOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import DatastoresOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import DatastoresOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import DatastoresOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import DatastoresOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'datastores'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -650,29 +665,32 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def environment_containers(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.EnvironmentContainersOperations>`
            * 2021-10-01-dataplanepreview: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.EnvironmentContainersOperations>`
            * 2022-02-01-preview: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.EnvironmentContainersOperations>`
            * 2022-05-01: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.EnvironmentContainersOperations>`
-           * 2022-06-01-preview: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.EnvironmentContainersOperations>`
            * 2022-10-01: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.EnvironmentContainersOperations>`
            * 2022-10-01-preview: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.EnvironmentContainersOperations>`
+           * 2022-12-01-preview: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.EnvironmentContainersOperations>`
+           * 2023-02-01-preview: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.EnvironmentContainersOperations>`
+           * 2023-04-01-preview: :class:`EnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.EnvironmentContainersOperations>`
         """
         api_version = self._get_api_version('environment_containers')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import EnvironmentContainersOperations as OperationClass
-        elif api_version == '2021-10-01-dataplanepreview':
+        if api_version == '2021-10-01-dataplanepreview':
             from .v2021_10_01_dataplanepreview.operations import EnvironmentContainersOperations as OperationClass
         elif api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import EnvironmentContainersOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import EnvironmentContainersOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import EnvironmentContainersOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import EnvironmentContainersOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import EnvironmentContainersOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import EnvironmentContainersOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import EnvironmentContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import EnvironmentContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'environment_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -681,29 +699,32 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def environment_versions(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.EnvironmentVersionsOperations>`
            * 2021-10-01-dataplanepreview: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.EnvironmentVersionsOperations>`
            * 2022-02-01-preview: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.EnvironmentVersionsOperations>`
            * 2022-05-01: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.EnvironmentVersionsOperations>`
-           * 2022-06-01-preview: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.EnvironmentVersionsOperations>`
            * 2022-10-01: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.EnvironmentVersionsOperations>`
            * 2022-10-01-preview: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.EnvironmentVersionsOperations>`
+           * 2022-12-01-preview: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.EnvironmentVersionsOperations>`
+           * 2023-02-01-preview: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.EnvironmentVersionsOperations>`
+           * 2023-04-01-preview: :class:`EnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.EnvironmentVersionsOperations>`
         """
         api_version = self._get_api_version('environment_versions')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import EnvironmentVersionsOperations as OperationClass
-        elif api_version == '2021-10-01-dataplanepreview':
+        if api_version == '2021-10-01-dataplanepreview':
             from .v2021_10_01_dataplanepreview.operations import EnvironmentVersionsOperations as OperationClass
         elif api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import EnvironmentVersionsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import EnvironmentVersionsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import EnvironmentVersionsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import EnvironmentVersionsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import EnvironmentVersionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import EnvironmentVersionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import EnvironmentVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import EnvironmentVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'environment_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -748,6 +769,70 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def featureset_containers(self):
+        """Instance depends on the API version:
+
+           * 2023-02-01-preview: :class:`FeaturesetContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.FeaturesetContainersOperations>`
+           * 2023-04-01-preview: :class:`FeaturesetContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.FeaturesetContainersOperations>`
+        """
+        api_version = self._get_api_version('featureset_containers')
+        if api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import FeaturesetContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import FeaturesetContainersOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'featureset_containers'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def featureset_versions(self):
+        """Instance depends on the API version:
+
+           * 2023-02-01-preview: :class:`FeaturesetVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.FeaturesetVersionsOperations>`
+           * 2023-04-01-preview: :class:`FeaturesetVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.FeaturesetVersionsOperations>`
+        """
+        api_version = self._get_api_version('featureset_versions')
+        if api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import FeaturesetVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import FeaturesetVersionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'featureset_versions'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def featurestore_entity_containers(self):
+        """Instance depends on the API version:
+
+           * 2023-02-01-preview: :class:`FeaturestoreEntityContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.FeaturestoreEntityContainersOperations>`
+           * 2023-04-01-preview: :class:`FeaturestoreEntityContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.FeaturestoreEntityContainersOperations>`
+        """
+        api_version = self._get_api_version('featurestore_entity_containers')
+        if api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import FeaturestoreEntityContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import FeaturestoreEntityContainersOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'featurestore_entity_containers'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def featurestore_entity_versions(self):
+        """Instance depends on the API version:
+
+           * 2023-02-01-preview: :class:`FeaturestoreEntityVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.FeaturestoreEntityVersionsOperations>`
+           * 2023-04-01-preview: :class:`FeaturestoreEntityVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.FeaturestoreEntityVersionsOperations>`
+        """
+        api_version = self._get_api_version('featurestore_entity_versions')
+        if api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import FeaturestoreEntityVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import FeaturestoreEntityVersionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'featurestore_entity_versions'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def get_operation_status(self):
         """Instance depends on the API version:
 
@@ -764,26 +849,29 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def jobs(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`JobsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.JobsOperations>`
            * 2022-02-01-preview: :class:`JobsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.JobsOperations>`
            * 2022-05-01: :class:`JobsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.JobsOperations>`
-           * 2022-06-01-preview: :class:`JobsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.JobsOperations>`
            * 2022-10-01: :class:`JobsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.JobsOperations>`
            * 2022-10-01-preview: :class:`JobsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.JobsOperations>`
+           * 2022-12-01-preview: :class:`JobsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.JobsOperations>`
+           * 2023-02-01-preview: :class:`JobsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.JobsOperations>`
+           * 2023-04-01-preview: :class:`JobsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.JobsOperations>`
         """
         api_version = self._get_api_version('jobs')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import JobsOperations as OperationClass
-        elif api_version == '2022-02-01-preview':
+        if api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import JobsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import JobsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import JobsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import JobsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import JobsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import JobsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import JobsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import JobsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'jobs'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -792,16 +880,48 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def labeling_jobs(self):
         """Instance depends on the API version:
 
-           * 2022-06-01-preview: :class:`LabelingJobsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.LabelingJobsOperations>`
            * 2022-10-01-preview: :class:`LabelingJobsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.LabelingJobsOperations>`
+           * 2022-12-01-preview: :class:`LabelingJobsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.LabelingJobsOperations>`
+           * 2023-02-01-preview: :class:`LabelingJobsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.LabelingJobsOperations>`
+           * 2023-04-01-preview: :class:`LabelingJobsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.LabelingJobsOperations>`
         """
         api_version = self._get_api_version('labeling_jobs')
-        if api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import LabelingJobsOperations as OperationClass
-        elif api_version == '2022-10-01-preview':
+        if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import LabelingJobsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import LabelingJobsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import LabelingJobsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import LabelingJobsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'labeling_jobs'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def managed_network_settings(self):
+        """Instance depends on the API version:
+
+           * 2022-12-01-preview: :class:`ManagedNetworkSettingsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.ManagedNetworkSettingsOperations>`
+        """
+        api_version = self._get_api_version('managed_network_settings')
+        if api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import ManagedNetworkSettingsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'managed_network_settings'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def managed_network_settings_rule(self):
+        """Instance depends on the API version:
+
+           * 2022-12-01-preview: :class:`ManagedNetworkSettingsRuleOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.ManagedNetworkSettingsRuleOperations>`
+        """
+        api_version = self._get_api_version('managed_network_settings_rule')
+        if api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import ManagedNetworkSettingsRuleOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'managed_network_settings_rule'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -834,29 +954,32 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def model_containers(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.ModelContainersOperations>`
            * 2021-10-01-dataplanepreview: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.ModelContainersOperations>`
            * 2022-02-01-preview: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.ModelContainersOperations>`
            * 2022-05-01: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.ModelContainersOperations>`
-           * 2022-06-01-preview: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.ModelContainersOperations>`
            * 2022-10-01: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.ModelContainersOperations>`
            * 2022-10-01-preview: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.ModelContainersOperations>`
+           * 2022-12-01-preview: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.ModelContainersOperations>`
+           * 2023-02-01-preview: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.ModelContainersOperations>`
+           * 2023-04-01-preview: :class:`ModelContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.ModelContainersOperations>`
         """
         api_version = self._get_api_version('model_containers')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import ModelContainersOperations as OperationClass
-        elif api_version == '2021-10-01-dataplanepreview':
+        if api_version == '2021-10-01-dataplanepreview':
             from .v2021_10_01_dataplanepreview.operations import ModelContainersOperations as OperationClass
         elif api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import ModelContainersOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import ModelContainersOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import ModelContainersOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import ModelContainersOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import ModelContainersOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import ModelContainersOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import ModelContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import ModelContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'model_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -865,29 +988,32 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def model_versions(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.ModelVersionsOperations>`
            * 2021-10-01-dataplanepreview: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2021_10_01_dataplanepreview.operations.ModelVersionsOperations>`
            * 2022-02-01-preview: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.ModelVersionsOperations>`
            * 2022-05-01: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.ModelVersionsOperations>`
-           * 2022-06-01-preview: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.ModelVersionsOperations>`
            * 2022-10-01: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.ModelVersionsOperations>`
            * 2022-10-01-preview: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.ModelVersionsOperations>`
+           * 2022-12-01-preview: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.ModelVersionsOperations>`
+           * 2023-02-01-preview: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.ModelVersionsOperations>`
+           * 2023-04-01-preview: :class:`ModelVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.ModelVersionsOperations>`
         """
         api_version = self._get_api_version('model_versions')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import ModelVersionsOperations as OperationClass
-        elif api_version == '2021-10-01-dataplanepreview':
+        if api_version == '2021-10-01-dataplanepreview':
             from .v2021_10_01_dataplanepreview.operations import ModelVersionsOperations as OperationClass
         elif api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import ModelVersionsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import ModelVersionsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import ModelVersionsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import ModelVersionsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import ModelVersionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import ModelVersionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import ModelVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import ModelVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'model_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -909,26 +1035,29 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def online_deployments(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`OnlineDeploymentsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.OnlineDeploymentsOperations>`
            * 2022-02-01-preview: :class:`OnlineDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.OnlineDeploymentsOperations>`
            * 2022-05-01: :class:`OnlineDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.OnlineDeploymentsOperations>`
-           * 2022-06-01-preview: :class:`OnlineDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.OnlineDeploymentsOperations>`
            * 2022-10-01: :class:`OnlineDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.OnlineDeploymentsOperations>`
            * 2022-10-01-preview: :class:`OnlineDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.OnlineDeploymentsOperations>`
+           * 2022-12-01-preview: :class:`OnlineDeploymentsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.OnlineDeploymentsOperations>`
+           * 2023-02-01-preview: :class:`OnlineDeploymentsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.OnlineDeploymentsOperations>`
+           * 2023-04-01-preview: :class:`OnlineDeploymentsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.OnlineDeploymentsOperations>`
         """
         api_version = self._get_api_version('online_deployments')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import OnlineDeploymentsOperations as OperationClass
-        elif api_version == '2022-02-01-preview':
+        if api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import OnlineDeploymentsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import OnlineDeploymentsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import OnlineDeploymentsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import OnlineDeploymentsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import OnlineDeploymentsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import OnlineDeploymentsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import OnlineDeploymentsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import OnlineDeploymentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'online_deployments'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -937,26 +1066,29 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def online_endpoints(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`OnlineEndpointsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.OnlineEndpointsOperations>`
            * 2022-02-01-preview: :class:`OnlineEndpointsOperations<azure.mgmt.machinelearningservices.v2022_02_01_preview.operations.OnlineEndpointsOperations>`
            * 2022-05-01: :class:`OnlineEndpointsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.OnlineEndpointsOperations>`
-           * 2022-06-01-preview: :class:`OnlineEndpointsOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.OnlineEndpointsOperations>`
            * 2022-10-01: :class:`OnlineEndpointsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.OnlineEndpointsOperations>`
            * 2022-10-01-preview: :class:`OnlineEndpointsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.OnlineEndpointsOperations>`
+           * 2022-12-01-preview: :class:`OnlineEndpointsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.OnlineEndpointsOperations>`
+           * 2023-02-01-preview: :class:`OnlineEndpointsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.OnlineEndpointsOperations>`
+           * 2023-04-01-preview: :class:`OnlineEndpointsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.OnlineEndpointsOperations>`
         """
         api_version = self._get_api_version('online_endpoints')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import OnlineEndpointsOperations as OperationClass
-        elif api_version == '2022-02-01-preview':
+        if api_version == '2022-02-01-preview':
             from .v2022_02_01_preview.operations import OnlineEndpointsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import OnlineEndpointsOperations as OperationClass
-        elif api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import OnlineEndpointsOperations as OperationClass
         elif api_version == '2022-10-01':
             from .v2022_10_01.operations import OnlineEndpointsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import OnlineEndpointsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import OnlineEndpointsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import OnlineEndpointsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import OnlineEndpointsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'online_endpoints'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -965,16 +1097,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def operations(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`Operations<azure.mgmt.machinelearningservices.v2021_10_01.operations.Operations>`
            * 2022-01-01-preview: :class:`Operations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.Operations>`
            * 2022-05-01: :class:`Operations<azure.mgmt.machinelearningservices.v2022_05_01.operations.Operations>`
            * 2022-10-01: :class:`Operations<azure.mgmt.machinelearningservices.v2022_10_01.operations.Operations>`
            * 2022-10-01-preview: :class:`Operations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.Operations>`
+           * 2022-12-01-preview: :class:`Operations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.Operations>`
+           * 2023-02-01-preview: :class:`Operations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.Operations>`
+           * 2023-04-01-preview: :class:`Operations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import Operations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import Operations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import Operations as OperationClass
@@ -982,6 +1114,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import Operations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import Operations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import Operations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import Operations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -990,16 +1128,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def private_endpoint_connections(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.PrivateEndpointConnectionsOperations>`
            * 2022-01-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.PrivateEndpointConnectionsOperations>`
            * 2022-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.PrivateEndpointConnectionsOperations>`
            * 2022-10-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.PrivateEndpointConnectionsOperations>`
            * 2022-10-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.PrivateEndpointConnectionsOperations>`
+           * 2022-12-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.PrivateEndpointConnectionsOperations>`
+           * 2023-02-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.PrivateEndpointConnectionsOperations>`
+           * 2023-04-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import PrivateEndpointConnectionsOperations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import PrivateEndpointConnectionsOperations as OperationClass
@@ -1007,6 +1145,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1015,16 +1159,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def private_link_resources(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.PrivateLinkResourcesOperations>`
            * 2022-01-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.PrivateLinkResourcesOperations>`
            * 2022-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.PrivateLinkResourcesOperations>`
            * 2022-10-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.PrivateLinkResourcesOperations>`
            * 2022-10-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.PrivateLinkResourcesOperations>`
+           * 2022-12-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.PrivateLinkResourcesOperations>`
+           * 2023-02-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.PrivateLinkResourcesOperations>`
+           * 2023-04-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import PrivateLinkResourcesOperations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import PrivateLinkResourcesOperations as OperationClass
@@ -1032,6 +1176,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1040,16 +1190,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def quotas(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`QuotasOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.QuotasOperations>`
            * 2022-01-01-preview: :class:`QuotasOperations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.QuotasOperations>`
            * 2022-05-01: :class:`QuotasOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.QuotasOperations>`
            * 2022-10-01: :class:`QuotasOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.QuotasOperations>`
            * 2022-10-01-preview: :class:`QuotasOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.QuotasOperations>`
+           * 2022-12-01-preview: :class:`QuotasOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.QuotasOperations>`
+           * 2023-02-01-preview: :class:`QuotasOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.QuotasOperations>`
+           * 2023-04-01-preview: :class:`QuotasOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.QuotasOperations>`
         """
         api_version = self._get_api_version('quotas')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import QuotasOperations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import QuotasOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import QuotasOperations as OperationClass
@@ -1057,6 +1207,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import QuotasOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import QuotasOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import QuotasOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import QuotasOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import QuotasOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'quotas'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1066,10 +1222,19 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-10-01-preview: :class:`RegistriesOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.RegistriesOperations>`
+           * 2022-12-01-preview: :class:`RegistriesOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.RegistriesOperations>`
+           * 2023-02-01-preview: :class:`RegistriesOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistriesOperations>`
+           * 2023-04-01-preview: :class:`RegistriesOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistriesOperations>`
         """
         api_version = self._get_api_version('registries')
         if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import RegistriesOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import RegistriesOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistriesOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistriesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registries'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1079,10 +1244,19 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-10-01-preview: :class:`RegistryCodeContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.RegistryCodeContainersOperations>`
+           * 2022-12-01-preview: :class:`RegistryCodeContainersOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.RegistryCodeContainersOperations>`
+           * 2023-02-01-preview: :class:`RegistryCodeContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryCodeContainersOperations>`
+           * 2023-04-01-preview: :class:`RegistryCodeContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryCodeContainersOperations>`
         """
         api_version = self._get_api_version('registry_code_containers')
         if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import RegistryCodeContainersOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import RegistryCodeContainersOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryCodeContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryCodeContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registry_code_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1092,10 +1266,19 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-10-01-preview: :class:`RegistryCodeVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.RegistryCodeVersionsOperations>`
+           * 2022-12-01-preview: :class:`RegistryCodeVersionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.RegistryCodeVersionsOperations>`
+           * 2023-02-01-preview: :class:`RegistryCodeVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryCodeVersionsOperations>`
+           * 2023-04-01-preview: :class:`RegistryCodeVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryCodeVersionsOperations>`
         """
         api_version = self._get_api_version('registry_code_versions')
         if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import RegistryCodeVersionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import RegistryCodeVersionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryCodeVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryCodeVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registry_code_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1105,10 +1288,19 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-10-01-preview: :class:`RegistryComponentContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.RegistryComponentContainersOperations>`
+           * 2022-12-01-preview: :class:`RegistryComponentContainersOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.RegistryComponentContainersOperations>`
+           * 2023-02-01-preview: :class:`RegistryComponentContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryComponentContainersOperations>`
+           * 2023-04-01-preview: :class:`RegistryComponentContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryComponentContainersOperations>`
         """
         api_version = self._get_api_version('registry_component_containers')
         if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import RegistryComponentContainersOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import RegistryComponentContainersOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryComponentContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryComponentContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registry_component_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1118,12 +1310,53 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-10-01-preview: :class:`RegistryComponentVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.RegistryComponentVersionsOperations>`
+           * 2022-12-01-preview: :class:`RegistryComponentVersionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.RegistryComponentVersionsOperations>`
+           * 2023-02-01-preview: :class:`RegistryComponentVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryComponentVersionsOperations>`
+           * 2023-04-01-preview: :class:`RegistryComponentVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryComponentVersionsOperations>`
         """
         api_version = self._get_api_version('registry_component_versions')
         if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import RegistryComponentVersionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import RegistryComponentVersionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryComponentVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryComponentVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registry_component_versions'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def registry_data_containers(self):
+        """Instance depends on the API version:
+
+           * 2023-02-01-preview: :class:`RegistryDataContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryDataContainersOperations>`
+           * 2023-04-01-preview: :class:`RegistryDataContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryDataContainersOperations>`
+        """
+        api_version = self._get_api_version('registry_data_containers')
+        if api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryDataContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryDataContainersOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'registry_data_containers'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def registry_data_versions(self):
+        """Instance depends on the API version:
+
+           * 2023-02-01-preview: :class:`RegistryDataVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryDataVersionsOperations>`
+           * 2023-04-01-preview: :class:`RegistryDataVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryDataVersionsOperations>`
+        """
+        api_version = self._get_api_version('registry_data_versions')
+        if api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryDataVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryDataVersionsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'registry_data_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -1131,10 +1364,19 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-10-01-preview: :class:`RegistryEnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.RegistryEnvironmentContainersOperations>`
+           * 2022-12-01-preview: :class:`RegistryEnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.RegistryEnvironmentContainersOperations>`
+           * 2023-02-01-preview: :class:`RegistryEnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryEnvironmentContainersOperations>`
+           * 2023-04-01-preview: :class:`RegistryEnvironmentContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryEnvironmentContainersOperations>`
         """
         api_version = self._get_api_version('registry_environment_containers')
         if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import RegistryEnvironmentContainersOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import RegistryEnvironmentContainersOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryEnvironmentContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryEnvironmentContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registry_environment_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1144,10 +1386,19 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-10-01-preview: :class:`RegistryEnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.RegistryEnvironmentVersionsOperations>`
+           * 2022-12-01-preview: :class:`RegistryEnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.RegistryEnvironmentVersionsOperations>`
+           * 2023-02-01-preview: :class:`RegistryEnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryEnvironmentVersionsOperations>`
+           * 2023-04-01-preview: :class:`RegistryEnvironmentVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryEnvironmentVersionsOperations>`
         """
         api_version = self._get_api_version('registry_environment_versions')
         if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import RegistryEnvironmentVersionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import RegistryEnvironmentVersionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryEnvironmentVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryEnvironmentVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registry_environment_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1170,10 +1421,19 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-10-01-preview: :class:`RegistryModelContainersOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.RegistryModelContainersOperations>`
+           * 2022-12-01-preview: :class:`RegistryModelContainersOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.RegistryModelContainersOperations>`
+           * 2023-02-01-preview: :class:`RegistryModelContainersOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryModelContainersOperations>`
+           * 2023-04-01-preview: :class:`RegistryModelContainersOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryModelContainersOperations>`
         """
         api_version = self._get_api_version('registry_model_containers')
         if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import RegistryModelContainersOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import RegistryModelContainersOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryModelContainersOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryModelContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registry_model_containers'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1183,10 +1443,19 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-10-01-preview: :class:`RegistryModelVersionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.RegistryModelVersionsOperations>`
+           * 2022-12-01-preview: :class:`RegistryModelVersionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.RegistryModelVersionsOperations>`
+           * 2023-02-01-preview: :class:`RegistryModelVersionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.RegistryModelVersionsOperations>`
+           * 2023-04-01-preview: :class:`RegistryModelVersionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.RegistryModelVersionsOperations>`
         """
         api_version = self._get_api_version('registry_model_versions')
         if api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import RegistryModelVersionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import RegistryModelVersionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import RegistryModelVersionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import RegistryModelVersionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'registry_model_versions'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1247,17 +1516,23 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def schedules(self):
         """Instance depends on the API version:
 
-           * 2022-06-01-preview: :class:`SchedulesOperations<azure.mgmt.machinelearningservices.v2022_06_01_preview.operations.SchedulesOperations>`
            * 2022-10-01: :class:`SchedulesOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.SchedulesOperations>`
            * 2022-10-01-preview: :class:`SchedulesOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.SchedulesOperations>`
+           * 2022-12-01-preview: :class:`SchedulesOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.SchedulesOperations>`
+           * 2023-02-01-preview: :class:`SchedulesOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.SchedulesOperations>`
+           * 2023-04-01-preview: :class:`SchedulesOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.SchedulesOperations>`
         """
         api_version = self._get_api_version('schedules')
-        if api_version == '2022-06-01-preview':
-            from .v2022_06_01_preview.operations import SchedulesOperations as OperationClass
-        elif api_version == '2022-10-01':
+        if api_version == '2022-10-01':
             from .v2022_10_01.operations import SchedulesOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import SchedulesOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import SchedulesOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import SchedulesOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import SchedulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'schedules'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1292,16 +1567,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def usages(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`UsagesOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.UsagesOperations>`
            * 2022-01-01-preview: :class:`UsagesOperations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.UsagesOperations>`
            * 2022-05-01: :class:`UsagesOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.UsagesOperations>`
            * 2022-10-01: :class:`UsagesOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.UsagesOperations>`
            * 2022-10-01-preview: :class:`UsagesOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.UsagesOperations>`
+           * 2022-12-01-preview: :class:`UsagesOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.UsagesOperations>`
+           * 2023-02-01-preview: :class:`UsagesOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.UsagesOperations>`
+           * 2023-04-01-preview: :class:`UsagesOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.UsagesOperations>`
         """
         api_version = self._get_api_version('usages')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import UsagesOperations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import UsagesOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import UsagesOperations as OperationClass
@@ -1309,6 +1584,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import UsagesOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import UsagesOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import UsagesOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import UsagesOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import UsagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'usages'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1317,16 +1598,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def virtual_machine_sizes(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`VirtualMachineSizesOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.VirtualMachineSizesOperations>`
            * 2022-01-01-preview: :class:`VirtualMachineSizesOperations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.VirtualMachineSizesOperations>`
            * 2022-05-01: :class:`VirtualMachineSizesOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.VirtualMachineSizesOperations>`
            * 2022-10-01: :class:`VirtualMachineSizesOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.VirtualMachineSizesOperations>`
            * 2022-10-01-preview: :class:`VirtualMachineSizesOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.VirtualMachineSizesOperations>`
+           * 2022-12-01-preview: :class:`VirtualMachineSizesOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.VirtualMachineSizesOperations>`
+           * 2023-02-01-preview: :class:`VirtualMachineSizesOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.VirtualMachineSizesOperations>`
+           * 2023-04-01-preview: :class:`VirtualMachineSizesOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.VirtualMachineSizesOperations>`
         """
         api_version = self._get_api_version('virtual_machine_sizes')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import VirtualMachineSizesOperations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import VirtualMachineSizesOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import VirtualMachineSizesOperations as OperationClass
@@ -1334,6 +1615,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import VirtualMachineSizesOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import VirtualMachineSizesOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import VirtualMachineSizesOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import VirtualMachineSizesOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import VirtualMachineSizesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'virtual_machine_sizes'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1342,16 +1629,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def workspace_connections(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`WorkspaceConnectionsOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.WorkspaceConnectionsOperations>`
            * 2022-01-01-preview: :class:`WorkspaceConnectionsOperations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.WorkspaceConnectionsOperations>`
            * 2022-05-01: :class:`WorkspaceConnectionsOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.WorkspaceConnectionsOperations>`
            * 2022-10-01: :class:`WorkspaceConnectionsOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.WorkspaceConnectionsOperations>`
            * 2022-10-01-preview: :class:`WorkspaceConnectionsOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.WorkspaceConnectionsOperations>`
+           * 2022-12-01-preview: :class:`WorkspaceConnectionsOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.WorkspaceConnectionsOperations>`
+           * 2023-02-01-preview: :class:`WorkspaceConnectionsOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.WorkspaceConnectionsOperations>`
+           * 2023-04-01-preview: :class:`WorkspaceConnectionsOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.WorkspaceConnectionsOperations>`
         """
         api_version = self._get_api_version('workspace_connections')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import WorkspaceConnectionsOperations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import WorkspaceConnectionsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import WorkspaceConnectionsOperations as OperationClass
@@ -1359,6 +1646,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import WorkspaceConnectionsOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import WorkspaceConnectionsOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import WorkspaceConnectionsOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import WorkspaceConnectionsOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import WorkspaceConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workspace_connections'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1367,16 +1660,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def workspace_features(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`WorkspaceFeaturesOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.WorkspaceFeaturesOperations>`
            * 2022-01-01-preview: :class:`WorkspaceFeaturesOperations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.WorkspaceFeaturesOperations>`
            * 2022-05-01: :class:`WorkspaceFeaturesOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.WorkspaceFeaturesOperations>`
            * 2022-10-01: :class:`WorkspaceFeaturesOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.WorkspaceFeaturesOperations>`
            * 2022-10-01-preview: :class:`WorkspaceFeaturesOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.WorkspaceFeaturesOperations>`
+           * 2022-12-01-preview: :class:`WorkspaceFeaturesOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.WorkspaceFeaturesOperations>`
+           * 2023-02-01-preview: :class:`WorkspaceFeaturesOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.WorkspaceFeaturesOperations>`
+           * 2023-04-01-preview: :class:`WorkspaceFeaturesOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.WorkspaceFeaturesOperations>`
         """
         api_version = self._get_api_version('workspace_features')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import WorkspaceFeaturesOperations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import WorkspaceFeaturesOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import WorkspaceFeaturesOperations as OperationClass
@@ -1384,6 +1677,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import WorkspaceFeaturesOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import WorkspaceFeaturesOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import WorkspaceFeaturesOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import WorkspaceFeaturesOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import WorkspaceFeaturesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workspace_features'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -1392,16 +1691,16 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
     def workspaces(self):
         """Instance depends on the API version:
 
-           * 2021-10-01: :class:`WorkspacesOperations<azure.mgmt.machinelearningservices.v2021_10_01.operations.WorkspacesOperations>`
            * 2022-01-01-preview: :class:`WorkspacesOperations<azure.mgmt.machinelearningservices.v2022_01_01_preview.operations.WorkspacesOperations>`
            * 2022-05-01: :class:`WorkspacesOperations<azure.mgmt.machinelearningservices.v2022_05_01.operations.WorkspacesOperations>`
            * 2022-10-01: :class:`WorkspacesOperations<azure.mgmt.machinelearningservices.v2022_10_01.operations.WorkspacesOperations>`
            * 2022-10-01-preview: :class:`WorkspacesOperations<azure.mgmt.machinelearningservices.v2022_10_01_preview.operations.WorkspacesOperations>`
+           * 2022-12-01-preview: :class:`WorkspacesOperations<azure.mgmt.machinelearningservices.v2022_12_01_preview.operations.WorkspacesOperations>`
+           * 2023-02-01-preview: :class:`WorkspacesOperations<azure.mgmt.machinelearningservices.v2023_02_01_preview.operations.WorkspacesOperations>`
+           * 2023-04-01-preview: :class:`WorkspacesOperations<azure.mgmt.machinelearningservices.v2023_04_01_preview.operations.WorkspacesOperations>`
         """
         api_version = self._get_api_version('workspaces')
-        if api_version == '2021-10-01':
-            from .v2021_10_01.operations import WorkspacesOperations as OperationClass
-        elif api_version == '2022-01-01-preview':
+        if api_version == '2022-01-01-preview':
             from .v2022_01_01_preview.operations import WorkspacesOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import WorkspacesOperations as OperationClass
@@ -1409,6 +1708,12 @@ class AzureMachineLearningWorkspaces(MultiApiClientMixin, _SDKClient):
             from .v2022_10_01.operations import WorkspacesOperations as OperationClass
         elif api_version == '2022-10-01-preview':
             from .v2022_10_01_preview.operations import WorkspacesOperations as OperationClass
+        elif api_version == '2022-12-01-preview':
+            from .v2022_12_01_preview.operations import WorkspacesOperations as OperationClass
+        elif api_version == '2023-02-01-preview':
+            from .v2023_02_01_preview.operations import WorkspacesOperations as OperationClass
+        elif api_version == '2023-04-01-preview':
+            from .v2023_04_01_preview.operations import WorkspacesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'workspaces'".format(api_version))
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
