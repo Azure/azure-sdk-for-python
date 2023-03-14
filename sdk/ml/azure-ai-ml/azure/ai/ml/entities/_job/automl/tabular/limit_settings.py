@@ -21,6 +21,14 @@ class TabularLimitSettings(RestTranslatableMixin):
     :type max_concurrent_trials: int, optional
     :param max_cores_per_trial: The maximum number of threads to use for a given training iteration.
     :type max_cores_per_trial: int, optional
+    :param max_nodes: [Experimental] The maximum number of nodes to use for this experiment.
+
+        * For forecasting, each model is trained using max(2, int(max_nodes / max_concurrent_trials)) nodes.
+
+        * For classification/regression, each model is trained using n nodes.
+
+        The default value is 1. Note- This parameter is in public preview and might change in future.
+    :type max_nodes: typing.Optional[int]
     :param max_trials: Maximum number of AutoML iterations.
     :type max_trials: int, optional
     :param timeout_minutes: AutoML job timeout.

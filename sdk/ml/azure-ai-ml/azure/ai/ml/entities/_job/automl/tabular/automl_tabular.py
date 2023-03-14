@@ -303,6 +303,14 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
             * Equal to 1, the default.
         :paramtype max_cores_per_trial: typing.Optional[int]
+        :keyword max_nodes: [Experimental] The maximum number of nodes to use for this experiment.
+
+            * For forecasting, each model is trained using max(2, int(max_nodes / max_concurrent_trials)) nodes.
+
+            * For classification/regression, each model is trained using n nodes.
+
+            The default value is 1. Note- This parameter is in public preview and might change in future.
+        :paramtype max_nodes: typing.Optional[int]
         :keyword max_trials: The total number of different algorithm and parameter combinations to test during an
             automated ML experiment. If not specified, the default is 1000 iterations.
         :paramtype max_trials: typing.Optional[int]
@@ -387,6 +395,17 @@ class AutoMLTabular(AutoMLVertical, ABC):
         :paramtype allowed_training_algorithms: typing.Optional[List[str]]
         :keyword blocked_training_algorithms: A list of algorithms to ignore for an experiment, defaults to None
         :paramtype blocked_training_algorithms: typing.Optional[List[str]]
+        :keyword training_mode: [Experimental] The training mode to use.
+            The possible values are-
+
+            * distributed- enables distributed training for supported algorithms.
+
+            * non_distributed- disables distributed training.
+
+            * auto- Currently, it is same as non_distributed. In future, this might change.
+
+            Note: This parameter is in public preview currently and may change in future.
+        :paramtype training_mode: typing.Optional[typing.Union[str, azure.ai.ml.constants.TabularTrainingMode]]
         """
         # get training object by calling training getter of respective tabular task
         self._training = self.training

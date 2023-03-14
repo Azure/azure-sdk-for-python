@@ -54,6 +54,16 @@ class TrainingSettings(RestTranslatableMixin):
         :param ensemble_model_download_timeout: Timeout for downloading ensemble models
         :param allowed_training_algorithms: Models to train
         :param blocked_training_algorithms: Models that will not be considered for training
+        :param training_mode: [Experimental] The training mode to use.
+            The possible values are-
+
+            * distributed- enables distributed training for supported algorithms.
+
+            * non_distributed- disables distributed training.
+
+            * auto- Currently, it is same as non_distributed. In future, this might change.
+
+            Note: This parameter is in public preview currently and may change in future.
         """
         self.enable_onnx_compatible_models = enable_onnx_compatible_models
         self.enable_dnn_training = enable_dnn_training
