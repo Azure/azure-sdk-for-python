@@ -11,6 +11,7 @@
 - Added support for serverless compute in pipeline, command, automl and sweep job
 - Added support for `job_tier` and `priority` in job
 - Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
+- Added support for modifying SSH key values after creation on Compute Resources.
 - Added WorkspaceConnection types `s3`, `snowflake`, `azure_sql_db`, `azure_synapse_analytics`, `azure_my_sql_db`, `azure_postgres_db`
 - Added WorkspaceConnection auth type `access_key` for `s3`
 
