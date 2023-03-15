@@ -189,7 +189,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         sg_graph = {"silo_steps" : []}
         siloed_outputs = {}
         # TODO 2293586 replace this for-loop with a parallel-for node
-        for silo_config in self.silo_configs:
+        # pylint: disable=consider-using-enumerate
+        for i in range(len(self.silo_configs)):
+            silo_config = self.silo_configs[i]
             silo_inputs.update(silo_config.inputs)
             executed_silo_component = self.silo_component(**silo_inputs)
             for v, k in executed_silo_component.inputs.items():
