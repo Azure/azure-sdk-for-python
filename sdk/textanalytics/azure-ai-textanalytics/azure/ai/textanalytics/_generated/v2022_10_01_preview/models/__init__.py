@@ -32,7 +32,6 @@ from ._models_py3 import AnalyzeTextTask
 from ._models_py3 import AnalyzeTextTaskResult
 from ._patch import AreaResolution
 from ._models_py3 import BaseResolution
-from ._models_py3 import BooleanResolution
 from ._models_py3 import ClassificationDocumentResult
 from ._models_py3 import ClassificationResult
 from ._patch import CurrencyResolution
@@ -233,7 +232,6 @@ __all__ = [
     'AnalyzeTextTaskResult',
     'AreaResolution',
     'BaseResolution',
-    'BooleanResolution',
     'ClassificationDocumentResult',
     'ClassificationResult',
     'CurrencyResolution',

@@ -9,16 +9,18 @@ from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2022_12_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import dump_yaml_to_file
+from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .customer_managed_key import CustomerManagedKey
+from .feature_store_settings import _FeatureStoreSettings
 from .networking import ManagedNetwork
 
 
@@ -96,6 +98,8 @@ class Workspace(Resource):
         """
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
+        self._kind = kwargs.pop("kind", "default")
+        self._feature_store_settings: Optional[_FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
         self.display_name = display_name
@@ -169,7 +173,6 @@ class Workspace(Resource):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> "Workspace":
-
         if not rest_obj:
             return None
         customer_managed_key = (
@@ -202,10 +205,20 @@ class Workspace(Resource):
             identity = IdentityConfiguration._from_workspace_rest_object(  # pylint: disable=protected-access
                 rest_obj.identity
             )
+        feature_store_settings = None
+        if (
+            is_private_preview_enabled()
+            and rest_obj.feature_store_settings
+            and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings)
+        ):
+            feature_store_settings = _FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
+                rest_obj.feature_store_settings
+            )
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,
             description=rest_obj.description,
+            kind=rest_obj.kind.lower() if rest_obj.kind else None,
             tags=rest_obj.tags,
             location=rest_obj.location,
             resource_group=group,
@@ -223,9 +236,14 @@ class Workspace(Resource):
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
+            feature_store_settings=feature_store_settings,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
+        feature_store_Settings = None
+        if is_private_preview_enabled() and self._feature_store_settings:
+            feature_store_Settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
+
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
             if self.identity
@@ -233,6 +251,7 @@ class Workspace(Resource):
             location=self.location,
             tags=self.tags,
             description=self.description,
+            kind=self._kind,
             friendly_name=self.display_name,
             key_vault=self.key_vault,
             application_insights=self.application_insights,
@@ -246,4 +265,5 @@ class Workspace(Resource):
             managed_network=self.managed_network._to_rest_object()  # pylint: disable=protected-access
             if self.managed_network
             else None,  # pylint: disable=protected-access
+            feature_store_Settings=feature_store_Settings,
         )

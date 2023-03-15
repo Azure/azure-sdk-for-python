@@ -139,7 +139,7 @@ async def test_receive_batch_no_max_wait_time_async(connstr_senders, uamqp_trans
 
 
 @pytest.mark.parametrize("max_wait_time, sleep_time, expected_result",
-                         [(3, 10, []),
+                         [(3, 15, []),
                           (3, 2, None),
                           ])
 @pytest.mark.liveTest

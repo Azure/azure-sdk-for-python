@@ -29,8 +29,7 @@ class GetTokenMixin(abc.ABC):
 
     @abc.abstractmethod
     async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
-        """Attempt to acquire an access token from a cache or by redeeming a
-        refresh token."""
+        """Attempt to acquire an access token from a cache or by redeeming a refresh token."""
 
     @abc.abstractmethod
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":

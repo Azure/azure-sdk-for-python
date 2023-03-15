@@ -1,6 +1,16 @@
 # Release History
 
-## 5.3.0b2 (Unreleased)
+## 5.3.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.3.0b2 (2023-03-07)
 
 This version of the client library defaults to the service API version `2022-10-01-preview`.
 
@@ -12,16 +22,14 @@ This version of the client library defaults to the service API version `2022-10-
 ### Breaking Changes
 
 - Removed models `BaseResolution` and `BooleanResolution`.
-- Renamed property `date_time_sub_kind` to `datetime_subkind` on `DateTimeResolution`.
+- Removed enum value `BooleanResolution` from `ResolutionKind`.
 - Renamed model `AbstractSummaryAction` to `AbstractiveSummaryAction`.
 - Renamed model `AbstractSummaryResult` to `AbstractiveSummaryResult`.
-- Changed automatic language detection, it is now controlled by the boolean keyword argument `auto_detect_language`.
-  Pass `True` to enable automatic language detection for text documents analyzed by long-running operation APIs.
-- Removed keyword argument `autodetect_default_language` - use `language` to provide a default/fallback language.
-
-### Bugs Fixed
+- Removed keyword argument `autodetect_default_language` from long-running operation APIs.
 
 ### Other Changes
+
+ - Improved static typing in the client library. 
 
 ## 5.3.0b1 (2022-11-17)
 

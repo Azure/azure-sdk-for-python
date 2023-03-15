@@ -118,7 +118,6 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 class DataTransferCopyComponent(DataTransferComponent):
     """DataTransfer copy component version, used to define a data transfer component.
 
-
     :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
     :type task: str
     :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
@@ -206,7 +205,6 @@ class DataTransferCopyComponent(DataTransferComponent):
 class DataTransferImportComponent(DataTransferComponent):
     """DataTransfer import component version, used to define a data transfer component.
 
-
     :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
     :type task: str
     :param source: The data source of file system or database
@@ -253,7 +251,6 @@ class DataTransferImportComponent(DataTransferComponent):
 
 class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
     """DataTransfer export component version, used to define a data transfer component.
-
 
     :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
     :type task: str
