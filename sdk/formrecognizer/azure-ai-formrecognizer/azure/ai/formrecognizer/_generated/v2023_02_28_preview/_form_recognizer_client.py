@@ -27,12 +27,13 @@ class FormRecognizerClient:
 
     :ivar document_models: DocumentModelsOperations operations
     :vartype document_models:
-     azure.ai.formrecognizer.v2023_02_28.operations.DocumentModelsOperations
+     azure.ai.formrecognizer.v2023_02_28_preview.operations.DocumentModelsOperations
     :ivar miscellaneous: MiscellaneousOperations operations
-    :vartype miscellaneous: azure.ai.formrecognizer.v2023_02_28.operations.MiscellaneousOperations
+    :vartype miscellaneous:
+     azure.ai.formrecognizer.v2023_02_28_preview.operations.MiscellaneousOperations
     :ivar document_classifiers: DocumentClassifiersOperations operations
     :vartype document_classifiers:
-     azure.ai.formrecognizer.v2023_02_28.operations.DocumentClassifiersOperations
+     azure.ai.formrecognizer.v2023_02_28_preview.operations.DocumentClassifiersOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for

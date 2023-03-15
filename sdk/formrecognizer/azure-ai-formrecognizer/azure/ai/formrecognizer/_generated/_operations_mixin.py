@@ -17,11 +17,44 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, IO, Iterable, List, Optional, Union
 
+    # FIXME: have to manually reconfigure import path for multiapi operation mixin
+    from .._polling import DocumentModelAdministrationClientLROPoller
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
 
 
 class FormRecognizerClientOperationsMixin(object):
+
+    def authorize_copy_document_model(
+        self,
+        authorize_copy_request,  # type: _models.AuthorizeCopyRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.CopyAuthorization
+        """Generate copy authorization.
+
+        Generates authorization to copy a document model to this location with specified modelId and
+        optional description.
+
+        :param authorize_copy_request: Authorize copy request parameters.
+        :type authorize_copy_request: ~azure.ai.formrecognizer.v2022_08_31.models.AuthorizeCopyRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: CopyAuthorization, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.CopyAuthorization
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('authorize_copy_document_model')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'authorize_copy_document_model'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.authorize_copy_document_model(authorize_copy_request, **kwargs)
 
     def begin_analyze_business_card_async(  # pylint: disable=inconsistent-return-statements
         self,
@@ -80,6 +113,61 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_analyze_business_card_async(include_text_details, locale, pages, file_stream, **kwargs)
+
+    def begin_analyze_document(  # pylint: disable=inconsistent-return-statements
+        self,
+        model_id,  # type: str
+        pages=None,  # type: Optional[str]
+        locale=None,  # type: Optional[str]
+        string_index_type=None,  # type: Optional[Union[str, "_models.StringIndexType"]]
+        analyze_request=None,  # type: Optional[Union[IO, _models.AnalyzeDocumentRequest]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """Analyze document.
+
+        Analyzes document with document model.
+
+        :param model_id: Unique document model name.
+        :type model_id: str
+        :param pages: List of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is None.
+        :type pages: str
+        :param locale: Locale hint for text recognition and document analysis.  Value may contain only
+         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is None.
+        :type locale: str
+        :param string_index_type: Method used to compute string offset and length. Default value is
+         None.
+        :type string_index_type: str or ~azure.ai.formrecognizer.v2022_08_31.models.StringIndexType
+        :param analyze_request: Analyze request parameters. Default value is None.
+        :type analyze_request: IO or ~azure.ai.formrecognizer.v2022_08_31.models.AnalyzeDocumentRequest
+        :keyword content_type: Media type of the body sent to the API. Known values are:
+         "application/octet-stream", "application/pdf", "image/bmp", "image/heif", "image/jpeg",
+         "image/png", "image/tiff", and "application/json". Default value is "application/json".
+        :paramtype content_type: str or ~azure.ai.formrecognizer.v2022_08_31.models.ContentType
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('begin_analyze_document')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'begin_analyze_document'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.begin_analyze_document(model_id, pages, locale, string_index_type, analyze_request, **kwargs)
 
     def begin_analyze_id_document_async(  # pylint: disable=inconsistent-return-statements
         self,
@@ -400,6 +488,44 @@ class FormRecognizerClientOperationsMixin(object):
         elif api_version == '2.1':
             return mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, pages, file_stream, **kwargs)
 
+    def begin_build_document_model(  # pylint: disable=inconsistent-return-statements
+        self,
+        build_request,  # type: _models.BuildDocumentModelRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
+        """Build document model.
+
+        Builds a custom document analysis model.
+
+        :param build_request: Building request parameters.
+        :type build_request: ~azure.ai.formrecognizer.v2022_08_31.models.BuildDocumentModelRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('begin_build_document_model')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'begin_build_document_model'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.begin_build_document_model(build_request, **kwargs)
+
     def begin_compose_custom_models_async(  # pylint: disable=inconsistent-return-statements
         self,
         compose_request,  # type: _models.ComposeRequest
@@ -438,6 +564,44 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_compose_custom_models_async(compose_request, **kwargs)
+
+    def begin_compose_document_model(  # pylint: disable=inconsistent-return-statements
+        self,
+        compose_request,  # type: _models.ComposeDocumentModelRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
+        """Compose document model.
+
+        Creates a new document model from document types of existing document models.
+
+        :param compose_request: Compose request parameters.
+        :type compose_request: ~azure.ai.formrecognizer.v2022_08_31.models.ComposeDocumentModelRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('begin_compose_document_model')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'begin_compose_document_model'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.begin_compose_document_model(compose_request, **kwargs)
 
     def begin_copy_custom_model(  # pylint: disable=inconsistent-return-statements
         self,
@@ -481,6 +645,47 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.begin_copy_custom_model(model_id, copy_request, **kwargs)
+
+    def begin_copy_document_model_to(  # pylint: disable=inconsistent-return-statements
+        self,
+        model_id,  # type: str
+        copy_to_request,  # type: _models.CopyAuthorization
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DocumentModelAdministrationClientLROPoller[None]
+        """Copy document model.
+
+        Copies document model to the target resource, region, and modelId.
+
+        :param model_id: Unique document model name.
+        :type model_id: str
+        :param copy_to_request: Copy to request parameters.
+        :type copy_to_request: ~azure.ai.formrecognizer.v2022_08_31.models.CopyAuthorization
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of DocumentModelAdministrationClientLROPoller that returns either None or
+         the result of cls(response)
+        :rtype: ~...._polling.DocumentModelAdministrationClientLROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('begin_copy_document_model_to')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'begin_copy_document_model_to'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.begin_copy_document_model_to(model_id, copy_to_request, **kwargs)
 
     def begin_train_custom_model_async(  # pylint: disable=inconsistent-return-statements
         self,
@@ -560,6 +765,36 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.delete_custom_model(model_id, **kwargs)
 
+    def delete_document_model(  # pylint: disable=inconsistent-return-statements
+        self,
+        model_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
+        """Delete document model.
+
+        Deletes document model.
+
+        :param model_id: Unique document model name.
+        :type model_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('delete_document_model')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'delete_document_model'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.delete_document_model(model_id, **kwargs)
+
     def generate_model_copy_authorization(
         self,
         **kwargs  # type: Any
@@ -618,6 +853,39 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_analyze_business_card_result(result_id, **kwargs)
+
+    def get_analyze_document_result(
+        self,
+        model_id,  # type: str
+        result_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.AnalyzeResultOperation
+        """Get analyze result.
+
+        Gets the result of document analysis.
+
+        :param model_id: Unique document model name.
+        :type model_id: str
+        :param result_id: Analyze operation result ID.
+        :type result_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalyzeResultOperation, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.AnalyzeResultOperation
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_analyze_document_result')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_analyze_document_result'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_analyze_document_result(model_id, result_id, **kwargs)
 
     def get_analyze_form_result(
         self,
@@ -880,6 +1148,151 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.get_custom_models(**kwargs)
+
+    def get_document_model(
+        self,
+        model_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.DocumentModelDetails
+        """Get document model.
+
+        Gets detailed document model information.
+
+        :param model_id: Unique document model name.
+        :type model_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DocumentModelDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.DocumentModelDetails
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_document_model')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_document_model'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_document_model(model_id, **kwargs)
+
+    def get_document_models(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable[_models.GetDocumentModelsResponse]
+        """List document models.
+
+        List all document models.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either GetDocumentModelsResponse or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2022_08_31.models.GetDocumentModelsResponse]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_document_models')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_document_models'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_document_models(**kwargs)
+
+    def get_operation(
+        self,
+        operation_id,  # type: str
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.OperationDetails
+        """Get operation.
+
+        Gets operation info.
+
+        :param operation_id: Unique operation ID.
+        :type operation_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: OperationDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.OperationDetails
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_operation')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_operation'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_operation(operation_id, **kwargs)
+
+    def get_operations(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> Iterable[_models.GetOperationsResponse]
+        """List operations.
+
+        Lists all operations.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either GetOperationsResponse or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.ai.formrecognizer.v2022_08_31.models.GetOperationsResponse]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_operations')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_operations'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_operations(**kwargs)
+
+    def get_resource_details(
+        self,
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> _models.ResourceDetails
+        """Get resource info.
+
+        Return information about the current resource.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ResourceDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.ResourceDetails
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_resource_details')
+        if api_version == '2022-08-31':
+            from .v2022_08_31.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_resource_details'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_resource_details(**kwargs)
 
     def list_custom_models(
         self,

@@ -16,31 +16,22 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models
 from ._configuration import FormRecognizerClientConfiguration
-from .operations import DocumentClassifiersOperations, DocumentModelsOperations, MiscellaneousOperations
+from .operations import FormRecognizerClientOperationsMixin
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class FormRecognizerClient:
+class FormRecognizerClient(FormRecognizerClientOperationsMixin):
     """Extracts content, layout, and structured data from documents.
 
-    :ivar document_models: DocumentModelsOperations operations
-    :vartype document_models:
-     azure.ai.formrecognizer.v2023_02_28.aio.operations.DocumentModelsOperations
-    :ivar miscellaneous: MiscellaneousOperations operations
-    :vartype miscellaneous:
-     azure.ai.formrecognizer.v2023_02_28.aio.operations.MiscellaneousOperations
-    :ivar document_classifiers: DocumentClassifiersOperations operations
-    :vartype document_classifiers:
-     azure.ai.formrecognizer.v2023_02_28.aio.operations.DocumentClassifiersOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for
      example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2023-02-28-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-08-31". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -60,15 +51,6 @@ class FormRecognizerClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.document_models = DocumentModelsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.miscellaneous = MiscellaneousOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.document_classifiers = DocumentClassifiersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
 
     def _send_request(
