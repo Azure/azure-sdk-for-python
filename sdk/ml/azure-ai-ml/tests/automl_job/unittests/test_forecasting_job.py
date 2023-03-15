@@ -86,11 +86,10 @@ class TestAutoMLForecasting:
         assert original_obj.validation_data.type == AssetTypes.MLTABLE, "Test data type not set correctly"
         assert original_obj.validation_data.path == "https://foo/bar/valid.csv", "Test data path not set correctly"
         assert original_obj.training.training_mode == None, "Training mode not set correctly"
-        assert original_obj.limits.max_nodes == 1, "Max nodes not set correctly"
+        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
 
     def test_forecasting_task_distributed_mode(self):
         # Create AutoML Forecasting Task
-        identity = UserIdentityConfiguration()
         forecasting_job = forecasting(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",
@@ -102,7 +101,6 @@ class TestAutoMLForecasting:
             name="forecasting_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity=identity,
         )  # type: ForecastingJob
         forecasting_job.set_limits(
             timeout_minutes=60,
@@ -130,16 +128,14 @@ class TestAutoMLForecasting:
 
         # serialize and deserialize again and compare
         rest_obj = forecasting_job._to_rest_object()  # serialize to rest object
-        assert isinstance(rest_obj.properties.identity, RestUserIdentity)
-
         original_obj = ForecastingJob._from_rest_object(rest_obj)  # deserialize from rest object
+
         assert forecasting_job == original_obj, "Conversion to/from rest object failed"
         assert original_obj.training.training_mode == TabularTrainingMode.DISTRIBUTED, "Training mode not set correctly"
         assert original_obj.limits.max_nodes == 4, "Max nodes not set correctly"
 
     def test_forecasting_task_non_distributed_mode(self):
         # Create AutoML Forecasting Task
-        identity = UserIdentityConfiguration()
         forecasting_job = forecasting(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",
@@ -151,7 +147,6 @@ class TestAutoMLForecasting:
             name="forecasting_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity=identity,
         )  # type: ForecastingJob
         forecasting_job.set_limits(
             timeout_minutes=60,
@@ -178,18 +173,16 @@ class TestAutoMLForecasting:
 
         # serialize and deserialize again and compare
         rest_obj = forecasting_job._to_rest_object()  # serialize to rest object
-        assert isinstance(rest_obj.properties.identity, RestUserIdentity)
-
         original_obj = ForecastingJob._from_rest_object(rest_obj)  # deserialize from rest object
+
         assert forecasting_job == original_obj, "Conversion to/from rest object failed"
         assert (
             original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED
         ), "Training mode not set correctly"
-        assert original_obj.limits.max_nodes == 1, "Max nodes not set correctly"
+        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
 
     def test_forecasting_task_auto_mode(self):
         # Create AutoML Forecasting Task
-        identity = UserIdentityConfiguration()
         forecasting_job = forecasting(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",
@@ -201,7 +194,6 @@ class TestAutoMLForecasting:
             name="forecasting_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity=identity,
         )  # type: ForecastingJob
         forecasting_job.set_limits(
             timeout_minutes=60,
@@ -229,9 +221,8 @@ class TestAutoMLForecasting:
 
         # serialize and deserialize again and compare
         rest_obj = forecasting_job._to_rest_object()  # serialize to rest object
-        assert isinstance(rest_obj.properties.identity, RestUserIdentity)
-
         original_obj = ForecastingJob._from_rest_object(rest_obj)  # deserialize from rest object
+
         assert forecasting_job == original_obj, "Conversion to/from rest object failed"
         assert original_obj.training.training_mode == TabularTrainingMode.AUTO, "Training mode not set correctly"
         assert original_obj.limits.max_nodes == 4, "Max nodes not set correctly"

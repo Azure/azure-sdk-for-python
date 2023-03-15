@@ -13,6 +13,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     StackMetaLearnerType,
 )
 from azure.ai.ml.constants import TabularTrainingMode
+from azure.ai.ml._schema import ExperimentalField
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -50,10 +51,10 @@ class TrainingSettingsSchema(metaclass=PatchedSchemaMeta):
     enable_vote_ensemble = fields.Bool()
     ensemble_model_download_timeout = fields.Int(data_key=AutoMLConstants.ENSEMBLE_MODEL_DOWNLOAD_TIMEOUT_YAML)
     stack_ensemble_settings = NestedField(StackEnsembleSettingsSchema())
-    training_mode = StringTransformedEnum(
+    training_mode = ExperimentalField(StringTransformedEnum(
         allowed_values=[o.value for o in TabularTrainingMode],
         casing_transform=camel_to_snake,
-    )
+    ))
 
 
 class ClassificationTrainingSettingsSchema(TrainingSettingsSchema):

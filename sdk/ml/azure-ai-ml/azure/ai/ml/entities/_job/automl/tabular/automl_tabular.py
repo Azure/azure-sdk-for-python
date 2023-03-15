@@ -303,13 +303,13 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
             * Equal to 1, the default.
         :paramtype max_cores_per_trial: typing.Optional[int]
-        :keyword max_nodes: [Experimental] The maximum number of nodes to use for this experiment.
+        :keyword max_nodes: [Experimental] The maximum number of nodes to use for distributed training.
 
             * For forecasting, each model is trained using max(2, int(max_nodes / max_concurrent_trials)) nodes.
 
-            * For classification/regression, each model is trained using n nodes.
+            * For classification/regression, each model is trained using max_nodes nodes.
 
-            The default value is 1. Note- This parameter is in public preview and might change in future.
+            Note- This parameter is in public preview and might change in future.
         :paramtype max_nodes: typing.Optional[int]
         :keyword max_trials: The total number of different algorithm and parameter combinations to test during an
             automated ML experiment. If not specified, the default is 1000 iterations.

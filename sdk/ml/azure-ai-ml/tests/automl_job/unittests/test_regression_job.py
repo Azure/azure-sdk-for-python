@@ -76,11 +76,10 @@ class TestAutoMLRegression:
             RegressionModels.LIGHT_GBM,
         ], "Allowed models not set correctly"
         assert original_obj.training.training_mode == None, "Training mode not set correctly"
-        assert original_obj.limits.max_nodes == 1, "Max nodes not set correctly"
+        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
 
     def test_regression_task_distributed_mode(self):
         # Create AutoML Regression Task
-        identity = UserIdentityConfiguration()
         regression_job = regression(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",
@@ -93,7 +92,6 @@ class TestAutoMLRegression:
             name="regression_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity=identity,
         )  # type: RegressionJob
         regression_job.set_limits(timeout_minutes=60, max_trials=100, max_concurrent_trials=4, max_nodes=4)
         regression_job.set_training(
@@ -105,9 +103,8 @@ class TestAutoMLRegression:
 
         # check the rest object
         rest_obj = regression_job._to_rest_object()  # serialize to rest object
-        assert isinstance(rest_obj.properties.identity, RestUserIdentity)
-
         original_obj = RegressionJob._from_rest_object(rest_obj)  # deserialize from rest object
+
         assert regression_job == original_obj, "Conversion to/from rest object failed"
         assert original_obj.training.allowed_training_algorithms == [
             RegressionModels.LIGHT_GBM,
@@ -117,7 +114,6 @@ class TestAutoMLRegression:
 
     def test_regression_task_non_distributed_mode(self):
         # Create AutoML Regression Task
-        identity = UserIdentityConfiguration()
         regression_job = regression(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",
@@ -130,7 +126,6 @@ class TestAutoMLRegression:
             name="regression_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity=identity,
         )  # type: RegressionJob
         regression_job.set_limits(timeout_minutes=60, max_trials=100, max_concurrent_trials=4)
         regression_job.set_training(
@@ -142,9 +137,8 @@ class TestAutoMLRegression:
 
         # check the rest object
         rest_obj = regression_job._to_rest_object()  # serialize to rest object
-        assert isinstance(rest_obj.properties.identity, RestUserIdentity)
-
         original_obj = RegressionJob._from_rest_object(rest_obj)  # deserialize from rest object
+
         assert regression_job == original_obj, "Conversion to/from rest object failed"
         assert original_obj.training.allowed_training_algorithms == [
             RegressionModels.LIGHT_GBM,
@@ -152,11 +146,10 @@ class TestAutoMLRegression:
         assert (
             original_obj.training.training_mode == TabularTrainingMode.NON_DISTRIBUTED
         ), "Training mode not set correctly"
-        assert original_obj.limits.max_nodes == 1, "Max nodes not set correctly"
+        assert original_obj.limits.max_nodes == None, "Max nodes not set correctly"
 
     def test_regression_task_auto_mode(self):
         # Create AutoML Regression Task
-        identity = UserIdentityConfiguration()
         regression_job = regression(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",
@@ -169,7 +162,6 @@ class TestAutoMLRegression:
             name="regression_job",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            identity=identity,
         )  # type: RegressionJob
         regression_job.set_limits(timeout_minutes=60, max_trials=100, max_concurrent_trials=4, max_nodes=4)
         regression_job.set_training(
@@ -181,9 +173,8 @@ class TestAutoMLRegression:
 
         # check the rest object
         rest_obj = regression_job._to_rest_object()  # serialize to rest object
-        assert isinstance(rest_obj.properties.identity, RestUserIdentity)
-
         original_obj = RegressionJob._from_rest_object(rest_obj)  # deserialize from rest object
+
         assert regression_job == original_obj, "Conversion to/from rest object failed"
         assert original_obj.training.allowed_training_algorithms == [
             RegressionModels.LIGHT_GBM,

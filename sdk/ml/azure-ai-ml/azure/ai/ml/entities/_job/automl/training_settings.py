@@ -19,6 +19,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
 from azure.ai.ml._restclient.v2023_02_01_preview.models import TrainingSettings as RestTrainingSettings
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
@@ -76,6 +77,7 @@ class TrainingSettings(RestTranslatableMixin):
         self.blocked_training_algorithms = blocked_training_algorithms
         self.training_mode = training_mode
 
+    @experimental
     @property
     def training_mode(self):
         return self._training_mode
