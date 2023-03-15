@@ -9,7 +9,6 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, List
 
 from azure.core import CaseInsensitiveEnumMeta
-
 from ._generated.models import (
     ArtifactTagProperties as GeneratedArtifactTagProperties,
     ArtifactManifestProperties as GeneratedArtifactManifestProperties,
@@ -17,13 +16,12 @@ from ._generated.models import (
     RepositoryWriteableProperties,
     TagWriteableProperties,
     ManifestWriteableProperties,
+    OCIManifest,
 )
-from ._helpers import _host_only, _is_tag, _strip_alg
+from ._helpers import _host_only, _is_tag, _strip_alg, _deserialize_manifest
 
 if TYPE_CHECKING:
-    from typing import IO
     from datetime import datetime
-    from ._generated.models import ManifestAttributesBase, OCIManifest
 
 
 class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
@@ -318,17 +316,23 @@ class DownloadBlobResult(object):
 class DownloadManifestResult(object):
     """The result from downloading a manifest from the registry.
 
-    :ivar manifest: The OCI manifest that was downloaded.
-    :vartype manifest: ~azure.containerregistry.models.OCIManifest
     :ivar data: The manifest stream that was downloaded.
     :vartype data: IO
     :ivar str digest: The manifest's digest, calculated by the registry.
+    :ivar media_type: The manifest's media type.
     """
 
     def __init__(self, **kwargs):
-        self.manifest = kwargs.get("manifest")
         self.data = kwargs.get("data")
         self.digest = kwargs.get("digest")
+        self.media_type = kwargs.get("media_type")
+    
+    def to_oci_manifest(self) -> OCIManifest:
+        """Serialize stream data to OCIManifest type.
+        """
+        if self.data is not None:
+            return _deserialize_manifest(self.data)
+        return OCIManifest()
 
 
 class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -364,3 +368,12 @@ class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PLAN9 = "plan9"
     SOLARIS = "solaris"
     WINDOWS = "windows"
+
+
+class ManifestMediaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    OCI_IMAGE_MANIFEST = "application/vnd.oci.image.manifest.v1+json"
+    OCI_INDEX = "application/vnd.oci.image.index.v1+json"
+    DOCKER_MANIFEST = "application/vnd.docker.distribution.manifest.v2+json"
+    DOCKER_MANIFEST_V1 = "application/vnd.docker.container.image.v1+json"
+    DOCKER_MANIFEST_LIST = "application/vnd.docker.distribution.manifest.list.v2+json"

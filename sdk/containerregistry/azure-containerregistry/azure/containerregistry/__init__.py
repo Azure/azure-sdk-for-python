@@ -11,12 +11,14 @@ from ._generated.models._container_registry_enums import (
     ArtifactManifestOrder,
     ArtifactTagOrder,
 )
+from ._generated.models import OCIManifest
 from ._models import (
     ArtifactArchitecture,
     ArtifactOperatingSystem,
     ArtifactManifestProperties,
     RepositoryProperties,
     ArtifactTagProperties,
+    ManifestMediaType,
 )
 from ._version import VERSION
 
@@ -31,4 +33,6 @@ __all__ = [
     "RepositoryProperties",
     "ArtifactTagOrder",
     "ArtifactTagProperties",
+    "ManifestMediaType",
+    "OCIManifest",
 ]
