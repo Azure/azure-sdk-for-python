@@ -20,7 +20,7 @@ def _get_deserialize(api_version):
     elif api_version == "2.1":
         from ._generated.v2_1 import FormRecognizerClient
     elif api_version == "2023-02-28-preview":
-        from ._generated.v2023_02_28 import FormRecognizerClient
+        from ._generated.v2023_02_28_preview import FormRecognizerClient
     return FormRecognizerClient("dummy", "dummy")._deserialize  # pylint: disable=protected-access
 
 
