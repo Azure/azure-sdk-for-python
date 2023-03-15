@@ -9,7 +9,6 @@ from marshmallow import fields
 
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.core.schema import YamlFileSchema, PatchedSchemaMeta
-from azure.ai.ml._schema._feature_store_entity.data_column_schema import DataColumnSchema
 
 from .source_metadata_schema import SourceMetadataSchema
 
