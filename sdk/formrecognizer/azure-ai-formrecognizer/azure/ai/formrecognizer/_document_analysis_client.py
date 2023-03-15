@@ -110,7 +110,10 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         continuation_token = kwargs.pop("continuation_token", None)
 
         if continuation_token is not None:
-            return self._client.document_models.begin_analyze_document(  # type: ignore
+            _client_op_path = self._client
+            if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+                _client_op_path = _client_op_path.document_models
+            return _client_op_path.begin_analyze_document(  # type: ignore
                 model_id=model_id,
                 analyze_request=document,  # type: ignore
                 content_type="application/octet-stream",
@@ -123,7 +126,10 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        return self._client.document_models.begin_analyze_document(  # type: ignore
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.document_models
+        return _client_op_path.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
@@ -171,7 +177,10 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         # continuation token requests do not perform the same value checks as
         # regular analysis requests
         if continuation_token is not None:
-            return self._client.document_models.begin_analyze_document(  # type: ignore
+            _client_op_path = self._client
+            if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+                _client_op_path = _client_op_path.document_models
+            return _client_op_path.begin_analyze_document(  # type: ignore
                 model_id=model_id,
                 analyze_request={"urlSource": document_url},  # type: ignore
                 string_index_type="unicodeCodePoint",
@@ -189,7 +198,10 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
                 "Please see `begin_analyze_document()` to pass a byte stream."
             )
 
-        return self._client.document_models.begin_analyze_document(  # type: ignore
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.document_models
+        return _client_op_path.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",

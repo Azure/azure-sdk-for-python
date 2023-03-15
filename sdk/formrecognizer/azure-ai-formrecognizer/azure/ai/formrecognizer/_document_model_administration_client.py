@@ -143,7 +143,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        return self._client.document_models.begin_build_model(  # type: ignore
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.document_models
+        return _client_op_path.begin_build_model(  # type: ignore
             build_request=self._generated_models.BuildDocumentModelRequest(
                 model_id=model_id,
                 build_mode=build_mode,
@@ -207,7 +210,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        return self._client.document_models.begin_compose_model(  # type: ignore
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.document_models
+        return _client_op_path.document_models.begin_compose_model(  # type: ignore
             compose_request=self._generated_models.ComposeDocumentModelRequest(
                 model_id=model_id,
                 description=description,
@@ -251,7 +257,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        response = self._client.document_models.authorize_model_copy(
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.document_models
+        response = _client_op_path.authorize_model_copy(
             authorize_copy_request=self._generated_models.AuthorizeCopyRequest(
                 model_id=model_id, description=description, tags=tags
             ),
@@ -301,7 +310,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        return self._client.document_models.begin_copy_model_to(  # type: ignore
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.document_models
+        return _client_op_path.begin_copy_model_to(  # type: ignore
             model_id=model_id,
             copy_to_request=self._generated_models.CopyAuthorization(
                 target_resource_id=target["targetResourceId"],
@@ -343,7 +355,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        return self._client.document_models.delete_model(model_id=model_id, **kwargs)
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.document_models
+        return _client_op_path.delete_model(model_id=model_id, **kwargs)
 
     @distributed_trace
     def list_document_models(self, **kwargs: Any) -> ItemPaged[DocumentModelSummary]:
@@ -364,7 +379,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 :caption: List all models that were built successfully under the Form Recognizer resource.
         """
 
-        return self._client.document_models.list_models(  # type: ignore
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.document_models
+        return _client_op_path.list_models(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [DocumentModelSummary._from_generated(x) for x in objs],
@@ -390,7 +408,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 :caption: Get model counts and limits under the Form Recognizer resource.
         """
 
-        response = self._client.miscellaneous.get_resource_info(**kwargs)
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.miscellaneous
+        response = _client_op_path.get_resource_info(**kwargs)
         return ResourceDetails._from_generated(response.custom_document_models)
 
     @distributed_trace
@@ -415,7 +436,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        response = self._client.document_models.get_model(model_id=model_id, **kwargs)
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.document_models
+        response = _client_op_path.get_model(model_id=model_id, **kwargs)
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
@@ -440,7 +464,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
                 :caption: List all document model operations in the past 24 hours.
         """
 
-        return self._client.miscellaneous.list_operations(  # type: ignore
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.miscellaneous
+        return _client_op_path.list_operations(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [OperationSummary._from_generated(x) for x in objs],
@@ -474,8 +501,11 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if not operation_id:
             raise ValueError("'operation_id' cannot be None or empty.")
 
+        _client_op_path = self._client
+        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
+            _client_op_path = _client_op_path.miscellaneous
         return OperationDetails._from_generated(
-            self._client.miscellaneous.get_operation(operation_id, **kwargs),
+            _client_op_path.get_operation(operation_id, **kwargs),
             api_version=self._api_version,
         )
 
