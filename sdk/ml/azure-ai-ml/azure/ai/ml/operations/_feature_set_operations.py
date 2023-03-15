@@ -352,6 +352,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Archive a FeatureSet asset.
+
         :param name: Name of FeatureSet asset.
         :type name: str
         :param version: Version of FeatureSet asset.
@@ -380,6 +381,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Restore an archived FeatureSet asset.
+
         :param name: Name of FeatureSet asset.
         :type name: str
         :param version: Version of FeatureSet asset.

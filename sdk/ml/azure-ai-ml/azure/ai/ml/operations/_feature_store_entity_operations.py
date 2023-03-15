@@ -171,6 +171,7 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Archive a FeatureStoreEntity asset.
+
         :param name: Name of FeatureStoreEntity asset.
         :type name: str
         :param version: Version of FeatureStoreEntity asset.
@@ -199,6 +200,7 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Restore an archived FeatureStoreEntity asset.
+
         :param name: Name of FeatureStoreEntity asset.
         :type name: str
         :param version: Version of FeatureStoreEntity asset.
