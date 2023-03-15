@@ -22,6 +22,8 @@
 - Added support for modifying SSH key values after creation on Compute Resources.
 - Added WorkspaceConnection types `s3`, `snowflake`, `azure_sql_db`, `azure_synapse_analytics`, `azure_my_sql_db`, `azure_postgres_db`
 - Added WorkspaceConnection auth type `access_key` for `s3`
+- Added load_data_import function, DataImport class and DataOperations.import_data.
+- Added DataOperations.list_materialization_status - list status of data import jobs that create asset versions via asset name.
 
 ### Bugs Fixed
 
