@@ -299,7 +299,7 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
-        partition_key = kwargs.pop("partition_key", None)
+        partition_key = kwargs.pop("partitionKey", kwargs.pop("partition_key", None))
         if partition_key is not None:
             feed_options["partitionKey"] = partition_key
         if is_start_from_beginning is not None:
