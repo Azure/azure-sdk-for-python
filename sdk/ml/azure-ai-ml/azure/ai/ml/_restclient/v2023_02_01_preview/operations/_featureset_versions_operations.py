@@ -758,6 +758,9 @@ class FeaturesetVersionsOperations(object):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        print("Request !!", request)
+        print("Request body!!", request.body)
+
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             request,
             stream=False,

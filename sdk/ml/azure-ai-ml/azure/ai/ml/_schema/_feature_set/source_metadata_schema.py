@@ -8,7 +8,6 @@ from typing import Dict
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 from .delay_metadata_schema import DelayMetadataSchema
