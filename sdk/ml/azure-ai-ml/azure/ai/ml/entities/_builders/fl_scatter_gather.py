@@ -183,7 +183,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 This dictionary is merged with silo-specific inputs before each executed.
         Returns:
             sg_graph (dict): A dictionary containing the subgraph of this scatter-gather iteration.
-                Contains three indeces which contain a list of executed silo steps, a list of internally
+                Contains three indexes which contain a list of executed silo steps, a list of internally
                 created and executed merge components, and the executed aggregation step.
         '''
 
@@ -291,8 +291,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """
         match = re.match("(.*datastore/)([^/]*)(/.*)", path)
         if match:
-            grps = match.groups()
-            if grps[1] == expected_datastore:
+            groups = match.groups()
+            if groups[1] == expected_datastore:
                 return True
         return False
 
@@ -323,7 +323,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         # Double check the path's datastore leads to the target if it's already set.
         elif not cls._check_datastore(output.path, target_datastore):
             validation_result.append_warning(yaml_path=name,
-                message=f"Output '{name}' has an unparseable datastore, or a datstore"
+                message=f"Output '{name}' has an undetermined datastore, or a datstore"
                     + f" that does not match the expected datastore for this output, which is '{target_datastore}'."
                     + " Make sure this is intended.")
         return validation_result
@@ -369,7 +369,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 # then we need to anchor the internal component of this step
                 # The outputs of this sub-component are a deep copy of the outputs of this step
                 # This is dangerous, and we need to make sure they both use the same datastore,
-                # so we keep datastore types idendical across this recursive call.
+                # so we keep datastore types indentical across this recursive call.
                 cls._anchor_step(
                     pipeline_step.component,
                     compute,

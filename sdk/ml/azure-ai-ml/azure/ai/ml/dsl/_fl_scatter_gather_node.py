@@ -61,7 +61,7 @@ def fl_scatter_gather(
             fl_node = fl_scatter_gather(**many_inputs)
             return {"pipeline_output" : fl_node.outputs["aggregated_model"]}
 
-        submitted_pipeline_job = my_mlclient.jobs.create_or_update(fl_pipeline(), experiment_name="example_fl_pipeline")
+        submitted_pipeline_job = my_client.jobs.create_or_update(fl_pipeline(), experiment_name="example_fl_pipeline")
         ```
     
     param silo_component: A pipeline step that will be run multiple

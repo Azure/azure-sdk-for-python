@@ -15,3 +15,4 @@ azure-mgmt-msi
 pywin32==304 ; sys_platform == 'win32'
 numpy;platform.python_implementation!="PyPy"
 scikit-image;platform.python_implementation!="PyPy"
+mldesigner
