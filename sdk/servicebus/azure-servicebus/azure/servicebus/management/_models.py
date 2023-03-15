@@ -9,7 +9,7 @@ from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
 from typing import Type, Dict, Any, Union, Optional, List
-from msrest.serialization import Model
+from ._generated._serialization import Model
 
 from ._generated.models import (
     QueueDescription as InternalQueueDescription,
