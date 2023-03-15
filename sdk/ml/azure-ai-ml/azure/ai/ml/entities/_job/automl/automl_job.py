@@ -11,7 +11,6 @@ from typing import Any, Dict, Optional, Union
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     JobBase,
     MLTableJobInput,
-    QueueSettings,
     ResourceConfiguration,
     TaskType,
 )
@@ -28,6 +27,7 @@ from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.pipeline._io import AutoMLNodeIOMixin
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -153,7 +153,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         :type priority: str
         """
         if self.queue_settings is None:
-            self.queue_settings = QueueSettings
+            self.queue_settings = QueueSettings()
 
         if job_tier is not None:
             self.queue_settings.job_tier = job_tier
