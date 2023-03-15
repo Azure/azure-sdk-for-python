@@ -72,6 +72,8 @@ class ParameterizedSweep:
             ]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
+        job_tier: Optional[str] = None,
+        priority: Optional[str] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination
@@ -83,6 +85,9 @@ class ParameterizedSweep:
             self.objective = Objective(**objective)
         else:
             self.objective = objective
+
+        if job_tier is not None or priority is not None:
+            self.set_queue_settings(job_tier=job_tier, priority=priority)
 
     @property
     def limits(self):
@@ -136,6 +141,21 @@ class ParameterizedSweep:
                 self.limits.timeout = timeout
             if trial_timeout is not None:
                 self.limits.trial_timeout = trial_timeout
+
+    def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None):
+        """Set QueueSettings for the job.
+        :param job_tier: determines the job tier.
+        :type job_tier: str
+        :param priority: controls the priority on the compute.
+        :type priority: str
+        """
+        if self.queue_settings is None:
+            self.queue_settings = QueueSettings
+
+        if job_tier is not None:
+            self.queue_settings.job_tier = job_tier
+        if priority is not None:
+            self.queue_settings.priority = priority
 
     def set_objective(self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None) -> None:
         """Set the sweep object.

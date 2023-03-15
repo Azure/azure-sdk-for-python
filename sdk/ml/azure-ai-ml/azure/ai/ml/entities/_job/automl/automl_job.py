@@ -51,6 +51,10 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
     :paramtype outputs: typing.Optional[Dict[str, str]]
     :keyword queue_settings: The queue settings for the AutoML job, defaults to None
     :paramtype queue_settings: typing.Optional[QueueSettings]
+    :keyword job_tier: Determines the job tier, defaults to None
+    :paramtype job_tier: typing.Optional[str]
+    :keyword priority: Controls the priority on the compute, defaults to None
+    :paramtype priority: typing.Optional[str]
     :raises ValidationException: task type validation error
     :raises NotImplementedError: Raises NotImplementedError
     :return: An AutoML Job
@@ -65,6 +69,8 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
+        job_tier: Optional[str] = None,
+        priority: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity.
@@ -84,6 +90,10 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         :paramtype outputs: typing.Optional[Dict[str, str]]
         :keyword queue_settings: The queue settings for the AutoML job, defaults to None
         :paramtype queue_settings: typing.Optional[QueueSettings]
+        :keyword job_tier: Determines the job tier, defaults to None
+        :paramtype job_tier: typing.Optional[str]
+        :keyword priority: Controls the priority on the compute, defaults to None
+        :paramtype priority: typing.Optional[str]
         :raises ValidationException: task type validation error
         :raises NotImplementedError: Raises NotImplementedError
         :return: An AutoML Job
@@ -99,6 +109,8 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         self.resources = resources
         self.identity = identity
         self.queue_settings = queue_settings
+        if job_tier is not None or priority is not None:
+            self.set_queue_settings(job_tier=job_tier, priority=priority)
 
     @property
     @abstractmethod
@@ -132,6 +144,21 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         :rtype: Input
         """
         raise NotImplementedError()
+    
+    def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None):
+        """Set QueueSettings for the job.
+        :param job_tier: determines the job tier.
+        :type job_tier: str
+        :param priority: controls the priority on the compute.
+        :type priority: str
+        """
+        if self.queue_settings is None:
+            self.queue_settings = QueueSettings
+
+        if job_tier is not None:
+            self.queue_settings.job_tier = job_tier
+        if priority is not None:
+            self.queue_settings.priority = priority
 
     @classmethod
     def _load_from_rest(cls, obj: JobBase) -> "AutoMLJob":
