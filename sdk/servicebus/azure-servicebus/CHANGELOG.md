@@ -6,9 +6,15 @@
 
 ### Breaking Changes
 
+- Operations on the sync and async `ServiceBusAdministrationClient` will now raise `azure.core.exceptions.HttpResponseError` everywhere `msrest.exceptions.ValidationErrors` were raised.
+
 ### Bugs Fixed
 
 ### Other Changes
+
+- Updated minimum `azure-core` version to 1.24.0.
+- Removed `msrest` dependency.
+- Removed `azure-common` dependency.
 
 ## 7.8.3 (2023-03-09)
 
