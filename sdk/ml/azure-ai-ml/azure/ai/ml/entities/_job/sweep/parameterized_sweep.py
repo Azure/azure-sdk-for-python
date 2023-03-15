@@ -150,7 +150,7 @@ class ParameterizedSweep:
         :type priority: str
         """
         if self.queue_settings is None:
-            self.queue_settings = QueueSettings
+            self.queue_settings = QueueSettings()
 
         if job_tier is not None:
             self.queue_settings.job_tier = job_tier
