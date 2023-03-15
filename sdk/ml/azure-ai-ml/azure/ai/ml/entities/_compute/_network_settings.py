@@ -8,33 +8,24 @@ from typing import Optional
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._schema._utils.utils import validate_arm_str
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class NetworkSettings:
     def __init__(
         self,
         *,
-        subnet: Optional[str] = None,
+        subnet: str,
         vnet_name: Optional[str] = None,
         **kwargs,
     ):
         """Network settings for a compute.
 
-        :param subnet: The subnet name. Can also be provided as an ARM string specifying the location of the subnet. Defaults to None
-        :type subnet: str, optional
+        :param subnet: The subnet name. Can also be provided as an ARM string specifying the location of the subnet.
+        :type subnet: str
         :param vnet_name: The virtual network name. Ignored if subnet is provided as an ARM string. Defaults to None.
         :type vnet_name: str, optional
 
         """
-        if vnet_name and not subnet:
-            msg = "Subnet is required when vnet name is specified."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPUTE,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
         self.subnet = subnet
         self.vnet_name = vnet_name
         self._public_ip_address = kwargs.pop("public_ip_address", None)
