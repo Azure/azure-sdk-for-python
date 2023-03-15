@@ -4,8 +4,8 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DumpableEnumField, VersionField
+from ..._schema import PathAwareSchema
+from ..._schema.core.fields import DumpableEnumField, VersionField
 
 
 class InternalEnvironmentSchema(PathAwareSchema):
