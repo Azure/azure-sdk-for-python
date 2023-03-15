@@ -48,6 +48,7 @@ from ._credentials import (
     ServicePrincipalConfiguration,
     UserIdentityConfiguration,
     UsernamePasswordConfiguration,
+    AccessKeyConfiguration,
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
@@ -319,4 +320,5 @@ __all__ = [
     "ContainerRegistryCredential",
     "EndpointAuthKeys",
     "EndpointAuthToken",
+    "AccessKeyConfiguration",
 ]

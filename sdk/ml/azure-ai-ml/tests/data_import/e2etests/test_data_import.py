@@ -1,7 +1,7 @@
 import pytest
 from devtools_testutils import AzureRecordedTestCase
 
-from azure.ai.ml import MLClient, load_data
+from azure.ai.ml import MLClient, load_data_import
 from azure.ai.ml.entities import PipelineJob, DataImport
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
 
@@ -14,7 +14,7 @@ class TestDataImport(AzureRecordedTestCase):
     # Please set ML_TENANT_ID in your environment variables when recording this test.
     # It will to help sanitize RequestBody.Studio.endpoint for job creation request.
     def test_data_import(self, client: MLClient) -> None:
-        data_import = load_data(
+        data_import = load_data_import(
             source="./tests/test_configs/data_import/data_import_e2e.yaml",
         )
         pipeline_job: PipelineJob = client.data.import_data(data_import)
