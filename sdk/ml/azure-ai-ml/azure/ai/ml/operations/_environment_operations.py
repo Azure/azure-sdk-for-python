@@ -72,7 +72,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
     @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, environment: Environment, **kwargs) -> Environment:
+    def create_or_update(self, environment: Environment) -> Environment:
         """Returns created or updated environment asset.
 
         :param environment: Environment object
@@ -149,9 +149,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     )
                     return self.get(name=environment.name, version=environment.version)
 
-            show_progress = kwargs.pop("show_progress", True)
             environment = _check_and_upload_env_build_context(
-                environment=environment, operations=self, sas_uri=sas_uri, show_progress=show_progress
+                environment=environment, operations=self, sas_uri=sas_uri, show_progress=self._show_progress
             )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (

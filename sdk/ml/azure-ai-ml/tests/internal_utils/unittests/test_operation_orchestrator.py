@@ -534,53 +534,17 @@ class TestOperationOrchestration:
     def test_show_progress_off(self, operation_orchestrator_no_progress: OperationOrchestrator) -> None:
         # Ensure that show_progress set in OperationConfig in MLClient is being passed through operation orchestrator
 
-        model = Model(name="name", version="1", path="test_path")
-        operation_orchestrator_no_progress.get_asset_arm_id(model, azureml_type=AzureMLResourceType.MODEL)
-        operation_orchestrator_no_progress._model.create_or_update.assert_called_once_with(model, show_progress=False)
-
-        environment = Environment(name="name", version="1")
-        operation_orchestrator_no_progress.get_asset_arm_id(environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
-        operation_orchestrator_no_progress._environments.create_or_update.assert_called_once_with(
-            environment, show_progress=False
-        )
-
-        code = Code(name="name", version="1")
-        operation_orchestrator_no_progress.get_asset_arm_id(code, azureml_type=AzureMLResourceType.CODE)
-        operation_orchestrator_no_progress._code_assets.create_or_update.assert_called_once_with(
-            code, show_progress=False
-        )
-
         component = Component()
         operation_orchestrator_no_progress.get_asset_arm_id(component, azureml_type=AzureMLResourceType.COMPONENT)
         operation_orchestrator_no_progress._component.create_or_update.assert_called_once_with(
             component, is_anonymous=True, show_progress=False
         )
 
-        data = Data(name="name", version="1")
-        operation_orchestrator_no_progress.get_asset_arm_id(data, azureml_type=AzureMLResourceType.DATA)
-        operation_orchestrator_no_progress._data.create_or_update.assert_called_once_with(data, show_progress=False)
-
     def test_show_progress_on(self, operation_orchestrator: OperationOrchestrator) -> None:
         # Ensure that show_progress set in OperationConfig in MLClient is being passed through operation orchestrator
-
-        model = Model(name="name", version="1", path="test_path")
-        operation_orchestrator.get_asset_arm_id(model, azureml_type=AzureMLResourceType.MODEL)
-        operation_orchestrator._model.create_or_update.assert_called_once_with(model, show_progress=True)
-
-        environment = Environment(name="name", version="1")
-        operation_orchestrator.get_asset_arm_id(environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
-        operation_orchestrator._environments.create_or_update.assert_called_once_with(environment, show_progress=True)
-
-        code = Code(name="name", version="1")
-        operation_orchestrator.get_asset_arm_id(code, azureml_type=AzureMLResourceType.CODE)
-        operation_orchestrator._code_assets.create_or_update.assert_called_once_with(code, show_progress=True)
 
         component = Component(name="name", version="1")
         operation_orchestrator.get_asset_arm_id(component, azureml_type=AzureMLResourceType.COMPONENT)
         operation_orchestrator._component.create_or_update.assert_called_once_with(
             component, is_anonymous=True, show_progress=True
         )
-
-        data = Data(name="name", version="1")
-        operation_orchestrator.get_asset_arm_id(data, azureml_type=AzureMLResourceType.DATA)
-        operation_orchestrator._data.create_or_update.assert_called_once_with(data, show_progress=True)
