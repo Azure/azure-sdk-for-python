@@ -17,7 +17,6 @@ class KeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     p_384 = "P-384"  #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
     p_521 = "P-521"  #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
     p_256_k = "P-256K"  #: The SECG SECP256K1 elliptic curve.
-    ed25519 = "Ed25519"  #: The Ed25519 Edwards curve.
 
 
 class KeyExportEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
