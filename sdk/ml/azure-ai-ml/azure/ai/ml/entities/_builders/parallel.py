@@ -267,9 +267,9 @@ class Parallel(BaseNode):
             "resources": (dict, JobResourceConfiguration),
             "task": (dict, ParallelTask),
             "logging_level": str,
-            "max_concurrency_per_instance": int,
-            "error_threshold": int,
-            "mini_batch_error_threshold": int,
+            "max_concurrency_per_instance": (str, int),
+            "error_threshold": (str, int),
+            "mini_batch_error_threshold": (str, int),
             "environment_variables": dict,
         }
 
@@ -358,8 +358,7 @@ class Parallel(BaseNode):
                 obj["task"].environment = task_env[len(ARM_ID_PREFIX) :]
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_dict(obj["resources"])
 
         if "partition_keys" in obj and obj["partition_keys"]:
             obj["partition_keys"] = json.dumps(obj["partition_keys"])

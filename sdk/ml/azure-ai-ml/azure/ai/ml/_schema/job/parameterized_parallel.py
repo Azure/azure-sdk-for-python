@@ -11,6 +11,7 @@ from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job.input_output_entry import InputLiteralValueSchema
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import LoggingLevel
+from azure.ai.ml._schema.core.fields import DataBindingStr, UnionField
 
 from ..core.fields import UnionField
 
@@ -36,32 +37,47 @@ class ParameterizedParallelSchema(PathAwareSchema):
     input_data = fields.Str()
     resources = NestedField(JobResourceConfigurationSchema)
     retry_settings = NestedField(RetrySettingsSchema, unknown=INCLUDE)
-    max_concurrency_per_instance = fields.Integer(
-        dump_default=1,
-        metadata={"description": "The max parallellism that each compute instance has."},
+    max_concurrency_per_instance = UnionField(
+        [
+            fields.Integer(
+                dump_default=1,
+                metadata={"description": "The max parallellism that each compute instance has."},
+            ),
+            DataBindingStr()
+        ]
     )
-    error_threshold = fields.Integer(
-        dump_default=-1,
-        metadata={
-            "description": (
-                "The number of item processing failures should be ignored. "
-                "If the error_threshold is reached, the job terminates. "
-                "For a list of files as inputs, one item means one file reference. "
-                "This setting doesn't apply to command parallelization."
-            )
-        },
+    error_threshold = UnionField(
+        [
+            fields.Integer(
+                dump_default=-1,
+                metadata={
+                    "description": (
+                        "The number of item processing failures should be ignored. "
+                        "If the error_threshold is reached, the job terminates. "
+                        "For a list of files as inputs, one item means one file reference. "
+                        "This setting doesn't apply to command parallelization."
+                    )
+                },
+            ),
+            DataBindingStr()
+        ]
     )
-    mini_batch_error_threshold = fields.Integer(
-        dump_default=-1,
-        metadata={
-            "description": (
-                "The number of mini batch processing failures should be ignored. "
-                "If the mini_batch_error_threshold is reached, the job terminates. "
-                "For a list of files as inputs, one item means one file reference. "
-                "This setting can be used by either command or python function parallelization. "
-                "Only one error_threshold setting can be used in one job."
-            )
-        },
+    mini_batch_error_threshold = UnionField(
+        [
+            fields.Integer(
+                dump_default=-1,
+                metadata={
+                    "description": (
+                        "The number of mini batch processing failures should be ignored. "
+                        "If the mini_batch_error_threshold is reached, the job terminates. "
+                        "For a list of files as inputs, one item means one file reference. "
+                        "This setting can be used by either command or python function parallelization. "
+                        "Only one error_threshold setting can be used in one job."
+                    )
+                },
+            ),
+            DataBindingStr()
+        ]
     )
     environment_variables = UnionField(
         [

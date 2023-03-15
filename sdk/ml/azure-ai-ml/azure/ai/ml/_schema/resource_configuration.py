@@ -7,10 +7,10 @@
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-
+from azure.ai.ml._schema.core.fields import DataBindingStr, UnionField
 
 class ResourceConfigurationSchema(metaclass=PatchedSchemaMeta):
-    instance_count = fields.Int()
+    instance_count = UnionField([fields.Int(), DataBindingStr()])
     instance_type = fields.Str(metadata={"description": "The instance type to make available to this job."})
     properties = fields.Dict(keys=fields.Str())
 
