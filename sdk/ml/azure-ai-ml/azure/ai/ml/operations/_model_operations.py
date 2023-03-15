@@ -170,7 +170,11 @@ class ModelOperations(_ScopeDependentOperations):
                     return self.get(name=model.name, version=model.version)
 
             model, indicator_file = _check_and_upload_path(
-                artifact=model, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.MODEL
+                artifact=model,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.MODEL,
+                show_progress=self._show_progress,
             )
 
             model.path = resolve_short_datastore_url(model.path, self._operation_scope)
