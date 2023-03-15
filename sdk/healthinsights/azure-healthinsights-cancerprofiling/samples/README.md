@@ -5,7 +5,7 @@ languages:
 products:
   - azure
   - azure-cognitive-services
-  - azure-healthinsights-cancerprofiling
+  - azure-health-insights
 urlFragment: healthinsights-cancerprofiling-samples
 ---
 
