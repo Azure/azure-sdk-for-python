@@ -70,7 +70,7 @@ output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azur
 These settings apply only when `--tag=release_2022_08_31` is specified on the command line.
 
 ``` yaml $(tag) == 'release_2022_08_31'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/FormRecognizer/stable/2022-08-31/FormRecognizer.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/64484dc8760571a2de7f5cfbc96861e4a0985a54/specification/cognitiveservices/data-plane/FormRecognizer/stable/2022-08-31/FormRecognizer.json
 namespace: azure.ai.formrecognizer.v2022_08_31
 output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2022_08_31
 ```
@@ -113,4 +113,14 @@ directive:
         transform: >
             $["x-python-custom-poller-sync"] = "...._polling.DocumentModelAdministrationClientLROPoller";
             $["x-python-custom-poller-async"] = ".....aio._async_polling.AsyncDocumentModelAdministrationClientLROPoller";
+```
+
+### Override unique items in composed models due to msrest validation issue
+
+``` yaml
+directive:
+    -   from: swagger-document
+        where: '$.definitions["ComposeDocumentModelRequest"].properties'
+        transform: >
+            $["componentModels"].uniqueItems = false
 ```
