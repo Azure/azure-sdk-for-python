@@ -9,13 +9,13 @@ from urllib.parse import urlparse
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._models import SipTrunk
+from .._models import SipTrunk, SipTrunkRoute
 from .._generated.models import (
     SipConfiguration,
-    SipTrunkRoute,
-    SipTrunkInternal
+    SipTrunkInternal,
+    SipTrunkRouteInternal
 )
-from .._generated.aio._sip_routing_service import SIPRoutingService
+from .._generated.aio._client import SIPRoutingService
 from ..._shared.utils import (
     parse_connection_str,
     get_authentication_policy
@@ -94,26 +94,23 @@ class SipRoutingClient(object):
         self,
         trunk_fqdn,  # type: str
         **kwargs  # type: Any
-    ):  # type: (...) -> Optional[SipTrunk]
+    ):  # type: (...) -> SipTrunk
         """Retrieve a single SIP trunk.
 
         :param trunk_fqdn: FQDN of the desired SIP trunk.
         :type trunk_fqdn: str
-        :returns: SIP trunk with specified trunk_fqdn. If it doesn't exist, returns None.
-        :rtype: ~azure.communication.siprouting.models.SipTrunk or None
-        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, LookupError
+        :returns: SIP trunk with specified trunk_fqdn. If it doesn't exist, throws KeyError.
+        :rtype: ~azure.communication.siprouting.models.SipTrunk
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError, KeyError
         """
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
 
-        config = await self._rest_service.get_sip_configuration(
+        config = await self._rest_service.sip_routing.get(
             **kwargs)
 
-        if trunk_fqdn in config.trunks:
-            trunk = config.trunks[trunk_fqdn]
-            return SipTrunk(fqdn=trunk_fqdn,sip_signaling_port=trunk.sip_signaling_port)
-
-        return None
+        trunk = config.trunks[trunk_fqdn]
+        return SipTrunk(fqdn=trunk_fqdn,sip_signaling_port=trunk.sip_signaling_port)
 
     @distributed_trace_async
     async def set_trunk(
@@ -132,7 +129,7 @@ class SipRoutingClient(object):
         if trunk is None:
             raise ValueError("Parameter 'trunk' must not be None.")
 
-        await self._patch_trunks_([trunk],**kwargs)
+        await self._update_trunks_([trunk],**kwargs)
 
     @distributed_trace_async
     async def delete_trunk(
@@ -151,7 +148,7 @@ class SipRoutingClient(object):
         if trunk_fqdn is None:
             raise ValueError("Parameter 'trunk_fqdn' must not be None.")
 
-        await self._rest_service.patch_sip_configuration(
+        await self._rest_service.sip_routing.update(
             body=SipConfiguration(trunks={trunk_fqdn:None}),
             **kwargs)
 
@@ -179,10 +176,15 @@ class SipRoutingClient(object):
         :rtype: Iterable[~azure.communication.siprouting.models.SipTrunkRoute]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        config = await self._rest_service.get_sip_configuration(
+        config = await self._rest_service.sip_routing.get(
             **kwargs
         )
-        return config.routes
+        return [SipTrunkRoute(
+            description=x.description,
+            name=x.name,
+            number_pattern=x.number_pattern,
+            trunks=x.trunks
+            ) for x in config.routes]
 
     @distributed_trace_async
     async def set_trunks(
@@ -211,7 +213,7 @@ class SipRoutingClient(object):
                 config.trunks[x.fqdn] = None
 
         if len(config.trunks) > 0:
-            await self._rest_service.patch_sip_configuration(
+            await self._rest_service.sip_routing.update(
                 body=config, **kwargs
             )
 
@@ -232,25 +234,31 @@ class SipRoutingClient(object):
         if routes is None:
             raise ValueError("Parameter 'routes' must not be None.")
 
-        await self._rest_service.patch_sip_configuration(
-            body=SipConfiguration(routes=routes),
+        routes_internal = [SipTrunkRouteInternal(
+            description=x.description,
+            name=x.name,
+            number_pattern=x.number_pattern,
+            trunks=x.trunks
+            ) for x in routes]
+        await self._rest_service.sip_routing.update(
+            body=SipConfiguration(routes=routes_internal),
             **kwargs
             )
 
     async def _list_trunks_(self, **kwargs):
-        config = await self._rest_service.get_sip_configuration(
+        config = await self._rest_service.sip_routing.get(
             **kwargs
         )
         return [SipTrunk(fqdn=k,sip_signaling_port=v.sip_signaling_port) for k,v in config.trunks.items()]
 
-    async def _patch_trunks_(self,
+    async def _update_trunks_(self,
         trunks,  # type: List[SipTrunk]
         **kwargs  # type: Any
         ):  # type: (...) -> SipTrunk
         trunks_internal = {x.fqdn: SipTrunkInternal(sip_signaling_port=x.sip_signaling_port) for x in trunks}
         modified_config = SipConfiguration(trunks=trunks_internal)
 
-        new_config = await self._rest_service.patch_sip_configuration(
+        new_config = await self._rest_service.sip_routing.update(
             body=modified_config, **kwargs
         )
         return [SipTrunk(fqdn=k,sip_signaling_port=v.sip_signaling_port) for k,v in new_config.trunks.items()]

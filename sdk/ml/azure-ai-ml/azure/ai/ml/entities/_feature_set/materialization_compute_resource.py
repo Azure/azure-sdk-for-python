@@ -10,7 +10,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class MaterializationComputeResource(RestTranslatableMixin):
+class _MaterializationComputeResource(RestTranslatableMixin):
     def __init__(self, *, instance_type: str, **kwargs):  # pylint: disable=unused-argument
         """
         :keyword instance_type: Specifies the instance type.
@@ -22,7 +22,7 @@ class MaterializationComputeResource(RestTranslatableMixin):
         return RestMaterializationComputeResource(instance_type=self.instance_type)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMaterializationComputeResource) -> "MaterializationComputeResource":
+    def _from_rest_object(cls, obj: RestMaterializationComputeResource) -> "_MaterializationComputeResource":
         if not obj:
             return None
-        return MaterializationComputeResource(instance_type=obj.instance_type)
+        return _MaterializationComputeResource(instance_type=obj.instance_type)
