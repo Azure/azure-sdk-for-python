@@ -213,7 +213,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         _client_op_path = self._client
         if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
             _client_op_path = _client_op_path.document_models
-        return _client_op_path.document_models.begin_compose_model(  # type: ignore
+        return _client_op_path.begin_compose_model(  # type: ignore
             compose_request=self._generated_models.ComposeDocumentModelRequest(
                 model_id=model_id,
                 description=description,
