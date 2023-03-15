@@ -16,7 +16,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._asset_utils import (
+from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
     _get_latest_version_from_container,
     _resolve_label_to_asset,

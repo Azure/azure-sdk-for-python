@@ -27,12 +27,12 @@ from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._asset_utils import (
+from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
     _get_latest_version_from_container,
     _resolve_label_to_asset,
+    read_feature_set_metadata_contents,
 )
-from azure.ai.ml._utils._feature_set_utils import read_feature_set_metadata_contents
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
 from azure.ai.ml.entities._feature_set.featureset_spec_metadata import FeaturesetSpecMetadata
