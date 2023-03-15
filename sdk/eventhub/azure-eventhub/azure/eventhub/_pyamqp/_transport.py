@@ -755,23 +755,19 @@ class WebSocketTransport(_AbstractTransport):
             nbytes = self._read_buffer.readinto(view)
             length += nbytes
             n -= nbytes
-            try:
-                while n:
-                    data = self.ws.recv()
-                    if len(data) <= n:
-                        view[length : length + len(data)] = data
-                        n -= len(data)
-                        length += len(data)
-                    else:
-                        view[length : length + n] = data[0:n]
-                        self._read_buffer = BytesIO(data[n:])
-                        n = 0
-                return view
-            except AttributeError:
-                raise IOError("Websocket connection has already been closed.")
-            except WebSocketTimeoutException as wte:
-                raise TimeoutError('Websocket receive timed out (%s)' % wte)
-        except:
+            
+            while n:
+                data = self.ws.recv()
+                if len(data) <= n:
+                    view[length : length + len(data)] = data
+                    n -= len(data)
+                    length += len(data)
+                else:
+                    view[length : length + n] = data[0:n]
+                    self._read_buffer = BytesIO(data[n:])
+                    n = 0
+            return view
+        except Exception as e:
             self._read_buffer = BytesIO(view[:length])
             raise
 
