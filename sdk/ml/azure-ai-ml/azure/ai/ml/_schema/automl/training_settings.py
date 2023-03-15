@@ -51,10 +51,12 @@ class TrainingSettingsSchema(metaclass=PatchedSchemaMeta):
     enable_vote_ensemble = fields.Bool()
     ensemble_model_download_timeout = fields.Int(data_key=AutoMLConstants.ENSEMBLE_MODEL_DOWNLOAD_TIMEOUT_YAML)
     stack_ensemble_settings = NestedField(StackEnsembleSettingsSchema())
-    training_mode = ExperimentalField(StringTransformedEnum(
-        allowed_values=[o.value for o in TabularTrainingMode],
-        casing_transform=camel_to_snake,
-    ))
+    training_mode = ExperimentalField(
+        StringTransformedEnum(
+            allowed_values=[o.value for o in TabularTrainingMode],
+            casing_transform=camel_to_snake,
+        )
+    )
 
 
 class ClassificationTrainingSettingsSchema(TrainingSettingsSchema):
