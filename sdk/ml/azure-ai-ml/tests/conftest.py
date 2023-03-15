@@ -342,6 +342,13 @@ def e2e_ws_scope(sanitized_environment_variables: dict) -> OperationScope:
         workspace_name=sanitized_environment_variables["ML_WORKSPACE_NAME"],
     )
 
+@pytest.fixture
+def e2e_fs_scope(sanitized_environment_variables: dict) -> OperationScope:
+    return OperationScope(
+        subscription_id=sanitized_environment_variables["ML_SUBSCRIPTION_ID"],
+        resource_group_name=sanitized_environment_variables["ML_RESOURCE_GROUP"],
+        feature_store_name=sanitized_environment_variables["ML_FEATURE_STORE_NAME"],
+    )
 
 @pytest.fixture
 def client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
@@ -355,6 +362,17 @@ def client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClie
         cloud="AzureCloud",
     )
 
+@pytest.fixture
+def feature_store_client(e2e_fs_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using default e2e testing feature store"""
+    return MLClient(
+        credential=auth,
+        subscription_id=e2e_fs_scope.subscription_id,
+        resource_group_name=e2e_fs_scope.resource_group_name,
+        workspace_name=e2e_fs_scope.feature_store_name,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        cloud="AzureCloud",
+    )
 
 @pytest.fixture
 def registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
