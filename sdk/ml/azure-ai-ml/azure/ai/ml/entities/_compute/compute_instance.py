@@ -143,9 +143,9 @@ class ComputeInstance(Compute):
         False - Indicates that the compute nodes will have a private endpoint and no public IPs.
         Default Value: True.
     :type enable_node_public_ip: Optional[bool], optional
-    :param setup_scripts: Experimental. Details of customized scripts to execute for setting up the cluster.
+    :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[SetupScripts], optional
-    :param custom_applications: Experimental. List of custom applications and their endpoints
+    :param custom_applications: List of custom applications and their endpoints
         for the compute instance.
     :type custom_applications: Optional[List[CustomApplications]], optional
     """

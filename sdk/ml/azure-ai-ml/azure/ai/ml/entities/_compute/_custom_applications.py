@@ -22,10 +22,8 @@ from azure.ai.ml.constants._compute import (
     DUPLICATE_APPLICATION_ERROR,
     INVALID_VALUE_ERROR,
 )
-from azure.ai.ml._utils._experimental import experimental
 
 
-@experimental
 class ImageSettings:
     """Specifies an image configuration for a Custom Application.
 
@@ -44,7 +42,6 @@ class ImageSettings:
         return ImageSettings(reference=obj.reference)
 
 
-@experimental
 class EndpointsSettings:
     """Specifies an endpoint configuration for a Custom Application.
 
@@ -91,7 +88,6 @@ class EndpointsSettings:
                 )
 
 
-@experimental
 class VolumeSettings:
     """Specifies the Bind Mount settings for a Custom Application.
 
@@ -118,7 +114,6 @@ class VolumeSettings:
         return VolumeSettings(source=obj.source, target=obj.target)
 
 
-@experimental
 class CustomApplications:
     """Specifies the custom service application configuration.
 

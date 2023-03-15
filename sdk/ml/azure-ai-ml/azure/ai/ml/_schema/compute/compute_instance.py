@@ -65,7 +65,7 @@ class ComputeInstanceSchema(ComputeSchema):
     identity = ExperimentalField(NestedField(IdentitySchema))
     idle_time_before_shutdown = fields.Str()
     idle_time_before_shutdown_minutes = fields.Int()
-    custom_applications = ExperimentalField(fields.List(NestedField(CustomApplicationsSchema)))
+    custom_applications = fields.List(NestedField(CustomApplicationsSchema))
     setup_scripts = ExperimentalField(NestedField(SetupScriptsSchema))
     os_image_metadata = ExperimentalField(NestedField(OsImageMetadataSchema, dump_only=True))
     enable_node_public_ip = fields.Bool(
