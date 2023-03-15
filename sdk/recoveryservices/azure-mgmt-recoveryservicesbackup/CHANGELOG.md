@@ -4,6 +4,12 @@
 
 ### Features Added
 
+  - Model BMSRPQueryObject has a new parameter include_soft_deleted_rp
+  - Model IaasVMRecoveryPoint has a new parameter is_private_access_enabled_on_any_disk
+  - Model IaasVMRecoveryPoint has a new parameter security_type
+  - Model IaasVMRestoreRequest has a new parameter extended_location
+  - Model IaasVMRestoreRequest has a new parameter secured_vm_details
+  - Model IaasVMRestoreRequest has a new parameter target_disk_network_access_settings
   - Model IaasVMRestoreWithRehydrationRequest has a new parameter extended_location
   - Model IaasVMRestoreWithRehydrationRequest has a new parameter secured_vm_details
   - Model IaasVMRestoreWithRehydrationRequest has a new parameter target_disk_network_access_settings
