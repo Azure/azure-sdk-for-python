@@ -116,10 +116,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
     """
 
     def __init__(
-            self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(BlobServiceClient, self).__init__(
             account_url,
@@ -131,10 +131,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     @distributed_trace_async
     async def get_user_delegation_key(
-            self, key_start_time: "datetime",
-            key_expiry_time: "datetime",
-            **kwargs: Any
-        ) -> "UserDelegationKey":
+        self, key_start_time: "datetime",
+        key_expiry_time: "datetime",
+        **kwargs: Any
+    ) -> "UserDelegationKey":
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
@@ -266,15 +266,15 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     @distributed_trace_async
     async def set_service_properties(
-            self, analytics_logging: Optional["BlobAnalyticsLogging"] = None,
-            hour_metrics: Optional["Metrics"] = None,
-            minute_metrics: Optional["Metrics"] = None,
-            cors: Optional[List["CorsRule"]] = None,
-            target_version: Optional[str] = None,
-            delete_retention_policy: Optional["RetentionPolicy"] = None,
-            static_website: Optional["StaticWebsite"] = None,
-            **kwargs: Any
-        ) -> None:
+        self, analytics_logging: Optional["BlobAnalyticsLogging"] = None,
+        hour_metrics: Optional["Metrics"] = None,
+        minute_metrics: Optional["Metrics"] = None,
+        cors: Optional[List["CorsRule"]] = None,
+        target_version: Optional[str] = None,
+        delete_retention_policy: Optional["RetentionPolicy"] = None,
+        static_website: Optional["StaticWebsite"] = None,
+        **kwargs: Any
+    ) -> None:
         """Sets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
@@ -347,13 +347,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     @distributed_trace
     def list_containers(
-            self, name_starts_with: Optional[str] = None,
-            include_metadata: Optional[bool] = False,
-            *,
-            include_deleted: Optional[bool] = False,
-            include_system: Optional[bool] = False,
-            **kwargs: Any
-        ) -> AsyncItemPaged["ContainerProperties"]:
+        self, name_starts_with: Optional[str] = None,
+        include_metadata: Optional[bool] = False,
+        *,
+        include_deleted: Optional[bool] = False,
+        include_system: Optional[bool] = False,
+        **kwargs: Any
+    ) -> AsyncItemPaged["ContainerProperties"]:
         """Returns a generator to list the containers under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -450,13 +450,13 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     @distributed_trace_async
     async def create_container(
-            self, name: str,
-            metadata: Optional[Dict[str, str]] = None,
-            public_access: Optional[Union["PublicAccess", str]] = None,
-            *,
-            container_encryption_scope: Optional[Union[Dict[str, str], "ContainerEncryptionScope"]] = None,
-            **kwargs: Any
-        ) -> ContainerClient:
+        self, name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        public_access: Optional[Union["PublicAccess", str]] = None,
+        *,
+        container_encryption_scope: Optional[Union[Dict[str, str], "ContainerEncryptionScope"]] = None,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Creates a new container under the specified account.
 
         If the container with the same name already exists, a ResourceExistsError will
@@ -508,10 +508,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     @distributed_trace_async
     async def delete_container(
-            self, container: Union["ContainerProperties", str],
-            lease: Optional[Union["BlobLeaseClient", str]] = None,
-            **kwargs: Any
-        ) -> None:
+        self, container: Union["ContainerProperties", str],
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        **kwargs: Any
+    ) -> None:
         """Marks the specified container for deletion.
 
         The container and any blobs contained within it are later deleted during garbage collection.
@@ -570,12 +570,12 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     @distributed_trace_async
     async def _rename_container(
-            self, name: str,
-            new_name: str,
-            *,
-            lease: Optional[Union["BlobLeaseClient", str]] = None,
-            **kwargs: Any
-        ) -> ContainerClient:
+        self, name: str,
+        new_name: str,
+        *,
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Renames a container.
 
         Operation is successful only if the source container exists.
@@ -610,10 +610,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     @distributed_trace_async
     async def undelete_container(
-            self, deleted_container_name: str,
-            deleted_container_version: str,
-            **kwargs: Any
-        ) -> ContainerClient:
+        self, deleted_container_name: str,
+        deleted_container_version: str,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Restores soft-deleted container.
 
         Operation will only be successful if used within the specified number of days
@@ -683,10 +683,10 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-            self, container: Union["ContainerProperties", str],
-            blob: Union["BlobProperties", str],
-            snapshot: Optional[Union[Dict[str, Any], str]] = None
-        ) -> BlobClient:
+        self, container: Union["ContainerProperties", str],
+        blob: Union["BlobProperties", str],
+        snapshot: Optional[Union[Dict[str, Any], str]] = None
+    ) -> BlobClient:
         """Get a client to interact with the specified blob.
 
         The blob need not already exist.

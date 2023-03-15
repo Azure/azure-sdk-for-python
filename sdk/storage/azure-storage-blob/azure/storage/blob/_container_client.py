@@ -13,8 +13,6 @@ from typing import (
 )
 from urllib.parse import urlparse, quote, unquote
 
-from typing_extensions import Self
-
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
@@ -53,6 +51,11 @@ if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
     from typing_extensions import Literal  # pylint: disable=ungrouped-imports
+
+if sys.version_info >= (3, 11):
+    from typing import Self  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Self  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential

@@ -5,14 +5,13 @@
 # --------------------------------------------------------------------------
 
 import functools
+import sys
 import warnings
 from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse
-
-from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -35,6 +34,11 @@ from ._encryption import StorageEncryptionMixin
 from ._list_blobs_helper import FilteredBlobPaged
 from ._models import ContainerPropertiesPaged
 from ._serialize import get_api_version
+
+if sys.version_info >= (3, 11):
+    from typing import Self  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Self  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -120,10 +124,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """
 
     def __init__(
-            self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -148,10 +152,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:
@@ -184,10 +188,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def get_user_delegation_key(
-            self, key_start_time: "datetime",
-            key_expiry_time: "datetime",
-            **kwargs: Any
-        ) -> "UserDelegationKey":
+        self, key_start_time: "datetime",
+        key_expiry_time: "datetime",
+        **kwargs: Any
+    ) -> "UserDelegationKey":
         """
         Obtain a user delegation key for the purpose of signing SAS tokens.
         A token credential must be present on the service object for this request to succeed.
@@ -319,15 +323,15 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def set_service_properties(
-            self, analytics_logging: Optional["BlobAnalyticsLogging"] = None,
-            hour_metrics: Optional["Metrics"] = None,
-            minute_metrics: Optional["Metrics"] = None,
-            cors: Optional[List["CorsRule"]] = None,
-            target_version: Optional[str] = None,
-            delete_retention_policy: Optional["RetentionPolicy"] = None,
-            static_website: Optional["StaticWebsite"] = None,
-            **kwargs: Any
-        ) -> None:
+        self, analytics_logging: Optional["BlobAnalyticsLogging"] = None,
+        hour_metrics: Optional["Metrics"] = None,
+        minute_metrics: Optional["Metrics"] = None,
+        cors: Optional[List["CorsRule"]] = None,
+        target_version: Optional[str] = None,
+        delete_retention_policy: Optional["RetentionPolicy"] = None,
+        static_website: Optional["StaticWebsite"] = None,
+        **kwargs: Any
+    ) -> None:
         """Sets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
@@ -400,13 +404,13 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def list_containers(
-            self, name_starts_with: Optional[str] = None,
-            include_metadata: Optional[bool] = False,
-            *,
-            include_deleted: Optional[bool] = False,
-            include_system: Optional[bool] = False,
-            **kwargs: Any
-        ) -> ItemPaged["ContainerProperties"]:
+        self, name_starts_with: Optional[str] = None,
+        include_metadata: Optional[bool] = False,
+        *,
+        include_deleted: Optional[bool] = False,
+        include_system: Optional[bool] = False,
+        **kwargs: Any
+    ) -> ItemPaged["ContainerProperties"]:
         """Returns a generator to list the containers under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -503,13 +507,13 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def create_container(
-            self, name: str,
-            metadata: Optional[Dict[str, str]] = None,
-            public_access: Optional[Union["PublicAccess", str]] = None,
-            *,
-            container_encryption_scope: Optional[Union[Dict[str, str], "ContainerEncryptionScope"]] = None,
-            **kwargs: Any
-        ) -> ContainerClient:
+        self, name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        public_access: Optional[Union["PublicAccess", str]] = None,
+        *,
+        container_encryption_scope: Optional[Union[Dict[str, str], "ContainerEncryptionScope"]] = None,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Creates a new container under the specified account.
 
         If the container with the same name already exists, a ResourceExistsError will
@@ -561,10 +565,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_container(
-            self, container: Union["ContainerProperties", str],
-            lease: Optional[Union["BlobLeaseClient", str]] = None,
-            **kwargs: Any
-        ) -> None:
+        self, container: Union["ContainerProperties", str],
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        **kwargs: Any
+    ) -> None:
         """Marks the specified container for deletion.
 
         The container and any blobs contained within it are later deleted during garbage collection.
@@ -623,12 +627,12 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def _rename_container(
-            self, name: str,
-            new_name: str,
-            *,
-            lease: Optional[Union["BlobLeaseClient", str]] = None,
-            **kwargs: Any
-        ) -> ContainerClient:
+        self, name: str,
+        new_name: str,
+        *,
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Renames a container.
 
         Operation is successful only if the source container exists.
@@ -662,10 +666,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def undelete_container(
-            self, deleted_container_name: str,
-            deleted_container_version: str,
-            **kwargs: Any
-        ) -> ContainerClient:
+        self, deleted_container_name: str,
+        deleted_container_version: str,
+        **kwargs: Any
+    ) -> ContainerClient:
         """Restores soft-deleted container.
 
         Operation will only be successful if used within the specified number of days
@@ -735,10 +739,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-            self, container: Union["ContainerProperties", str],
-            blob: Union["BlobProperties", str],
-            snapshot: Optional[Union[Dict[str, Any], str]] = None
-        ) -> BlobClient:
+        self, container: Union["ContainerProperties", str],
+        blob: Union["BlobProperties", str],
+        snapshot: Optional[Union[Dict[str, Any], str]] = None
+    ) -> BlobClient:
         """Get a client to interact with the specified blob.
 
         The blob need not already exist.
