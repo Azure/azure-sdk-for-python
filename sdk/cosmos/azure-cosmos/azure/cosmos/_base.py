@@ -41,35 +41,35 @@ from .offer import ThroughputProperties
 
 # pylint: disable=protected-access
 
-_COMMON_OPTIONS = {
-    'initial_headers': 'initialHeaders',
-    'pre_trigger_include': 'preTriggerInclude',
-    'post_trigger_include': 'postTriggerInclude',
-    'max_item_count': 'maxItemCount',
-    'access_condition': 'accessCondition',
-    'indexing_directive': 'indexingDirective',
-    'consistency_level': 'consistencyLevel',
-    'session_token': 'sessionToken',
-    'enable_scan_in_query': 'enableScanInQuery',
-    'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
-    'offer_type': 'offerType',
-    'offer_throughput': 'offerThroughput',
-    'partition_key': 'partitionKey',
-    'enable_cross_partition_query': 'enableCrossPartitionQuery',
-    'populate_query_metrics': 'populateQueryMetrics',
-    'enable_script_logging': 'enableScriptLogging',
-    'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
-    'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
-    'change_feed': 'changeFeed',
-    'continuation': 'continuation',
-    'is_start_from_beginning': 'isStartFromBeginning',
-    'populate_partition_key_range_statistics': 'populatePartitionKeyRangeStatistics',
-    'populate_quota_info': 'populateQuotaInfo',
-    'content_type': 'contentType',
-    'is_query_plan_request': 'isQueryPlanRequest',
-    'supported_query_features': 'supportedQueryFeatures',
-    'query_version': 'queryVersion'
-}
+# _COMMON_OPTIONS = {
+#     'initial_headers': 'initialHeaders',
+#     'pre_trigger_include': 'preTriggerInclude',
+#     'post_trigger_include': 'postTriggerInclude',
+#     'max_item_count': 'maxItemCount',
+#     'access_condition': 'accessCondition',
+#     'indexing_directive': 'indexingDirective',
+#     'consistency_level': 'consistencyLevel',
+#     'session_token': 'sessionToken',
+#     'enable_scan_in_query': 'enableScanInQuery',
+#     'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
+#     'offer_type': 'offerType',
+#     'offer_throughput': 'offerThroughput',
+#     'partition_key': 'partitionKey',
+#     'enable_cross_partition_query': 'enableCrossPartitionQuery',
+#     'populate_query_metrics': 'populateQueryMetrics',
+#     'enable_script_logging': 'enableScriptLogging',
+#     'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
+#     'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
+#     'change_feed': 'changeFeed',
+#     'continuation': 'continuation',
+#     'is_start_from_beginning': 'isStartFromBeginning',
+#     'populate_partition_key_range_statistics': 'populatePartitionKeyRangeStatistics',
+#     'populate_quota_info': 'populateQuotaInfo',
+#     'content_type': 'contentType',
+#     'is_query_plan_request': 'isQueryPlanRequest',
+#     'supported_query_features': 'supportedQueryFeatures',
+#     'query_version': 'queryVersion'
+# }
 
 
 def _get_match_headers(kwargs):
