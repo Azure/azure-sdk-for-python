@@ -53,10 +53,10 @@ from ...aio._base_handler_async import (
     ServiceBusSharedKeyCredential,
     ServiceBusSASTokenCredential,
 )
-from ...management._generated.aio._configuration_async import (
+from ...management._generated.aio._configuration import (
     ServiceBusManagementClientConfiguration,
 )
-from ...management._generated.aio._service_bus_management_client_async import (
+from ...management._generated.aio._client import (
     ServiceBusManagementClient as ServiceBusManagementClientImpl,
 )
 from ...management import _constants as constants
@@ -119,10 +119,12 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         self._api_version = api_version
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
-        self._config = ServiceBusManagementClientConfiguration(self._endpoint, **kwargs)
+        self._config = ServiceBusManagementClientConfiguration(
+            self._endpoint, credential=self._credential, api_version=api_version, **kwargs
+        )
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(
-            endpoint=fully_qualified_namespace, pipeline=self._pipeline
+            endpoint=fully_qualified_namespace, credential=self._credential, pipeline=self._pipeline
         )
 
     async def __aenter__(self) -> "ServiceBusAdministrationClient":
@@ -170,7 +172,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             element = cast(
                 ElementTree,
                 await self._impl.entity.get(
-                    entity_name, enrich=enrich, api_version=self._api_version, **kwargs
+                    entity_name, enrich=enrich, **kwargs
                 ),
             )
         return element
@@ -191,7 +193,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     topic_name,
                     subscription_name,
                     enrich=enrich,
-                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -212,7 +213,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     subscription_name,
                     rule_name,
                     enrich=False,
-                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -441,7 +441,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 await self._impl.entity.put(
                     queue_name,  # type: ignore
                     request_body,
-                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -484,7 +483,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             await self._impl.entity.put(
                 queue.name,  # type: ignore
                 request_body,
-                api_version=self._api_version,
                 if_match="*",
                 **kwargs
             )
@@ -502,7 +500,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
             await self._impl.entity.delete(
-                queue_name, api_version=self._api_version, **kwargs
+                queue_name, **kwargs
             )
 
     def list_queues(self, **kwargs: Any) -> AsyncItemPaged[QueueProperties]:
@@ -524,7 +522,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -550,7 +547,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_QUEUES),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -696,7 +692,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 await self._impl.entity.put(
                     topic_name,  # type: ignore
                     request_body,
-                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -737,7 +732,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             await self._impl.entity.put(
                 topic.name,  # type: ignore
                 request_body,
-                api_version=self._api_version,
                 if_match="*",
                 **kwargs
             )
@@ -751,7 +745,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_entity_name_type(topic_name)
 
         await self._impl.entity.delete(
-            topic_name, api_version=self._api_version, **kwargs
+            topic_name, **kwargs
         )
 
     def list_topics(self, **kwargs: Any) -> AsyncItemPaged[TopicProperties]:
@@ -773,7 +767,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -799,7 +792,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_entities, constants.ENTITY_TYPE_TOPICS),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -960,7 +952,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                     topic_name,
                     subscription_name,  # type: ignore
                     request_body,
-                    api_version=self._api_version,
                     **kwargs
                 ),
             )
@@ -1013,7 +1004,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 topic_name,
                 subscription.name,
                 request_body,
-                api_version=self._api_version,
                 if_match="*",
                 **kwargs
             )
@@ -1031,7 +1021,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
         await self._impl.subscription.delete(
-            topic_name, subscription_name, api_version=self._api_version, **kwargs
+            topic_name, subscription_name, **kwargs
         )
 
     def list_subscriptions(
@@ -1057,7 +1047,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -1085,7 +1074,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_subscriptions, topic_name),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -1170,7 +1158,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,  # type: ignore
                 rule_name,
                 request_body,
-                api_version=self._api_version,
                 **kwargs
             )
         entry = RuleDescriptionEntry.deserialize(entry_ele)
@@ -1223,7 +1210,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 subscription_name,
                 rule.name,
                 request_body,
-                api_version=self._api_version,
                 if_match="*",
                 **kwargs
             )
@@ -1247,7 +1233,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             topic_name,
             subscription_name,
             rule_name,
-            api_version=self._api_version,
             **kwargs
         )
 
@@ -1281,7 +1266,6 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         get_next = functools.partial(
             get_next_template,
             functools.partial(self._impl.list_rules, topic_name, subscription_name),
-            api_version=self._api_version,
             **kwargs
         )
         return AsyncItemPaged(get_next, extract_data)
@@ -1291,9 +1275,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :rtype: ~azure.servicebus.management.NamespaceProperties
         """
-        entry_el = await self._impl.namespace.get(
-            api_version=self._api_version, **kwargs
-        )
+        entry_el = await self._impl.namespace.get(**kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
         return NamespaceProperties._from_internal_entity(
             namespace_entry.title, namespace_entry.content.namespace_properties

@@ -162,8 +162,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             transport = RequestsTransport(**kwargs)
         return Pipeline(transport, policies)
 
-    def _get_entity_element(self, entity_name, enrich=False, **kwargs):
-        # type: (str, bool, Any) -> ElementTree
+    def _get_entity_element(
+        self, entity_name: str, enrich: bool = False, **kwargs: Any
+    ) -> ElementTree:
         _validate_entity_name_type(entity_name)
 
         with _handle_response_error():
@@ -178,9 +179,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return element
 
     def _get_subscription_element(
-        self, topic_name, subscription_name, enrich=False, **kwargs
-    ):
-        # type: (str, str, bool, Any) -> ElementTree
+        self, topic_name: str, subscription_name: str, enrich: bool = False, **kwargs: Any
+    ) -> ElementTree:
         _validate_topic_and_subscription_types(topic_name, subscription_name)
         with _handle_response_error():
             element = cast(
@@ -194,8 +194,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
         return element
 
-    def _get_rule_element(self, topic_name, subscription_name, rule_name, **kwargs):
-        # type: (str, str, str, Any) -> ElementTree
+    def _get_rule_element(
+        self, topic_name: str, subscription_name: str, rule_name: str, **kwargs: Any
+    ) -> ElementTree:
         _validate_topic_subscription_and_rule_types(
             topic_name, subscription_name, rule_name
         )
@@ -280,8 +281,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return queue_description
 
-    def get_queue_runtime_properties(self, queue_name, **kwargs):
-        # type: (str, Any) -> QueueRuntimeProperties
+    def get_queue_runtime_properties(
+        self, queue_name: str, **kwargs: Any
+    ) -> QueueRuntimeProperties:
         """Get the runtime information of a queue.
 
         :param str queue_name: The name of the queue.
@@ -441,8 +443,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return result
 
-    def update_queue(self, queue, **kwargs):
-        # type: (Union[QueueProperties, Mapping], Any) -> None
+    def update_queue(
+        self, queue: Union[QueueProperties, Mapping], **kwargs: Any
+    ) -> None:
         """Update a queue.
 
         Before calling this method, you should use `get_queue`, `create_queue` or `list_queues` to get a
@@ -476,8 +479,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    def delete_queue(self, queue_name, **kwargs):
-        # type: (str, Any) -> None
+    def delete_queue(
+        self, queue_name: str, **kwargs: Any
+    ) -> None:
         """Delete a queue.
 
         :param str queue_name: The name of the queue or
@@ -493,8 +497,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 queue_name, **kwargs  # type: ignore
             )
 
-    def list_queues(self, **kwargs):
-        # type: (Any) -> ItemPaged[QueueProperties]
+    def list_queues(self, **kwargs: Any) -> ItemPaged[QueueProperties]:
         """List the queues of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of QueueProperties.
@@ -517,8 +520,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return ItemPaged(get_next, extract_data)
 
-    def list_queues_runtime_properties(self, **kwargs):
-        # type: (Any) -> ItemPaged[QueueRuntimeProperties]
+    def list_queues_runtime_properties(
+        self, **kwargs: Any
+    ) -> ItemPaged[QueueRuntimeProperties]:
         """List the runtime information of the queues in a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of QueueRuntimeProperties.
@@ -541,8 +545,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return ItemPaged(get_next, extract_data)
 
-    def get_topic(self, topic_name, **kwargs):
-        # type: (str, Any) -> TopicProperties
+    def get_topic(
+        self, topic_name: str, **kwargs: Any
+    ) -> TopicProperties:
         """Get the properties of a topic.
 
         :param str topic_name: The name of the topic.
@@ -557,8 +562,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return topic_description
 
-    def get_topic_runtime_properties(self, topic_name, **kwargs):
-        # type: (str, Any) -> TopicRuntimeProperties
+    def get_topic_runtime_properties(
+        self, topic_name: str, **kwargs: Any
+    ) -> TopicRuntimeProperties:
         """Get a the runtime information of a topic.
 
         :param str topic_name: The name of the topic.
@@ -692,8 +698,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return result
 
-    def update_topic(self, topic, **kwargs):
-        # type: (Union[TopicProperties, Mapping[str, Any]], Any) -> None
+    def update_topic(
+        self, topic: Union[TopicProperties, Mapping[str, Any]], **kwargs: Any
+    ) -> None:
         """Update a topic.
 
         Before calling this method, you should use `get_topic`, `create_topic` or `list_topics` to get a
@@ -726,8 +733,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    def delete_topic(self, topic_name, **kwargs):
-        # type: (str, Any) -> None
+    def delete_topic(
+        self, topic_name: str, **kwargs: Any
+    ) -> None:
         """Delete a topic.
 
         :param str topic_name: The topic to be deleted.
@@ -739,8 +747,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             topic_name, **kwargs  # type: ignore
         )
 
-    def list_topics(self, **kwargs):
-        # type: (Any) -> ItemPaged[TopicProperties]
+    def list_topics(
+        self, **kwargs: Any
+    ) -> ItemPaged[TopicProperties]:
         """List the topics of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of TopicProperties.
@@ -763,8 +772,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return ItemPaged(get_next, extract_data)
 
-    def list_topics_runtime_properties(self, **kwargs):
-        # type: (Any) -> ItemPaged[TopicRuntimeProperties]
+    def list_topics_runtime_properties(
+        self, **kwargs: Any
+    ) -> ItemPaged[TopicRuntimeProperties]:
         """List the topics runtime information of a ServiceBus namespace.
 
         :returns: An iterable (auto-paging) response of TopicRuntimeProperties.
@@ -787,8 +797,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return ItemPaged(get_next, extract_data)
 
-    def get_subscription(self, topic_name, subscription_name, **kwargs):
-        # type: (str, str, Any) -> SubscriptionProperties
+    def get_subscription(
+        self, topic_name: str, subscription_name: str, **kwargs: Any
+    ) -> SubscriptionProperties:
         """Get the properties of a topic subscription.
 
         :param str topic_name: The topic that owns the subscription.
@@ -811,9 +822,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return subscription
 
     def get_subscription_runtime_properties(
-        self, topic_name, subscription_name, **kwargs
-    ):
-        # type: (str, str, Any) -> SubscriptionRuntimeProperties
+        self, topic_name: str, subscription_name: str, **kwargs: Any
+    ) -> SubscriptionRuntimeProperties:
         """Get a topic subscription runtime info.
 
         :param str topic_name: The topic that owns the subscription.
@@ -952,8 +962,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return result
 
-    def update_subscription(self, topic_name, subscription, **kwargs):
-        # type: (str, Union[SubscriptionProperties, Mapping[str, Any]], Any) -> None
+    def update_subscription(
+        self, topic_name: str, subscription: Union[SubscriptionProperties, Mapping[str, Any]], **kwargs: Any
+    ) -> None:
         """Update a subscription.
 
         Before calling this method, you should use `get_subscription`, `update_subscription` or `list_subscription`
@@ -993,8 +1004,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    def delete_subscription(self, topic_name, subscription_name, **kwargs):
-        # type: (str, str, Any) -> None
+    def delete_subscription(
+        self, topic_name: str, subscription_name: str, **kwargs: Any
+    ) -> None:
         """Delete a topic subscription.
 
         :param str topic_name: The topic that owns the subscription.
@@ -1008,8 +1020,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             topic_name, subscription_name, **kwargs  # type: ignore
         )
 
-    def list_subscriptions(self, topic_name, **kwargs):
-        # type: (str, Any) -> ItemPaged[SubscriptionProperties]
+    def list_subscriptions(
+        self, topic_name: str, **kwargs: Any
+    ) -> ItemPaged[SubscriptionProperties]:
         """List the subscriptions of a ServiceBus Topic.
 
         :param str topic_name: The topic that owns the subscription.
@@ -1034,8 +1047,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return ItemPaged(get_next, extract_data)
 
-    def list_subscriptions_runtime_properties(self, topic_name, **kwargs):
-        # type: (str, Any) -> ItemPaged[SubscriptionRuntimeProperties]
+    def list_subscriptions_runtime_properties(
+        self, topic_name: str, **kwargs: Any
+    ) -> ItemPaged[SubscriptionRuntimeProperties]:
         """List the subscriptions runtime information of a ServiceBus Topic.
 
         :param str topic_name: The topic that owns the subscription.
@@ -1060,8 +1074,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return ItemPaged(get_next, extract_data)
 
-    def get_rule(self, topic_name, subscription_name, rule_name, **kwargs):
-        # type: (str, str, str, Any) -> RuleProperties
+    def get_rule(
+        self, topic_name: str, subscription_name: str, rule_name: str, **kwargs: Any
+    ) -> RuleProperties:
         """Get the properties of a topic subscription rule.
 
         :param str topic_name: The topic that owns the subscription.
@@ -1149,8 +1164,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )  # to remove after #3535 is released.
         return result
 
-    def update_rule(self, topic_name, subscription_name, rule, **kwargs):
-        # type: (str, str, Union[RuleProperties, Mapping[str, Any]], Any) -> None
+    def update_rule(
+        self, topic_name: str, subscription_name: str, rule: Union[RuleProperties, Mapping[str, Any]], **kwargs: Any
+    ) -> None:
         """Update a rule.
 
         Before calling this method, you should use `get_rule`, `create_rule` or `list_rules` to get a `RuleProperties`
@@ -1190,8 +1206,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
 
-    def delete_rule(self, topic_name, subscription_name, rule_name, **kwargs):
-        # type: (str, str, str, Any) -> None
+    def delete_rule(
+        self, topic_name: str, subscription_name: str, rule_name: str, **kwargs: Any
+    ):
         """Delete a topic subscription rule.
 
         :param str topic_name: The topic that owns the subscription.
@@ -1211,8 +1228,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             **kwargs
         )
 
-    def list_rules(self, topic_name, subscription_name, **kwargs):
-        # type: (str, str, Any) -> ItemPaged[RuleProperties]
+    def list_rules(
+        self, topic_name: str, subscription_name: str, **kwargs: Any
+    ) -> ItemPaged[RuleProperties]:
         """List the rules of a topic subscription.
 
         :param str topic_name: The topic that owns the subscription.
@@ -1244,18 +1262,15 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         return ItemPaged(get_next, extract_data)
 
-    def get_namespace_properties(self, **kwargs):
-        # type: (Any) -> NamespaceProperties
+    def get_namespace_properties(self, **kwargs: Any) -> NamespaceProperties:
         """Get the namespace properties
 
         :rtype: ~azure.servicebus.management.NamespaceProperties
         """
         namespace_entry = self._impl.namespace.get(**kwargs)  # type: ignore
-        #namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
         return NamespaceProperties._from_internal_entity(
             namespace_entry.title, namespace_entry.content.namespace_properties
         )
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._impl.close()

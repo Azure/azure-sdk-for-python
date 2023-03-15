@@ -46,8 +46,8 @@ class ServiceBusManagementClient(
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Known values are "2021_05" and None. Default value is None.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-05". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

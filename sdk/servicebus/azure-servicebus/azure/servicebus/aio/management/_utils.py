@@ -9,7 +9,6 @@ from xml.etree.ElementTree import ElementTree
 import urllib.parse as urlparse
 
 from ...management import _constants as constants
-from ...management._api_version import DEFAULT_VERSION
 from ...management._handle_response_error import _handle_response_error
 
 # This module defines functions get_next_template and extract_data_template.
@@ -127,17 +126,15 @@ async def get_next_template(
     XML ElementTree to call a partial function created from `extrat_data_template`.
 
     """
-    api_version = kwargs.pop("api_version", DEFAULT_VERSION)
     if args[0]:  # It's next link. It's None for the first page.
         queries = urlparse.parse_qs(urlparse.urlparse(args[0]).query)
         start_index = int(queries[constants.LIST_OP_SKIP][0])
         max_page_size = int(queries[constants.LIST_OP_TOP][0])
-        api_version = queries[constants.API_VERSION_PARAM_NAME][0]
     with _handle_response_error():
         feed_element = cast(
             ElementTree,
             await list_func(
-                skip=start_index, top=max_page_size, api_version=api_version, **kwargs
+                skip=start_index, top=max_page_size, **kwargs
             ),
         )
     return feed_element

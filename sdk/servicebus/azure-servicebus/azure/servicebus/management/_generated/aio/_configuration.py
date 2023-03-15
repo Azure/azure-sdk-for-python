@@ -7,12 +7,10 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
-
-from .._version import VERSION
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -22,6 +20,8 @@ else:
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
+
+VERSION = "unknown"
 
 
 class ServiceBusManagementClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
@@ -34,14 +34,14 @@ class ServiceBusManagementClientConfiguration(Configuration):  # pylint: disable
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Known values are "2021_05" and None. Default value is None.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-05". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(ServiceBusManagementClientConfiguration, self).__init__(**kwargs)
-        api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", None)
+        api_version: Literal["2021-05"] = kwargs.pop("api_version", "2021-05")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

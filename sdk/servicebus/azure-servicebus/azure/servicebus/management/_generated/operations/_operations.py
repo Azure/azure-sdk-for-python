@@ -47,7 +47,7 @@ def build_entity_get_request(entity_name: str, *, enrich: bool = False, **kwargs
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -61,8 +61,7 @@ def build_entity_get_request(entity_name: str, *, enrich: bool = False, **kwargs
     # Construct parameters
     if enrich is not None:
         _params["enrich"] = _SERIALIZER.query("enrich", enrich, "bool")
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -77,7 +76,7 @@ def build_entity_put_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -89,8 +88,7 @@ def build_entity_put_request(
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if if_match is not None:
@@ -106,7 +104,7 @@ def build_entity_delete_request(entity_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -118,8 +116,7 @@ def build_entity_delete_request(entity_name: str, **kwargs: Any) -> HttpRequest:
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -133,7 +130,7 @@ def build_service_bus_management_list_subscriptions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -149,8 +146,7 @@ def build_service_bus_management_list_subscriptions_request(
         _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if top is not None:
         _params["$top"] = _SERIALIZER.query("top", top, "int")
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -164,7 +160,7 @@ def build_service_bus_management_list_rules_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -181,8 +177,7 @@ def build_service_bus_management_list_rules_request(
         _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if top is not None:
         _params["$top"] = _SERIALIZER.query("top", top, "int")
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -196,7 +191,7 @@ def build_service_bus_management_list_entities_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -212,8 +207,7 @@ def build_service_bus_management_list_entities_request(
         _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if top is not None:
         _params["$top"] = _SERIALIZER.query("top", top, "int")
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -227,7 +221,7 @@ def build_subscription_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -242,8 +236,7 @@ def build_subscription_get_request(
     # Construct parameters
     if enrich is not None:
         _params["enrich"] = _SERIALIZER.query("enrich", enrich, "bool")
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -258,7 +251,7 @@ def build_subscription_put_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -271,8 +264,7 @@ def build_subscription_put_request(
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if if_match is not None:
@@ -288,7 +280,7 @@ def build_subscription_delete_request(topic_name: str, subscription_name: str, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -301,8 +293,7 @@ def build_subscription_delete_request(topic_name: str, subscription_name: str, *
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -316,7 +307,7 @@ def build_rule_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -332,8 +323,7 @@ def build_rule_get_request(
     # Construct parameters
     if enrich is not None:
         _params["enrich"] = _SERIALIZER.query("enrich", enrich, "bool")
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -354,7 +344,7 @@ def build_rule_put_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -368,8 +358,7 @@ def build_rule_put_request(
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if if_match is not None:
@@ -385,7 +374,7 @@ def build_rule_delete_request(topic_name: str, subscription_name: str, rule_name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
@@ -399,8 +388,7 @@ def build_rule_delete_request(topic_name: str, subscription_name: str, rule_name
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -412,15 +400,14 @@ def build_namespace_get_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Optional[Literal["2021_05"]] = kwargs.pop("api_version", _params.pop("api-version", None))
+    api_version: Literal["2021-05"] = kwargs.pop("api_version", _params.pop("api-version", "2021-05"))
     accept = _headers.pop("Accept", "application/xml, application/atom+xml")
 
     # Construct URL
     _url = "/$namespaceinfo"
 
     # Construct parameters
-    if api_version is not None:
-        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
