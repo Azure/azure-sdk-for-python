@@ -7,6 +7,7 @@ import time
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.keyvault.administration._internal import HttpChallengeCache
+from azure.keyvault.keys._shared import HttpChallengeCache as _HttpChallengeCache
 
 
 class KeyVaultTestCase(AzureRecordedTestCase):
@@ -37,4 +38,6 @@ class KeyVaultTestCase(AzureRecordedTestCase):
 
     def teardown_method(self, method):
         HttpChallengeCache.clear()
+        _HttpChallengeCache.clear()
         assert len(HttpChallengeCache._cache) == 0
+        assert len(_HttpChallengeCache._cache) == 0

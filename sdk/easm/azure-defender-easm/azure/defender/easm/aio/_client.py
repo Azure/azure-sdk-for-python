@@ -81,7 +81,7 @@ class EasmClient:  # pylint: disable=client-accepts-api-version-keyword
             credential=credential,
             **kwargs
         )
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()

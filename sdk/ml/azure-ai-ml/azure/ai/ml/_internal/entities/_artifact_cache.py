@@ -21,8 +21,9 @@ _logger = logging.getLogger(__name__)
 
 
 class ArtifactCache:
-    """
-    Disk cache of azure artifact packages. The key of the cache is path of artifact packages in local, like this
+    """Disk cache of azure artifact packages.
+
+    The key of the cache is path of artifact packages in local, like this
     azure-ai-ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}.
     The value is the files/folders in this cache folder.
     """
@@ -39,7 +40,7 @@ class ArtifactCache:
     _instance = None
 
     def __new__(cls):
-        """Singleton creation disk cache"""
+        """Singleton creation disk cache."""
         if cls._instance is None:
             with cls._instance_lock:
                 if cls._instance is None:
@@ -89,11 +90,9 @@ class ArtifactCache:
 
     @staticmethod
     def get_organization_project_by_git():
-        """
-        Get organization and project from git remote url.
-        For example, the git remote url is
-            "https://organization.visualstudio.com/xxx/project_name/_git/repositry_name" or
-            "https://dev.azure.com/{organization}/project"
+        """Get organization and project from git remote url. For example, the git remote url is
+        "https://organization.visualstudio.com/xxx/project_name/_git/repositry_name" or
+        "https://dev.azure.com/{organization}/project".
 
         :return organization_url, project: organization_url, project
         :rtype organization_url, project: str, str
@@ -142,8 +141,8 @@ class ArtifactCache:
         return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
 
     def _redirect_artifacts_tool_path(self, organization):
-        """To avoid the transient issue when download artifacts,
-        download the artifacts tool and redirect az artifact command to it."""
+        """To avoid the transient issue when download artifacts, download the artifacts tool and redirect az artifact
+        command to it."""
         from azure.identity import DefaultAzureCredential
 
         if not organization:
@@ -211,11 +210,11 @@ class ArtifactCache:
                 return
 
     def _check_artifacts(self, artifact_package_path):
-        """
-        Check the artifact folder is legal.
-        If the artifact folder or checksum file does not exist, return false.
-        If the checksum file exists and does not equal to the hash of artifact folder, return False.
-        If the checksum file equals to the hash of artifact folder, return true.
+        """Check the artifact folder is legal.
+
+        If the artifact folder or checksum file does not exist, return false. If the checksum file exists and does not
+        equal to the hash of artifact folder, return False. If the checksum file equals to the hash of artifact folder,
+        return true.
         """
         path = Path(artifact_package_path)
         if not path.exists():
@@ -230,12 +229,10 @@ class ArtifactCache:
         return False
 
     def get(self, feed, name, version, scope, organization=None, project=None, resolve=True):
-        """
-        Get the catch path of artifact package. Package path like this
-        azure-ai-ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}.
-        If the path exits, it will return the package path.
-        If the path not exist and resolve=True, it will download the artifact package and return package path.
-        If the path not exist and resolve=False, it will return None.
+        """Get the catch path of artifact package. Package path like this azure-ai-
+        ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}. If the
+        path exits, it will return the package path. If the path not exist and resolve=True, it will download the
+        artifact package and return package path. If the path not exist and resolve=False, it will return None.
 
         :param feed: Name or ID of the feed.
         :param name: Name of the package.
@@ -284,9 +281,8 @@ class ArtifactCache:
         return None
 
     def set(self, feed, name, version, scope, organization=None, project=None):
-        """
-        Set the artifact package to the cache. The key of the cache is path of artifact packages in local.
-        The value is the files/folders in this cache folder. If package path exists, directly return package path.
+        """Set the artifact package to the cache. The key of the cache is path of artifact packages in local. The value
+        is the files/folders in this cache folder. If package path exists, directly return package path.
 
         :param feed: Name or ID of the feed.
         :param name: Name of the package.

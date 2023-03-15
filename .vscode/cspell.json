@@ -400,6 +400,14 @@
         "Phong"
       ]
     },
+    {              
+      "filename": "tools/azure-sdk-tools/ci_tools/deps.html.j2",
+      "words": [
+        "isfork",
+        "ISFORK",
+        "thead"
+      ]
+    },
     {
       "filename": "sdk/core/azure-core/tests/test_serialization.py",
       "words": [

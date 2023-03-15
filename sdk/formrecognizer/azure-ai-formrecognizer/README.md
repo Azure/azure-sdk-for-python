@@ -8,7 +8,12 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 
-[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
+[Source code][python-fr-src]
+| [Package (PyPI)][python-fr-pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-formrecognizer/)
+| [API reference documentation][python-fr-ref-docs]
+| [Product documentation][python-fr-product-docs]
+| [Samples][python-fr-samples]
 
 ## _Disclaimer_
 
@@ -36,7 +41,7 @@ This table shows the relationship between SDK versions and supported API version
 
 |SDK version|Supported API version of service
 |-|-
-|3.2.0 - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
+|3.2.X - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
 |3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
@@ -148,6 +153,7 @@ Once completed, set the values of the client ID, tenant ID, and client secret of
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
 <!-- SNIPPET:sample_authentication.create_da_client_with_aad -->
+
 ```python
 """DefaultAzureCredential will use the values from these environment
 variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
@@ -160,6 +166,7 @@ credential = DefaultAzureCredential()
 
 document_analysis_client = DocumentAnalysisClient(endpoint, credential)
 ```
+
 <!-- END SNIPPET -->
 
 ## Key concepts
@@ -212,7 +219,6 @@ The following section provides several code snippets covering some of the most c
 
 Extract text, selection marks, text styles, and table structures, along with their bounding region coordinates, from documents.
 
-<!-- SNIPPET:sample_analyze_layout.extract_layout -->
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -251,7 +257,7 @@ for page in result.pages:
                 line_idx,
                 len(words),
                 line.content,
-                format_polygon(line.polygon),
+                line.polygon,
             )
         )
 
@@ -266,7 +272,7 @@ for page in result.pages:
         print(
             "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                format_polygon(selection_mark.polygon),
+                selection_mark.polygon,
                 selection_mark.confidence,
             )
         )
@@ -282,7 +288,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                format_polygon(region.polygon),
+                region.polygon,
             )
         )
     for cell in table.cells:
@@ -297,20 +303,18 @@ for table_idx, table in enumerate(result.tables):
             print(
                 "...content on page {} is within bounding polygon '{}'".format(
                     region.page_number,
-                    format_polygon(region.polygon),
+                    region.polygon,
                 )
             )
 
 print("----------------------------------------")
 ```
-<!-- END SNIPPET -->
 
 ### Using the General Document Model
 
 Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
 Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
 
-<!-- SNIPPET:sample_analyze_general_documents.analyze_general_documents -->
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -338,14 +342,14 @@ for kv_pair in result.key_value_pairs:
         print(
                 "Key '{}' found within '{}' bounding regions".format(
                     kv_pair.key.content,
-                    format_bounding_region(kv_pair.key.bounding_regions),
+                    kv_pair.key.bounding_regions,
                 )
             )
     if kv_pair.value:
         print(
                 "Value '{}' found within '{}' bounding regions\n".format(
                     kv_pair.value.content,
-                    format_bounding_region(kv_pair.value.bounding_regions),
+                    kv_pair.value.bounding_regions,
                 )
             )
 
@@ -364,7 +368,7 @@ for page in result.pages:
                 line_idx,
                 len(words),
                 line.content,
-                format_polygon(line.polygon),
+                line.polygon,
             )
         )
 
@@ -379,7 +383,7 @@ for page in result.pages:
         print(
             "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
                 selection_mark.state,
-                format_polygon(selection_mark.polygon),
+                selection_mark.polygon,
                 selection_mark.confidence,
             )
         )
@@ -395,7 +399,7 @@ for table_idx, table in enumerate(result.tables):
             "Table # {} location on page: {} is {}".format(
                 table_idx,
                 region.page_number,
-                format_polygon(region.polygon),
+                region.polygon,
             )
         )
     for cell in table.cells:
@@ -410,12 +414,11 @@ for table_idx, table in enumerate(result.tables):
             print(
                 "...content on page {} is within bounding polygon '{}'\n".format(
                     region.page_number,
-                    format_polygon(region.polygon),
+                    region.polygon,
                 )
             )
 print("----------------------------------------")
 ```
-<!-- END SNIPPET -->
 
 - Read more about the features provided by the `prebuilt-document` model [here][service_prebuilt_document].
 
@@ -426,6 +429,7 @@ Extract fields from select document types such as receipts, invoices, business c
 For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_document` method:
 
 <!-- SNIPPET:sample_analyze_receipts.analyze_receipts -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -509,6 +513,7 @@ for idx, receipt in enumerate(receipts.documents):
         print("Total: {} has confidence: {}".format(total.value, total.confidence))
     print("--------------------------------------")
 ```
+
 <!-- END SNIPPET -->
 
 You are not limited to receipts! There are a few prebuilt models to choose from, each of which has its own set of supported fields. See other supported prebuilt models [here][fr-models].
@@ -521,6 +526,7 @@ Provide a container SAS URL to your Azure Storage Blob container where you're st
 More details on setting up a container and required file structure can be found in the [service documentation][fr-build-training-set].
 
 <!-- SNIPPET:sample_build_model.build_model -->
+
 ```python
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
 from azure.core.credentials import AzureKeyCredential
@@ -546,6 +552,7 @@ for name, doc_type in model.doc_types.items():
             field_name, field["type"], doc_type.field_confidence[field_name]
         ))
 ```
+
 <!-- END SNIPPET -->
 
 ### Analyze Documents Using a Custom Model
@@ -554,6 +561,7 @@ Analyze document fields, tables, selection marks, and more. These models are tra
 For best results, you should only analyze documents of the same document type that the custom model was built with.
 
 <!-- SNIPPET:sample_analyze_custom_documents.analyze_custom_documents -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient
@@ -613,6 +621,7 @@ for i, table in enumerate(result.tables):
         )
 print("-----------------------------------")
 ```
+
 <!-- END SNIPPET -->
 
 Alternatively, a document URL can also be used to analyze documents using the `begin_analyze_document_from_url` method.

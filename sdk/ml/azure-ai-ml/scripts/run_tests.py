@@ -8,8 +8,7 @@ from pathlib import Path
 
 
 def run_tests(input_file):
-    """Run tests listed in a file.
-    Lines starting with # or ; are ignored.
+    """Run tests listed in a file. Lines starting with # or ; are ignored.
 
     :param input_file: Path to a file containing a list of tests to run.
     :type input_file: str
