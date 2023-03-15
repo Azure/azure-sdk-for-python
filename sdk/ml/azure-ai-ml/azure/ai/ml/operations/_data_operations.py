@@ -301,7 +301,11 @@ class DataOperations(_ScopeDependentOperations):
                 data._referenced_uris = referenced_uris
 
             data, _ = _check_and_upload_path(
-                artifact=data, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.DATA
+                artifact=data,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.DATA,
+                show_progress=self._show_progress,
             )
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
