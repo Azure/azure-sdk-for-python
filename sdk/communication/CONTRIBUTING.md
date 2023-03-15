@@ -32,7 +32,7 @@ If the tests are successful, we can proceed to run the tests in LIVE mode.
 
 Because in LIVE mode we are hitting an actual resource, we must set the appropriate environment variable to make sure the code tests against the resource we want. Set up an env variable called `COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING` (just needed for SMS and Phone Numbers SDKs) and set it to the connection string of the resource you want to test against.
 
-Depending on which package you are testing, it may need special environment variables to test succesfully. The names of these variables can be found inside each test file in the `setUp()` function. Make sure to set these variables before running the tests themselves. You may need to restart your development environment after creating or updating these environment variables.
+Depending on which package you are testing, it may need special environment variables to test successfully. The names of these variables can be found inside each test file in the `setUp()` function. Make sure to set these variables before running the tests themselves. You may need to restart your development environment after creating or updating these environment variables.
 
 You can run the `pytest .` command after setting the `AZURE_TEST_RUN_LIVE` variable to `true`.
 
