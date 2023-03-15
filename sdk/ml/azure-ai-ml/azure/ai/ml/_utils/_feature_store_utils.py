@@ -73,10 +73,6 @@ def _archive_or_restore(
         "FeaturesetVersionsOperations",
         "FeaturestoreEntityVersionsOperations",
     ],
-    container_operation: Union[
-        "FeaturesetContainersOperations",
-        "FeaturestoreEntityContainersOperations",
-    ],
     is_archived: bool,
     name: str,
     version: Optional[str] = None,
@@ -84,6 +80,16 @@ def _archive_or_restore(
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
+    if not version and not label:
+        msg = "Must provide either version or label."
+        raise ValidationException(
+            message=msg,
+            target=ErrorTarget.ASSET,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.MISSING_FIELD,
+        )
+
     if version and label:
         msg = "Cannot specify both version and label."
         raise ValidationException(
@@ -93,6 +99,7 @@ def _archive_or_restore(
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
+
     if label:
         version = _resolve_label_to_asset(asset_operations, name, label).version
 
@@ -104,25 +111,13 @@ def _archive_or_restore(
             workspace_name=workspace_name,
         )
         version_resource.properties.is_archived = is_archived
+        version_resource.properties.stage = "Archived" if is_archived else "Development"
         version_operation.begin_create_or_update(
             name=name,
             version=version,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             body=version_resource,
-        )
-    else:
-        container_resource = container_operation.get_entity(
-            name=name,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-        )
-        container_resource.properties.is_archived = is_archived
-        container_operation.begin_create_or_update(
-            name=name,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            body=container_resource,
         )
 
 

@@ -6,6 +6,10 @@ import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+    FeaturesetContainer,
+    FeaturesetContainerProperties,
+    FeaturesetVersion,
+    FeaturesetVersionProperties,
     FeaturesetJobArmPaginatedResult,
     FeatureArmPaginatedResult,
 )
@@ -126,3 +130,31 @@ class TestFeatureSetOperations:
     def test_get_feature(self, mock_feature_set_operations: _FeatureSetOperations) -> None:
         mock_feature_set_operations.get_feature(feature_set_name="random_name", version="1", feature_name="test")
         mock_feature_set_operations._operation.get_feature.assert_called_once()
+
+    def test_archive_version(self, mock_feature_set_operations: _FeatureSetOperations):
+        name = "random_name"
+        featureset_version = Mock(FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"]))))
+        version = "1"
+        mock_feature_set_operations._operation.get.return_value = featureset_version
+        mock_feature_set_operations.archive(name=name, version=version)
+        mock_feature_set_operations._operation.begin_create_or_update.assert_called_once_with(
+            name=name,
+            version=version,
+            workspace_name=mock_feature_set_operations._workspace_name,
+            body=featureset_version,
+            resource_group_name=mock_feature_set_operations._resource_group_name,
+        )
+
+    def test_restore_version(self, mock_feature_set_operations: _FeatureSetOperations):
+        name = "random_name"
+        featureset_version = Mock(FeaturesetVersion(properties=Mock(FeaturesetVersionProperties(entities=["test"]))))
+        version = "1"
+        mock_feature_set_operations._operation.get.return_value = featureset_version
+        mock_feature_set_operations.restore(name=name, version=version)
+        mock_feature_set_operations._operation.begin_create_or_update.assert_called_once_with(
+            name=name,
+            version=version,
+            workspace_name=mock_feature_set_operations._workspace_name,
+            body=featureset_version,
+            resource_group_name=mock_feature_set_operations._resource_group_name,
+        )
