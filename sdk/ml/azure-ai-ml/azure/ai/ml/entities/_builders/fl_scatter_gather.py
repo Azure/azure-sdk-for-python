@@ -40,6 +40,7 @@ ANCHORING_PATH_ROOT = "root"
 # MLDesigner component created by the subcomponents.aggregate_output function
 # will produce a ComponentExecutor object instead of the actual component.
 # TODO 2293541: Add telemetry of some sort
+# pylint: disable=too-many-instance-attributes
 class FLScatterGather(ControlFlowNode, NodeIOMixin):
     """A node which creates a federated learning scatter-gather loop as a pipeline subgraph.
     Intended for use inside a pipeline job. This is initialized when calling
@@ -74,7 +75,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 silo_to_aggregation_argument_map,
                 aggregation_to_silo_argument_map
             )
-            
 
         # input validation.
         FLScatterGather.validate_inputs(
@@ -107,7 +107,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         executed_aggregation_step = None
         # TODO 2293573: replace this for-loop with a do-while node.
-        for i in range(self.max_iterations):
+        for _ in range(self.max_iterations):
             # Create inputs for silo components
             silo_inputs = {}
             # Start with static inputs
@@ -189,8 +189,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         sg_graph = {"silo_steps" : []}
         siloed_outputs = {}
         # TODO 2293586 replace this for-loop with a parallel-for node
-        for i in range(len(self.silo_configs)):
-            silo_config = self.silo_configs[i]
+        for silo_config in self.silo_configs:
             silo_inputs.update(silo_config.inputs)
             executed_silo_component = self.silo_component(**silo_inputs)
             for v, k in executed_silo_component.inputs.items():
@@ -214,13 +213,13 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         # produce internal argument-merging components and record them in local subgraph
         merge_comp_mapping = self._inject_merge_components(sg_graph["silo_steps"])
-        sg_graph["mergers"] = [merge_comp for merge_comp in merge_comp_mapping.values()]
+        sg_graph["mergers"] = list(merge_comp_mapping.values())
 
         # produce aggregate step inputs by merging static kwargs and mapped arguments from
         # internal merge components
         agg_inputs = {}
         agg_inputs.update(self.aggregation_kwargs)
-        internal_merge_outputs = {self._get_aggregator_input_name(k): v.outputs.aggregated_output 
+        internal_merge_outputs = {self._get_aggregator_input_name(k): v.outputs.aggregated_output
                                     for k, v in merge_comp_mapping.items()}
         agg_inputs.update(internal_merge_outputs)
 
@@ -397,7 +396,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 # ...then recursively anchor each job inside the pipeline
                 for job_key in pipeline_step.jobs:
                     job = pipeline_step.jobs[job_key]
-                    # replace orchestrator with internal datastore, jobs components should either use the local datastore
+                    # replace orchestrator with internal datastore, jobs components
+                    # should either use the local datastore
                     # or have already had their outputs re-assigned.
                     cls._anchor_step(
                         job,
@@ -430,7 +430,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     # Making this a class method allows for easier, isolated testing, and allows careful
     # users to call this as a pre-init step.
     # TODO: Might be worth migrating this to a schema validation class, but out of scope for now.
-    # pylint: disable=too-many-statements,too-many-branches
+    # pylint: disable=too-many-statements,too-many-branches, too-many-locals
     @classmethod
     def validate_inputs(cls,
         *,
@@ -504,6 +504,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             if hasattr(first_silo, "inputs"):
                 expected_inputs = first_silo.inputs.keys()
             num_expected_inputs = len(expected_inputs)
+            # pylint: disable=consider-using-enumerate
             for i in range(len(silo_configs)):
                 silo = silo_configs[i]
                 if not hasattr(silo, "compute"):
@@ -702,7 +703,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         return merge_comp_mapping
 
-    # boilerplate functions - largely copied from other node builders, 
+    # boilerplate functions - largely copied from other node builders
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:

@@ -15,8 +15,6 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 # FL subgraphs in pipelines.
 # The functionality of this entity is limited, and it exists mostly
 # To simplify the process of loading and validating these objects from YAML.
-# TODO better/any error messaging
- # Review TODO: should this inherit from the Resource class despite note being a true resource? abc.ABC doesn't feel appropriate either
 class FederatedLearningSilo():
 
     def __init__(
@@ -123,7 +121,8 @@ class FederatedLearningSilo():
         type list_arg: str
         """
         yaml_dict = load_yaml(yaml_path)
-        return [FederatedLearningSilo._load_from_dict(silo_dict=silo_yaml_dict) for silo_yaml_dict in  yaml_dict[list_arg]]
+        return [FederatedLearningSilo._load_from_dict(silo_dict=silo_yaml_dict)
+                for silo_yaml_dict in  yaml_dict[list_arg]]
 
 
 
