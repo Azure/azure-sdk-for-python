@@ -100,9 +100,9 @@ def _get_match_headers(kwargs):
 def build_options(kwargs):
     # type: (Dict[str, Any]) -> Dict[str, Any]
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
-    for key, value in _COMMON_OPTIONS.items():
-        if key in kwargs:
-            options[value] = kwargs.pop(key)
+    # for key, value in _COMMON_OPTIONS.items():
+    #     if key in kwargs:
+    #         options[value] = kwargs.pop(key)
 
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
