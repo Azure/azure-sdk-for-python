@@ -43,20 +43,8 @@ def model_operations(mocker: MockFixture) -> Mock:
 
 
 @pytest.fixture
-def code_operations(
-    mock_workspace_scope: OperationScope,
-    mock_operation_config: OperationConfig,
-    mock_aml_services_2022_10_01: Mock,
-    mock_datastore_operations: DatastoreOperations,
-    mock_machinelearning_client: Mock,
-) -> CodeOperations:
-    yield CodeOperations(
-        operation_scope=mock_workspace_scope,
-        operation_config=mock_operation_config,
-        service_client=mock_aml_services_2022_10_01,
-        datastore_operations=mock_datastore_operations,
-        requests_pipeline=mock_machinelearning_client._requests_pipeline,
-    )
+def code_operations(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml.operations._code_operations.CodeOperations")
 
 
 @pytest.fixture
@@ -71,11 +59,10 @@ def component_operations(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
-) -> DatastoreOperations:
+    mock_workspace_scope: OperationScope, mock_aml_services_2022_10_01: Mock
+) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
-        operation_config=mock_operation_config,
         serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
@@ -83,17 +70,13 @@ def mock_datastore_operations(
 @pytest.fixture
 def mock_code_assets_operations(
     mock_workspace_scope: OperationScope,
-    mock_operation_config: OperationConfig,
-    mock_aml_services_2022_05_01: Mock,
-    mock_datastore_operations: Mock,
-    mock_machinelearning_client: Mock,
+    mock_aml_services_2022_10_01: Mock,
+    mock_datastore_operations: DatastoreOperations,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
-        operation_config=mock_operation_config,
-        service_client=mock_aml_services_2022_05_01,
+        service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operations,
-        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -347,9 +330,9 @@ class TestOperationOrchestration:
         operation_orchestrator: OperationOrchestrator,
         mocker: MockFixture,
     ) -> None:
-        code = Code(name="name", version="1", path="tests/test_configs/data/sample1.csv")
+        code = Code(name="name", version="1", path="test_path")
         mocker.patch(
-            "azure.ai.ml._artifacts._artifact_utilities._upload_snapshot_to_datastore",
+            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
             return_value=ArtifactStorageInfo(
                 "name",
                 "1",

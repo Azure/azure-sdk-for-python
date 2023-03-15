@@ -8,6 +8,7 @@ from .resource_configuration import ResourceConfigurationSchema
 
 
 class JobResourceConfigurationSchema(ResourceConfigurationSchema):
+    locations = fields.List(fields.Str())
     shm_size = fields.Str(
         metadata={
             "description": (

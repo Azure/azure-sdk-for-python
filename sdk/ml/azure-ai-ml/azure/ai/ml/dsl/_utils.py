@@ -33,8 +33,7 @@ def is_valid_name(name: str):
 
 
 def _resolve_source_directory():
-    """Resolve source directory as last customer frame's module file dir
-    position."""
+    """Resolve source directory as last customer frame's module file dir position."""
     source_file = _resolve_source_file()
     # Fall back to current working directory if not found
     return os.getcwd() if not source_file else Path(os.path.dirname(source_file)).absolute()
@@ -70,10 +69,8 @@ def _assert_frame_package_name(pattern, frame):
 def _relative_to(path, basedir, raises_if_impossible=False):
     """Compute the relative path under basedir.
 
-    This is a wrapper function of Path.relative_to, by default
-    Path.relative_to raises if path is not under basedir, In this
-    function, it returns None if raises_if_impossible=False, otherwise
-    raises.
+    This is a wrapper function of Path.relative_to, by default Path.relative_to raises if path is not under basedir, In
+    this function, it returns None if raises_if_impossible=False, otherwise raises.
     """
     # The second resolve is to resolve possible win short path.
     path = Path(path).resolve().absolute().resolve()

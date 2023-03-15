@@ -2,7 +2,11 @@
 
 Azure Confidential Ledger provides a service for logging to an immutable, tamper-proof ledger. As part of the [Azure Confidential Computing][azure_confidential_computing] portfolio, Azure Confidential Ledger runs in secure, hardware-based trusted execution environments, also known as enclaves. It is built on Microsoft Research's [Confidential Consortium Framework][ccf].
 
-[Source code][confidential_ledger_client_src] | [Package (PyPI)][pypi_package_confidential_ledger] | [API reference documentation][reference_docs] | [Product documentation][confidential_ledger_docs]
+[Source code][confidential_ledger_client_src]
+| [Package (PyPI)][pypi_package_confidential_ledger]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-confidentialledger/)
+| [API reference documentation][reference_docs]
+| [Product documentation][confidential_ledger_docs]
 
 ## Getting started
 ### Install packages
