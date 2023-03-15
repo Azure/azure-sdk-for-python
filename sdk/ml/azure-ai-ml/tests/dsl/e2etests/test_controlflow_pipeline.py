@@ -1,6 +1,6 @@
 import pytest
 from azure.ai.ml.dsl._group_decorator import group
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
 from azure.ai.ml import Input, MLClient, load_component, Output
@@ -41,13 +41,7 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
 
 
 class TestIfElse(TestControlFlowPipeline):
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
-    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_dsl_condition_pipeline(self, client: MLClient):
-        set_bodiless_matcher()
-
         # update jobs field to include private preview nodes
 
         hello_world_component_no_paths = load_component(
@@ -102,12 +96,7 @@ class TestIfElse(TestControlFlowPipeline):
             },
         }
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_dsl_condition_pipeline_with_primitive_input(self, client: MLClient):
-        set_bodiless_matcher()
-
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
         )
@@ -148,12 +137,7 @@ class TestIfElse(TestControlFlowPipeline):
             },
         }
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     def test_dsl_condition_pipeline_with_one_branch(self, client: MLClient):
-        set_bodiless_matcher()
-
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
         )
@@ -337,12 +321,84 @@ class TestIfElse(TestControlFlowPipeline):
             },
         }
 
+    def test_if_else_multiple_blocks(self, client: MLClient):
+        hello_world_component_no_paths = load_component(
+            source="./tests/test_configs/components/helloworld_component_no_paths.yml"
+        )
+        hello_world_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        basic_component = load_component(
+            source="./tests/test_configs/components/component_with_conditional_output/spec.yaml"
+        )
 
-# @pytest.mark.skipif(
-#     condition=is_live(),
-#     # TODO: reopen live test when parallel_for deployed to canary
-#     reason="parallel_for is not available in canary."
-# )
+        @pipeline(
+            compute="cpu-cluster",
+        )
+        def condition_pipeline():
+            result = basic_component()
+
+            node1 = hello_world_component_no_paths(component_in_number=1)
+
+            node2 = hello_world_component_no_paths(component_in_number=2)
+            node3 = hello_world_component(component_in_number=3, component_in_path=test_input)
+            node4 = hello_world_component(component_in_number=4, component_in_path=test_input)
+            condition(condition=result.outputs.output, false_block=[node1, node3], true_block=[node2, node4])
+
+        pipeline_job = condition_pipeline()
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"]["conditionnode"] == {
+            "_source": "DSL",
+            "condition": "${{parent.jobs.result.outputs.output}}",
+            "false_block": ["${{parent.jobs.node1}}", "${{parent.jobs.node3}}"],
+            "true_block": ["${{parent.jobs.node2}}", "${{parent.jobs.node4}}"],
+            "type": "if_else",
+        }
+
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO(2177353): check why recorded tests failure.")
+    def test_if_else_multiple_blocks_subgraph(self, client: MLClient):
+        hello_world_component_no_paths = load_component(
+            source="./tests/test_configs/components/helloworld_component_no_paths.yml"
+        )
+        basic_component = load_component(
+            source="./tests/test_configs/components/component_with_conditional_output/spec.yaml"
+        )
+
+        @pipeline()
+        def subgraph():
+            hello_world_component_no_paths(component_in_number=2)
+
+        @pipeline(
+            compute="cpu-cluster",
+        )
+        def condition_pipeline():
+            result = basic_component()
+
+            node1 = hello_world_component_no_paths(component_in_number=1)
+
+            node2 = subgraph()
+
+            condition(condition=result.outputs.output, true_block=[node1, node2])
+
+        pipeline_job = condition_pipeline()
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"]["conditionnode"] == {
+            "_source": "DSL",
+            "condition": "${{parent.jobs.result.outputs.output}}",
+            "true_block": ["${{parent.jobs.node1}}", "${{parent.jobs.node2}}"],
+            "type": "if_else",
+        }
+
+
+@pytest.mark.skipif(
+    condition=is_live(),
+    # TODO: reopen live test when parallel_for deployed to canary
+    reason="parallel_for is not available in canary.",
+)
 class TestParallelForPipeline(TestControlFlowPipeline):
     def test_simple_dsl_parallel_for_pipeline(self, client: MLClient):
         hello_world_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")

@@ -192,6 +192,7 @@ class FileProperties(DictMixin):
     :ivar int size: size of the file
     :ivar int remaining_retention_days: The number of days that the file will be retained
         before being permanently deleted by the service.
+    :ivar str encryption_context: Specifies the encryption context to set on the file.
     :var ~azure.storage.filedatalake.ContentSettings content_settings:
     """
 
@@ -209,6 +210,9 @@ class FileProperties(DictMixin):
         self.remaining_retention_days = None
         self.content_settings = ContentSettings(**kwargs)
         self.encryption_scope = kwargs.get('x-ms-encryption-scope')
+
+        # This is being passed directly not coming from headers
+        self.encryption_context = kwargs.get('encryption_context')
 
 
 class PathProperties(DictMixin):
@@ -234,6 +238,7 @@ class PathProperties(DictMixin):
         scope can be created using the Management API and referenced here by name. If a default
         encryption scope has been defined at the file system, this value will override it if the
         file system level scope is configured to allow overrides. Otherwise an error will be raised.
+    :ivar str encryption_context: Specifies the encryption context to set on the file.
     """
 
     def __init__(self, **kwargs):
@@ -248,6 +253,7 @@ class PathProperties(DictMixin):
         self.creation_time = kwargs.get('creation_time', None)
         self.expiry_time = kwargs.get('expiry_time', None)
         self.encryption_scope = kwargs.get('x-ms-encryption-scope', None)
+        self.encryption_context = kwargs.get('x-ms-encryption-context', None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -263,6 +269,7 @@ class PathProperties(DictMixin):
         path_prop.creation_time = _filetime_to_datetime(generated.creation_time)
         path_prop.expiry_time = _filetime_to_datetime(generated.expiry_time)
         path_prop.encryption_scope = generated.encryption_scope
+        path_prop.encryption_context = generated.encryption_context
         return path_prop
 
 

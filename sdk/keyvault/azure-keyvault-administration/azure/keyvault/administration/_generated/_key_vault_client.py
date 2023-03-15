@@ -43,7 +43,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '7.4-preview.1'
+    DEFAULT_API_VERSION = '7.4'
     _PROFILE_TAG = "azure.keyvault.KeyVaultClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -54,11 +54,11 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
     def __init__(
         self,
-        api_version=None, # type: Optional[str]
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        api_version: Optional[str]=None,
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
-        if api_version == '7.2' or api_version == '7.3' or api_version == '7.4-preview.1':
+        if api_version == '7.2' or api_version == '7.3' or api_version == '7.4':
             base_url = '{vaultBaseUrl}'
         else:
             raise ValueError("API version {} is not available".format(api_version))
@@ -79,7 +79,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
            * 7.2: :mod:`v7_2.models<azure.keyvault.v7_2.models>`
            * 7.3: :mod:`v7_3.models<azure.keyvault.v7_3.models>`
-           * 7.4-preview.1: :mod:`v7_4_preview_1.models<azure.keyvault.v7_4_preview_1.models>`
+           * 7.4: :mod:`v7_4.models<azure.keyvault.v7_4.models>`
         """
         if api_version == '7.2':
             from .v7_2 import models
@@ -87,8 +87,8 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         elif api_version == '7.3':
             from .v7_3 import models
             return models
-        elif api_version == '7.4-preview.1':
-            from .v7_4_preview_1 import models
+        elif api_version == '7.4':
+            from .v7_4 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -98,15 +98,15 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
            * 7.2: :class:`RoleAssignmentsOperations<azure.keyvault.v7_2.operations.RoleAssignmentsOperations>`
            * 7.3: :class:`RoleAssignmentsOperations<azure.keyvault.v7_3.operations.RoleAssignmentsOperations>`
-           * 7.4-preview.1: :class:`RoleAssignmentsOperations<azure.keyvault.v7_4_preview_1.operations.RoleAssignmentsOperations>`
+           * 7.4: :class:`RoleAssignmentsOperations<azure.keyvault.v7_4.operations.RoleAssignmentsOperations>`
         """
         api_version = self._get_api_version('role_assignments')
         if api_version == '7.2':
             from .v7_2.operations import RoleAssignmentsOperations as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import RoleAssignmentsOperations as OperationClass
-        elif api_version == '7.4-preview.1':
-            from .v7_4_preview_1.operations import RoleAssignmentsOperations as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import RoleAssignmentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'role_assignments'".format(api_version))
         self._config.api_version = api_version
@@ -118,15 +118,15 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
            * 7.2: :class:`RoleDefinitionsOperations<azure.keyvault.v7_2.operations.RoleDefinitionsOperations>`
            * 7.3: :class:`RoleDefinitionsOperations<azure.keyvault.v7_3.operations.RoleDefinitionsOperations>`
-           * 7.4-preview.1: :class:`RoleDefinitionsOperations<azure.keyvault.v7_4_preview_1.operations.RoleDefinitionsOperations>`
+           * 7.4: :class:`RoleDefinitionsOperations<azure.keyvault.v7_4.operations.RoleDefinitionsOperations>`
         """
         api_version = self._get_api_version('role_definitions')
         if api_version == '7.2':
             from .v7_2.operations import RoleDefinitionsOperations as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import RoleDefinitionsOperations as OperationClass
-        elif api_version == '7.4-preview.1':
-            from .v7_4_preview_1.operations import RoleDefinitionsOperations as OperationClass
+        elif api_version == '7.4':
+            from .v7_4.operations import RoleDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'role_definitions'".format(api_version))
         self._config.api_version = api_version

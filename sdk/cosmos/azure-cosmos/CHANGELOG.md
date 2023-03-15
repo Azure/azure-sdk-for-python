@@ -7,15 +7,16 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally.
 
 #### Other Changes
 
 ### 4.3.1 (2023-02-23)
 
 #### Features Added
- - Added `correlated_activity_id` for query operations
- - Added cross regional retries for Service Unavailable/Request Timeouts for read/Query Plan operations
- - GA release of CosmosHttpLoggingPolicy and autoscale feature
+ - Added `correlated_activity_id` for query operations.
+ - Added cross regional retries for Service Unavailable/Request Timeouts for read/Query Plan operations.
+ - GA release of CosmosHttpLoggingPolicy and autoscale feature.
 
 #### Bugs Fixed
 - Bug fix to address queries with VALUE MAX (or any other aggregate) that run into an issue if the query is executed on a container with at least one "empty" partition.

@@ -7,15 +7,14 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
-from test_utilities.utils import assert_job_cancel, sleep_if_live
-
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, sleep_if_live
 
 from .._utils import (
     DATA_VERSION,
@@ -80,15 +79,12 @@ def create_internal_sample_dependent_datasets(client: MLClient):
     "enable_pipeline_private_preview_features",
     "create_internal_sample_dependent_datasets",
     "enable_internal_components",
-    "mock_snapshot_hash",
 )
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
     @classmethod
     def _test_component(cls, node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client: MLClient):
-        set_bodiless_matcher()
-
         @pipeline()
         def pipeline_func():
             node = node_func(**inputs)
@@ -163,8 +159,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         test_case_i: int,
         test_case_name: str,
     ):
-        set_bodiless_matcher()
-
         yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[test_case_i]
         # curated env with name & version
         node_func: InternalComponent = load_component(yaml_path)
@@ -182,8 +176,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         test_case_i: int,
         test_case_name: str,
     ):
-        set_bodiless_matcher()
-
         yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[test_case_i]
         component_name = randstr("component_name")
 
@@ -199,8 +191,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         client: MLClient,
         randstr: Callable[[], str],
     ):
-        set_bodiless_matcher()
-
         yaml_path = "./tests/test_configs/internal/distribution-component/component_spec.yaml"
         node_func: InternalComponent = load_component(yaml_path)
         inputs = {
@@ -210,8 +200,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         self._test_component(node_func, inputs, {"compute": "cpu-cluster"}, {}, client)
 
     def test_data_as_pipeline_inputs(self, client: MLClient, randstr: Callable[[], str]):
-        set_bodiless_matcher()
-
         yaml_path = "./tests/test_configs/internal/distribution-component/component_spec.yaml"
         node_func: InternalComponent = load_component(yaml_path)
 
@@ -238,8 +226,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         test_case_i: int,
         test_case_name: str,
     ):
-        set_bodiless_matcher()
-
         yaml_path, inputs, runsettings_dict, pipeline_runsettings_dict = PARAMETERS_TO_TEST[test_case_i]
         component_func = load_component(yaml_path)
 
@@ -260,8 +246,6 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     @pytest.mark.skipif(condition=not is_live(), reason="unknown recording error to further investigate")
     def test_pipeline_with_setting_node_output(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         component_dir = Path(__file__).parent.parent.parent / "test_configs" / "internal" / "command-component"
         tsv_func = load_component(component_dir / "command-linux/one-line-tsv/component.yaml")
         copy_func = load_component(component_dir / "command-linux/copy/component.yaml")
@@ -295,8 +279,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert_job_cancel(pipeline_job, client, experiment_name="v15_v2_interop")
 
     def test_pipeline_with_setting_node_output_mode(self, client: MLClient):
-        set_bodiless_matcher()
-
         # get dataset
         training_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
         test_data = Input(type=AssetTypes.URI_FILE, path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")

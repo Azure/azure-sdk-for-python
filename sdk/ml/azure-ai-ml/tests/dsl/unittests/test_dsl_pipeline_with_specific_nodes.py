@@ -1362,9 +1362,12 @@ class TestDSLPipelineWithSpecificNodes:
             }
 
         pipeline1 = pipeline(iris_data)
-        with pytest.raises(ValidationException) as ve:
-            pipeline1._to_rest_object().as_dict()
-            assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
+        result = pipeline1._validate()
+        assert (
+            "jobs.node" in result.error_messages
+            and result.error_messages["jobs.node"]
+            == "Should not specify min or max executors when dynamic allocation is disabled."
+        )
 
     def test_pipeline_with_spark_job(self):
         environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"

@@ -7,9 +7,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
 import datetime
-from typing import List, Optional, Union
+from enum import Enum
+from typing import Any, List, Optional, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -52,8 +52,8 @@ class Attributes(_serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -95,7 +95,7 @@ class Error(_serialization.Model):
         "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -143,8 +143,8 @@ class FullBackupOperation(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         job_id: Optional[str] = None,
         azure_storage_blob_container_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the backup operation.
         :paramtype status: str
@@ -189,7 +189,7 @@ class KeyVaultError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error = None
@@ -224,8 +224,8 @@ class Permission(_serialization.Model):
         not_actions: Optional[List[str]] = None,
         data_actions: Optional[List[Union[str, "DataAction"]]] = None,
         not_data_actions: Optional[List[Union[str, "DataAction"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword actions: Action permissions that are granted.
         :paramtype actions: list[str]
@@ -280,8 +280,8 @@ class RestoreOperation(_serialization.Model):
         job_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the restore operation.
         :paramtype status: str
@@ -327,7 +327,9 @@ class RestoreOperationParameters(_serialization.Model):
         "folder_to_restore": {"key": "folderToRestore", "type": "str"},
     }
 
-    def __init__(self, *, sas_token_parameters: "SASTokenParameter", folder_to_restore: str, **kwargs):
+    def __init__(
+        self, *, sas_token_parameters: "SASTokenParameter", folder_to_restore: str, **kwargs: Any
+    ) -> None:
         """
         :keyword sas_token_parameters: Required.
         :paramtype sas_token_parameters: ~azure.keyvault.administration._generated_models.SASTokenParameter
@@ -368,7 +370,9 @@ class RoleAssignment(_serialization.Model):
         "properties": {"key": "properties", "type": "RoleAssignmentPropertiesWithScope"},
     }
 
-    def __init__(self, *, properties: Optional["RoleAssignmentPropertiesWithScope"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["RoleAssignmentPropertiesWithScope"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Role assignment properties.
         :paramtype properties: ~azure.keyvault.administration._generated_models.RoleAssignmentPropertiesWithScope
@@ -397,7 +401,7 @@ class RoleAssignmentCreateParameters(_serialization.Model):
         "properties": {"key": "properties", "type": "RoleAssignmentProperties"},
     }
 
-    def __init__(self, *, properties: "RoleAssignmentProperties", **kwargs):
+    def __init__(self, *, properties: "RoleAssignmentProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Role assignment properties. Required.
         :paramtype properties: ~azure.keyvault.administration._generated_models.RoleAssignmentProperties
@@ -417,7 +421,7 @@ class RoleAssignmentFilter(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, *, principal_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, principal_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword principal_id: Returns role assignment of the specific principal.
         :paramtype principal_id: str
@@ -441,8 +445,8 @@ class RoleAssignmentListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["RoleAssignment"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["RoleAssignment"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role assignment list.
         :paramtype value: list[~azure.keyvault.administration._generated_models.RoleAssignment]
@@ -476,7 +480,7 @@ class RoleAssignmentProperties(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, *, role_definition_id: str, principal_id: str, **kwargs):
+    def __init__(self, *, role_definition_id: str, principal_id: str, **kwargs: Any) -> None:
         """
         :keyword role_definition_id: The role definition ID used in the role assignment. Required.
         :paramtype role_definition_id: str
@@ -512,8 +516,8 @@ class RoleAssignmentPropertiesWithScope(_serialization.Model):
         scope: Optional[Union[str, "RoleScope"]] = None,
         role_definition_id: Optional[str] = None,
         principal_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scope: The role scope. Known values are: "/" and "/keys".
         :paramtype scope: str or ~azure.keyvault.administration._generated_models.RoleScope
@@ -576,8 +580,8 @@ class RoleDefinition(_serialization.Model):
         role_type: Optional[Union[str, "RoleType"]] = None,
         permissions: Optional[List["Permission"]] = None,
         assignable_scopes: Optional[List[Union[str, "RoleScope"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_name: The role name.
         :paramtype role_name: str
@@ -618,7 +622,7 @@ class RoleDefinitionCreateParameters(_serialization.Model):
         "properties": {"key": "properties", "type": "RoleDefinitionProperties"},
     }
 
-    def __init__(self, *, properties: "RoleDefinitionProperties", **kwargs):
+    def __init__(self, *, properties: "RoleDefinitionProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Role definition properties. Required.
         :paramtype properties: ~azure.keyvault.administration._generated_models.RoleDefinitionProperties
@@ -638,7 +642,7 @@ class RoleDefinitionFilter(_serialization.Model):
         "role_name": {"key": "roleName", "type": "str"},
     }
 
-    def __init__(self, *, role_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, role_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword role_name: Returns role definition with the specific name.
         :paramtype role_name: str
@@ -662,8 +666,8 @@ class RoleDefinitionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["RoleDefinition"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["RoleDefinition"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Role definition list.
         :paramtype value: list[~azure.keyvault.administration._generated_models.RoleDefinition]
@@ -706,8 +710,8 @@ class RoleDefinitionProperties(_serialization.Model):
         role_type: Optional[Union[str, "RoleType"]] = None,
         permissions: Optional[List["Permission"]] = None,
         assignable_scopes: Optional[List[Union[str, "RoleScope"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword role_name: The role name.
         :paramtype role_name: str
@@ -749,7 +753,7 @@ class SASTokenParameter(_serialization.Model):
         "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(self, *, storage_resource_uri: str, token: str, **kwargs):
+    def __init__(self, *, storage_resource_uri: str, token: str, **kwargs: Any) -> None:
         """
         :keyword storage_resource_uri: Azure Blob storage container Uri. Required.
         :paramtype storage_resource_uri: str
@@ -796,8 +800,8 @@ class SelectiveKeyRestoreOperation(_serialization.Model):
         job_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the restore operation.
         :paramtype status: str
@@ -843,7 +847,7 @@ class SelectiveKeyRestoreOperationParameters(_serialization.Model):
         "folder": {"key": "folder", "type": "str"},
     }
 
-    def __init__(self, *, sas_token_parameters: "SASTokenParameter", folder: str, **kwargs):
+    def __init__(self, *, sas_token_parameters: "SASTokenParameter", folder: str, **kwargs: Any) -> None:
         """
         :keyword sas_token_parameters: Required.
         :paramtype sas_token_parameters: ~azure.keyvault.administration._generated_models.SASTokenParameter
@@ -881,8 +885,8 @@ class Setting(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, value: str, type: Optional[Union[str, "SettingTypeEnum"]] = None, **kwargs
-    ):
+        self, *, name: str, value: str, type: Optional[Union[str, "SettingTypeEnum"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The account setting to be updated. Required.
         :paramtype name: str
@@ -904,7 +908,7 @@ class SettingsListResult(_serialization.Model):
 
     :ivar settings: A response message containing a list of account settings with their associated
      value.
-    :vartype settings: list[~azure.keyvault.administration._generated_models.models.Setting]
+    :vartype settings: list[~azure.keyvault.administration._generated_models.Setting]
     """
 
     _validation = {
@@ -915,13 +919,13 @@ class SettingsListResult(_serialization.Model):
         "settings": {"key": "settings", "type": "[Setting]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.settings = None
 
 
-class UpdateSettingsRequest(_serialization.Model):
+class UpdateSettingRequest(_serialization.Model):
     """The update settings request object.
 
     All required parameters must be populated in order to send to Azure.
@@ -938,7 +942,7 @@ class UpdateSettingsRequest(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: str, **kwargs):
+    def __init__(self, *, value: str, **kwargs: Any) -> None:
         """
         :keyword value: The value of the pool setting. Required.
         :paramtype value: str
@@ -950,74 +954,74 @@ class UpdateSettingsRequest(_serialization.Model):
 class DataAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported permissions for data actions."""
 
-    #: Read HSM key metadata.
     READ_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/read/action"
-    #: Update an HSM key.
+    """Read HSM key metadata."""
     WRITE_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/write/action"
-    #: Read deleted HSM key.
+    """Update an HSM key."""
     READ_DELETED_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action"
-    #: Recover deleted HSM key.
+    """Read deleted HSM key."""
     RECOVER_DELETED_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/deletedKeys/recover/action"
-    #: Backup HSM keys.
+    """Recover deleted HSM key."""
     BACKUP_HSM_KEYS = "Microsoft.KeyVault/managedHsm/keys/backup/action"
-    #: Restore HSM keys.
+    """Backup HSM keys."""
     RESTORE_HSM_KEYS = "Microsoft.KeyVault/managedHsm/keys/restore/action"
-    #: Delete role assignment.
+    """Restore HSM keys."""
     DELETE_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/delete/action"
-    #: Get role assignment.
+    """Delete role assignment."""
     GET_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/read/action"
-    #: Create or update role assignment.
+    """Get role assignment."""
     WRITE_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/write/action"
-    #: Get role definition.
+    """Create or update role assignment."""
     READ_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/read/action"
-    #: Create or update role definition.
+    """Get role definition."""
     WRITE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/write/action"
-    #: Delete role definition.
+    """Create or update role definition."""
     DELETE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/delete/action"
-    #: Encrypt using an HSM key.
+    """Delete role definition."""
     ENCRYPT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/encrypt/action"
-    #: Decrypt using an HSM key.
+    """Encrypt using an HSM key."""
     DECRYPT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/decrypt/action"
-    #: Wrap using an HSM key.
+    """Decrypt using an HSM key."""
     WRAP_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/wrap/action"
-    #: Unwrap using an HSM key.
+    """Wrap using an HSM key."""
     UNWRAP_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/unwrap/action"
-    #: Sign using an HSM key.
+    """Unwrap using an HSM key."""
     SIGN_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/sign/action"
-    #: Verify using an HSM key.
+    """Sign using an HSM key."""
     VERIFY_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/verify/action"
-    #: Create an HSM key.
+    """Verify using an HSM key."""
     CREATE_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/create"
-    #: Delete an HSM key.
+    """Create an HSM key."""
     DELETE_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/delete"
-    #: Export an HSM key.
+    """Delete an HSM key."""
     EXPORT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/export/action"
-    #: Release an HSM key using Secure Key Release.
+    """Export an HSM key."""
     RELEASE_KEY = "Microsoft.KeyVault/managedHsm/keys/release/action"
-    #: Import an HSM key.
+    """Release an HSM key using Secure Key Release."""
     IMPORT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/import/action"
-    #: Purge a deleted HSM key.
+    """Import an HSM key."""
     PURGE_DELETED_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/deletedKeys/delete"
-    #: Download an HSM security domain.
+    """Purge a deleted HSM key."""
     DOWNLOAD_HSM_SECURITY_DOMAIN = "Microsoft.KeyVault/managedHsm/securitydomain/download/action"
-    #: Check status of HSM security domain download.
+    """Download an HSM security domain."""
     DOWNLOAD_HSM_SECURITY_DOMAIN_STATUS = "Microsoft.KeyVault/managedHsm/securitydomain/download/read"
-    #: Upload an HSM security domain.
+    """Check status of HSM security domain download."""
     UPLOAD_HSM_SECURITY_DOMAIN = "Microsoft.KeyVault/managedHsm/securitydomain/upload/action"
-    #: Check the status of the HSM security domain exchange file.
+    """Upload an HSM security domain."""
     READ_HSM_SECURITY_DOMAIN_STATUS = "Microsoft.KeyVault/managedHsm/securitydomain/upload/read"
-    #: Download an HSM security domain transfer key.
+    """Check the status of the HSM security domain exchange file."""
     READ_HSM_SECURITY_DOMAIN_TRANSFER_KEY = "Microsoft.KeyVault/managedHsm/securitydomain/transferkey/read"
-    #: Start an HSM backup.
+    """Download an HSM security domain transfer key."""
     START_HSM_BACKUP = "Microsoft.KeyVault/managedHsm/backup/start/action"
-    #: Start an HSM restore.
+    """Start an HSM backup."""
     START_HSM_RESTORE = "Microsoft.KeyVault/managedHsm/restore/start/action"
-    #: Read an HSM backup status.
+    """Start an HSM restore."""
     READ_HSM_BACKUP_STATUS = "Microsoft.KeyVault/managedHsm/backup/status/action"
-    #: Read an HSM restore status.
+    """Read an HSM backup status."""
     READ_HSM_RESTORE_STATUS = "Microsoft.KeyVault/managedHsm/restore/status/action"
-    #: Generate random numbers.
+    """Read an HSM restore status."""
     RANDOM_NUMBERS_GENERATE = "Microsoft.KeyVault/managedHsm/rng/action"
+    """Generate random numbers."""
 
 
 class RoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1029,19 +1033,19 @@ class RoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RoleScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The role scope."""
 
-    #: Global scope
     GLOBAL = "/"
-    #: Keys scope
+    """Global scope"""
     KEYS = "/keys"
+    """Keys scope"""
 
 
 class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The role type."""
 
-    #: Built in role.
     BUILT_IN_ROLE = "AKVBuiltInRole"
-    #: Custom role.
+    """Built in role."""
     CUSTOM_ROLE = "CustomRole"
+    """Custom role."""
 
 
 class SettingTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
