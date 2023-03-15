@@ -25,6 +25,12 @@ with azure-core tracing. This includes (not exhaustive list), azure-storage-blob
     from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
     settings.tracing_implementation = OpenTelemetrySpan
   ```
+* Alternatively, if you have the latest version of `azure-core` installed, you can also set the following environment variable to
+  enable tracing with OpenTelemetry:
+
+  ```bash
+  AZURE_SDK_TRACING_IMPLEMENTATION=opentelemetry
+  ```
 
 ## Examples
 
