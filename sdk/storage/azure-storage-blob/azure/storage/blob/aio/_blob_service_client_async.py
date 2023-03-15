@@ -32,7 +32,6 @@ from .._generated.models import StorageServiceProperties, KeyInfo
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
 from .._encryption import StorageEncryptionMixin
-from .._models import ContainerProperties
 from .._serialize import get_api_version
 from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
@@ -47,6 +46,7 @@ if TYPE_CHECKING:
         BlobAnalyticsLogging,
         BlobProperties,
         ContainerEncryptionScope,
+        ContainerProperties,
         CorsRule,
         Metrics,
         PublicAccess,

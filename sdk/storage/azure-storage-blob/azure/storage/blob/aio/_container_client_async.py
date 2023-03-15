@@ -146,11 +146,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
     @distributed_trace_async
     async def create_container(
         self, metadata: Optional[Dict[str, str]] = None,
-        public_access: Optional[Union[PublicAccess, str]] = None,
+        public_access: Optional[Union["PublicAccess", str]] = None,
         *,
         container_encryption_scope: Optional[Union[Dict[str, Any], "ContainerEncryptionScope"]] = None,
         **kwargs: Any
-    ) -> Dict[str, Union[str, datetime]]:
+    ) -> Dict[str, Union[str, "datetime"]]:
         """
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
@@ -1076,6 +1076,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         length: int = None,
         *,
         encoding: str,
+        version_id: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
+        progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs
     ) -> StorageStreamDownloader[str]:
         ...
@@ -1087,6 +1091,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         length: int = None,
         *,
         encoding: None = None,
+        version_id: Optional[str] = None,
+        cpk: Optional["CustomerProvidedEncryptionKey"] = None,
+        max_concurrency: Optional[int] = None,
+        progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs
     ) -> StorageStreamDownloader[bytes]:
         ...
