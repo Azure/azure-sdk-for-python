@@ -1,6 +1,6 @@
 import pytest
 
-from azure.ai.ml import load_data_import
+from azure.ai.ml import load_data
 from azure.ai.ml.data_transfer import import_data
 from azure.ai.ml.entities import DataImport
 from azure.ai.ml.entities._inputs_outputs import Output
@@ -11,7 +11,7 @@ from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSys
 @pytest.mark.data_import_test
 class TestDataImport:
     def test_data_import_database(self):
-        data_import1 = load_data_import(source="./tests/test_configs/data_import/data_import_database.yaml")
+        data_import1 = load_data(source="./tests/test_configs/data_import/data_import_database.yaml")
         data_import2 = DataImport(
             name="my_azuresqldb_asset",
             type="mltable",
@@ -32,7 +32,7 @@ class TestDataImport:
         assert data_import1.source.connection == data_import2.source.connection
 
     def test_data_import_file_system(self):
-        data_import = load_data_import(source="./tests/test_configs/data_import/data_import_file_system.yaml")
+        data_import = load_data(source="./tests/test_configs/data_import/data_import_file_system.yaml")
         import_job = import_data(
             source=FileSystem(path="test1/*", connection="azureml:my_s3_connection"),
             outputs={
