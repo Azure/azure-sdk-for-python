@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added support to make JobService and ServiceInstance objects serializable when printed
+- Removed Experimental Tag from Idle Shutdown, Custom Applications, and Setup Scripts on Compute Instances.
 
 ### Bugs Fixed
 
