@@ -30,6 +30,7 @@ python3-only: true
 batch:
   - tag: release_2_0
   - tag: release_2_1
+  - tag: release_2022_08_31
   - tag: release_2023_02_28_preview
   - multiapiscript: true
 ```
@@ -69,7 +70,7 @@ output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azur
 These settings apply only when `--tag=release_2022_08_31` is specified on the command line.
 
 ``` yaml $(tag) == 'release_2022_08_31'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs-pr/b1e128f86879ba5a07502abe60577300eb9ec392/specification/cognitiveservices/data-plane/FormRecognizer/stable/2022-08-31/FormRecognizer.json?token=GHSAT0AAAAAABUYDSJIPTM5ED3IVOUKSYP2YX24EKA
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/FormRecognizer/stable/2022-08-31/FormRecognizer.json
 namespace: azure.ai.formrecognizer.v2022_08_31
 output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2022_08_31
 ```
@@ -79,9 +80,9 @@ output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azur
 These settings apply only when `--tag=release_2023_02_28_preview` is specified on the command line.
 
 ``` yaml $(tag) == 'release_2023_02_28_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs-pr/6fd0eae463baaa27e56893d67f58b59c32621cfe/specification/cognitiveservices/data-plane/FormRecognizer/preview/2022-10-31-preview/FormRecognizer.json?token=GHSAT0AAAAAABUYDSJJ5PADTZSZHA4KSQI6Y7QB65Q
-namespace: azure.ai.formrecognizer.v2023_02_28
-output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2023_02_28
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/59b486a366a6e1014cd01e1e606603e54bf6c64b/specification/cognitiveservices/data-plane/FormRecognizer/preview/2023-02-28-preview/FormRecognizer.json
+namespace: azure.ai.formrecognizer.v2023_02_28_preview
+output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2023_02_28_preview
 ```
 
 
