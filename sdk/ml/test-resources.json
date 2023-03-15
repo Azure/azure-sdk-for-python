@@ -4,7 +4,7 @@
   "parameters": {
     "workspaceName": {
       "type": "string",
-      "defaultValue": "sdk_vnext_cli_mayank",
+      "defaultValue": "sdk_vnext_cli",
       "metadata": {
         "description": "Specifies the name of the Azure Machine Learning workspace."
       }
@@ -941,7 +941,14 @@
             "keyIdentifier": "[parameters('resource_cmk_uri')]"
           }
         },
-        "hbiWorkspace": "[parameters('confidential_data')]"
+        "hbiWorkspace": "[parameters('confidential_data')]",
+        "featureStoreSettings": {
+          "computeruntime": {
+            "SparkRuntimeVersion": "3.1.2"
+            },
+            "offlinestoreconnectionname": "OfflineStoreConnectionName",
+            "onlinestoreconnectionname": "OnlineStoreConnectionName"
+          }
       }
     }
   ],
