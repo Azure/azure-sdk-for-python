@@ -17,7 +17,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._feature_store_utils import (
-    _archive_or_restore,
     _get_latest_version_from_container,
     _resolve_label_to_asset,
 )
@@ -159,66 +158,6 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
             version=feature_store_entity.version,
             body=feature_store_entity_resource,
             cls=lambda response, deserialized, headers: _FeatureStoreEntity._from_rest_object(deserialized),
-        )
-
-    # @monitor_with_activity(logger, "FeatureStoreEntity.Archive", ActivityType.PUBLICAPI)
-    def archive(
-        self,
-        *,
-        name: str,
-        version: Optional[str] = None,
-        label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
-    ) -> None:
-        """Archive a FeatureStoreEntity asset.
-
-        :param name: Name of FeatureStoreEntity asset.
-        :type name: str
-        :param version: Version of FeatureStoreEntity asset.
-        :type version: str
-        :param label: Label of the FeatureStoreEntity asset. (mutually exclusive with version)
-        :type label: str
-        :return: None
-        """
-
-        _archive_or_restore(
-            asset_operations=self,
-            version_operation=self._operation,
-            container_operation=self._container_operation,
-            is_archived=True,
-            name=name,
-            version=version,
-            label=label,
-        )
-
-    # @monitor_with_activity(logger, "FeatureStoreEntity.Restore", ActivityType.PUBLICAPI)
-    def restore(
-        self,
-        *,
-        name: str,
-        version: Optional[str] = None,
-        label: Optional[str] = None,
-        **kwargs,  # pylint:disable=unused-argument
-    ) -> None:
-        """Restore an archived FeatureStoreEntity asset.
-
-        :param name: Name of FeatureStoreEntity asset.
-        :type name: str
-        :param version: Version of FeatureStoreEntity asset.
-        :type version: str
-        :param label: Label of the FeatureStoreEntity asset. (mutually exclusive with version)
-        :type label: str
-        :return: None
-        """
-
-        _archive_or_restore(
-            asset_operations=self,
-            version_operation=self._operation,
-            container_operation=self._container_operation,
-            is_archived=False,
-            name=name,
-            version=version,
-            label=label,
         )
 
     def _get_latest_version(self, name: str) -> _FeatureStoreEntity:
