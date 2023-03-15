@@ -38,6 +38,5 @@ class FeaturesetSpecPropertiesSchema(YamlFileSchema):
         FeatureTransformationCodePropertiesSchema, data_key="featureTransformationCode"
     )
     features = fields.List(NestedField(FeaturePropertiesSchema), data_key="features")
-    index_columns = fields.List(NestedField(DataColumnSchema), data_key="indexColumns")
     source_lookback = fields.Nested(DelayMetadataPropertiesSchema, data_key="sourceLookback")
     temporal_join_lookback = fields.Nested(DelayMetadataPropertiesSchema, data_key="temporalJoinLookback")

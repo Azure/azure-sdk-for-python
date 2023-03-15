@@ -18,8 +18,8 @@ from .timestamp_column_metadata_schema import TimestampColumnMetadataSchema
 class SourceMetadataSchema(metaclass=PatchedSchemaMeta):
     type = fields.Str(required=True)
     path = fields.Str(required=True)
-    timestamp_column = NestedField(TimestampColumnMetadataSchema)
-    source_delay = NestedField(DelayMetadataSchema)
+    timestamp_column = fields.Nested(TimestampColumnMetadataSchema, required=True)
+    source_delay = fields.Nested(DelayMetadataSchema, required=False)
 
     @post_load
     def make(self, data: Dict, **kwargs):
