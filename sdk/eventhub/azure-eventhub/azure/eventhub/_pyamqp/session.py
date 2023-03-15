@@ -150,6 +150,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.next_incoming_id = frame[1]  # next_outgoing_id
         self.remote_incoming_window = frame[2]  # incoming_window
         self.remote_outgoing_window = frame[3]  # outgoing_window
+        self._remote_properties = frame[7]
         if self.state == SessionState.BEGIN_SENT:
             self.remote_channel = frame[0]  # remote_channel
             self._set_state(SessionState.MAPPED)

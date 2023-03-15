@@ -76,6 +76,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self.remote_max_message_size = None
         self.available = kwargs.pop("available", None)
         self.properties = kwargs.pop("properties", None)
+        self._remote_properties = None
         self.offered_capabilities = None
         self.desired_capabilities = kwargs.pop("desired_capabilities", None)
 
@@ -172,10 +173,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self.remote_handle = frame[1]  # handle
         self.remote_max_message_size = frame[10]  # max_message_size
         self.offered_capabilities = frame[11]  # offered_capabilities
-        if self.properties:
-            self.properties.update(frame[13])  # properties
-        else:
-            self.properties = frame[13]
+        self._remote_properties = frame[13]
         if self.state == LinkState.DETACHED:
             self._set_state(LinkState.ATTACH_RCVD)
         elif self.state == LinkState.ATTACH_SENT:
