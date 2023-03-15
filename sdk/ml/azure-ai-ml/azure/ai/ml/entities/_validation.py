@@ -18,11 +18,11 @@ import strictyaml
 from marshmallow import Schema, ValidationError
 from strictyaml.ruamel.scanner import ScannerError
 
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
-from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, decorate_validation_error
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from .._schema import PathAwareSchema
+from ..constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
+from ..entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
+from ..entities._util import convert_ordered_dict_to_dict, decorate_validation_error
+from ..exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -345,6 +345,29 @@ class SchemaValidatableMixin:
         # Note that, although context can be passed here, nested.schema will be initialized only once
         # base_path works well because it's fixed after loaded
         return cls._create_schema_for_validation(context={BASE_PATH_CONTEXT_KEY: base_path or Path.cwd()})
+
+    @classmethod
+    def _load_with_schema(cls, data, *, context=None, raise_original_exception=False, **kwargs):
+        if context is None:
+            schema = cls._create_schema_for_validation_with_base_path()
+        else:
+            schema = cls._create_schema_for_validation(context=context)
+
+        try:
+            return schema.load(data, **kwargs)
+        except ValidationError as e:
+            if raise_original_exception:
+                raise e
+            msg = "Trying to load data with schema failed. Data:\n%s\nError: %s" % (
+                json.dumps(data, indent=4) if isinstance(data, dict) else data,
+                json.dumps(e.messages, indent=4),
+            )
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=str(e),
+                target=cls._get_validation_error_target(),
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:

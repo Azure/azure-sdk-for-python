@@ -2,7 +2,13 @@
 
 Azure Event Grid is a fully-managed intelligent event routing service that allows for uniform event consumption using a publish-subscribe model.
 
-[Source code][python-eg-src] | [Package (PyPI)][python-eg-pypi] | [API reference documentation][python-eg-ref-docs] | [Product documentation][python-eg-product-docs] | [Samples][python-eg-samples] | [Changelog][python-eg-changelog]
+[Source code][python-eg-src]
+| [Package (PyPI)][python-eg-pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-eventgrid/)
+| [API reference documentation][python-eg-ref-docs]
+| [Product documentation][python-eg-product-docs]
+| [Samples][python-eg-samples]
+| [Changelog][python-eg-changelog]
 
 ## _Disclaimer_
 
