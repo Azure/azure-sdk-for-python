@@ -368,6 +368,7 @@ class AKS(Compute, AKSSchema):
         super(AKS, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'AKS'  # type: str
+        self.compute_type = 'AKS'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -510,6 +511,7 @@ class AksComputeSecrets(ComputeSecrets, AksComputeSecretsProperties):
         self.user_kube_config = user_kube_config
         self.admin_kube_config = admin_kube_config
         self.image_pull_secret_name = image_pull_secret_name
+        self.compute_type = 'AKS'  # type: str
         self.compute_type = 'AKS'  # type: str
 
 
@@ -772,6 +774,7 @@ class AmlCompute(Compute, AmlComputeSchema):
         """
         super(AmlCompute, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
+        self.compute_type = 'AmlCompute'  # type: str
         self.compute_type = 'AmlCompute'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -4330,6 +4333,7 @@ class ComputeInstance(Compute, ComputeInstanceSchema):
         super(ComputeInstance, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'ComputeInstance'  # type: str
+        self.compute_type = 'ComputeInstance'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -5078,6 +5082,10 @@ class ComputeResource(Resource, ComputeResourceSchema):
         self.name = None
         self.type = None
         self.system_data = None
+        self.identity = identity
+        self.location = location
+        self.tags = tags
+        self.sku = sku
 
 
 class ComputeSchedules(msrest.serialization.Model):
@@ -5497,6 +5505,7 @@ class CustomModelJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'custom_model'  # type: str
         self.description = description
+        self.job_input_type = 'custom_model'  # type: str
 
 
 class JobOutput(msrest.serialization.Model):
@@ -5592,6 +5601,7 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'custom_model'  # type: str
         self.description = description
+        self.job_output_type = 'custom_model'  # type: str
 
 
 class DatabricksSchema(msrest.serialization.Model):
@@ -5704,6 +5714,7 @@ class Databricks(Compute, DatabricksSchema):
         super(Databricks, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'Databricks'  # type: str
+        self.compute_type = 'Databricks'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -5774,6 +5785,7 @@ class DatabricksComputeSecrets(ComputeSecrets, DatabricksComputeSecretsPropertie
         """
         super(DatabricksComputeSecrets, self).__init__(databricks_access_token=databricks_access_token, **kwargs)
         self.databricks_access_token = databricks_access_token
+        self.compute_type = 'Databricks'  # type: str
         self.compute_type = 'Databricks'  # type: str
 
 
@@ -6155,6 +6167,7 @@ class DataLakeAnalytics(Compute, DataLakeAnalyticsSchema):
         """
         super(DataLakeAnalytics, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
+        self.compute_type = 'DataLakeAnalytics'  # type: str
         self.compute_type = 'DataLakeAnalytics'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -7955,6 +7968,7 @@ class HDInsight(Compute, HDInsightSchema):
         super(HDInsight, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'HDInsight'  # type: str
+        self.compute_type = 'HDInsight'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -8432,6 +8446,7 @@ class Kubernetes(Compute, KubernetesSchema):
         """
         super(Kubernetes, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
+        self.compute_type = 'Kubernetes'  # type: str
         self.compute_type = 'Kubernetes'  # type: str
         self.compute_location = None
         self.provisioning_state = None
@@ -9523,6 +9538,7 @@ class MLFlowModelJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'mlflow_model'  # type: str
         self.description = description
+        self.job_input_type = 'mlflow_model'  # type: str
 
 
 class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
@@ -9574,6 +9590,7 @@ class MLFlowModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'mlflow_model'  # type: str
         self.description = description
+        self.job_output_type = 'mlflow_model'  # type: str
 
 
 class MLTableData(DataVersionBaseDetails):
@@ -9703,6 +9720,7 @@ class MLTableJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'mltable'  # type: str
         self.description = description
+        self.job_input_type = 'mltable'  # type: str
 
 
 class MLTableJobOutput(JobOutput, AssetJobOutput):
@@ -9754,6 +9772,7 @@ class MLTableJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'mltable'  # type: str
         self.description = description
+        self.job_output_type = 'mltable'  # type: str
 
 
 class ModelContainerData(Resource):
@@ -14412,6 +14431,7 @@ class TritonModelJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'triton_model'  # type: str
         self.description = description
+        self.job_input_type = 'triton_model'  # type: str
 
 
 class TritonModelJobOutput(JobOutput, AssetJobOutput):
@@ -14463,6 +14483,7 @@ class TritonModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'triton_model'  # type: str
         self.description = description
+        self.job_output_type = 'triton_model'  # type: str
 
 
 class TruncationSelectionPolicy(EarlyTerminationPolicy):
@@ -14725,6 +14746,7 @@ class UriFileJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'uri_file'  # type: str
         self.description = description
+        self.job_input_type = 'uri_file'  # type: str
 
 
 class UriFileJobOutput(JobOutput, AssetJobOutput):
@@ -14776,6 +14798,7 @@ class UriFileJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'uri_file'  # type: str
         self.description = description
+        self.job_output_type = 'uri_file'  # type: str
 
 
 class UriFolderDataVersion(DataVersionBaseDetails):
@@ -14898,6 +14921,7 @@ class UriFolderJobInput(JobInput, AssetJobInput):
         self.uri = uri
         self.job_input_type = 'uri_folder'  # type: str
         self.description = description
+        self.job_input_type = 'uri_folder'  # type: str
 
 
 class UriFolderJobOutput(JobOutput, AssetJobOutput):
@@ -14949,6 +14973,7 @@ class UriFolderJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'uri_folder'  # type: str
         self.description = description
+        self.job_output_type = 'uri_folder'  # type: str
 
 
 class Usage(msrest.serialization.Model):
@@ -15325,6 +15350,7 @@ class VirtualMachine(Compute, VirtualMachineSchema):
         super(VirtualMachine, self).__init__(description=description, resource_id=resource_id, disable_local_auth=disable_local_auth, properties=properties, **kwargs)
         self.properties = properties
         self.compute_type = 'VirtualMachine'  # type: str
+        self.compute_type = 'VirtualMachine'  # type: str
         self.compute_location = None
         self.provisioning_state = None
         self.description = description
@@ -15494,6 +15520,7 @@ class VirtualMachineSecrets(ComputeSecrets, VirtualMachineSecretsSchema):
         """
         super(VirtualMachineSecrets, self).__init__(administrator_account=administrator_account, **kwargs)
         self.administrator_account = administrator_account
+        self.compute_type = 'VirtualMachine'  # type: str
         self.compute_type = 'VirtualMachine'  # type: str
 
 

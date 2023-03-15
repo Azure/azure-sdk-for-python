@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureMachineLearningWorkspacesConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class AzureMachineLearningWorkspacesConfiguration(Configuration):
     """Configuration for AzureMachineLearningWorkspaces.
 
     Note that all parameters used to create this instance are saved as instance

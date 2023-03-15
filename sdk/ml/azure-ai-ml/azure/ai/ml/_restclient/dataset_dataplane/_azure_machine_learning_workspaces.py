@@ -9,9 +9,8 @@
 from copy import deepcopy
 from typing import TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.mgmt.core import ARMPipelineClient
+from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
@@ -19,12 +18,12 @@ from .operations import DataCallOperations, DataContainerOperations, DataVersion
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+    from typing import Any, Optional
 
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
-class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-instance-attributes
+class AzureMachineLearningWorkspaces(object):
     """AzureMachineLearningWorkspaces.
 
     :ivar data_call: DataCallOperations operations

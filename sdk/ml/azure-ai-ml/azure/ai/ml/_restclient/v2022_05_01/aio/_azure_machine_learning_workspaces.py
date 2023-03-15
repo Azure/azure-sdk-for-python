@@ -7,12 +7,11 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
+from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
@@ -22,7 +21,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-attributes
+class AzureMachineLearningWorkspaces:
     """These APIs allow end users to operate on Azure Machine Learning Workspace resources.
 
     :ivar batch_endpoints: BatchEndpointsOperations operations
@@ -102,9 +101,6 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
     :type subscription_id: str
     :param base_url: Service URL. Default value is 'https://management.azure.com'.
     :type base_url: str
-    :keyword api_version: Api Version. The default value is "2022-05-01". Note that overriding this
-     default value may result in unsupported behavior.
-    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
