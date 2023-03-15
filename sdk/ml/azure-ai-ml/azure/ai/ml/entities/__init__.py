@@ -27,11 +27,12 @@ from ._compute._aml_compute_node_info import AmlComputeNodeInfo
 from ._compute._image_metadata import ImageMetadata
 from ._compute._schedule import ComputePowerAction, ComputeSchedules, ComputeStartStopSchedule, ScheduleState
 from ._compute._custom_applications import CustomApplications, ImageSettings, EndpointsSettings, VolumeSettings
+from ._compute._network_settings import NetworkSettings
 from ._compute._setup_scripts import SetupScripts, ScriptReference
 from ._compute._usage import Usage, UsageName
 from ._compute._vm_size import VmSize
 from ._compute.aml_compute import AmlCompute, AmlComputeSshSettings
-from ._compute.compute import Compute, NetworkSettings
+from ._compute.compute import Compute
 from ._compute.compute_instance import AssignedUserConfiguration, ComputeInstance, ComputeInstanceSshSettings
 from ._compute.kubernetes_compute import KubernetesCompute
 from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings, SynapseSparkCompute

@@ -16,7 +16,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ScaleSettings,
     UserAccountCredentials,
 )
-from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
 from azure.ai.ml._utils.utils import (
     camel_to_snake,
@@ -28,7 +27,8 @@ from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 
-from .compute import Compute, NetworkSettings
+from .compute import Compute
+from ._network_settings import NetworkSettings
 
 
 class AmlComputeSshSettings:
@@ -194,9 +194,7 @@ class AmlCompute(Compute):
 
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:
         if self.network_settings:
-            self.subnet = get_subnet_str(
-                self.network_settings.vnet_name,
-                self.network_settings.subnet,
+            self.subnet = self.network_settings.get_subnet_str(
                 subscription_id,
                 rg,
             )
