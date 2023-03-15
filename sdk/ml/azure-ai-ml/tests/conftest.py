@@ -151,6 +151,11 @@ def mock_operation_config() -> OperationConfig:
 
 
 @pytest.fixture
+def mock_operation_config_no_progress() -> OperationConfig:
+    yield OperationConfig(show_progress=False, enable_telemetry=True)
+
+
+@pytest.fixture
 def sanitized_environment_variables(environment_variables, fake_datastore_key) -> dict:
     sanitizings = {
         "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
