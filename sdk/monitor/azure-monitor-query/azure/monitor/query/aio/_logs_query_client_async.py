@@ -160,6 +160,85 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             raise_with=LogsQueryError,
         )
 
+    @distributed_trace_async
+    async def query_resource(
+        self,
+        resource_id: str,
+        query: str,
+        *,
+        timespan: Optional[Union[
+            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]
+        ],
+        **kwargs: Any
+        ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
+        """Execute a Kusto query on a resource.
+
+        Returns all the Azure Monitor logs matching the given Kusto query for an Azure resource.
+
+        :param resource_id:  The identifier of the resource. The expected format is
+         '/subscriptions/<sid>/resourceGroups/<rg>/providers/<providerName>/<resourceType>/<resourceName>'.
+        :type resource_id: str
+        :param query: The Kusto query. Learn more about the `Kusto query syntax
+         <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
+        :type query: str
+        :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
+         a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+         the query to a timespan.
+        :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
+         or tuple[~datetime.datetime, ~datetime.datetime] or None
+        :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
+         and the maximum timeout is 10 minutes.
+        :keyword bool include_statistics: To get information about query statistics.
+        :keyword bool include_visualization: In the query language, it is possible to specify different
+         visualization options. By default, the API does not return information regarding the type of
+         visualization to show. If your client requires this information, specify the preference
+        :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
+        :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+        .. literalinclude:: ../samples/async_samples/sample_resource_logs_query_async.py
+            :start-after: [START resource_logs_query_async]
+            :end-before: [END resource_logs_query_async]
+            :language: python
+            :dedent: 0
+            :caption: Get a response for a single query on a resource's logs.
+        """
+        timespan_iso = construct_iso8601(timespan)
+        include_statistics = kwargs.pop("include_statistics", False)
+        include_visualization = kwargs.pop("include_visualization", False)
+        server_timeout = kwargs.pop("server_timeout", None)
+
+        prefer = process_prefer(
+            server_timeout, include_statistics, include_visualization
+        )
+
+        body = {
+            "query": query,
+            "timespan": timespan_iso,
+        }
+
+        try:
+            generated_response = (
+                await self._query_op.resource_execute(  # pylint: disable=protected-access
+                    resource_id=resource_id, body=body, prefer=prefer, **kwargs
+                )
+            )
+        except HttpResponseError as err:
+            process_error(err, LogsQueryError)
+
+        response: Union[LogsQueryResult, LogsQueryPartialResult]
+        if not generated_response.get("error"):
+            response = LogsQueryResult._from_generated( # pylint: disable=protected-access
+                generated_response
+            )
+        else:
+            response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
+                generated_response, LogsQueryError
+            )
+        return response
+
     async def __aenter__(self) -> "LogsQueryClient":
         await self._client.__aenter__()
         return self
