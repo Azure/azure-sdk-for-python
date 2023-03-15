@@ -2,16 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from pathlib import Path
-from typing import Dict
-
-from .utils import load_yaml
+# pylint: disable=protected-access
 
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Optional, Union
 
 
-from azure.ai.ml._restclient.v2023_02_01_preview.operations import (
+from azure.ai.ml._restclient.v2023_02_01_preview.operations import (  # pylint: disable = unused-import
     FeaturesetContainersOperations,
     FeaturesetVersionsOperations,
     FeaturestoreEntityContainersOperations,
@@ -25,6 +22,8 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.core.exceptions import ResourceNotFoundError
+
+from .utils import load_yaml
 
 if TYPE_CHECKING:
     from azure.ai.ml.operations._feature_set_operations import _FeatureSetOperations
