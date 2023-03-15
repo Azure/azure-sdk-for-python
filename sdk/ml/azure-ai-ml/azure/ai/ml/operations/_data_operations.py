@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Union, Iterable
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.entities import Job, PipelineJob, PipelineJobSettings
+from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.data_transfer import import_data as import_data_func
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
