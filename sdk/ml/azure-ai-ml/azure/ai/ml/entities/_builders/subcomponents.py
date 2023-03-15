@@ -26,9 +26,9 @@ def save_mltable_yaml(path, mltable_paths):
     with open(save_path, 'w') as f:
         f.write(mltable_file_content)
 
-# TODO 2293610: add support for more types of outputs besides uri_folder and mltable 
+# TODO 2293610: add support for more types of outputs besides uri_folder and mltable
 # Used by the FL scatter gather node to reduce a dynamic number of silo outputs
-# into a single input for the user-supplied aggregation step. 
+# into a single input for the user-supplied aggregation step.
 @command_component()
 def aggregate_output(aggregated_output: Output(type="mltable"), **kwargs):
     # kwargs keys are inputs names (ex: silo_output_silo_1)

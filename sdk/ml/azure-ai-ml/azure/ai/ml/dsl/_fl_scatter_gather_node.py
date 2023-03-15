@@ -33,7 +33,7 @@ def fl_scatter_gather(
             different inputs, datatstores, and computes based on an inputted config.
         - Merge the outputs of the multiple silo steps into a single input for another step (the aggregation step),
             which will then process the values into a single unified result.
-        - With the process above being a 'scatter gather' sequence, iterate and perform the scatter gather 
+        - With the process above being a 'scatter gather' sequence, iterate and perform the scatter gather
             a number of times according to the max_iterations input, with the output of any given iteration's
             aggregation step being fed back into the silo steps of the subsequent iteration.
         - Return the outputs of the last iteration's aggregation step as the node's final output.
@@ -63,7 +63,7 @@ def fl_scatter_gather(
 
         submitted_pipeline_job = my_client.jobs.create_or_update(fl_pipeline(), experiment_name="example_fl_pipeline")
         ```
-    
+
     param silo_component: A pipeline step that will be run multiple
         times across different silos, as specified by the silo_configs input. In a typical
         horizontal federated learning context, this step is what will perform model
