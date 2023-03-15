@@ -558,10 +558,10 @@ class ModelOperations(_ScopeDependentOperations):
         debugpy.connect(("localhost", 5678))
         debugpy.breakpoint()
 
-        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-            Code(base_path=package_request._base_path, path=package_request.inferencing_server.code_configuration.code),
-            azureml_type=AzureMLResourceType.CODE,
-        )
+        # package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
+        #     Code(base_path=package_request._base_path, path=package_request.inferencing_server.code_configuration.code),
+        #     azureml_type=AzureMLResourceType.CODE,
+        # )
 
         package_out = self._model_versions_operation.begin_package(
             name=model_name,

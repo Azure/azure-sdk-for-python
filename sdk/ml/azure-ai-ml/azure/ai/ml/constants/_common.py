@@ -837,7 +837,7 @@ class Boolean:
 
 
 class InferenceServerType:
-    AZUREML_ONLINE = "azureml_inferencing_server"
-    AZUREML_BATCH = "AzureMLBatchInferencingServer"
-    TRITON = "TritonInferencingServer"
-    CUSTOM = "CustomInferencingServer"
+    AZUREML_ONLINE = "azureml_online"
+    AZUREML_BATCH = "azureml_batch"
+    TRITON = "triton"
+    CUSTOM = "custom"

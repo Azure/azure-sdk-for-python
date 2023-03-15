@@ -26,6 +26,7 @@ from azure.ai.ml._utils.utils import (
     is_private_preview_enabled,
     modified_operation_client,
 )
+from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
 from azure.ai.ml.entities._deployment.deployment import Deployment
@@ -75,6 +76,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         deployment: BatchDeployment,
         *,
         skip_script_validation: bool = False,
+        **kwargs,
     ) -> LROPoller[BatchDeployment]:
         """Create or update a batch deployment.
 
@@ -115,6 +117,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             self._validate_component(deployment, orchestrators)
         try:
             location = self._get_workspace_location()
+            if kwargs.pop("package_model", True):
+                deployment = package_deployment(deployment, self._all_operations.all_operations)
             deployment_rest = deployment._to_rest_object(location=location)
 
             poller = self._batch_deployment.begin_create_or_update(
