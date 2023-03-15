@@ -20,7 +20,6 @@ from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._compute.compute import Compute
-from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
@@ -430,7 +429,7 @@ def load_data(
     *,
     relative_origin: Optional[str] = None,
     **kwargs,
-) -> Union[Data, DataImport]:
+) -> Data:
     """Construct a data object from yaml file.
 
     :param source: The local yaml source of a data object. Must be either a
@@ -451,9 +450,9 @@ def load_data(
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed Data or DataImport object.
-    :rtype: Union[Data, DataImport]
+    :rtype: Data
     """
-    return load_common(DataImport, source, relative_origin, **kwargs)
+    return load_common(Data, source, relative_origin, **kwargs)
 
 
 def load_environment(
