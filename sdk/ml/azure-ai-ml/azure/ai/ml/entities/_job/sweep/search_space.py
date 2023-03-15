@@ -19,7 +19,6 @@ class SweepDistribution(ABC, RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: List) -> "SweepDistribution":
-
         mapping = {
             SearchSpace.CHOICE: Choice,
             SearchSpace.NORMAL: Normal,

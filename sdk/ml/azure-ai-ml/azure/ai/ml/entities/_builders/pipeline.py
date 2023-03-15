@@ -19,9 +19,8 @@ module_logger = logging.getLogger(__name__)
 
 
 class Pipeline(BaseNode):
-    """Base class for pipeline node, used for pipeline component version
-    consumption. You should not instantiate this class directly. Instead, you should
-    use @pipeline decorator to create a pipeline node.
+    """Base class for pipeline node, used for pipeline component version consumption. You should not instantiate this
+    class directly. Instead, you should use @pipeline decorator to create a pipeline node.
 
     You should not instantiate this class directly. Instead, you should
     create from @pipeline decorator.
@@ -97,7 +96,7 @@ class Pipeline(BaseNode):
 
     @settings.setter
     def settings(self, value):
-        if value is not None and not isinstance(value, PipelineJobSettings):
+        if value and not isinstance(value, PipelineJobSettings):
             raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
         self._settings = value
 

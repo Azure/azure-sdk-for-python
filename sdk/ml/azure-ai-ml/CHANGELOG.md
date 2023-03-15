@@ -1,9 +1,8 @@
 # Release History
 
-## 1.5.0 (2023-03-07)
+## 1.5.0 (2023-03-20)
 
 ### Features Added
-
 - Added support for `tags` on Compute Resources.
 - Added support for promoting data asset from a workspace to a registry
 - Added support for registering named asset from job output or node output by specifying name and version settings.
@@ -19,17 +18,26 @@
 ### Bugs Fixed
 
 - Fix experiment name wrongly set to 'Default' when schedule existing job.
+- Error message improvement when a local path fails to match with data asset type.
+- Error message improvement when an asset does not exist in a registry
+- Fix an issue when submit spark pipeline job with referring a registered component
+- Fix an issue that prevented Job.download from downloading the output of a BatchJob
 
 ### Other Changes
 
 - Added dependency on `azure-mgmt-resource`
 - Added dependency on `azure-mgmt-resourcegraph`
+- Added dependency on `opencensus-ext-azure<2.0.0`
+- Update job types to use MFE Dec preview rest objects.
+- Added classifiers for Python version 3.11.
+- Added warning for reserved keywords in IO names in pipeline job nodes.
+- Added telemetry logging for SDK Jupyter Notebook scenarios with opt-out option (see README.md)
 
 ## 1.4.0 (2023-02-07)
 
 ### Features Added
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
-- Added Custom Applications Support to Compute Instances. 
+- Added Custom Applications Support to Compute Instances.
 - Update data asset list, show and create operations to support data assets in registry.
 
 ### Bugs Fixed

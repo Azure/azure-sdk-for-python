@@ -398,7 +398,7 @@ class RecognizeEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -449,7 +449,7 @@ class RecognizePiiEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -508,7 +508,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         FHIR compatible object for consumption in other Healthcare tools. For additional
         information see https://www.hl7.org/fhir/overview.html."""
     detected_language: Optional[str] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the detected language for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1061,7 +1061,7 @@ class ExtractKeyPhrasesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1107,7 +1107,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1161,7 +1161,7 @@ class AnalyzeSentimentResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -1441,7 +1441,12 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     :keyword str text: Required. The input text to process.
     :keyword str language: This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc.
-     If not set, uses "en" for English as default.
+     For automatic language detection, use "auto" (Only supported by long-running
+     operation APIs with API version 2022-10-01-preview or newer). If
+     not set, uses "en" for English as default.
+
+    .. versionadded:: 2022-10-01-preview
+        The 'auto' option for language.
     """
 
     id: str  # pylint: disable=redefined-builtin
@@ -1451,7 +1456,9 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
     language: Optional[str] = None
     """This is the 2 letter ISO 639-1 representation
      of a language. For example, use "en" for English; "es" for Spanish etc.
-     If not set, uses "en" for English as default."""
+     For automatic language detection, use "auto" (Only supported by long-running
+     operation APIs with API version 2022-10-01-preview or newer). If
+     not set, uses "en" for English as default."""
 
     def __init__(
         self,
@@ -2329,7 +2336,7 @@ class RecognizeCustomEntitiesResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -2458,7 +2465,7 @@ class ClassifyDocumentResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -2792,7 +2799,7 @@ class ExtractSummaryResult(DictMixin):
     """If `show_stats=True` was specified in the request this
         field will contain information about the document payload."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
@@ -2899,7 +2906,7 @@ class AbstractiveSummaryResult(DictMixin):
     """Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate."""
     detected_language: Optional[DetectedLanguage] = None
-    """If automatic language detection is enabled, then this
+    """If 'language' is set to 'auto' for the document in the request this
         field will contain the DetectedLanguage for the document."""
     statistics: Optional[TextDocumentStatistics] = None
     """If `show_stats=True` was specified in the request this
@@ -2987,10 +2994,10 @@ class SummaryContext(DictMixin):
     """
 
     offset: int
-    """Start position for the context. Use of different 'stringIndexType' values can
+    """Start position for the context. Use of different 'string_index_type' values can
      affect the offset returned. Required."""
     length: int
-    """The length of the context. Use of different 'stringIndexType' values can affect
+    """The length of the context. Use of different 'string_index_type' values can affect
      the length returned. Required."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -3022,7 +3029,7 @@ class AbstractiveSummaryAction(DictMixin):
     .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
         https://aka.ms/applyforgatedsummarizationfeatures
 
-    :keyword Optional[int] max_sentence_count: It controls the approximate number of sentences in the output summaries.
+    :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
     :keyword Optional[str] model_version: The model version to use for the analysis.
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -3041,7 +3048,7 @@ class AbstractiveSummaryAction(DictMixin):
         The *AbstractiveSummaryAction* model.
     """
 
-    max_sentence_count: Optional[int] = None
+    sentence_count: Optional[int] = None
     """It controls the approximate number of sentences in the output summaries."""
     model_version: Optional[str] = None
     """The model version to use for the analysis."""
@@ -3063,13 +3070,13 @@ class AbstractiveSummaryAction(DictMixin):
     def __init__(
         self,
         *,
-        max_sentence_count: Optional[int] = None,
+        sentence_count: Optional[int] = None,
         model_version: Optional[str] = None,
         string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
-        self.max_sentence_count = max_sentence_count
+        self.sentence_count = sentence_count
         self.model_version = model_version
         self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
@@ -3078,7 +3085,7 @@ class AbstractiveSummaryAction(DictMixin):
         return (
             f"AbstractiveSummaryAction(model_version={self.model_version}, "
             f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
-            f"max_sentence_count={self.max_sentence_count})"[:1024]
+            f"sentence_count={self.sentence_count})"[:1024]
         )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
@@ -3088,7 +3095,7 @@ class AbstractiveSummaryAction(DictMixin):
                 model_version=self.model_version,
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
-                sentence_count=self.max_sentence_count,
+                sentence_count=self.sentence_count,
             )
         )
 

@@ -16,7 +16,6 @@ class ImageLimitsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-
         from azure.ai.ml.automl import ImageLimitSettings
 
         return ImageLimitSettings(**data)

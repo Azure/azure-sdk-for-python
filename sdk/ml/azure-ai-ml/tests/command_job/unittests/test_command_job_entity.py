@@ -4,7 +4,7 @@ from collections import OrderedDict
 import pytest
 
 from azure.ai.ml import Input, MpiDistribution
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken, JobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken, JobBase
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import CommandJob, Environment, Job
@@ -13,6 +13,7 @@ from azure.ai.ml.entities._builders.command_func import command
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.exceptions import ValidationException
 
@@ -77,7 +78,7 @@ class TestCommandJobEntity:
             experiment_name="tensorflow-mnist",
             command="python train.py",
             code="./src",
-            environment="AzureML-tensorflow-2.4-ubuntu18.04-py37-cuda11-gpu:14",
+            environment="AzureML-tensorflow-2.5-ubuntu20.04-py38-cuda11-gpu:27",
             environment_variables={"FOO": "BAR"},
             compute="gpu-cluster",
         )
@@ -132,8 +133,10 @@ class TestCommandJobEntity:
             outputs={"best_model": {}},
             instance_count=2,
             instance_type="STANDARD_BLA",
+            locations=["westus"],
             timeout=300,
             code="./",
+            queue_settings=QueueSettings(job_tier="standard", priorty="medium"),
         )
 
         expected_job = CommandJob(
@@ -152,7 +155,8 @@ class TestCommandJobEntity:
             environment_variables={"EVN1": "VAR1"},
             outputs={"best_model": {}},
             limits=CommandJobLimits(timeout=300),
-            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA"),
+            resources=JobResourceConfiguration(instance_count=2, instance_type="STANDARD_BLA", locations=["westus"]),
+            queue_settings=QueueSettings(job_tier="standard", priorty="medium"),
             code="./",
         )
 

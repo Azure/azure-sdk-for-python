@@ -71,7 +71,7 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
         )
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
-            capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]
+            capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
             cls = msal.ConfidentialClientApplication if self._client_credential else msal.PublicClientApplication
             self._client_applications[tenant_id] = cls(
                 client_id=self._client_id,

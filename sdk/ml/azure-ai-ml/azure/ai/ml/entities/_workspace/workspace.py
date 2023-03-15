@@ -19,6 +19,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .customer_managed_key import CustomerManagedKey
+from .feature_store_settings import FeatureStoreSettings
 from .networking import ManagedNetwork
 
 
@@ -96,6 +97,8 @@ class Workspace(Resource):
         """
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
+        self._kind = kwargs.pop("kind", "default")
+        self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
         self.display_name = display_name
@@ -169,7 +172,6 @@ class Workspace(Resource):
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> "Workspace":
-
         if not rest_obj:
             return None
         customer_managed_key = (
@@ -206,6 +208,7 @@ class Workspace(Resource):
             name=rest_obj.name,
             id=rest_obj.id,
             description=rest_obj.description,
+            kind=rest_obj.kind.lower() if rest_obj.kind else None,
             tags=rest_obj.tags,
             location=rest_obj.location,
             resource_group=group,
@@ -226,6 +229,7 @@ class Workspace(Resource):
         )
 
     def _to_rest_object(self) -> RestWorkspace:
+
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
             if self.identity
@@ -233,6 +237,7 @@ class Workspace(Resource):
             location=self.location,
             tags=self.tags,
             description=self.description,
+            kind=self._kind,
             friendly_name=self.display_name,
             key_vault=self.key_vault,
             application_insights=self.application_insights,
