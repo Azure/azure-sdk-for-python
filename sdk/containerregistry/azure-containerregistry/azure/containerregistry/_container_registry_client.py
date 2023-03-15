@@ -871,7 +871,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             )
             manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
             manifest_stream = _serialize_manifest(manifest)
-            if tag_or_digest.startswith("sha:256:"):
+            if tag_or_digest.startswith("sha256:"):
                 digest = tag_or_digest
             else:
                 digest = response.http_response.headers['Docker-Content-Digest']
