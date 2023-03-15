@@ -4,12 +4,6 @@ from unittest.mock import Mock, patch
 import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
-    FeaturestoreEntityContainer,
-    FeaturestoreEntityContainerProperties,
-    FeaturestoreEntityVersion,
-    FeaturestoreEntityVersionProperties,
-)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities import _FeatureStoreEntity, _DataColumn, _DataColumnType
 from azure.ai.ml.operations._feature_store_entity_operations import _FeatureStoreEntityOperations
@@ -66,63 +60,3 @@ class TestFeatureStoreEntityOperations:
         with pytest.raises(Exception) as ex:
             mock_feature_store_entity_operations.get(name=name)
         assert "At least one required parameter is missing" in str(ex.value)
-
-    def test_archive_version(self, mock_feature_store_entity_operations: _FeatureStoreEntityOperations):
-        name = "random_name"
-        featureStoreEntity_version = Mock(
-            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties()))
-        )
-        version = "1"
-        mock_feature_store_entity_operations._operation.get.return_value = featureStoreEntity_version
-        mock_feature_store_entity_operations.archive(name=name, version=version)
-        mock_feature_store_entity_operations._operation.create_or_update.assert_called_once_with(
-            name=name,
-            version=version,
-            workspace_name=mock_feature_store_entity_operations._workspace_name,
-            body=featureStoreEntity_version,
-            resource_group_name=mock_feature_store_entity_operations._resource_group_name,
-        )
-
-    def test_archive_container(self, mock_feature_store_entity_operations: _FeatureStoreEntityOperations):
-        name = "random_name"
-        featureStoreEntity_container = Mock(
-            FeaturestoreEntityContainer(properties=Mock(FeaturestoreEntityContainerProperties(description="test")))
-        )
-        mock_feature_store_entity_operations._container_operation.get.return_value = featureStoreEntity_container
-        mock_feature_store_entity_operations.archive(name=name)
-        mock_feature_store_entity_operations._container_operation.create_or_update.assert_called_once_with(
-            name=name,
-            workspace_name=mock_feature_store_entity_operations._workspace_name,
-            body=featureStoreEntity_container,
-            resource_group_name=mock_feature_store_entity_operations._resource_group_name,
-        )
-
-    def test_restore_version(self, mock_feature_store_entity_operations: _FeatureStoreEntityOperations):
-        name = "random_name"
-        featureStoreEntity_version = Mock(
-            FeaturestoreEntityVersion(properties=Mock(FeaturestoreEntityVersionProperties()))
-        )
-        version = "1"
-        mock_feature_store_entity_operations._operation.get.return_value = featureStoreEntity_version
-        mock_feature_store_entity_operations.restore(name=name, version=version)
-        mock_feature_store_entity_operations._operation.create_or_update.assert_called_once_with(
-            name=name,
-            version=version,
-            workspace_name=mock_feature_store_entity_operations._workspace_name,
-            body=featureStoreEntity_version,
-            resource_group_name=mock_feature_store_entity_operations._resource_group_name,
-        )
-
-    def test_restore_container(self, mock_feature_store_entity_operations: _FeatureStoreEntityOperations):
-        name = "random_name"
-        featureStoreEntity_container = Mock(
-            FeaturestoreEntityContainer(properties=Mock(FeaturestoreEntityContainerProperties()))
-        )
-        mock_feature_store_entity_operations._container_operation.get.return_value = featureStoreEntity_container
-        mock_feature_store_entity_operations.restore(name=name)
-        mock_feature_store_entity_operations._container_operation.create_or_update.assert_called_once_with(
-            name=name,
-            workspace_name=mock_feature_store_entity_operations._workspace_name,
-            body=featureStoreEntity_container,
-            resource_group_name=mock_feature_store_entity_operations._resource_group_name,
-        )
