@@ -850,6 +850,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :param str tag_or_digest: The tag or digest of the manifest to download.
+            When digest is provided, will use this digest to compare with the one calculated by the response payload.
+            When tag is provided, will use the digest in response headers to compare.
         :returns: DownloadManifestResult
         :rtype: ~azure.containerregistry.models.DownloadManifestResult
         :raises ValueError: If the parameter repository or tag_or_digest is None.
