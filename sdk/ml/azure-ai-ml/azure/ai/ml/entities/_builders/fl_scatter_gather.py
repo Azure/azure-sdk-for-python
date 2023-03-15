@@ -369,7 +369,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 # then we need to anchor the internal component of this step
                 # The outputs of this sub-component are a deep copy of the outputs of this step
                 # This is dangerous, and we need to make sure they both use the same datastore,
-                # so we keep datastore types indentical across this recursive call.
+                # so we keep datastore types identical across this recursive call.
                 cls._anchor_step(
                     pipeline_step.component,
                     compute,
