@@ -96,6 +96,7 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         ]
         if not partition_ownership:
             return
+        assert len(partition_ownership) == 1
         partition_ownership[0]["owner_id"] = ""
         self.checkpoint_store.claim_ownership(partition_ownership)
 
