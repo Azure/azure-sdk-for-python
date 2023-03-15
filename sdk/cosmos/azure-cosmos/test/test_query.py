@@ -56,7 +56,6 @@ class QueryTest(unittest.TestCase):
                                                                             PartitionKey(path="/pk"))
         # The test targets partition #3
         partition_key = "pk"
-        partitionParam = {"partition_key": partition_key}
 
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
@@ -64,7 +63,7 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(len(iter_list), 0)
 
         # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(**partitionParam)
+        query_iterable = created_collection.query_items_change_feed(partition_key=partition_key)
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
@@ -73,7 +72,7 @@ class QueryTest(unittest.TestCase):
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
-            **partitionParam
+            partition_key=partition_key
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
@@ -86,7 +85,7 @@ class QueryTest(unittest.TestCase):
         created_collection.create_item(body=document_definition)
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
-            **partitionParam
+            partition_key=partition_key
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 1)
@@ -108,7 +107,7 @@ class QueryTest(unittest.TestCase):
             query_iterable = created_collection.query_items_change_feed(
                 continuation=continuation2,
                 max_item_count=pageSize,
-                **partitionParam
+                partition_key=partition_key
             )
             it = query_iterable.__iter__()
             expected_ids = 'doc2.doc3.'
@@ -122,7 +121,7 @@ class QueryTest(unittest.TestCase):
             query_iterable = created_collection.query_items_change_feed(
                 continuation=continuation2,
                 max_item_count=pageSize,
-                **partitionParam
+                partition_key=partition_key
             )
             count = 0
             expected_count = 2
@@ -141,7 +140,7 @@ class QueryTest(unittest.TestCase):
         # verify reading change feed from the beginning
         query_iterable = created_collection.query_items_change_feed(
             is_start_from_beginning=True,
-            **partitionParam
+            partition_key=partition_key
         )
         expected_ids = ['doc1', 'doc2', 'doc3']
         it = query_iterable.__iter__()
@@ -155,7 +154,7 @@ class QueryTest(unittest.TestCase):
         query_iterable = created_collection.query_items_change_feed(
             continuation=continuation3,
             is_start_from_beginning=True,
-            **partitionParam
+            partition_key=partition_key
         )
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
