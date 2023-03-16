@@ -27,14 +27,14 @@ pip install azure-purview-sharing
 
 This document demonstrates using [DefaultAzureCredential][default_cred_ref] to authenticate via Azure Active Directory. However, any of the credentials offered by the [azure_identity][azure_identity] will be accepted.  See the [azure_identity][azure_identity] documentation for more information about other credentials.
 
-Once you have chosen and configured your credential, you can create instances of the `PurviewSharing`.
+Once you have chosen and configured your credential, you can create instances of the `PurviewSharingClient`.
 
 ```python
-from azure.purview.sharing import PurviewSharing
+from azure.purview.sharing import PurviewSharingClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
-client = PurviewSharing(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
+client = PurviewSharingClient(endpoint="https://<my-account-name>.purview.azure.com", credential=credential)
 ```
 
 ## Key concepts
@@ -90,12 +90,13 @@ request = client.sent_shares.begin_create_or_replace(
     content=json.dumps(sent_share))
 
 response = request.result()
+print(response)
 ```
 
 ### Get sent share
 
 ```python Snippet:get_a_sent_share
-import os, uuid, json
+import os, uuid
 
 from azure.purview.sharing import PurviewSharingClient
 from azure.identity import DefaultAzureCredential
@@ -106,8 +107,8 @@ sent_share_id = uuid.uuid4()
 
 client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 
-get_response = client.sent_shares.get(sent_share_id=str(sent_share_id))
-retrieved_sent_share = json.loads(get_response)
+retrieved_sent_share = client.sent_shares.get(sent_share_id=str(sent_share_id))
+print(retrieved_sent_share)
 ```
 
 ### List sent shares
@@ -154,6 +155,7 @@ list_request = client.sent_shares.list(
     orderby="properties/createdAt desc")
 
 list_response = list_request.result()
+print(list_response)
 ```
 
 ### Create sent share invitation
@@ -191,6 +193,7 @@ invitation_request = client.sent_shares.create_invitation(
 
 invitation_response = invitation_request.result()
 created_invitation = json.loads(invitation_response)
+print(created_invitation)
 ```
 
 ### List sent share invitations
@@ -210,7 +213,8 @@ sent_share_id = uuid.uuid4()
 
 list_request = client.sent_shares.list_invitations(sent_share_id=str(sent_share_id))
 list_response = list_request.result()
-list = json.loads(list_response)
+result_list = json.loads(list_response)
+print(result_list)
 ```
 
 ### List detached received shares
@@ -227,6 +231,7 @@ credential = DefaultAzureCredential()
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
 list_detached_response = client.received_shares.list_detached(orderby="properties/createdAt desc")
+print(list_detached_response)
 ```
 
 ### Create a received share
@@ -271,6 +276,7 @@ update_request = client.received_shares.begin_create_or_replace(
     content=json.dumps(received_share))
 
 update_response = update_request.result()
+print(update_response)
 ```
 
 ### Get received share
@@ -292,6 +298,7 @@ received_share = list_detached[0]
 
 get_share_response = client.received_shares.get(received_share_id=received_share['id'])
 retrieved_share = json.loads(get_share_response)
+print(retrieved_share)
 ```
 
 ### List attached received shares
@@ -312,6 +319,7 @@ consumer_storage_account_resource_id = "/subscriptions/{subscription-id}/resourc
 list_attached_response = client.received_shares.list_attached(
     reference_name=consumer_storage_account_resource_id,
     orderby="properties/createdAt desc")
+print(list_attached_response)
 ```
 
 ### Delete received share
@@ -329,6 +337,7 @@ client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
 delete_received_share_request = client.received_shares.begin_delete(received_share_id=received_share['id'])
 delete_received_share_response = delete_received_share_request.result()
+print(delete_received_share_response)
 ```
 
 ### Delete sent share
@@ -348,6 +357,7 @@ sent_share_id="885E60CB-2001-4192-B95D-B98CE316C783"
 
 delete_request = client.sent_shares.begin_delete(sent_share_id=str(sent_share_id))
 delete_response = delete_request.result()
+print(delete_response)
 ```
 
 ## Troubleshooting

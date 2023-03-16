@@ -8,7 +8,7 @@
 # example snippets, take into consideration how this might affect
 # the readability and usability of the reference documentation.
 
-# All interactions starts with an instance of PurviewSharing, the client
+# All interactions starts with an instance of PurviewSharingClient, the client
 # Create a share client
 # [START create_a_share_client]
 import os
