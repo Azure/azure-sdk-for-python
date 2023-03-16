@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint: disable=C0302
+# pylint: disable=too-many-lines
 from io import BytesIO
 from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.credentials import TokenCredential
@@ -85,6 +85,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             raise ValueError(
                 f"Unsupported API version '{api_version}'. Please select from:\n{supported_versions}"
             )
+        if api_version is not None:
+            kwargs["api_version"] = api_version
         defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
@@ -569,11 +571,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         repository: str,
         tag_or_digest: str,
         properties: ArtifactManifestProperties,
-        *,
-        can_delete: Optional[bool] = None,
-        can_list: Optional[bool] = None,
-        can_read: Optional[bool] = None,
-        can_write: Optional[bool] = None,
         **kwargs
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
@@ -585,10 +582,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param properties: The property's values to be set. This is a positional-only
             parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.ArtifactManifestProperties
-        :keyword bool can_delete: Delete permissions for a manifest.
-        :keyword bool can_list: List permissions for a manifest.
-        :keyword bool can_read: Read permissions for a manifest.
-        :keyword bool can_write: Write permissions for a manifest.
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
@@ -692,11 +685,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         repository: str,
         tag: str,
         properties: ArtifactTagProperties,
-        *,
-        can_delete: Optional[bool] = None,
-        can_list: Optional[bool] = None,
-        can_read: Optional[bool] = None,
-        can_write: Optional[bool] = None,
         **kwargs
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
@@ -708,10 +696,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param properties: The property's values to be set. This is a positional-only
             parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.ArtifactTagProperties
-        :keyword bool can_delete: Delete permissions for a tag.
-        :keyword bool can_list: List permissions for a tag.
-        :keyword bool can_read: Read permissions for a tag.
-        :keyword bool can_write: Write permissions for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
 
@@ -801,11 +785,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self,
         repository: str,
         properties: RepositoryProperties,
-        *,
-        can_delete: Optional[bool] = None,
-        can_list: Optional[bool] = None,
-        can_read: Optional[bool] = None,
-        can_write: Optional[bool] = None,
         **kwargs
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
@@ -816,10 +795,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param properties: Properties to set for the repository. This is a positional-only
             parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.RepositoryProperties
-        :keyword bool can_delete: Delete permissions for a repository.
-        :keyword bool can_list: List permissions for a repository.
-        :keyword bool can_read: Read permissions for a repository.
-        :keyword bool can_write: Write permissions for a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """

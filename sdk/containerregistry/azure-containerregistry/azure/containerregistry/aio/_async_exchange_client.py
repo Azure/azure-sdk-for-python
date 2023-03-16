@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Optional, List
+from typing import Optional
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -34,8 +34,10 @@ class ACRExchangeClient(object):
     :param credential: Credential which provides tokens to authenticate requests
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
-     default value may result in unsupported behavior.
+        default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword credential_scopes: The scopes that access token can request.
+    :paramtype credential_scopes: str
     """
 
     def __init__(
@@ -43,7 +45,7 @@ class ACRExchangeClient(object):
         endpoint: str,
         credential: AsyncTokenCredential,
         *,
-        credential_scopes: List[str] = ["https://management.core.windows.net/.default"],
+        credential_scopes: str = "https://management.core.windows.net/.default",
         **kwargs
     ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):

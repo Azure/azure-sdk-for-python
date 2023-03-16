@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Optional, List
+from typing import Optional
 
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -36,6 +36,8 @@ class ACRExchangeClient(object):
     :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
         may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword credential_scopes: The scopes that access token can request.
+    :paramtype credential_scopes: str
     """
 
     def __init__(
@@ -43,7 +45,7 @@ class ACRExchangeClient(object):
         endpoint: str,
         credential: TokenCredential,
         *,
-        credential_scopes: List[str] = ["https://management.core.windows.net/.default"],
+        credential_scopes: str = "https://management.core.windows.net/.default",
         **kwargs
     ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
@@ -78,7 +80,7 @@ class ACRExchangeClient(object):
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN,
             service=service,
-            access_token=self._credential.get_token(self.credential_scopes).token,
+            access_token=self._credential.get_token(*self.credential_scopes).token,
             **kwargs
         )
         return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
