@@ -8,6 +8,7 @@ This library allows you to send data from virtually any source to supported buil
 
 - [Source code][source]
 - [Package (PyPI)][package]
+- [Package (Conda)](https://anaconda.org/microsoft/azure-monitor-ingestion/)
 - [API reference documentation][python-ingestion-ref-docs]
 - [Service documentation][azure_monitor_overview]
 - [Samples][samples]

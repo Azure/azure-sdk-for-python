@@ -10,7 +10,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from _async_test_case import KeyVaultSettingsClientPreparer, get_decorator
 from _shared.test_case_async import KeyVaultTestCase
 
-only_7_4 = get_decorator(api_versions=[ApiVersion.V7_4_PREVIEW_1])
+only_7_4 = get_decorator(api_versions=[ApiVersion.V7_4])
 
 
 class TestSettings(KeyVaultTestCase):
@@ -19,7 +19,10 @@ class TestSettings(KeyVaultTestCase):
     @KeyVaultSettingsClientPreparer()
     @recorded_by_proxy_async
     async def test_list_settings(self, client: KeyVaultSettingsClient, **kwargs):
-        default_settings = [setting async for setting in await client.list_settings()]
+        result = client.list_settings()
+        default_settings = []
+        async for setting in result:
+            default_settings.append(setting)
         assert len(default_settings)
         for setting in default_settings:
             assert setting.name and setting.setting_type and setting.value is not None

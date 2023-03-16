@@ -8,9 +8,9 @@ from typing import List, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal.entities.node import InternalBaseNode
-from azure.ai.ml._schema import PathAwareSchema
+from ..._schema import PathAwareSchema
+from .._schema.component import NodeType
+from ..entities.node import InternalBaseNode
 
 
 class Scope(InternalBaseNode):
