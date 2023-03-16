@@ -444,6 +444,13 @@
                 "description": "Feature store offline store connection target"
             }
         },
+        "online_store_connection_target": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store connection target"
+            }
+        },
         "materialization_identity_client_id": {
             "type": "string",
             "defaultValue": "",
@@ -499,7 +506,8 @@
         },
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
-        "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]"
+        "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
+        "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]"
     },
     "resources": [
         {
@@ -686,28 +694,52 @@
                     "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
                 }
             },
-            "resources": [{
-                "condition": "[equals(parameters('setup_materialization_store'), 'true')]",
-                "type": "connections",
-                "apiVersion": "2022-05-01",
-                "name": "[variables('offlineStoreConnectionName')]",
-                "location": "[parameters('location')]",
-                "dependsOn": [
-                    "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
-                ],
-                "identity": {
-                    "type": "SystemAssigned"
-                },
-                "properties": {
-                    "category": "AzureDataLakeGen2",
-                    "target": "[parameters('offline_store_connection_target')]",
-                    "authType": "ManagedIdentity",
-                    "credentials": {
-                        "clientid": "[parameters('materialization_identity_client_id')]",
-                        "resourceid": "[parameters('materialization_identity_resource_id')]"
+            "resources": [
+                {
+                    "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('offline_store_connection_target'), ''))]",
+                    "type": "connections",
+                    "apiVersion": "2022-05-01",
+                    "name": "[variables('offlineStoreConnectionName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
+                    ],
+                    "identity": {
+                        "type": "SystemAssigned"
+                    },
+                    "properties": {
+                        "category": "AzureDataLakeGen2",
+                        "target": "[parameters('offline_store_connection_target')]",
+                        "authType": "ManagedIdentity",
+                        "credentials": {
+                            "clientid": "[parameters('materialization_identity_client_id')]",
+                            "resourceid": "[parameters('materialization_identity_resource_id')]"
+                        }
                     }
-                }
-            }]
+                },
+                {
+                    "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('online_store_connection_target'), ''))]",
+                    "type": "connections",
+                    "apiVersion": "2022-05-01",
+                    "name": "[variables('onlineStoreConnectionName')]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
+                    ],
+                    "identity": {
+                        "type": "SystemAssigned"
+                    },
+                    "properties": {
+                        "category": "Redis",
+                        "target": "[parameters('online_store_connection_target')]",
+                        "authType": "ManagedIdentity",
+                        "credentials": {
+                            "clientid": "[parameters('materialization_identity_client_id')]",
+                            "resourceid": "[parameters('materialization_identity_resource_id')]"
+                        }
+                    }
+                },
+            ]
         },
         {
             "condition": "[equals(parameters('setup_materialization_store'), 'true')]",
