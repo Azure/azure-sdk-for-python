@@ -5,7 +5,8 @@
 from marshmallow import fields, post_dump, pre_load
 
 from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, PythonFuncNameStr, UnionField
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, ExperimentalField, NestedField, PythonFuncNameStr, UnionField
+from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 from ..assets.asset import AssetSchema
@@ -43,6 +44,7 @@ class ComponentSchema(AssetSchema):
         keys=fields.Str(),
         values=NestedField(OutputPortSchema),
     )
+    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema))
 
     def __init__(self, *args, **kwargs):
         # Remove schema_ignored to enable serialize and deserialize schema.

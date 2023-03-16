@@ -6,11 +6,12 @@
 
 from marshmallow import fields, INCLUDE
 
-from azure.ai.ml._schema.core.fields import DumpableEnumField, UnionField
+from azure.ai.ml._schema.core.fields import DumpableEnumField, ExperimentalField, UnionField, NestedField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes
+from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
 
 # Here we use an adhoc way to collect all class constant attributes by checking if it's upper letter
 # because making those constants enum will fail in string serialization in marshmallow
@@ -50,6 +51,7 @@ class OutputPortSchema(metaclass=PatchedSchemaMeta):
     mode = DumpableEnumField(
         allowed_values=SUPPORTED_INPUT_OUTPUT_MODES,
     )
+    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema))
 
 
 class PrimitiveOutputSchema(OutputPortSchema):

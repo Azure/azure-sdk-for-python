@@ -39,7 +39,7 @@ class Registry(Resource):
         tags: Optional[Dict[str, str]] = None,
         public_network_access: Optional[str] = None,
         discovery_url: Optional[str] = None,
-        intellectual_property_publisher: Optional[str] = None,
+        intellectual_property: Optional[IntellectualProperty] = None,
         managed_resource_group: Optional[str] = None,
         mlflow_registry_uri: Optional[str] = None,
         replication_locations: List[RegistryRegionDetails],
@@ -192,11 +192,6 @@ class Registry(Resource):
             if global_acr_exists:
                 if not hasattr(region_detail, "acr_details") or len(region_detail.acr_details) == 0:
                     region_detail.acr_config = [acr_input]
-        if INTELLECTUAL_PROPERTY in input:
-            intellectual_property = input.pop(INTELLECTUAL_PROPERTY)
-            publisher = intellectual_property.get("publisher", None)
-            if publisher:
-                input["intellectual_property_publisher"] = publisher
 
     def _to_rest_object(self) -> RestRegistry:
         """Build current parameterized schedule instance to a registry object before submission.
