@@ -72,6 +72,9 @@ parameters:
 - name: TestProxy
   type: boolean
   default: false
+- name: GenerateApiReviewForManualOnly
+  type: boolean
+  default: false
 
 variables:
   - template: /eng/pipelines/templates/variables/globals.yml
@@ -106,6 +109,7 @@ stages:
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
         TestProxy: ${{ parameters.TestProxy }}
+        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:

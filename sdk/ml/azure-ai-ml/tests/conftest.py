@@ -147,7 +147,12 @@ def mock_registry_scope() -> OperationScope:
 
 @pytest.fixture
 def mock_operation_config() -> OperationConfig:
-    yield OperationConfig(True)
+    yield OperationConfig(show_progress=True, enable_telemetry=True)
+
+
+@pytest.fixture
+def mock_operation_config_no_progress() -> OperationConfig:
+    yield OperationConfig(show_progress=False, enable_telemetry=True)
 
 
 @pytest.fixture

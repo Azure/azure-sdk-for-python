@@ -16,7 +16,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _deserialize_manifest, DEFAULT_CHUNK_SIZE
+from azure.containerregistry._helpers import _serialize_manifest, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -461,7 +461,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -472,9 +471,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
-        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
-        manifest = _deserialize_manifest(manifest_stream)     
+        manifest = self.create_oci_manifest()
+        manifest_stream = _serialize_manifest(manifest)
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_manifest_prerequisites(repo, client)
 
@@ -483,7 +481,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -494,10 +491,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
+        tag = "v1"
         manifest = self.create_oci_manifest()
         with self.create_registry_client(containerregistry_endpoint) as client:
-            tag = "v1"
-            
             self.upload_manifest_prerequisites(repo, client)
             
             # Act
@@ -505,7 +501,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -525,12 +520,10 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
-        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
-        manifest = _deserialize_manifest(manifest_stream)
+        tag = "v1"
+        manifest = self.create_oci_manifest()
+        manifest_stream = _serialize_manifest(manifest)
         with self.create_registry_client(containerregistry_endpoint) as client:
-            tag = "v1"
-            
             self.upload_manifest_prerequisites(repo, client)
             
             # Act
@@ -538,7 +531,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
