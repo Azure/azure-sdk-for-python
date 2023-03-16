@@ -86,7 +86,7 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
             component_io = FileSystem()
         else:
             if isinstance(io_dict, dict):
-                data_type = io_dict.get("type", None)
+                data_type = io_dict.pop("type", None)
                 if data_type == ExternalDataType.DATABASE:
                     component_io = Database()
                 elif data_type == ExternalDataType.FILE_SYSTEM:

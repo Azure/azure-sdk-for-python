@@ -53,7 +53,7 @@ def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
         component_io = io_dict
     else:
         if isinstance(io_dict, dict):
-            data_type = io_dict.get("type", None)
+            data_type = io_dict.pop("type", None)
             if data_type == ExternalDataType.DATABASE:
                 component_io = Database(**io_dict)
             elif data_type == ExternalDataType.FILE_SYSTEM:
