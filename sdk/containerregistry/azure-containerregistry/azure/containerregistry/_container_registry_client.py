@@ -826,8 +826,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             digest, location, blob_size = self._upload_blob_chunk(
                 start_upload_response_headers['Location'], data, **kwargs
             )
-            if not _validate_digest(data, digest):
-                raise ValueError("The digest in the response does not match the digest of the uploaded blob.")
             complete_upload_response_headers = cast(
                 Dict[str, str],
                 self._client.container_registry_blob.complete_upload(
