@@ -21,7 +21,7 @@ from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConf
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
-from ..._restclient.v2022_05_01.models import ComponentVersionData
+from ..._restclient.v2023_04_01_preview.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
@@ -166,7 +166,7 @@ class CommandComponent(Component, ParameterizedCommand):
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
 
     @classmethod
-    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # put it here as distribution is shared by some components, e.g. command
         distribution = obj.properties.component_spec.pop("distribution", None)
         init_kwargs = super()._from_rest_object_to_init_params(obj)

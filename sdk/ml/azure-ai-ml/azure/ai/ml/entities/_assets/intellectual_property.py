@@ -20,6 +20,7 @@ class IntellectualProperty(RestTranslatableMixin):
     """
     def __init__(
         self,
+        *,
         publisher: str = None,
         protection_level: IPProtectionLevel = IPProtectionLevel.ALL
     ):

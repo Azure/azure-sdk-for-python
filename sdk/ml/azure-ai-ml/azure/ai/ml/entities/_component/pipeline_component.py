@@ -13,7 +13,7 @@ from typing import Dict, Optional, Tuple, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ComponentVersion, ComponentVersionProperties
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression, hash_dict
@@ -399,7 +399,7 @@ class PipelineComponent(Component):
         return telemetry_values
 
     @classmethod
-    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # Pop jobs to avoid it goes with schema load
         jobs = obj.properties.component_spec.pop("jobs", None)
         init_params_dict = super()._from_rest_object_to_init_params(obj)
@@ -440,7 +440,7 @@ class PipelineComponent(Component):
             rest_component_jobs[job_name] = rest_node_dict
         return rest_component_jobs
 
-    def _to_rest_object(self) -> ComponentVersionData:
+    def _to_rest_object(self) -> ComponentVersion:
         """Check ignored keys and return rest object."""
         ignored_keys = self._check_ignored_keys(self)
         if ignored_keys:
@@ -450,14 +450,16 @@ class PipelineComponent(Component):
         component["_source"] = self._source
         component["jobs"] = self._build_rest_component_jobs()
         component["sourceJobId"] = self._source_job_id
-        properties = ComponentVersionDetails(
+        if self._intellectual_property:
+            component["intellectualProperty"] = component.pop("intellectual_property")
+        properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
             properties=self.properties,
             tags=self.tags,
         )
-        result = ComponentVersionData(properties=properties)
+        result = ComponentVersion(properties=properties)
         result.name = self.name
         return result
 

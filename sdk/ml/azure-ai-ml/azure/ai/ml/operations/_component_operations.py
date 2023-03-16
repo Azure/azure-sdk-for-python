@@ -58,6 +58,7 @@ from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
+from ._registry_operations import RegistryOperations
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -89,6 +90,10 @@ class ComponentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
+
+    @property
+    def _registry_operations(self) -> RegistryOperations:
+        return self._all_operations.get_operation(AzureMLResourceType.REGISTRY, lambda x: isinstance(x, RegistryOperations))
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -317,7 +322,15 @@ class ComponentOperations(_ScopeDependentOperations):
             self._validate(component, raise_on_failure=True)
 
         # Create all dependent resources
-        self._resolve_arm_id_or_upload_dependencies(component)
+        # Only do this if publishing to a workspace OR a registry that is NOT IP protected
+        if (
+            self._workspace_name or
+            (
+                self._registry_name and
+                self._registry_operations.get(self._operation_scope.registry_name).intellectual_property.publisher is None
+            )
+        ):
+            self._resolve_arm_id_or_upload_dependencies(component)
 
         name, version = component._get_rest_name_version()
         rest_component_resource = component._to_rest_object()
