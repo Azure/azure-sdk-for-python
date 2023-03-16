@@ -50,6 +50,8 @@ class NetworkSettings:
         return self._private_ip_address
 
     def get_subnet_str(self, sub_id: Optional[str] = None, rg: Optional[str] = None) -> str:
+        if self.subnet is None:
+            return None
         try:
             if validate_arm_str(self.subnet):
                 return self.subnet

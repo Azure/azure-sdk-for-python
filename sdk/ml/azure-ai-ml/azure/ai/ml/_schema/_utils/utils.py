@@ -5,7 +5,7 @@
 import logging
 import re
 from collections import OrderedDict
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from marshmallow.exceptions import ValidationError
 
