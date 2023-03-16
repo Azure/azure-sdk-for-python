@@ -120,18 +120,18 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        obrules_dict = data.get("outbound_rules", False)
-        if obrules_dict:
-            obrules_as_list = []
-            for rule_name in obrules_dict:
-                rule = obrules_dict[rule_name]
+        rules_dict = data.get("outbound_rules", False)
+        if rules_dict:
+            rules_as_list = []
+            for rule_name in rules_dict:
+                rule = rules_dict[rule_name]
                 rule.rule_name = rule_name
-                obrules_as_list.append(rule)
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), obrules_as_list)
+                rules_as_list.append(rule)
+            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), rules_as_list)
         else:
             return ManagedNetwork(_snake_to_camel(data["isolation_mode"]))
-    
+
     @pre_dump
     def predump(self, data, **kwargs):
-        data.outbound_rules = { rule.rule_name: rule for rule in data.outbound_rules }
+        data.outbound_rules = {rule.rule_name: rule for rule in data.outbound_rules}
         return data

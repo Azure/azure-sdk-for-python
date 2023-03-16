@@ -65,13 +65,7 @@ class OutboundRule:
 
 @experimental
 class FqdnDestination(OutboundRule):
-    def __init__(
-        self,
-        *,
-        rule_name: str,
-        destination: str,
-        **kwargs
-    ) -> None:
+    def __init__(self, *, rule_name: str, destination: str, **kwargs) -> None:
         self.destination = destination
         category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
         OutboundRule.__init__(self, type=OutboundRuleType.FQDN, category=category, rule_name=rule_name)
