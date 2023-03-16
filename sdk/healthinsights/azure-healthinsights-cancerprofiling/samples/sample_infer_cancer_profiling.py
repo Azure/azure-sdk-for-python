@@ -114,7 +114,7 @@ class HealthInsightsSamples:
                                             created_date_time=datetime.datetime(2021, 10, 20))
 
         doc_content3 = "PATHOLOGY REPORT" \
-                       + "                          Clinical Iדדnformation" \
+                       + "                          Clinical Information" \
                        + "Ultrasound-guided biopsy; A. 18 mm mass; most likely diagnosis based on imaging:  IDC" \
                        + "                               Diagnosis" \
                        + " A.  BREAST, LEFT AT 2:00 4 CM FN; ULTRASOUND-GUIDED NEEDLE CORE BIOPSIES:" \

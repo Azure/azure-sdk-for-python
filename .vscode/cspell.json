@@ -60,6 +60,8 @@
     "sdk/eventhub/azure-eventhub/**",
     "sdk/easm/azure-defender-easm/azure/defender/easm/**",
     "sdk/graphrbac/azure-graphrbac/**",
+    "sdk/healthinsights/azure-healthinsights-cancerprofiling/azure/**",
+    "sdk/healthinsights/azure-healthinsights-clinicalmatching/azure/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
     "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
@@ -607,6 +609,32 @@
       ]
     },
     {
+      "filename": "sdk/healthinsights/**",
+      "words": [
+        "ACEI",
+        "acessory",
+        "auscltation",
+        "fhir",
+        "Gastro",
+        "hypercholesterolemia",
+        "hystarectomy",
+        "IADLs",
+        "LVEF",
+        "Musculo",
+        "nxoperex",
+        "onco",
+        "PERRLA",
+        "Phos"
+        "Prilosec",
+        "solumedrol",
+        "sulfonylurea",
+        "Theophyline",
+        "tounge",
+        "tounge",
+        "Uniphyl",
+        "Zocor"
+      ]
+    },    {
       "filename": "sdk/keyvault/**",
       "words": [
         "eddsa"
