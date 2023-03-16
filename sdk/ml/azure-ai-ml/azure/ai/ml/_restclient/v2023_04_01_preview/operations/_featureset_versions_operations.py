@@ -45,6 +45,12 @@ def build_list_request(
     skip = kwargs.pop('skip', None)  # type: Optional[str]
     tags = kwargs.pop('tags', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
+    page_size = kwargs.pop('page_size', 20)  # type: Optional[int]
+    version_name = kwargs.pop('version_name', None)  # type: Optional[str]
+    version = kwargs.pop('version', None)  # type: Optional[str]
+    description = kwargs.pop('description', None)  # type: Optional[str]
+    created_by = kwargs.pop('created_by', None)  # type: Optional[str]
+    stage = kwargs.pop('stage', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -67,6 +73,18 @@ def build_list_request(
         _query_parameters['tags'] = _SERIALIZER.query("tags", tags, 'str')
     if list_view_type is not None:
         _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
+    if page_size is not None:
+        _query_parameters['pageSize'] = _SERIALIZER.query("page_size", page_size, 'int')
+    if version_name is not None:
+        _query_parameters['versionName'] = _SERIALIZER.query("version_name", version_name, 'str')
+    if version is not None:
+        _query_parameters['version'] = _SERIALIZER.query("version", version, 'str')
+    if description is not None:
+        _query_parameters['description'] = _SERIALIZER.query("description", description, 'str')
+    if created_by is not None:
+        _query_parameters['createdBy'] = _SERIALIZER.query("created_by", created_by, 'str')
+    if stage is not None:
+        _query_parameters['stage'] = _SERIALIZER.query("stage", stage, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -307,6 +325,8 @@ def build_list_features_request(
     api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
     tags = kwargs.pop('tags', None)  # type: Optional[str]
+    feature_name = kwargs.pop('feature_name', None)  # type: Optional[str]
+    description = kwargs.pop('description', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -328,6 +348,10 @@ def build_list_features_request(
         _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
     if tags is not None:
         _query_parameters['$tags'] = _SERIALIZER.query("tags", tags, 'str')
+    if feature_name is not None:
+        _query_parameters['featureName'] = _SERIALIZER.query("feature_name", feature_name, 'str')
+    if description is not None:
+        _query_parameters['description'] = _SERIALIZER.query("description", description, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -426,6 +450,12 @@ class FeaturesetVersionsOperations(object):
         skip=None,  # type: Optional[str]
         tags=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
+        page_size=20,  # type: Optional[int]
+        version_name=None,  # type: Optional[str]
+        version=None,  # type: Optional[str]
+        description=None,  # type: Optional[str]
+        created_by=None,  # type: Optional[str]
+        stage=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.FeaturesetVersionResourceArmPaginatedResult"]
@@ -447,6 +477,18 @@ class FeaturesetVersionsOperations(object):
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param version_name: name for the featureset version.
+        :type version_name: str
+        :param version: featureset version.
+        :type version: str
+        :param description: description for the feature set version.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
+        :param stage: stage.
+        :type stage: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FeaturesetVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -473,6 +515,12 @@ class FeaturesetVersionsOperations(object):
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -489,6 +537,12 @@ class FeaturesetVersionsOperations(object):
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -857,7 +911,7 @@ class FeaturesetVersionsOperations(object):
             return deserialized
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -880,8 +934,8 @@ class FeaturesetVersionsOperations(object):
         body,  # type: "_models.FeaturesetVersionBackfillRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> Optional["_models.FeaturesetVersionBackfillResponse"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FeaturesetVersionBackfillResponse"]]
+        # type: (...) -> Optional["_models.FeaturesetJob"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FeaturesetJob"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -920,7 +974,7 @@ class FeaturesetVersionsOperations(object):
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('FeaturesetVersionBackfillResponse', pipeline_response)
+            deserialized = self._deserialize('FeaturesetJob', pipeline_response)
 
         if response.status_code == 202:
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
@@ -945,7 +999,7 @@ class FeaturesetVersionsOperations(object):
         body,  # type: "_models.FeaturesetVersionBackfillRequest"
         **kwargs  # type: Any
     ):
-        # type: (...) -> LROPoller["_models.FeaturesetVersionBackfillResponse"]
+        # type: (...) -> LROPoller["_models.FeaturesetJob"]
         """Backfill.
 
         Backfill.
@@ -968,16 +1022,15 @@ class FeaturesetVersionsOperations(object):
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either FeaturesetVersionBackfillResponse or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetVersionBackfillResponse]
+        :return: An instance of LROPoller that returns either FeaturesetJob or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetVersionBackfillResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -999,7 +1052,7 @@ class FeaturesetVersionsOperations(object):
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('FeaturesetVersionBackfillResponse', pipeline_response)
+            deserialized = self._deserialize('FeaturesetJob', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -1105,6 +1158,8 @@ class FeaturesetVersionsOperations(object):
         version,  # type: str
         skip=None,  # type: Optional[str]
         tags=None,  # type: Optional[str]
+        feature_name=None,  # type: Optional[str]
+        description=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.FeatureArmPaginatedResult"]
@@ -1125,6 +1180,10 @@ class FeaturesetVersionsOperations(object):
         :param tags: Comma-separated list of tag names (and optionally values). Example:
          tag1,tag2=value2.
         :type tags: str
+        :param feature_name: feature name.
+        :type feature_name: str
+        :param description: description.
+        :type description: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FeatureArmPaginatedResult or the result of
          cls(response)
@@ -1151,6 +1210,8 @@ class FeaturesetVersionsOperations(object):
                     api_version=api_version,
                     skip=skip,
                     tags=tags,
+                    feature_name=feature_name,
+                    description=description,
                     template_url=self.list_features.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -1167,6 +1228,8 @@ class FeaturesetVersionsOperations(object):
                     api_version=api_version,
                     skip=skip,
                     tags=tags,
+                    feature_name=feature_name,
+                    description=description,
                     template_url=next_link,
                 )
                 request = _convert_request(request)

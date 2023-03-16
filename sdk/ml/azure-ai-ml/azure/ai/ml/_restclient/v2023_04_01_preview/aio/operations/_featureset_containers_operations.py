@@ -55,6 +55,10 @@ class FeaturesetContainersOperations:
         skip: Optional[str] = None,
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
+        page_size: Optional[int] = 20,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_by: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.FeaturesetContainerResourceArmPaginatedResult"]:
         """List featurestore entity containers.
@@ -73,6 +77,14 @@ class FeaturesetContainersOperations:
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param name: name for the featureset.
+        :type name: str
+        :param description: description for the feature set.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FeaturesetContainerResourceArmPaginatedResult or
          the result of cls(response)
@@ -98,6 +110,10 @@ class FeaturesetContainersOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    name=name,
+                    description=description,
+                    created_by=created_by,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -113,6 +129,10 @@ class FeaturesetContainersOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    name=name,
+                    description=description,
+                    created_by=created_by,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -460,7 +480,7 @@ class FeaturesetContainersOperations:
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
