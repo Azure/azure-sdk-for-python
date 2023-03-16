@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from marshmallow import fields, post_dump
+from marshmallow import fields, post_dump, ValidationError
 
 from azure.ai.ml._schema import StringTransformedEnum
 from azure.ai.ml._schema.core.fields import DataBindingStr, NodeBindingStr, UnionField
@@ -24,4 +24,25 @@ class ConditionNodeSchema(ControlFlowSchema):
         for block in block_keys:
             if isinstance(data.get(block), list) and len(data.get(block)) == 1:
                 data[block] = data.get(block)[0]
+
+        # validate blocks intersection
+        def _normalize_blocks(key):
+            blocks = data.get(key, [])
+            if blocks:
+                if not isinstance(blocks, list):
+                    blocks = [blocks]
+            else:
+                blocks = []
+            return blocks
+
+        true_block = _normalize_blocks("true_block")
+        false_block = _normalize_blocks("false_block")
+
+        if not true_block and not false_block:
+            raise ValidationError("True block and false block cannot be empty at the same time.")
+
+        intersection = set(true_block).intersection(set(false_block))
+        if intersection:
+            raise ValidationError(f"True block and false block cannot contain same nodes: {intersection}")
+
         return data

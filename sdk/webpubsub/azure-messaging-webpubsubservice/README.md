@@ -13,7 +13,11 @@ Use this library to:
 - Close connections
 - Grant, revoke, and check permissions for an existing connection
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubservice) | [Package (Pypi)][package] | [API reference documentation](https://aka.ms/awps/sdk/python) | [Product documentation][webpubsubservice_docs]
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubservice)
+| [Package (Pypi)][package]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-messaging-webpubsubservice)
+| [API reference documentation](https://aka.ms/awps/sdk/python)
+| [Product documentation][webpubsubservice_docs]
 
 ## _Disclaimer_
 

@@ -3,12 +3,12 @@
 # ---------------------------------------------------------
 from typing import Dict, Optional, Union
 
-from azure.ai.ml import Input, Output
-from azure.ai.ml._internal._schema.input_output import SUPPORTED_INTERNAL_PARAM_TYPES
-from azure.ai.ml._utils.utils import get_all_enum_values_iter
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.constants._common import InputTypes
-from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
+from ... import Input, Output
+from ..._utils.utils import get_all_enum_values_iter
+from ...constants import AssetTypes
+from ...constants._common import InputTypes
+from ...constants._component import ComponentParameterTypes, IOConstants
+from .._schema.input_output import SUPPORTED_INTERNAL_PARAM_TYPES
 
 _INPUT_TYPE_ENUM = "enum"
 _INPUT_TYPE_ENUM_CAP = "Enum"

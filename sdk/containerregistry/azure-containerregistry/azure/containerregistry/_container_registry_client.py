@@ -42,9 +42,6 @@ if TYPE_CHECKING:
 def _return_response_and_deserialized(pipeline_response, deserialized, _):
     return pipeline_response, deserialized
 
-def _return_deserialized(_, deserialized, __):
-    return deserialized
-
 def _return_response_headers(_, __, response_headers):
     return response_headers
 
@@ -799,15 +796,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 cls=_return_response_headers,
                 **kwargs
             )
-
             digest = response_headers['Docker-Content-Digest']
+            if not _validate_digest(data, digest):
+                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
         except ValueError:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.")
-            if not _validate_digest(data, digest):
-                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
             raise
-
         return digest
 
     @distributed_trace
@@ -855,6 +850,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :param str tag_or_digest: The tag or digest of the manifest to download.
+            When digest is provided, will use this digest to compare with the one calculated by the response payload.
+            When tag is provided, will use the digest in response headers to compare.
         :returns: DownloadManifestResult
         :rtype: ~azure.containerregistry.models.DownloadManifestResult
         :raises ValueError: If the parameter repository or tag_or_digest is None.
@@ -872,16 +869,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     **kwargs
                 )
             )
-            digest = response.http_response.headers['Docker-Content-Digest']
             manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
             manifest_stream = _serialize_manifest(manifest)
+            if tag_or_digest.startswith("sha256:"):
+                digest = tag_or_digest
+            else:
+                digest = response.http_response.headers['Docker-Content-Digest']
+            if not _validate_digest(manifest_stream, digest):
+                raise ValueError("The requested digest does not match the digest of the received manifest.")
         except ValueError:
             if repository is None or tag_or_digest is None:
                 raise ValueError("The parameter repository and tag_or_digest cannot be None.")
-            if not _validate_digest(manifest_stream, digest):
-                raise ValueError("The requested digest does not match the digest of the received manifest.")
             raise
-
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
@@ -896,9 +895,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or digest is None.
         """
         try:
-            deserialized = self._client.container_registry_blob.get_blob( # type: ignore
-                repository, digest, cls=_return_deserialized, **kwargs
-            )
+            deserialized = self._client.container_registry_blob.get_blob(repository, digest, **kwargs)
         except ValueError:
             if repository is None or digest is None:
                 raise ValueError("The parameter repository and digest cannot be None.")

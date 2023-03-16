@@ -29,5 +29,3 @@ materialization_settings:
   online_enabled: false
 tags:
   t1: v1
-properties:
-  p1: v1
