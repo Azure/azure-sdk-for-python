@@ -327,8 +327,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # Only do this if publishing to a workspace OR a registry that is NOT IP protected
         if self._workspace_name or (
             self._registry_name
-            and self._registry_operations.get(self._operation_scope.registry_name).intellectual_property.publisher
-            is None
+            and self._registry_operations.get(self._registry_name).intellectual_property.publisher is None
         ):
             self._resolve_arm_id_or_upload_dependencies(component)
 
