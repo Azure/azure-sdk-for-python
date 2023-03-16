@@ -7,15 +7,12 @@
 from typing import TYPE_CHECKING, Union
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
 from .._generated.aio._client import PhoneNumbersClient as PhoneNumbersClientGen
 from .._generated.models import (
     PhoneNumberSearchRequest,
     PhoneNumberCapabilitiesRequest,
     PhoneNumberPurchaseRequest,
     PhoneNumberType,
-    PhoneNumberAssignmentType
 )
 from .._shared.utils import parse_connection_str, get_authentication_policy
 from .._version import SDK_MONIKER

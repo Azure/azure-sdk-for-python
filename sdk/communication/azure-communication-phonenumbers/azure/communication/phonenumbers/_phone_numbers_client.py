@@ -13,7 +13,6 @@ from ._generated.models import (
     PhoneNumberCapabilitiesRequest,
     PhoneNumberPurchaseRequest,
     PhoneNumberType,
-    PhoneNumberAssignmentType
 )
 from ._shared.utils import parse_connection_str, get_authentication_policy
 from ._version import SDK_MONIKER
