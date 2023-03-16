@@ -142,5 +142,8 @@
     },
     "online_store_connection_name" : {
         "value": ""
+    },
+    "online_store_connection_target" : {
+        "value": ""
     }
 }
