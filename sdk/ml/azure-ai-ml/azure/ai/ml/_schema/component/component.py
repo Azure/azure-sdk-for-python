@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump, pre_load
+from marshmallow import fields, post_dump, pre_load, pre_dump
 
 from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
 from azure.ai.ml._schema.core.fields import (
@@ -61,6 +61,13 @@ class ComponentSchema(AssetSchema):
     def convert_version_to_str(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
         if isinstance(data, dict) and data.get("version", None):
             data["version"] = str(data["version"])
+        return data
+
+    @pre_dump
+    def add_private_fields_to_dump(self, data, **kwargs):
+        ipp_field = getattr(data, "_intellectual_property")
+        if ipp_field:
+            setattr(data, "intellectual_property", ipp_field)
         return data
 
     @post_dump

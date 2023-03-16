@@ -408,9 +408,6 @@ class Component(
 
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
-        intellectual_property = rest_component_version.component_spec.pop("intellectualProperty", None)
-        if intellectual_property:
-            rest_component_version.component_spec["intellectual_property"] = intellectual_property
         init_kwargs = cls._load_with_schema(rest_component_version.component_spec, unknown=INCLUDE)
         init_kwargs.update(
             dict(
