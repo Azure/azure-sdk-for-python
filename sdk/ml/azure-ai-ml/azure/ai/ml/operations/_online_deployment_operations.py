@@ -170,6 +170,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 location = self._get_workspace_location()
                 if kwargs.pop("package_model", False):
                     deployment = package_deployment(deployment, self._all_operations.all_operations)
+                    module_logger.info("\nStarting deployment")
                 deployment_rest = deployment._to_rest_object(location=location)
 
                 poller = self._online_deployment.begin_create_or_update(

@@ -31,7 +31,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListVie
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import PackageRequest, PackageResponse
 from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListViewType
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationScope,
@@ -553,23 +553,13 @@ class ModelOperations(_ScopeDependentOperations):
             operation_config=self._operation_config,
         )
 
-        import debugpy
-
-        debugpy.connect(("localhost", 5678))
-        debugpy.breakpoint()
-
-        # package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-        #     Code(base_path=package_request._base_path, path=package_request.inferencing_server.code_configuration.code),
-        #     azureml_type=AzureMLResourceType.CODE,
-        # )
-
+        module_logger.info("Creating package with name: %s", package_request.target_environment_name)
         package_out = self._model_versions_operation.begin_package(
             name=model_name,
             version=model_version,
             workspace_name=self._workspace_name,
             body=package_request,
-            api_version="2023-02-01-preview",
             **self._scope_kwargs,
         ).result()
-
+        module_logger.info("\nPackage Created")
         return package_out

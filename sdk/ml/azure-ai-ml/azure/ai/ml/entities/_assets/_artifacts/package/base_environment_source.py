@@ -18,9 +18,12 @@ class BaseEnvironmentId:
         self.resource_id = resource_id
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestBaseEnvironmentId) -> "AmlComputeNodeInfo":
-        return rest_obj.as_dict()
+    def _from_rest_object(cls, rest_obj: RestBaseEnvironmentId) -> "RestBaseEnvironmentId":
+        return BaseEnvironmentId(type=rest_obj.base_environment_source_type, resource_id=rest_obj.resource_id)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         return BaseEnvironmentSourceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+
+    def _to_rest_object(self) -> RestBaseEnvironmentId:
+        return RestBaseEnvironmentId(base_environment_source_type=self.type, resource_id=self.resource_id)

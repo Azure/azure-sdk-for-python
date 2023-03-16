@@ -386,7 +386,7 @@ class MLClient:
             self._operation_config,
             self._service_client_10_2021_dataplanepreview
             if registry_name
-            else self._service_client_04_2023_preview
+            else self._service_client_02_2023_preview
             if is_private_preview_enabled
             else self._service_client_05_2022,
             self._datastores,
