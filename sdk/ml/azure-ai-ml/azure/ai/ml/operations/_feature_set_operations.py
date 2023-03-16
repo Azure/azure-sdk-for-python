@@ -425,6 +425,8 @@ def validate_and_get_feature_set_spec(featureset: _FeatureSet) -> FeaturesetSpec
         )
 
     featureset_spec_path = str(featureset.specification.path)
+    if not os.path.isabs(featureset_spec_path):
+        featureset_spec_path = Path(featureset.base_path, featureset_spec_path).resolve()
 
     if not os.path.isdir(featureset_spec_path):
         raise ValidationException(
