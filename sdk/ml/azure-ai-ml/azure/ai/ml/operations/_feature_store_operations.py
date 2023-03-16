@@ -150,9 +150,8 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                     )
 
             # materialization identity = identity when created through feature store operations
-            if (
-                (offline_Store_connection and offline_Store_connection.name == OFFLINE_STORE_CONNECTION_NAME)
-                or (online_Store_connection and online_Store_connection.name == ONLINE_STORE_CONNECTION_NAME)
+            if (offline_Store_connection and offline_Store_connection.name == OFFLINE_STORE_CONNECTION_NAME) or (
+                online_Store_connection and online_Store_connection.name == ONLINE_STORE_CONNECTION_NAME
             ):
                 if (
                     feature_store.identity
