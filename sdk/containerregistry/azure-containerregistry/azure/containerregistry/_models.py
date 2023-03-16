@@ -304,6 +304,7 @@ class ArtifactTagProperties(object):
 
 class DownloadBlobResult(object):
     """The result from downloading a blob from the registry.
+
     :ivar data: The blob content.
     :vartype data: IO
     :ivar str digest: The blob's digest, calculated by the registry.

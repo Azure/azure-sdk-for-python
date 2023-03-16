@@ -970,4 +970,5 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         if _is_tag(tag_or_digest):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
+
         self._client.container_registry_blob.delete_blob(repository, tag_or_digest, **kwargs)
