@@ -130,3 +130,8 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
             return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), obrules_as_list)
         else:
             return ManagedNetwork(_snake_to_camel(data["isolation_mode"]))
+    
+    @pre_dump
+    def predump(self, data, **kwargs):
+        data.outbound_rules = { rule.rule_name: rule for rule in data.outbound_rules }
+        return data
