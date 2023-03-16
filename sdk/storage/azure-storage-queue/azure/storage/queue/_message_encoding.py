@@ -147,7 +147,7 @@ class NoEncodePolicy(MessageEncodePolicy):
     """Bypass any message content encoding."""
 
     def encode(self, content: str) -> str:
-        if isinstance(content, bytes)
+        if isinstance(content, bytes):
             raise TypeError(
                 "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
             )
