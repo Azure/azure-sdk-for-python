@@ -157,8 +157,7 @@ class GitIgnoreFile(IgnoreFile):
 
 
 def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
-    """Finds and returns IgnoreFile object based on ignore file found in
-    directory_path.
+    """Finds and returns IgnoreFile object based on ignore file found in directory_path.
 
     .amlignore takes precedence over .gitignore and if no file is found, an empty
     IgnoreFile object will be returned.
@@ -230,9 +229,8 @@ def _get_dir_hash(directory: Union[str, Path], _hash: hash_type, ignore_file: Ig
 def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
     """Build metadata dictionary to attach to uploaded data.
 
-    Metadata includes an upload confirmation field, and for code uploads
-    only, the name and version of the code asset being created for that
-    data.
+    Metadata includes an upload confirmation field, and for code uploads only, the name and version of the code asset
+    being created for that data.
     """
     if name:
         linked_asset_arm_id = {"name": name, "version": version}
@@ -333,8 +331,9 @@ def traverse_directory(
     prefix: str,
     ignore_file: IgnoreFile = IgnoreFile(),
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
-    """Enumerate all files in the given directory and compose paths for them to
-    be uploaded to in the remote storage. e.g.
+    """Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage.
+    e.g.
+
     [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
     /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
 
@@ -419,11 +418,10 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
 
 
 def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(None)) -> Tuple[int, Dict[str, int]]:
-    """Returns total size of a directory and a dictionary itemizing each sub-
-    path and its size.
+    """Returns total size of a directory and a dictionary itemizing each sub- path and its size.
 
-    If an optional ignore_file argument is provided, then files specified in the ignore file are not \
-    included in the directory size calculation.
+    If an optional ignore_file argument is provided, then files specified in the ignore file are not included in the
+    directory size calculation.
     """
     total_size = 0
     size_list = {}
@@ -439,8 +437,7 @@ def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(N
                 # ensure we're counting the size of the linked file
                 # os.readlink returns a file path relative to dirpath, and must be
                 # re-joined to get a workable result
-                path_size = os.path.getsize(os.path.join(dirpath,
-                    os.readlink(convert_windows_path_to_unix(full_path))))
+                path_size = os.path.getsize(os.path.join(dirpath, os.readlink(convert_windows_path_to_unix(full_path))))
             size_list[full_path] = path_size
             total_size += path_size
     return total_size, size_list
@@ -709,6 +706,7 @@ def _get_next_version_from_container(
         version = "1"
     return version
 
+
 def _get_latest_version_from_container(
     asset_name: str,
     container_operation: Any,
@@ -740,20 +738,21 @@ def _get_latest_version_from_container(
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         no_personal_data_message = (
             "Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else "Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
             target=ErrorTarget.ASSET,
             error_category=ErrorCategory.USER_ERROR,
-            error_type=ValidationErrorType.RESOURCE_NOT_FOUND
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
     return version
+
 
 def _get_latest(
     asset_name: str,
@@ -766,8 +765,7 @@ def _get_latest(
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Returns the latest version of the asset with the given name.
 
-    Latest is defined as the most recently created, not the most
-    recently updated.
+    Latest is defined as the most recently created, not the most recently updated.
     """
     result = (
         version_operation.list(
@@ -801,12 +799,12 @@ def _get_latest(
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         no_personal_data_message = (
             "Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else "Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -931,10 +929,11 @@ def _resolve_label_to_asset(
 
     resolver = assetOperations._managed_label_resolver.get(label, None)
     if not resolver:
-        msg = "Asset {} with version label {} does not exist in workspace."
+        scope = "registry" if assetOperations._registry_name else "workspace"
+        msg = "Asset {} with version label {} does not exist in {}."
         raise ValidationException(
-            message=msg.format(name, label),
-            no_personal_data_message=msg.format("[name]", "[label]"),
+            message=msg.format(name, label, scope),
+            no_personal_data_message=msg.format("[name]", "[label]", "[scope]"),
             target=ErrorTarget.ASSET,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )

@@ -31,17 +31,9 @@ from enum import Enum
 import logging
 import os
 import sys
-from typing import Type, Optional, Callable, cast, Union, Dict, TYPE_CHECKING
+from typing import Type, Optional, Callable, cast, Union, Dict
 from azure.core.tracing import AbstractSpan
 
-if TYPE_CHECKING:
-    try:
-        # pylint:disable=unused-import
-        from azure.core.tracing.ext.opencensus_span import (
-            OpenCensusSpan,
-        )  # pylint:disable=redefined-outer-name
-    except ImportError:
-        pass
 
 __all__ = ("settings", "Settings")
 
@@ -111,16 +103,12 @@ def convert_logging(value: Union[str, int]) -> int:
     val = cast(str, value).upper()
     level = _levels.get(val)
     if not level:
-        raise ValueError(
-            "Cannot convert {} to log level, valid values are: {}".format(
-                value, ", ".join(_levels)
-            )
-        )
+        raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
     return level
 
 
-def get_opencensus_span() -> Optional[Type[AbstractSpan]]:
-    """Returns the OpenCensusSpan if opencensus is installed else returns None"""
+def _get_opencensus_span() -> Optional[Type[AbstractSpan]]:
+    """Returns the OpenCensusSpan if the opencensus tracing plugin is installed else returns None"""
     try:
         from azure.core.tracing.ext.opencensus_span import (  # pylint:disable=redefined-outer-name
             OpenCensusSpan,
@@ -131,26 +119,44 @@ def get_opencensus_span() -> Optional[Type[AbstractSpan]]:
         return None
 
 
-def get_opencensus_span_if_opencensus_is_imported() -> Optional[Type[AbstractSpan]]:
+def _get_opentelemetry_span() -> Optional[Type[AbstractSpan]]:
+    """Returns the OpenTelemetrySpan if the opentelemetry tracing plugin is installed else returns None"""
+    try:
+        from azure.core.tracing.ext.opentelemetry_span import (  # pylint:disable=redefined-outer-name
+            OpenTelemetrySpan,
+        )
+
+        return OpenTelemetrySpan
+    except ImportError:
+        return None
+
+
+def _get_opencensus_span_if_opencensus_is_imported() -> Optional[Type[AbstractSpan]]:
     if "opencensus" not in sys.modules:
         return None
-    return get_opencensus_span()
+    return _get_opencensus_span()
+
+
+def _get_opentelemetry_span_if_opentelemetry_is_imported() -> Optional[Type[AbstractSpan]]:
+    if "opentelemetry" not in sys.modules:
+        return None
+    return _get_opentelemetry_span()
 
 
 _tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]] = {
-    "opencensus": get_opencensus_span
+    "opencensus": _get_opencensus_span,
+    "opentelemetry": _get_opentelemetry_span,
 }
 
 
-def convert_tracing_impl(
-    value: Union[str, Type[AbstractSpan]]
-) -> Optional[Type[AbstractSpan]]:
+def convert_tracing_impl(value: Union[str, Type[AbstractSpan]]) -> Optional[Type[AbstractSpan]]:
     """Convert a string to AbstractSpan
 
     If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
     understands the following strings, ignoring case:
 
     * "opencensus"
+    * "opentelemetry"
 
     :param value: the value to convert
     :type value: string
@@ -159,7 +165,9 @@ def convert_tracing_impl(
 
     """
     if value is None:
-        return get_opencensus_span_if_opencensus_is_imported()
+        return (
+            _get_opentelemetry_span_if_opentelemetry_is_imported() or _get_opencensus_span_if_opencensus_is_imported()
+        )
 
     if not isinstance(value, str):
         value = cast(Type[AbstractSpan], value)
@@ -205,9 +213,7 @@ class PrioritizedSetting:
 
     """
 
-    def __init__(
-        self, name, env_var=None, system_hook=None, default=_Unset, convert=None
-    ):
+    def __init__(self, name, env_var=None, system_hook=None, default=_Unset, convert=None):
 
         self._name = name
         self._env_var = env_var
@@ -384,11 +390,7 @@ class Settings:
 
         :rtype: namedtuple
         """
-        props = {
-            k: v.default
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v.default for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         return self._config(props)
 
     @property
@@ -412,11 +414,7 @@ class Settings:
            settings.config(log_level=logging.DEBUG)
 
         """
-        props = {
-            k: v()
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v() for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         props.update(kwargs)
         return self._config(props)
 

@@ -22,14 +22,12 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
@@ -40,8 +38,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class ComputeInstanceSshSettings:
-    """Credentials for an administrator user account to SSH into the compute
-    node.
+    """Credentials for an administrator user account to SSH into the compute node.
 
     Can only be configured if ssh_public_access_enabled is set to true.
     """
@@ -63,8 +60,7 @@ class ComputeInstanceSshSettings:
 
     @property
     def admin_username(self) -> str:
-        """The name of the administrator user account which can be used to SSH
-        into nodes.
+        """The name of the administrator user account which can be used to SSH into nodes.
 
         return: The name of the administrator user account.
         rtype: str
@@ -107,6 +103,8 @@ class ComputeInstance(Compute):
     :type description: Optional[str], optional
     :param size: Compute Size, defaults to None
     :type size: Optional[str], optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param create_on_behalf_of: defaults to None
     :type create_on_behalf_of: Optional[AssignedUserConfiguration], optional
     :ivar state: defaults to None
@@ -157,6 +155,7 @@ class ComputeInstance(Compute):
         name: str,
         description: Optional[str] = None,
         size: Optional[str] = None,
+        tags: Optional[dict] = None,
         ssh_public_access_enabled: Optional[bool] = None,
         create_on_behalf_of: Optional[AssignedUserConfiguration] = None,
         network_settings: Optional[NetworkSettings] = None,
@@ -180,6 +179,7 @@ class ComputeInstance(Compute):
             location=kwargs.pop("location", None),
             resource_id=kwargs.pop("resource_id", None),
             description=description,
+            tags=tags,
             **kwargs,
         )
         self.size = size
@@ -223,11 +223,9 @@ class ComputeInstance(Compute):
         """
         return self._state
 
-    @experimental
     @property
     def os_image_metadata(self) -> ImageMetadata:
-        """
-        Metadata about the operating system image for this compute instance.
+        """Metadata about the operating system image for this compute instance.
 
         return: Operating system image metadata.
         rtype: ImageMetadata
@@ -239,27 +237,15 @@ class ComputeInstance(Compute):
             subnet_resource = ResourceId(id=self.subnet)
         else:
             subnet_resource = None
-        if self.ssh_public_access_enabled and not (
-            self.ssh_settings and self.ssh_settings.ssh_key_value
-        ):
-            msg = "ssh_key_value is required when ssh_public_access_enabled = True."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPUTE,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+
         ssh_settings = None
-        if self.ssh_settings and self.ssh_settings.ssh_key_value:
-            ssh_settings = CiSShSettings(
-                admin_public_key=self.ssh_settings.ssh_key_value,
+        if self.ssh_public_access_enabled is not None or self.ssh_settings is not None:
+            ssh_settings = CiSShSettings()
+            ssh_settings.ssh_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
+            ssh_settings.admin_public_key = (
+                self.ssh_settings.ssh_key_value if self.ssh_settings and self.ssh_settings.ssh_key_value else None
             )
-            if self.ssh_public_access_enabled is not None:
-                ssh_settings.ssh_public_access = (
-                    "Enabled" if self.ssh_public_access_enabled else "Disabled"
-                )
-            else:
-                ssh_settings.ssh_public_access = "NotSpecified"
+
         personal_compute_instance_settings = None
         if self.create_on_behalf_of:
             personal_compute_instance_settings = PersonalComputeInstanceSettings(
@@ -288,12 +274,8 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown=idle_time_before_shutdown,
             enable_node_public_ip=self.enable_node_public_ip,
         )
-        compute_instance_prop.schedules = (
-            self.schedules._to_rest_object() if self.schedules else None
-        )
-        compute_instance_prop.setup_scripts = (
-            self.setup_scripts._to_rest_object() if self.setup_scripts else None
-        )
+        compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
+        compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
         if self.custom_applications:
             validate_custom_applications(self.custom_applications)
             compute_instance_prop.custom_services = []
@@ -307,9 +289,8 @@ class ComputeInstance(Compute):
         return ComputeResource(
             location=self.location,
             properties=compute_instance,
-            identity=(
-                self.identity._to_compute_rest_object() if self.identity else None
-            ),
+            identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            tags=self.tags,
         )
 
     def _to_dict(self) -> Dict:
@@ -356,12 +337,10 @@ class ComputeInstance(Compute):
             network_settings = NetworkSettings(
                 subnet=prop.properties.subnet.id if prop.properties.subnet else None,
                 public_ip_address=prop.properties.connectivity_endpoints.public_ip_address
-                if prop.properties.connectivity_endpoints
-                and prop.properties.connectivity_endpoints.public_ip_address
+                if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.public_ip_address
                 else None,
                 private_ip_address=prop.properties.connectivity_endpoints.private_ip_address
-                if prop.properties.connectivity_endpoints
-                and prop.properties.connectivity_endpoints.private_ip_address
+                if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.private_ip_address
                 else None,
             )
         os_image_metadata = None
@@ -371,12 +350,8 @@ class ComputeInstance(Compute):
                 is_latest_os_image_version=metadata.is_latest_os_image_version
                 if metadata.is_latest_os_image_version is not None
                 else None,
-                current_image_version=metadata.current_image_version
-                if metadata.current_image_version
-                else None,
-                latest_image_version=metadata.latest_image_version
-                if metadata.latest_image_version
-                else None,
+                current_image_version=metadata.current_image_version if metadata.current_image_version else None,
+                latest_image_version=metadata.latest_image_version if metadata.latest_image_version else None,
             )
 
         idle_time_before_shutdown = None
@@ -388,9 +363,7 @@ class ComputeInstance(Compute):
                 pattern=idle_time_before_shutdown_pattern,
                 string=idle_time_before_shutdown,
             )
-            idle_time_before_shutdown_minutes = (
-                int(idle_time_match[1]) if idle_time_match else None
-            )
+            idle_time_before_shutdown_minutes = int(idle_time_match[1]) if idle_time_match else None
         custom_applications = None
         if prop.properties and prop.properties.custom_services:
             custom_applications = []
@@ -403,6 +376,7 @@ class ComputeInstance(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
             if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
@@ -419,23 +393,13 @@ class ComputeInstance(Compute):
             create_on_behalf_of=create_on_behalf_of,
             network_settings=network_settings,
             ssh_settings=ssh_settings,
-            ssh_public_access_enabled=_ssh_public_access_to_bool(
-                prop.properties.ssh_settings.ssh_public_access
-            )
-            if (
-                prop.properties
-                and prop.properties.ssh_settings
-                and prop.properties.ssh_settings.ssh_public_access
-            )
+            ssh_public_access_enabled=_ssh_public_access_to_bool(prop.properties.ssh_settings.ssh_public_access)
+            if (prop.properties and prop.properties.ssh_settings and prop.properties.ssh_settings.ssh_public_access)
             else None,
             schedules=ComputeSchedules._from_rest_object(prop.properties.schedules)
-            if prop.properties
-            and prop.properties.schedules
-            and prop.properties.schedules.compute_start_stop
+            if prop.properties and prop.properties.schedules and prop.properties.schedules.compute_start_stop
             else None,
-            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity)
-            if rest_obj.identity
-            else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
             if prop.properties and prop.properties.setup_scripts
             else None,

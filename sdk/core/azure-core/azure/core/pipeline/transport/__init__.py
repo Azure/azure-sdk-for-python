@@ -114,6 +114,4 @@ def __getattr__(name):
             raise ImportError("trio package is not installed")
     if transport:
         return transport
-    raise AttributeError(
-        f"module 'azure.core.pipeline.transport' has no attribute {name}"
-    )
+    raise AttributeError(f"module 'azure.core.pipeline.transport' has no attribute {name}")

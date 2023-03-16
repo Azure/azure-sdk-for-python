@@ -5,13 +5,13 @@
 from typing import Optional
 
 # pylint: disable=R0902,too-many-locals
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     ImageModelSettingsClassification as RestImageModelSettingsClassification,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,

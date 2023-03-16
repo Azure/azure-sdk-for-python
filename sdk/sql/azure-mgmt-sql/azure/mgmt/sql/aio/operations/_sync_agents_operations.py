@@ -305,7 +305,7 @@ class SyncAgentsOperations:
         :type server_name: str
         :param sync_agent_name: The name of the sync agent. Required.
         :type sync_agent_name: str
-        :param parameters: The requested sync agent resource state. Is either a model type or a IO
+        :param parameters: The requested sync agent resource state. Is either a SyncAgent type or a IO
          type. Required.
         :type parameters: ~azure.mgmt.sql.models.SyncAgent or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

@@ -19,13 +19,12 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-
-import os
 import asyncio
 
 
 async def sample_extractive_summarization_async():
     # [START extract_summary_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -66,7 +65,7 @@ async def sample_extractive_summarization_async():
                 )
             elif result.is_error is True:
                 print("...Is an error with code '{}' and message '{}'".format(
-                    result.code, result.message
+                    result.error.code, result.error.message
                 ))
     # [END extract_summary_async]
 

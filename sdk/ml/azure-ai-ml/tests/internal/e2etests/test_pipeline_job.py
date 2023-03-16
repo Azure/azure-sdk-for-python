@@ -7,15 +7,14 @@ from typing import Callable
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import assert_job_cancel, sleep_if_live
-
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import assert_job_cancel, sleep_if_live
 
 from .._utils import (
     DATA_VERSION,
@@ -26,6 +25,21 @@ from .._utils import (
 )
 
 _dependent_datasets = {}
+
+PARAMETERS_TO_TEST_WITH_OUTPUT_OUTPUT_RELATED = [
+    ("output_path", "Distributed_output", "1"),
+    ("scored_dataset", "Parallel_output", "1"),
+    ("SSPath", "Scope_output", "1"),
+    ("output_path", "HDInsight_output", "1"),
+    ("output1", "Hemera_output", "1"),
+    ("destination_data", "DataTransfer_output", "1"),
+    ("CosmosPath", "Starlite_output", "1"),
+    ("outputfolderEnc", "Ae365expool_output", "1"),
+]
+PARAMETERS_TO_TEST_WITH_OUTPUT = []
+# don't use PARAMETERS_TO_TEST[0] because this component doesn't have output
+for ori_tuple, output_tuple in zip(PARAMETERS_TO_TEST[1:], PARAMETERS_TO_TEST_WITH_OUTPUT_OUTPUT_RELATED):
+    PARAMETERS_TO_TEST_WITH_OUTPUT.append(ori_tuple + output_tuple)
 
 
 @pytest.fixture
@@ -93,6 +107,47 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert not mismatched_runsettings, "Current value:\n{}\nMismatched fields:\n{}".format(
             json.dumps(node_rest_dict, indent=2), json.dumps(mismatched_runsettings, indent=2)
         )
+
+    @pytest.mark.parametrize(
+        "test_case",
+        PARAMETERS_TO_TEST_WITH_OUTPUT,
+    )
+    @pytest.mark.disable_mock_code_hash
+    def test_register_output_for_anonymous_internal_component(
+        self,
+        client: MLClient,
+        test_case: tuple,
+    ):
+        (
+            yaml_path,
+            inputs,
+            runsettings_dict,
+            pipeline_runsettings_dict,
+            output_port_name,
+            output_name,
+            output_version,
+        ) = test_case
+        node_func: InternalComponent = load_component(yaml_path)
+
+        @pipeline()
+        def pipeline_func():
+            node = node_func(**inputs)
+            node.outputs[output_port_name].type = "uri_file"  # use this, in case that the type is path
+            node.outputs[output_port_name].name = output_name
+            node.outputs[output_port_name].version = output_version
+            set_run_settings(node, runsettings_dict)
+
+        dsl_pipeline: PipelineJob = pipeline_func()
+        set_run_settings(dsl_pipeline.settings, pipeline_runsettings_dict)
+        dsl_pipeline.settings.default_compute = "cpu-cluster"
+
+        result = dsl_pipeline._validate()
+        assert result._to_dict() == {"result": "Succeeded"}
+
+        pipeline_job = assert_job_cancel(dsl_pipeline, client)
+
+        assert pipeline_job.jobs["node"].outputs[output_port_name].name == output_name
+        assert pipeline_job.jobs["node"].outputs[output_port_name].version == output_version
 
     @pytest.mark.parametrize(
         "test_case_i,test_case_name",

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,91 +8,98 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._edge_order_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AddressDetails(msrest.serialization.Model):
+class AddressDetails(_serialization.Model):
     """Address details for an order item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param forward_address: Required. Customer address and contact details. It should be address
-     resource.
-    :type forward_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
+    :ivar forward_address: Customer address and contact details. It should be address resource.
+     Required.
+    :vartype forward_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
     :ivar return_address: Return shipping address.
     :vartype return_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
     """
 
     _validation = {
-        'forward_address': {'required': True},
-        'return_address': {'readonly': True},
+        "forward_address": {"required": True},
+        "return_address": {"readonly": True},
     }
 
     _attribute_map = {
-        'forward_address': {'key': 'forwardAddress', 'type': 'AddressProperties'},
-        'return_address': {'key': 'returnAddress', 'type': 'AddressProperties'},
+        "forward_address": {"key": "forwardAddress", "type": "AddressProperties"},
+        "return_address": {"key": "returnAddress", "type": "AddressProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        forward_address: "AddressProperties",
-        **kwargs
-    ):
-        super(AddressDetails, self).__init__(**kwargs)
+    def __init__(self, *, forward_address: "_models.AddressProperties", **kwargs: Any) -> None:
+        """
+        :keyword forward_address: Customer address and contact details. It should be address resource.
+         Required.
+        :paramtype forward_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
+        """
+        super().__init__(**kwargs)
         self.forward_address = forward_address
         self.return_address = None
 
 
-class AddressProperties(msrest.serialization.Model):
+class AddressProperties(_serialization.Model):
     """Address Properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param shipping_address: Shipping details for the address.
-    :type shipping_address: ~azure.mgmt.edgeorder.v2021_12_01.models.ShippingAddress
-    :param contact_details: Required. Contact details for the address.
-    :type contact_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ContactDetails
-    :ivar address_validation_status: Status of address validation. Possible values include:
-     "Valid", "Invalid", "Ambiguous".
+    :ivar shipping_address: Shipping details for the address.
+    :vartype shipping_address: ~azure.mgmt.edgeorder.v2021_12_01.models.ShippingAddress
+    :ivar contact_details: Contact details for the address. Required.
+    :vartype contact_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ContactDetails
+    :ivar address_validation_status: Status of address validation. Known values are: "Valid",
+     "Invalid", and "Ambiguous".
     :vartype address_validation_status: str or
      ~azure.mgmt.edgeorder.v2021_12_01.models.AddressValidationStatus
     """
 
     _validation = {
-        'contact_details': {'required': True},
-        'address_validation_status': {'readonly': True},
+        "contact_details": {"required": True},
+        "address_validation_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
-        'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
-        'address_validation_status': {'key': 'addressValidationStatus', 'type': 'str'},
+        "shipping_address": {"key": "shippingAddress", "type": "ShippingAddress"},
+        "contact_details": {"key": "contactDetails", "type": "ContactDetails"},
+        "address_validation_status": {"key": "addressValidationStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        contact_details: "ContactDetails",
-        shipping_address: Optional["ShippingAddress"] = None,
-        **kwargs
-    ):
-        super(AddressProperties, self).__init__(**kwargs)
+        contact_details: "_models.ContactDetails",
+        shipping_address: Optional["_models.ShippingAddress"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword shipping_address: Shipping details for the address.
+        :paramtype shipping_address: ~azure.mgmt.edgeorder.v2021_12_01.models.ShippingAddress
+        :keyword contact_details: Contact details for the address. Required.
+        :paramtype contact_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ContactDetails
+        """
+        super().__init__(**kwargs)
         self.shipping_address = shipping_address
         self.contact_details = contact_details
         self.address_validation_status = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -107,29 +115,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -143,35 +150,35 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
@@ -191,163 +198,177 @@ class AddressResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar system_data: Represents resource creation and update time.
     :vartype system_data: ~azure.mgmt.edgeorder.v2021_12_01.models.SystemData
-    :param shipping_address: Shipping details for the address.
-    :type shipping_address: ~azure.mgmt.edgeorder.v2021_12_01.models.ShippingAddress
-    :param contact_details: Required. Contact details for the address.
-    :type contact_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ContactDetails
-    :ivar address_validation_status: Status of address validation. Possible values include:
-     "Valid", "Invalid", "Ambiguous".
+    :ivar shipping_address: Shipping details for the address.
+    :vartype shipping_address: ~azure.mgmt.edgeorder.v2021_12_01.models.ShippingAddress
+    :ivar contact_details: Contact details for the address. Required.
+    :vartype contact_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ContactDetails
+    :ivar address_validation_status: Status of address validation. Known values are: "Valid",
+     "Invalid", and "Ambiguous".
     :vartype address_validation_status: str or
      ~azure.mgmt.edgeorder.v2021_12_01.models.AddressValidationStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'contact_details': {'required': True},
-        'address_validation_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "contact_details": {"required": True},
+        "address_validation_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'shipping_address': {'key': 'properties.shippingAddress', 'type': 'ShippingAddress'},
-        'contact_details': {'key': 'properties.contactDetails', 'type': 'ContactDetails'},
-        'address_validation_status': {'key': 'properties.addressValidationStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "shipping_address": {"key": "properties.shippingAddress", "type": "ShippingAddress"},
+        "contact_details": {"key": "properties.contactDetails", "type": "ContactDetails"},
+        "address_validation_status": {"key": "properties.addressValidationStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        contact_details: "ContactDetails",
+        contact_details: "_models.ContactDetails",
         tags: Optional[Dict[str, str]] = None,
-        shipping_address: Optional["ShippingAddress"] = None,
-        **kwargs
-    ):
-        super(AddressResource, self).__init__(tags=tags, location=location, **kwargs)
+        shipping_address: Optional["_models.ShippingAddress"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword shipping_address: Shipping details for the address.
+        :paramtype shipping_address: ~azure.mgmt.edgeorder.v2021_12_01.models.ShippingAddress
+        :keyword contact_details: Contact details for the address. Required.
+        :paramtype contact_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ContactDetails
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.shipping_address = shipping_address
         self.contact_details = contact_details
         self.address_validation_status = None
 
 
-class AddressResourceList(msrest.serialization.Model):
+class AddressResourceList(_serialization.Model):
     """Address Resource Collection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of address resources.
     :vartype value: list[~azure.mgmt.edgeorder.v2021_12_01.models.AddressResource]
-    :param next_link: Link for the next set of job resources.
-    :type next_link: str
+    :ivar next_link: Link for the next set of job resources.
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AddressResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AddressResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(AddressResourceList, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link for the next set of job resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class AddressUpdateParameter(msrest.serialization.Model):
+class AddressUpdateParameter(_serialization.Model):
     """The Address update parameters.
 
-    :param tags: A set of tags. The list of key value pairs that describe the resource. These tags
-     can be used in viewing and grouping this resource (across resource groups).
-    :type tags: dict[str, str]
-    :param shipping_address: Shipping details for the address.
-    :type shipping_address: ~azure.mgmt.edgeorder.v2021_12_01.models.ShippingAddress
-    :param contact_details: Contact details for the address.
-    :type contact_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ContactDetails
+    :ivar tags: The list of key value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups).
+    :vartype tags: dict[str, str]
+    :ivar shipping_address: Shipping details for the address.
+    :vartype shipping_address: ~azure.mgmt.edgeorder.v2021_12_01.models.ShippingAddress
+    :ivar contact_details: Contact details for the address.
+    :vartype contact_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ContactDetails
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'shipping_address': {'key': 'properties.shippingAddress', 'type': 'ShippingAddress'},
-        'contact_details': {'key': 'properties.contactDetails', 'type': 'ContactDetails'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "shipping_address": {"key": "properties.shippingAddress", "type": "ShippingAddress"},
+        "contact_details": {"key": "properties.contactDetails", "type": "ContactDetails"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        shipping_address: Optional["ShippingAddress"] = None,
-        contact_details: Optional["ContactDetails"] = None,
-        **kwargs
-    ):
-        super(AddressUpdateParameter, self).__init__(**kwargs)
+        shipping_address: Optional["_models.ShippingAddress"] = None,
+        contact_details: Optional["_models.ContactDetails"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: The list of key value pairs that describe the resource. These tags can be used
+         in viewing and grouping this resource (across resource groups).
+        :paramtype tags: dict[str, str]
+        :keyword shipping_address: Shipping details for the address.
+        :paramtype shipping_address: ~azure.mgmt.edgeorder.v2021_12_01.models.ShippingAddress
+        :keyword contact_details: Contact details for the address.
+        :paramtype contact_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ContactDetails
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.shipping_address = shipping_address
         self.contact_details = contact_details
 
 
-class AvailabilityInformation(msrest.serialization.Model):
+class AvailabilityInformation(_serialization.Model):
     """Availability information of a product system.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar availability_stage: Current availability stage of the product. Availability stage.
-     Possible values include: "Available", "ComingSoon", "Preview", "Deprecated", "Signup",
-     "Unavailable".
+    :ivar availability_stage: Current availability stage of the product. Availability stage. Known
+     values are: "Available", "ComingSoon", "Preview", "Deprecated", "Signup", and "Unavailable".
     :vartype availability_stage: str or ~azure.mgmt.edgeorder.v2021_12_01.models.AvailabilityStage
-    :ivar disabled_reason: Reason why the product is disabled. Possible values include: "None",
-     "Country", "Region", "Feature", "OfferType", "NoSubscriptionInfo", "NotAvailable",
-     "OutOfStock".
+    :ivar disabled_reason: Reason why the product is disabled. Known values are: "None", "Country",
+     "Region", "Feature", "OfferType", "NoSubscriptionInfo", "NotAvailable", and "OutOfStock".
     :vartype disabled_reason: str or ~azure.mgmt.edgeorder.v2021_12_01.models.DisabledReason
     :ivar disabled_reason_message: Message for why the product is disabled.
     :vartype disabled_reason_message: str
     """
 
     _validation = {
-        'availability_stage': {'readonly': True},
-        'disabled_reason': {'readonly': True},
-        'disabled_reason_message': {'readonly': True},
+        "availability_stage": {"readonly": True},
+        "disabled_reason": {"readonly": True},
+        "disabled_reason_message": {"readonly": True},
     }
 
     _attribute_map = {
-        'availability_stage': {'key': 'availabilityStage', 'type': 'str'},
-        'disabled_reason': {'key': 'disabledReason', 'type': 'str'},
-        'disabled_reason_message': {'key': 'disabledReasonMessage', 'type': 'str'},
+        "availability_stage": {"key": "availabilityStage", "type": "str"},
+        "disabled_reason": {"key": "disabledReason", "type": "str"},
+        "disabled_reason_message": {"key": "disabledReasonMessage", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AvailabilityInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.availability_stage = None
         self.disabled_reason = None
         self.disabled_reason_message = None
 
 
-class BasicInformation(msrest.serialization.Model):
+class BasicInformation(_serialization.Model):
     """Basic information for any product system.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -368,28 +389,26 @@ class BasicInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'Description'},
-        'image_information': {'key': 'imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "Description"},
+        "image_information": {"key": "imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "hierarchyInformation", "type": "HierarchyInformation"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BasicInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.image_information = None
@@ -398,7 +417,7 @@ class BasicInformation(msrest.serialization.Model):
         self.hierarchy_information = None
 
 
-class BillingMeterDetails(msrest.serialization.Model):
+class BillingMeterDetails(_serialization.Model):
     """Holds billing meter details for each type of billing.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -407,62 +426,59 @@ class BillingMeterDetails(msrest.serialization.Model):
     :vartype name: str
     :ivar meter_details: Represents MeterDetails.
     :vartype meter_details: ~azure.mgmt.edgeorder.v2021_12_01.models.MeterDetails
-    :ivar metering_type: Represents Metering type (eg one-time or recurrent). Possible values
-     include: "OneTime", "Recurring", "Adhoc".
+    :ivar metering_type: Represents Metering type (eg one-time or recurrent). Known values are:
+     "OneTime", "Recurring", and "Adhoc".
     :vartype metering_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.MeteringType
     :ivar frequency: Frequency of recurrence.
     :vartype frequency: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'meter_details': {'readonly': True},
-        'metering_type': {'readonly': True},
-        'frequency': {'readonly': True},
+        "name": {"readonly": True},
+        "meter_details": {"readonly": True},
+        "metering_type": {"readonly": True},
+        "frequency": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'meter_details': {'key': 'meterDetails', 'type': 'MeterDetails'},
-        'metering_type': {'key': 'meteringType', 'type': 'str'},
-        'frequency': {'key': 'frequency', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "meter_details": {"key": "meterDetails", "type": "MeterDetails"},
+        "metering_type": {"key": "meteringType", "type": "str"},
+        "frequency": {"key": "frequency", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(BillingMeterDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.meter_details = None
         self.metering_type = None
         self.frequency = None
 
 
-class CancellationReason(msrest.serialization.Model):
+class CancellationReason(_serialization.Model):
     """Reason for cancellation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param reason: Required. Reason for cancellation.
-    :type reason: str
+    :ivar reason: Reason for cancellation. Required.
+    :vartype reason: str
     """
 
     _validation = {
-        'reason': {'required': True},
+        "reason": {"required": True},
     }
 
     _attribute_map = {
-        'reason': {'key': 'reason', 'type': 'str'},
+        "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        reason: str,
-        **kwargs
-    ):
-        super(CancellationReason, self).__init__(**kwargs)
+    def __init__(self, *, reason: str, **kwargs: Any) -> None:
+        """
+        :keyword reason: Reason for cancellation. Required.
+        :paramtype reason: str
+        """
+        super().__init__(**kwargs)
         self.reason = reason
 
 
@@ -490,34 +506,32 @@ class CommonProperties(BasicInformation):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'Description'},
-        'image_information': {'key': 'imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'filterableProperties', 'type': '[FilterableProperty]'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "Description"},
+        "image_information": {"key": "imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "filterableProperties", "type": "[FilterableProperty]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CommonProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.filterable_properties = None
 
 
-class Configuration(msrest.serialization.Model):
+class Configuration(_serialization.Model):
     """Configuration object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -545,34 +559,32 @@ class Configuration(msrest.serialization.Model):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
-        'specifications': {'readonly': True},
-        'dimensions': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
+        "specifications": {"readonly": True},
+        "dimensions": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'Description'},
-        'image_information': {'key': 'properties.imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'properties.costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'properties.availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'properties.hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'properties.filterableProperties', 'type': '[FilterableProperty]'},
-        'specifications': {'key': 'properties.specifications', 'type': '[Specification]'},
-        'dimensions': {'key': 'properties.dimensions', 'type': 'Dimensions'},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "Description"},
+        "image_information": {"key": "properties.imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "properties.costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "properties.availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "properties.hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "properties.filterableProperties", "type": "[FilterableProperty]"},
+        "specifications": {"key": "properties.specifications", "type": "[Specification]"},
+        "dimensions": {"key": "properties.dimensions", "type": "Dimensions"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Configuration, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.image_information = None
@@ -584,34 +596,41 @@ class Configuration(msrest.serialization.Model):
         self.dimensions = None
 
 
-class ConfigurationFilters(msrest.serialization.Model):
+class ConfigurationFilters(_serialization.Model):
     """Configuration filters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param hierarchy_information: Required. Product hierarchy information.
-    :type hierarchy_information: ~azure.mgmt.edgeorder.v2021_12_01.models.HierarchyInformation
-    :param filterable_property: Filters specific to product.
-    :type filterable_property: list[~azure.mgmt.edgeorder.v2021_12_01.models.FilterableProperty]
+    :ivar hierarchy_information: Product hierarchy information. Required.
+    :vartype hierarchy_information: ~azure.mgmt.edgeorder.v2021_12_01.models.HierarchyInformation
+    :ivar filterable_property: Filters specific to product.
+    :vartype filterable_property: list[~azure.mgmt.edgeorder.v2021_12_01.models.FilterableProperty]
     """
 
     _validation = {
-        'hierarchy_information': {'required': True},
+        "hierarchy_information": {"required": True},
     }
 
     _attribute_map = {
-        'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_property': {'key': 'filterableProperty', 'type': '[FilterableProperty]'},
+        "hierarchy_information": {"key": "hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_property": {"key": "filterableProperty", "type": "[FilterableProperty]"},
     }
 
     def __init__(
         self,
         *,
-        hierarchy_information: "HierarchyInformation",
-        filterable_property: Optional[List["FilterableProperty"]] = None,
-        **kwargs
-    ):
-        super(ConfigurationFilters, self).__init__(**kwargs)
+        hierarchy_information: "_models.HierarchyInformation",
+        filterable_property: Optional[List["_models.FilterableProperty"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword hierarchy_information: Product hierarchy information. Required.
+        :paramtype hierarchy_information: ~azure.mgmt.edgeorder.v2021_12_01.models.HierarchyInformation
+        :keyword filterable_property: Filters specific to product.
+        :paramtype filterable_property:
+         list[~azure.mgmt.edgeorder.v2021_12_01.models.FilterableProperty]
+        """
+        super().__init__(**kwargs)
         self.hierarchy_information = hierarchy_information
         self.filterable_property = filterable_property
 
@@ -644,134 +663,141 @@ class ConfigurationProperties(CommonProperties):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
-        'specifications': {'readonly': True},
-        'dimensions': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
+        "specifications": {"readonly": True},
+        "dimensions": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'Description'},
-        'image_information': {'key': 'imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'filterableProperties', 'type': '[FilterableProperty]'},
-        'specifications': {'key': 'specifications', 'type': '[Specification]'},
-        'dimensions': {'key': 'dimensions', 'type': 'Dimensions'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "Description"},
+        "image_information": {"key": "imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "filterableProperties", "type": "[FilterableProperty]"},
+        "specifications": {"key": "specifications", "type": "[Specification]"},
+        "dimensions": {"key": "dimensions", "type": "Dimensions"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ConfigurationProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.specifications = None
         self.dimensions = None
 
 
-class Configurations(msrest.serialization.Model):
+class Configurations(_serialization.Model):
     """The list of configurations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of configurations.
     :vartype value: list[~azure.mgmt.edgeorder.v2021_12_01.models.Configuration]
-    :param next_link: Link for the next set of configurations.
-    :type next_link: str
+    :ivar next_link: Link for the next set of configurations.
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Configuration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Configuration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(Configurations, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link for the next set of configurations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class ConfigurationsRequest(msrest.serialization.Model):
+class ConfigurationsRequest(_serialization.Model):
     """Configuration request object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param configuration_filters: Required. Holds details about product hierarchy information and
-     filterable property.
-    :type configuration_filters:
+    :ivar configuration_filters: Holds details about product hierarchy information and filterable
+     property. Required.
+    :vartype configuration_filters:
      list[~azure.mgmt.edgeorder.v2021_12_01.models.ConfigurationFilters]
-    :param customer_subscription_details: Customer subscription properties. Clients can display
+    :ivar customer_subscription_details: Customer subscription properties. Clients can display
      available products to unregistered customers by explicitly passing subscription details.
-    :type customer_subscription_details:
+    :vartype customer_subscription_details:
      ~azure.mgmt.edgeorder.v2021_12_01.models.CustomerSubscriptionDetails
     """
 
     _validation = {
-        'configuration_filters': {'required': True, 'unique': True},
+        "configuration_filters": {"required": True, "unique": True},
     }
 
     _attribute_map = {
-        'configuration_filters': {'key': 'configurationFilters', 'type': '[ConfigurationFilters]'},
-        'customer_subscription_details': {'key': 'customerSubscriptionDetails', 'type': 'CustomerSubscriptionDetails'},
+        "configuration_filters": {"key": "configurationFilters", "type": "[ConfigurationFilters]"},
+        "customer_subscription_details": {"key": "customerSubscriptionDetails", "type": "CustomerSubscriptionDetails"},
     }
 
     def __init__(
         self,
         *,
-        configuration_filters: List["ConfigurationFilters"],
-        customer_subscription_details: Optional["CustomerSubscriptionDetails"] = None,
-        **kwargs
-    ):
-        super(ConfigurationsRequest, self).__init__(**kwargs)
+        configuration_filters: List["_models.ConfigurationFilters"],
+        customer_subscription_details: Optional["_models.CustomerSubscriptionDetails"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword configuration_filters: Holds details about product hierarchy information and
+         filterable property. Required.
+        :paramtype configuration_filters:
+         list[~azure.mgmt.edgeorder.v2021_12_01.models.ConfigurationFilters]
+        :keyword customer_subscription_details: Customer subscription properties. Clients can display
+         available products to unregistered customers by explicitly passing subscription details.
+        :paramtype customer_subscription_details:
+         ~azure.mgmt.edgeorder.v2021_12_01.models.CustomerSubscriptionDetails
+        """
+        super().__init__(**kwargs)
         self.configuration_filters = configuration_filters
         self.customer_subscription_details = customer_subscription_details
 
 
-class ContactDetails(msrest.serialization.Model):
+class ContactDetails(_serialization.Model):
     """Contact Details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param contact_name: Required. Contact name of the person.
-    :type contact_name: str
-    :param phone: Required. Phone number of the contact person.
-    :type phone: str
-    :param phone_extension: Phone extension number of the contact person.
-    :type phone_extension: str
-    :param mobile: Mobile number of the contact person.
-    :type mobile: str
-    :param email_list: Required. List of Email-ids to be notified about job progress.
-    :type email_list: list[str]
+    :ivar contact_name: Contact name of the person. Required.
+    :vartype contact_name: str
+    :ivar phone: Phone number of the contact person. Required.
+    :vartype phone: str
+    :ivar phone_extension: Phone extension number of the contact person.
+    :vartype phone_extension: str
+    :ivar mobile: Mobile number of the contact person.
+    :vartype mobile: str
+    :ivar email_list: List of Email-ids to be notified about job progress. Required.
+    :vartype email_list: list[str]
     """
 
     _validation = {
-        'contact_name': {'required': True},
-        'phone': {'required': True},
-        'email_list': {'required': True},
+        "contact_name": {"required": True},
+        "phone": {"required": True},
+        "email_list": {"required": True},
     }
 
     _attribute_map = {
-        'contact_name': {'key': 'contactName', 'type': 'str'},
-        'phone': {'key': 'phone', 'type': 'str'},
-        'phone_extension': {'key': 'phoneExtension', 'type': 'str'},
-        'mobile': {'key': 'mobile', 'type': 'str'},
-        'email_list': {'key': 'emailList', 'type': '[str]'},
+        "contact_name": {"key": "contactName", "type": "str"},
+        "phone": {"key": "phone", "type": "str"},
+        "phone_extension": {"key": "phoneExtension", "type": "str"},
+        "mobile": {"key": "mobile", "type": "str"},
+        "email_list": {"key": "emailList", "type": "[str]"},
     }
 
     def __init__(
@@ -782,9 +808,21 @@ class ContactDetails(msrest.serialization.Model):
         email_list: List[str],
         phone_extension: Optional[str] = None,
         mobile: Optional[str] = None,
-        **kwargs
-    ):
-        super(ContactDetails, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword contact_name: Contact name of the person. Required.
+        :paramtype contact_name: str
+        :keyword phone: Phone number of the contact person. Required.
+        :paramtype phone: str
+        :keyword phone_extension: Phone extension number of the contact person.
+        :paramtype phone_extension: str
+        :keyword mobile: Mobile number of the contact person.
+        :paramtype mobile: str
+        :keyword email_list: List of Email-ids to be notified about job progress. Required.
+        :paramtype email_list: list[str]
+        """
+        super().__init__(**kwargs)
         self.contact_name = contact_name
         self.phone = phone
         self.phone_extension = phone_extension
@@ -792,7 +830,7 @@ class ContactDetails(msrest.serialization.Model):
         self.email_list = email_list
 
 
-class CostInformation(msrest.serialization.Model):
+class CostInformation(_serialization.Model):
     """Cost information for the product system.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -805,94 +843,102 @@ class CostInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'billing_meter_details': {'readonly': True},
-        'billing_info_url': {'readonly': True},
+        "billing_meter_details": {"readonly": True},
+        "billing_info_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'billing_meter_details': {'key': 'billingMeterDetails', 'type': '[BillingMeterDetails]'},
-        'billing_info_url': {'key': 'billingInfoUrl', 'type': 'str'},
+        "billing_meter_details": {"key": "billingMeterDetails", "type": "[BillingMeterDetails]"},
+        "billing_info_url": {"key": "billingInfoUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CostInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.billing_meter_details = None
         self.billing_info_url = None
 
 
-class CustomerSubscriptionDetails(msrest.serialization.Model):
-    """Holds Customer subscription details. Clients can display available products to unregistered customers by explicitly passing subscription details.
+class CustomerSubscriptionDetails(_serialization.Model):
+    """Holds Customer subscription details. Clients can display available products to unregistered
+    customers by explicitly passing subscription details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param registered_features: List of registered feature flags for subscription.
-    :type registered_features:
+    :ivar registered_features: List of registered feature flags for subscription.
+    :vartype registered_features:
      list[~azure.mgmt.edgeorder.v2021_12_01.models.CustomerSubscriptionRegisteredFeatures]
-    :param location_placement_id: Location placement Id of a subscription.
-    :type location_placement_id: str
-    :param quota_id: Required. Quota ID of a subscription.
-    :type quota_id: str
+    :ivar location_placement_id: Location placement Id of a subscription.
+    :vartype location_placement_id: str
+    :ivar quota_id: Quota ID of a subscription. Required.
+    :vartype quota_id: str
     """
 
     _validation = {
-        'quota_id': {'required': True},
+        "quota_id": {"required": True},
     }
 
     _attribute_map = {
-        'registered_features': {'key': 'registeredFeatures', 'type': '[CustomerSubscriptionRegisteredFeatures]'},
-        'location_placement_id': {'key': 'locationPlacementId', 'type': 'str'},
-        'quota_id': {'key': 'quotaId', 'type': 'str'},
+        "registered_features": {"key": "registeredFeatures", "type": "[CustomerSubscriptionRegisteredFeatures]"},
+        "location_placement_id": {"key": "locationPlacementId", "type": "str"},
+        "quota_id": {"key": "quotaId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         quota_id: str,
-        registered_features: Optional[List["CustomerSubscriptionRegisteredFeatures"]] = None,
+        registered_features: Optional[List["_models.CustomerSubscriptionRegisteredFeatures"]] = None,
         location_placement_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(CustomerSubscriptionDetails, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword registered_features: List of registered feature flags for subscription.
+        :paramtype registered_features:
+         list[~azure.mgmt.edgeorder.v2021_12_01.models.CustomerSubscriptionRegisteredFeatures]
+        :keyword location_placement_id: Location placement Id of a subscription.
+        :paramtype location_placement_id: str
+        :keyword quota_id: Quota ID of a subscription. Required.
+        :paramtype quota_id: str
+        """
+        super().__init__(**kwargs)
         self.registered_features = registered_features
         self.location_placement_id = location_placement_id
         self.quota_id = quota_id
 
 
-class CustomerSubscriptionRegisteredFeatures(msrest.serialization.Model):
+class CustomerSubscriptionRegisteredFeatures(_serialization.Model):
     """Represents subscription registered features.
 
-    :param name: Name of subscription registered feature.
-    :type name: str
-    :param state: State of subscription registered feature.
-    :type state: str
+    :ivar name: Name of subscription registered feature.
+    :vartype name: str
+    :ivar state: State of subscription registered feature.
+    :vartype state: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        state: Optional[str] = None,
-        **kwargs
-    ):
-        super(CustomerSubscriptionRegisteredFeatures, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, state: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Name of subscription registered feature.
+        :paramtype name: str
+        :keyword state: State of subscription registered feature.
+        :paramtype state: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.state = state
 
 
-class Description(msrest.serialization.Model):
+class Description(_serialization.Model):
     """Description related properties of a product system.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar description_type: Type of description. Possible values include: "Base".
+    :ivar description_type: Type of description. "Base"
     :vartype description_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.DescriptionType
     :ivar short_description: Short description of the product system.
     :vartype short_description: str
@@ -907,28 +953,26 @@ class Description(msrest.serialization.Model):
     """
 
     _validation = {
-        'description_type': {'readonly': True},
-        'short_description': {'readonly': True},
-        'long_description': {'readonly': True},
-        'keywords': {'readonly': True},
-        'attributes': {'readonly': True},
-        'links': {'readonly': True},
+        "description_type": {"readonly": True},
+        "short_description": {"readonly": True},
+        "long_description": {"readonly": True},
+        "keywords": {"readonly": True},
+        "attributes": {"readonly": True},
+        "links": {"readonly": True},
     }
 
     _attribute_map = {
-        'description_type': {'key': 'descriptionType', 'type': 'str'},
-        'short_description': {'key': 'shortDescription', 'type': 'str'},
-        'long_description': {'key': 'longDescription', 'type': 'str'},
-        'keywords': {'key': 'keywords', 'type': '[str]'},
-        'attributes': {'key': 'attributes', 'type': '[str]'},
-        'links': {'key': 'links', 'type': '[Link]'},
+        "description_type": {"key": "descriptionType", "type": "str"},
+        "short_description": {"key": "shortDescription", "type": "str"},
+        "long_description": {"key": "longDescription", "type": "str"},
+        "keywords": {"key": "keywords", "type": "[str]"},
+        "attributes": {"key": "attributes", "type": "[str]"},
+        "links": {"key": "links", "type": "[Link]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Description, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.description_type = None
         self.short_description = None
         self.long_description = None
@@ -937,7 +981,7 @@ class Description(msrest.serialization.Model):
         self.links = None
 
 
-class DeviceDetails(msrest.serialization.Model):
+class DeviceDetails(_serialization.Model):
     """Device details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -951,28 +995,26 @@ class DeviceDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'serial_number': {'readonly': True},
-        'management_resource_id': {'readonly': True},
-        'management_resource_tenant_id': {'readonly': True},
+        "serial_number": {"readonly": True},
+        "management_resource_id": {"readonly": True},
+        "management_resource_tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'serial_number': {'key': 'serialNumber', 'type': 'str'},
-        'management_resource_id': {'key': 'managementResourceId', 'type': 'str'},
-        'management_resource_tenant_id': {'key': 'managementResourceTenantId', 'type': 'str'},
+        "serial_number": {"key": "serialNumber", "type": "str"},
+        "management_resource_id": {"key": "managementResourceId", "type": "str"},
+        "management_resource_tenant_id": {"key": "managementResourceTenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DeviceDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.serial_number = None
         self.management_resource_id = None
         self.management_resource_tenant_id = None
 
 
-class Dimensions(msrest.serialization.Model):
+class Dimensions(_serialization.Model):
     """Dimensions of a configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -983,42 +1025,40 @@ class Dimensions(msrest.serialization.Model):
     :vartype height: float
     :ivar width: Width of the device.
     :vartype width: float
-    :ivar length_height_unit: Unit for the dimensions of length, height and width. Possible values
-     include: "IN", "CM".
+    :ivar length_height_unit: Unit for the dimensions of length, height and width. Known values
+     are: "IN" and "CM".
     :vartype length_height_unit: str or ~azure.mgmt.edgeorder.v2021_12_01.models.LengthHeightUnit
     :ivar weight: Weight of the device.
     :vartype weight: float
     :ivar depth: Depth of the device.
     :vartype depth: float
-    :ivar weight_unit: Unit for the dimensions of weight. Possible values include: "LBS", "KGS".
+    :ivar weight_unit: Unit for the dimensions of weight. Known values are: "LBS" and "KGS".
     :vartype weight_unit: str or ~azure.mgmt.edgeorder.v2021_12_01.models.WeightMeasurementUnit
     """
 
     _validation = {
-        'length': {'readonly': True},
-        'height': {'readonly': True},
-        'width': {'readonly': True},
-        'length_height_unit': {'readonly': True},
-        'weight': {'readonly': True},
-        'depth': {'readonly': True},
-        'weight_unit': {'readonly': True},
+        "length": {"readonly": True},
+        "height": {"readonly": True},
+        "width": {"readonly": True},
+        "length_height_unit": {"readonly": True},
+        "weight": {"readonly": True},
+        "depth": {"readonly": True},
+        "weight_unit": {"readonly": True},
     }
 
     _attribute_map = {
-        'length': {'key': 'length', 'type': 'float'},
-        'height': {'key': 'height', 'type': 'float'},
-        'width': {'key': 'width', 'type': 'float'},
-        'length_height_unit': {'key': 'lengthHeightUnit', 'type': 'str'},
-        'weight': {'key': 'weight', 'type': 'float'},
-        'depth': {'key': 'depth', 'type': 'float'},
-        'weight_unit': {'key': 'weightUnit', 'type': 'str'},
+        "length": {"key": "length", "type": "float"},
+        "height": {"key": "height", "type": "float"},
+        "width": {"key": "width", "type": "float"},
+        "length_height_unit": {"key": "lengthHeightUnit", "type": "str"},
+        "weight": {"key": "weight", "type": "float"},
+        "depth": {"key": "depth", "type": "float"},
+        "weight_unit": {"key": "weightUnit", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Dimensions, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.length = None
         self.height = None
         self.width = None
@@ -1028,7 +1068,7 @@ class Dimensions(msrest.serialization.Model):
         self.weight_unit = None
 
 
-class DisplayInfo(msrest.serialization.Model):
+class DisplayInfo(_serialization.Model):
     """Describes product display information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1040,49 +1080,51 @@ class DisplayInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'product_family_display_name': {'readonly': True},
-        'configuration_display_name': {'readonly': True},
+        "product_family_display_name": {"readonly": True},
+        "configuration_display_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'product_family_display_name': {'key': 'productFamilyDisplayName', 'type': 'str'},
-        'configuration_display_name': {'key': 'configurationDisplayName', 'type': 'str'},
+        "product_family_display_name": {"key": "productFamilyDisplayName", "type": "str"},
+        "configuration_display_name": {"key": "configurationDisplayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DisplayInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.product_family_display_name = None
         self.configuration_display_name = None
 
 
-class EncryptionPreferences(msrest.serialization.Model):
+class EncryptionPreferences(_serialization.Model):
     """Preferences related to the double encryption.
 
-    :param double_encryption_status: Double encryption status as entered by the customer. It is
-     compulsory to give this parameter if the 'Deny' or 'Disabled' policy is configured. Possible
-     values include: "Disabled", "Enabled".
-    :type double_encryption_status: str or
+    :ivar double_encryption_status: Double encryption status as entered by the customer. It is
+     compulsory to give this parameter if the 'Deny' or 'Disabled' policy is configured. Known
+     values are: "Disabled" and "Enabled".
+    :vartype double_encryption_status: str or
      ~azure.mgmt.edgeorder.v2021_12_01.models.DoubleEncryptionStatus
     """
 
     _attribute_map = {
-        'double_encryption_status': {'key': 'doubleEncryptionStatus', 'type': 'str'},
+        "double_encryption_status": {"key": "doubleEncryptionStatus", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        double_encryption_status: Optional[Union[str, "DoubleEncryptionStatus"]] = None,
-        **kwargs
-    ):
-        super(EncryptionPreferences, self).__init__(**kwargs)
+        self, *, double_encryption_status: Optional[Union[str, "_models.DoubleEncryptionStatus"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword double_encryption_status: Double encryption status as entered by the customer. It is
+         compulsory to give this parameter if the 'Deny' or 'Disabled' policy is configured. Known
+         values are: "Disabled" and "Enabled".
+        :paramtype double_encryption_status: str or
+         ~azure.mgmt.edgeorder.v2021_12_01.models.DoubleEncryptionStatus
+        """
+        super().__init__(**kwargs)
         self.double_encryption_status = double_encryption_status
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1090,29 +1132,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1130,26 +1170,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -1157,62 +1195,65 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.edgeorder.v2021_12_01.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.edgeorder.v2021_12_01.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.edgeorder.v2021_12_01.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class FilterableProperty(msrest.serialization.Model):
+class FilterableProperty(_serialization.Model):
     """Different types of filters supported and its values.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of product filter. Possible values include: "ShipToCountries",
+    :ivar type: Type of product filter. Required. Known values are: "ShipToCountries" and
      "DoubleEncryptionStatus".
-    :type type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.SupportedFilterTypes
-    :param supported_values: Required. Values to be filtered.
-    :type supported_values: list[str]
+    :vartype type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.SupportedFilterTypes
+    :ivar supported_values: Values to be filtered. Required.
+    :vartype supported_values: list[str]
     """
 
     _validation = {
-        'type': {'required': True},
-        'supported_values': {'required': True},
+        "type": {"required": True},
+        "supported_values": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'supported_values': {'key': 'supportedValues', 'type': '[str]'},
+        "type": {"key": "type", "type": "str"},
+        "supported_values": {"key": "supportedValues", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        type: Union[str, "SupportedFilterTypes"],
-        supported_values: List[str],
-        **kwargs
-    ):
-        super(FilterableProperty, self).__init__(**kwargs)
+        self, *, type: Union[str, "_models.SupportedFilterTypes"], supported_values: List[str], **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of product filter. Required. Known values are: "ShipToCountries" and
+         "DoubleEncryptionStatus".
+        :paramtype type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.SupportedFilterTypes
+        :keyword supported_values: Values to be filtered. Required.
+        :paramtype supported_values: list[str]
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.supported_values = supported_values
 
 
-class ForwardShippingDetails(msrest.serialization.Model):
+class ForwardShippingDetails(_serialization.Model):
     """Forward shipment details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1229,50 +1270,47 @@ class ForwardShippingDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'carrier_name': {'readonly': True},
-        'carrier_display_name': {'readonly': True},
-        'tracking_id': {'readonly': True},
-        'tracking_url': {'readonly': True},
+        "carrier_name": {"readonly": True},
+        "carrier_display_name": {"readonly": True},
+        "tracking_id": {"readonly": True},
+        "tracking_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'carrier_name': {'key': 'carrierName', 'type': 'str'},
-        'carrier_display_name': {'key': 'carrierDisplayName', 'type': 'str'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
-        'tracking_url': {'key': 'trackingUrl', 'type': 'str'},
+        "carrier_name": {"key": "carrierName", "type": "str"},
+        "carrier_display_name": {"key": "carrierDisplayName", "type": "str"},
+        "tracking_id": {"key": "trackingId", "type": "str"},
+        "tracking_url": {"key": "trackingUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ForwardShippingDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.carrier_name = None
         self.carrier_display_name = None
         self.tracking_id = None
         self.tracking_url = None
 
 
-class HierarchyInformation(msrest.serialization.Model):
+class HierarchyInformation(_serialization.Model):
     """Holds details about product hierarchy information.
 
-    :param product_family_name: Represents product family name that uniquely identifies product
+    :ivar product_family_name: Represents product family name that uniquely identifies product
      family.
-    :type product_family_name: str
-    :param product_line_name: Represents product line name that uniquely identifies product line.
-    :type product_line_name: str
-    :param product_name: Represents product name that uniquely identifies product.
-    :type product_name: str
-    :param configuration_name: Represents configuration name that uniquely identifies
-     configuration.
-    :type configuration_name: str
+    :vartype product_family_name: str
+    :ivar product_line_name: Represents product line name that uniquely identifies product line.
+    :vartype product_line_name: str
+    :ivar product_name: Represents product name that uniquely identifies product.
+    :vartype product_name: str
+    :ivar configuration_name: Represents configuration name that uniquely identifies configuration.
+    :vartype configuration_name: str
     """
 
     _attribute_map = {
-        'product_family_name': {'key': 'productFamilyName', 'type': 'str'},
-        'product_line_name': {'key': 'productLineName', 'type': 'str'},
-        'product_name': {'key': 'productName', 'type': 'str'},
-        'configuration_name': {'key': 'configurationName', 'type': 'str'},
+        "product_family_name": {"key": "productFamilyName", "type": "str"},
+        "product_line_name": {"key": "productLineName", "type": "str"},
+        "product_name": {"key": "productName", "type": "str"},
+        "configuration_name": {"key": "configurationName", "type": "str"},
     }
 
     def __init__(
@@ -1282,21 +1320,33 @@ class HierarchyInformation(msrest.serialization.Model):
         product_line_name: Optional[str] = None,
         product_name: Optional[str] = None,
         configuration_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(HierarchyInformation, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword product_family_name: Represents product family name that uniquely identifies product
+         family.
+        :paramtype product_family_name: str
+        :keyword product_line_name: Represents product line name that uniquely identifies product line.
+        :paramtype product_line_name: str
+        :keyword product_name: Represents product name that uniquely identifies product.
+        :paramtype product_name: str
+        :keyword configuration_name: Represents configuration name that uniquely identifies
+         configuration.
+        :paramtype configuration_name: str
+        """
+        super().__init__(**kwargs)
         self.product_family_name = product_family_name
         self.product_line_name = product_line_name
         self.product_name = product_name
         self.configuration_name = configuration_name
 
 
-class ImageInformation(msrest.serialization.Model):
+class ImageInformation(_serialization.Model):
     """Image for the product.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar image_type: Type of the image. Possible values include: "MainImage", "BulletImage",
+    :ivar image_type: Type of the image. Known values are: "MainImage", "BulletImage", and
      "GenericImage".
     :vartype image_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.ImageType
     :ivar image_url: Url of the image.
@@ -1304,156 +1354,147 @@ class ImageInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'image_type': {'readonly': True},
-        'image_url': {'readonly': True},
+        "image_type": {"readonly": True},
+        "image_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'image_type': {'key': 'imageType', 'type': 'str'},
-        'image_url': {'key': 'imageUrl', 'type': 'str'},
+        "image_type": {"key": "imageType", "type": "str"},
+        "image_url": {"key": "imageUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ImageInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.image_type = None
         self.image_url = None
 
 
-class Link(msrest.serialization.Model):
+class Link(_serialization.Model):
     """Returns link related to the product.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar link_type: Type of link. Possible values include: "Generic", "TermsAndConditions",
-     "Specification", "Documentation", "KnowMore", "SignUp".
+    :ivar link_type: Type of link. Known values are: "Generic", "TermsAndConditions",
+     "Specification", "Documentation", "KnowMore", and "SignUp".
     :vartype link_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.LinkType
     :ivar link_url: Url of the link.
     :vartype link_url: str
     """
 
     _validation = {
-        'link_type': {'readonly': True},
-        'link_url': {'readonly': True},
+        "link_type": {"readonly": True},
+        "link_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'link_type': {'key': 'linkType', 'type': 'str'},
-        'link_url': {'key': 'linkUrl', 'type': 'str'},
+        "link_type": {"key": "linkType", "type": "str"},
+        "link_url": {"key": "linkUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Link, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.link_type = None
         self.link_url = None
 
 
-class ManagementResourcePreferences(msrest.serialization.Model):
+class ManagementResourcePreferences(_serialization.Model):
     """Management resource preference to link device.
 
-    :param preferred_management_resource_id: Customer preferred Management resource ARM ID.
-    :type preferred_management_resource_id: str
+    :ivar preferred_management_resource_id: Customer preferred Management resource ARM ID.
+    :vartype preferred_management_resource_id: str
     """
 
     _attribute_map = {
-        'preferred_management_resource_id': {'key': 'preferredManagementResourceId', 'type': 'str'},
+        "preferred_management_resource_id": {"key": "preferredManagementResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        preferred_management_resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ManagementResourcePreferences, self).__init__(**kwargs)
+    def __init__(self, *, preferred_management_resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword preferred_management_resource_id: Customer preferred Management resource ARM ID.
+        :paramtype preferred_management_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.preferred_management_resource_id = preferred_management_resource_id
 
 
-class MeterDetails(msrest.serialization.Model):
+class MeterDetails(_serialization.Model):
     """Holds details about billing type and its meter guids.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: Pav2MeterDetails, PurchaseMeterDetails.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    Pav2MeterDetails, PurchaseMeterDetails
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param billing_type: Required. Represents billing type.Constant filled by server.  Possible
-     values include: "Pav2", "Purchase".
-    :type billing_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.BillingType
+    :ivar billing_type: Represents billing type. Required. Known values are: "Pav2" and "Purchase".
+    :vartype billing_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.BillingType
     :ivar multiplier: Billing unit applicable for Pav2 billing.
     :vartype multiplier: float
-    :ivar charging_type: Charging type. Possible values include: "PerOrder", "PerDevice".
+    :ivar charging_type: Charging type. Known values are: "PerOrder" and "PerDevice".
     :vartype charging_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.ChargingType
     """
 
     _validation = {
-        'billing_type': {'required': True},
-        'multiplier': {'readonly': True},
-        'charging_type': {'readonly': True},
+        "billing_type": {"required": True},
+        "multiplier": {"readonly": True},
+        "charging_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'billing_type': {'key': 'billingType', 'type': 'str'},
-        'multiplier': {'key': 'multiplier', 'type': 'float'},
-        'charging_type': {'key': 'chargingType', 'type': 'str'},
+        "billing_type": {"key": "billingType", "type": "str"},
+        "multiplier": {"key": "multiplier", "type": "float"},
+        "charging_type": {"key": "chargingType", "type": "str"},
     }
 
-    _subtype_map = {
-        'billing_type': {'Pav2': 'Pav2MeterDetails', 'Purchase': 'PurchaseMeterDetails'}
-    }
+    _subtype_map = {"billing_type": {"Pav2": "Pav2MeterDetails", "Purchase": "PurchaseMeterDetails"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(MeterDetails, self).__init__(**kwargs)
-        self.billing_type = None  # type: Optional[str]
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.billing_type: Optional[str] = None
         self.multiplier = None
         self.charging_type = None
 
 
-class NotificationPreference(msrest.serialization.Model):
+class NotificationPreference(_serialization.Model):
     """Notification preference for a job stage.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param stage_name: Required. Name of the stage. Possible values include: "Shipped",
-     "Delivered".
-    :type stage_name: str or ~azure.mgmt.edgeorder.v2021_12_01.models.NotificationStageName
-    :param send_notification: Required. Notification is required or not.
-    :type send_notification: bool
+    :ivar stage_name: Name of the stage. Required. Known values are: "Shipped" and "Delivered".
+    :vartype stage_name: str or ~azure.mgmt.edgeorder.v2021_12_01.models.NotificationStageName
+    :ivar send_notification: Notification is required or not. Required.
+    :vartype send_notification: bool
     """
 
     _validation = {
-        'stage_name': {'required': True},
-        'send_notification': {'required': True},
+        "stage_name": {"required": True},
+        "send_notification": {"required": True},
     }
 
     _attribute_map = {
-        'stage_name': {'key': 'stageName', 'type': 'str'},
-        'send_notification': {'key': 'sendNotification', 'type': 'bool'},
+        "stage_name": {"key": "stageName", "type": "str"},
+        "send_notification": {"key": "sendNotification", "type": "bool"},
     }
 
     def __init__(
-        self,
-        *,
-        stage_name: Union[str, "NotificationStageName"],
-        send_notification: bool,
-        **kwargs
-    ):
-        super(NotificationPreference, self).__init__(**kwargs)
+        self, *, stage_name: Union[str, "_models.NotificationStageName"], send_notification: bool, **kwargs: Any
+    ) -> None:
+        """
+        :keyword stage_name: Name of the stage. Required. Known values are: "Shipped" and "Delivered".
+        :paramtype stage_name: str or ~azure.mgmt.edgeorder.v2021_12_01.models.NotificationStageName
+        :keyword send_notification: Notification is required or not. Required.
+        :paramtype send_notification: bool
+        """
+        super().__init__(**kwargs)
         self.stage_name = stage_name
         self.send_notification = send_notification
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1464,39 +1505,38 @@ class Operation(msrest.serialization.Model):
     :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
-    :param display: Localized display information for this particular operation.
-    :type display: ~azure.mgmt.edgeorder.v2021_12_01.models.OperationDisplay
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.edgeorder.v2021_12_01.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
-     "system", "user,system".
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
     :vartype origin: str or ~azure.mgmt.edgeorder.v2021_12_01.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Possible values include: "Internal".
+     internal only APIs. "Internal"
     :vartype action_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.ActionType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
+        """
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.edgeorder.v2021_12_01.models.OperationDisplay
+        """
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = None
         self.display = display
@@ -1504,7 +1544,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Localized display information for this particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1524,32 +1564,31 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+class OperationListResult(_serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1560,63 +1599,60 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class OrderItemDetails(msrest.serialization.Model):
+class OrderItemDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Order item details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param product_details: Required. Unique identifier for configuration.
-    :type product_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ProductDetails
-    :param order_item_type: Required. Order item type. Possible values include: "Purchase",
-     "Rental".
-    :type order_item_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemType
+    :ivar product_details: Unique identifier for configuration. Required.
+    :vartype product_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ProductDetails
+    :ivar order_item_type: Order item type. Required. Known values are: "Purchase" and "Rental".
+    :vartype order_item_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemType
     :ivar current_stage: Current Order item Status.
     :vartype current_stage: ~azure.mgmt.edgeorder.v2021_12_01.models.StageDetails
     :ivar order_item_stage_history: Order item status history.
     :vartype order_item_stage_history: list[~azure.mgmt.edgeorder.v2021_12_01.models.StageDetails]
-    :param preferences: Customer notification Preferences.
-    :type preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.Preferences
+    :ivar preferences: Customer notification Preferences.
+    :vartype preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.Preferences
     :ivar forward_shipping_details: Forward Package Shipping details.
     :vartype forward_shipping_details:
      ~azure.mgmt.edgeorder.v2021_12_01.models.ForwardShippingDetails
     :ivar reverse_shipping_details: Reverse Package Shipping details.
     :vartype reverse_shipping_details:
      ~azure.mgmt.edgeorder.v2021_12_01.models.ReverseShippingDetails
-    :param notification_email_list: Additional notification email list.
-    :type notification_email_list: list[str]
+    :ivar notification_email_list: Additional notification email list.
+    :vartype notification_email_list: list[str]
     :ivar cancellation_reason: Cancellation reason.
     :vartype cancellation_reason: str
-    :ivar cancellation_status: Describes whether the order item is cancellable or not. Possible
-     values include: "Cancellable", "CancellableWithFee", "NotCancellable".
+    :ivar cancellation_status: Describes whether the order item is cancellable or not. Known values
+     are: "Cancellable", "CancellableWithFee", and "NotCancellable".
     :vartype cancellation_status: str or
      ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemCancellationEnum
-    :ivar deletion_status: Describes whether the order item is deletable or not. Possible values
-     include: "Allowed", "NotAllowed".
+    :ivar deletion_status: Describes whether the order item is deletable or not. Known values are:
+     "Allowed" and "NotAllowed".
     :vartype deletion_status: str or ~azure.mgmt.edgeorder.v2021_12_01.models.ActionStatusEnum
     :ivar return_reason: Return reason.
     :vartype return_reason: str
-    :ivar return_status: Describes whether the order item is returnable or not. Possible values
-     include: "Returnable", "ReturnableWithFee", "NotReturnable".
+    :ivar return_status: Describes whether the order item is returnable or not. Known values are:
+     "Returnable", "ReturnableWithFee", and "NotReturnable".
     :vartype return_status: str or ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemReturnEnum
     :ivar management_rp_details: Parent RP details - this returns only the first or default parent
      RP from the entire list.
@@ -1630,51 +1666,61 @@ class OrderItemDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'product_details': {'required': True},
-        'order_item_type': {'required': True},
-        'current_stage': {'readonly': True},
-        'order_item_stage_history': {'readonly': True},
-        'forward_shipping_details': {'readonly': True},
-        'reverse_shipping_details': {'readonly': True},
-        'cancellation_reason': {'readonly': True},
-        'cancellation_status': {'readonly': True},
-        'deletion_status': {'readonly': True},
-        'return_reason': {'readonly': True},
-        'return_status': {'readonly': True},
-        'management_rp_details': {'readonly': True},
-        'management_rp_details_list': {'readonly': True},
-        'error': {'readonly': True},
+        "product_details": {"required": True},
+        "order_item_type": {"required": True},
+        "current_stage": {"readonly": True},
+        "order_item_stage_history": {"readonly": True},
+        "forward_shipping_details": {"readonly": True},
+        "reverse_shipping_details": {"readonly": True},
+        "cancellation_reason": {"readonly": True},
+        "cancellation_status": {"readonly": True},
+        "deletion_status": {"readonly": True},
+        "return_reason": {"readonly": True},
+        "return_status": {"readonly": True},
+        "management_rp_details": {"readonly": True},
+        "management_rp_details_list": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'product_details': {'key': 'productDetails', 'type': 'ProductDetails'},
-        'order_item_type': {'key': 'orderItemType', 'type': 'str'},
-        'current_stage': {'key': 'currentStage', 'type': 'StageDetails'},
-        'order_item_stage_history': {'key': 'orderItemStageHistory', 'type': '[StageDetails]'},
-        'preferences': {'key': 'preferences', 'type': 'Preferences'},
-        'forward_shipping_details': {'key': 'forwardShippingDetails', 'type': 'ForwardShippingDetails'},
-        'reverse_shipping_details': {'key': 'reverseShippingDetails', 'type': 'ReverseShippingDetails'},
-        'notification_email_list': {'key': 'notificationEmailList', 'type': '[str]'},
-        'cancellation_reason': {'key': 'cancellationReason', 'type': 'str'},
-        'cancellation_status': {'key': 'cancellationStatus', 'type': 'str'},
-        'deletion_status': {'key': 'deletionStatus', 'type': 'str'},
-        'return_reason': {'key': 'returnReason', 'type': 'str'},
-        'return_status': {'key': 'returnStatus', 'type': 'str'},
-        'management_rp_details': {'key': 'managementRpDetails', 'type': 'ResourceProviderDetails'},
-        'management_rp_details_list': {'key': 'managementRpDetailsList', 'type': '[ResourceProviderDetails]'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "product_details": {"key": "productDetails", "type": "ProductDetails"},
+        "order_item_type": {"key": "orderItemType", "type": "str"},
+        "current_stage": {"key": "currentStage", "type": "StageDetails"},
+        "order_item_stage_history": {"key": "orderItemStageHistory", "type": "[StageDetails]"},
+        "preferences": {"key": "preferences", "type": "Preferences"},
+        "forward_shipping_details": {"key": "forwardShippingDetails", "type": "ForwardShippingDetails"},
+        "reverse_shipping_details": {"key": "reverseShippingDetails", "type": "ReverseShippingDetails"},
+        "notification_email_list": {"key": "notificationEmailList", "type": "[str]"},
+        "cancellation_reason": {"key": "cancellationReason", "type": "str"},
+        "cancellation_status": {"key": "cancellationStatus", "type": "str"},
+        "deletion_status": {"key": "deletionStatus", "type": "str"},
+        "return_reason": {"key": "returnReason", "type": "str"},
+        "return_status": {"key": "returnStatus", "type": "str"},
+        "management_rp_details": {"key": "managementRpDetails", "type": "ResourceProviderDetails"},
+        "management_rp_details_list": {"key": "managementRpDetailsList", "type": "[ResourceProviderDetails]"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
         self,
         *,
-        product_details: "ProductDetails",
-        order_item_type: Union[str, "OrderItemType"],
-        preferences: Optional["Preferences"] = None,
+        product_details: "_models.ProductDetails",
+        order_item_type: Union[str, "_models.OrderItemType"],
+        preferences: Optional["_models.Preferences"] = None,
         notification_email_list: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(OrderItemDetails, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword product_details: Unique identifier for configuration. Required.
+        :paramtype product_details: ~azure.mgmt.edgeorder.v2021_12_01.models.ProductDetails
+        :keyword order_item_type: Order item type. Required. Known values are: "Purchase" and "Rental".
+        :paramtype order_item_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemType
+        :keyword preferences: Customer notification Preferences.
+        :paramtype preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.Preferences
+        :keyword notification_email_list: Additional notification email list.
+        :paramtype notification_email_list: list[str]
+        """
+        super().__init__(**kwargs)
         self.product_details = product_details
         self.order_item_type = order_item_type
         self.current_stage = None
@@ -1708,58 +1754,70 @@ class OrderItemResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar system_data: Represents resource creation and update time.
     :vartype system_data: ~azure.mgmt.edgeorder.v2021_12_01.models.SystemData
-    :param order_item_details: Required. Represents order item details.
-    :type order_item_details: ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemDetails
-    :param address_details: Required. Represents shipping and return address for order item.
-    :type address_details: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressDetails
+    :ivar order_item_details: Represents order item details. Required.
+    :vartype order_item_details: ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemDetails
+    :ivar address_details: Represents shipping and return address for order item. Required.
+    :vartype address_details: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressDetails
     :ivar start_time: Start time of order item.
     :vartype start_time: ~datetime.datetime
-    :param order_id: Required. Id of the order to which order item belongs to.
-    :type order_id: str
+    :ivar order_id: Id of the order to which order item belongs to. Required.
+    :vartype order_id: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'order_item_details': {'required': True},
-        'address_details': {'required': True},
-        'start_time': {'readonly': True},
-        'order_id': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "order_item_details": {"required": True},
+        "address_details": {"required": True},
+        "start_time": {"readonly": True},
+        "order_id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'order_item_details': {'key': 'properties.orderItemDetails', 'type': 'OrderItemDetails'},
-        'address_details': {'key': 'properties.addressDetails', 'type': 'AddressDetails'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'order_id': {'key': 'properties.orderId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "order_item_details": {"key": "properties.orderItemDetails", "type": "OrderItemDetails"},
+        "address_details": {"key": "properties.addressDetails", "type": "AddressDetails"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "order_id": {"key": "properties.orderId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        order_item_details: "OrderItemDetails",
-        address_details: "AddressDetails",
+        order_item_details: "_models.OrderItemDetails",
+        address_details: "_models.AddressDetails",
         order_id: str,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(OrderItemResource, self).__init__(tags=tags, location=location, **kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword order_item_details: Represents order item details. Required.
+        :paramtype order_item_details: ~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemDetails
+        :keyword address_details: Represents shipping and return address for order item. Required.
+        :paramtype address_details: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressDetails
+        :keyword order_id: Id of the order to which order item belongs to. Required.
+        :paramtype order_id: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.order_item_details = order_item_details
         self.address_details = address_details
@@ -1767,68 +1825,78 @@ class OrderItemResource(TrackedResource):
         self.order_id = order_id
 
 
-class OrderItemResourceList(msrest.serialization.Model):
+class OrderItemResourceList(_serialization.Model):
     """List of orderItems.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of order item resources.
     :vartype value: list[~azure.mgmt.edgeorder.v2021_12_01.models.OrderItemResource]
-    :param next_link: Link for the next set of order item resources.
-    :type next_link: str
+    :ivar next_link: Link for the next set of order item resources.
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OrderItemResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OrderItemResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(OrderItemResourceList, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link for the next set of order item resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class OrderItemUpdateParameter(msrest.serialization.Model):
+class OrderItemUpdateParameter(_serialization.Model):
     """Updates order item parameters.
 
-    :param tags: A set of tags. The list of key value pairs that describe the resource. These tags
-     can be used in viewing and grouping this resource (across resource groups).
-    :type tags: dict[str, str]
-    :param forward_address: Updates forward shipping address and contact details.
-    :type forward_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
-    :param preferences: Customer preference.
-    :type preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.Preferences
-    :param notification_email_list: Additional notification email list.
-    :type notification_email_list: list[str]
+    :ivar tags: The list of key value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups).
+    :vartype tags: dict[str, str]
+    :ivar forward_address: Updates forward shipping address and contact details.
+    :vartype forward_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
+    :ivar preferences: Customer preference.
+    :vartype preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.Preferences
+    :ivar notification_email_list: Additional notification email list.
+    :vartype notification_email_list: list[str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'forward_address': {'key': 'properties.forwardAddress', 'type': 'AddressProperties'},
-        'preferences': {'key': 'properties.preferences', 'type': 'Preferences'},
-        'notification_email_list': {'key': 'properties.notificationEmailList', 'type': '[str]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "forward_address": {"key": "properties.forwardAddress", "type": "AddressProperties"},
+        "preferences": {"key": "properties.preferences", "type": "Preferences"},
+        "notification_email_list": {"key": "properties.notificationEmailList", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        forward_address: Optional["AddressProperties"] = None,
-        preferences: Optional["Preferences"] = None,
+        forward_address: Optional["_models.AddressProperties"] = None,
+        preferences: Optional["_models.Preferences"] = None,
         notification_email_list: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(OrderItemUpdateParameter, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: The list of key value pairs that describe the resource. These tags can be used
+         in viewing and grouping this resource (across resource groups).
+        :paramtype tags: dict[str, str]
+        :keyword forward_address: Updates forward shipping address and contact details.
+        :paramtype forward_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
+        :keyword preferences: Customer preference.
+        :paramtype preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.Preferences
+        :keyword notification_email_list: Additional notification email list.
+        :paramtype notification_email_list: list[str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.forward_address = forward_address
         self.preferences = preferences
@@ -1836,7 +1904,8 @@ class OrderItemUpdateParameter(msrest.serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1851,26 +1920,25 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class OrderResource(ProxyResource):
-    """Specifies the properties or parameters for an order. Order is a grouping of one or more order items.
+    """Specifies the properties or parameters for an order. Order is a grouping of one or more order
+    items.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1893,63 +1961,60 @@ class OrderResource(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'order_item_ids': {'readonly': True},
-        'current_stage': {'readonly': True},
-        'order_stage_history': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "order_item_ids": {"readonly": True},
+        "current_stage": {"readonly": True},
+        "order_stage_history": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'order_item_ids': {'key': 'properties.orderItemIds', 'type': '[str]'},
-        'current_stage': {'key': 'properties.currentStage', 'type': 'StageDetails'},
-        'order_stage_history': {'key': 'properties.orderStageHistory', 'type': '[StageDetails]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "order_item_ids": {"key": "properties.orderItemIds", "type": "[str]"},
+        "current_stage": {"key": "properties.currentStage", "type": "StageDetails"},
+        "order_stage_history": {"key": "properties.orderStageHistory", "type": "[StageDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OrderResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.system_data = None
         self.order_item_ids = None
         self.current_stage = None
         self.order_stage_history = None
 
 
-class OrderResourceList(msrest.serialization.Model):
+class OrderResourceList(_serialization.Model):
     """List of orders.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of order resources.
     :vartype value: list[~azure.mgmt.edgeorder.v2021_12_01.models.OrderResource]
-    :param next_link: Link for the next set of order resources.
-    :type next_link: str
+    :ivar next_link: Link for the next set of order resources.
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OrderResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OrderResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(OrderResourceList, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link for the next set of order resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
@@ -1961,79 +2026,92 @@ class Pav2MeterDetails(MeterDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param billing_type: Required. Represents billing type.Constant filled by server.  Possible
-     values include: "Pav2", "Purchase".
-    :type billing_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.BillingType
+    :ivar billing_type: Represents billing type. Required. Known values are: "Pav2" and "Purchase".
+    :vartype billing_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.BillingType
     :ivar multiplier: Billing unit applicable for Pav2 billing.
     :vartype multiplier: float
-    :ivar charging_type: Charging type. Possible values include: "PerOrder", "PerDevice".
+    :ivar charging_type: Charging type. Known values are: "PerOrder" and "PerDevice".
     :vartype charging_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.ChargingType
     :ivar meter_guid: Validation status of requested data center and transport.
     :vartype meter_guid: str
     """
 
     _validation = {
-        'billing_type': {'required': True},
-        'multiplier': {'readonly': True},
-        'charging_type': {'readonly': True},
-        'meter_guid': {'readonly': True},
+        "billing_type": {"required": True},
+        "multiplier": {"readonly": True},
+        "charging_type": {"readonly": True},
+        "meter_guid": {"readonly": True},
     }
 
     _attribute_map = {
-        'billing_type': {'key': 'billingType', 'type': 'str'},
-        'multiplier': {'key': 'multiplier', 'type': 'float'},
-        'charging_type': {'key': 'chargingType', 'type': 'str'},
-        'meter_guid': {'key': 'meterGuid', 'type': 'str'},
+        "billing_type": {"key": "billingType", "type": "str"},
+        "multiplier": {"key": "multiplier", "type": "float"},
+        "charging_type": {"key": "chargingType", "type": "str"},
+        "meter_guid": {"key": "meterGuid", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Pav2MeterDetails, self).__init__(**kwargs)
-        self.billing_type = 'Pav2'  # type: str
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.billing_type: str = "Pav2"
         self.meter_guid = None
 
 
-class Preferences(msrest.serialization.Model):
+class Preferences(_serialization.Model):
     """Preferences related to the order.
 
-    :param notification_preferences: Notification preferences.
-    :type notification_preferences:
+    :ivar notification_preferences: Notification preferences.
+    :vartype notification_preferences:
      list[~azure.mgmt.edgeorder.v2021_12_01.models.NotificationPreference]
-    :param transport_preferences: Preferences related to the shipment logistics of the order.
-    :type transport_preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.TransportPreferences
-    :param encryption_preferences: Preferences related to the Encryption.
-    :type encryption_preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.EncryptionPreferences
-    :param management_resource_preferences: Preferences related to the Management resource.
-    :type management_resource_preferences:
+    :ivar transport_preferences: Preferences related to the shipment logistics of the order.
+    :vartype transport_preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.TransportPreferences
+    :ivar encryption_preferences: Preferences related to the Encryption.
+    :vartype encryption_preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.EncryptionPreferences
+    :ivar management_resource_preferences: Preferences related to the Management resource.
+    :vartype management_resource_preferences:
      ~azure.mgmt.edgeorder.v2021_12_01.models.ManagementResourcePreferences
     """
 
     _attribute_map = {
-        'notification_preferences': {'key': 'notificationPreferences', 'type': '[NotificationPreference]'},
-        'transport_preferences': {'key': 'transportPreferences', 'type': 'TransportPreferences'},
-        'encryption_preferences': {'key': 'encryptionPreferences', 'type': 'EncryptionPreferences'},
-        'management_resource_preferences': {'key': 'managementResourcePreferences', 'type': 'ManagementResourcePreferences'},
+        "notification_preferences": {"key": "notificationPreferences", "type": "[NotificationPreference]"},
+        "transport_preferences": {"key": "transportPreferences", "type": "TransportPreferences"},
+        "encryption_preferences": {"key": "encryptionPreferences", "type": "EncryptionPreferences"},
+        "management_resource_preferences": {
+            "key": "managementResourcePreferences",
+            "type": "ManagementResourcePreferences",
+        },
     }
 
     def __init__(
         self,
         *,
-        notification_preferences: Optional[List["NotificationPreference"]] = None,
-        transport_preferences: Optional["TransportPreferences"] = None,
-        encryption_preferences: Optional["EncryptionPreferences"] = None,
-        management_resource_preferences: Optional["ManagementResourcePreferences"] = None,
-        **kwargs
-    ):
-        super(Preferences, self).__init__(**kwargs)
+        notification_preferences: Optional[List["_models.NotificationPreference"]] = None,
+        transport_preferences: Optional["_models.TransportPreferences"] = None,
+        encryption_preferences: Optional["_models.EncryptionPreferences"] = None,
+        management_resource_preferences: Optional["_models.ManagementResourcePreferences"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword notification_preferences: Notification preferences.
+        :paramtype notification_preferences:
+         list[~azure.mgmt.edgeorder.v2021_12_01.models.NotificationPreference]
+        :keyword transport_preferences: Preferences related to the shipment logistics of the order.
+        :paramtype transport_preferences: ~azure.mgmt.edgeorder.v2021_12_01.models.TransportPreferences
+        :keyword encryption_preferences: Preferences related to the Encryption.
+        :paramtype encryption_preferences:
+         ~azure.mgmt.edgeorder.v2021_12_01.models.EncryptionPreferences
+        :keyword management_resource_preferences: Preferences related to the Management resource.
+        :paramtype management_resource_preferences:
+         ~azure.mgmt.edgeorder.v2021_12_01.models.ManagementResourcePreferences
+        """
+        super().__init__(**kwargs)
         self.notification_preferences = notification_preferences
         self.transport_preferences = transport_preferences
         self.encryption_preferences = encryption_preferences
         self.management_resource_preferences = management_resource_preferences
 
 
-class Product(msrest.serialization.Model):
+class Product(_serialization.Model):
     """List of Products.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2059,32 +2137,30 @@ class Product(msrest.serialization.Model):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
-        'configurations': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
+        "configurations": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'Description'},
-        'image_information': {'key': 'properties.imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'properties.costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'properties.availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'properties.hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'properties.filterableProperties', 'type': '[FilterableProperty]'},
-        'configurations': {'key': 'properties.configurations', 'type': '[Configuration]'},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "Description"},
+        "image_information": {"key": "properties.imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "properties.costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "properties.availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "properties.hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "properties.filterableProperties", "type": "[FilterableProperty]"},
+        "configurations": {"key": "properties.configurations", "type": "[Configuration]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Product, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.image_information = None
@@ -2095,22 +2171,22 @@ class Product(msrest.serialization.Model):
         self.configurations = None
 
 
-class ProductDetails(msrest.serialization.Model):
+class ProductDetails(_serialization.Model):
     """Represents product details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param display_info: Display details of the product.
-    :type display_info: ~azure.mgmt.edgeorder.v2021_12_01.models.DisplayInfo
-    :param hierarchy_information: Required. Hierarchy of the product which uniquely identifies the
-     product.
-    :type hierarchy_information: ~azure.mgmt.edgeorder.v2021_12_01.models.HierarchyInformation
+    :ivar display_info: Display details of the product.
+    :vartype display_info: ~azure.mgmt.edgeorder.v2021_12_01.models.DisplayInfo
+    :ivar hierarchy_information: Hierarchy of the product which uniquely identifies the product.
+     Required.
+    :vartype hierarchy_information: ~azure.mgmt.edgeorder.v2021_12_01.models.HierarchyInformation
     :ivar count: Quantity of the product.
     :vartype count: int
     :ivar product_double_encryption_status: Double encryption status of the configuration.
-     Read-only field. Possible values include: "Disabled", "Enabled".
+     Read-only field. Known values are: "Disabled" and "Enabled".
     :vartype product_double_encryption_status: str or
      ~azure.mgmt.edgeorder.v2021_12_01.models.DoubleEncryptionStatus
     :ivar device_details: list of device details.
@@ -2118,28 +2194,35 @@ class ProductDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'hierarchy_information': {'required': True},
-        'count': {'readonly': True},
-        'product_double_encryption_status': {'readonly': True},
-        'device_details': {'readonly': True},
+        "hierarchy_information": {"required": True},
+        "count": {"readonly": True},
+        "product_double_encryption_status": {"readonly": True},
+        "device_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_info': {'key': 'displayInfo', 'type': 'DisplayInfo'},
-        'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
-        'count': {'key': 'count', 'type': 'int'},
-        'product_double_encryption_status': {'key': 'productDoubleEncryptionStatus', 'type': 'str'},
-        'device_details': {'key': 'deviceDetails', 'type': '[DeviceDetails]'},
+        "display_info": {"key": "displayInfo", "type": "DisplayInfo"},
+        "hierarchy_information": {"key": "hierarchyInformation", "type": "HierarchyInformation"},
+        "count": {"key": "count", "type": "int"},
+        "product_double_encryption_status": {"key": "productDoubleEncryptionStatus", "type": "str"},
+        "device_details": {"key": "deviceDetails", "type": "[DeviceDetails]"},
     }
 
     def __init__(
         self,
         *,
-        hierarchy_information: "HierarchyInformation",
-        display_info: Optional["DisplayInfo"] = None,
-        **kwargs
-    ):
-        super(ProductDetails, self).__init__(**kwargs)
+        hierarchy_information: "_models.HierarchyInformation",
+        display_info: Optional["_models.DisplayInfo"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword display_info: Display details of the product.
+        :paramtype display_info: ~azure.mgmt.edgeorder.v2021_12_01.models.DisplayInfo
+        :keyword hierarchy_information: Hierarchy of the product which uniquely identifies the product.
+         Required.
+        :paramtype hierarchy_information: ~azure.mgmt.edgeorder.v2021_12_01.models.HierarchyInformation
+        """
+        super().__init__(**kwargs)
         self.display_info = display_info
         self.hierarchy_information = hierarchy_information
         self.count = None
@@ -2147,38 +2230,37 @@ class ProductDetails(msrest.serialization.Model):
         self.device_details = None
 
 
-class ProductFamilies(msrest.serialization.Model):
+class ProductFamilies(_serialization.Model):
     """The list of product families.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of product families.
     :vartype value: list[~azure.mgmt.edgeorder.v2021_12_01.models.ProductFamily]
-    :param next_link: Link for the next set of product families.
-    :type next_link: str
+    :ivar next_link: Link for the next set of product families.
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProductFamily]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProductFamily]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(ProductFamilies, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link for the next set of product families.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class ProductFamiliesMetadata(msrest.serialization.Model):
+class ProductFamiliesMetadata(_serialization.Model):
     """Holds details about product family metadata.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2190,25 +2272,23 @@ class ProductFamiliesMetadata(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProductFamiliesMetadataDetails]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProductFamiliesMetadataDetails]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProductFamiliesMetadata, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ProductFamiliesMetadataDetails(msrest.serialization.Model):
+class ProductFamiliesMetadataDetails(_serialization.Model):
     """Product families metadata details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2231,41 +2311,43 @@ class ProductFamiliesMetadataDetails(msrest.serialization.Model):
      list[~azure.mgmt.edgeorder.v2021_12_01.models.FilterableProperty]
     :ivar product_lines: List of product lines supported in the product family.
     :vartype product_lines: list[~azure.mgmt.edgeorder.v2021_12_01.models.ProductLine]
-    :param resource_provider_details: Contains details related to resource provider.
-    :type resource_provider_details:
+    :ivar resource_provider_details: Contains details related to resource provider.
+    :vartype resource_provider_details:
      list[~azure.mgmt.edgeorder.v2021_12_01.models.ResourceProviderDetails]
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
-        'product_lines': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
+        "product_lines": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'Description'},
-        'image_information': {'key': 'properties.imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'properties.costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'properties.availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'properties.hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'properties.filterableProperties', 'type': '[FilterableProperty]'},
-        'product_lines': {'key': 'properties.productLines', 'type': '[ProductLine]'},
-        'resource_provider_details': {'key': 'properties.resourceProviderDetails', 'type': '[ResourceProviderDetails]'},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "Description"},
+        "image_information": {"key": "properties.imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "properties.costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "properties.availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "properties.hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "properties.filterableProperties", "type": "[FilterableProperty]"},
+        "product_lines": {"key": "properties.productLines", "type": "[ProductLine]"},
+        "resource_provider_details": {"key": "properties.resourceProviderDetails", "type": "[ResourceProviderDetails]"},
     }
 
     def __init__(
-        self,
-        *,
-        resource_provider_details: Optional[List["ResourceProviderDetails"]] = None,
-        **kwargs
-    ):
-        super(ProductFamiliesMetadataDetails, self).__init__(**kwargs)
+        self, *, resource_provider_details: Optional[List["_models.ResourceProviderDetails"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_provider_details: Contains details related to resource provider.
+        :paramtype resource_provider_details:
+         list[~azure.mgmt.edgeorder.v2021_12_01.models.ResourceProviderDetails]
+        """
+        super().__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.image_information = None
@@ -2277,42 +2359,52 @@ class ProductFamiliesMetadataDetails(msrest.serialization.Model):
         self.resource_provider_details = resource_provider_details
 
 
-class ProductFamiliesRequest(msrest.serialization.Model):
+class ProductFamiliesRequest(_serialization.Model):
     """The filters for showing the product families.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param filterable_properties: Required. Dictionary of filterable properties on product family.
-    :type filterable_properties: dict[str,
+    :ivar filterable_properties: Dictionary of filterable properties on product family. Required.
+    :vartype filterable_properties: dict[str,
      list[~azure.mgmt.edgeorder.v2021_12_01.models.FilterableProperty]]
-    :param customer_subscription_details: Customer subscription properties. Clients can display
+    :ivar customer_subscription_details: Customer subscription properties. Clients can display
      available products to unregistered customers by explicitly passing subscription details.
-    :type customer_subscription_details:
+    :vartype customer_subscription_details:
      ~azure.mgmt.edgeorder.v2021_12_01.models.CustomerSubscriptionDetails
     """
 
     _validation = {
-        'filterable_properties': {'required': True},
+        "filterable_properties": {"required": True},
     }
 
     _attribute_map = {
-        'filterable_properties': {'key': 'filterableProperties', 'type': '{[FilterableProperty]}'},
-        'customer_subscription_details': {'key': 'customerSubscriptionDetails', 'type': 'CustomerSubscriptionDetails'},
+        "filterable_properties": {"key": "filterableProperties", "type": "{[FilterableProperty]}"},
+        "customer_subscription_details": {"key": "customerSubscriptionDetails", "type": "CustomerSubscriptionDetails"},
     }
 
     def __init__(
         self,
         *,
-        filterable_properties: Dict[str, List["FilterableProperty"]],
-        customer_subscription_details: Optional["CustomerSubscriptionDetails"] = None,
-        **kwargs
-    ):
-        super(ProductFamiliesRequest, self).__init__(**kwargs)
+        filterable_properties: Dict[str, List["_models.FilterableProperty"]],
+        customer_subscription_details: Optional["_models.CustomerSubscriptionDetails"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword filterable_properties: Dictionary of filterable properties on product family.
+         Required.
+        :paramtype filterable_properties: dict[str,
+         list[~azure.mgmt.edgeorder.v2021_12_01.models.FilterableProperty]]
+        :keyword customer_subscription_details: Customer subscription properties. Clients can display
+         available products to unregistered customers by explicitly passing subscription details.
+        :paramtype customer_subscription_details:
+         ~azure.mgmt.edgeorder.v2021_12_01.models.CustomerSubscriptionDetails
+        """
+        super().__init__(**kwargs)
         self.filterable_properties = filterable_properties
         self.customer_subscription_details = customer_subscription_details
 
 
-class ProductFamily(msrest.serialization.Model):
+class ProductFamily(_serialization.Model):
     """Product Family.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2335,41 +2427,43 @@ class ProductFamily(msrest.serialization.Model):
      list[~azure.mgmt.edgeorder.v2021_12_01.models.FilterableProperty]
     :ivar product_lines: List of product lines supported in the product family.
     :vartype product_lines: list[~azure.mgmt.edgeorder.v2021_12_01.models.ProductLine]
-    :param resource_provider_details: Contains details related to resource provider.
-    :type resource_provider_details:
+    :ivar resource_provider_details: Contains details related to resource provider.
+    :vartype resource_provider_details:
      list[~azure.mgmt.edgeorder.v2021_12_01.models.ResourceProviderDetails]
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
-        'product_lines': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
+        "product_lines": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'Description'},
-        'image_information': {'key': 'properties.imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'properties.costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'properties.availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'properties.hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'properties.filterableProperties', 'type': '[FilterableProperty]'},
-        'product_lines': {'key': 'properties.productLines', 'type': '[ProductLine]'},
-        'resource_provider_details': {'key': 'properties.resourceProviderDetails', 'type': '[ResourceProviderDetails]'},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "Description"},
+        "image_information": {"key": "properties.imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "properties.costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "properties.availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "properties.hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "properties.filterableProperties", "type": "[FilterableProperty]"},
+        "product_lines": {"key": "properties.productLines", "type": "[ProductLine]"},
+        "resource_provider_details": {"key": "properties.resourceProviderDetails", "type": "[ResourceProviderDetails]"},
     }
 
     def __init__(
-        self,
-        *,
-        resource_provider_details: Optional[List["ResourceProviderDetails"]] = None,
-        **kwargs
-    ):
-        super(ProductFamily, self).__init__(**kwargs)
+        self, *, resource_provider_details: Optional[List["_models.ResourceProviderDetails"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_provider_details: Contains details related to resource provider.
+        :paramtype resource_provider_details:
+         list[~azure.mgmt.edgeorder.v2021_12_01.models.ResourceProviderDetails]
+        """
+        super().__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.image_information = None
@@ -2404,46 +2498,48 @@ class ProductFamilyProperties(CommonProperties):
      list[~azure.mgmt.edgeorder.v2021_12_01.models.FilterableProperty]
     :ivar product_lines: List of product lines supported in the product family.
     :vartype product_lines: list[~azure.mgmt.edgeorder.v2021_12_01.models.ProductLine]
-    :param resource_provider_details: Contains details related to resource provider.
-    :type resource_provider_details:
+    :ivar resource_provider_details: Contains details related to resource provider.
+    :vartype resource_provider_details:
      list[~azure.mgmt.edgeorder.v2021_12_01.models.ResourceProviderDetails]
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
-        'product_lines': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
+        "product_lines": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'Description'},
-        'image_information': {'key': 'imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'filterableProperties', 'type': '[FilterableProperty]'},
-        'product_lines': {'key': 'productLines', 'type': '[ProductLine]'},
-        'resource_provider_details': {'key': 'resourceProviderDetails', 'type': '[ResourceProviderDetails]'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "Description"},
+        "image_information": {"key": "imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "filterableProperties", "type": "[FilterableProperty]"},
+        "product_lines": {"key": "productLines", "type": "[ProductLine]"},
+        "resource_provider_details": {"key": "resourceProviderDetails", "type": "[ResourceProviderDetails]"},
     }
 
     def __init__(
-        self,
-        *,
-        resource_provider_details: Optional[List["ResourceProviderDetails"]] = None,
-        **kwargs
-    ):
-        super(ProductFamilyProperties, self).__init__(**kwargs)
+        self, *, resource_provider_details: Optional[List["_models.ResourceProviderDetails"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_provider_details: Contains details related to resource provider.
+        :paramtype resource_provider_details:
+         list[~azure.mgmt.edgeorder.v2021_12_01.models.ResourceProviderDetails]
+        """
+        super().__init__(**kwargs)
         self.product_lines = None
         self.resource_provider_details = resource_provider_details
 
 
-class ProductLine(msrest.serialization.Model):
+class ProductLine(_serialization.Model):
     """Product line.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2469,32 +2565,30 @@ class ProductLine(msrest.serialization.Model):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
-        'products': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
+        "products": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'Description'},
-        'image_information': {'key': 'properties.imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'properties.costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'properties.availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'properties.hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'properties.filterableProperties', 'type': '[FilterableProperty]'},
-        'products': {'key': 'properties.products', 'type': '[Product]'},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "Description"},
+        "image_information": {"key": "properties.imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "properties.costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "properties.availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "properties.hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "properties.filterableProperties", "type": "[FilterableProperty]"},
+        "products": {"key": "properties.products", "type": "[Product]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProductLine, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.display_name = None
         self.description = None
         self.image_information = None
@@ -2531,32 +2625,30 @@ class ProductLineProperties(CommonProperties):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
-        'products': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
+        "products": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'Description'},
-        'image_information': {'key': 'imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'filterableProperties', 'type': '[FilterableProperty]'},
-        'products': {'key': 'products', 'type': '[Product]'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "Description"},
+        "image_information": {"key": "imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "filterableProperties", "type": "[FilterableProperty]"},
+        "products": {"key": "products", "type": "[Product]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProductLineProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.products = None
 
 
@@ -2586,32 +2678,30 @@ class ProductProperties(CommonProperties):
     """
 
     _validation = {
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'image_information': {'readonly': True},
-        'cost_information': {'readonly': True},
-        'availability_information': {'readonly': True},
-        'hierarchy_information': {'readonly': True},
-        'filterable_properties': {'readonly': True},
-        'configurations': {'readonly': True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "image_information": {"readonly": True},
+        "cost_information": {"readonly": True},
+        "availability_information": {"readonly": True},
+        "hierarchy_information": {"readonly": True},
+        "filterable_properties": {"readonly": True},
+        "configurations": {"readonly": True},
     }
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'Description'},
-        'image_information': {'key': 'imageInformation', 'type': '[ImageInformation]'},
-        'cost_information': {'key': 'costInformation', 'type': 'CostInformation'},
-        'availability_information': {'key': 'availabilityInformation', 'type': 'AvailabilityInformation'},
-        'hierarchy_information': {'key': 'hierarchyInformation', 'type': 'HierarchyInformation'},
-        'filterable_properties': {'key': 'filterableProperties', 'type': '[FilterableProperty]'},
-        'configurations': {'key': 'configurations', 'type': '[Configuration]'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "description": {"key": "description", "type": "Description"},
+        "image_information": {"key": "imageInformation", "type": "[ImageInformation]"},
+        "cost_information": {"key": "costInformation", "type": "CostInformation"},
+        "availability_information": {"key": "availabilityInformation", "type": "AvailabilityInformation"},
+        "hierarchy_information": {"key": "hierarchyInformation", "type": "HierarchyInformation"},
+        "filterable_properties": {"key": "filterableProperties", "type": "[FilterableProperty]"},
+        "configurations": {"key": "configurations", "type": "[Configuration]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProductProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.configurations = None
 
 
@@ -2622,12 +2712,11 @@ class PurchaseMeterDetails(MeterDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param billing_type: Required. Represents billing type.Constant filled by server.  Possible
-     values include: "Pav2", "Purchase".
-    :type billing_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.BillingType
+    :ivar billing_type: Represents billing type. Required. Known values are: "Pav2" and "Purchase".
+    :vartype billing_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.BillingType
     :ivar multiplier: Billing unit applicable for Pav2 billing.
     :vartype multiplier: float
-    :ivar charging_type: Charging type. Possible values include: "PerOrder", "PerDevice".
+    :ivar charging_type: Charging type. Known values are: "PerOrder" and "PerDevice".
     :vartype charging_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.ChargingType
     :ivar product_id: Product Id.
     :vartype product_id: str
@@ -2638,41 +2727,39 @@ class PurchaseMeterDetails(MeterDetails):
     """
 
     _validation = {
-        'billing_type': {'required': True},
-        'multiplier': {'readonly': True},
-        'charging_type': {'readonly': True},
-        'product_id': {'readonly': True},
-        'sku_id': {'readonly': True},
-        'term_id': {'readonly': True},
+        "billing_type": {"required": True},
+        "multiplier": {"readonly": True},
+        "charging_type": {"readonly": True},
+        "product_id": {"readonly": True},
+        "sku_id": {"readonly": True},
+        "term_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'billing_type': {'key': 'billingType', 'type': 'str'},
-        'multiplier': {'key': 'multiplier', 'type': 'float'},
-        'charging_type': {'key': 'chargingType', 'type': 'str'},
-        'product_id': {'key': 'productId', 'type': 'str'},
-        'sku_id': {'key': 'skuId', 'type': 'str'},
-        'term_id': {'key': 'termId', 'type': 'str'},
+        "billing_type": {"key": "billingType", "type": "str"},
+        "multiplier": {"key": "multiplier", "type": "float"},
+        "charging_type": {"key": "chargingType", "type": "str"},
+        "product_id": {"key": "productId", "type": "str"},
+        "sku_id": {"key": "skuId", "type": "str"},
+        "term_id": {"key": "termId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PurchaseMeterDetails, self).__init__(**kwargs)
-        self.billing_type = 'Purchase'  # type: str
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.billing_type: str = "Purchase"
         self.product_id = None
         self.sku_id = None
         self.term_id = None
 
 
-class ResourceIdentity(msrest.serialization.Model):
+class ResourceIdentity(_serialization.Model):
     """Msi identity details of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param type: Identity type.
-    :type type: str
+    :ivar type: Identity type.
+    :vartype type: str
     :ivar principal_id: Service Principal Id backing the Msi.
     :vartype principal_id: str
     :ivar tenant_id: Home Tenant Id.
@@ -2680,29 +2767,28 @@ class ResourceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(ResourceIdentity, self).__init__(**kwargs)
+    def __init__(self, *, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword type: Identity type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.principal_id = None
         self.tenant_id = None
 
 
-class ResourceProviderDetails(msrest.serialization.Model):
+class ResourceProviderDetails(_serialization.Model):
     """Management RP details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2712,64 +2798,72 @@ class ResourceProviderDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_provider_namespace': {'readonly': True},
+        "resource_provider_namespace": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_provider_namespace': {'key': 'resourceProviderNamespace', 'type': 'str'},
+        "resource_provider_namespace": {"key": "resourceProviderNamespace", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ResourceProviderDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.resource_provider_namespace = None
 
 
-class ReturnOrderItemDetails(msrest.serialization.Model):
+class ReturnOrderItemDetails(_serialization.Model):
     """Return order item request body.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param return_address: customer return address.
-    :type return_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
-    :param return_reason: Required. Return Reason.
-    :type return_reason: str
-    :param service_tag: Service tag (located on the bottom-right corner of the device).
-    :type service_tag: str
-    :param shipping_box_required: Shipping Box required.
-    :type shipping_box_required: bool
+    :ivar return_address: customer return address.
+    :vartype return_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
+    :ivar return_reason: Return Reason. Required.
+    :vartype return_reason: str
+    :ivar service_tag: Service tag (located on the bottom-right corner of the device).
+    :vartype service_tag: str
+    :ivar shipping_box_required: Shipping Box required.
+    :vartype shipping_box_required: bool
     """
 
     _validation = {
-        'return_reason': {'required': True},
+        "return_reason": {"required": True},
     }
 
     _attribute_map = {
-        'return_address': {'key': 'returnAddress', 'type': 'AddressProperties'},
-        'return_reason': {'key': 'returnReason', 'type': 'str'},
-        'service_tag': {'key': 'serviceTag', 'type': 'str'},
-        'shipping_box_required': {'key': 'shippingBoxRequired', 'type': 'bool'},
+        "return_address": {"key": "returnAddress", "type": "AddressProperties"},
+        "return_reason": {"key": "returnReason", "type": "str"},
+        "service_tag": {"key": "serviceTag", "type": "str"},
+        "shipping_box_required": {"key": "shippingBoxRequired", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         return_reason: str,
-        return_address: Optional["AddressProperties"] = None,
+        return_address: Optional["_models.AddressProperties"] = None,
         service_tag: Optional[str] = None,
-        shipping_box_required: Optional[bool] = False,
-        **kwargs
-    ):
-        super(ReturnOrderItemDetails, self).__init__(**kwargs)
+        shipping_box_required: bool = False,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword return_address: customer return address.
+        :paramtype return_address: ~azure.mgmt.edgeorder.v2021_12_01.models.AddressProperties
+        :keyword return_reason: Return Reason. Required.
+        :paramtype return_reason: str
+        :keyword service_tag: Service tag (located on the bottom-right corner of the device).
+        :paramtype service_tag: str
+        :keyword shipping_box_required: Shipping Box required.
+        :paramtype shipping_box_required: bool
+        """
+        super().__init__(**kwargs)
         self.return_address = return_address
         self.return_reason = return_reason
         self.service_tag = service_tag
         self.shipping_box_required = shipping_box_required
 
 
-class ReverseShippingDetails(msrest.serialization.Model):
+class ReverseShippingDetails(_serialization.Model):
     """Reverse shipment details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2788,26 +2882,24 @@ class ReverseShippingDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'sas_key_for_label': {'readonly': True},
-        'carrier_name': {'readonly': True},
-        'carrier_display_name': {'readonly': True},
-        'tracking_id': {'readonly': True},
-        'tracking_url': {'readonly': True},
+        "sas_key_for_label": {"readonly": True},
+        "carrier_name": {"readonly": True},
+        "carrier_display_name": {"readonly": True},
+        "tracking_id": {"readonly": True},
+        "tracking_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'sas_key_for_label': {'key': 'sasKeyForLabel', 'type': 'str'},
-        'carrier_name': {'key': 'carrierName', 'type': 'str'},
-        'carrier_display_name': {'key': 'carrierDisplayName', 'type': 'str'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
-        'tracking_url': {'key': 'trackingUrl', 'type': 'str'},
+        "sas_key_for_label": {"key": "sasKeyForLabel", "type": "str"},
+        "carrier_name": {"key": "carrierName", "type": "str"},
+        "carrier_display_name": {"key": "carrierDisplayName", "type": "str"},
+        "tracking_id": {"key": "trackingId", "type": "str"},
+        "tracking_url": {"key": "trackingUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ReverseShippingDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.sas_key_for_label = None
         self.carrier_name = None
         self.carrier_display_name = None
@@ -2815,50 +2907,49 @@ class ReverseShippingDetails(msrest.serialization.Model):
         self.tracking_url = None
 
 
-class ShippingAddress(msrest.serialization.Model):
+class ShippingAddress(_serialization.Model):
     """Shipping address where customer wishes to receive the device.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param street_address1: Required. Street Address line 1.
-    :type street_address1: str
-    :param street_address2: Street Address line 2.
-    :type street_address2: str
-    :param street_address3: Street Address line 3.
-    :type street_address3: str
-    :param city: Name of the City.
-    :type city: str
-    :param state_or_province: Name of the State or Province.
-    :type state_or_province: str
-    :param country: Required. Name of the Country.
-    :type country: str
-    :param postal_code: Postal code.
-    :type postal_code: str
-    :param zip_extended_code: Extended Zip Code.
-    :type zip_extended_code: str
-    :param company_name: Name of the company.
-    :type company_name: str
-    :param address_type: Type of address. Possible values include: "None", "Residential",
-     "Commercial".
-    :type address_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.AddressType
+    :ivar street_address1: Street Address line 1. Required.
+    :vartype street_address1: str
+    :ivar street_address2: Street Address line 2.
+    :vartype street_address2: str
+    :ivar street_address3: Street Address line 3.
+    :vartype street_address3: str
+    :ivar city: Name of the City.
+    :vartype city: str
+    :ivar state_or_province: Name of the State or Province.
+    :vartype state_or_province: str
+    :ivar country: Name of the Country. Required.
+    :vartype country: str
+    :ivar postal_code: Postal code.
+    :vartype postal_code: str
+    :ivar zip_extended_code: Extended Zip Code.
+    :vartype zip_extended_code: str
+    :ivar company_name: Name of the company.
+    :vartype company_name: str
+    :ivar address_type: Type of address. Known values are: "None", "Residential", and "Commercial".
+    :vartype address_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.AddressType
     """
 
     _validation = {
-        'street_address1': {'required': True},
-        'country': {'required': True},
+        "street_address1": {"required": True},
+        "country": {"required": True},
     }
 
     _attribute_map = {
-        'street_address1': {'key': 'streetAddress1', 'type': 'str'},
-        'street_address2': {'key': 'streetAddress2', 'type': 'str'},
-        'street_address3': {'key': 'streetAddress3', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'state_or_province': {'key': 'stateOrProvince', 'type': 'str'},
-        'country': {'key': 'country', 'type': 'str'},
-        'postal_code': {'key': 'postalCode', 'type': 'str'},
-        'zip_extended_code': {'key': 'zipExtendedCode', 'type': 'str'},
-        'company_name': {'key': 'companyName', 'type': 'str'},
-        'address_type': {'key': 'addressType', 'type': 'str'},
+        "street_address1": {"key": "streetAddress1", "type": "str"},
+        "street_address2": {"key": "streetAddress2", "type": "str"},
+        "street_address3": {"key": "streetAddress3", "type": "str"},
+        "city": {"key": "city", "type": "str"},
+        "state_or_province": {"key": "stateOrProvince", "type": "str"},
+        "country": {"key": "country", "type": "str"},
+        "postal_code": {"key": "postalCode", "type": "str"},
+        "zip_extended_code": {"key": "zipExtendedCode", "type": "str"},
+        "company_name": {"key": "companyName", "type": "str"},
+        "address_type": {"key": "addressType", "type": "str"},
     }
 
     def __init__(
@@ -2873,10 +2964,33 @@ class ShippingAddress(msrest.serialization.Model):
         postal_code: Optional[str] = None,
         zip_extended_code: Optional[str] = None,
         company_name: Optional[str] = None,
-        address_type: Optional[Union[str, "AddressType"]] = None,
-        **kwargs
-    ):
-        super(ShippingAddress, self).__init__(**kwargs)
+        address_type: Optional[Union[str, "_models.AddressType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword street_address1: Street Address line 1. Required.
+        :paramtype street_address1: str
+        :keyword street_address2: Street Address line 2.
+        :paramtype street_address2: str
+        :keyword street_address3: Street Address line 3.
+        :paramtype street_address3: str
+        :keyword city: Name of the City.
+        :paramtype city: str
+        :keyword state_or_province: Name of the State or Province.
+        :paramtype state_or_province: str
+        :keyword country: Name of the Country. Required.
+        :paramtype country: str
+        :keyword postal_code: Postal code.
+        :paramtype postal_code: str
+        :keyword zip_extended_code: Extended Zip Code.
+        :paramtype zip_extended_code: str
+        :keyword company_name: Name of the company.
+        :paramtype company_name: str
+        :keyword address_type: Type of address. Known values are: "None", "Residential", and
+         "Commercial".
+        :paramtype address_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.AddressType
+        """
+        super().__init__(**kwargs)
         self.street_address1 = street_address1
         self.street_address2 = street_address2
         self.street_address3 = street_address3
@@ -2889,7 +3003,7 @@ class ShippingAddress(msrest.serialization.Model):
         self.address_type = address_type
 
 
-class ShippingDetails(msrest.serialization.Model):
+class ShippingDetails(_serialization.Model):
     """Package shipping details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2906,31 +3020,29 @@ class ShippingDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'carrier_name': {'readonly': True},
-        'carrier_display_name': {'readonly': True},
-        'tracking_id': {'readonly': True},
-        'tracking_url': {'readonly': True},
+        "carrier_name": {"readonly": True},
+        "carrier_display_name": {"readonly": True},
+        "tracking_id": {"readonly": True},
+        "tracking_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'carrier_name': {'key': 'carrierName', 'type': 'str'},
-        'carrier_display_name': {'key': 'carrierDisplayName', 'type': 'str'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
-        'tracking_url': {'key': 'trackingUrl', 'type': 'str'},
+        "carrier_name": {"key": "carrierName", "type": "str"},
+        "carrier_display_name": {"key": "carrierDisplayName", "type": "str"},
+        "tracking_id": {"key": "trackingId", "type": "str"},
+        "tracking_url": {"key": "trackingUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ShippingDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.carrier_name = None
         self.carrier_display_name = None
         self.tracking_id = None
         self.tracking_url = None
 
 
-class Specification(msrest.serialization.Model):
+class Specification(_serialization.Model):
     """Specifications of the configurations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2942,35 +3054,33 @@ class Specification(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Specification, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
 
-class StageDetails(msrest.serialization.Model):
+class StageDetails(_serialization.Model):
     """Resource stage details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar stage_status: Stage status. Possible values include: "None", "InProgress", "Succeeded",
-     "Failed", "Cancelled", "Cancelling".
+    :ivar stage_status: Stage status. Known values are: "None", "InProgress", "Succeeded",
+     "Failed", "Cancelled", and "Cancelling".
     :vartype stage_status: str or ~azure.mgmt.edgeorder.v2021_12_01.models.StageStatus
-    :ivar stage_name: Stage name. Possible values include: "Placed", "InReview", "Confirmed",
+    :ivar stage_name: Stage name. Known values are: "Placed", "InReview", "Confirmed",
      "ReadyToShip", "Shipped", "Delivered", "InUse", "ReturnInitiated", "ReturnPickedUp",
-     "ReturnedToMicrosoft", "ReturnCompleted", "Cancelled".
+     "ReturnedToMicrosoft", "ReturnCompleted", and "Cancelled".
     :vartype stage_name: str or ~azure.mgmt.edgeorder.v2021_12_01.models.StageName
     :ivar display_name: Display name of the resource stage.
     :vartype display_name: str
@@ -2979,70 +3089,84 @@ class StageDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'stage_status': {'readonly': True},
-        'stage_name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'start_time': {'readonly': True},
+        "stage_status": {"readonly": True},
+        "stage_name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "start_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'stage_status': {'key': 'stageStatus', 'type': 'str'},
-        'stage_name': {'key': 'stageName', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
+        "stage_status": {"key": "stageStatus", "type": "str"},
+        "stage_name": {"key": "stageName", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(StageDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.stage_status = None
         self.stage_name = None
         self.display_name = None
         self.start_time = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(SystemData, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.edgeorder.v2021_12_01.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -3051,30 +3175,31 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TransportPreferences(msrest.serialization.Model):
+class TransportPreferences(_serialization.Model):
     """Preferences related to the shipment logistics of the sku.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param preferred_shipment_type: Required. Indicates Shipment Logistics type that the customer
-     preferred. Possible values include: "CustomerManaged", "MicrosoftManaged".
-    :type preferred_shipment_type: str or
+    :ivar preferred_shipment_type: Indicates Shipment Logistics type that the customer preferred.
+     Required. Known values are: "CustomerManaged" and "MicrosoftManaged".
+    :vartype preferred_shipment_type: str or
      ~azure.mgmt.edgeorder.v2021_12_01.models.TransportShipmentTypes
     """
 
     _validation = {
-        'preferred_shipment_type': {'required': True},
+        "preferred_shipment_type": {"required": True},
     }
 
     _attribute_map = {
-        'preferred_shipment_type': {'key': 'preferredShipmentType', 'type': 'str'},
+        "preferred_shipment_type": {"key": "preferredShipmentType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        preferred_shipment_type: Union[str, "TransportShipmentTypes"],
-        **kwargs
-    ):
-        super(TransportPreferences, self).__init__(**kwargs)
+    def __init__(self, *, preferred_shipment_type: Union[str, "_models.TransportShipmentTypes"], **kwargs: Any) -> None:
+        """
+        :keyword preferred_shipment_type: Indicates Shipment Logistics type that the customer
+         preferred. Required. Known values are: "CustomerManaged" and "MicrosoftManaged".
+        :paramtype preferred_shipment_type: str or
+         ~azure.mgmt.edgeorder.v2021_12_01.models.TransportShipmentTypes
+        """
+        super().__init__(**kwargs)
         self.preferred_shipment_type = preferred_shipment_type

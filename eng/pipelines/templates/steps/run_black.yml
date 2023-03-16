@@ -11,7 +11,7 @@ steps:
     condition: succeededOrFailed()
 
   - script: |
-      pip install black==21.6b0 tools/azure-sdk-tools["build"]
+      python -m pip install black==22.3.0 tools/azure-sdk-tools["build"]
     displayName: 'Prep Environment'
     condition: succeededOrFailed()
 

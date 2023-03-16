@@ -234,8 +234,8 @@ class DedicatedHostsOperations:
         :type host_group_name: str
         :param host_name: The name of the dedicated host . Required.
         :type host_name: str
-        :param parameters: Parameters supplied to the Create Dedicated Host. Is either a model type or
-         a IO type. Required.
+        :param parameters: Parameters supplied to the Create Dedicated Host. Is either a DedicatedHost
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2022_03_01.models.DedicatedHost or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -467,7 +467,7 @@ class DedicatedHostsOperations:
         :param host_name: The name of the dedicated host . Required.
         :type host_name: str
         :param parameters: Parameters supplied to the Update Dedicated Host operation. Is either a
-         model type or a IO type. Required.
+         DedicatedHostUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2022_03_01.models.DedicatedHostUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

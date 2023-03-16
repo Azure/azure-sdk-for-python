@@ -304,8 +304,8 @@ class ServerTrustGroupsOperations:
         :type location_name: str
         :param server_trust_group_name: The name of the server trust group. Required.
         :type server_trust_group_name: str
-        :param parameters: The server trust group parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: The server trust group parameters. Is either a ServerTrustGroup type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.sql.models.ServerTrustGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

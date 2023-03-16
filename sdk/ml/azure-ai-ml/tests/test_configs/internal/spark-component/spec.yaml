@@ -1,0 +1,36 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/SparkComponent.json
+name: spark_test
+type: spark
+version: 1
+display_name: Aml Spark dataset test module
+description: Aml Spark dataset test module
+
+# Please use hdfs mode for input and output data for type path
+inputs:
+  file_input1:
+    type: path
+    datastore_mode: hdfs
+    description: The data to be read.
+  file_input2:
+    type: path
+    datastore_mode: hdfs
+    description: The data to be read.
+
+outputs:
+  output:
+    type: path
+    datastore_mode: hdfs
+
+entry:
+  file: entry.py # file path of the entry file relative to the code root folder
+
+pyFiles: utils.zip
+jars: scalaproj.jar
+
+args: >-
+  --file_input1 ${{inputs.file_input1}}
+  --file_input2 ${{inputs.file_input2}}
+  --output ${{outputs.output}}
+
+environment:
+  conda_file: conda.yaml

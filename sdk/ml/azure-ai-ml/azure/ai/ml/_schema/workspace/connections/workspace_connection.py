@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionCategory
 from azure.ai.ml._schema.core.fields import ArmStr, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
@@ -16,6 +16,7 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     SasTokenConfigurationSchema,
     ServicePrincipalConfigurationSchema,
     UsernamePasswordConfigurationSchema,
+    AccessKeyConfigurationSchema,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import AzureMLResourceType
@@ -31,6 +32,12 @@ class WorkspaceConnectionSchema(PathAwareSchema):
             ConnectionCategory.CONTAINER_REGISTRY,
             ConnectionCategory.PYTHON_FEED,
             ConnectionCategory.FEATURE_STORE,
+            ConnectionCategory.S3,
+            ConnectionCategory.SNOWFLAKE,
+            ConnectionCategory.AZURE_SQL_DB,
+            ConnectionCategory.AZURE_SYNAPSE_ANALYTICS,
+            ConnectionCategory.AZURE_MY_SQL_DB,
+            ConnectionCategory.AZURE_POSTGRES_DB,
         ],
         casing_transform=camel_to_snake,
         required=True,
@@ -43,6 +50,7 @@ class WorkspaceConnectionSchema(PathAwareSchema):
             NestedField(UsernamePasswordConfigurationSchema),
             NestedField(ManagedIdentityConfigurationSchema),
             NestedField(ServicePrincipalConfigurationSchema),
+            NestedField(AccessKeyConfigurationSchema),
         ]
     )
     metadata = fields.Dict(required=False, allow_none=True)

@@ -214,9 +214,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         **kwargs,
     ):
         super(Input, self).__init__(type=type)
-        # As an annotation, it is not allowed to initialize the _arg_name.
-        # The _arg_name will be updated by the annotated variable _arg_name.
-        self._arg_name = None
+        # As an annotation, it is not allowed to initialize the _port_name.
+        self._port_name = None
         self.description = description
 
         if path is not None and not isinstance(path, str):
@@ -291,8 +290,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             if lower_val not in {"true", "false"}:
                 msg = "Boolean parameter '{}' only accept True/False, got {}."
                 raise ValidationException(
-                    message=msg.format(self._arg_name, val),
-                    no_personal_data_message=msg.format("[self._arg_name]", "[val]"),
+                    message=msg.format(self._port_name, val),
+                    no_personal_data_message=msg.format("[self._port_name]", "[val]"),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -314,11 +313,11 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         return val
 
     def _update_name(self, name):
-        self._arg_name = name
+        self._port_name = name
 
     def _update_default(self, default_value):
         """Update provided default values."""
-        name = "" if not self._arg_name else f"{self._arg_name!r} "
+        name = "" if not self._port_name else f"{self._port_name!r} "
         msg_prefix = f"Default value of Input {name}"
 
         if not self._is_primitive_type and default_value is not None:
@@ -354,14 +353,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _validate_or_throw(self, value):
         """Validate input parameter value, throw exception if not as expected.
 
-        It will throw exception if validate failed, otherwise do
-        nothing.
+        It will throw exception if validate failed, otherwise do nothing.
         """
         if not self.optional and value is None:
             msg = "Parameter {} cannot be None since it is not optional."
             raise ValidationException(
-                message=msg.format(self._arg_name),
-                no_personal_data_message=msg.format("[self._arg_name]"),
+                message=msg.format(self._port_name),
+                no_personal_data_message=msg.format("[self._port_name]"),
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.PIPELINE,
                 error_type=ValidationErrorType.INVALID_VALUE,
@@ -370,8 +368,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             if not isinstance(value, self._allowed_types):
                 msg = "Unexpected data type for parameter '{}'. Expected {} but got {}."
                 raise ValidationException(
-                    message=msg.format(self._arg_name, self._allowed_types, type(value)),
-                    no_personal_data_message=msg.format("[_arg_name]", self._allowed_types, type(value)),
+                    message=msg.format(self._port_name, self._allowed_types, type(value)),
+                    no_personal_data_message=msg.format("[_port_name]", self._allowed_types, type(value)),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -381,8 +379,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             if self.min is not None and value < self.min:
                 msg = "Parameter '{}' should not be less than {}."
                 raise ValidationException(
-                    message=msg.format(self._arg_name, self.min),
-                    no_personal_data_message=msg.format("[_arg_name]", self.min),
+                    message=msg.format(self._port_name, self.min),
+                    no_personal_data_message=msg.format("[_port_name]", self.min),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -390,8 +388,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             if self.max is not None and value > self.max:
                 msg = "Parameter '{}' should not be greater than {}."
                 raise ValidationException(
-                    message=msg.format(self._arg_name, self.max),
-                    no_personal_data_message=msg.format("[_arg_name]", self.max),
+                    message=msg.format(self._port_name, self.max),
+                    no_personal_data_message=msg.format("[_port_name]", self.max),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -438,7 +436,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         return value
 
     def _normalize_self_properties(self):
-        # parse value from string to it's original type. eg: "false" -> False
+        # parse value from string to its original type. eg: "false" -> False
         for key in ["min", "max"]:
             if getattr(self, key) is not None:
                 origin_value = getattr(self, key)

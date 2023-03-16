@@ -11,10 +11,9 @@ from typing import Union
 
 import yaml
 
-from azure.ai.ml._utils._asset_utils import IgnoreFile, traverse_directory
-from azure.ai.ml.entities._util import _general_copy
-from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
-
+from ..._utils._asset_utils import IgnoreFile, traverse_directory
+from ...entities._util import _general_copy
+from ...entities._validation import MutableValidationResult, _ValidationResultBuilder
 from ._artifact_cache import ArtifactCache
 from .code import InternalComponentIgnoreFile
 
@@ -95,11 +94,7 @@ class _AdditionalIncludes:
             # for same folder, the expected behavior is merging
             # ignore will be also applied during this process
             for name in src.glob("*"):
-                _AdditionalIncludes._copy(
-                    name,
-                    dst / name.name,
-                    ignore_file=ignore_file.merge(name)
-                )
+                _AdditionalIncludes._copy(name, dst / name.name, ignore_file=ignore_file.merge(name))
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -182,9 +177,7 @@ class _AdditionalIncludes:
                 skip_ignore_file=True,
             )
             self._copy(
-                Path(self._code_path),
-                tmp_folder_path / Path(self._code_path).name,
-                ignore_file=root_ignore_file
+                Path(self._code_path), tmp_folder_path / Path(self._code_path).name, ignore_file=root_ignore_file
             )
         else:
             # current implementation of ignore file is based on absolute path, so it cannot be shared

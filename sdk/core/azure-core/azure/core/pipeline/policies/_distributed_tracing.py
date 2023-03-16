@@ -81,9 +81,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     _RESPONSE_ID = "x-ms-request-id"
 
     def __init__(self, **kwargs):
-        self._network_span_namer = kwargs.get(
-            "network_span_namer", _default_network_span_namer
-        )
+        self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
 
     def on_request(self, request: "PipelineRequest") -> None:
@@ -126,17 +124,13 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             if request_id is not None:
                 span.add_attribute(self._REQUEST_ID, request_id)
             if response and self._RESPONSE_ID in response.headers:
-                span.add_attribute(
-                    self._RESPONSE_ID, response.headers[self._RESPONSE_ID]
-                )
+                span.add_attribute(self._RESPONSE_ID, response.headers[self._RESPONSE_ID])
             if exc_info:
                 span.__exit__(*exc_info)
             else:
                 span.finish()
 
-    def on_response(
-        self, request: "PipelineRequest", response: "PipelineResponse"
-    ) -> None:
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
         self.end_span(request, response=response.http_response)
 
     def on_exception(self, request: "PipelineRequest") -> None:

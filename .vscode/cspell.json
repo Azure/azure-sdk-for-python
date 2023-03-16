@@ -58,6 +58,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
+    "sdk/easm/azure-defender-easm/azure/defender/easm/**",
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
@@ -170,6 +171,7 @@
     "dtlksd",
     "DWORD",
     "eastus",
+    "Easm",
     "euap",
     "eckey",
     "ekus",
@@ -386,13 +388,29 @@
     "prnumber",
     "yarl",
     "SDDL",
-    "dacl"
+    "dacl",
+    "whls"
   ],
   "overrides": [
     {
       "filename": "sdk/remoterendering/**",
       "words": [
         "Phong"
+      ]
+    },
+    {              
+      "filename": "tools/azure-sdk-tools/ci_tools/deps.html.j2",
+      "words": [
+        "isfork",
+        "ISFORK",
+        "thead"
+      ]
+    },
+    {
+      "filename": "sdk/core/azure-core/tests/test_serialization.py",
+      "words": [
+        "Rlcw",
+        "Jwcmlud"
       ]
     },
     {
@@ -910,7 +928,19 @@
       "filename": "sdk/agrifood/azure-agrifood-farming/**",
       "words": [
         "NDVI",
-        "Unhandleable"
+        "Unhandleable",
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize",
+        "stac",
+        "nnumeral",
+        "nonly",
+        "STAC",
+        "Placeid",
+        "resouce",
+        "nnumeral"
       ]
      },
      {
@@ -1113,6 +1143,13 @@
         "nonly",
         "nthe",
         "reques"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
       ]
     },
     {

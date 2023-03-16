@@ -22,13 +22,14 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs
-from azure.ai.ml.entities import OnlineDeployment
+from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs, DEFAULT_MDC_PATH
+from azure.ai.ml.entities import OnlineDeployment, Data
+from azure.ai.ml.entities._deployment.data_asset import DataAsset
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
@@ -45,15 +46,14 @@ from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
     """OnlineDeploymentOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -67,7 +67,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_02_2022_preview.online_deployments
         self._online_endpoint_operations = service_client_02_2022_preview.online_endpoints
@@ -76,7 +76,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: OnlineDeployment,
@@ -126,12 +126,12 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
                 )
-            if (deployment and deployment.instance_type and deployment.instance_type.lower() in SmallSKUs):
+            if deployment and deployment.instance_type and deployment.instance_type.lower() in SmallSKUs:
                 module_logger.warning(
-                    "Instance type %s may be too small for compute resources. " # pylint: disable=line-too-long
-                    "Minimum recommended compute SKU is Standard_DS3_v2 for general purpose endpoints. Learn more about SKUs here: " # pylint: disable=line-too-long
+                    "Instance type %s may be too small for compute resources. "  # pylint: disable=line-too-long
+                    "Minimum recommended compute SKU is Standard_DS3_v2 for general purpose endpoints. Learn more about SKUs here: "  # pylint: disable=line-too-long
                     "https://learn.microsoft.com/en-us/azure/machine-learning/referencemanaged-online-endpoints-vm-sku-list",
-                    deployment.instance_type # pylint: disable=line-too-long
+                    deployment.instance_type,  # pylint: disable=line-too-long
                 )
             if (
                 not skip_script_validation
@@ -160,6 +160,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 operation_scope=self._operation_scope,
                 operation_config=self._operation_config,
             )
+            if deployment.data_collector:
+                self._register_collection_data_assets(deployment=deployment)
 
             upload_dependencies(deployment, orchestrators)
             try:
@@ -191,7 +193,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
         """Get a deployment resource.
 
@@ -222,7 +224,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return deployment
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
@@ -247,7 +249,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
         self,
         name: str,
@@ -290,7 +292,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         ).content
 
     @distributed_trace
-    # @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 
@@ -337,9 +339,27 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return f"{self._workspace_name}-{name}-{random.randint(1, 10000000)}"
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location TODO[TASK 1260265]: can we cache this
-        information and only refresh when the operation_scope is changed?"""
+        """Get the workspace location TODO[TASK 1260265]: can we cache this information and only refresh when the
+        operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _get_local_endpoint_mode(self, vscode_debug):
         return LocalEndpointMode.VSCodeDevContainer if vscode_debug else LocalEndpointMode.DetachedContainer
+
+    def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:
+        for collection in deployment.data_collector.collections:
+            data_name = f"{deployment.endpoint_name}-{deployment.name}-{collection}"
+            short_form_path = (
+                f"{deployment.data_collector.destination.path}/{deployment.endpoint_name}/{deployment.name}/{collection}"  # pylint: disable=line-too-long
+                if deployment.data_collector.destination and deployment.data_collector.destination.path
+                else f"{DEFAULT_MDC_PATH}/{deployment.endpoint_name}/{deployment.name}/{collection}"
+            )
+            data_object = Data(
+                name=data_name,
+                path=short_form_path,
+                is_anonymous=True,
+            )
+            result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
+            deployment.data_collector.collections[collection].data = DataAsset(
+                path=short_form_path, name=result.name, version=result.version
+            )

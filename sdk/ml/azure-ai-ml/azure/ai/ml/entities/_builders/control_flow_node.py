@@ -11,7 +11,7 @@ from marshmallow import ValidationError
 
 from azure.ai.ml._utils.utils import is_data_binding_expression, is_internal_components_enabled
 from azure.ai.ml.constants._common import CommonYamlFields
-from azure.ai.ml.constants._component import ControlFlowType
+from azure.ai.ml.constants._component import ControlFlowType, ComponentSource
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._validation import SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType
@@ -24,14 +24,15 @@ module_logger = logging.getLogger(__name__)
 
 # ControlFlowNode did not inherit from BaseNode since it doesn't have inputs/outputs like other nodes.
 class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
-    """
-    Base class for control flow node in pipeline. Please do not directly use this class.
+    """Base class for control flow node in pipeline.
+
+    Please do not directly use this class.
     """
 
     def __init__(self, **kwargs):
         # TODO(1979547): refactor this
-        # property _source can't be set
-        kwargs.pop("_source", None)
+        _source = kwargs.pop("_source", None)
+        self._source = _source if _source else ComponentSource.DSL
         _from_component_func = kwargs.pop("_from_component_func", False)
         self._type = kwargs.get("type", None)
         self._instance_id = str(uuid.uuid4())
@@ -51,11 +52,11 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
         rest_obj = self._to_dict()
+        rest_obj["_source"] = self._source
         return convert_ordered_dict_to_dict(rest_obj)
 
     def _register_in_current_pipeline_component_builder(self):
-        """Register this node in current pipeline component builder by adding
-        self to a global stack."""
+        """Register this node in current pipeline component builder by adding self to a global stack."""
         from azure.ai.ml.dsl._pipeline_component_builder import _add_component_to_current_definition_builder
 
         _add_component_to_current_definition_builder(self)
@@ -64,15 +65,15 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
     def _get_validation_error_target(cls) -> ErrorTarget:
         """Return the error target of this resource.
 
-        Should be overridden by subclass. Value should be in ErrorTarget
-        enum.
+        Should be overridden by subclass. Value should be in ErrorTarget enum.
         """
         return ErrorTarget.PIPELINE
 
 
 class LoopNode(ControlFlowNode, ABC):
-    """
-    Base class for loop node in pipeline. Please do not directly use this class.
+    """Base class for loop node in pipeline.
+
+    Please do not directly use this class.
     """
 
     def __init__(self, *, body: Union[BaseNode], **kwargs):

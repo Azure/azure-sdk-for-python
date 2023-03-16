@@ -291,11 +291,13 @@ def assert_job_cancel(
     *,
     experiment_name=None,
     check_before_cancelled: Callable[[Job], bool] = None,
+    skip_cancel=False,
 ) -> Job:
     created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
     if check_before_cancelled is not None:
         assert check_before_cancelled(created_job)
-    cancel_job(client, created_job)
+    if skip_cancel is False:
+        cancel_job(client, created_job)
     return created_job
 
 
@@ -349,11 +351,11 @@ def parse_local_path(origin_path, base_path=None):
 
 @contextmanager
 def build_temp_folder(
-        *,
-        source_base_dir: Union[str, os.PathLike],
-        relative_dirs_to_copy: List[str] = None,
-        relative_files_to_copy: List[str] = None,
-        extra_files_to_create: Dict[str, Optional[str]] = None,
+    *,
+    source_base_dir: Union[str, os.PathLike],
+    relative_dirs_to_copy: List[str] = None,
+    relative_files_to_copy: List[str] = None,
+    extra_files_to_create: Dict[str, Optional[str]] = None,
 ) -> str:
     """Build a temporary folder with files and subfolders copied from source_base_dir.
 
