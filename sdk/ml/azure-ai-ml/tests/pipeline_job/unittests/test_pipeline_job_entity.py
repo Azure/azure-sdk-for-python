@@ -2039,5 +2039,5 @@ class TestPipelineJobEntity:
         yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/pipeline_with_job_tier.yml"
         pipeline_job = load_job(yaml_path)
         rest_obj = pipeline_job._to_rest_object()
-        expected_queue_settings = {"job_tier": "Standard"}
-        assert rest_obj.properties.jobs["hello_world"]["queue_settings"] == expected_queue_settings
+        assert rest_obj.properties.jobs["spot_job_tier"]["queue_settings"] == {"job_tier": "Spot"}
+        assert rest_obj.properties.jobs["standard_job_tier"]["queue_settings"] == {"job_tier": "Standard"}
