@@ -10,6 +10,7 @@ import sys
 from typing import Any, Callable, List, Tuple, TYPE_CHECKING, Union, Dict # pylint: disable=unused-import
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
+from azure.storage.queue import RetentionPolicy
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -25,7 +26,6 @@ else:
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.storage.queue import RetentionPolicy
 
 
 class QueueAnalyticsLogging(GeneratedLogging):
@@ -78,7 +78,7 @@ class Metrics(GeneratedMetrics):
 
     :keyword str version: The version of Storage Analytics to configure.
     :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
-    :keyword bool include_ap_is: Indicates whether metrics should generate summary
+    :keyword bool include_apis: Indicates whether metrics should generate summary
         statistics for called API operations.
     :keyword ~azure.storage.queue.RetentionPolicy retention_policy: The retention policy for the metrics.
     """
@@ -87,7 +87,7 @@ class Metrics(GeneratedMetrics):
     """The version of Storage Analytics to configure."""
     enabled: bool = False
     """Indicates whether metrics are enabled for the service."""
-    include_ap_is: bool
+    include_apis: bool
     """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: "RetentionPolicy"
     """The retention policy for the metrics."""
@@ -122,7 +122,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         soft-deleted data should be retained. All data older than this value will
         be deleted.
     """
-    
+
     enabled: bool = False
     """Indicates whether a retention policy is enabled for the storage service."""
     days: int = None
