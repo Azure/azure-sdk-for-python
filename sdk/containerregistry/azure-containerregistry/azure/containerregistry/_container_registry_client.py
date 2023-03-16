@@ -34,6 +34,7 @@ from ._models import (
     RepositoryProperties,
     ArtifactTagProperties,
     ArtifactManifestProperties,
+    DownloadBlobResult,
     DownloadManifestResult,
 )
 
@@ -42,9 +43,6 @@ if TYPE_CHECKING:
 
 def _return_response_and_deserialized(pipeline_response, deserialized, _):
     return pipeline_response, deserialized
-
-def _return_deserialized_and_headers(_, deserialized, response_headers):
-    return deserialized, response_headers
 
 def _return_response_headers(_, __, response_headers):
     return response_headers
@@ -852,7 +850,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         while len(buffer) > 0:
             response_headers = cast(Dict[str, str], self._client.container_registry_blob.upload_chunk(
                 location,
-                buffer,
+                BytesIO(buffer),
                 cls=_return_response_headers,
                 **kwargs
             ))
@@ -898,43 +896,29 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository: str, digest: str, **kwargs) -> IO:
-        """Download a blob that is part of an artifact to a stream.
-
-        :param str repository: Name of the repository.
+    def download_blob(self, repository, digest, **kwargs):
+        # type: (str, str, **Any) -> Union[DownloadBlobResult, None]
+        """Download a blob that is part of an artifact.
+        :param str repository: Name of the repository
         :param str digest: The digest of the blob to download.
-        :returns: IO
-        :rtype: IO
+        :returns: DownloadBlobResult or None
+        :rtype: ~azure.containerregistry.DownloadBlobResult or None
         :raises ValueError: If the parameter repository or digest is None.
         """
-        hasher = hashlib.sha256()
-        downloaded = 0
-        blob_size = None
-        data = BytesIO()
         try:
-            while True:
-                end_range = downloaded + DEFAULT_CHUNK_SIZE
-                range_header = f"bytes={downloaded}-{end_range}"
-                deserialized, headers = self._client.container_registry_blob.get_chunk(
-                    repository, digest, range_header, cls=_return_deserialized_and_headers, **kwargs
-                )
-                if blob_size is None:
-                    blob_size = headers["Content-Range"].split("/")[1]
-                downloaded += headers["Content-Length"]
-                for chunk in deserialized:
-                    data.write(chunk)
-                    hasher.update(chunk)
-                if str(downloaded) == blob_size:
-                    break
-            data.seek(0)
-            computed_digest = "sha256:" + hasher.hexdigest()
-            if computed_digest != digest:
-                raise ValueError("The requested digest does not match the digest of the received blob.")
+            deserialized = self._client.container_registry_blob.get_blob(repository, digest, **kwargs)
         except ValueError:
             if repository is None or digest is None:
-                raise ValueError("The parameter repository, digest and destination cannot be None.")
+                raise ValueError("The parameter repository and digest cannot be None.")
             raise
-        return data
+
+        if deserialized:
+            blob_content = b''
+            for chunk in deserialized:
+                if chunk:
+                    blob_content += chunk
+            return DownloadBlobResult(data=BytesIO(blob_content), digest=digest)
+        return None
 
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):
