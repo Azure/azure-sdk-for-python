@@ -1,6 +1,6 @@
 include *.md
 include LICENSE
-include azure/ai/projectcarnegie/py.typed
+include azure/ai/contentsafety/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
 include azure/__init__.py

@@ -21,7 +21,7 @@ class BatchCreateTextListItemsRequest(_model_base.Model):
     """BatchCreateTextListItemsRequest.
 
     :ivar items:
-    :vartype items: list[~azure.ai.projectcarnegie.models.TextListItemInfo]
+    :vartype items: list[~azure.ai.contentsafety.models.TextListItemInfo]
     """
 
     items: Optional[List["_models.TextListItemInfo"]] = rest_field()
@@ -49,7 +49,7 @@ class BatchCreateTextListItemsResponse(_model_base.Model):
     """BatchCreateTextListItemsResponse.
 
     :ivar items:
-    :vartype items: list[~azure.ai.projectcarnegie.models.TextListItem]
+    :vartype items: list[~azure.ai.contentsafety.models.TextListItem]
     """
 
     items: Optional[List["_models.TextListItem"]] = rest_field()
@@ -142,7 +142,7 @@ class ImageDetectMultiSeverityResult(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar category: Required. Known values are: "Hate", "SelfHarm", "Sexual", and "Violence".
-    :vartype category: str or ~azure.ai.projectcarnegie.models.ImageCategory
+    :vartype category: str or ~azure.ai.contentsafety.models.ImageCategory
     :ivar risk_level: riskLevel represent the severity of the input, currently its value could be:
      0,2,4,6. Required.
     :vartype risk_level: int
@@ -179,10 +179,10 @@ class ImageDetectRequest(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar image: The image needs to be scanned. Required.
-    :vartype image: ~azure.ai.projectcarnegie.models.Image
+    :vartype image: ~azure.ai.contentsafety.models.Image
     :ivar categories: The categories will be analyzed, if not assigned, default categories will be
      analyzed.
-    :vartype categories: list[str or ~azure.ai.projectcarnegie.models.ImageCategory]
+    :vartype categories: list[str or ~azure.ai.contentsafety.models.ImageCategory]
     """
 
     image: "_models.Image" = rest_field()
@@ -215,13 +215,13 @@ class ImageDetectResponse(_model_base.Model):
     """The analysis response of the image.
 
     :ivar hate_result:
-    :vartype hate_result: ~azure.ai.projectcarnegie.models.ImageDetectMultiSeverityResult
+    :vartype hate_result: ~azure.ai.contentsafety.models.ImageDetectMultiSeverityResult
     :ivar self_harm_result:
-    :vartype self_harm_result: ~azure.ai.projectcarnegie.models.ImageDetectMultiSeverityResult
+    :vartype self_harm_result: ~azure.ai.contentsafety.models.ImageDetectMultiSeverityResult
     :ivar sexual_result:
-    :vartype sexual_result: ~azure.ai.projectcarnegie.models.ImageDetectMultiSeverityResult
+    :vartype sexual_result: ~azure.ai.contentsafety.models.ImageDetectMultiSeverityResult
     :ivar violence_result:
-    :vartype violence_result: ~azure.ai.projectcarnegie.models.ImageDetectMultiSeverityResult
+    :vartype violence_result: ~azure.ai.contentsafety.models.ImageDetectMultiSeverityResult
     """
 
     hate_result: Optional["_models.ImageDetectMultiSeverityResult"] = rest_field(name="hateResult")
@@ -257,7 +257,7 @@ class TextDetectMultiSeverityResult(_model_base.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar category: Required. Known values are: "Hate", "SelfHarm", "Sexual", and "Violence".
-    :vartype category: str or ~azure.ai.projectcarnegie.models.TextCategory
+    :vartype category: str or ~azure.ai.contentsafety.models.TextCategory
     :ivar risk_level: riskLevel represent the severity of the input, currently its value could be:
      0,2,4,6. Required.
     :vartype risk_level: int
@@ -298,7 +298,7 @@ class TextDetectRequest(_model_base.Model):
     :ivar categories: The categories will be analyzed, if not assigned, a default set of
      categories'
      analysis results will be returned.
-    :vartype categories: list[str or ~azure.ai.projectcarnegie.models.TextCategory]
+    :vartype categories: list[str or ~azure.ai.contentsafety.models.TextCategory]
     :ivar languages: Language hints for text analysis.  Values can contain only the language code
      (ex.
      "en", "fr") of BCP 47. If no languages given, the service will detact languages.
@@ -354,15 +354,15 @@ class TextDetectResponse(_model_base.Model):
     """The analysis response of the text.
 
     :ivar blocklist_match_results: The details of list match.
-    :vartype blocklist_match_results: list[~azure.ai.projectcarnegie.models.TextListMatchResult]
+    :vartype blocklist_match_results: list[~azure.ai.contentsafety.models.TextListMatchResult]
     :ivar hate_result:
-    :vartype hate_result: ~azure.ai.projectcarnegie.models.TextDetectMultiSeverityResult
+    :vartype hate_result: ~azure.ai.contentsafety.models.TextDetectMultiSeverityResult
     :ivar self_harm_result:
-    :vartype self_harm_result: ~azure.ai.projectcarnegie.models.TextDetectMultiSeverityResult
+    :vartype self_harm_result: ~azure.ai.contentsafety.models.TextDetectMultiSeverityResult
     :ivar sexual_result:
-    :vartype sexual_result: ~azure.ai.projectcarnegie.models.TextDetectMultiSeverityResult
+    :vartype sexual_result: ~azure.ai.contentsafety.models.TextDetectMultiSeverityResult
     :ivar violence_result:
-    :vartype violence_result: ~azure.ai.projectcarnegie.models.TextDetectMultiSeverityResult
+    :vartype violence_result: ~azure.ai.contentsafety.models.TextDetectMultiSeverityResult
     """
 
     blocklist_match_results: Optional[List["_models.TextListMatchResult"]] = rest_field(name="blocklistMatchResults")

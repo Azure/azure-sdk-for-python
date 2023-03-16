@@ -8,9 +8,8 @@
 # --------------------------------------------------------------------------
 import json
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
 
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -19,41 +18,295 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
-from ..._model_base import AzureJSONEncoder, _deserialize
-from ..._operations._operations import (
-    build_project_carnegie_add_items_request,
-    build_project_carnegie_analyze_request,
-    build_project_carnegie_create_or_update_list_request,
-    build_project_carnegie_delete_text_list_request,
-    build_project_carnegie_detect_request,
-    build_project_carnegie_get_text_list_item_request,
-    build_project_carnegie_get_text_list_request,
-    build_project_carnegie_list_text_list_items_request,
-    build_project_carnegie_list_text_lists_request,
-    build_project_carnegie_remove_items_request,
-)
-from .._vendor import ProjectCarnegieClientMixinABC
+from .. import models as _models
+from .._model_base import AzureJSONEncoder, _deserialize
+from .._serialization import Serializer
+from .._vendor import ContentSafetyClientMixinABC, _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
-class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
+def build_content_safety_analyze_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/text:analyze"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_content_safety_detect_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/image:analyze"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_content_safety_get_text_list_request(list_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/text/lists/{listName}"
+    path_format_arguments = {
+        "listName": _SERIALIZER.url("list_name", list_name, "str"),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_content_safety_create_or_update_list_request(list_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/text/lists/{listName}"
+    path_format_arguments = {
+        "listName": _SERIALIZER.url("list_name", list_name, "str"),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_content_safety_delete_text_list_request(list_name: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    # Construct URL
+    _url = "/text/lists/{listName}"
+    path_format_arguments = {
+        "listName": _SERIALIZER.url("list_name", list_name, "str"),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_content_safety_list_text_lists_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/text/lists"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_content_safety_add_items_request(list_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/text/lists/{listName}:addItems"
+    path_format_arguments = {
+        "listName": _SERIALIZER.url("list_name", list_name, "str"),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_content_safety_remove_items_request(list_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    # Construct URL
+    _url = "/text/lists/{listName}:removeItems"
+    path_format_arguments = {
+        "listName": _SERIALIZER.url("list_name", list_name, "str"),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_content_safety_get_text_list_item_request(list_name: str, item_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/text/lists/{listName}/items/{itemId}"
+    path_format_arguments = {
+        "listName": _SERIALIZER.url("list_name", list_name, "str"),
+        "itemId": _SERIALIZER.url("item_id", item_id, "str"),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_content_safety_list_text_list_items_request(
+    list_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2023-04-30-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2023-04-30-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/text/lists/{listName}/items"
+    path_format_arguments = {
+        "listName": _SERIALIZER.url("list_name", list_name, "str"),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     @overload
-    async def analyze(
+    def analyze(
         self, request: _models.TextDetectRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TextDetectResponse:
         """Analyze Text.
@@ -61,19 +314,19 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         A sync API for harmful content analysis for text.
 
         :param request: The analysis request of the text. Required.
-        :type request: ~azure.ai.projectcarnegie.models.TextDetectRequest
+        :type request: ~azure.ai.contentsafety.models.TextDetectRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextDetectResponse. The TextDetectResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextDetectResponse
+        :rtype: ~azure.ai.contentsafety.models.TextDetectResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def analyze(
+    def analyze(
         self, request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TextDetectResponse:
         """Analyze Text.
@@ -88,12 +341,12 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextDetectResponse. The TextDetectResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextDetectResponse
+        :rtype: ~azure.ai.contentsafety.models.TextDetectResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def analyze(
+    def analyze(
         self, request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TextDetectResponse:
         """Analyze Text.
@@ -108,28 +361,26 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextDetectResponse. The TextDetectResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextDetectResponse
+        :rtype: ~azure.ai.contentsafety.models.TextDetectResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def analyze(
-        self, request: Union[_models.TextDetectRequest, JSON, IO], **kwargs: Any
-    ) -> _models.TextDetectResponse:
+    @distributed_trace
+    def analyze(self, request: Union[_models.TextDetectRequest, JSON, IO], **kwargs: Any) -> _models.TextDetectResponse:
         """Analyze Text.
 
         A sync API for harmful content analysis for text.
 
         :param request: The analysis request of the text. Is one of the following types:
          TextDetectRequest, JSON, IO Required.
-        :type request: ~azure.ai.projectcarnegie.models.TextDetectRequest or JSON or IO
+        :type request: ~azure.ai.contentsafety.models.TextDetectRequest or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextDetectResponse. The TextDetectResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextDetectResponse
+        :rtype: ~azure.ai.contentsafety.models.TextDetectResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -153,7 +404,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         else:
             _content = json.dumps(request, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_project_carnegie_analyze_request(
+        request = build_content_safety_analyze_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -166,7 +417,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -187,7 +438,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    async def detect(
+    def detect(
         self, request: _models.ImageDetectRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ImageDetectResponse:
         """Analyze Image.
@@ -195,19 +446,19 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         A sync API for harmful content analysis for image.
 
         :param request: The analysis request of the image. Required.
-        :type request: ~azure.ai.projectcarnegie.models.ImageDetectRequest
+        :type request: ~azure.ai.contentsafety.models.ImageDetectRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ImageDetectResponse. The ImageDetectResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.ImageDetectResponse
+        :rtype: ~azure.ai.contentsafety.models.ImageDetectResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def detect(
+    def detect(
         self, request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ImageDetectResponse:
         """Analyze Image.
@@ -222,12 +473,12 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ImageDetectResponse. The ImageDetectResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.ImageDetectResponse
+        :rtype: ~azure.ai.contentsafety.models.ImageDetectResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def detect(
+    def detect(
         self, request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ImageDetectResponse:
         """Analyze Image.
@@ -242,12 +493,12 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ImageDetectResponse. The ImageDetectResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.ImageDetectResponse
+        :rtype: ~azure.ai.contentsafety.models.ImageDetectResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def detect(
+    @distributed_trace
+    def detect(
         self, request: Union[_models.ImageDetectRequest, JSON, IO], **kwargs: Any
     ) -> _models.ImageDetectResponse:
         """Analyze Image.
@@ -256,14 +507,14 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
         :param request: The analysis request of the image. Is one of the following types:
          ImageDetectRequest, JSON, IO Required.
-        :type request: ~azure.ai.projectcarnegie.models.ImageDetectRequest or JSON or IO
+        :type request: ~azure.ai.contentsafety.models.ImageDetectRequest or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ImageDetectResponse. The ImageDetectResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.ImageDetectResponse
+        :rtype: ~azure.ai.contentsafety.models.ImageDetectResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -287,7 +538,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         else:
             _content = json.dumps(request, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_project_carnegie_detect_request(
+        request = build_content_safety_detect_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -300,7 +551,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -320,8 +571,8 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_text_list(self, list_name: str, **kwargs: Any) -> _models.TextList:
+    @distributed_trace
+    def get_text_list(self, list_name: str, **kwargs: Any) -> _models.TextList:
         """Get Text List By listId.
 
         Returns text list details of the Text List with list Id equal to list Id passed.
@@ -331,7 +582,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextList. The TextList is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextList
+        :rtype: ~azure.ai.contentsafety.models.TextList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -347,7 +598,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
         cls: ClsType[_models.TextList] = kwargs.pop("cls", None)
 
-        request = build_project_carnegie_get_text_list_request(
+        request = build_content_safety_get_text_list_request(
             list_name=list_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -359,7 +610,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -380,7 +631,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    async def create_or_update_list(
+    def create_or_update_list(
         self,
         list_name: str,
         resource: _models.TextList,
@@ -395,19 +646,19 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :param list_name: Text List Id. Required.
         :type list_name: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.ai.projectcarnegie.models.TextList
+        :type resource: ~azure.ai.contentsafety.models.TextList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextList. The TextList is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextList
+        :rtype: ~azure.ai.contentsafety.models.TextList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_or_update_list(
+    def create_or_update_list(
         self, list_name: str, resource: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TextList:
         """Create Or Update Text List.
@@ -424,12 +675,12 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextList. The TextList is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextList
+        :rtype: ~azure.ai.contentsafety.models.TextList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_or_update_list(
+    def create_or_update_list(
         self, list_name: str, resource: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TextList:
         """Create Or Update Text List.
@@ -446,12 +697,12 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextList. The TextList is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextList
+        :rtype: ~azure.ai.contentsafety.models.TextList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def create_or_update_list(
+    @distributed_trace
+    def create_or_update_list(
         self, list_name: str, resource: Union[_models.TextList, JSON, IO], **kwargs: Any
     ) -> _models.TextList:
         """Create Or Update Text List.
@@ -462,13 +713,13 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :type list_name: str
         :param resource: The resource instance. Is one of the following types: TextList, JSON, IO
          Required.
-        :type resource: ~azure.ai.projectcarnegie.models.TextList or JSON or IO
+        :type resource: ~azure.ai.contentsafety.models.TextList or JSON or IO
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextList. The TextList is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextList
+        :rtype: ~azure.ai.contentsafety.models.TextList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -492,7 +743,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         else:
             _content = json.dumps(resource, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_project_carnegie_create_or_update_list_request(
+        request = build_content_safety_create_or_update_list_request(
             list_name=list_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -506,7 +757,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -533,10 +784,8 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete_text_list(  # pylint: disable=inconsistent-return-statements
-        self, list_name: str, **kwargs: Any
-    ) -> None:
+    @distributed_trace
+    def delete_text_list(self, list_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete Text List By listId.
 
         Deletes Text List with the list Id equal to list Id passed.
@@ -562,7 +811,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_project_carnegie_delete_text_list_request(
+        request = build_content_safety_delete_text_list_request(
             list_name=list_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -574,7 +823,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -588,13 +837,13 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_text_lists(self, **kwargs: Any) -> AsyncIterable["_models.TextList"]:
+    def list_text_lists(self, **kwargs: Any) -> Iterable["_models.TextList"]:
         """Get All Text Lists.
 
         Get All Text Lists.
 
         :return: An iterator like instance of TextList
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projectcarnegie.models.TextList]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.contentsafety.models.TextList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -613,7 +862,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_project_carnegie_list_text_lists_request(
+                request = build_content_safety_list_text_lists_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -636,18 +885,18 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TextList], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -658,10 +907,10 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @overload
-    async def add_items(
+    def add_items(
         self,
         list_name: str,
         body: _models.BatchCreateTextListItemsRequest,
@@ -674,7 +923,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :param list_name: Text List Id. Required.
         :type list_name: str
         :param body: Required.
-        :type body: ~azure.ai.projectcarnegie.models.BatchCreateTextListItemsRequest
+        :type body: ~azure.ai.contentsafety.models.BatchCreateTextListItemsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -682,12 +931,12 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
          will have to context manage the returned stream.
         :return: BatchCreateTextListItemsResponse. The BatchCreateTextListItemsResponse is compatible
          with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.BatchCreateTextListItemsResponse
+        :rtype: ~azure.ai.contentsafety.models.BatchCreateTextListItemsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def add_items(
+    def add_items(
         self, list_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.BatchCreateTextListItemsResponse:
         """add_items.
@@ -703,12 +952,12 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
          will have to context manage the returned stream.
         :return: BatchCreateTextListItemsResponse. The BatchCreateTextListItemsResponse is compatible
          with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.BatchCreateTextListItemsResponse
+        :rtype: ~azure.ai.contentsafety.models.BatchCreateTextListItemsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def add_items(
+    def add_items(
         self, list_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.BatchCreateTextListItemsResponse:
         """add_items.
@@ -724,12 +973,12 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
          will have to context manage the returned stream.
         :return: BatchCreateTextListItemsResponse. The BatchCreateTextListItemsResponse is compatible
          with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.BatchCreateTextListItemsResponse
+        :rtype: ~azure.ai.contentsafety.models.BatchCreateTextListItemsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def add_items(
+    @distributed_trace
+    def add_items(
         self, list_name: str, body: Union[_models.BatchCreateTextListItemsRequest, JSON, IO], **kwargs: Any
     ) -> _models.BatchCreateTextListItemsResponse:
         """add_items.
@@ -737,7 +986,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :param list_name: Text List Id. Required.
         :type list_name: str
         :param body: Is one of the following types: BatchCreateTextListItemsRequest, JSON, IO Required.
-        :type body: ~azure.ai.projectcarnegie.models.BatchCreateTextListItemsRequest or JSON or IO
+        :type body: ~azure.ai.contentsafety.models.BatchCreateTextListItemsRequest or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -745,7 +994,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
          will have to context manage the returned stream.
         :return: BatchCreateTextListItemsResponse. The BatchCreateTextListItemsResponse is compatible
          with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.BatchCreateTextListItemsResponse
+        :rtype: ~azure.ai.contentsafety.models.BatchCreateTextListItemsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -769,7 +1018,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_project_carnegie_add_items_request(
+        request = build_content_safety_add_items_request(
             list_name=list_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -783,7 +1032,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -804,7 +1053,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    async def remove_items(  # pylint: disable=inconsistent-return-statements
+    def remove_items(  # pylint: disable=inconsistent-return-statements
         self,
         list_name: str,
         body: _models.BatchDeleteTextListItemsRequest,
@@ -817,7 +1066,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :param list_name: Text List Id. Required.
         :type list_name: str
         :param body: Required.
-        :type body: ~azure.ai.projectcarnegie.models.BatchDeleteTextListItemsRequest
+        :type body: ~azure.ai.contentsafety.models.BatchDeleteTextListItemsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -829,7 +1078,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         """
 
     @overload
-    async def remove_items(  # pylint: disable=inconsistent-return-statements
+    def remove_items(  # pylint: disable=inconsistent-return-statements
         self, list_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """remove_items.
@@ -849,7 +1098,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         """
 
     @overload
-    async def remove_items(  # pylint: disable=inconsistent-return-statements
+    def remove_items(  # pylint: disable=inconsistent-return-statements
         self, list_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """remove_items.
@@ -868,8 +1117,8 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def remove_items(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def remove_items(  # pylint: disable=inconsistent-return-statements
         self, list_name: str, body: Union[_models.BatchDeleteTextListItemsRequest, JSON, IO], **kwargs: Any
     ) -> None:
         """remove_items.
@@ -877,7 +1126,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :param list_name: Text List Id. Required.
         :type list_name: str
         :param body: Is one of the following types: BatchDeleteTextListItemsRequest, JSON, IO Required.
-        :type body: ~azure.ai.projectcarnegie.models.BatchDeleteTextListItemsRequest or JSON or IO
+        :type body: ~azure.ai.contentsafety.models.BatchDeleteTextListItemsRequest or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -908,7 +1157,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_project_carnegie_remove_items_request(
+        request = build_content_safety_remove_items_request(
             list_name=list_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -922,7 +1171,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -935,8 +1184,8 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace_async
-    async def get_text_list_item(self, list_name: str, item_id: str, **kwargs: Any) -> _models.TextListItem:
+    @distributed_trace
+    def get_text_list_item(self, list_name: str, item_id: str, **kwargs: Any) -> _models.TextListItem:
         """Get Item By itemId and listId.
 
         Get Item By itemId and listId.
@@ -948,7 +1197,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TextListItem. The TextListItem is compatible with MutableMapping
-        :rtype: ~azure.ai.projectcarnegie.models.TextListItem
+        :rtype: ~azure.ai.contentsafety.models.TextListItem
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -964,7 +1213,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
         cls: ClsType[_models.TextListItem] = kwargs.pop("cls", None)
 
-        request = build_project_carnegie_get_text_list_item_request(
+        request = build_content_safety_get_text_list_item_request(
             list_name=list_name,
             item_id=item_id,
             api_version=self._config.api_version,
@@ -977,7 +1226,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -1000,7 +1249,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
     @distributed_trace
     def list_text_list_items(
         self, list_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.TextListItem"]:
+    ) -> Iterable["_models.TextListItem"]:
         """Get All Items By listId.
 
         Get All Items By listId.
@@ -1012,7 +1261,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
         :return: An iterator like instance of TextListItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projectcarnegie.models.TextListItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.contentsafety.models.TextListItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1031,7 +1280,7 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_project_carnegie_list_text_list_items_request(
+                request = build_content_safety_list_text_list_items_request(
                     list_name=list_name,
                     top=top,
                     skip=skip,
@@ -1057,18 +1306,18 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.TextListItem], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
@@ -1079,4 +1328,4 @@ class ProjectCarnegieClientOperationsMixin(ProjectCarnegieClientMixinABC):
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)

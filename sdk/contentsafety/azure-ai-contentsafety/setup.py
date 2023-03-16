@@ -12,7 +12,7 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "azure-ai-projectcarnegie"
+PACKAGE_NAME = "azure-ai-contentsafety"
 PACKAGE_PPRINT_NAME = "None"
 
 # a-b-c => a/b/c

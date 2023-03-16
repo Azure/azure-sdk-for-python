@@ -13,12 +13,12 @@ from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import ProjectCarnegieClientConfiguration
-from ._operations import ProjectCarnegieClientOperationsMixin
+from ._configuration import ContentSafetyClientConfiguration
+from ._operations import ContentSafetyClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 
-class ProjectCarnegieClient(ProjectCarnegieClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class ContentSafetyClient(ContentSafetyClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Analyze harmful content.
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
@@ -33,8 +33,8 @@ class ProjectCarnegieClient(ProjectCarnegieClientOperationsMixin):  # pylint: di
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        _endpoint = "{endpoint}/carnegie"
-        self._config = ProjectCarnegieClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        _endpoint = "{endpoint}/contentsafety"
+        self._config = ContentSafetyClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -70,7 +70,7 @@ class ProjectCarnegieClient(ProjectCarnegieClientOperationsMixin):  # pylint: di
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "ProjectCarnegieClient":
+    def __enter__(self) -> "ContentSafetyClient":
         self._client.__enter__()
         return self
 

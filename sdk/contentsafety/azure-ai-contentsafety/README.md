@@ -7,7 +7,7 @@
 ### Installating the package
 
 ```bash
-python -m pip install azure-ai-projectcarnegie
+python -m pip install azure-ai-contentsafety
 ```
 
 #### Prequisites

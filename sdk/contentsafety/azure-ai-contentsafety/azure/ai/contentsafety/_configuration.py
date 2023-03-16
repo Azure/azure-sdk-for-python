@@ -21,8 +21,8 @@ else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 
-class ProjectCarnegieClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for ProjectCarnegieClient.
+class ContentSafetyClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for ContentSafetyClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -39,7 +39,7 @@ class ProjectCarnegieClientConfiguration(Configuration):  # pylint: disable=too-
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        super(ProjectCarnegieClientConfiguration, self).__init__(**kwargs)
+        super(ContentSafetyClientConfiguration, self).__init__(**kwargs)
         api_version: Literal["2023-04-30-preview"] = kwargs.pop("api_version", "2023-04-30-preview")
 
         if endpoint is None:
@@ -50,7 +50,7 @@ class ProjectCarnegieClientConfiguration(Configuration):  # pylint: disable=too-
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        kwargs.setdefault("sdk_moniker", "ai-projectcarnegie/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "ai-contentsafety/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
