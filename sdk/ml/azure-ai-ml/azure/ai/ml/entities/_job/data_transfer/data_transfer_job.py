@@ -66,12 +66,13 @@ class DataTransferJob(Job, JobIOMixin):
 
     def __init__(
         self,
+        task: str, 
         **kwargs,
     ):
         kwargs[TYPE] = JobType.DATA_TRANSFER
         self._parameters = kwargs.pop("parameters", {})
-
         super().__init__(**kwargs)
+        self.task = task
 
     @property
     def parameters(self) -> Dict[str, str]:
@@ -148,11 +149,11 @@ class DataTransferCopyJob(DataTransferJob):
         data_copy_mode: str = None,
         **kwargs,
     ):
+        kwargs["task"]=DataTransferTaskType.COPY_DATA
         super().__init__(**kwargs)
 
         self.outputs = outputs
         self.inputs = inputs
-        self.task = DataTransferTaskType.COPY_DATA
         self.data_copy_mode = data_copy_mode
 
     def _to_dict(self) -> Dict:
@@ -217,10 +218,10 @@ class DataTransferImportJob(DataTransferJob):
         source: Optional[Union[Dict, Database, FileSystem]] = None,
         **kwargs,
     ):
+        kwargs["task"]=DataTransferTaskType.IMPORT_DATA
         super().__init__(**kwargs)
 
         self.outputs = outputs
-        self.task = DataTransferTaskType.IMPORT_DATA
         self.source = self._build_source_sink(source)
 
     def _to_dict(self) -> Dict:
@@ -277,10 +278,10 @@ class DataTransferExportJob(DataTransferJob):
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
         **kwargs,
     ):
+        kwargs["task"]=DataTransferTaskType.EXPORT_DATA
         super().__init__(**kwargs)
 
         self.inputs = inputs
-        self.task = DataTransferTaskType.EXPORT_DATA
         self.sink = self._build_source_sink(sink)
 
     def _to_dict(self) -> Dict:
