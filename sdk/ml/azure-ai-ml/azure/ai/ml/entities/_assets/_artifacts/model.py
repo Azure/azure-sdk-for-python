@@ -7,9 +7,9 @@ from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     FlavorData,
-    ModelContainerData,
-    ModelVersionData,
-    ModelVersionDetails,
+    ModelContainer,
+    ModelVersion,
+    ModelVersionProperties,
 )
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
@@ -112,8 +112,8 @@ class Model(Artifact):
         return ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     @classmethod
-    def _from_rest_object(cls, model_rest_object: ModelVersionData) -> "Model":
-        rest_model_version: ModelVersionDetails = model_rest_object.properties
+    def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
+        rest_model_version: ModelVersionProperties = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
         if hasattr(rest_model_version, "flavors"):
             flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
@@ -137,7 +137,7 @@ class Model(Artifact):
         return model
 
     @classmethod
-    def _from_container_rest_object(cls, model_container_rest_object: ModelContainerData) -> "Model":
+    def _from_container_rest_object(cls, model_container_rest_object: ModelContainer) -> "Model":
         model = Model(
             name=model_container_rest_object.name,
             version="1",
@@ -152,8 +152,8 @@ class Model(Artifact):
         model.version = None
         return model
 
-    def _to_rest_object(self) -> ModelVersionData:
-        model_version = ModelVersionDetails(
+    def _to_rest_object(self) -> ModelVersion:
+        model_version = ModelVersionProperties(
             description=self.description,
             tags=self.tags,
             properties=self.properties,
@@ -167,7 +167,7 @@ class Model(Artifact):
             if self._intellectual_property
             else None,
         )
-        model_version_resource = ModelVersionData(properties=model_version)
+        model_version_resource = ModelVersion(properties=model_version)
 
         return model_version_resource
 
@@ -192,6 +192,6 @@ class Model(Artifact):
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "ModelVersionDetails"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "ModelVersionProperties"),
             }
         }
