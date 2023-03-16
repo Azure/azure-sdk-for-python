@@ -103,7 +103,7 @@ class HealthInsightsSamples:
         # Specify the clinical trial registry source as ClinicalTrials.Gov
         registry_filters.sources = [ClinicalTrialSource.CLINICALTRIALS_GOV]
         # Limit the clinical trial to a certain location, in this case California, USA
-        registry_filters.facility_locations = [GeographicLocation(country_or_region=="United States", city="Gilbert", state="Arizona")]
+        registry_filters.facility_locations = [GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")]
         # Limit the trial to a specific study type, interventional
         registry_filters.study_types = [ClinicalTrialStudyType.INTERVENTIONAL]
 
