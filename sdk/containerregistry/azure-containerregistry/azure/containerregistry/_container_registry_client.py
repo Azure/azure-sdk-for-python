@@ -54,6 +54,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         endpoint: str,
         credential: Optional[TokenCredential] = None,
         *,
+        api_version: Optional[str] = None,
         audience: str = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
         **kwargs
     ) -> None:
@@ -82,7 +83,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 :dedent: 8
                 :caption: Instantiate an instance of `ContainerRegistryClient`
         """
-        api_version = kwargs.get("api_version", None)
         if api_version and api_version not in SUPPORTED_API_VERSIONS:
             supported_versions = "\n".join(SUPPORTED_API_VERSIONS)
             raise ValueError(

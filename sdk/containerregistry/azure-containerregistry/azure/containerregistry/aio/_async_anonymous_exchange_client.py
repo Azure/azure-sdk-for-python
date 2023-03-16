@@ -18,13 +18,11 @@ class AnonymousACRExchangeClient(object):
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
-     default value may result in unsupported behavior.
+        default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs
-    ) -> None:
+    def __init__(self, endpoint: str, **kwargs) -> None: # pylint: disable=missing-client-constructor-parameter-credential
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
