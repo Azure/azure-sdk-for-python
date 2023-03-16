@@ -66,18 +66,21 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
         category = data.get("category", OutboundRuleCategory.USER_DEFINED)
         if dest:
             if isinstance(dest, str):
-                return FqdnDestination(dest, _snake_to_camel(category))
+                return FqdnDestination(destination=dest, category=_snake_to_camel(category))
             else:
                 if dest.get("subresource_target", False):
                     return PrivateEndpointDestination(
-                        dest["service_resource_id"],
-                        dest["subresource_target"],
-                        dest["spark_enabled"],
-                        _snake_to_camel(category),
+                        service_resource_id=dest["service_resource_id"],
+                        subresource_target=dest["subresource_target"],
+                        spark_enabled=dest["spark_enabled"],
+                        category=_snake_to_camel(category),
                     )
                 if dest.get("service_tag", False):
                     return ServiceTagDestination(
-                        dest["service_tag"], dest["protocol"], dest["port_ranges"], _snake_to_camel(category)
+                        service_tag=dest["service_tag"],
+                        protocol=dest["protocol"],
+                        port_ranges=dest["port_ranges"],
+                        category=_snake_to_camel(category),
                     )
         return OutboundRule(data)
 
