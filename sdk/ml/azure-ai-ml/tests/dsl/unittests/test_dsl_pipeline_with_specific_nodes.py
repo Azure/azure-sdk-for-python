@@ -630,7 +630,7 @@ class TestDSLPipelineWithSpecificNodes:
         query_source_snowflake = "SELECT * FROM my_table"
         connection_target_azuresql = "azureml:my_azuresql_connection"
         outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
-        source = {"type": "database", "connection": "azureml:my_snowflake_connection", "query": query_source_snowflake}
+        source = {"connection": "azureml:my_snowflake_connection", "query": query_source_snowflake}
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_database_function")
         def pipeline(query_source_snowflake, connection_target_azuresql):
@@ -715,7 +715,6 @@ class TestDSLPipelineWithSpecificNodes:
         ]
         outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
         source = {
-            "type": "database",
             "stored_procedure": stored_procedure,
             "stored_procedure_params": stored_procedure_params,
         }
@@ -780,7 +779,7 @@ class TestDSLPipelineWithSpecificNodes:
         path_source_s3 = "s3://my_bucket/my_folder"
         connection_target = "azureml:my_s3_connection"
         outputs = {"sink": Output(type=AssetTypes.URI_FOLDER, path="azureml://datastores/managed/paths/some_path")}
-        source = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
+        source = {"connection": connection_target, "path": path_source_s3}
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_file_system_function")
         def pipeline(path_source_s3, connection_target):
@@ -869,7 +868,7 @@ class TestDSLPipelineWithSpecificNodes:
         table_name = "merged_table"
         cosmos_folder = Input(type=AssetTypes.URI_FILE, path="azureml://datastores/my_cosmos/paths/source_cosmos")
         inputs = {"source": cosmos_folder}
-        sink = {"type": "database", "connection": connection_target_azuresql, "table_name": table_name}
+        sink = {"connection": connection_target_azuresql, "table_name": table_name}
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_database_function")
         def pipeline(table_name, connection_target_azuresql):
