@@ -1199,9 +1199,9 @@ class OnlineEndpointsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.EndpointAuthToken"
-        """Retrieve a valid AAD token for an Endpoint using AMLToken-based authentication.
+        """Retrieve a valid AML token for an Endpoint using AMLToken-based authentication.
 
-        Retrieve a valid AAD token for an Endpoint using AMLToken-based authentication.
+        Retrieve a valid AML token for an Endpoint using AMLToken-based authentication.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str

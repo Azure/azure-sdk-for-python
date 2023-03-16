@@ -54,6 +54,7 @@ class ComponentVersionsOperations:
         order_by: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[str] = None,
+        stage: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ComponentVersionResourceArmPaginatedResult"]:
@@ -73,6 +74,8 @@ class ComponentVersionsOperations:
         :type top: int
         :param skip: Continuation token for pagination.
         :type skip: str
+        :param stage: Component stage.
+        :type stage: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         :keyword callable cls: A custom type or function that will be passed the direct response
@@ -101,6 +104,7 @@ class ComponentVersionsOperations:
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
@@ -118,6 +122,7 @@ class ComponentVersionsOperations:
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=next_link,
                 )
