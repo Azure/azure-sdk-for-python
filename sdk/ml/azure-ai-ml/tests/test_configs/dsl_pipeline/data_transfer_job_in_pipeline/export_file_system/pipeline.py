@@ -22,7 +22,7 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     def data_transfer_export_file_system_pipeline_from_builder(path_source_s3, connection_target, cosmos_folder):
         from azure.ai.ml.data_transfer import FileSystem
 
-        s3_blob_input = export_data(inputs=inputs, sink=sink, task=DataTransferTaskType.EXPORT_DATA)
+        s3_blob_input = export_data(inputs=inputs, sink=sink)
 
         source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
         s3_blob = export_data(inputs={"source": cosmos_folder}, sink=source_snowflake)

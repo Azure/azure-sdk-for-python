@@ -237,7 +237,6 @@ class DataTransferCopy(DataTransfer):
             outputs=self._job_outputs,
             services=self.services,
             compute=self.compute,
-            task=self.task,
             data_copy_mode=self.data_copy_mode,
         )
 
@@ -403,7 +402,6 @@ class DataTransferImport(DataTransfer):
             outputs=self._job_outputs,
             services=self.services,
             compute=self.compute,
-            task=self.task,
         )
 
 
@@ -551,5 +549,4 @@ class DataTransferExport(DataTransfer):
             inputs=self._job_inputs,
             services=self.services,
             compute=self.compute,
-            task=self.task,
         )

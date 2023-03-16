@@ -27,7 +27,6 @@ class TestDataTransferComponentEntity:
         rest_path = "./tests/test_configs/components/data_transfer/copy_files.json"
         rest_entity = load_component_entity_from_rest_json(rest_path)
         data_transfer_copy_component = DataTransferCopyComponent(
-            task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_copy_files",
             display_name="Data Transfer Component copy-files",
             inputs={"folder1": {"type": "uri_folder"}},
@@ -54,7 +53,6 @@ class TestDataTransferComponentEntity:
         rest_path = "./tests/test_configs/components/data_transfer/merge_files.json"
         rest_entity = load_component_entity_from_rest_json(rest_path)
         data_transfer_copy_component = DataTransferCopyComponent(
-            task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_merge_files",
             display_name="Data Transfer Component merge-files",
             inputs={"folder1": {"type": "uri_folder"}, "folder2": {"type": "uri_folder"}},
@@ -89,7 +87,6 @@ class TestDataTransferComponentEntity:
         assert isinstance(component_entity, DataTransferImportComponent)
 
         data_transfer_copy_component = DataTransferImportComponent(
-            task=DataTransferTaskType.IMPORT_DATA,
             name="datatransfer_s3_blob",
             display_name="Data Transfer s3-blob",
             source={"type": "file_system"},
@@ -110,7 +107,6 @@ class TestDataTransferComponentEntity:
         assert isinstance(component_entity, DataTransferExportComponent)
 
         data_transfer_copy_component = DataTransferExportComponent(
-            task=DataTransferTaskType.EXPORT_DATA,
             name="datatransfer_blob_azuresql",
             display_name="Data Transfer blob-azuresql",
             inputs={"source": {"type": "uri_folder"}},
@@ -125,7 +121,6 @@ class TestDataTransferComponentEntity:
 
     def test_copy_task_component_entity(self):
         component = DataTransferCopyComponent(
-            task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_copy_files",
             display_name="Data Transfer Component copy-files",
             inputs={

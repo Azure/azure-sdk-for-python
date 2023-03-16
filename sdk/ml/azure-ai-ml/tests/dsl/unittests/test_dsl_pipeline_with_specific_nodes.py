@@ -529,7 +529,6 @@ class TestDSLPipelineWithSpecificNodes:
         data_transfer_job = DataTransferCopyJob(
             inputs=inputs,
             outputs=outputs,
-            task=DataTransferTaskType.COPY_DATA,
             data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
         )
         data_transfer_job_func = to_component(job=data_transfer_job)
@@ -538,7 +537,6 @@ class TestDSLPipelineWithSpecificNodes:
         data_transfer_function = copy_data(
             inputs=inputs,
             outputs=outputs,
-            task=DataTransferTaskType.COPY_DATA,
             data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
         )
 
@@ -1498,7 +1496,6 @@ class TestDSLPipelineWithSpecificNodes:
         data_transfer_job = DataTransferCopyJob(
             inputs=inputs,
             outputs=outputs,
-            task=DataTransferTaskType.COPY_DATA,
             data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
         )
         data_transfer_job_func = to_component(job=data_transfer_job)

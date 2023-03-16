@@ -145,7 +145,6 @@ class DataTransferCopyJob(DataTransferJob):
         *,
         inputs: Optional[Dict[str, Union[Input, str]]] = None,
         outputs: Optional[Dict[str, Union[Output]]] = None,
-        task: str = DataTransferTaskType.COPY_DATA,
         data_copy_mode: str = None,
         **kwargs,
     ):
@@ -153,7 +152,7 @@ class DataTransferCopyJob(DataTransferJob):
 
         self.outputs = outputs
         self.inputs = inputs
-        self.task = task
+        self.task = DataTransferTaskType.COPY_DATA
         self.data_copy_mode = data_copy_mode
 
     def _to_dict(self) -> Dict:
@@ -184,7 +183,6 @@ class DataTransferCopyJob(DataTransferJob):
             description=self.description,
             inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
             outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
-            task=self.task,
             data_copy_mode=self.data_copy_mode,
         )
 
@@ -216,14 +214,13 @@ class DataTransferImportJob(DataTransferJob):
         self,
         *,
         outputs: Optional[Dict[str, Union[Output]]] = None,
-        task: str = DataTransferTaskType.IMPORT_DATA,
         source: Optional[Union[Dict, Database, FileSystem]] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
 
         self.outputs = outputs
-        self.task = task
+        self.task = DataTransferTaskType.IMPORT_DATA
         self.source = self._build_source_sink(source)
 
     def _to_dict(self) -> Dict:
@@ -268,7 +265,6 @@ class DataTransferImportJob(DataTransferJob):
             description=self.description,
             tags=self.tags,
             display_name=self.display_name,
-            task=self.task,
             properties=self.properties,
         )
 
@@ -278,14 +274,13 @@ class DataTransferExportJob(DataTransferJob):
         self,
         *,
         inputs: Optional[Dict[str, Union[Input]]] = None,
-        task: str = DataTransferTaskType.EXPORT_DATA,
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
 
         self.inputs = inputs
-        self.task = task
+        self.task = DataTransferTaskType.EXPORT_DATA
         self.sink = self._build_source_sink(sink)
 
     def _to_dict(self) -> Dict:
@@ -334,6 +329,5 @@ class DataTransferExportJob(DataTransferJob):
             description=self.description,
             tags=self.tags,
             display_name=self.display_name,
-            task=self.task,
             properties=self.properties,
         )
