@@ -166,7 +166,7 @@ class Parallel(BaseNode):
         self.environment_variables = {} if environment_variables is None else environment_variables
 
         if isinstance(self.component, ParallelComponent):
-            self.resources = self.resources or self.component.resources
+            self.resources = self.resources or copy.deepcopy(self.component.resources)
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
                 self.max_concurrency_per_instance or self.component.max_concurrency_per_instance
@@ -175,7 +175,7 @@ class Parallel(BaseNode):
                 self.mini_batch_error_threshold or self.component.mini_batch_error_threshold
             )
             self.mini_batch_size = self.mini_batch_size or self.component.mini_batch_size
-            self.partition_keys = self.partition_keys or self.component.partition_keys
+            self.partition_keys = self.partition_keys or copy.deepcopy(self.component.partition_keys)
 
             if not self.task:
                 self.task = self.component.task
