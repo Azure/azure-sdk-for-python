@@ -22,7 +22,6 @@ from azure.ai.ml.entities._credentials import (
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
-from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -98,12 +97,6 @@ class Sweep(ParameterizedSweep, BaseNode):
         ManagedIdentityConfiguration,
         AmlTokenConfiguration,
         UserIdentityConfiguration]
-    :param queue_settings: Queue settings for the job.
-    :type queue_settings: QueueSettings
-    :param job_tier: Determines the job tier
-    :type job_tier: str
-    :param priority: Controls the priority on the compute.
-    :type priority: str
     """
 
     def __init__(
@@ -128,9 +121,6 @@ class Sweep(ParameterizedSweep, BaseNode):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        queue_settings: Optional[QueueSettings] = None,
-        job_tier: Optional[str] = None,
-        priority: Optional[str] = None,
         **kwargs,
     ):
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
@@ -155,9 +145,6 @@ class Sweep(ParameterizedSweep, BaseNode):
             limits=limits,
             early_termination=early_termination,
             search_space=search_space,
-            queue_settings=queue_settings,
-            job_tier=job_tier,
-            priority=priority,
         )
 
         self.identity = identity
@@ -306,7 +293,6 @@ class Sweep(ParameterizedSweep, BaseNode):
             inputs=self._job_inputs,
             outputs=self._job_outputs,
             identity=self.identity,
-            queue_settings=self.queue_settings,
         )
 
     @classmethod
