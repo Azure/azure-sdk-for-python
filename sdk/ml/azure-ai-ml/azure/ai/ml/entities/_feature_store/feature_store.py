@@ -22,8 +22,12 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
 from .materialization_store import _MaterializationStore
-from ._constants import OFFLINE_STORE_CONNECTION_NAME, ONLINE_STORE_CONNECTION_NAME, DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
-
+from ._constants import (
+    OFFLINE_STORE_CONNECTION_NAME,
+    ONLINE_STORE_CONNECTION_NAME,
+    DEFAULT_SPARK_RUNTIME_VERSION,
+    FEATURE_STORE_KIND
+)
 
 @experimental
 class _FeatureStore(Workspace):
@@ -112,7 +116,7 @@ class _FeatureStore(Workspace):
 
         if offline_store and not materialization_identity:
             raise ValidationError("materialization_identity is required to setup offline store")
-        
+
         if online_store and not materialization_identity:
             raise ValidationError("materialization_identity is required to setup online store")
 
