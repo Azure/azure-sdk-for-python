@@ -68,7 +68,7 @@ from .._base_handler import (
 )
 from ._shared_key_policy import ServiceBusSharedKeyCredentialPolicy
 from ._generated._configuration import ServiceBusManagementClientConfiguration
-from ._generated._client import (
+from ._generated import (
     ServiceBusManagementClient as ServiceBusManagementClientImpl,
 )
 from . import _constants as constants
@@ -123,7 +123,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(
-            endpoint=fully_qualified_namespace, credential=self._credential, pipeline=self._pipeline
+            endpoint=fully_qualified_namespace,
+            credential=self._credential,
+            pipeline=self._pipeline,
+            api_version=api_version,
+            **kwargs
         )
 
     def __enter__(self):

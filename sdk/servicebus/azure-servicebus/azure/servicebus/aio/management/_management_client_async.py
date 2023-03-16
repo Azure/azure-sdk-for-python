@@ -56,7 +56,7 @@ from ...aio._base_handler_async import (
 from ...management._generated.aio._configuration import (
     ServiceBusManagementClientConfiguration,
 )
-from ...management._generated.aio._client import (
+from ...management._generated.aio import (
     ServiceBusManagementClient as ServiceBusManagementClientImpl,
 )
 from ...management import _constants as constants
@@ -124,7 +124,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         )
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(
-            endpoint=fully_qualified_namespace, credential=self._credential, pipeline=self._pipeline
+            endpoint=fully_qualified_namespace,
+            credential=self._credential,
+            pipeline=self._pipeline,
+            api_version=api_version,
+            **kwargs
         )
 
     async def __aenter__(self) -> "ServiceBusAdministrationClient":
