@@ -26,8 +26,9 @@ from ._constants import (
     OFFLINE_STORE_CONNECTION_NAME,
     ONLINE_STORE_CONNECTION_NAME,
     DEFAULT_SPARK_RUNTIME_VERSION,
-    FEATURE_STORE_KIND
+    FEATURE_STORE_KIND,
 )
+
 
 @experimental
 class _FeatureStore(Workspace):
