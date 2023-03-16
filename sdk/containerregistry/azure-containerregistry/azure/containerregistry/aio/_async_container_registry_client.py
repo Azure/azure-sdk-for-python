@@ -38,11 +38,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param credential: The credential with which to authenticate.
         :type credential: ~azure.core.credentials_async.AsyncTokenCredential
         :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
-         may result in unsupported behavior.
+            may result in unsupported behavior.
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
-         "https://management.azure.com", "https://management.chinacloudapi.cn" or
-         "https://management.usgovcloudapi.net". The default value is "https://management.azure.com".
+            "https://management.azure.com", "https://management.chinacloudapi.cn" or
+            "https://management.usgovcloudapi.net". The default value is "https://management.azure.com".
         :paramtype audience: str
         :returns: None
         :rtype: None
@@ -562,7 +562,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository.
         :param properties: Properties to set for the repository. This is a positional-only
-         parameter. Please provide either this or individual keyword parameters.
+            parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.RepositoryProperties
         :keyword bool can_delete: Delete permissions for a repository.
         :keyword bool can_list: List permissions for a repository.
@@ -581,7 +581,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs) -> RepositoryProperties:
+        **kwargs
+    ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
         The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
@@ -637,7 +638,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Repository the manifest belongs to.
         :param str tag_or_digest: Tag or digest of the manifest.
         :param properties: The property's values to be set. This is a positional-only
-         parameter. Please provide either this or individual keyword parameters.
+            parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.ArtifactManifestProperties
         :keyword bool can_delete: Delete permissions for a manifest.
         :keyword bool can_list: List permissions for a manifest.
@@ -761,7 +762,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Repository the tag belongs to.
         :param str tag: Tag to set properties for.
         :param properties: The property's values to be set. This is a positional-only
-         parameter. Please provide either this or individual keyword parameters.
+            parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.ArtifactTagProperties
         :keyword bool can_delete: Delete permissions for a tag.
         :keyword bool can_list: List permissions for a tag.
