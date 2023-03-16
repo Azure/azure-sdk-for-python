@@ -130,7 +130,9 @@ class Model(Artifact):
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
-            intellectual_property=IntellectualProperty._from_rest_object(rest_model_version.intellectual_property) if rest_model_version.intellectual_property else None,
+            intellectual_property=IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
+            if rest_model_version.intellectual_property
+            else None,
         )
         return model
 
@@ -161,7 +163,9 @@ class Model(Artifact):
             model_type=self.type,
             model_uri=self.path,
             is_anonymous=self._is_anonymous,
-            intellectual_property=self._intellectual_property._to_rest_object() if self._intellectual_property else None,
+            intellectual_property=self._intellectual_property._to_rest_object()
+            if self._intellectual_property
+            else None,
         )
         model_version_resource = ModelVersionData(properties=model_version)
 

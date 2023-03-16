@@ -172,7 +172,9 @@ class Data(Artifact):
             is_archived=False,
             properties=self.properties,
             data_uri=self.path,
-            intellectual_property=self._intellectual_property._to_rest_object() if self._intellectual_property else None,
+            intellectual_property=self._intellectual_property._to_rest_object()
+            if self._intellectual_property
+            else None,
         )
         if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
             data_version_details.referenced_uris = self._referenced_uris
@@ -208,7 +210,9 @@ class Data(Artifact):
             creation_context=SystemData._from_rest_object(data_rest_object.system_data),
             is_anonymous=data_rest_object_details.is_anonymous,
             referenced_uris=getattr(data_rest_object_details, "referenced_uris", None),
-            intellectual_property=IntellectualProperty._from_rest_object(data_rest_object_details.intellectual_property) if data_rest_object_details.intellectual_property else None,
+            intellectual_property=IntellectualProperty._from_rest_object(data_rest_object_details.intellectual_property)
+            if data_rest_object_details.intellectual_property
+            else None,
         )
         return data
 

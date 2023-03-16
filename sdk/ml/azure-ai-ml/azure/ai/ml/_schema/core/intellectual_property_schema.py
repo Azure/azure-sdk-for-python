@@ -18,7 +18,7 @@ class IntellectualPropertySchema(metaclass=PatchedSchemaMeta):
     protection_level = StringTransformedEnum(
         allowed_values=[level.name for level in IPProtectionLevel],
         casing_transform=camel_to_snake,
-        )
+    )
 
     @post_load
     def make(self, data, **kwargs) -> "IntellectualProperty":

@@ -235,7 +235,9 @@ class Environment(Asset):
             inference_config=rest_env_version.inference_config,
             build=BuildContext._from_rest_object(rest_env_version.build) if rest_env_version.build else None,
             properties=rest_env_version.properties,
-            intellectual_property=IntellectualProperty._from_rest_object(rest_env_version.intellectual_property) if rest_env_version.intellectual_property else None,
+            intellectual_property=IntellectualProperty._from_rest_object(rest_env_version.intellectual_property)
+            if rest_env_version.intellectual_property
+            else None,
         )
 
         if rest_env_version.conda_file:

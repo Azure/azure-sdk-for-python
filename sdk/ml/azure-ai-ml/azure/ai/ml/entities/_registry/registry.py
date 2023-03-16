@@ -166,7 +166,9 @@ class Registry(Resource):
             location=rest_obj.location,
             public_network_access=real_registry.public_network_access,
             discovery_url=real_registry.discovery_url,
-            intellectual_property_publisher=IntellectualProperty(publisher=real_registry.intellectual_property_publisher),
+            intellectual_property_publisher=IntellectualProperty(
+                publisher=real_registry.intellectual_property_publisher
+            ),
             managed_resource_group=real_registry.managed_resource_group,
             mlflow_registry_uri=real_registry.ml_flow_registry_uri,
             replication_locations=replication_locations,
