@@ -18,7 +18,9 @@ from ._operations import CancerProfilingClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 
-class CancerProfilingClient(CancerProfilingClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class CancerProfilingClient(
+    CancerProfilingClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """CancerProfilingClient.
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
