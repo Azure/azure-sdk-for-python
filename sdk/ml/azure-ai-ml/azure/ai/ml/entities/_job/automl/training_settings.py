@@ -64,7 +64,7 @@ class TrainingSettings(RestTranslatableMixin):
 
             * auto- Currently, it is same as non_distributed. In future, this might change.
 
-            Note: This parameter is in public preview currently and may change in future.
+            Note: This parameter is in public preview and may change in future.
         """
         self.enable_onnx_compatible_models = enable_onnx_compatible_models
         self.enable_dnn_training = enable_dnn_training

@@ -404,7 +404,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
             * auto- Currently, it is same as non_distributed. In future, this might change.
 
-            Note: This parameter is in public preview currently and may change in future.
+            Note: This parameter is in public preview and may change in future.
         :paramtype training_mode: typing.Optional[typing.Union[str, azure.ai.ml.constants.TabularTrainingMode]]
         """
         # get training object by calling training getter of respective tabular task
