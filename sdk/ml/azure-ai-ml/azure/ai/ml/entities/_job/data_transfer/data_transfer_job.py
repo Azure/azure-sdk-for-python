@@ -66,7 +66,7 @@ class DataTransferJob(Job, JobIOMixin):
 
     def __init__(
         self,
-        task: str, 
+        task: str,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.DATA_TRANSFER

@@ -868,7 +868,7 @@ class TestDSLPipelineWithSpecificNodes:
         table_name = "merged_table"
         cosmos_folder = Input(type=AssetTypes.URI_FILE, path="azureml://datastores/my_cosmos/paths/source_cosmos")
         inputs = {"source": cosmos_folder}
-        sink = {"connection": connection_target_azuresql, "table_name": table_name}
+        sink = {"type": "database", "connection": connection_target_azuresql, "table_name": table_name}
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_database_function")
         def pipeline(table_name, connection_target_azuresql):
