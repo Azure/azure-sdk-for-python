@@ -5,7 +5,13 @@
 from marshmallow import fields, post_dump, pre_load
 
 from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, ExperimentalField, NestedField, PythonFuncNameStr, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ArmVersionedStr,
+    ExperimentalField,
+    NestedField,
+    PythonFuncNameStr,
+    UnionField,
+)
 from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
 from azure.ai.ml.constants._common import AzureMLResourceType
 

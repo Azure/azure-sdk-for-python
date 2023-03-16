@@ -93,7 +93,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @property
     def _registry_operations(self) -> RegistryOperations:
-        return self._all_operations.get_operation(AzureMLResourceType.REGISTRY, lambda x: isinstance(x, RegistryOperations))
+        return self._all_operations.get_operation(
+            AzureMLResourceType.REGISTRY, lambda x: isinstance(x, RegistryOperations)
+        )
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -323,12 +325,9 @@ class ComponentOperations(_ScopeDependentOperations):
 
         # Create all dependent resources
         # Only do this if publishing to a workspace OR a registry that is NOT IP protected
-        if (
-            self._workspace_name or
-            (
-                self._registry_name and
-                self._registry_operations.get(self._registry_name).intellectual_property.publisher is None
-            )
+        if self._workspace_name or (
+            self._registry_name
+            and self._registry_operations.get(self._registry_name).intellectual_property.publisher is None
         ):
             self._resolve_arm_id_or_upload_dependencies(component)
 

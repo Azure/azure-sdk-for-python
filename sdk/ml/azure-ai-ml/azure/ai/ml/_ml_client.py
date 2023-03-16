@@ -48,9 +48,7 @@ from azure.ai.ml._restclient.v2022_12_01_preview import (
 from azure.ai.ml._restclient.v2023_02_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient022023Preview,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient042023Preview
-)
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
