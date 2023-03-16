@@ -86,9 +86,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
     """
 
     def __init__(
-            self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        self, account_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
     ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
@@ -164,11 +164,11 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
 
     @distributed_trace_async
     async def set_service_properties(
-            self, analytics_logging: Optional["QueueAnalyticsLogging"] = None,
-            hour_metrics: Optional["Metrics"] = None,
-            minute_metrics: Optional["Metrics"] = None,
-            cors: Optional[List["CorsRule"]] = None,
-            **kwargs: Any
+        self, analytics_logging: Optional["QueueAnalyticsLogging"] = None,
+        hour_metrics: Optional["Metrics"] = None,
+        minute_metrics: Optional["Metrics"] = None,
+        cors: Optional[List["CorsRule"]] = None,
+        **kwargs: Any
     ) -> None:
         """Sets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
@@ -219,9 +219,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
 
     @distributed_trace
     def list_queues(
-            self, name_starts_with: Optional[str] = None,
-            include_metadata: Optional[bool] = False,
-            **kwargs: Any
+        self, name_starts_with: Optional[str] = None,
+        include_metadata: Optional[bool] = False,
+        **kwargs: Any
     ) -> AsyncItemPaged:
         """Returns a generator to list the queues under the specified account.
 
@@ -272,9 +272,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
 
     @distributed_trace_async
     async def create_queue(
-            self, name: str,
-            metadata: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self, name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> QueueClient:
         """Creates a new queue under the specified account.
 
@@ -308,8 +308,8 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
 
     @distributed_trace_async
     async def delete_queue(
-            self, queue: Union["QueueProperties", str],
-            **kwargs: Any
+        self, queue: Union["QueueProperties", str],
+        **kwargs: Any
     ) -> None:
         """Deletes the specified queue and any messages it contains.
 
@@ -344,9 +344,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         await queue_client.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(
-            self,
-            queue: Union["QueueProperties", str],
-            **kwargs: Any
+        self,
+        queue: Union["QueueProperties", str],
+        **kwargs: Any
     ) -> QueueClient:
         """Get a client to interact with the specified queue.
 

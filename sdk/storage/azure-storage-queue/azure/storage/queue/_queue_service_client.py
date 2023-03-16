@@ -89,9 +89,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """
 
     def __init__(
-            self, account_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        self, account_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
     ) -> None:
         try:
             if not account_url.lower().startswith('http'):
@@ -119,9 +119,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        cls, conn_str: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
     ) -> Self:
         """Create QueueServiceClient from a Connection String.
 
@@ -216,11 +216,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def set_service_properties(
-            self, analytics_logging: Optional["QueueAnalyticsLogging"] = None,
-            hour_metrics: Optional["Metrics"] = None,
-            minute_metrics: Optional["Metrics"] = None,
-            cors: Optional[List["CorsRule"]] = None,
-            **kwargs: Any
+        self, analytics_logging: Optional["QueueAnalyticsLogging"] = None,
+        hour_metrics: Optional["Metrics"] = None,
+        minute_metrics: Optional["Metrics"] = None,
+        cors: Optional[List["CorsRule"]] = None,
+        **kwargs: Any
     ) -> None:
         """Sets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
@@ -271,9 +271,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def list_queues(
-            self, name_starts_with: Optional[str] = None,
-            include_metadata: Optional[bool] = False,
-            **kwargs: Any
+        self, name_starts_with: Optional[str] = None,
+        include_metadata: Optional[bool] = False,
+        **kwargs: Any
     ) -> ItemPaged["QueueProperties"]:
         """Returns a generator to list the queues under the specified account.
 
@@ -324,9 +324,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def create_queue(
-            self, name: str,
-            metadata: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self, name: str,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> QueueClient:
         """Creates a new queue under the specified account.
 
@@ -360,9 +360,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_queue(
-            self,
-            queue: Union["QueueProperties", str],
-            **kwargs: Any
+        self,
+        queue: Union["QueueProperties", str],
+        **kwargs: Any
     ) -> None:
         """Deletes the specified queue and any messages it contains.
 
@@ -397,9 +397,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         queue_client.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(
-            self,
-            queue: Union["QueueProperties", str],
-            **kwargs: Any
+        self,
+        queue: Union["QueueProperties", str],
+        **kwargs: Any
     ) -> QueueClient:
         """Get a client to interact with the specified queue.
 
