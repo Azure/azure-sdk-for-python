@@ -21,7 +21,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._registry_code_versions_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_request
+from ...operations._registry_code_versions_operations import build_create_or_get_pending_upload_request, build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -492,3 +492,79 @@ class RegistryCodeVersionsOperations:
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/{version}"}  # type: ignore
+
+    @distributed_trace_async
+    async def create_or_get_pending_upload(
+        self,
+        resource_group_name: str,
+        registry_name: str,
+        code_name: str,
+        version: str,
+        body: "_models.PendingUploadRequestDto",
+        **kwargs: Any
+    ) -> "_models.PendingUploadResponseDto":
+        """Generate a storage location and credential for the client to upload a code asset to.
+
+        Generate a storage location and credential for the client to upload a code asset to.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param registry_name: Name of Azure Machine Learning registry.
+        :type registry_name: str
+        :param code_name: Pending upload name. This is case-sensitive.
+        :type code_name: str
+        :param version: Version identifier. This is case-sensitive.
+        :type version: str
+        :param body: Pending upload request object.
+        :type body: ~azure.mgmt.machinelearningservices.models.PendingUploadRequestDto
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PendingUploadResponseDto, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.PendingUploadResponseDto
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PendingUploadResponseDto"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'PendingUploadRequestDto')
+
+        request = build_create_or_get_pending_upload_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            code_name=code_name,
+            version=version,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.create_or_get_pending_upload.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('PendingUploadResponseDto', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    create_or_get_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/pendingUpload/{version}"}  # type: ignore
+
