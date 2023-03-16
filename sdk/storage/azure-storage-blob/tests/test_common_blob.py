@@ -1184,7 +1184,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
             # Soft delete the blob
             blob.delete_blob()
-            self.sleep(5)
             blob_list = list(container.list_blobs(include='deleted'))
 
             # Assert
@@ -1199,7 +1198,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
             # Restore blob with undelete
             blob.undelete_blob()
-            self.sleep(5)
             blob_list = list(container.list_blobs(include='deleted'))
 
             # Assert
@@ -1208,6 +1206,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         finally:
             self._disable_soft_delete()
+            time.sleep(40)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1227,7 +1226,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             snapshot_1 = self.bsc.get_blob_client(
                 self.container_name, blob_name, snapshot=blob_snapshot_1)
             snapshot_1.delete_blob()
-            self.sleep(5)
 
             with pytest.raises(ValueError):
                 snapshot_1.delete_blob(delete_snapshots='only')
@@ -1251,7 +1249,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
             # Restore snapshot with undelete
             blob.undelete_blob()
-            self.sleep(5)
             blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
 
             # Assert
@@ -1260,6 +1257,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                 self._assert_blob_not_soft_deleted(blob)
         finally:
             self._disable_soft_delete()
+            time.sleep(40)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1277,7 +1275,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
             # Soft delete all snapshots
             blob.delete_blob(delete_snapshots='only')
-            self.sleep(5)
             container = self.bsc.get_container_client(self.container_name)
             blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
 
@@ -1299,7 +1296,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
             # Restore snapshots with undelete
             blob.undelete_blob()
-            self.sleep(5)
             blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
 
             # Assert
@@ -1309,6 +1305,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         finally:
             self._disable_soft_delete()
+            time.sleep(40)
 
     @BlobPreparer()
     @recorded_by_proxy
