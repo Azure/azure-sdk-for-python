@@ -11,7 +11,6 @@ from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml.entities._workspace.networking import (
     ManagedNetwork,
-    OutboundRule,
     FqdnDestination,
     ServiceTagDestination,
     PrivateEndpointDestination,
