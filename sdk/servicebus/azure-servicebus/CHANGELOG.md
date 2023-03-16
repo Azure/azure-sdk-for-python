@@ -6,7 +6,7 @@
 
 ### Breaking Changes
 
-- Client side validation of input is now disabled by default. This means there will be no `ValidationError` raised by the client SDK in the case of malformed input. An `azure.core.exceptions.HttpResponseError` may now be raised if the server refuses the request.
+- Client side validation of input is now disabled by default. This means there will be no `msrest.exceptions.ValidationError` raised by the client SDK in the case of malformed input. An `azure.core.exceptions.HttpResponseError` may now be raised if the server refuses the request.
 
 ### Bugs Fixed
 
