@@ -13,7 +13,6 @@ from azure.ai.ml.constants._component import (
     ComponentSource,
     ExternalDataType,
     DataTransferBuiltinComponentUri,
-    DataTransferTaskType,
 )
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs import Output, Input
