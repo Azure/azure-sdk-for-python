@@ -47,5 +47,5 @@ class _FeatureStoreSettings(RestTranslatableMixin):
         return _FeatureStoreSettings(
             compute_runtime=_ComputeRuntime._from_rest_object(obj.compute_runtime),
             offline_store_connection_name=obj.offline_store_connection_name,
-            online_store_connection_name=obj.online_store_connection_name
+            online_store_connection_name=obj.online_store_connection_name,
         )
