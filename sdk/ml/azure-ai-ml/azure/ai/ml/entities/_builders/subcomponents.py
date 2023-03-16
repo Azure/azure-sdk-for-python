@@ -8,23 +8,26 @@
 
 from mldesigner import command_component, Output
 
+
 def save_mltable_yaml(path, mltable_paths):
     import os
+
     path = os.path.abspath(path)
 
     if os.path.isfile(path):
-        raise ValueError(f'The given path {path} points to a file.')
+        raise ValueError(f"The given path {path} points to a file.")
 
     if not os.path.exists(path):
         os.makedirs(path, exist_ok=True)
 
-    save_path = os.path.join(path, 'MLTable')
+    save_path = os.path.join(path, "MLTable")
     # Do not touch - this is MLTable syntax that is needed to mount these paths
     # To the MLTable's inputs
     mltable_file_content = "\n".join(["paths:"] + [f"- folder : {path}" for path in mltable_paths])
 
-    with open(save_path, 'w') as f:
+    with open(save_path, "w") as f:
         f.write(mltable_file_content)
+
 
 # TODO 2293610: add support for more types of outputs besides uri_folder and mltable
 # Used by the FL scatter gather node to reduce a dynamic number of silo outputs

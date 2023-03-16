@@ -27,16 +27,10 @@ def get_arg_parser(parser=None):
     parser.add_argument("--test_data", type=str, required=True, help="")
     parser.add_argument("--checkpoint", type=str, required=False, help="")
     parser.add_argument("--model", type=str, required=True, help="")
-    parser.add_argument(
-        "--metrics_prefix", type=str, required=False, help="Metrics prefix"
-    )
-    parser.add_argument(
-        "--iteration_num", type=int, required=False, help="Iteration number"
-    )
+    parser.add_argument("--metrics_prefix", type=str, required=False, help="Metrics prefix")
+    parser.add_argument("--iteration_num", type=int, required=False, help="Iteration number")
 
-    parser.add_argument(
-        "--lr", type=float, required=False, help="Training algorithm's learning rate"
-    )
+    parser.add_argument("--lr", type=float, required=False, help="Training algorithm's learning rate")
     parser.add_argument(
         "--epochs",
         type=int,

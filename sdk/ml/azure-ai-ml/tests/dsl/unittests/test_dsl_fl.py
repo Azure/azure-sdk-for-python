@@ -9,6 +9,8 @@ from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._constants import FL_TESTING_LOCAL_DATA_FOLDER, FL_TESTING_COMPONENTS_FOLDER
 
 from .._util import _DSL_TIMEOUT_SECOND
+
+
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
@@ -18,9 +20,7 @@ class TestDSLPipeline:
             source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "preprocessing", "spec.yaml")
         )
 
-        training_component = load_component(
-            source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "training", "spec.yaml")
-        )
+        training_component = load_component(source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "training", "spec.yaml"))
 
         aggregate_component = load_component(
             source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "aggregate", "spec.yaml")
@@ -34,15 +34,11 @@ class TestDSLPipeline:
             "siloCompute3",
             "aggCompute",
         ]
-        datastore_names = [
-            "silo_datastore1",
-            "silo_datastore2",
-            "silo_datastore3",
-            "agg_datastore"
-        ]
+        datastore_names = ["silo_datastore1", "silo_datastore2", "silo_datastore3", "agg_datastore"]
 
         @pipeline
-        def silo_step_func(raw_train_data: Input,
+        def silo_step_func(
+            raw_train_data: Input,
             raw_test_data: Input,
             checkpoint: Input(optional=True),
             lr: float = 0.01,
@@ -76,56 +72,71 @@ class TestDSLPipeline:
             }
 
         silo_configs = [
-            FederatedLearningSilo(compute=compute_names[0], datastore=datastore_names[0], inputs={
-                "raw_train_data": Input(
+            FederatedLearningSilo(
+                compute=compute_names[0],
+                datastore=datastore_names[0],
+                inputs={
+                    "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo1_input1.txt"),
-                        datastore=datastore_names[0]
+                        datastore=datastore_names[0],
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo1_input2.txt"),
-                        datastore=datastore_names[0]
-                    )}),
-            FederatedLearningSilo(compute=compute_names[1], datastore=datastore_names[1], inputs={
-                "raw_train_data": Input(
+                        datastore=datastore_names[0],
+                    ),
+                },
+            ),
+            FederatedLearningSilo(
+                compute=compute_names[1],
+                datastore=datastore_names[1],
+                inputs={
+                    "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo2_input1.txt"),
-                        datastore=datastore_names[1]
+                        datastore=datastore_names[1],
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo2_input2.txt"),
-                        datastore=datastore_names[1]
-                    )}),
-            FederatedLearningSilo(compute=compute_names[2], datastore=datastore_names[2], inputs={
-                "raw_train_data": Input(
+                        datastore=datastore_names[1],
+                    ),
+                },
+            ),
+            FederatedLearningSilo(
+                compute=compute_names[2],
+                datastore=datastore_names[2],
+                inputs={
+                    "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo3_input1.txt"),
-                        datastore=datastore_names[2]
+                        datastore=datastore_names[2],
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo3_input2.txt"),
-                        datastore=datastore_names[2]
-                    )}),
-            ]
+                        datastore=datastore_names[2],
+                    ),
+                },
+            ),
+        ]
 
-        silo_to_aggregation_argument_map = {"model" : "silo_inputs"}
-        aggregation_to_silo_argument_map = {"aggregated_output" : "checkpoint"}  
-            
+        silo_to_aggregation_argument_map = {"model": "silo_inputs"}
+        aggregation_to_silo_argument_map = {"aggregated_output": "checkpoint"}
+
         # Other args
         iterations = 3
         silo_kwargs = {}
         agg_kwargs = {}
         aggregation_compute = datastore_names[3]
-        aggregation_datastore= datastore_names[3]
+        aggregation_datastore = datastore_names[3]
 
         fl_node = FLScatterGather(
             silo_configs=silo_configs,
@@ -137,7 +148,7 @@ class TestDSLPipeline:
             aggregation_kwargs=agg_kwargs,
             silo_to_aggregation_argument_map=silo_to_aggregation_argument_map,
             aggregation_to_silo_argument_map=aggregation_to_silo_argument_map,
-            max_iterations=iterations, 
+            max_iterations=iterations,
         )
 
         for iteration_subgraph in fl_node.subgraph:
@@ -149,11 +160,10 @@ class TestDSLPipeline:
                 assert sub_step_1.outputs["processed_test_data"]
                 assert sub_step_1.compute == config.compute
 
-
                 sub_step_2 = silo_step.jobs["silo_training_step"]
                 assert aggregation_datastore in sub_step_2.outputs["model"].path
 
-            merge_step = iteration_subgraph['mergers'][0]
+            merge_step = iteration_subgraph["mergers"][0]
             agg_step = iteration_subgraph["aggregation"]
             assert merge_step.compute == aggregation_compute
             assert agg_step.compute == aggregation_compute
@@ -167,7 +177,7 @@ class TestDSLPipeline:
         # Much of the validation function is concerned with the I/O of inputted components,
         # This function creates a basic command component with specified I/O to aid with testing
         # that validation.
-        def create_component_with_io(inputs: List=[], outputs: List=[]):
+        def create_component_with_io(inputs: List = [], outputs: List = []):
             return command(
                 name=f"fake_component",
                 display_name="fake component for testing",
@@ -175,9 +185,10 @@ class TestDSLPipeline:
                 command=('echo "hello world"'),
                 distribution={"type": "Pytorch", "process_count_per_instance": 2},
                 resources={"instance_count": 2},
-                inputs={ val: Input(type="number", default=0) for val in inputs},
-                outputs={ val: Output(type="number", default=0) for val in outputs},
+                inputs={val: Input(type="number", default=0) for val in inputs},
+                outputs={val: Output(type="number", default=0) for val in outputs},
             )
+
         silo_configs = [
             FederatedLearningSilo(compute="com1", datastore="ds1", inputs={}),
             FederatedLearningSilo(compute="com2", datastore="ds2", inputs={}),
@@ -196,8 +207,9 @@ class TestDSLPipeline:
         # function. Now we only need to modify the input values, then call
         # try_validate() to see how that changes its behavior.
         validate = FLScatterGather.validate_inputs
+
         def try_validate(raise_error=False):
-            return validate( 
+            return validate(
                 silo_configs=silo_configs,
                 silo_component=silo_comp,
                 aggregation_component=agg_comp,
@@ -208,8 +220,9 @@ class TestDSLPipeline:
                 silo_to_aggregation_argument_map=silo_agg_map,
                 aggregation_to_silo_argument_map=agg_silo_map,
                 max_iterations=iters,
-                raise_error=raise_error)
-        
+                raise_error=raise_error,
+            )
+
         # initial check
         validation_result = try_validate()
         assert validation_result.passed
@@ -219,12 +232,18 @@ class TestDSLPipeline:
         agg_kwargs = {"another_input": 456}
         validation_result = try_validate()
         assert not validation_result.passed
-        assert "shared_silo_kwargs keyword some_input not listed in silo_component's inputs" in validation_result.error_messages["shared_silo_kwargs"]
-        assert "aggregation_kwargs keyword another_input not listed in aggregation_component's inputs" in validation_result.error_messages["aggregation_kwargs"]
-        
+        assert (
+            "shared_silo_kwargs keyword some_input not listed in silo_component's inputs"
+            in validation_result.error_messages["shared_silo_kwargs"]
+        )
+        assert (
+            "aggregation_kwargs keyword another_input not listed in aggregation_component's inputs"
+            in validation_result.error_messages["aggregation_kwargs"]
+        )
+
         # succeed once inputs have static kwargs
         silo_comp = create_component_with_io(inputs=["some_input"], outputs=["in_out"])
-        agg_comp =  create_component_with_io(inputs=["another_input"], outputs=["agg_out"])
+        agg_comp = create_component_with_io(inputs=["another_input"], outputs=["agg_out"])
         validation_result = try_validate()
         assert validation_result.passed
 
@@ -232,15 +251,31 @@ class TestDSLPipeline:
         silo_agg_map = {"silo_output_name": "agg_input_name"}
         agg_silo_map = {"agg_output_name": "silo_input_name"}
         validation_result = try_validate()
-        assert "aggregation_to_silo_argument_map key agg_output_name is not a known output of the aggregation component" in validation_result.error_messages["aggregation_to_silo_argument_map"]
-        assert "aggregation_to_silo_argument_map value silo_input_name is not a known input of the silo component" in validation_result.error_messages["aggregation_to_silo_argument_map"]
-        assert "silo_to_aggregation_argument_map key silo_output_name is not a known output of the silo component" in validation_result.error_messages["silo_to_aggregation_argument_map"]
-        assert "silo_to_aggregation_argument_map value agg_input_name is not a known input of the aggregation component" in validation_result.error_messages["silo_to_aggregation_argument_map"]
+        assert (
+            "aggregation_to_silo_argument_map key agg_output_name is not a known output of the aggregation component"
+            in validation_result.error_messages["aggregation_to_silo_argument_map"]
+        )
+        assert (
+            "aggregation_to_silo_argument_map value silo_input_name is not a known input of the silo component"
+            in validation_result.error_messages["aggregation_to_silo_argument_map"]
+        )
+        assert (
+            "silo_to_aggregation_argument_map key silo_output_name is not a known output of the silo component"
+            in validation_result.error_messages["silo_to_aggregation_argument_map"]
+        )
+        assert (
+            "silo_to_aggregation_argument_map value agg_input_name is not a known input of the aggregation component"
+            in validation_result.error_messages["silo_to_aggregation_argument_map"]
+        )
         assert not validation_result.passed
 
         # succeed once step i/o contains values mentioned in argument maps
-        silo_comp = create_component_with_io(inputs=["some_input", "silo_input_name"], outputs=["in_out", "silo_output_name"])
-        agg_comp =  create_component_with_io(inputs=["another_input", "agg_input_name"], outputs=["agg_out", "agg_output_name"])
+        silo_comp = create_component_with_io(
+            inputs=["some_input", "silo_input_name"], outputs=["in_out", "silo_output_name"]
+        )
+        agg_comp = create_component_with_io(
+            inputs=["another_input", "agg_input_name"], outputs=["agg_out", "agg_output_name"]
+        )
         validation_result = try_validate()
         assert validation_result.passed
 
@@ -248,13 +283,19 @@ class TestDSLPipeline:
         agg_ds = "a_datastore"
         validation_result = try_validate()
         assert not validation_result.passed
-        assert "aggregation_compute cannot be unset if aggregation_datastore is set" in validation_result.error_messages["aggregation_compute"]
+        assert (
+            "aggregation_compute cannot be unset if aggregation_datastore is set"
+            in validation_result.error_messages["aggregation_compute"]
+        )
 
         agg_ds = None
         agg_compute = "a_compute"
         validation_result = try_validate()
         assert not validation_result.passed
-        assert "aggregation_datastore cannot be unset if aggregation_compute is set" in validation_result.error_messages["aggregation_datastore"]
+        assert (
+            "aggregation_datastore cannot be unset if aggregation_compute is set"
+            in validation_result.error_messages["aggregation_datastore"]
+        )
 
         agg_ds = "a_datastore"
         agg_compute = "a_compute"
@@ -262,22 +303,31 @@ class TestDSLPipeline:
         assert validation_result.passed
 
         # Require number of silo-specific inputs to be consistent per silo
-        silo_configs[0] = FederatedLearningSilo(compute="com1", datastore="ds1", inputs={"input1" : Input(type=AssetTypes.MLTABLE)})
+        silo_configs[0] = FederatedLearningSilo(
+            compute="com1", datastore="ds1", inputs={"input1": Input(type=AssetTypes.MLTABLE)}
+        )
         validation_result = try_validate()
         assert not validation_result.passed
-        assert "Silo at index 1 has is missing inputs named 'input1'" in validation_result.error_messages["silo_configs"]
+        assert (
+            "Silo at index 1 has is missing inputs named 'input1'" in validation_result.error_messages["silo_configs"]
+        )
         assert "Silo at index 1 has 0 inputs" in validation_result.error_messages["silo_configs"]
 
-        silo_configs[1] = FederatedLearningSilo(compute="com1", datastore="ds1", inputs={"input1" : Input(type=AssetTypes.MLTABLE), "input2" : Input(type=AssetTypes.MLTABLE)})
+        silo_configs[1] = FederatedLearningSilo(
+            compute="com1",
+            datastore="ds1",
+            inputs={"input1": Input(type=AssetTypes.MLTABLE), "input2": Input(type=AssetTypes.MLTABLE)},
+        )
         validation_result = try_validate()
         assert not validation_result.passed
         assert "Silo at index 1 has 2 inputs" in validation_result.error_messages["silo_configs"]
 
-        
-        silo_configs[1] = FederatedLearningSilo(compute="com1", datastore="ds1", inputs={"input1" : Input(type=AssetTypes.MLTABLE)})
+        silo_configs[1] = FederatedLearningSilo(
+            compute="com1", datastore="ds1", inputs={"input1": Input(type=AssetTypes.MLTABLE)}
+        )
         validation_result = try_validate()
         assert validation_result.passed
-    
+
     # Test 'leaf' case of anchoring.
     # Currently only pipeline steps and
     # command components are anchored.
@@ -287,7 +337,7 @@ class TestDSLPipeline:
         # Its output datastores should be assigned to aggregator datastore, if one is inputted
         # If output datastores are already set, and the database doesn't match the
         # orchestrator datatstore, we should get a warning.
-        # The local_datastore should be ignored, since there are no in-step outputs for single 
+        # The local_datastore should be ignored, since there are no in-step outputs for single
         # components.
         command_component = command(
             name="example_comp",
@@ -302,6 +352,7 @@ class TestDSLPipeline:
         compute_name = "a_compute"
         local_ds_name = "local_datastore"
         orch_ds_name = "orchestrator_datastore"
+
         def try_anchor():
             return FLScatterGather._anchor_step(
                 pipeline_step=executed_command_component,
@@ -309,6 +360,7 @@ class TestDSLPipeline:
                 internal_datastore=local_ds_name,
                 orchestrator_datastore=orch_ds_name,
             )
+
         warnings = try_anchor()
         assert len(warnings._warnings) == 0
         assert executed_command_component.compute == compute_name
@@ -324,9 +376,7 @@ class TestDSLPipeline:
     # recursively, setting the values of subcomponents as expected.
     def test_anchoring_pipeline_steps(self) -> None:
         @pipeline(name="test pipeline")
-        def test_pipeline_func(
-            x: Input(type="uri_folder")
-        ):
+        def test_pipeline_func(x: Input(type="uri_folder")):
             subcomponent1 = command(
                 name="example_comp",
                 display_name="test component",
@@ -342,17 +392,21 @@ class TestDSLPipeline:
                 environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
                 command=("echo unit test example component. Why was this actually run?"),
                 inputs={"input": Input(type="uri_folder", mode="rw_mount", path="")},
-                outputs={"output2": Output(type="uri_folder", mode="rw_mount", path=""), 
-                    "other_output": Output(type=AssetTypes.MLTABLE, path="this-should-not-change")},
+                outputs={
+                    "output2": Output(type="uri_folder", mode="rw_mount", path=""),
+                    "other_output": Output(type=AssetTypes.MLTABLE, path="this-should-not-change"),
+                },
             )
             executed_subcomponent2 = subcomponent2(input=executed_subcomponent1.outputs["output"])
-            return { "pipeline_output": executed_subcomponent2.outputs["output2"], "pipeline_output2": executed_subcomponent2.outputs["other_output"]}
-
+            return {
+                "pipeline_output": executed_subcomponent2.outputs["output2"],
+                "pipeline_output2": executed_subcomponent2.outputs["other_output"],
+            }
 
         compute_name = "a_compute"
         local_ds_name = "local_datastore"
         orch_ds_name = "orchestrator_datastore"
-        executed_pipeline = test_pipeline_func(x= Input(type="uri_folder", mode="mount", path="hello"))
+        executed_pipeline = test_pipeline_func(x=Input(type="uri_folder", mode="mount", path="hello"))
         FLScatterGather._anchor_step(
             pipeline_step=executed_pipeline,
             compute=compute_name,

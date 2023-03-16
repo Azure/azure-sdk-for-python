@@ -8,10 +8,14 @@ from typing import Callable
 from azure.ai.ml.dsl._fl_scatter_gather_node import fl_scatter_gather
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities._credentials import IdentityConfiguration, IdentityConfigurationType, ManagedIdentityConfiguration
+from azure.ai.ml.entities._credentials import (
+    IdentityConfiguration,
+    IdentityConfigurationType,
+    ManagedIdentityConfiguration,
+)
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._constants import FL_TESTING_LOCAL_DATA_FOLDER, FL_TESTING_COMPONENTS_FOLDER
-import os 
+import os
 from azure.ai.ml import (
     MLClient,
 )
@@ -44,12 +48,17 @@ class TestDSLPipeline(AzureRecordedTestCase):
     #       agg_datastore.
     @pytest.mark.skipif(
         condition=not is_live(),
-        reason=("TODO (2235034) The critical call to `client.jobs.create_or_update` seems to make different" +
-            "API calls in playback mode compared to recording mode"),
+        reason=(
+            "TODO (2235034) The critical call to `client.jobs.create_or_update` seems to make different"
+            + "API calls in playback mode compared to recording mode"
+        ),
     )
     def test_fl_pipeline(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        id = IdentityConfiguration(type=IdentityConfigurationType.MANAGED, user_assigned_identities=[ManagedIdentityConfiguration(client_id="3adff742-0142-45a6-8142-3d94f944cafb")])
-        
+        id = IdentityConfiguration(
+            type=IdentityConfigurationType.MANAGED,
+            user_assigned_identities=[ManagedIdentityConfiguration(client_id="3adff742-0142-45a6-8142-3d94f944cafb")],
+        )
+
         compute_names = [
             "siloCompute1",
             "siloCompute2",
@@ -63,14 +72,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 print(f"Found existing compute '{name}', using that instead of creating it.")
                 computes.append(extant_compute)
             except ResourceNotFoundError as e:
-                raise(e)
+                raise (e)
 
-        datastore_names = [
-            "silo_datastore1",
-            "silo_datastore2",
-            "silo_datastore3",
-            "agg_datastore"
-        ]
+        datastore_names = ["silo_datastore1", "silo_datastore2", "silo_datastore3", "agg_datastore"]
 
         datastores = []
         for datastore_name in datastore_names:
@@ -79,16 +83,14 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 print(f"Found existing datastore '{datastore_name}', using that instead of creating it.")
                 datastores.append(extant_ds)
             except ResourceNotFoundError as e:
-                raise(e)
+                raise (e)
 
         # Load components from local configs
         preprocessing_component = load_component(
             source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "preprocessing", "spec.yaml")
         )
 
-        training_component = load_component(
-            source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "training", "spec.yaml")
-        )
+        training_component = load_component(source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "training", "spec.yaml"))
 
         aggregate_component = load_component(
             source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "aggregate", "spec.yaml")
@@ -96,7 +98,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         # Use a nested pipeline for the silo step
         @pipeline
-        def silo_step_func(raw_train_data: Input,
+        def silo_step_func(
+            raw_train_data: Input,
             raw_test_data: Input,
             checkpoint: Input(optional=True),
             lr: float = 0.01,
@@ -133,56 +136,71 @@ class TestDSLPipeline(AzureRecordedTestCase):
         aggregation_step = aggregate_component
 
         silo_configs = [
-            FederatedLearningSilo(compute=computes[0].name, datastore=datastores[0].name, inputs={
-                "raw_train_data": Input(
+            FederatedLearningSilo(
+                compute=computes[0].name,
+                datastore=datastores[0].name,
+                inputs={
+                    "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo1_input1.txt"),
-                        datastore=datastores[0].name
+                        datastore=datastores[0].name,
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo1_input2.txt"),
-                        datastore=datastores[0].name
-                    )}),
-            FederatedLearningSilo(compute=computes[1].name, datastore=datastores[1].name, inputs={
-                "raw_train_data": Input(
+                        datastore=datastores[0].name,
+                    ),
+                },
+            ),
+            FederatedLearningSilo(
+                compute=computes[1].name,
+                datastore=datastores[1].name,
+                inputs={
+                    "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo2_input1.txt"),
-                        datastore=datastores[1].name
+                        datastore=datastores[1].name,
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo2_input2.txt"),
-                        datastore=datastores[1].name
-                    )}),
-            FederatedLearningSilo(compute=computes[2].name, datastore=datastores[2].name, inputs={
-                "raw_train_data": Input(
+                        datastore=datastores[1].name,
+                    ),
+                },
+            ),
+            FederatedLearningSilo(
+                compute=computes[2].name,
+                datastore=datastores[2].name,
+                inputs={
+                    "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo3_input1.txt"),
-                        datastore=datastores[2].name
+                        datastore=datastores[2].name,
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
                         path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo3_input2.txt"),
-                        datastore=datastores[2].name
-                    )}),
-            ]
+                        datastore=datastores[2].name,
+                    ),
+                },
+            ),
+        ]
 
-        silo_to_aggregation_argument_map = {"model" : "silo_inputs"}
-        aggregation_to_silo_argument_map = {"aggregated_output" : "checkpoint"}  
-            
+        silo_to_aggregation_argument_map = {"model": "silo_inputs"}
+        aggregation_to_silo_argument_map = {"aggregated_output": "checkpoint"}
+
         # Other args
         iterations = 3
         silo_kwargs = {}
         agg_kwargs = {}
         aggregation_compute = computes[3].name
-        aggregation_datastore= datastores[3].name
+        aggregation_datastore = datastores[3].name
 
         # Define the fl pipeline
         @pipeline()
@@ -197,9 +215,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 aggregation_kwargs=agg_kwargs,
                 silo_to_aggregation_argument_map=silo_to_aggregation_argument_map,
                 aggregation_to_silo_argument_map=aggregation_to_silo_argument_map,
-                max_iterations=iterations, 
+                max_iterations=iterations,
             )
-            return {"pipeline_output" : fl_node.outputs["aggregated_output"]}
+            return {"pipeline_output": fl_node.outputs["aggregated_output"]}
 
         # create and submit the pipeline job
         fl_pipeline_job = fl_pipeline()
@@ -210,7 +228,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         silo_steps = [value for key, value in subgraph.items() if "silo_step" in key]
         merge_steps = [value for key, value in subgraph.items() if "aggregate_output" in key]
         agg_steps = [value for key, value in subgraph.items() if "model_weights" in key]
-
 
         assert len(silo_steps) == 9
         assert len(merge_steps) == 3
@@ -226,8 +243,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
             assert merge_step.compute == aggregation_compute
             assert agg_step.compute == aggregation_compute
             assert aggregation_datastore in merge_step.outputs["aggregated_output"].path
-             # last agg output isn't doesn't list path in local agg spec,
-             # it's instead located in overall pipeline output spec
+            # last agg output isn't doesn't list path in local agg spec,
+            # it's instead located in overall pipeline output spec
             if iteration != iterations - 1:
                 assert aggregation_datastore in agg_step.outputs["aggregated_output"].path
         assert aggregation_datastore in submitted_pipeline_job.outputs["pipeline_output"].path

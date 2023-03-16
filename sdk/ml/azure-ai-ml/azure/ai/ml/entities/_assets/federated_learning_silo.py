@@ -15,8 +15,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 # FL subgraphs in pipelines.
 # The functionality of this entity is limited, and it exists mostly
 # To simplify the process of loading and validating these objects from YAML.
-class FederatedLearningSilo():
-
+class FederatedLearningSilo:
     def __init__(
         self,
         *,
@@ -47,8 +46,6 @@ class FederatedLearningSilo():
         self.datastore = datastore
         self.inputs = inputs
 
-
-
     def dump(
         self,
         dest: Union[str, PathLike, IO[AnyStr]],
@@ -62,7 +59,6 @@ class FederatedLearningSilo():
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
 
-
     def _to_dict(self) -> Dict:
         # JIT import to avoid experimental warnings on unrelated calls
         from azure.ai.ml._schema.assets.federated_learning_silo import FederatedLearningSiloSchema
@@ -70,22 +66,14 @@ class FederatedLearningSilo():
         # pylint: disable=no-member
         schema = FederatedLearningSiloSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
 
-
         return schema.dump(self)
 
     @classmethod
-    def _load_from_dict(
-        cls,
-        silo_dict: dict
-    ) -> "FederatedLearningSilo":
+    def _load_from_dict(cls, silo_dict: dict) -> "FederatedLearningSilo":
         data_input = silo_dict.get("inputs", {})
-        return FederatedLearningSilo(
-            compute=silo_dict["compute"],
-            datastore=silo_dict["datastore"],
-            inputs=data_input
-            )
+        return FederatedLearningSilo(compute=silo_dict["compute"], datastore=silo_dict["datastore"], inputs=data_input)
 
-    #simple load based off mltable metadata loading style
+    # simple load based off mltable metadata loading style
     @classmethod
     def _load(
         cls,
@@ -121,10 +109,9 @@ class FederatedLearningSilo():
         type list_arg: str
         """
         yaml_dict = load_yaml(yaml_path)
-        return [FederatedLearningSilo._load_from_dict(silo_dict=silo_yaml_dict)
-                for silo_yaml_dict in  yaml_dict[list_arg]]
-
-
+        return [
+            FederatedLearningSilo._load_from_dict(silo_dict=silo_yaml_dict) for silo_yaml_dict in yaml_dict[list_arg]
+        ]
 
     # There are no to/from rest object functions because this object has no
     # rest object equivalent. Any conversions should be done as part of the

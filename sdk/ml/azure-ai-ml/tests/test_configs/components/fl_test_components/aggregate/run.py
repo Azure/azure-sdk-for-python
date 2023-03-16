@@ -62,7 +62,7 @@ def main(cli_args=None):
     for root, dirs, files in os.walk(args.silo_inputs):
         for name in files:
             print(f"found file: {name}")
-            #test_output(os.path.join(root,"aggregate_output_dir"))
+            # test_output(os.path.join(root,"aggregate_output_dir"))
     test_output(args.aggregated_output)
 
 

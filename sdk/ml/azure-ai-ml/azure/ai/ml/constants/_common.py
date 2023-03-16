@@ -178,6 +178,7 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
 
 class AzureMLResourceType:
     """AzureMLResourceType is a class that defines the resource types that are supported by the SDK/CLI."""
+
     CODE = "codes"
     """Code resource type."""
     COMPUTE = "computes"

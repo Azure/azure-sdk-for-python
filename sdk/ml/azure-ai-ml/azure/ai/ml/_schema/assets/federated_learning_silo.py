@@ -12,11 +12,12 @@ from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 # this does not represent a server-side resource.
 @experimental
 class FederatedLearningSiloSchema(YamlFileSchema):
-    """ The YAML definition of a silo for describing a federated learning data target.
+    """The YAML definition of a silo for describing a federated learning data target.
     Unlike most SDK/CLI schemas, this schema does not represent an AML resource;
     it is merely used to simplify the loading and validation of silos which are used
     to create FL pipeline nodes.
     """
+
     compute = fields.Str()
     datastore = fields.Str()
     inputs = InputsField()

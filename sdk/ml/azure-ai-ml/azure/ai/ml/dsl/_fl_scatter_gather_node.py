@@ -11,6 +11,7 @@ from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearni
 from azure.ai.ml.entities import CommandComponent
 from azure.ai.ml._utils._experimental import experimental
 
+
 @experimental
 def fl_scatter_gather(
     *,
