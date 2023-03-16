@@ -116,10 +116,8 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 
 
 class DataTransferCopyComponent(DataTransferComponent):
-    """DataTransfer copy component version, used to define a data transfer component.
+    """DataTransfer copy component version, used to define a data transfer copy component.
 
-    :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
-    :type task: str
     :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
     :type data_copy_mode: str
     :param inputs: Mapping of inputs data bindings used in the job.
@@ -131,7 +129,6 @@ class DataTransferCopyComponent(DataTransferComponent):
     def __init__(
         self,
         *,
-        task: str = DataTransferTaskType.COPY_DATA,
         data_copy_mode: str = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
@@ -139,7 +136,7 @@ class DataTransferCopyComponent(DataTransferComponent):
     ):
 
         super().__init__(
-            task=task,
+            task=DataTransferTaskType.COPY_DATA,
             inputs=inputs,
             outputs=outputs,
             **kwargs,
@@ -203,10 +200,8 @@ class DataTransferCopyComponent(DataTransferComponent):
 
 
 class DataTransferImportComponent(DataTransferComponent):
-    """DataTransfer import component version, used to define a data transfer component.
+    """DataTransfer import component version, used to define a data transfer import component.
 
-    :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
-    :type task: str
     :param source: The data source of file system or database
     :type source: dict
     :param outputs: Mapping of outputs data bindings used in the job, default will be an output port with key "sink"
@@ -217,7 +212,6 @@ class DataTransferImportComponent(DataTransferComponent):
     def __init__(
         self,
         *,
-        task: str = DataTransferTaskType.IMPORT_DATA,
         source: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         **kwargs,
@@ -225,7 +219,7 @@ class DataTransferImportComponent(DataTransferComponent):
 
         outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
         super().__init__(
-            task=task,
+            task=DataTransferTaskType.IMPORT_DATA,
             outputs=outputs,
             **kwargs,
         )
@@ -250,10 +244,8 @@ class DataTransferImportComponent(DataTransferComponent):
 
 
 class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
-    """DataTransfer export component version, used to define a data transfer component.
+    """DataTransfer export component version, used to define a data transfer export component.
 
-    :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
-    :type task: str
     :param sink: The sink of external data and databases.
     :type sink: Union[Dict, Database, FileSystem]
     :param inputs: Mapping of inputs data bindings used in the job.
@@ -263,14 +255,13 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     def __init__(
         self,
         *,
-        task: str = DataTransferTaskType.EXPORT_DATA,
         inputs: Optional[Dict] = None,
         sink: Optional[Dict] = None,
         **kwargs,
     ):
 
         super().__init__(
-            task=task,
+            task=DataTransferTaskType.EXPORT_DATA,
             inputs=inputs,
             **kwargs,
         )
