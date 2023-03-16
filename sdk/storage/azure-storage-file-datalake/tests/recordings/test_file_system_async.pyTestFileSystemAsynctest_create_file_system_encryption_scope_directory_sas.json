@@ -29,7 +29,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem90fd3d23/dir1?resource=directory\u0026se=end\u0026sp=rwd\u0026sv=2022-11-02\u0026sr=d\u0026ses=hnstestscope1\u0026sdd=1\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem90fd3d23/dir1?resource=directory\u0026se=end\u0026sp=rwd\u0026sv=2023-01-03\u0026sr=d\u0026ses=hnstestscope1\u0026sdd=1\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -57,7 +57,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/filesystem90fd3d23/dir1?se=end\u0026sp=rwd\u0026sv=2022-11-02\u0026sr=d\u0026ses=hnstestscope1\u0026sdd=1\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.blob.core.windows.net/filesystem90fd3d23/dir1?se=end\u0026sp=rwd\u0026sv=2023-01-03\u0026sr=d\u0026ses=hnstestscope1\u0026sdd=1\u0026sig=fake_token_value",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",

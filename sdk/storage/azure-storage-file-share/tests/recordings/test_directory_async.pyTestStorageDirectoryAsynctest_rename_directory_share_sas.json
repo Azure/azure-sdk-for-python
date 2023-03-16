@@ -27,7 +27,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/utsharea75e3405/dir1?restype=directory\u0026se=end\u0026sp=rw\u0026sv=2022-11-02\u0026sr=s\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea75e3405/dir1?restype=directory\u0026se=end\u0026sp=rw\u0026sv=2023-01-03\u0026sr=s\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -65,7 +65,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/utsharea75e3405/dir2?restype=directory\u0026comp=rename\u0026se=end\u0026sp=rw\u0026sv=2022-11-02\u0026sr=s\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea75e3405/dir2?restype=directory\u0026comp=rename\u0026se=end\u0026sp=rw\u0026sv=2023-01-03\u0026sr=s\u0026sig=fake_token_value",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -73,7 +73,7 @@
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.10.0 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
         "x-ms-date": "Wed, 28 Sep 2022 21:47:13 GMT",
-        "x-ms-file-rename-source": "https://storagename.file.core.windows.net/utsharea75e3405/dir1?se=end\u0026sp=rw\u0026sv=2022-11-02\u0026sr=s\u0026sig=fake_token_value",
+        "x-ms-file-rename-source": "https://storagename.file.core.windows.net/utsharea75e3405/dir1?se=end\u0026sp=rw\u0026sv=2023-01-03\u0026sr=s\u0026sig=fake_token_value",
         "x-ms-version": "2021-06-08"
       },
       "RequestBody": null,
@@ -100,7 +100,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/utsharea75e3405/dir2?restype=directory\u0026se=end\u0026sp=rw\u0026sv=2022-11-02\u0026sr=s\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.file.core.windows.net/utsharea75e3405/dir2?restype=directory\u0026se=end\u0026sp=rw\u0026sv=2023-01-03\u0026sr=s\u0026sig=fake_token_value",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",

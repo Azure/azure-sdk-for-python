@@ -104,7 +104,7 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-blob/12.14.0b2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-copy-source": "https://storagenamestorname.blob.core.windows.net/utcontainer70fa318d/srcblob70fa318d?se=end\u0026sp=r\u0026sv=2022-11-02\u0026sr=b\u0026sig=fake_token_value",
+        "x-ms-copy-source": "https://storagenamestorname.blob.core.windows.net/utcontainer70fa318d/srcblob70fa318d?se=end\u0026sp=r\u0026sv=2023-01-03\u0026sr=b\u0026sig=fake_token_value",
         "x-ms-date": "Tue, 30 Aug 2022 22:32:30 GMT",
         "x-ms-requires-sync": "True",
         "x-ms-version": "2021-08-06"
@@ -160,7 +160,7 @@
         "x-ms-copy-completion-time": "Tue, 30 Aug 2022 22:32:32 GMT",
         "x-ms-copy-id": "09363751-ed2d-4147-b720-ed97163de129",
         "x-ms-copy-progress": "8192/8192",
-        "x-ms-copy-source": "https://storagenamestorname.blob.core.windows.net/utcontainer70fa318d/srcblob70fa318d?se=2022-08-30T23%3A32%3A30Z\u0026sp=r\u0026sv=2022-11-02\u0026sr=b",
+        "x-ms-copy-source": "https://storagenamestorname.blob.core.windows.net/utcontainer70fa318d/srcblob70fa318d?se=2022-08-30T23%3A32%3A30Z\u0026sp=r\u0026sv=2023-01-03\u0026sr=b",
         "x-ms-copy-status": "success",
         "x-ms-creation-time": "Tue, 30 Aug 2022 22:32:32 GMT",
         "x-ms-is-current-version": "true",
