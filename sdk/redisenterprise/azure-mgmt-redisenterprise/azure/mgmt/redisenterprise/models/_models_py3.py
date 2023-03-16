@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+import datetime
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -37,11 +38,37 @@ class AccessKeys(_serialization.Model):
         "secondary_key": {"key": "secondaryKey", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.primary_key = None
         self.secondary_key = None
+
+
+class Capability(_serialization.Model):
+    """Information about the features the location supports.
+
+    :ivar name: Feature name.
+    :vartype name: str
+    :ivar value: Indicates whether feature is supported or not.
+    :vartype value: bool
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "bool"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, value: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Feature name.
+        :paramtype name: str
+        :keyword value: Indicates whether feature is supported or not.
+        :paramtype value: bool
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.value = value
 
 
 class Resource(_serialization.Model):
@@ -57,30 +84,37 @@ class Resource(_serialization.Model):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redisenterprise.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -94,6 +128,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redisenterprise.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -104,6 +141,7 @@ class TrackedResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -111,11 +149,12 @@ class TrackedResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -142,6 +181,9 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redisenterprise.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -150,9 +192,13 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype sku: ~azure.mgmt.redisenterprise.models.Sku
     :ivar zones: The Availability Zones where this cluster will be deployed.
     :vartype zones: list[str]
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentity
     :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
      Known values are: "1.0", "1.1", and "1.2".
     :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+    :ivar encryption: Encryption-at-rest configuration for the cluster.
+    :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -174,6 +220,7 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "sku": {"required": True},
         "host_name": {"readonly": True},
@@ -187,11 +234,14 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "zones": {"key": "zones", "type": "[str]"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "ClusterPropertiesEncryption"},
         "host_name": {"key": "properties.hostName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "resource_state": {"key": "properties.resourceState", "type": "str"},
@@ -209,9 +259,11 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
         zones: Optional[List[str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
-        **kwargs
-    ):
+        encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -221,14 +273,20 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype sku: ~azure.mgmt.redisenterprise.models.Sku
         :keyword zones: The Availability Zones where this cluster will be deployed.
         :paramtype zones: list[str]
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentity
         :keyword minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
          Known values are: "1.0", "1.1", and "1.2".
         :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+        :keyword encryption: Encryption-at-rest configuration for the cluster.
+        :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.zones = zones
+        self.identity = identity
         self.minimum_tls_version = minimum_tls_version
+        self.encryption = encryption
         self.host_name = None
         self.provisioning_state = None
         self.resource_state = None
@@ -256,7 +314,7 @@ class ClusterList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of clusters.
         :paramtype value: list[~azure.mgmt.redisenterprise.models.Cluster]
@@ -266,6 +324,125 @@ class ClusterList(_serialization.Model):
         self.next_link = None
 
 
+class ClusterPropertiesEncryption(_serialization.Model):
+    """Encryption-at-rest configuration for the cluster.
+
+    :ivar customer_managed_key_encryption: All Customer-managed key encryption properties for the
+     resource. Set this to an empty object to use Microsoft-managed key encryption.
+    :vartype customer_managed_key_encryption:
+     ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryptionCustomerManagedKeyEncryption
+    """
+
+    _attribute_map = {
+        "customer_managed_key_encryption": {
+            "key": "customerManagedKeyEncryption",
+            "type": "ClusterPropertiesEncryptionCustomerManagedKeyEncryption",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        customer_managed_key_encryption: Optional[
+            "_models.ClusterPropertiesEncryptionCustomerManagedKeyEncryption"
+        ] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword customer_managed_key_encryption: All Customer-managed key encryption properties for
+         the resource. Set this to an empty object to use Microsoft-managed key encryption.
+        :paramtype customer_managed_key_encryption:
+         ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryptionCustomerManagedKeyEncryption
+        """
+        super().__init__(**kwargs)
+        self.customer_managed_key_encryption = customer_managed_key_encryption
+
+
+class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_serialization.Model):
+    """All Customer-managed key encryption properties for the resource. Set this to an empty object to
+    use Microsoft-managed key encryption.
+
+    :ivar key_encryption_key_identity: All identity configuration for Customer-managed key settings
+     defining which identity should be used to auth to Key Vault.
+    :vartype key_encryption_key_identity:
+     ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity
+    :ivar key_encryption_key_url: Key encryption key Url, versioned only. Ex:
+     https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78.
+    :vartype key_encryption_key_url: str
+    """
+
+    _attribute_map = {
+        "key_encryption_key_identity": {
+            "key": "keyEncryptionKeyIdentity",
+            "type": "ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity",
+        },
+        "key_encryption_key_url": {"key": "keyEncryptionKeyUrl", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_encryption_key_identity: Optional[
+            "_models.ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity"
+        ] = None,
+        key_encryption_key_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_encryption_key_identity: All identity configuration for Customer-managed key
+         settings defining which identity should be used to auth to Key Vault.
+        :paramtype key_encryption_key_identity:
+         ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity
+        :keyword key_encryption_key_url: Key encryption key Url, versioned only. Ex:
+         https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78.
+        :paramtype key_encryption_key_url: str
+        """
+        super().__init__(**kwargs)
+        self.key_encryption_key_identity = key_encryption_key_identity
+        self.key_encryption_key_url = key_encryption_key_url
+
+
+class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(_serialization.Model):
+    """All identity configuration for Customer-managed key settings defining which identity should be
+    used to auth to Key Vault.
+
+    :ivar user_assigned_identity_resource_id: User assigned identity to use for accessing key
+     encryption key Url. Ex: /subscriptions/:code:`<sub uuid>`/resourceGroups/:code:`<resource
+     group>`/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId.
+    :vartype user_assigned_identity_resource_id: str
+    :ivar identity_type: Only userAssignedIdentity is supported in this API version; other types
+     may be supported in the future. Known values are: "systemAssignedIdentity" and
+     "userAssignedIdentity".
+    :vartype identity_type: str or ~azure.mgmt.redisenterprise.models.CmkIdentityType
+    """
+
+    _attribute_map = {
+        "user_assigned_identity_resource_id": {"key": "userAssignedIdentityResourceId", "type": "str"},
+        "identity_type": {"key": "identityType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_assigned_identity_resource_id: Optional[str] = None,
+        identity_type: Optional[Union[str, "_models.CmkIdentityType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword user_assigned_identity_resource_id: User assigned identity to use for accessing key
+         encryption key Url. Ex: /subscriptions/:code:`<sub uuid>`/resourceGroups/:code:`<resource
+         group>`/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId.
+        :paramtype user_assigned_identity_resource_id: str
+        :keyword identity_type: Only userAssignedIdentity is supported in this API version; other types
+         may be supported in the future. Known values are: "systemAssignedIdentity" and
+         "userAssignedIdentity".
+        :paramtype identity_type: str or ~azure.mgmt.redisenterprise.models.CmkIdentityType
+        """
+        super().__init__(**kwargs)
+        self.user_assigned_identity_resource_id = user_assigned_identity_resource_id
+        self.identity_type = identity_type
+
+
 class ClusterUpdate(_serialization.Model):
     """A partial update to the RedisEnterprise cluster.
 
@@ -273,11 +450,15 @@ class ClusterUpdate(_serialization.Model):
 
     :ivar sku: The SKU to create, which affects price, performance, and features.
     :vartype sku: ~azure.mgmt.redisenterprise.models.Sku
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
      Known values are: "1.0", "1.1", and "1.2".
     :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+    :ivar encryption: Encryption-at-rest configuration for the cluster.
+    :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -305,8 +486,10 @@ class ClusterUpdate(_serialization.Model):
 
     _attribute_map = {
         "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "tags": {"key": "tags", "type": "{str}"},
         "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "ClusterPropertiesEncryption"},
         "host_name": {"key": "properties.hostName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "resource_state": {"key": "properties.resourceState", "type": "str"},
@@ -321,23 +504,31 @@ class ClusterUpdate(_serialization.Model):
         self,
         *,
         sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
-        **kwargs
-    ):
+        encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: The SKU to create, which affects price, performance, and features.
         :paramtype sku: ~azure.mgmt.redisenterprise.models.Sku
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.redisenterprise.models.ManagedServiceIdentity
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
          Known values are: "1.0", "1.1", and "1.2".
         :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+        :keyword encryption: Encryption-at-rest configuration for the cluster.
+        :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
         """
         super().__init__(**kwargs)
         self.sku = sku
+        self.identity = identity
         self.tags = tags
         self.minimum_tls_version = minimum_tls_version
+        self.encryption = encryption
         self.host_name = None
         self.provisioning_state = None
         self.resource_state = None
@@ -346,7 +537,8 @@ class ClusterUpdate(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -358,21 +550,26 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redisenterprise.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -390,6 +587,9 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redisenterprise.models.SystemData
     :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
      plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
      "Plaintext".
@@ -425,6 +625,7 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "resource_state": {"readonly": True},
     }
@@ -433,6 +634,7 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "client_protocol": {"key": "properties.clientProtocol", "type": "str"},
         "port": {"key": "properties.port", "type": "int"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -454,8 +656,8 @@ class Database(ProxyResource):  # pylint: disable=too-many-instance-attributes
         persistence: Optional["_models.Persistence"] = None,
         modules: Optional[List["_models.Module"]] = None,
         geo_replication: Optional["_models.DatabasePropertiesGeoReplication"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
          plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
@@ -512,7 +714,7 @@ class DatabaseList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Database"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Database"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of databases.
         :paramtype value: list[~azure.mgmt.redisenterprise.models.Database]
@@ -541,8 +743,8 @@ class DatabasePropertiesGeoReplication(_serialization.Model):
         *,
         group_nickname: Optional[str] = None,
         linked_databases: Optional[List["_models.LinkedDatabase"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_nickname: Name for the group of linked database resources.
         :paramtype group_nickname: str
@@ -617,8 +819,8 @@ class DatabaseUpdate(_serialization.Model):
         persistence: Optional["_models.Persistence"] = None,
         modules: Optional[List["_models.Module"]] = None,
         geo_replication: Optional["_models.DatabasePropertiesGeoReplication"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
          plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
@@ -676,7 +878,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -716,7 +918,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -727,7 +929,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.redisenterprise.models.ErrorDetail
@@ -737,7 +940,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.redisenterprise.models.ErrorDetail
@@ -763,13 +966,35 @@ class ExportClusterParameters(_serialization.Model):
         "sas_uri": {"key": "sasUri", "type": "str"},
     }
 
-    def __init__(self, *, sas_uri: str, **kwargs):
+    def __init__(self, *, sas_uri: str, **kwargs: Any) -> None:
         """
         :keyword sas_uri: SAS URI for the target directory to export to. Required.
         :paramtype sas_uri: str
         """
         super().__init__(**kwargs)
         self.sas_uri = sas_uri
+
+
+class FlushParameters(_serialization.Model):
+    """Parameters for a Redis Enterprise active geo-replication flush operation.
+
+    :ivar ids: The resource identifiers of all the other database resources in the georeplication
+     group to be flushed.
+    :vartype ids: list[str]
+    """
+
+    _attribute_map = {
+        "ids": {"key": "ids", "type": "[str]"},
+    }
+
+    def __init__(self, *, ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword ids: The resource identifiers of all the other database resources in the
+         georeplication group to be flushed.
+        :paramtype ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.ids = ids
 
 
 class ForceUnlinkParameters(_serialization.Model):
@@ -789,7 +1014,7 @@ class ForceUnlinkParameters(_serialization.Model):
         "ids": {"key": "ids", "type": "[str]"},
     }
 
-    def __init__(self, *, ids: List[str], **kwargs):
+    def __init__(self, *, ids: List[str], **kwargs: Any) -> None:
         """
         :keyword ids: The resource IDs of the database resources to be unlinked. Required.
         :paramtype ids: list[str]
@@ -815,7 +1040,7 @@ class ImportClusterParameters(_serialization.Model):
         "sas_uris": {"key": "sasUris", "type": "[str]"},
     }
 
-    def __init__(self, *, sas_uris: List[str], **kwargs):
+    def __init__(self, *, sas_uris: List[str], **kwargs: Any) -> None:
         """
         :keyword sas_uris: SAS URIs for the target blobs to import from. Required.
         :paramtype sas_uris: list[str]
@@ -845,7 +1070,7 @@ class LinkedDatabase(_serialization.Model):
         "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID of a database resource to link with this database.
         :paramtype id: str
@@ -853,6 +1078,102 @@ class LinkedDatabase(_serialization.Model):
         super().__init__(**kwargs)
         self.id = id
         self.state = None
+
+
+class LocationInfo(_serialization.Model):
+    """Information about location (for example: features that it supports).
+
+    :ivar location: Location name.
+    :vartype location: str
+    :ivar capabilities: List of capabilities.
+    :vartype capabilities: list[~azure.mgmt.redisenterprise.models.Capability]
+    """
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "capabilities": {"key": "capabilities", "type": "[Capability]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        capabilities: Optional[List["_models.Capability"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Location name.
+        :paramtype location: str
+        :keyword capabilities: List of capabilities.
+        :paramtype capabilities: list[~azure.mgmt.redisenterprise.models.Capability]
+        """
+        super().__init__(**kwargs)
+        self.location = location
+        self.capabilities = capabilities
+
+
+class ManagedServiceIdentity(_serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned, UserAssigned".
+    :vartype type: str or ~azure.mgmt.redisenterprise.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.redisenterprise.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned, UserAssigned".
+        :paramtype type: str or ~azure.mgmt.redisenterprise.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.redisenterprise.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class Module(_serialization.Model):
@@ -882,7 +1203,7 @@ class Module(_serialization.Model):
         "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(self, *, name: str, args: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: str, args: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the module, e.g. 'RedisBloom', 'RediSearch', 'RedisTimeSeries'.
          Required.
@@ -933,7 +1254,7 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.redisenterprise.models.OperationDisplay
@@ -979,7 +1300,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -989,7 +1310,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1009,7 +1331,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1051,8 +1373,8 @@ class OperationStatus(_serialization.Model):
         end_time: Optional[str] = None,
         status: Optional[str] = None,
         error: Optional["_models.ErrorResponse"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The operation's unique id.
         :paramtype id: str
@@ -1105,8 +1427,8 @@ class Persistence(_serialization.Model):
         rdb_enabled: Optional[bool] = None,
         aof_frequency: Optional[Union[str, "_models.AofFrequency"]] = None,
         rdb_frequency: Optional[Union[str, "_models.RdbFrequency"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword aof_enabled: Sets whether AOF is enabled.
         :paramtype aof_enabled: bool
@@ -1143,7 +1465,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1162,6 +1484,9 @@ class PrivateEndpointConnection(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redisenterprise.models.SystemData
     :ivar private_endpoint: The resource of private end point.
     :vartype private_endpoint: ~azure.mgmt.redisenterprise.models.PrivateEndpoint
     :ivar private_link_service_connection_state: A collection of information about the state of the
@@ -1178,6 +1503,7 @@ class PrivateEndpointConnection(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -1185,6 +1511,7 @@ class PrivateEndpointConnection(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
@@ -1198,8 +1525,8 @@ class PrivateEndpointConnection(Resource):
         *,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The resource of private end point.
         :paramtype private_endpoint: ~azure.mgmt.redisenterprise.models.PrivateEndpoint
@@ -1225,7 +1552,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
@@ -1247,6 +1574,9 @@ class PrivateLinkResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redisenterprise.models.SystemData
     :ivar group_id: The private link resource group id.
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
@@ -1259,6 +1589,7 @@ class PrivateLinkResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "group_id": {"readonly": True},
         "required_members": {"readonly": True},
     }
@@ -1267,12 +1598,13 @@ class PrivateLinkResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "group_id": {"key": "properties.groupId", "type": "str"},
         "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
@@ -1294,7 +1626,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.redisenterprise.models.PrivateLinkResource]
@@ -1304,7 +1636,8 @@ class PrivateLinkResourceListResult(_serialization.Model):
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
-    """A collection of information about the state of the connection between service consumer and provider.
+    """A collection of information about the state of the connection between service consumer and
+    provider.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
      of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -1329,8 +1662,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -1366,7 +1699,7 @@ class RegenerateKeyParameters(_serialization.Model):
         "key_type": {"key": "keyType", "type": "str"},
     }
 
-    def __init__(self, *, key_type: Union[str, "_models.AccessKeyType"], **kwargs):
+    def __init__(self, *, key_type: Union[str, "_models.AccessKeyType"], **kwargs: Any) -> None:
         """
         :keyword key_type: Which access key to regenerate. Required. Known values are: "Primary" and
          "Secondary".
@@ -1374,6 +1707,66 @@ class RegenerateKeyParameters(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.key_type = key_type
+
+
+class RegionSkuDetail(_serialization.Model):
+    """Details about the location requested and the available skus in the location.
+
+    :ivar resource_type: Resource type which has the SKU, such as Microsoft.Cache/redisEnterprise.
+    :vartype resource_type: str
+    :ivar location_info: Details about location and its capabilities.
+    :vartype location_info: ~azure.mgmt.redisenterprise.models.LocationInfo
+    :ivar sku_details: Details about available skus.
+    :vartype sku_details: ~azure.mgmt.redisenterprise.models.SkuDetail
+    """
+
+    _attribute_map = {
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "location_info": {"key": "locationInfo", "type": "LocationInfo"},
+        "sku_details": {"key": "skuDetails", "type": "SkuDetail"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_type: Optional[str] = None,
+        location_info: Optional["_models.LocationInfo"] = None,
+        sku_details: Optional["_models.SkuDetail"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_type: Resource type which has the SKU, such as
+         Microsoft.Cache/redisEnterprise.
+        :paramtype resource_type: str
+        :keyword location_info: Details about location and its capabilities.
+        :paramtype location_info: ~azure.mgmt.redisenterprise.models.LocationInfo
+        :keyword sku_details: Details about available skus.
+        :paramtype sku_details: ~azure.mgmt.redisenterprise.models.SkuDetail
+        """
+        super().__init__(**kwargs)
+        self.resource_type = resource_type
+        self.location_info = location_info
+        self.sku_details = sku_details
+
+
+class RegionSkuDetails(_serialization.Model):
+    """List of details about all the available SKUs.
+
+    :ivar value: List of Sku Detail.
+    :vartype value: list[~azure.mgmt.redisenterprise.models.RegionSkuDetail]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[RegionSkuDetail]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.RegionSkuDetail"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of Sku Detail.
+        :paramtype value: list[~azure.mgmt.redisenterprise.models.RegionSkuDetail]
+        """
+        super().__init__(**kwargs)
+        self.value = value
 
 
 class Sku(_serialization.Model):
@@ -1400,7 +1793,7 @@ class Sku(_serialization.Model):
         "capacity": {"key": "capacity", "type": "int"},
     }
 
-    def __init__(self, *, name: Union[str, "_models.SkuName"], capacity: Optional[int] = None, **kwargs):
+    def __init__(self, *, name: Union[str, "_models.SkuName"], capacity: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword name: The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10,
          EnterpriseFlash_F300 etc.). Required. Known values are: "Enterprise_E10", "Enterprise_E20",
@@ -1414,3 +1807,121 @@ class Sku(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.capacity = capacity
+
+
+class SkuDetail(_serialization.Model):
+    """Information about Sku.
+
+    :ivar name: The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10,
+     EnterpriseFlash_F300 etc.). Known values are: "Enterprise_E10", "Enterprise_E20",
+     "Enterprise_E50", "Enterprise_E100", "EnterpriseFlash_F300", "EnterpriseFlash_F700", and
+     "EnterpriseFlash_F1500".
+    :vartype name: str or ~azure.mgmt.redisenterprise.models.SkuName
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[Union[str, "_models.SkuName"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The type of RedisEnterprise cluster to deploy. Possible values: (Enterprise_E10,
+         EnterpriseFlash_F300 etc.). Known values are: "Enterprise_E10", "Enterprise_E20",
+         "Enterprise_E50", "Enterprise_E100", "EnterpriseFlash_F300", "EnterpriseFlash_F700", and
+         "EnterpriseFlash_F1500".
+        :paramtype name: str or ~azure.mgmt.redisenterprise.models.SkuName
+        """
+        super().__init__(**kwargs)
+        self.name = name
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.redisenterprise.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.redisenterprise.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.redisenterprise.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.redisenterprise.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
+
+
+class UserAssignedIdentity(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
