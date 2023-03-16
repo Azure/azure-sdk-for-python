@@ -29,7 +29,7 @@ class _FeatureStoreSettings(RestTranslatableMixin):
         :keyword online_store_connection_name:
         :paramtype online_store_connection_name: str
         """
-        self.compute_runtime = compute_runtime if compute_runtime else _ComputeRuntime(spark_runtime_version="3.1.0")
+        self.compute_runtime = compute_runtime if compute_runtime else _ComputeRuntime(spark_runtime_version="3.2.0")
         self.offline_store_connection_name = offline_store_connection_name
         self.online_store_connection_name = online_store_connection_name
 
