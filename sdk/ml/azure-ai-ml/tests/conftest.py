@@ -347,7 +347,7 @@ def e2e_fs_scope(sanitized_environment_variables: dict) -> OperationScope:
     return OperationScope(
         subscription_id=sanitized_environment_variables["ML_SUBSCRIPTION_ID"],
         resource_group_name=sanitized_environment_variables["ML_RESOURCE_GROUP"],
-        feature_store_name=sanitized_environment_variables["ML_FEATURE_STORE_NAME"],
+        workspace_name=sanitized_environment_variables["ML_FEATURE_STORE_NAME"],
     )
 
 @pytest.fixture
@@ -369,7 +369,7 @@ def feature_store_client(e2e_fs_scope: OperationScope, auth: ClientSecretCredent
         credential=auth,
         subscription_id=e2e_fs_scope.subscription_id,
         resource_group_name=e2e_fs_scope.resource_group_name,
-        workspace_name=e2e_fs_scope.feature_store_name,
+        workspace_name=e2e_fs_scope.workspace_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         cloud="AzureCloud",
     )
