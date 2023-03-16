@@ -863,6 +863,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
     @classmethod
     def _from_internal_entity(cls, name, internal_subscription):
         # type: (str, InternalSubscriptionDescription) -> SubscriptionProperties
+        # pylint: disable=line-too-long
         subscription = cls(
             name,
             lock_duration=internal_subscription.lock_duration,

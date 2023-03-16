@@ -25,13 +25,23 @@ from azure.core.pipeline.transport import AioHttpTransport
 
 from ...management._generated.models import (
     QueueDescriptionFeed,
+    QueueDescription,
+    QueueDescriptionEntryContent,
     TopicDescriptionEntry,
+    TopicDescription,
+    TopicDescriptionEntryContent,
     QueueDescriptionEntry,
     SubscriptionDescriptionFeed,
     SubscriptionDescriptionEntry,
+    SubscriptionDescription,
+    SubscriptionDescriptionEntryContent,
     RuleDescriptionEntry,
     RuleDescriptionFeed,
+    RuleDescription,
+    RuleDescriptionEntryContent,
     NamespacePropertiesEntry,
+    NamespaceProperties as NamespaceEntryProperties,
+    NamespacePropertiesEntryContent,
     CreateTopicBody,
     CreateTopicBodyContent,
     TopicDescriptionFeed,
@@ -282,7 +292,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError("Queue '{}' does not exist".format(queue_name))
         queue_description = QueueProperties._from_internal_entity(
-            queue_name, entry.content.queue_description
+            queue_name, cast(QueueDescription, entry.content.queue_description)
         )
         return queue_description
 
@@ -299,7 +309,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError("Queue {} does not exist".format(queue_name))
         runtime_properties = QueueRuntimeProperties._from_internal_entity(
-            queue_name, entry.content.queue_description
+            queue_name, cast(QueueDescription, entry.content.queue_description)
         )
         return runtime_properties
 
@@ -441,8 +451,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
 
         entry = QueueDescriptionEntry.deserialize(entry_ele)
+        entry.content = cast(QueueDescriptionEntryContent, entry.content)
         result = QueueProperties._from_internal_entity(
-            queue_name, entry.content.queue_description
+            queue_name, cast(QueueDescription, entry.content.queue_description)
         )
         return result
 
@@ -552,7 +563,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError("Topic '{}' does not exist".format(topic_name))
         topic_description = TopicProperties._from_internal_entity(
-            topic_name, entry.content.topic_description
+            topic_name, cast(TopicDescription, entry.content.topic_description)
         )
         return topic_description
 
@@ -569,7 +580,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         if not entry.content:
             raise ResourceNotFoundError("Topic {} does not exist".format(topic_name))
         topic_description = TopicRuntimeProperties._from_internal_entity(
-            topic_name, entry.content.topic_description
+            topic_name, cast(TopicDescription, entry.content.topic_description)
         )
         return topic_description
 
@@ -684,8 +695,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 ),
             )
         entry = TopicDescriptionEntry.deserialize(entry_ele)
+        entry.content = cast(TopicDescriptionEntryContent, entry.content)
         result = TopicProperties._from_internal_entity(
-            topic_name, entry.content.topic_description
+            topic_name, cast(TopicDescription, entry.content.topic_description)
         )
         return result
 
@@ -799,7 +811,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 )
             )
         subscription = SubscriptionProperties._from_internal_entity(
-            entry.title, entry.content.subscription_description
+            cast(str, entry.title),
+            cast(SubscriptionDescription, entry.content.subscription_description)
         )
         return subscription
 
@@ -823,7 +836,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 )
             )
         subscription = SubscriptionRuntimeProperties._from_internal_entity(
-            entry.title, entry.content.subscription_description
+            cast(str, entry.title),
+            cast(SubscriptionDescription, entry.content.subscription_description)
         )
         return subscription
 
@@ -940,8 +954,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
 
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
+        entry.content = cast(SubscriptionDescriptionEntryContent, entry.content)
         result = SubscriptionProperties._from_internal_entity(
-            subscription_name, entry.content.subscription_description
+            cast(str, subscription_name),
+            cast(SubscriptionDescription, entry.content.subscription_description)
         )
         return result
 
@@ -1077,7 +1093,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 )
             )
         rule_description = RuleProperties._from_internal_entity(
-            rule_name, entry.content.rule_description
+            rule_name, cast(RuleDescription, entry.content.rule_description)
         )
         deserialize_rule_key_values(
             entry_ele, rule_description
@@ -1138,8 +1154,9 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
         entry = RuleDescriptionEntry.deserialize(entry_ele)
+        entry.content = cast(RuleDescriptionEntryContent, entry.content)
         result = RuleProperties._from_internal_entity(
-            rule_name, entry.content.rule_description
+            rule_name, cast(RuleDescription, entry.content.rule_description)
         )
         deserialize_rule_key_values(
             entry_ele, result
@@ -1249,8 +1266,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         entry_el = await self._impl.namespace.get(**kwargs)
         namespace_entry = NamespacePropertiesEntry.deserialize(entry_el)
+        namespace_entry.content = cast(NamespacePropertiesEntryContent, namespace_entry.content)
         return NamespaceProperties._from_internal_entity(
-            namespace_entry.title, namespace_entry.content.namespace_properties
+            cast(str, namespace_entry.title),
+            cast(NamespaceEntryProperties, namespace_entry.content.namespace_properties)
         )
 
     async def close(self) -> None:
