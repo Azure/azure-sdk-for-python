@@ -580,11 +580,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 if k not in silo_outputs:
                     validation_result.append_error(yaml_path="silo_to_aggregation_argument_map",
                     message=f"silo_to_aggregation_argument_map key {k }" +
-                        "is not a known output of the silo component.")
+                        " is not a known output of the silo component.")
                 if v not in agg_inputs:
                     validation_result.append_error(yaml_path="silo_to_aggregation_argument_map",
-                    message=f"silo_to_aggregation_argument_map value {v} " +
-                        "is not a known input of the aggregation component.")
+                    message=f"silo_to_aggregation_argument_map value {v}" +
+                        " is not a known input of the aggregation component.")
 
         if max_iterations < 1:
             validation_result.append_error(yaml_path="max_iterations",
