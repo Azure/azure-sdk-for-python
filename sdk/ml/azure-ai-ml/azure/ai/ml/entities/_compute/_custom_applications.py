@@ -172,7 +172,7 @@ class CustomApplications:
             endpoints=endpoints,
             environment_variables=environment_variables,
             volumes=volumes,
-            docker=(Docker(privileged=True) if self.type == CustomApplicationDefaults.DOCKER else None),
+            docker=Docker(privileged=True),
             additional_properties=self.additional_properties,
         )
 
