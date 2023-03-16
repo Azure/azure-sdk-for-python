@@ -1773,7 +1773,10 @@ class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_serverless_compute_with_job_tier(self, client: MLClient) -> None:
         yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/pipeline_with_job_tier.yml"
         pipeline_job = load_job(yaml_path)
-        assert_job_cancel(pipeline_job, client)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["spot_job_tier"]["queue_settings"] == {"job_tier": "Spot"}
+        assert rest_obj.properties.jobs["standard_job_tier"]["queue_settings"] == {"job_tier": "Standard"}
 
     @pytest.mark.disable_mock_code_hash
     def test_register_automl_output(self, client: MLClient, randstr: Callable[[str], str]):
