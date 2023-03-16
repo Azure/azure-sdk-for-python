@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
@@ -30,13 +30,12 @@ class OutboundRule:
     def __init__(
         self,
         *,
-        type: str = None,  # pylint: disable=redefined-builtin
-        category: str = OutboundRuleCategory.USER_DEFINED,
+        rule_name: str = None,
         **kwargs,
     ) -> None:
-        self.rule_name = kwargs.pop("rule_name", None)
-        self.type = type
-        self.category = category
+        self.rule_name = rule_name
+        self.type = kwargs.pop("type", None)
+        self.category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
 
     @classmethod
     def _from_rest_object(cls, rest_obj: Any, rule_name: str) -> "OutboundRule":
@@ -66,9 +65,15 @@ class OutboundRule:
 
 @experimental
 class FqdnDestination(OutboundRule):
-    def __init__(self, *, destination: str, category: str = OutboundRuleCategory.USER_DEFINED, **kwargs) -> None:
-        rule_name = kwargs.pop("rule_name", None)
+    def __init__(
+        self,
+        *,
+        rule_name: str,
+        destination: str,
+        **kwargs
+    ) -> None:
         self.destination = destination
+        category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
         OutboundRule.__init__(self, type=OutboundRuleType.FQDN, category=category, rule_name=rule_name)
 
     def _to_rest_object(self) -> RestFqdnOutboundRule:
@@ -85,16 +90,16 @@ class PrivateEndpointDestination(OutboundRule):
     def __init__(
         self,
         *,
+        rule_name: str,
         service_resource_id: str,
         subresource_target: str,
         spark_enabled: bool = False,
-        category: str = OutboundRuleCategory.USER_DEFINED,
         **kwargs,
     ) -> None:
-        rule_name = kwargs.pop("rule_name", None)
         self.service_resource_id = service_resource_id
         self.subresource_target = subresource_target
         self.spark_enabled = spark_enabled
+        category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
         OutboundRule.__init__(self, type=OutboundRuleType.PRIVATE_ENDPOINT, category=category, rule_name=rule_name)
 
     def _to_rest_object(self) -> RestPrivateEndpointOutboundRule:
@@ -127,16 +132,16 @@ class ServiceTagDestination(OutboundRule):
     def __init__(
         self,
         *,
+        rule_name: str,
         service_tag: str,
         protocol: str,
         port_ranges: str,
-        category: str = OutboundRuleCategory.USER_DEFINED,
         **kwargs,
     ) -> None:
-        rule_name = kwargs.pop("rule_name", None)
         self.service_tag = service_tag
         self.protocol = protocol
         self.port_ranges = port_ranges
+        category = kwargs.pop("category", OutboundRuleCategory.USER_DEFINED)
         OutboundRule.__init__(self, type=OutboundRuleType.SERVICE_TAG, category=category, rule_name=rule_name)
 
     def _to_rest_object(self) -> RestServiceTagOutboundRule:
@@ -167,7 +172,7 @@ class ManagedNetwork:
     def __init__(
         self,
         isolation_mode: str = IsolationMode.DISABLED,
-        outbound_rules: Optional[Dict[str, OutboundRule]] = None,
+        outbound_rules: Optional[List[OutboundRule]] = None,
         network_id: Optional[str] = None,
     ) -> None:
         self.isolation_mode = isolation_mode
@@ -177,8 +182,8 @@ class ManagedNetwork:
     def _to_rest_object(self) -> RestManagedNetwork:
         rest_outbound_rules = (
             {
-                rule_name: self.outbound_rules[rule_name]._to_rest_object()  # pylint: disable=protected-access
-                for rule_name in self.outbound_rules
+                outbound_rule.rule_name: outbound_rule._to_rest_object()  # pylint: disable=protected-access
+                for outbound_rule in self.outbound_rules
             }
             if self.outbound_rules
             else None
@@ -188,12 +193,12 @@ class ManagedNetwork:
     @classmethod
     def _from_rest_object(cls, obj: RestManagedNetwork) -> "ManagedNetwork":
         from_rest_outbound_rules = (
-            {
-                rule_name: OutboundRule._from_rest_object(  # pylint: disable=protected-access
+            [
+                OutboundRule._from_rest_object(  # pylint: disable=protected-access
                     obj.outbound_rules[rule_name], rule_name=rule_name
                 )
                 for rule_name in obj.outbound_rules
-            }
+            ]
             if obj.outbound_rules
             else {}
         )

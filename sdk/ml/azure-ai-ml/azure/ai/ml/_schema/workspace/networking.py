@@ -65,16 +65,18 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
         category = data.get("category", OutboundRuleCategory.USER_DEFINED)
         if dest:
             if isinstance(dest, str):
-                return FqdnDestination(destination=dest, category=_snake_to_camel(category))
+                return FqdnDestination(rule_name=None, destination=dest, category=_snake_to_camel(category))
             else:
                 if dest.get("subresource_target", False):
                     return PrivateEndpointDestination(
+                        rule_name=None,
                         service_resource_id=dest["service_resource_id"],
                         subresource_target=dest["subresource_target"],
                         spark_enabled=dest["spark_enabled"],
                         category=_snake_to_camel(category),
                     )
             return ServiceTagDestination(
+                rule_name=None,
                 service_tag=dest["service_tag"],
                 protocol=dest["protocol"],
                 port_ranges=dest["port_ranges"],
@@ -118,7 +120,13 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        if data.get("outbound_rules", False):
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), data["outbound_rules"])
+        obrules_dict = data.get("outbound_rules", False)
+        if obrules_dict:
+            obrules_as_list = []
+            for rule_name in obrules_dict:
+                rule = obrules_dict[rule_name]
+                rule.rule_name = rule_name
+                obrules_as_list.append(rule)
+            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), obrules_as_list)
         else:
             return ManagedNetwork(_snake_to_camel(data["isolation_mode"]))
