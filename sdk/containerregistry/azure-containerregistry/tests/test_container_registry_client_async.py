@@ -490,12 +490,13 @@ async def test_set_api_version():
         assert client._client._config.api_version == "2021-07-01"
     
     async with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, api_version = "2019-08-15-preview", audience="https://microsoft.com"
+        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
     ) as client:
         assert client._client._config.api_version == "2019-08-15-preview"
     
-    with pytest.raises(ValueError):
-        with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, api_version = "2019-08-15", audience="https://microsoft.com"
+    with pytest.raises(ValueError) as error:
+        async with ContainerRegistryClient(
+            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
         ) as client:
             pass
+    assert "Unsupported API version '2019-08-15'." in str(error.value)

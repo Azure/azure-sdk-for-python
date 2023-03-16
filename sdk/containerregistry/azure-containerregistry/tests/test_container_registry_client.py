@@ -610,8 +610,9 @@ def test_set_api_version():
     ) as client:
         assert client._client._config.api_version == "2019-08-15-preview"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as error:
         with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
         ) as client:
             pass
+    assert "Unsupported API version '2019-08-15'." in str(error.value)
