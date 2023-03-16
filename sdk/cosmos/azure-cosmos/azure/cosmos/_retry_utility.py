@@ -91,6 +91,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             return result
         except exceptions.CosmosHttpResponseError as e:
             retry_policy = defaultRetry_policy
+            # Re-assign retry policy based on error code
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
