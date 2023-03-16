@@ -327,7 +327,7 @@ class ComponentOperations(_ScopeDependentOperations):
             self._workspace_name or
             (
                 self._registry_name and
-                self._registry_operations.get(self._operation_scope.registry_name).intellectual_property.publisher is None
+                self._registry_operations.get(self._registry_name).intellectual_property.publisher is None
             )
         ):
             self._resolve_arm_id_or_upload_dependencies(component)
