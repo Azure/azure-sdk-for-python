@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from enum import Enum
-from six import with_metaclass
 
 # pylint: disable=unused-import
 from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpLearningRateScheduler
-from azure.core import CaseInsensitiveEnumMeta
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TrainingMode
+from azure.ai.ml._utils._experimental import experimental
 
 
 class AutoMLConstants:
@@ -111,12 +111,6 @@ class NlpModels(Enum):
     XLNET_LARGE_CASED = "xlnet-large-cased"
 
 
-class TabularTrainingMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Mode to enable/disable distributed training"""
-
-    # Auto mode.
-    AUTO = "Auto"
-    # Distributed training mode.
-    DISTRIBUTED = "Distributed"
-    # Non distributed training mode.
-    NON_DISTRIBUTED = "NonDistributed"
+TrainingMode.__doc__ = "Mode to enable/disable distributed training."
+TabularTrainingMode = experimental(TrainingMode)
+TabularTrainingMode.__name__ = "TabularTrainingMode"

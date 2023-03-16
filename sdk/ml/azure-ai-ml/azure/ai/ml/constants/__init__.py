@@ -22,6 +22,8 @@ from ._job import (
 from ._registry import AcrAccountSku, StorageAccountType
 from ._workspace import ManagedServiceIdentityType
 
+TabularTrainingMode.__module__ = __name__
+
 __all__ = [
     "ImportSourceType",
     "JobType",
