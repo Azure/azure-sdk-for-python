@@ -40,18 +40,11 @@ class ACRExchangeClient(object):
     :paramtype credential_scopes: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: AsyncTokenCredential,
-        *,
-        credential_scopes: str = "https://management.core.windows.net/.default",
-        **kwargs
-    ) -> None:
+    def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
-        self.credential_scopes = credential_scopes
+        self.credential_scopes = kwargs.get("credential_scopes", ["https://management.core.windows.net/.default"])
         self._client = ContainerRegistry(
             credential=credential,
             url=endpoint,
