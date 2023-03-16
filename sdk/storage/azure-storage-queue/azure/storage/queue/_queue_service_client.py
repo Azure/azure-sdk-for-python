@@ -92,7 +92,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             self, account_url: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> None:
+    ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -122,7 +122,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             cls, conn_str: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> Self:
+    ) -> Self:
         """Create QueueServiceClient from a Connection String.
 
         :param str conn_str:
@@ -221,7 +221,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             minute_metrics: Optional["Metrics"] = None,
             cors: Optional[List["CorsRule"]] = None,
             **kwargs: Any
-        ) -> None:
+    ) -> None:
         """Sets the properties of a storage account's Queue service, including
         Azure Storage Analytics.
 
@@ -274,7 +274,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             self, name_starts_with: Optional[str] = None,
             include_metadata: Optional[bool] = False,
             **kwargs: Any
-        ) -> ItemPaged["QueueProperties"]:
+    ) -> ItemPaged["QueueProperties"]:
         """Returns a generator to list the queues under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -327,7 +327,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             self, name: str,
             metadata: Optional[Dict[str, str]] = None,
             **kwargs: Any
-        ) -> QueueClient:
+    ) -> QueueClient:
         """Creates a new queue under the specified account.
 
         If a queue with the same name already exists, the operation fails.
@@ -363,7 +363,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             self,
             queue: Union["QueueProperties", str],
             **kwargs: Any
-        ) -> None:
+    ) -> None:
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
@@ -400,7 +400,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             self,
             queue: Union["QueueProperties", str],
             **kwargs: Any
-        ) -> QueueClient:
+    ) -> QueueClient:
         """Get a client to interact with the specified queue.
 
         The queue need not already exist.
