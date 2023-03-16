@@ -78,10 +78,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :caption: Create the queue client with url and credential.
     """
     def __init__(
-            self, account_url: str,
-            queue_name: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        self, account_url: str,
+        queue_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
     ) -> None:
         try:
             if not account_url.lower().startswith('http'):
@@ -121,9 +121,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_queue_url(
-            cls, queue_url: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        cls, queue_url: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
     ) -> Self:
         """A client to interact with a specific Queue.
 
@@ -164,10 +164,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            queue_name: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        cls, conn_str: str,
+        queue_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
     ) -> Self:
         """Create QueueClient from a Connection String.
 
@@ -204,9 +204,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def create_queue(
-            self, *,
-            metadata: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self, *,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> None:
         """Creates a new queue in the storage account.
 
@@ -317,8 +317,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def set_queue_metadata(
-            self, metadata: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self, metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> None:
         """Sets user-defined metadata on the specified queue.
 
@@ -382,8 +382,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def set_queue_access_policy(
-            self, signed_identifiers: Dict[str, AccessPolicy],
-            **kwargs: Any
+        self, signed_identifiers: Dict[str, AccessPolicy],
+        **kwargs: Any
     ) -> None:
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
@@ -442,11 +442,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def send_message(
-            self, content: Any,
-            *,
-            visibility_timeout: Optional[int] = None,
-            time_to_live: Optional[int] = None,
-            **kwargs: Any
+        self, content: Any,
+        *,
+        visibility_timeout: Optional[int] = None,
+        time_to_live: Optional[int] = None,
+        **kwargs: Any
     ) -> "QueueMessage":
         """Adds a new message to the back of the message queue.
 
@@ -537,9 +537,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def receive_message(
-            self, *,
-            visibility_timeout: Optional[int] = None,
-            **kwargs: Any
+        self, *,
+        visibility_timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> Optional[QueueMessage]:
         """Removes one message from the front of the queue.
 
@@ -599,11 +599,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def receive_messages(
-            self, *,
-            messages_per_page: Optional[int] = None,
-            visibility_timeout: Optional[int] = None,
-            max_messages: Optional[int] = None,
-            **kwargs: Any
+        self, *,
+        messages_per_page: Optional[int] = None,
+        visibility_timeout: Optional[int] = None,
+        max_messages: Optional[int] = None,
+        **kwargs: Any
     ) -> ItemPaged[QueueMessage]:
         """Removes one or more messages from the front of the queue.
 
@@ -685,12 +685,12 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def update_message(
-            self, message: Union[str, QueueMessage],
-            pop_receipt: Optional[str] = None,
-            content: Optional[Any] = None,
-            *,
-            visibility_timeout: Optional[int] = None,
-            **kwargs: Any
+        self, message: Union[str, QueueMessage],
+        pop_receipt: Optional[str] = None,
+        content: Optional[Any] = None,
+        *,
+        visibility_timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> QueueMessage:
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
@@ -804,8 +804,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def peek_messages(
-            self, max_messages: Optional[int] = None,
-            **kwargs: Any
+        self, max_messages: Optional[int] = None,
+        **kwargs: Any
     ) -> List[QueueMessage]:
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
@@ -894,9 +894,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_message(
-            self, message: Union[str, QueueMessage],
-            pop_receipt: Optional[str] = None,
-            **kwargs: Any
+        self, message: Union[str, QueueMessage],
+        pop_receipt: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """Deletes the specified message.
 
