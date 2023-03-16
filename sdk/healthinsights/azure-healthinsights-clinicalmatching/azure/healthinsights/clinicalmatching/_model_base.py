@@ -635,7 +635,7 @@ def _deserialize_with_callable(
                 # for unknown value, return raw value
                 return value
         if isinstance(deserializer, type) and issubclass(deserializer, Model):
-            return deserializer._deserialize(value)
+            return deserializer._deserialize(value) # type: ignore
         return typing.cast(typing.Callable[[typing.Any], typing.Any], deserializer)(value)
     except Exception as e:
         raise DeserializationError() from e
@@ -653,7 +653,7 @@ class _RestField:
         self,
         *,
         name: typing.Optional[str] = None,
-        type: typing.Optional[typing.Callable] = None,
+        type: typing.Optional[typing.Callable] = None, # pylint: disable=redefined-builtin
         is_discriminator: bool = False,
         readonly: bool = False,
         default: typing.Any = _UNSET,
@@ -672,7 +672,7 @@ class _RestField:
             raise ValueError("Rest name was never set")
         return self._rest_name_input
 
-    def __get__(self, obj: Model, type=None):
+    def __get__(self, obj: Model, type=None): # pylint: disable=redefined-builtin
         # by this point, type and rest_name will have a value bc we default
         # them in __new__ of the Model class
         item = obj.get(self._rest_name)
@@ -701,7 +701,7 @@ class _RestField:
 def rest_field(
     *,
     name: typing.Optional[str] = None,
-    type: typing.Optional[typing.Callable] = None,
+    type: typing.Optional[typing.Callable] = None, # pylint: disable=redefined-builtin
     readonly: bool = False,
     default: typing.Any = _UNSET,
 ) -> typing.Any:
@@ -709,6 +709,6 @@ def rest_field(
 
 
 def rest_discriminator(
-    *, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None
+    *, name: typing.Optional[str] = None, type: typing.Optional[typing.Callable] = None # pylint: disable=redefined-builtin
 ) -> typing.Any:
     return _RestField(name=name, type=type, is_discriminator=True)

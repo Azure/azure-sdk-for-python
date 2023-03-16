@@ -114,7 +114,7 @@ This is an array of 2 decimal numbers, longitude and latitude (precisely in this
     def __init__(
         self,
         *,
-        type: Union[str, "_models.GeoJsonGeometryType"],
+        type: Union[str, "_models.GeoJsonGeometryType"], # pylint: disable=redefined-builtin
         coordinates: List[float],
     ):
         ...
@@ -272,11 +272,10 @@ class ClinicalTrialDemographics(_model_base.Model):
     """
 
     accepted_sex: Optional[Union[str, "_models.ClinicalTrialAcceptedSex"]] = rest_field(name="acceptedSex")
-    """Indication of the sex of people who may participate in the clinical trial.
-Known values are: \"all\", \"female\", and \"male\"."""
+    """Indication of the sex of people who may participate in the clinical trial. Known values are: \"all\",
+    \"female\", and \"male\". """
     accepted_age_range: Optional["_models.AcceptedAgeRange"] = rest_field(name="acceptedAgeRange")
-    """A definition of the range of ages accepted by a clinical trial.
-    Contains a minimum age and/or a maximum age. """
+    """A definition of the range of ages accepted by a clinical trial. Contains a minimum age and/or a maximum age. """
 
     @overload
     def __init__(
@@ -379,15 +378,15 @@ class ClinicalTrialMetadata(_model_base.Model):
     """Phases which are relevant for the clinical trial.
 Each clinical trial can be in a certain phase or in multiple phases. """
     study_type: Optional[Union[str, "_models.ClinicalTrialStudyType"]] = rest_field(name="studyType")
-    """Possible study types of a clinical trial.
-    Known values are: \"interventional\", \"observational\", \"expandedAccess\", and \"patientRegistries\"."""
+    """Possible study types of a clinical trial. Known values are: \"interventional\", \"observational\",
+    \"expandedAccess\", and \"patientRegistries\". """
     recruitment_status: Optional[Union[str, "_models.ClinicalTrialRecruitmentStatus"]] = rest_field(
         name="recruitmentStatus"
     )
-    """Possible recruitment status of a clinical trial.
-    Known values are: \"unknownStatus\", \"notYetRecruiting\", \"recruiting\", and \"enrollingByInvitation\"."""
+    """Possible recruitment status of a clinical trial. Known values are: \"unknownStatus\", \"notYetRecruiting\",
+    \"recruiting\", and \"enrollingByInvitation\". """
     conditions: List[str] = rest_field()
-    """Medical conditions and their synonyms which are relevant for the clinical trial, given as strings.Required. """
+    """Medical conditions and their synonyms which are relevant for the clinical trial, given as strings. Required. """
     sponsors: Optional[List[str]] = rest_field()
     """Sponsors/collaborators involved with the trial. """
     contacts: Optional[List["_models.ContactDetails"]] = rest_field()
@@ -476,51 +475,40 @@ class ClinicalTrialRegistryFilter(_model_base.Model):  # pylint: disable=too-man
     """
 
     conditions: Optional[List[str]] = rest_field()
-    """Trials with any of the given medical conditions will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the medical conditions. """
+    """Trials with any of the given medical conditions will be included in the selection (provided that other
+    limitations are satisfied). Leaving this list empty will not limit the medical conditions. """
     study_types: Optional[List[Union[str, "_models.ClinicalTrialStudyType"]]] = rest_field(name="studyTypes")
-    """Trials with any of the given study types will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the study types. """
+    """Trials with any of the given study types will be included in the selection (provided that other limitations
+    are satisfied). Leaving this list empty will not limit the study types. """
     recruitment_statuses: Optional[List[Union[str, "_models.ClinicalTrialRecruitmentStatus"]]] = rest_field(
         name="recruitmentStatuses"
     )
-    """Trials with any of the given recruitment statuses will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the recruitment statuses. """
+    """Trials with any of the given recruitment statuses will be included in the selection (provided that other
+    limitations are satisfied). Leaving this list empty will not limit the recruitment statuses. """
     sponsors: Optional[List[str]] = rest_field()
-    """Trials with any of the given sponsors will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the sponsors. """
+    """Trials with any of the given sponsors will be included in the selection (provided that other limitations are
+    satisfied). Leaving this list empty will not limit the sponsors. """
     phases: Optional[List[Union[str, "_models.ClinicalTrialPhase"]]] = rest_field()
-    """Trials with any of the given phases will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the phases. """
+    """Trials with any of the given phases will be included in the selection (provided that other limitations are
+    satisfied). Leaving this list empty will not limit the phases. """
     purposes: Optional[List[Union[str, "_models.ClinicalTrialPurpose"]]] = rest_field()
-    """Trials with any of the given purposes will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the purposes. """
+    """Trials with any of the given purposes will be included in the selection (provided that other limitations are
+    satisfied). Leaving this list empty will not limit the purposes. """
     ids: Optional[List[str]] = rest_field()
-    """Trials with any of the given identifiers will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the trial identifiers. """
+    """Trials with any of the given identifiers will be included in the selection (provided that other limitations
+    are satisfied). Leaving this list empty will not limit the trial identifiers. """
     sources: Optional[List[Union[str, "_models.ClinicalTrialSource"]]] = rest_field()
-    """Trials with any of the given sources will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the sources. """
+    """Trials with any of the given sources will be included in the selection (provided that other limitations are
+    satisfied). Leaving this list empty will not limit the sources. """
     facility_names: Optional[List[str]] = rest_field(name="facilityNames")
-    """Trials with any of the given facility names will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the trial facility names. """
+    """Trials with any of the given facility names will be included in the selection (provided that other limitations
+    are satisfied). Leaving this list empty will not limit the trial facility names. """
     facility_locations: Optional[List["_models.GeographicLocation"]] = rest_field(name="facilityLocations")
-    """Trials with any of the given facility locations will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the trial facility locations. """
+    """Trials with any of the given facility locations will be included in the selection (provided that other
+    limitations are satisfied). Leaving this list empty will not limit the trial facility locations. """
     facility_areas: Optional[List["_models.GeographicArea"]] = rest_field(name="facilityAreas")
-    """Trials with any of the given facility area boundaries will be included in the selection
-(provided that other limitations are satisfied).
-Leaving this list empty will not limit the trial facility area boundaries. """
+    """Trials with any of the given facility area boundaries will be included in the selection (provided that other
+    limitations are satisfied). Leaving this list empty will not limit the trial facility area boundaries. """
 
     @overload
     def __init__(
@@ -694,10 +682,9 @@ class DocumentContent(_model_base.Model):
     """
 
     source_type: Union[str, "_models.DocumentContentSourceType"] = rest_field(name="sourceType")
-    """The type of the content's source.
-In case the source type is 'inline', the content is given as a string (for instance, text).
-In case the source type is 'reference', the content is given as a URI.
-Required. Known values are: \"inline\" and \"reference\"."""
+    """The type of the content's source. In case the source type is 'inline', the content is given as a string (for
+    instance, text). In case the source type is 'reference', the content is given as a URI. Required. Known values
+    are: \"inline\" and \"reference\". """
     value: str = rest_field()
     """The content of the document, given either inline (as a string) or as a reference (URI). Required. """
 
@@ -806,8 +793,8 @@ class ExtendedClinicalCodedElement(_model_base.Model):
     value: Optional[str] = rest_field()
     """A value associated with the code within the given clinical coding system. """
     semantic_type: Optional[str] = rest_field(name="semanticType")
-    """The `UMLS semantic type <https://www.nlm.nih.gov/research/umls/META3_current_semantic_types.html>`_
-    associated with the coded concept. """
+    """The `UMLS semantic type <https://www.nlm.nih.gov/research/umls/META3_current_semantic_types.html>`_ associated
+    with the coded concept. """
     category: Optional[str] = rest_field()
     """The bio-medical category related to the coded concept, e.g. Diagnosis, Symptom, Medication, Examination. """
 
@@ -837,7 +824,7 @@ class ExtendedClinicalCodedElement(_model_base.Model):
 
 class GeographicArea(_model_base.Model):
     """A geographic area, expressed as a ``Circle`` geometry represented using a ``GeoJSON Feature``
-    (see `GeoJSON spec <https://tools.ietf.org/html/rfc7946>`_\ ).
+    (see `GeoJSON spec <https://tools.ietf.org/html/rfc7946>`_ ).
 
     All required parameters must be populated in order to send to Azure.
 
@@ -849,7 +836,7 @@ class GeographicArea(_model_base.Model):
     :vartype properties: ~azure.healthinsights.clinicalmatching.models.AreaProperties
     """
 
-    type: Union[str, "_models.GeoJsonType"] = rest_field()
+    type: Union[str, "_models.GeoJsonType"] = rest_field() # pylint: disable=redefined-builtin
     """``GeoJSON`` type. Required. \"Feature\""""
     geometry: "_models.AreaGeometry" = rest_field()
     """``GeoJSON`` geometry, representing the area circle's center. Required. """
@@ -860,7 +847,7 @@ class GeographicArea(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.GeoJsonType"],
+        type: Union[str, "_models.GeoJsonType"], # pylint: disable=redefined-builtin
         geometry: "_models.AreaGeometry",
         properties: "_models.AreaProperties",
     ):
@@ -986,13 +973,12 @@ class PatientDocument(_model_base.Model):
     :vartype content: ~azure.healthinsights.clinicalmatching.models.DocumentContent
     """
 
-    type: Union[str, "_models.DocumentType"] = rest_field()
+    type: Union[str, "_models.DocumentType"] = rest_field() # pylint: disable=redefined-builtin
     """The type of the patient document, such as 'note' (text document) or 'fhirBundle' (FHIR JSON document).
-    Required. Known values are: \"note\", \"fhirBundle\", \"dicom\", and \"genomicSequencing\"."""
+    Required. Known values are: \"note\", \"fhirBundle\", \"dicom\", and \"genomicSequencing\". """
     clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = rest_field(name="clinicalType")
-    """The type of the clinical document.
-    Known values are: \"consultation\", \"dischargeSummary\", \"historyAndPhysical\", \"procedure\", \"progress\",
-    \"imaging\", \"laboratory\", and \"pathology\"."""
+    """The type of the clinical document. Known values are: \"consultation\", \"dischargeSummary\",
+    \"historyAndPhysical\", \"procedure\", \"progress\", \"imaging\", \"laboratory\", and \"pathology\". """
     id: str = rest_field()
     """A given identifier for the document. Has to be unique across all documents for a single patient. Required. """
     language: Optional[str] = rest_field()
@@ -1006,7 +992,7 @@ class PatientDocument(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.DocumentType"],
+        type: Union[str, "_models.DocumentType"], # pylint: disable=redefined-builtin
         id: str,  # pylint: disable=redefined-builtin
         content: "_models.DocumentContent",
         clinical_type: Optional[Union[str, "_models.ClinicalDocumentType"]] = None,
@@ -1172,7 +1158,7 @@ class TrialMatcherInference(_model_base.Model):
     :vartype metadata: ~azure.healthinsights.clinicalmatching.models.ClinicalTrialMetadata
     """
 
-    type: Union[str, "_models.TrialMatcherInferenceType"] = rest_field()
+    type: Union[str, "_models.TrialMatcherInferenceType"] = rest_field() # pylint: disable=redefined-builtin
     """The type of the Trial Matcher inference. Required. \"trialEligibility\""""
     value: str = rest_field()
     """The value of the inference, as relevant for the given inference type. Required. """
@@ -1193,7 +1179,7 @@ class TrialMatcherInference(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Union[str, "_models.TrialMatcherInferenceType"],
+        type: Union[str, "_models.TrialMatcherInferenceType"], # pylint: disable=redefined-builtin
         value: str,
         description: Optional[str] = None,
         confidence_score: Optional[float] = None,
@@ -1335,8 +1321,8 @@ class TrialMatcherPatientResult(_model_base.Model):
     inferences: List["_models.TrialMatcherInference"] = rest_field()
     """The model's inferences for the given patient. Required. """
     needed_clinical_info: Optional[List["_models.ExtendedClinicalCodedElement"]] = rest_field(name="neededClinicalInfo")
-    """Clinical information which is needed to provide better trial matching results for the patient.
-    Clinical information which is needed to provide better trial matching results for the patient."""
+    """Clinical information which is needed to provide better trial matching results for the patient. Clinical
+    information which is needed to provide better trial matching results for the patient. """
 
     @overload
     def __init__(
@@ -1394,8 +1380,8 @@ class TrialMatcherResult(_model_base.Model):
     last_update_date_time: datetime.datetime = rest_field(name="lastUpdateDateTime", readonly=True)
     """The date and time when the processing job was last updated. Required. """
     status: Union[str, "_models.JobStatus"] = rest_field(readonly=True)
-    """The status of the processing job.
-    Required. Known values are: \"notStarted\", \"running\", \"succeeded\", \"failed\", and \"partiallyCompleted\"."""
+    """The status of the processing job. Required. Known values are: \"notStarted\", \"running\", \"succeeded\",
+    \"failed\", and \"partiallyCompleted\". """
     errors: Optional[List["_models.Error"]] = rest_field(readonly=True)
     """An array of errors, if any errors occurred during the processing job. """
     results: Optional["_models.TrialMatcherResults"] = rest_field(readonly=True)
