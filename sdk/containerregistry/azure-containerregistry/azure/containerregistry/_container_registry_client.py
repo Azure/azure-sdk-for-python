@@ -900,6 +900,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def download_blob(self, repository, digest, **kwargs):
         # type: (str, str, **Any) -> Union[DownloadBlobResult, None]
         """Download a blob that is part of an artifact.
+
         :param str repository: Name of the repository
         :param str digest: The digest of the blob to download.
         :returns: DownloadBlobResult or None
