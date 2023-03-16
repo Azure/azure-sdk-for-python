@@ -88,7 +88,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             queue_name: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> None:
+    ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(QueueClient, self).__init__(
@@ -105,7 +105,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             self, *,
             metadata: Optional[Dict[str, str]] = None,
             **kwargs: Any
-        ) -> None:
+    ) -> None:
         """Creates a new queue in the storage account.
 
         If a queue with the same name already exists, the operation fails with
@@ -213,7 +213,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
     async def set_queue_metadata(
             self, metadata: Optional[Dict[str, str]] = None,
             **kwargs: Any
-        ) -> None:
+    ) -> None:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
@@ -275,7 +275,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
     async def set_queue_access_policy(
             self, signed_identifiers: Dict[str, AccessPolicy],
             **kwargs: Any
-        ) -> None:
+    ) -> None:
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
 
@@ -336,7 +336,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             visibility_timeout: Optional[int] = None,
             time_to_live: Optional[int] = None,
             **kwargs: Any
-        ) -> "QueueMessage":
+    ) -> "QueueMessage":
         """Adds a new message to the back of the message queue.
 
         The visibility timeout specifies the time that the message will be
@@ -430,7 +430,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             self, *,
             visibility_timeout: Optional[int] = None,
             **kwargs: Any
-        ) -> Optional[QueueMessage]:
+    ) -> Optional[QueueMessage]:
         """Removes one message from the front of the queue.
 
         When the message is retrieved from the queue, the response includes the message
@@ -494,7 +494,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             visibility_timeout: Optional[int] = None,
             max_messages: Optional[int] = None,
             **kwargs: Any
-        ) -> AsyncItemPaged[QueueMessage]:
+    ) -> AsyncItemPaged[QueueMessage]:
         """Removes one or more messages from the front of the queue.
 
         When a message is retrieved from the queue, the response includes the message
@@ -573,7 +573,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             *,
             visibility_timeout: Optional[int] = None,
             **kwargs: Any
-        ) -> QueueMessage:
+    ) -> QueueMessage:
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
 
@@ -691,7 +691,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
     async def peek_messages(
             self, max_messages: Optional[int] = None,
             **kwargs: Any
-        ) -> List[QueueMessage]:
+    ) -> List[QueueMessage]:
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
 
@@ -781,7 +781,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             self, message: Union[str, QueueMessage],
             pop_receipt: Optional[str] = None,
             **kwargs: Any
-        ) -> None:
+    ) -> None:
         """Deletes the specified message.
 
         Normally after a client retrieves a message with the receive messages operation,
