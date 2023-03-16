@@ -77,9 +77,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert updated_job.tags[new_tag_name] == new_tag_value
 
     @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
-    def test_pipeline_job_create_with_registries(
-        self, client: MLClient, randstr: Callable[[str], str]
-    ) -> None:
+    def test_pipeline_job_create_with_registries(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/hello_pipeline_job_with_registries.yml",
@@ -352,6 +350,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         randstr: Callable[[str], str],
         test_case_i,
         test_case_name,
+        pipeline_samples_e2e_registered_train_components,  # Test depends on this being in the workspace
     ) -> None:
         params = [
             (
@@ -1344,6 +1343,446 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
+    def test_pipeline_job_with_singularity_compute(self, client: MLClient, randstr: Callable[[str], str]):
+        params_override = [{"name": randstr("job_name")}]
+        pipeline_job: PipelineJob = load_job(
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_singularity_compute.yml",
+            params_override=params_override,
+        )
+
+        singularity_compute_id = (
+            f"/subscriptions/{client.subscription_id}/resourceGroups/{client.resource_group_name}/"
+            f"providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC"
+        )
+        pipeline_job.settings.default_compute = singularity_compute_id
+        pipeline_job.jobs["hello_job"].compute = singularity_compute_id
+
+        assert pipeline_job._customized_validate().passed is True
+
+        created_pipeline_job: PipelineJob = assert_job_cancel(pipeline_job, client)
+        assert created_pipeline_job.settings.default_compute == singularity_compute_id
+        assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
+
+    def test_register_output_yaml(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+    ):
+        # only register pipeline output
+        register_pipeline_output_path = (
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_name_version.yaml"
+        )
+        pipeline = load_job(source=register_pipeline_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.outputs.component_out_path
+        assert output.name == "pipeline_output"
+        assert output.version == "1"
+
+        # only register node output
+        register_node_output_path = (
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_name_version.yaml"
+        )
+        pipeline = load_job(source=register_node_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.jobs["parallel_body"].outputs.component_out_path
+        assert output.name == "node_output"
+        assert output.version == "1"
+
+        # register node output and pipeline output while the node output isn't binding to pipeline output
+        register_both_output_path = (
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_and_node_output.yaml"
+        )
+        pipeline = load_job(source=register_both_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        pipeline_output = pipeline_job.outputs.pipeline_out_path
+        assert pipeline_output.name == "pipeline_output"
+        assert pipeline_output.version == "2"
+        node_output = pipeline_job.jobs["parallel_body"].outputs.component_out_path
+        assert node_output.name == "node_output"
+        assert node_output.version == "1"
+
+        # register node output and pipeline output while the node output is binding to pipeline output
+        register_both_output_binding_path = (
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_and_node_binding_output.yaml"
+        )
+        pipeline = load_job(source=register_both_output_binding_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        pipeline_output = pipeline_job.outputs.pipeline_out_path
+        assert pipeline_output.name == "pipeline_output"
+        assert pipeline_output.version == "2"
+        node_output = pipeline_job.jobs["parallel_body"].outputs.component_out_path
+        assert node_output.name == "node_output"
+        assert node_output.version == "1"
+
+        # register spark node output
+        register_spark_output_path = (
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job_register_output.yml"
+        )
+        pipeline = load_job(source=register_spark_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        node_output = pipeline_job.jobs["count_by_row"].outputs.output
+        assert node_output.name == "spark_output"
+        assert node_output.version == "12"
+
+        # register sweep node output
+        register_sweep_output_path = (
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_sweep_node_register_output.yml"
+        )
+        pipeline = load_job(source=register_sweep_output_path, params_override=[{"name": randstr("job_name")}])
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        node_output = pipeline_job.jobs["hello_sweep_inline_file_trial"].outputs.trained_model_dir
+        assert node_output.name == "sweep_output"
+        assert node_output.version == "123_sweep"
+
+        # register parallel node output
+        register_parallel_output_path = (
+            "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/pipeline_register_output.yml"
+        )
+        pipeline = load_job(source=register_parallel_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        node_output = pipeline_job.jobs["convert_data_node"].outputs.file_output_data
+        assert node_output.name == "convert_data_node_output"
+        assert node_output.version == "1"
+
+    def test_pipeline_job_with_data_transfer_copy_urifolder(self, client: MLClient, randstr: Callable[[str], str]):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["copy_files"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "data_copy_mode": "merge_with_overwrite",
+            "inputs": {"folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
+            "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
+            "task": "copy_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_data_transfer_copy_urifile(self, client: MLClient, randstr: Callable[[str], str]):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_uri_files.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["copy_files"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "data_copy_mode": "fail_if_conflict",
+            "inputs": {"folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
+            "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
+            "task": "copy_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_data_transfer_copy_2urifolder(self, client: MLClient, randstr: Callable[[str], str]):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["merge_files"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "data_copy_mode": "merge_with_overwrite",
+            "inputs": {
+                "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"},
+                "folder2": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder_dup}}"},
+            },
+            "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
+            "task": "copy_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_inline_data_transfer_copy_2urifolder(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["merge_files_job"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "data_copy_mode": "merge_with_overwrite",
+            "inputs": {
+                "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"},
+                "folder2": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder_dup}}"},
+            },
+            "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
+            "task": "copy_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_inline_data_transfer_copy_mixtype_file(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_mixtype_files.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["merge_files"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "data_copy_mode": "merge_with_overwrite",
+            "inputs": {
+                "input1": {"job_input_type": "literal", "value": "${{parent.inputs.input1}}"},
+                "input2": {"job_input_type": "literal", "value": "${{parent.inputs.input2}}"},
+                "input3": {"job_input_type": "literal", "value": "${{parent.inputs.input3}}"},
+            },
+            "outputs": {"output_folder": {"type": "literal", "value": "${{parent.outputs.merged_blob}}"}},
+            "task": "copy_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_data_transfer_import_filesystem(self, client: MLClient, randstr: Callable[[str], str]):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/import_file_system_to_blob.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["s3_blob"], fields_to_omit)
+
+        # load from rest will get source from component, which will be REMOTE.REGISTRY since component now is
+        # registry component
+        assert actual_dict == {
+            "_source": "REMOTE.REGISTRY",
+            "outputs": {
+                "sink": {
+                    "job_output_type": "uri_folder",
+                    "uri": "azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//",
+                }
+            },
+            "source": {
+                "connection": "${{parent.inputs.connection_target}}",
+                "path": "${{parent.inputs.path_source_s3}}",
+                "type": "file_system",
+            },
+            "task": "import_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_data_transfer_import_filesystem_reference_component(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/" "import_file_system_to_blob_reference_component.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["s3_blob"], fields_to_omit)
+
+        # load from rest will get source from component, which will be REMOTE.REGISTRY since component now is
+        # registry component
+        assert actual_dict == {
+            "_source": "REMOTE.REGISTRY",
+            "outputs": {
+                "sink": {
+                    "job_output_type": "uri_folder",
+                    "uri": "azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//",
+                }
+            },
+            "source": {
+                "connection": "${{parent.inputs.connection_target}}",
+                "path": "${{parent.inputs.path_source_s3}}",
+                "type": "file_system",
+            },
+            "task": "import_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_data_transfer_import_sql_database(self, client: MLClient, randstr: Callable[[str], str]):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/import_sql_database_to_blob.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.REGISTRY",
+            "computeId": "serverless",
+            "outputs": {"sink": {"job_output_type": "mltable"}},
+            "source": {
+                "connection": "azureml:my_azuresqldb_connection",
+                "query": "${{parent.inputs.query_source_snowflake}}",
+                "type": "database",
+            },
+            "task": "import_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_data_transfer_import_snowflake_database(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/import_database_to_blob.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.REGISTRY",
+            "computeId": "serverless",
+            "outputs": {
+                "sink": {
+                    "job_output_type": "mltable",
+                    "uri": "azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
+                }
+            },
+            "source": {
+                "connection": "azureml:my_snowflake_connection",
+                "query": "${{parent.inputs.query_source_snowflake}}",
+                "type": "database",
+            },
+            "task": "import_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_data_transfer_export_sql_database(self, client: MLClient, randstr: Callable[[str], str]):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["blob_azuresql"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.REGISTRY",
+            "inputs": {"source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
+            "sink": {
+                "connection": "${{parent.inputs.connection_target_azuresql}}",
+                "table_name": "${{parent.inputs.table_name}}",
+                "type": "database",
+            },
+            "task": "export_data",
+            "type": "data_transfer",
+        }
+
+    def test_pipeline_job_with_data_transfer_export_sql_database_reference_component(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob_reference_component.yaml"
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client, skip_cancel=True)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["blob_azuresql"], fields_to_omit)
+
+        assert actual_dict == {
+            "_source": "REMOTE.REGISTRY",
+            "inputs": {"source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}},
+            "sink": {
+                "connection": "${{parent.inputs.connection_target_azuresql}}",
+                "table_name": "${{parent.inputs.table_name}}",
+                "type": "database",
+            },
+            "task": "export_data",
+            "type": "data_transfer",
+        }
+
+    def test_register_output_yaml_succeed(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+    ):
+        register_pipeline_path = (
+            "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline_register_output.yml"
+        )
+        pipeline = load_job(source=register_pipeline_path)
+        # overwrite version
+        random_version = randstr("version")
+        pipeline.outputs.pipeline_job_best_model.version = random_version
+        pipeline.jobs["train_and_evaludate_model1"].outputs.trained_model.version = random_version
+        pipeline.jobs["compare"].outputs.best_model.version = random_version
+        pipeline.jobs["compare"].outputs.best_result.version = random_version
+        pipeline.jobs["compare_2"].outputs.best_model.version = random_version
+        pipeline.jobs["compare_2"].outputs.best_result.version = random_version
+
+        pipeline_job = client.jobs.create_or_update(pipeline)
+        client.jobs.stream(pipeline_job.name)
+
+        def check_name_version_and_register_succeed(output, asset_name):
+            assert output.name == asset_name
+            assert output.version == random_version
+            assert client.data.get(name=asset_name, version=random_version)
+
+        check_name_version_and_register_succeed(pipeline_job.outputs.pipeline_job_best_model, "pipeline_output_a")
+        check_name_version_and_register_succeed(
+            pipeline_job.jobs["train_and_evaludate_model1"].outputs.trained_model, "model1_output"
+        )
+        check_name_version_and_register_succeed(pipeline_job.jobs["compare_2"].outputs.best_model, "best_model_2")
+        check_name_version_and_register_succeed(pipeline_job.jobs["compare_2"].outputs.best_result, "best_result_2")
+
+        # name and version are not rewritten, but the display content in page is the PipelineOutput
+        assert pipeline_job.jobs["compare"].outputs.best_model.name == "best_model"
+        assert pipeline_job.jobs["compare"].outputs.best_model.version == random_version
+
+    @pytest.mark.skipif(condition=not is_live(), reason="Task 2177353: component version changes across tests.")
+    @pytest.mark.parametrize(
+        "test_path",
+        [
+            "command/pipeline_serverless_compute.yml",
+            "command/node_serverless_compute.yml",
+            "command/node_serverless_compute_no_default.yml",
+            "sweep/pipeline_serverless_compute.yml",
+            "sweep/node_serverless_compute.yml",
+            "sweep/node_serverless_compute_no_default.yml",
+            "pipeline/pipeline_serverless_compute.yml",
+            "pipeline/node_serverless_compute.yml",
+            "automl/pipeline_with_instance_type.yml",
+            "automl/pipeline_without_instance_type.yml",
+            "automl/pipeline_with_instance_type_no_default.yml",
+            "parallel/pipeline_serverless_compute.yml",
+            "spark/pipeline_serverless_compute.yml",
+            "spark/node_serverless_compute_no_default.yml",
+        ],
+    )
+    def test_serverless_compute_in_pipeline(self, client: MLClient, test_path: str) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/" + test_path
+        pipeline_job = load_job(yaml_path)
+        assert_job_cancel(pipeline_job, client)
+
+    @pytest.mark.disable_mock_code_hash
+    def test_register_automl_output(self, client: MLClient, randstr: Callable[[str], str]):
+        register_pipeline_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/automl_regression_with_command_node_register_output.yml"
+        pipeline = load_job(source=register_pipeline_path, params_override=[{"name": randstr("name")}])
+        pipeline_job = assert_job_cancel(pipeline, client)
+        assert pipeline_job.jobs["regression_node"].outputs["best_model"].name == "regression_name"
+        assert pipeline_job.jobs["regression_node"].outputs["best_model"].version == "1"
+
+        # Current code won't copy NodeOutput to the binding PipelineOutput for yaml defined job.
+        # To register a binding NodeOutput, define name and version in pipeline level is more expected.
+        assert pipeline_job.outputs.regression_node_2.name == None
+        assert pipeline_job.outputs.regression_node_2.version == None
+
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
@@ -1352,6 +1791,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 class TestPipelineJobLongRunning:
     """Long-running tests that require pipeline job completed."""
+
     def test_pipeline_job_get_child_run(self, client: MLClient, randstr: Callable[[str], str]):
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
@@ -1369,9 +1809,7 @@ class TestPipelineJobLongRunning:
         assert isinstance(retrieved_child_run, Job)
         assert retrieved_child_run.name == child_job.name
 
-    def test_pipeline_job_download(
-        self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
-    ) -> None:
+    def test_pipeline_job_download(self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path) -> None:
         job = client.jobs.create_or_update(
             load_job(
                 source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",

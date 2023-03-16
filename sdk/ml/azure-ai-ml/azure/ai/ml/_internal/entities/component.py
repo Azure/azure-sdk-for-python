@@ -11,20 +11,19 @@ from uuid import UUID
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import Component
-from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml.entities._validation import MutableValidationResult
-
 from ... import Input, Output
+from ..._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
+from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
+from ...entities import Component
 from ...entities._assets import Code
 from ...entities._job.distribution import DistributionConfiguration
+from ...entities._system_data import SystemData
+from ...entities._util import convert_ordered_dict_to_dict
+from ...entities._validation import MutableValidationResult
 from .._schema.component import InternalComponentSchema
-from ._additional_includes import _AdditionalIncludes, ADDITIONAL_INCLUDES_SUFFIX
+from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
 from .code import InternalCode, InternalComponentIgnoreFile
@@ -34,8 +33,8 @@ from .node import InternalBaseNode
 
 class InternalComponent(Component):
     # pylint: disable=too-many-instance-attributes, too-many-locals
-    """Base class for internal component version, used to define an internal
-    component. Recommended to create instance with component_factory.
+    """Base class for internal component version, used to define an internal component. Recommended to create instance
+    with component_factory.
 
     :param name: Name of the resource.
     :type name: str
@@ -96,6 +95,7 @@ class InternalComponent(Component):
         starlite: Optional[Dict] = None,
         ae365exepool: Optional[Dict] = None,
         launcher: Optional[Dict] = None,
+        datatransfer: Optional[Dict] = None,
         **kwargs,
     ):
         type, self._type_label = parse_name_label(type)
@@ -135,6 +135,7 @@ class InternalComponent(Component):
         self.starlite = starlite
         self.ae365exepool = ae365exepool
         self.launcher = launcher
+        self.datatransfer = datatransfer
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -210,8 +211,8 @@ class InternalComponent(Component):
         code_path: Union[str, PathLike],
         ignore_file: IgnoreFile,
     ) -> str:
-        """Get the snapshot id of a component with specific working directory in ml-components.
-        Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
+        """Get the snapshot id of a component with specific working directory in ml-components. Use this as the name of
+        code asset to reuse steps in a pipeline job from ml-components runs.
 
         :param code_path: The path of the working directory.
         :type code_path: str
@@ -226,8 +227,8 @@ class InternalComponent(Component):
     @contextmanager
     def _resolve_local_code(self) -> Optional[Code]:
         """Try to create a Code object pointing to local code and yield it.
-        If there is no local code to upload, yield None.
-        Otherwise, yield a Code object pointing to the code.
+
+        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
         """
         # an internal component always has a default local code of its base path
         # otherwise, if there is no local code, yield super()._resolve_local_code() and return early
@@ -247,21 +248,7 @@ class InternalComponent(Component):
                 return Path(self._source_path).with_suffix(ADDITIONAL_INCLUDES_SUFFIX).name
             return None
 
-        def get_ignore_file() -> InternalComponentIgnoreFile:
-            if self.code is None and self._source_path is None:
-                # no code and no yaml, ignore file is not needed; return ignore file on cwd to avoid error
-                return InternalComponentIgnoreFile(
-                    self.base_path,
-                    additional_include_file_name=get_additional_include_file_name(),
-                )
-
-            return InternalComponentIgnoreFile(
-                self.code if self.code is not None else Path(self._source_path).parent,
-                additional_include_file_name=get_additional_include_file_name(),
-            )
-        ignore_file = get_ignore_file()
-
-        self._additional_includes.resolve(ignore_file=ignore_file)
+        self._additional_includes.resolve()
 
         # file dependency in code will be read during internal environment resolution
         # for example, docker file of the environment may be in additional includes
@@ -273,7 +260,7 @@ class InternalComponent(Component):
         tmp_code_dir = self._additional_includes.code.absolute()
         rebased_ignore_file = InternalComponentIgnoreFile(
             tmp_code_dir,
-            additional_include_file_name=get_additional_include_file_name(),
+            additional_includes_file_name=get_additional_include_file_name(),
         )
         # Use the snapshot id in ml-components as code name to enable anonymous
         # component reuse from ml-component runs.

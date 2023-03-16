@@ -158,6 +158,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: response dict (Etag and last modified).
+        :keyword str encryption_context:
+            Specifies the encryption context to set on the file.
 
         .. admonition:: Example:
 
@@ -675,17 +677,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Rename the source file.
         """
-        new_name = new_name.strip('/')
-        new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
-        new_path = new_path_and_token[0]
-        try:
-            new_file_sas = new_path_and_token[1] or self._query_str.strip('?')
-        except IndexError:
-            if not self._raw_credential and new_file_system != self.file_system_name:
-                raise ValueError("please provide the sas token for the new file")
-            if not self._raw_credential and new_file_system == self.file_system_name:
-                new_file_sas = self._query_str.strip('?')
+        new_file_system, new_path, new_file_sas = self._parse_rename_path(new_name)
 
         new_file_client = DataLakeFileClient(
             "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, file_path=new_path,

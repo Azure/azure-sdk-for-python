@@ -10,7 +10,9 @@ if TYPE_CHECKING:
 
 
 class HttpChallenge(object):
-    def __init__(self, request_uri: str, challenge: str, response_headers: "MutableMapping[str, str]" = None) -> None:
+    def __init__(
+        self, request_uri: str, challenge: str, response_headers: "Optional[MutableMapping[str, str]]" = None
+    ) -> None:
         """Parses an HTTP WWW-Authentication Bearer challenge from a server."""
         self.source_authority = self._validate_request_uri(request_uri)
         self.source_uri = request_uri

@@ -13,6 +13,8 @@ from azure.identity import (
 )
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 
+from helpers import get_token_payload_contents
+
 ARM_SCOPE = "https://management.azure.com/.default"
 
 
@@ -21,6 +23,7 @@ def get_token(credential):
     assert token
     assert token.token
     assert token.expires_on
+    return token
 
 
 @pytest.mark.parametrize("certificate_fixture", ("live_pem_certificate", "live_pfx_certificate"))
@@ -42,7 +45,9 @@ def test_certificate_credential(certificate_fixture, request):
     credential = CertificateCredential(
         tenant_id, client_id, certificate_data=cert["cert_with_password_bytes"], password=cert["password"]
     )
-    get_token(credential)
+    token = get_token(credential)
+    parsed_payload = get_token_payload_contents(token.token)
+    assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
 
 
 def test_client_secret_credential(live_service_principal):
@@ -51,7 +56,9 @@ def test_client_secret_credential(live_service_principal):
         live_service_principal["client_id"],
         live_service_principal["client_secret"],
     )
-    get_token(credential)
+    token = get_token(credential)
+    parsed_payload = get_token_payload_contents(token.token)
+    assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
 
 
 def test_default_credential(live_service_principal):

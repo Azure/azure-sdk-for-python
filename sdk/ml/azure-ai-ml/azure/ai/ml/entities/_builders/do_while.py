@@ -22,11 +22,9 @@ module_logger = logging.getLogger(__name__)
 
 
 class DoWhile(LoopNode):
-    """Do-while loop node in the pipeline job.
-    By specifying the loop body and loop termination condition in this class, a job-level do while loop can be
-    implemented.
-    It will be initialized when calling dsl.do_while or when loading the pipeline yml containing do_while node.
-    Please do not manually initialize this class.
+    """Do-while loop node in the pipeline job. By specifying the loop body and loop termination condition in this class,
+    a job-level do while loop can be implemented. It will be initialized when calling dsl.do_while or when loading the
+    pipeline yml containing do_while node. Please do not manually initialize this class.
 
     :param body: Pipeline job for the do-while loop body.
     :type body: Pipeline
@@ -129,16 +127,21 @@ class DoWhile(LoopNode):
             ]
             mapping[output_name] = [get_port_obj(body, item, validate_port=validate_port) for item in input_names]
 
-        # Convert condition to output object
-        condition_name = cls._get_data_binding_expression_value(
-            loaded_data.pop("condition"), regex=r"\{\{.*\.%s\.outputs\.(.*)\}\}" % body_name
-        )
-
         limits = loaded_data.pop("limits", None)
+
+        if "condition" in loaded_data:
+            # Convert condition to output object
+            condition_name = cls._get_data_binding_expression_value(
+                loaded_data.pop("condition"), regex=r"\{\{.*\.%s\.outputs\.(.*)\}\}" % body_name
+            )
+            condition_value = get_port_obj(body, condition_name, is_input=False, validate_port=validate_port)
+        else:
+            condition_value = None
+
         do_while_instance = DoWhile(
             body=body,
             mapping=mapping,
-            condition=get_port_obj(body, condition_name, is_input=False, validate_port=validate_port),
+            condition=condition_value,
             **loaded_data,
         )
         do_while_instance.set_limits(**limits)
@@ -162,7 +165,10 @@ class DoWhile(LoopNode):
         max_iteration_count: int,
         **kwargs,  # pylint: disable=unused-argument
     ):
-        """Set max iteration count for do while job. The range of the iteration count is (0, 1000]."""
+        """Set max iteration count for do while job.
+
+        The range of the iteration count is (0, 1000].
+        """
         if isinstance(self.limits, DoWhileJobLimits):
             self.limits._max_iteration_count = max_iteration_count  # pylint: disable=protected-access
         else:
@@ -190,16 +196,16 @@ class DoWhile(LoopNode):
             validation_result.append_error(
                 yaml_path=yaml_path,
                 message=(
-                    f"{port_obj._name} is the {port_type} of {port_obj._owner.name}, "  # pylint: disable=protected-access
+                    f"{port_obj._port_name} is the {port_type} of {port_obj._owner.name}, "  # pylint: disable=protected-access
                     f"dowhile only accept {port_type} of the body: {self.body.name}."
                 ),
             )
-        elif port_obj is None or port_obj._name not in node_ports:  # pylint: disable=protected-access
+        elif port_obj is None or port_obj._port_name not in node_ports:  # pylint: disable=protected-access
             # Check port is exist in dowhile body.
             validation_result.append_error(
                 yaml_path=yaml_path,
                 message=(
-                    f"The {port_type} of mapping {port_obj._name if port_obj else port} does not "  # pylint: disable=protected-access
+                    f"The {port_type} of mapping {port_obj._port_name if port_obj else port} does not "  # pylint: disable=protected-access
                     f"exist in {self.body.name} {port_type}, existing {port_type}: {node_ports.keys()}"
                 ),
             )
@@ -207,18 +213,15 @@ class DoWhile(LoopNode):
 
     def _validate_loop_condition(self, raise_error=True):
         # pylint: disable=protected-access
-
         validation_result = self._create_empty_validation_result()
-        if self.condition is None:
-            validation_result.append_error(yaml_path="condition", message="The condition cannot be empty.")
-        else:
+        if self.condition is not None:
             # Check condition exists in dowhile body.
             validation_result.merge_with(
                 self._validate_port(self.condition, self.body.outputs, port_type="output", yaml_path="condition")
             )
             if validation_result.passed:
                 # Check condition is a control output.
-                condition_name = self.condition if isinstance(self.condition, str) else self.condition._name
+                condition_name = self.condition if isinstance(self.condition, str) else self.condition._port_name
                 if not self.body._outputs[condition_name].is_control:
                     validation_result.append_error(
                         yaml_path="condition",
@@ -258,7 +261,7 @@ class DoWhile(LoopNode):
             # Validate mapping input&output should come from while body
             for output, inputs in self.mapping.items():
                 # pylint: disable=protected-access
-                output_name = output if isinstance(output, str) else output._name
+                output_name = output if isinstance(output, str) else output._port_name
                 validate_results = self._validate_port(
                     output, self.body.outputs, port_type="output", yaml_path="mapping"
                 )
@@ -271,7 +274,7 @@ class DoWhile(LoopNode):
                         )
                         validation_result.merge_with(input_validate_results)
                         # pylint: disable=protected-access
-                        input_name = item if isinstance(item, str) else item._name
+                        input_name = item if isinstance(item, str) else item._port_name
                         input_output_mapping[input_name] = input_output_mapping.get(input_name, []) + [output_name]
                         is_primitive_type = self.body._inputs[input_name]._meta._is_primitive_type
 

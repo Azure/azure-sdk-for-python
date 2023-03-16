@@ -1,0 +1,17 @@
+$schema: http://azureml/sdk-2-0/DataTransferComponent.json
+name: datatransfer_merge_mixtype_files
+display_name: Data Transfer Component merge mix type files
+
+type: data_transfer
+task: copy_data
+inputs:
+  input1:
+    type: uri_file
+  input2:
+    type: uri_file
+  input3:
+    type: mltable
+outputs:
+  output_folder:
+    type: uri_folder
+data_copy_mode: merge_with_overwrite

@@ -37,7 +37,14 @@ discovered_roots = []
 from urllib3 import PoolManager, Retry
 from urllib3.exceptions import HTTPError
 
-http_client = PoolManager(retries=Retry(total=1, raise_on_status=False))
+if os.getenv("REQUESTS_CA_BUNDLE"):
+    http_client = PoolManager(
+        retries=Retry(total=3, raise_on_status=False),
+        cert_reqs="CERT_REQUIRED",
+        ca_certs=os.getenv("REQUESTS_CA_BUNDLE"),
+    )
+else:
+    http_client = PoolManager(retries=Retry(total=1, raise_on_status=False))
 
 
 def get_image_tag(repo_root: str) -> str:

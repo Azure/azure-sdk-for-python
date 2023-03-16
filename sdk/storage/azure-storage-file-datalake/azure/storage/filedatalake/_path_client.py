@@ -4,9 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import re
 from datetime import datetime
 from typing import ( # pylint: disable=unused-import
-    Any, Dict, Optional, Union,
+    Any, Dict, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote
@@ -177,6 +178,7 @@ class PathClient(StorageAccountHostsMixin):
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
+            'encryption_context': kwargs.pop('encryption_context', None),
             'cls': return_response_headers}
         options.update(kwargs)
         return options
@@ -268,6 +270,8 @@ class PathClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: A dictionary of response headers.
+        :keyword str encryption_context:
+            Specifies the encryption context to set on the file.
         :rtype: Dict[str, Union[str, datetime]]
         """
         lease_id = kwargs.get('lease_id', None)
@@ -736,6 +740,30 @@ class PathClient(StorageAccountHostsMixin):
         except AzureError as error:
             error.continuation_token = last_continuation_token
             raise error
+
+    def _parse_rename_path(self, new_name: str) -> Tuple[str, str, Optional[str]]:
+        new_name = new_name.strip('/')
+        new_file_system = new_name.split('/')[0]
+        new_path = new_name[len(new_file_system):].strip('/')
+
+        new_sas = None
+        sas_split = new_path.split('?')
+        # If there is a ?, there could be a SAS token
+        if len(sas_split) > 0:
+            # Check last element for SAS by looking for sv= and sig=
+            potential_sas = sas_split[-1]
+            if re.search(r'sv=\d{4}-\d{2}-\d{2}', potential_sas) and 'sig=' in potential_sas:
+                new_sas = potential_sas
+                # Remove SAS from new path
+                new_path = new_path[:-(len(new_sas) + 1)]
+
+        if not new_sas:
+            if not self._raw_credential and new_file_system != self.file_system_name:
+                raise ValueError("please provide the sas token for the new file")
+            if not self._raw_credential and new_file_system == self.file_system_name:
+                new_sas = self._query_str.strip('?')
+
+        return new_file_system, new_path, new_sas
 
     def _rename_path_options(self,  # pylint: disable=no-self-use
                              rename_source,  # type: str

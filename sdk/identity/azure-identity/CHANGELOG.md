@@ -1,16 +1,29 @@
 # Release History
 
-## 1.13.0b2 (Unreleased)
+## 1.13.0b4 (Unreleased)
 
 ### Features Added
-
-- Added `AzureDeveloperCredential` for Azure Developer CLI. ([#27916](https://github.com/Azure/azure-sdk-for-python/pull/27916))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.13.0b3 (2023-03-07)
+
+### Features Added
+
+- Changed parameter from `instance_discovery` to `disable_instance_discovery` to make it more explicit.
+- Service principal credentials now enable support for [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation-workload). This indicates to Azure Active Directory that your application can handle CAE claims challenges.
+
+## 1.13.0b2 (2023-02-07)
+
+### Features Added
+
+- Added `AzureDeveloperCredential` for Azure Developer CLI. ([#27916](https://github.com/Azure/azure-sdk-for-python/pull/27916))
+- Added `WorkloadIdentityCredential` for Workload Identity Federation on Kubernetes ([#28536](https://github.com/Azure/azure-sdk-for-python/pull/28536))
+- Added support to use "TryAutoDetect" as the value for `AZURE_REGIONAL_AUTHORITY_NAME` to enable auto detecting the appropriate authority ([#526](https://github.com/AzureAD/microsoft-authentication-library-for-python/issues/526))
 
 ## 1.13.0b1 (2023-01-10)
 

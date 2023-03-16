@@ -144,7 +144,7 @@ class RestorePointCollectionsOperations:
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
         :param parameters: Parameters supplied to the Create or Update restore point collection
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a RestorePointCollection type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2021_04_01.models.RestorePointCollection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -288,7 +288,7 @@ class RestorePointCollectionsOperations:
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
         :param parameters: Parameters supplied to the Update restore point collection operation. Is
-         either a model type or a IO type. Required.
+         either a RestorePointCollectionUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2021_04_01.models.RestorePointCollectionUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

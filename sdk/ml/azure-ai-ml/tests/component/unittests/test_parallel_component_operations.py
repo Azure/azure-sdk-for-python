@@ -34,7 +34,7 @@ class TestComponentOperation:
             "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},
             "code_configuration": {"code": "./src", "scoring_script": "score.py"},
-            "environment": "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            "environment": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         }
         mini_batch = {
             "split_inputs": "score_input",
@@ -62,14 +62,12 @@ class TestComponentOperation:
             workspace_name=mock_component_operation._workspace_name,
         )
 
-    def test_create_autoincrement(
-        self, mock_component_operation: ComponentOperations
-    ) -> None:
+    def test_create_autoincrement(self, mock_component_operation: ComponentOperations) -> None:
         task = {
             "type": "run_function",
             "model": {"name": "sore_model", "type": "mlflow_model"},
             "code_configuration": {"code": "./src", "scoring_script": "score.py"},
-            "environment": "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            "environment": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         }
         mini_batch = {
             "split_inputs": "score_input",
@@ -83,8 +81,8 @@ class TestComponentOperation:
         )
         assert component._auto_increment_version
         with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
-                "azure.ai.ml.operations._component_operations.Component._from_rest_object",
-                return_value=component,
+            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
+            return_value=component,
         ):
             mock_component_operation.create_or_update(component)
             mock_thing.assert_called_once()

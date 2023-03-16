@@ -1,10 +1,26 @@
 # Release History
 
-## 1.0.0b12 (Unreleased)
+## 1.0.0b13 (Unreleased)
 
 ### Features Added
 
+- Enable AAD Credentials
+    ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
+
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b12 (2023-02-06)
+
+### Features Added
+
+- Add sdkVersion prefix during App Service attach
+    ([#28637](https://github.com/Azure/azure-sdk-for-python/pull/28637))
+- Correcting sdkVersion prefix
+    ([#29227](https://github.com/Azure/azure-sdk-for-python/pull/29227))
 
 ### Bugs Fixed
 
@@ -19,6 +35,10 @@
     ([#28322](https://github.com/Azure/azure-sdk-for-python/pull/28322))
 - Add UK to eu statsbeats
     ([#28379](https://github.com/Azure/azure-sdk-for-python/pull/28379))
+- Update to opentelemetry api/sdk v1.15
+    ([#28499](https://github.com/Azure/azure-sdk-for-python/pull/28499))
+- Update logging samples import paths to opentelemetry api/sdk v1.15
+    ([#28646](https://github.com/Azure/azure-sdk-for-python/pull/28646))
 
 ## 1.0.0b11 (2022-12-15)
 

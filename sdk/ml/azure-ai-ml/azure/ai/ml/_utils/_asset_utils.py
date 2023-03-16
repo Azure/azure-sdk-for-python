@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,too-many-lines
+# pylint: disable=protected-access
 
 import hashlib
 import logging
@@ -84,36 +84,51 @@ class IgnoreFile(object):
 
     def exists(self) -> bool:
         """Checks if ignore file exists."""
+        return self._file_exists()
+
+    def _file_exists(self) -> bool:
         return self._path and self._path.exists()
+
+    @property
+    def base_path(self) -> Path:
+        return self._path.parent
 
     def _get_ignore_list(self) -> List[str]:
         """Get ignore list from ignore file contents."""
         if not self.exists():
             return []
-        with open(self._path, "r") as fh:
-            return [line for line in fh if line]
+        if self._file_exists():
+            with open(self._path, "r") as fh:
+                return [line.rstrip() for line in fh if line]
+        return []
 
     def _create_pathspec(self) -> List[GitWildMatchPattern]:
         """Creates path specification based on ignore list."""
         return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
+
+    def _get_rel_path(self, file_path: Union[str, Path]) -> Optional[str]:
+        """Get relative path of given file_path."""
+        file_path = Path(file_path).absolute()
+        try:
+            # use os.path.relpath instead of Path.relative_to in case file_path is not a child of self.base_path
+            return os.path.relpath(file_path, self.base_path)
+        except ValueError:
+            # 2 paths are on different drives
+            return None
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
         """
-        if not self.exists():
-            return False
-        if not self._path_spec:
+        # TODO: current design of ignore file can't distinguish between files and directories of the same name
+        if self._path_spec is None:
             self._path_spec = self._create_pathspec()
-        file_path = Path(file_path)
-        if file_path.is_absolute():
-            ignore_dirname = self._path.parent
-            try:
-                file_path = os.path.relpath(file_path, ignore_dirname)
-            except ValueError:
-                # 2 paths are on different drives
-                return True
+        if not self._path_spec:
+            return False
+        file_path = self._get_rel_path(file_path)
+        if file_path is None:
+            return True
 
         norm_file = normalize_file(file_path)
         matched = False
@@ -142,8 +157,7 @@ class GitIgnoreFile(IgnoreFile):
 
 
 def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
-    """Finds and returns IgnoreFile object based on ignore file found in
-    directory_path.
+    """Finds and returns IgnoreFile object based on ignore file found in directory_path.
 
     .amlignore takes precedence over .gitignore and if no file is found, an empty
     IgnoreFile object will be returned.
@@ -215,9 +229,8 @@ def _get_dir_hash(directory: Union[str, Path], _hash: hash_type, ignore_file: Ig
 def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
     """Build metadata dictionary to attach to uploaded data.
 
-    Metadata includes an upload confirmation field, and for code uploads
-    only, the name and version of the code asset being created for that
-    data.
+    Metadata includes an upload confirmation field, and for code uploads only, the name and version of the code asset
+    being created for that data.
     """
     if name:
         linked_asset_arm_id = {"name": name, "version": version}
@@ -273,14 +286,20 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
     # DO NOT change this function unless you change the verification logic together
     actual_path = path
     if os.path.islink(path):
-        target_path = os.readlink(path)
-        actual_path = target_path if os.path.isabs(target_path) else os.path.abspath(target_path)
+        link_path = os.readlink(path)
+        actual_path = link_path if os.path.isabs(link_path) else os.path.join(os.path.dirname(path), link_path)
     if os.path.isdir(actual_path):
-        file_list = construct_local_and_remote_paths(actual_path, dest="", ignore_file=ignore_file)
-        return _get_file_list_content_hash(file_list)
+        return _get_file_list_content_hash(_get_upload_files_from_folder(actual_path, ignore_file=ignore_file))
     if os.path.isfile(actual_path):
         return _get_file_list_content_hash([(actual_path, Path(actual_path).name)])
     return None
+
+
+def _get_upload_files_from_folder(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> List[str]:
+    upload_paths = []
+    for root, _, files in os.walk(path, followlinks=True):
+        upload_paths += list(traverse_directory(root, files, Path(path).resolve(), "", ignore_file=ignore_file))
+    return upload_paths
 
 
 def _get_file_list_content_hash(file_list) -> str:
@@ -298,170 +317,97 @@ def _get_file_list_content_hash(file_list) -> str:
     _hash.update(str(len(file_list)).encode())
     # Sort by "destination" path, since in this function destination prefix is empty and keep the link name in path.
     for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
-        _hash.update(("#" + str(file_name) + "#").encode())
+        _hash.update(("#" + file_name + "#").encode())
         _hash.update(str(os.path.getsize(file_path)).encode())
-    for file_path, _ in sorted(file_list, key=lambda x: str(x[1]).lower()):
+    for file_path, file_name in sorted(file_list, key=lambda x: str(x[1]).lower()):
         _hash = _get_file_hash(file_path, _hash)
     return str(_hash.hexdigest())
 
 
-def get_local_paths(
-    source_path: str,
-    ignore_file: IgnoreFile = IgnoreFile(),
-) -> Tuple[List[str], Dict[str, str]]:
-    """
-    Get the list of local paths to upload and if symlinks are discovered, return a dictionary of the link,target pairs.
-
-    :param source_path: The path to the local file or directory to upload
-    :type source_path: str
-    :param ignore_file: The ignore file to use when determining which files to upload
-    :type ignore_file: IgnoreFile
-    :return: A tuple of the list of local paths to upload and a dictionary of any symlinks and their targets
-    :rtype: Tuple[List[str], Dict[str, str]]
-    """
-    local_paths = []
-    symlink_dict = {}
-
-    def walk_directory_including_symlinks(source: Union[str, os.PathLike]) -> List[Tuple[str, str]]:
-        """
-        Python's os.walk() function doesn't follow symlinks to directories and subdirectories reliably on
-        all platforms. This function modifies it to check for symlinks, follow them if they're directories,
-        and add them to the list of directories to walk.
-
-        :param source: The directory to walk
-        :type source: str
-        :return: A generator of all directories and files in the directory tree.
-        :rtype: Generator[Tuple[str, str]]
-        """
-
-        for root, dirs, files in os.walk(source, topdown=True):
-            for file in files:
-                filename = os.path.join(root, file)
-                if os.path.islink(filename):
-                    # Follow the symlink and add the target to the list of directories to walk
-                    target = os.readlink(filename)
-                    target = os.path.abspath(target)
-                    if os.path.isdir(target):
-                        dirs.append(target)
-
-                    target = Path(str(target).replace("\\\\?\\", ""))  # Clean paths on Windows with Python 3.10
-                    relative_path = os.path.relpath(target, source)
-
-                    symlink_dict[file] = {
-                        "target file": convert_windows_path_to_unix(relative_path),
-                        "directory": False
-                    }
-                    if os.path.isdir(target):
-                        symlink_dict[file]["directory"] = True
-                    else:
-                        yield root, file
-                else:
-                    yield root, file
-
-    file_tree = walk_directory_including_symlinks(source_path)
-    for r, f in file_tree:
-        if not ignore_file.is_file_excluded(os.path.join(r, f)):
-            local_paths.append(convert_windows_path_to_unix(os.path.join(r, f)))
-
-    return sorted(local_paths), symlink_dict
-
-
-def construct_remote_paths(
-    original_file_paths: List[str],
+def traverse_directory(
+    root: str,
+    files: List[str],
     source: str,
     prefix: str,
-    link_dict: Dict[str, str],
-) -> Iterable[Tuple[str, str]]:
-    """
-    Given a list of local paths, compose remote paths for local files to be uploaded to datastore
-    and return as pairs. e.g.
-    [/mnt/c/Users/dipeck/upload_files/my_file1.txt, /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
-    [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
-     (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
+    ignore_file: IgnoreFile = IgnoreFile(),
+) -> Iterable[Tuple[str, Union[str, Any]]]:
+    """Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage.
+    e.g.
 
-    :param original_file_paths: List of all file paths in the directory
-    :type original_file_paths: List[str]
+    [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
+    /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+
+        [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
+        (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
+
+    :param root: Root directory path
+    :type root: str
+    :param files: List of all file paths in the directory
+    :type files: List[str]
     :param source: Local path to project directory
     :type source: str
     :param prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
     :type prefix: str
-    :param link_dict: Dictionary of links to be replaced
-    :type link_dict: Dict[str, str]
-    :return: List of remote destination paths for each file
-    :rtype: Iterable[Tuple[str, Union[str, Any]]]
-    """
-    upload_pairs = []
-    updated_upload_pairs = []
-
-    for file_path in original_file_paths:
-        local = file_path
-        relative_path = os.path.relpath(file_path, source)
-        remote = prefix + convert_windows_path_to_unix(relative_path)
-        upload_pairs.append((local, remote))
-
-    for local, remote in upload_pairs:
-        for link, target in zip(link_dict.keys(), link_dict.values()):
-            if target["target file"] in remote:
-                remote = remote.replace(target["target file"], link)
-            if not target["directory"]:
-                if link in local:
-                    local = os.path.abspath(local.replace(link, target["target file"]))
-        updated_upload_pairs.append((local, remote))
-
-    return updated_upload_pairs
-
-
-def construct_local_and_remote_paths(
-    source: str,
-    dest: str,
-    ignore_file: IgnoreFile = IgnoreFile(),
-) -> Iterable[Tuple[str, Union[str, Any]]]:
-    """
-    Compose local and remote paths for local files to be uploaded to datastore.
-
-    Composing Local Paths
-        This is trivial for most paths, but for symlinks, we need to resolve the symlink and
-        return the target path to the file. e.g. if we have a symlink directory /mnt/c/Users/dipeck/link/
-        that points to /mnt/c/Users/target/, we want to return /mnt/c/Users/target/ and its file tree.
-
-        For a symlink file:
-        [/mnt/c/Users/dipeck/link.txt] -> [/mnt/c/Users/dipeck/target.txt]
-
-        For a symlink directory with subfiles:
-        [/mnt/c/Users/dipeck/link/] --> [/mnt/c/Users/target/my_file1.txt, /mnt/c/Users/target/my_file2.txt]
-
-        For a symlink directory with subdirectories:
-        [/mnt/c/Users/dipeck/link/] --> [/mnt/c/Users/target/sub_folder/my_file1.txt, /mnt/c/Users/target/my_file2.txt]
-
-    Composing Remote Paths
-        Files are uploaded to the datastore under the path LocalUpload/<artifact hash>/project_dir/<relative path>, so
-        we need to construct the remote path for each file.
-        [/mnt/c/Users/dipeck/upload_files/my_file1.txt, /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
-        [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
-         (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
-
-        For symlinks, we need to use the symlink's relative path here because the user is expecting to see the
-        folder or file the same way it appears in their project directory. e.g. if a user has a symlink
-        /mnt/c/Users/dipeck/link.txt whose target is actually located at /mnt/c/Users/dipeck/target.txt, its remote
-        upload path will reflect the link -> LocalUpload/<guid>/dipeck/link.txt and *not* the target
-
-    :param source: Local path to project directory
-    :type source: str
-    :param dest: Remote upload path for project directory (e.g. LocalUpload/<guid>/)
-    :type dest: str
     :param ignore_file: The .amlignore or .gitignore file in the project directory
     :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
-    :return: List of tuples each containing a validated local path and a remote upload path for each file
-    :rtype: List[Tuple[str, str]]
+    :return: Zipped list of tuples representing the local path and remote destination path for each file
+    :rtype: Iterable[Tuple[str, Union[str, Any]]]
     """
-    source_path = Path(source).resolve()
-    prefix = "" if dest == "" else dest + "/"
-    prefix += os.path.basename(source_path) + "/"
+    # Normalize Windows paths
+    root = convert_windows_path_to_unix(root)
+    source = convert_windows_path_to_unix(source)
+    working_dir = convert_windows_path_to_unix(os.getcwd())
+    project_dir = root[len(str(working_dir)) :] + "/"
+    file_paths = [
+        convert_windows_path_to_unix(os.path.join(root, name))
+        for name in files
+        if not ignore_file.is_file_excluded(os.path.join(root, name))
+    ]  # get all files not excluded by the ignore file
+    file_paths_including_links = {fp: None for fp in file_paths}
 
-    local_upload_paths, link_dict = get_local_paths(source_path=source_path, ignore_file=ignore_file)
-    upload_pairs = construct_remote_paths(local_upload_paths, source_path, prefix, link_dict)
+    for path in file_paths:
+        target_prefix = ""
+        symlink_prefix = ""
 
-    return upload_pairs
+        # check for symlinks to get their true paths
+        if os.path.islink(path):
+            target_absolute_path = os.path.join(working_dir, os.readlink(path))
+            target_prefix = "/".join([root, str(os.readlink(path))]).replace(project_dir, "/")
+
+            # follow and add child links if the directory is a symlink
+            if os.path.isdir(target_absolute_path):
+                symlink_prefix = path.replace(root + "/", "")
+
+                for r, _, f in os.walk(target_absolute_path, followlinks=True):
+                    target_file_paths = {
+                        os.path.join(r, name): symlink_prefix + os.path.join(r, name).replace(target_prefix, "")
+                        for name in f
+                    }  # for each symlink, store its target_path as key and symlink path as value
+                    file_paths_including_links.update(target_file_paths)  # Add discovered symlinks to file paths list
+            else:
+                file_path_info = {
+                    target_absolute_path: path.replace(root + "/", "")
+                }  # for each symlink, store its target_path as key and symlink path as value
+                file_paths_including_links.update(file_path_info)  # Add discovered symlinks to file paths list
+            del file_paths_including_links[path]  # Remove original symlink entry now that detailed entry has been added
+
+    file_paths = sorted(
+        file_paths_including_links
+    )  # sort files to keep consistent order in case of repeat upload comparisons
+    dir_parts = [convert_windows_path_to_unix(os.path.relpath(root, source)) for _ in file_paths]
+    dir_parts = ["" if dir_part == "." else dir_part + "/" for dir_part in dir_parts]
+    blob_paths = []
+
+    for (dir_part, name) in zip(dir_parts, file_paths):
+        if file_paths_including_links.get(
+            name
+        ):  # for symlinks, use symlink name and structure in directory to create remote upload path
+            blob_path = prefix + dir_part + file_paths_including_links.get(name)
+        else:
+            blob_path = prefix + dir_part + name.replace(root + "/", "")
+        blob_paths.append(blob_path)
+
+    return zip(file_paths, blob_paths)
 
 
 def generate_asset_id(asset_hash: str, include_directory=True) -> str:
@@ -471,20 +417,27 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
     return asset_id
 
 
-def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
-    """Returns total size of a directory and a dictionary itemizing each sub-
-    path and its size."""
+def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(None)) -> Tuple[int, Dict[str, int]]:
+    """Returns total size of a directory and a dictionary itemizing each sub- path and its size.
+
+    If an optional ignore_file argument is provided, then files specified in the ignore file are not included in the
+    directory size calculation.
+    """
     total_size = 0
     size_list = {}
     for dirpath, _, filenames in os.walk(root, followlinks=True):
         for name in filenames:
             full_path = os.path.join(dirpath, name)
+            # Don't count files that are excluded by an ignore file
+            if ignore_file.is_file_excluded(full_path):
+                continue
             if not os.path.islink(full_path):
                 path_size = os.path.getsize(full_path)
             else:
-                path_size = os.path.getsize(
-                    os.readlink(convert_windows_path_to_unix(full_path))
-                )  # ensure we're counting the size of the linked file
+                # ensure we're counting the size of the linked file
+                # os.readlink returns a file path relative to dirpath, and must be
+                # re-joined to get a workable result
+                path_size = os.path.getsize(os.path.join(dirpath, os.readlink(convert_windows_path_to_unix(full_path))))
             size_list[full_path] = path_size
             total_size += path_size
     return total_size, size_list
@@ -621,19 +574,22 @@ def upload_directory(
             prefix.strip("/").split("/")[-1]
         )
 
-    upload_paths = construct_local_and_remote_paths(source=source, dest=dest, ignore_file=ignore_file)
-
-    # Get each file's size for progress bar tracking
+    # Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage
+    upload_paths = []
     size_dict = {}
     total_size = 0
-    for local_path, _ in upload_paths:
-        if os.path.islink(local_path):
+    for root, _, files in os.walk(source_path, followlinks=True):
+        upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file=ignore_file))
+
+    # Get each file's size for progress bar tracking
+    for path, _ in upload_paths:
+        if os.path.islink(path):
             path_size = os.path.getsize(
-                os.readlink(convert_windows_path_to_unix(local_path))
+                os.readlink(convert_windows_path_to_unix(path))
             )  # ensure we're counting the size of the linked file
         else:
-            path_size = os.path.getsize(local_path)
-        size_dict[local_path] = path_size
+            path_size = os.path.getsize(path)
+        size_dict[path] = path_size
         total_size += path_size
 
     upload_paths = sorted(upload_paths)
@@ -750,6 +706,7 @@ def _get_next_version_from_container(
         version = "1"
     return version
 
+
 def _get_latest_version_from_container(
     asset_name: str,
     container_operation: Any,
@@ -781,20 +738,21 @@ def _get_latest_version_from_container(
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         no_personal_data_message = (
             "Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else "Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
             target=ErrorTarget.ASSET,
             error_category=ErrorCategory.USER_ERROR,
-            error_type=ValidationErrorType.RESOURCE_NOT_FOUND
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
     return version
+
 
 def _get_latest(
     asset_name: str,
@@ -807,8 +765,7 @@ def _get_latest(
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Returns the latest version of the asset with the given name.
 
-    Latest is defined as the most recently created, not the most
-    recently updated.
+    Latest is defined as the most recently created, not the most recently updated.
     """
     result = (
         version_operation.list(
@@ -842,12 +799,12 @@ def _get_latest(
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         no_personal_data_message = (
             "Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else "Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -972,10 +929,11 @@ def _resolve_label_to_asset(
 
     resolver = assetOperations._managed_label_resolver.get(label, None)
     if not resolver:
-        msg = "Asset {} with version label {} does not exist in workspace."
+        scope = "registry" if assetOperations._registry_name else "workspace"
+        msg = "Asset {} with version label {} does not exist in {}."
         raise ValidationException(
-            message=msg.format(name, label),
-            no_personal_data_message=msg.format("[name]", "[label]"),
+            message=msg.format(name, label, scope),
+            no_personal_data_message=msg.format("[name]", "[label]", "[scope]"),
             target=ErrorTarget.ASSET,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )

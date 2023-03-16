@@ -1,17 +1,17 @@
+import fnmatch
+import subprocess
+import shutil
 from ast import Not
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse
 from pkg_resources import Requirement
 
-from ci_tools.variables import discover_repo_root, get_artifact_directory, DEV_BUILD_IDENTIFIER
-import os, sys, platform, glob, re
-
+from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER
 from ci_tools.parsing import ParsedSetup, get_build_config
 from pypi_tools.pypi import PyPIClient
 
-
+import os, sys, platform, glob, re, logging
 from typing import List, Any
-import logging
 
 INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
 
@@ -59,7 +59,6 @@ omit_function_dict = {
     "Omit_management": omit_mgmt,
 }
 
-
 def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     """
     This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
@@ -75,7 +74,7 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
 
     for pkg in package_set:
         try:
-            spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)    
+            spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
         except RuntimeError as e:
             logging.error(f"Unable to parse metadata for package {pkg}, omitting from build.")
             continue
@@ -89,7 +88,9 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
             collected_packages.append(pkg)
 
     logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
-    logging.debug("Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages)))
+    logging.debug(
+        "Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages))
+    )
 
     return collected_packages
 
@@ -114,8 +115,10 @@ def str_to_bool(input_string: str) -> bool:
     else:
         return False
 
+
 def generate_difference(original_packages: List[str], filtered_packages: List[str]):
     return list(set(original_packages) - set(filtered_packages))
+
 
 def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     if glob_string:
@@ -138,8 +141,10 @@ def apply_business_filter(collected_packages: List[str], filter_type: str) -> Li
     pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), collected_packages))
 
     logging.debug("Target packages after applying business filter: {}".format(pkg_set_ci_filtered))
-    logging.debug("Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, pkg_set_ci_filtered)))
-    
+    logging.debug(
+        "Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, pkg_set_ci_filtered))
+    )
+
     return pkg_set_ci_filtered
 
 
@@ -149,7 +154,7 @@ def discover_targeted_packages(
     additional_contains_filter: str = "",
     filter_type: str = "Build",
     compatibility_filter: bool = True,
-    include_inactive: bool = False
+    include_inactive: bool = False,
 ) -> List[str]:
     """
     During build and test, the set of targeted packages may expand or contract depending on the needs of the invocation.
@@ -188,7 +193,7 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
     override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
     if override_value:
         return override_value
-    
+
     # if no override, check for the config setting in the pyproject.toml
     config = get_build_config(package_path)
 
@@ -340,3 +345,98 @@ def process_requires(setup_py_path: str):
         logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
         logging.info("Package requirement is updated in setup.py")
+
+
+def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
+    """This function builds whls for every requirement found in a package's
+    dev_requirements.txt and installs it.
+
+    :param str file: the absolute path to the dev_requirements.txt file
+    :param str pkg_root: the absolute path to the package's root
+    :return: None
+    """
+    adjusted_req_lines = []
+
+    with open(file, "r") as f:
+        for line in f:
+            args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
+            amended_line = " ".join(args)
+
+            if amended_line.endswith("]"):
+                trim_amount = amended_line[::-1].index("[") + 1
+                amended_line = amended_line[0 : (len(amended_line) - trim_amount)]
+
+            adjusted_req_lines.append(amended_line)
+
+    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
+    install_deps_commands = [
+        sys.executable,
+        "-m",
+        "pip",
+        "install",
+    ]
+    logging.info(f"Installing dev requirements from freshly built packages: {adjusted_req_lines}")
+    install_deps_commands.extend(adjusted_req_lines)
+    subprocess.check_call(install_deps_commands)
+    shutil.rmtree(os.path.join(pkg_root, ".tmp_whl_dir"))
+
+
+def find_whl(package_name: str, version: str, whl_directory: str) -> str:
+    """Helper function to find where the built whl resides.
+
+    :param str package_name: the name of the package, e.g. azure-core
+    :param str version: the version used to build the whl
+    :param str whl_directory: the absolute path to the temp directory where the whls are built
+    :return: The absolute path to the whl built
+    """
+    if not os.path.exists(whl_directory):
+        logging.error("Whl directory is incorrect")
+        exit(1)
+
+    parsed_version = parse(version)
+
+    logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
+    whl_name_format = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
+    whls = []
+    for root, dirnames, filenames in os.walk(whl_directory):
+        for filename in fnmatch.filter(filenames, whl_name_format):
+            whls.append(os.path.join(root, filename))
+
+    whls = [os.path.relpath(w, whl_directory) for w in whls]
+
+    if not whls:
+        logging.error(
+            "whl is not found in whl directory {0} for package {1}-{2}".format(
+                whl_directory, package_name, parsed_version.base_version
+            )
+        )
+        exit(1)
+
+    return whls[0]
+
+def build_whl_for_req(req: str, package_path: str) -> str:
+    """Builds a whl from the dev_requirements file.
+
+    :param str req: a requirement from the dev_requirements.txt
+    :param str package_path: the absolute path to the package's root
+    :return: The absolute path to the whl built or the requirement if a third-party package
+    """
+    from ci_tools.build import create_package
+    if ".." in req:
+        # Create temp path if it doesn't exist
+        temp_dir = os.path.join(package_path, ".tmp_whl_dir")
+        if not os.path.exists(temp_dir):
+            os.mkdir(temp_dir)
+
+        req_pkg_path = os.path.abspath(os.path.join(package_path, req.replace("\n", "")))
+        parsed = ParsedSetup.from_path(req_pkg_path)
+
+        logging.info("Building wheel for package {}".format(parsed.name))
+        create_package(req_pkg_path, temp_dir, enable_sdist=False)
+
+        whl_path = os.path.join(temp_dir, find_whl(parsed.name, parsed.version, temp_dir))
+        logging.info("Wheel for package {0} is {1}".format(parsed.name, whl_path))
+        logging.info("Replacing dev requirement. Old requirement:{0}, New requirement:{1}".format(req, whl_path))
+        return whl_path
+    else:
+        return req

@@ -107,7 +107,7 @@ Mypy install and run.
 ```
 
 #### `sphinx` environment
-Generate shpinx doc for this package.
+Generate sphinx doc for this package.
 
 ```
 \> tox -e sphinx -c <path to tox.ini>
@@ -117,7 +117,7 @@ Generate shpinx doc for this package.
 
 `tox` supports custom arguments, and the defined pytest environments within the common `tox.ini` also allow these. Essentially, separate the arguments you want passed to `pytest` by a `--` in your tox invocation.
 
-[Tox Documentation on Positional Arguments](https://tox.readthedocs.io/en/latest/example/general.html#interactively-passing-positional-arguments)
+[Tox Documentation on Positional Arguments](https://tox.wiki/en/latest/config.html#substitutions-for-positional-arguments-in-commands)
 
 **Example: Invoke tox, breaking into the debugger on failure**
 `tox -e whl -c ../../../eng/tox/tox.ini -- --pdb`

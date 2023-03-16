@@ -16,15 +16,14 @@ from azure.communication.rooms import (
     RoleType
 )
 from azure.communication.rooms._shared.models import CommunicationUserIdentifier
-
 from _shared.utils import get_http_logging_policy
 from _shared.testcase import (
-    CommunicationTestCase,
     ResponseReplacerProcessor
 )
 from helper import URIIdentityReplacer, RequestBodyIdentityReplacer
+from testcase import RoomsTestCase
 
-class RoomsClientTest(CommunicationTestCase):
+class RoomsClientTest(RoomsTestCase):
     def __init__(self, method_name):
         super(RoomsClientTest, self).__init__(method_name)
 

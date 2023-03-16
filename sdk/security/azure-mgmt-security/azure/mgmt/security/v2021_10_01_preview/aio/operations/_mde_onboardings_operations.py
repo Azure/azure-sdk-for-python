@@ -75,10 +75,10 @@ class MdeOnboardingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-10-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-10-01-preview")
-        )  # type: Literal["2021-10-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MdeOnboardingDataList]
+        )
+        cls: ClsType[_models.MdeOnboardingDataList] = kwargs.pop("cls", None)
 
         request = build_list_request(
             subscription_id=self._config.subscription_id,
@@ -88,9 +88,9 @@ class MdeOnboardingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -107,7 +107,7 @@ class MdeOnboardingsOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/mdeOnboardings"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/mdeOnboardings"}
 
     @distributed_trace_async
     async def get(self, **kwargs: Any) -> _models.MdeOnboardingData:
@@ -129,10 +129,10 @@ class MdeOnboardingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2021-10-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2021-10-01-preview")
-        )  # type: Literal["2021-10-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.MdeOnboardingData]
+        )
+        cls: ClsType[_models.MdeOnboardingData] = kwargs.pop("cls", None)
 
         request = build_get_request(
             subscription_id=self._config.subscription_id,
@@ -142,9 +142,9 @@ class MdeOnboardingsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -161,4 +161,4 @@ class MdeOnboardingsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/mdeOnboardings/default"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/mdeOnboardings/default"}

@@ -180,15 +180,38 @@ PARAMETERS_TO_TEST = [
             "default_datastore": ADLS_DATA_STORE_NAME,
         },
     ),  # Ae365exepool
+    (
+        "tests/test_configs/internal/spark-component/spec.yaml",
+        {
+            "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
+            "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
+        },
+        {
+            "driver_cores": 1,
+            "driver_memory": "1g",
+            "executor_cores": 1,
+            "executor_memory": "1g",
+            "executor_instances": 1,
+            "compute": "cpu-cluster",
+        },  # no specific run settings
+        {
+            "default_compute": "cpu-cluster",
+            "default_datastore": ADLS_DATA_STORE_NAME,
+        },
+    ),  # SparkComponent
     # Pipeline  we can't test this because we can't create a v1.5 pipeline component in v2, instead we test v2 pipeline
     # component containing v1.5 nodes
 ]
 
 # this is to shorten the test name
-TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
-    lambda params: Path(params[0]).name,
-    PARAMETERS_TO_TEST,
-)))
+TEST_CASE_NAME_ENUMERATE = list(
+    enumerate(
+        map(
+            lambda params: Path(params[0]).name,
+            PARAMETERS_TO_TEST,
+        )
+    )
+)
 
 
 def get_expected_runsettings_items(runsettings_dict, client=None):
@@ -199,6 +222,20 @@ def get_expected_runsettings_items(runsettings_dict, client=None):
         if dot_key in expected_values:
             expected_values[dot_key_map[dot_key]] = expected_values.pop(dot_key)
 
+    conf = {}
+    conf_key_map = {
+        "driver_memory": "spark.driver.memory",
+        "driver_cores": "spark.driver.cores",
+        "executor_memory": "spark.executor.memory",
+        "executor_cores": "spark.executor.cores",
+        "executor_instances": "spark.executor.instances",
+    }
+    # hack: spark component settings will be set to conf
+    if all(key in expected_values for key in conf_key_map):
+        for dot_key in conf_key_map:
+            conf[conf_key_map[dot_key]] = expected_values.pop(dot_key)
+        expected_values["conf"] = conf
+
     for dot_key in expected_values:
         # hack: mini_batch_size will be transformed into str
         if dot_key == "mini_batch_size":
@@ -208,11 +245,13 @@ def get_expected_runsettings_items(runsettings_dict, client=None):
             expected_values[dot_key] = "PT5M"
         # hack: compute_name for hdinsight will be transformed into arm str
         if dot_key == "compute_name" and client is not None:
-            expected_values[dot_key] = f"/subscriptions/{client.subscription_id}/" \
-                             f"resourceGroups/{client.resource_group_name}/" \
-                             f"providers/Microsoft.MachineLearningServices/" \
-                             f"workspaces/{client.workspace_name}/" \
-                             f"computes/{expected_values[dot_key]}"
+            expected_values[dot_key] = (
+                f"/subscriptions/{client.subscription_id}/"
+                f"resourceGroups/{client.resource_group_name}/"
+                f"providers/Microsoft.MachineLearningServices/"
+                f"workspaces/{client.workspace_name}/"
+                f"computes/{expected_values[dot_key]}"
+            )
     return expected_values.items()
 
 
@@ -220,16 +259,17 @@ ANONYMOUS_COMPONENT_TEST_PARAMS = [
     (
         "simple-command/powershell_copy.yaml",
         # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
-        "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+        "75c43313-4777-b2e9-fe3a-3b98cabfaa77",
     ),
     (
         "additional-includes/component_spec.yaml",
         # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
-        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
+        "1dc8271a-9184-df03-c9a5-afac8dcdcf26",
     ),
     # TODO(2076035): skip tests related to zip additional includes for now
     # (
     #     "additional-includes-in-zip/component_spec.yaml",
+    #     # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
     #     "24f26249-94c3-19c5-effe-030a60205d88"
     # ),
 ]

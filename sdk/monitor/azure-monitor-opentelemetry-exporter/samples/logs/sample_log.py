@@ -7,11 +7,13 @@ logging library are tracked and telemetry is exported to application insights wi
 import os
 import logging
 
+from opentelemetry._logs import (
+    get_logger_provider,
+    set_logger_provider,
+)
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    get_logger_provider,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
@@ -27,6 +29,8 @@ get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter)
 handler = LoggingHandler()
 logger = logging.getLogger(__name__)
 logger.addHandler(handler)
-logger.setLevel(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
-logger.warning("Hello World!")
+logger.info("Hello World!")
+
+input()

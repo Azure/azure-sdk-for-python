@@ -12,47 +12,44 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as JobBaseData
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJobEntry as RestSparkJobEntry
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    SparkResourceConfiguration as RestSparkResourceConfiguration,
-)
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
-from azure.ai.ml._schema.job.spark_job import SparkJobSchema
-from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import (
+from ..._restclient.v2023_02_01_preview.models import IdentityConfiguration
+from ..._restclient.v2023_02_01_preview.models import JobBase as JobBaseData
+from ..._restclient.v2023_02_01_preview.models import SparkJob as RestSparkJob
+from ..._restclient.v2023_02_01_preview.models import SparkJobEntry as RestSparkJobEntry
+from ..._restclient.v2023_02_01_preview.models import SparkResourceConfiguration as RestSparkResourceConfiguration
+from ..._schema import NestedField, PathAwareSchema, UnionField
+from ..._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from ..._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
+from ..._schema.job.spark_job import SparkJobSchema
+from ..._utils.utils import is_url
+from ...constants._common import (
     ARM_ID_PREFIX,
     BASE_PATH_CONTEXT_KEY,
     REGISTRY_URI_FORMAT,
     SPARK_ENVIRONMENT_WARNING_MESSAGE,
 )
-from azure.ai.ml.constants._component import NodeType
-from azure.ai.ml.constants._job.job import SparkConfKey
-from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._credentials import (
+from ...constants._component import NodeType
+from ...constants._job.job import SparkConfKey
+from ...entities._assets import Environment
+from ...entities._component.component import Component
+from ...entities._component.spark_component import SparkComponent
+from ...entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
     _BaseJobIdentityConfiguration,
 )
-from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job._input_output_helpers import (
+from ...entities._inputs_outputs import Input, Output
+from ...entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
     validate_inputs_for_args,
 )
-from azure.ai.ml.entities._job.spark_job import SparkJob
-from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntryType
-from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
-from azure.ai.ml.entities._validation import MutableValidationResult
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-
-from ..._schema import NestedField, PathAwareSchema, UnionField
+from ...entities._job.spark_job import SparkJob
+from ...entities._job.spark_job_entry import SparkJobEntryType
+from ...entities._job.spark_resource_configuration import SparkResourceConfiguration
+from ...entities._validation import MutableValidationResult
+from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .._job.pipeline._io import NodeOutput
 from .._job.spark_helpers import (
     _validate_compute_or_resources,
@@ -174,6 +171,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         # init mark for _AttrDict
         self._init = True
+        SparkJobEntryMixin.__init__(self, entry=entry)
         self.conf = conf
         self.driver_cores = driver_cores
         self.driver_memory = driver_memory
@@ -186,7 +184,9 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
         is_spark_component = isinstance(component, SparkComponent)
         if is_spark_component:
-            self.conf = self.conf or component.conf
+            # conf is dict and we need copy component conf here, otherwise node conf setting will affect component
+            # setting
+            self.conf = self.conf or copy.copy(component.conf)
             self.driver_cores = self.driver_cores or component.driver_cores
             self.driver_memory = self.driver_memory or component.driver_memory
             self.executor_cores = self.executor_cores or component.executor_cores
@@ -199,7 +199,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
             self.dynamic_allocation_max_executors = (
                 self.dynamic_allocation_max_executors or component.dynamic_allocation_max_executors
             )
-
+        if self.executor_instances is None and str(self.dynamic_allocation_enabled).lower() == "true":
+            self.executor_instances = self.dynamic_allocation_min_executors
         # When create standalone job or pipeline job, following fields will always get value from component or get
         # default None, because we will not pass those fields to Spark. But in following cases, we expect to get
         # correct value from spark._from_rest_object() and then following fields will get from their respective
@@ -385,7 +386,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
-            "component": (str, SparkComponent),
+            # hack: allow use InternalSparkComponent as component
+            # "component": (str, SparkComponent),
             "environment": (str, Environment),
             "resources": (dict, SparkResourceConfiguration),
             "code": (str, PathLike),
@@ -396,7 +398,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return self.resources is not None
 
     def _to_job(self) -> SparkJob:
-
         return SparkJob(
             experiment_name=self.experiment_name,
             name=self.name,
@@ -450,7 +451,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
-        self._validate_fields()
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
@@ -485,6 +485,10 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
             )
         result.merge_with(self._validate_entry_exist(raise_error=False))
+        try:
+            self._validate_fields()
+        except ValidationException as e:
+            result.append_error(yaml_path="*", message=str(e))
         return result
 
     def _validate_entry_exist(self, raise_error=False) -> MutableValidationResult:

@@ -137,31 +137,6 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
     else:
         return False
 
-def find_whl(package_name, version, whl_directory):
-    if not os.path.exists(whl_directory):
-        logging.error("Whl directory is incorrect")
-        exit(1)
-
-    parsed_version = parse(version)
-
-    logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name_format = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
-    whls = []
-    for root, dirnames, filenames in os.walk(whl_directory):
-        for filename in fnmatch.filter(filenames, whl_name_format):
-            whls.append(os.path.join(root, filename))
-
-    whls = [os.path.relpath(w, whl_directory) for w in whls]
-
-    if not whls:
-        logging.error(
-            "whl is not found in whl directory {0} for package {1}-{2}".format(
-                whl_directory, package_name, parsed_version.base_version
-            )
-        )
-        exit(1)
-
-    return whls[0]
 
 # This method installs package from a pre-built whl
 def install_package_from_whl(package_whl_path, working_dir, python_sym_link=sys.executable):

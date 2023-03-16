@@ -13,7 +13,7 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component
@@ -33,8 +33,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Parallel(BaseNode):
-    """Base class for parallel node, used for parallel component version
-    consumption.
+    """Base class for parallel node, used for parallel component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from builder function: parallel.

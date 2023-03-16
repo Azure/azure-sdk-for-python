@@ -6,7 +6,7 @@
 ################
 # As of 1/26/2023 these paths have no owners:
 
-# /
+# /**
 # /.devcontainer/
 # /.vscode/
 # /conda-releaselogs/
@@ -19,7 +19,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                                       @jsquire @ronniegeraghty
+/.github/                                                            @jsquire @ronniegeraghty
 
 ###########
 # SDK
@@ -89,7 +89,7 @@
 /sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @RoyHerrod @danielav7
 
 # PRLabel: %Communication - Rooms
-/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft
+/sdk/communication/azure-communication-rooms/                        @shirleyqin-msft @minnieliu @paolamvhz @alexokun @Mrayyan @shwali-msft @allchiang-msft @mikehang-msft
 
 # PRLabel: %Communication - SMS
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
@@ -137,10 +137,10 @@
 /sdk/containerservice/                                               @zqingqing1
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @JericHunter
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @bambriz
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy @bambriz
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
@@ -163,7 +163,7 @@
 /sdk/machinelearningcompute/                                         @shutchings
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
+/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
 
 # PRLabel: %ML-Data
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_data/                       @sogansky @MayankKumar91 @code-vicar @pritamDas9191
@@ -180,7 +180,7 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # PRLabel: %ML-Jobs
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/                         @DouglasXiaoMS @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @DouglasXiaoMS @TonyJ1 @wangchao1230
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @DouglasXiaoMS @TonyJ1 @wangchao1230
 /sdk/ml/training-experiences.tests.yml                               @DouglasXiaoMS @TonyJ1
 
@@ -236,8 +236,8 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @mingweihe @seanyao1
 
 # PRLabel: %ML-WorkspaceConnections
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections/              @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections/              @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
 
 # PRLabel: %ML-ImportJob
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py                     @xiongrenyi
@@ -302,7 +302,7 @@
 /sdk/personalizer/                                                   @sharathmalladi
 
 # PRLabel: %Graph
-sdk/graphrbac/                                                       @msyyc @Wzb123456789
+/sdk/graphrbac/                                                      @msyyc @Wzb123456789
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
@@ -919,8 +919,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # Eng Sys
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
-/**/tests.yml                                                        @scbedd @benbp
-/**/ci.yml                                                           @scbedd @benbp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp

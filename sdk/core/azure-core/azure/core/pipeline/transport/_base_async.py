@@ -28,7 +28,7 @@ import asyncio
 import abc
 from collections.abc import AsyncIterator
 from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic
-from contextlib import AbstractAsyncContextManager  # type: ignore
+from contextlib import AbstractAsyncContextManager
 
 from ._base import (
     _HttpResponseBase,
@@ -72,6 +72,7 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :keyword bool decompress: If True which is default, will attempt to decode the body based
             on the *content-encoding* header.
         """
+        raise NotImplementedError("stream_download is not implemented.")
 
     def parts(self) -> AsyncIterator:
         """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
@@ -80,16 +81,14 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :raises ValueError: If the content is not multipart/mixed
         """
         if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError(
-                "You can't get parts if the response is not multipart/mixed"
-            )
+            raise ValueError("You can't get parts if the response is not multipart/mixed")
 
-        return _PartGenerator(
-            self, default_http_response_type=AsyncHttpClientTransportResponse
-        )
+        return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
 
 
-class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpResponse):
+class AsyncHttpClientTransportResponse(  # pylint: disable=abstract-method
+    _HttpClientTransportResponse, AsyncHttpResponse
+):
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
@@ -107,7 +106,7 @@ class AsyncHttpTransport(
     """An http sender ABC."""
 
     @abc.abstractmethod
-    async def send(self, request, **kwargs):
+    async def send(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
         """Send the request using this HTTP sender."""
 
     @abc.abstractmethod

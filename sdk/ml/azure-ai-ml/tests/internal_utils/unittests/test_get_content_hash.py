@@ -1,6 +1,5 @@
 import hashlib
 import os
-import shutil
 from pathlib import Path
 
 import pytest
@@ -28,19 +27,19 @@ class TestGetContentHash:
             with open(full_file_path, "wb") as f:
                 f.write(test_file_contents)
 
+        hash = get_content_hash(tmp_path)
         actual_hash = hashlib.sha256()
         actual_hash.update(b"4")
-        actual_hash.update(b"#test_get_content_hash_should_n0/file1.txt#" + str(len(content1)).encode())
-        actual_hash.update(b"#test_get_content_hash_should_n0/folder1/file2.txt#" + str(len(content2)).encode())
-        actual_hash.update(b"#test_get_content_hash_should_n0/Folder2/file3.txt#" + str(len(content3)).encode())
-        actual_hash.update(b"#test_get_content_hash_should_n0/Folder2/folder1/file4.txt#" + str(len(content4)).encode())
+        actual_hash.update(b"#file1.txt#" + str(len(content1)).encode())
+        actual_hash.update(b"#folder1/file2.txt#" + str(len(content2)).encode())
+        actual_hash.update(b"#Folder2/file3.txt#" + str(len(content3)).encode())
+        actual_hash.update(b"#Folder2/folder1/file4.txt#" + str(len(content4)).encode())
         actual_hash.update(content1)
         actual_hash.update(content2)
         actual_hash.update(content3)
         actual_hash.update(content4)
-
-        assert (actual_hash.hexdigest() == get_content_hash(tmp_path)
-                == "4e375359128cd904a93a8b7c2cc883f2ae8ca40c7870136f258be5ef78f7e537")
+        expected_hash_do_not_change = "3f99429630ebd5882337eedef79dc029a9b406338cd6f466206aef2c951453be"
+        assert actual_hash.hexdigest() == hash == expected_hash_do_not_change
 
     def test_get_content_hash_for_single_file(self, tmp_path: Path):
         content1 = b"test\n"
@@ -50,10 +49,10 @@ class TestGetContentHash:
         with open(file_path, "wb") as f:
             f.write(content1)
 
+        hash = get_content_hash(file_path)
         actual_hash = hashlib.sha256()
         actual_hash.update(b"1")
         actual_hash.update(b"#file1.txt#" + str(len(content1)).encode())
         actual_hash.update(content1)
-
-        assert (actual_hash.hexdigest() == get_content_hash(file_path)
-                == "f27673a89617f7808d3ed1bba0299a524bc23da2ba1aab4d508961f8b215ab84")
+        expected_hash_do_not_change = "f27673a89617f7808d3ed1bba0299a524bc23da2ba1aab4d508961f8b215ab84"
+        assert actual_hash.hexdigest() == hash == expected_hash_do_not_change

@@ -1,0 +1,882 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Azure Machine Learning Services",
+    "version": "2023-02-01-preview"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/registries": {
+      "get": {
+        "tags": [
+          "RegistryManagement"
+        ],
+        "summary": "List registries by subscription",
+        "operationId": "Registries_ListBySubscription",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/PaginationParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResourceArmPaginatedResult"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "List registries.": {
+            "$ref": "./examples/Registries/listBySubscription.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries": {
+      "get": {
+        "tags": [
+          "RegistryManagement"
+        ],
+        "summary": "List registries",
+        "operationId": "Registries_List",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/PaginationParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResourceArmPaginatedResult"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "List registries with system created accounts.": {
+            "$ref": "./examples/Registries/list-SystemCreated.json"
+          },
+          "List registries with user created accounts.": {
+            "$ref": "./examples/Registries/list-UserCreated.json"
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}": {
+      "delete": {
+        "tags": [
+          "RegistryManagement"
+        ],
+        "summary": "Delete registry.",
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        },
+        "operationId": "Registries_Delete",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "registryName",
+            "description": "Name of registry. This is case-insensitive",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success"
+          },
+          "202": {
+            "description": "Accepted",
+            "headers": {
+              "x-ms-async-operation-timeout": {
+                "description": "Timeout for the client to use when polling the asynchronous operation.",
+                "type": "string",
+                "format": "duration"
+              },
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "x-ms-examples": {
+          "Delete Registry.": {
+            "$ref": "./examples/Registries/delete.json"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "RegistryManagement"
+        ],
+        "summary": "Get registry",
+        "operationId": "Registries_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "registryName",
+            "description": "Name of registry. This is case-insensitive",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResource"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Get Registry with system created accounts.": {
+            "$ref": "./examples/Registries/get-SystemCreated.json"
+          },
+          "Get Registry with user created accounts.": {
+            "$ref": "./examples/Registries/get-UserCreated.json"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "RegistryManagement"
+        ],
+        "summary": "Update tags",
+        "operationId": "Registries_Update",
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "registryName",
+            "description": "Name of registry. This is case-insensitive",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Details required to create the registry.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PartialRegistryPartialTrackedResource"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResource"
+            }
+          },
+          "202": {
+            "description": "Success",
+            "headers": {
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResource"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Update Registry with system created accounts.": {
+            "$ref": "./examples/Registries/update-SystemCreated.json"
+          },
+          "Update Registry with user created accounts.": {
+            "$ref": "./examples/Registries/update-UserCreated.json"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "RegistryManagement"
+        ],
+        "summary": "Create or update registry",
+        "operationId": "Registries_CreateOrUpdate",
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "azure-async-operation"
+        },
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "registryName",
+            "description": "Name of registry. This is case-insensitive",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Details required to create the registry.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResource"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResource"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/RegistryTrackedResource"
+            }
+          },
+          "202": {
+            "description": "Created"
+          }
+        },
+        "x-ms-examples": {
+          "CreateOrUpdate Registry with system created accounts.": {
+            "$ref": "./examples/Registries/createOrUpdate-SystemCreated.json"
+          },
+          "CreateOrUpdate Registry with user created accounts.": {
+            "$ref": "./examples/Registries/createOrUpdate-UserCreated.json"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AcrDetails": {
+      "description": "Details of ACR account to be used for the Registry",
+      "type": "object",
+      "properties": {
+        "systemCreatedAcrAccount": {
+          "$ref": "#/definitions/SystemCreatedAcrAccount",
+          "x-nullable": true
+        },
+        "userCreatedAcrAccount": {
+          "$ref": "#/definitions/UserCreatedAcrAccount",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ArmResourceId": {
+      "description": "ARM ResourceId of a resource",
+      "type": "object",
+      "properties": {
+        "resourceId": {
+          "description": "Arm ResourceId is in the format \"/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Storage/storageAccounts/{StorageAccountName}\"\r\nor \"/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{AcrName}\"",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PartialRegistry": {
+      "description": "Partial Registry class for PATCH",
+      "type": "object",
+      "additionalProperties": false
+    },
+    "PartialRegistryPartialTrackedResource": {
+      "description": "Strictly used in update requests.",
+      "type": "object",
+      "properties": {
+        "identity": {
+          "description": "Managed service identity (system assigned and/or user assigned identities)",
+          "$ref": "#/definitions/PartialManagedServiceIdentity"
+        },
+        "kind": {
+          "description": "Metadata used by portal/tooling/etc to render different UX experiences for resources of the same type.",
+          "type": "string"
+        },
+        "properties": {
+          "description": "Additional attributes of the entity.",
+          "$ref": "#/definitions/PartialRegistry"
+        },
+        "sku": {
+          "description": "Sku details required for ARM contract for Autoscaling.",
+          "$ref": "#/definitions/PartialSku"
+        },
+        "tags": {
+          "description": "Resource tags.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "PartialManagedServiceIdentity": {
+      "description": "Managed service identity (system assigned and/or user assigned identities)",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Managed service identity (system assigned and/or user assigned identities)",
+          "$ref": "../../../../../common-types/resource-management/v3/managedidentity.json#/definitions/ManagedServiceIdentityType"
+        },
+        "userAssignedIdentities": {
+          "description": "The set of user assigned identities associated with the resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}. The dictionary values can be empty objects ({}) in requests.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/PartialUserAssignedIdentity"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "PartialUserAssignedIdentity": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "PartialSku": {
+      "description": "Common SKU definition.",
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "format": "int32",
+          "description": "If the SKU supports scale out/in then the capacity integer should be included. If scale out/in is not possible for the resource this may be omitted.",
+          "type": "integer"
+        },
+        "family": {
+          "description": "If the service has different generations of hardware, for the same SKU, then that can be captured here.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the SKU. Ex - P3. It is typically a letter+number code.",
+          "type": "string"
+        },
+        "size": {
+          "description": "The SKU size. When the name field is the combination of tier and some other value, this would be the standalone code.",
+          "type": "string"
+        },
+        "tier": {
+          "description": "This field is required to be implemented by the Resource Provider if the service has more than one tier, but is not required on a PUT.",
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/SkuTier"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Registry": {
+      "description": "Details of the Registry",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ResourceBase"
+        }
+      ],
+      "properties": {
+        "publicNetworkAccess": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "discoveryUrl": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "intellectualPropertyPublisher": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "managedResourceGroup": {
+          "description": "Managed resource group created for the registry",
+          "$ref": "#/definitions/ArmResourceId",
+          "x-nullable": true
+        },
+        "mlFlowRegistryUri": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "privateLinkCount": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "regionDetails": {
+          "description": "Details of each region the registry is in",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RegistryRegionArmDetails"
+          },
+          "x-ms-identifiers": [],
+          "x-nullable": true
+        },
+        "managedResourceGroupTags": {
+          "description": "Tags to be applied to the managed resource group associated with this registry.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
+        }
+      },
+      "x-ms-client-name": "RegistryProperties",
+      "additionalProperties": false
+    },
+    "RegistryRegionArmDetails": {
+      "description": "Details for each region the registry is in",
+      "type": "object",
+      "properties": {
+        "acrDetails": {
+          "description": "List of ACR accounts",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AcrDetails"
+          },
+          "x-ms-identifiers": [],
+          "x-nullable": true
+        },
+        "location": {
+          "description": "The location where the registry exists",
+          "type": "string",
+          "x-nullable": true
+        },
+        "storageAccountDetails": {
+          "description": "List of storage accounts",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StorageAccountDetails"
+          },
+          "x-ms-identifiers": [],
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "RegistryTrackedResource": {
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/TrackedResource"
+        }
+      ],
+      "properties": {
+        "identity": {
+          "description": "Managed service identity (system assigned and/or user assigned identities)",
+          "$ref": "../../../../../common-types/resource-management/v3/managedidentity.json#/definitions/ManagedServiceIdentity"
+        },
+        "kind": {
+          "description": "Metadata used by portal/tooling/etc to render different UX experiences for resources of the same type.",
+          "type": "string"
+        },
+        "properties": {
+          "description": "[Required] Additional attributes of the entity.",
+          "$ref": "#/definitions/Registry"
+        },
+        "sku": {
+          "description": "Sku details required for ARM contract for Autoscaling.",
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Sku"
+        }
+      },
+      "x-ms-client-name": "Registry",
+      "additionalProperties": false
+    },
+    "RegistryTrackedResourceArmPaginatedResult": {
+      "description": "A paginated list of Registry entities.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page of Registry objects. If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "An array of objects of type Registry.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RegistryTrackedResource"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResourceBase": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "The asset description text.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "properties": {
+          "description": "The asset property dictionary.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        },
+        "tags": {
+          "description": "Tag dictionary. Tags can be added, removed, and updated.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "SkuCapacity": {
+      "description": "SKU capacity information",
+      "type": "object",
+      "properties": {
+        "default": {
+          "format": "int32",
+          "description": "Gets or sets the default capacity.",
+          "default": 0,
+          "type": "integer"
+        },
+        "maximum": {
+          "format": "int32",
+          "description": "Gets or sets the maximum.",
+          "default": 0,
+          "type": "integer"
+        },
+        "minimum": {
+          "format": "int32",
+          "description": "Gets or sets the minimum.",
+          "default": 0,
+          "type": "integer"
+        },
+        "scaleType": {
+          "description": "Gets or sets the type of the scale.",
+          "default": "Automatic",
+          "$ref": "#/definitions/SkuScaleType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SkuResource": {
+      "description": "Fulfills ARM Contract requirement to list all available SKUS for a resource.",
+      "type": "object",
+      "properties": {
+        "capacity": {
+          "description": "Gets or sets the Sku Capacity.",
+          "$ref": "#/definitions/SkuCapacity",
+          "x-nullable": true
+        },
+        "resourceType": {
+          "description": "The resource type name.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "sku": {
+          "description": "Gets or sets the Sku.",
+          "$ref": "#/definitions/SkuSetting",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "SkuResourceArmPaginatedResult": {
+      "description": "A paginated list of SkuResource entities.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page of SkuResource objects. If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "An array of objects of type SkuResource.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SkuResource"
+          },
+          "x-ms-identifiers": []
+        }
+      },
+      "additionalProperties": false
+    },
+    "SkuScaleType": {
+      "description": "Node scaling setting for the compute sku.",
+      "enum": [
+        "Automatic",
+        "Manual",
+        "None"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "SkuScaleType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Automatic",
+            "description": "Automatically scales node count."
+          },
+          {
+            "value": "Manual",
+            "description": "Node count scaled upon user request."
+          },
+          {
+            "value": "None",
+            "description": "Fixed set of nodes."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "SkuSetting": {
+      "description": "SkuSetting fulfills the need for stripped down SKU info in ARM contract.",
+      "required": [
+        "name"
+      ],
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "[Required] The name of the SKU. Ex - P3. It is typically a letter+number code.",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        },
+        "tier": {
+          "description": "This field is required to be implemented by the Resource Provider if the service has more than one tier, but is not required on a PUT.",
+          "default": "Basic",
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/SkuTier"
+        }
+      },
+      "additionalProperties": false
+    },
+    "StorageAccountDetails": {
+      "description": "Details of storage account to be used for the Registry",
+      "type": "object",
+      "properties": {
+        "systemCreatedStorageAccount": {
+          "$ref": "#/definitions/SystemCreatedStorageAccount",
+          "x-nullable": true
+        },
+        "userCreatedStorageAccount": {
+          "$ref": "#/definitions/UserCreatedStorageAccount",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "SystemCreatedAcrAccount": {
+      "type": "object",
+      "properties": {
+        "acrAccountSku": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "armResourceId": {
+          "description": "ARM ResourceId of a resource",
+          "$ref": "#/definitions/ArmResourceId",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "SystemCreatedStorageAccount": {
+      "type": "object",
+      "properties": {
+        "armResourceId": {
+          "description": "ARM ResourceId of a resource",
+          "$ref": "#/definitions/ArmResourceId",
+          "x-nullable": true
+        },
+        "storageAccountHnsEnabled": {
+          "type": "boolean"
+        },
+        "storageAccountType": {
+          "description": "Allowed values:\r\n\"Standard_LRS\",\r\n\"Standard_GRS\",\r\n\"Standard_RAGRS\",\r\n\"Standard_ZRS\",\r\n\"Standard_GZRS\",\r\n\"Standard_RAGZRS\",\r\n\"Premium_LRS\",\r\n\"Premium_ZRS\"",
+          "type": "string",
+          "x-nullable": true
+        },
+        "allowBlobPublicAccess": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "UserCreatedAcrAccount": {
+      "type": "object",
+      "properties": {
+        "armResourceId": {
+          "description": "ARM ResourceId of a resource",
+          "$ref": "#/definitions/ArmResourceId",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "UserCreatedStorageAccount": {
+      "type": "object",
+      "properties": {
+        "armResourceId": {
+          "description": "ARM ResourceId of a resource",
+          "$ref": "#/definitions/ArmResourceId",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "flow": "implicit",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      },
+      "description": "Azure Active Directory OAuth2 Flow."
+    }
+  }
+}

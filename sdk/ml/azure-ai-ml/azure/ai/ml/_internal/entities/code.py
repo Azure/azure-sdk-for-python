@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 from pathlib import Path
 from typing import List, Optional, Union
 
@@ -11,35 +10,42 @@ from ...entities._component.code import ComponentIgnoreFile
 
 
 class InternalComponentIgnoreFile(ComponentIgnoreFile):
-    def __init__(self, directory_path: Union[str, Path], additional_include_file_name: Optional[str]):
-        super(InternalComponentIgnoreFile, self).__init__(directory_path=directory_path)
+    def __init__(
+        self,
+        directory_path: Union[str, Path],
+        *,
+        additional_includes_file_name: Optional[str] = None,
+        skip_ignore_file: bool = False,
+        extra_ignore_list: Optional[List[IgnoreFile]] = None,
+    ):
+        super(InternalComponentIgnoreFile, self).__init__(
+            directory_path=directory_path,
+            skip_ignore_file=skip_ignore_file,
+        )
+        self._extra_ignore_list: List[IgnoreFile] = extra_ignore_list or []
         # only the additional include file in root directory is ignored
         # additional include files in subdirectories are not processed so keep them
-        self._additional_include_file_name = additional_include_file_name
-        self._other_ignores = []
-
-    def _get_ignore_list(self) -> List[str]:
-        """Override to add custom ignores for internal component."""
-        if self._additional_include_file_name is None:
-            return super(InternalComponentIgnoreFile, self)._get_ignore_list()
-        return super(InternalComponentIgnoreFile, self)._get_ignore_list() + [self._additional_include_file_name]
-
-    def merge(self, other: IgnoreFile):
-        """Merge other ignore file with this one and create a new IgnoreFile for it.
-        """
-        ignore_file = InternalComponentIgnoreFile(self._base_path, self._additional_include_file_name)
-        ignore_file._other_ignores.append(other)  # pylint: disable=protected-access
-        return ignore_file
+        self._additional_includes_file_name = additional_includes_file_name
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
-        """Override to check if file is excluded in other ignore files."""
-        # TODO: current design of ignore file can't distinguish between files and directories of the same name
-        if super(InternalComponentIgnoreFile, self).is_file_excluded(file_path):
+        """Override to add custom ignores for internal component."""
+        if self._additional_includes_file_name and self._get_rel_path(file_path) == self._additional_includes_file_name:
             return True
-        for other in self._other_ignores:
-            if other.is_file_excluded(file_path):
+        for ignore_file in self._extra_ignore_list:
+            if ignore_file.is_file_excluded(file_path):
                 return True
-        return False
+        return super(InternalComponentIgnoreFile, self).is_file_excluded(file_path)
+
+    def merge(self, other_path: Path) -> "InternalComponentIgnoreFile":
+        """Merge ignore list from another InternalComponentIgnoreFile object."""
+        if other_path.is_file():
+            return self
+        return InternalComponentIgnoreFile(other_path, extra_ignore_list=self._extra_ignore_list + [self])
+
+    def rebase(self, directory_path: Union[str, Path]) -> "InternalComponentIgnoreFile":
+        """Rebase the ignore file to a new directory."""
+        self._base_path = directory_path
+        return self
 
 
 class InternalCode(Code):

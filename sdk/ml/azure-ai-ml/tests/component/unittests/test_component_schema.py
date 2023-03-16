@@ -7,11 +7,11 @@ from unittest import mock
 import pydash
 import pytest
 import yaml
-
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
+from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.component import COMPONENT_CODE_PLACEHOLDER, COMPONENT_PLACEHOLDER
@@ -120,13 +120,13 @@ class TestCommandComponent:
         )
         assert component_dict == expected_dict
         assert component_entity.code
-        assert component_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert component_entity.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
 
     def test_serialize_deserialize_environment_no_version(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component_alt1.yml"
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
 
-        assert component_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert component_entity.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
 
     def test_serialize_deserialize_input_types(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/input_types_component.yml"
@@ -315,7 +315,8 @@ class TestCommandComponent:
             data=component_entity._to_dict(),
             context={
                 "source_path": test_path,
-            }
+            },
+            _source=ComponentSource.YAML_COMPONENT,
         )
         assert recreated_component._to_dict() == component_entity._to_dict()
 
@@ -327,6 +328,21 @@ class TestCommandComponent:
         component_entity = load_component(source=test_path)
         component_entity._base_path = "/non/existent/path"
         component_entity._to_dict()
+
+    def test_arm_code_from_rest_object(self):
+        arm_code = (
+            "azureml:/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.MachineLearningServices/"
+            "workspaces/zzz/codes/90b33c11-365d-4ee4-aaa1-224a042deb41/versions/1"
+        )
+        yaml_path = "./tests/test_configs/components/helloworld_component.yml"
+        yaml_component = load_component(yaml_path)
+
+        from azure.ai.ml.entities import Component
+
+        rest_object = yaml_component._to_rest_object()
+        rest_object.properties.component_spec["code"] = arm_code
+        component = Component._from_rest_object(rest_object)
+        assert component.code == arm_code[8:]
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)

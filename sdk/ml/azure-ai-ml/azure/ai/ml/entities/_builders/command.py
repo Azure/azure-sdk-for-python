@@ -13,10 +13,11 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
@@ -43,7 +44,15 @@ from azure.ai.ml.entities._job.distribution import (
 )
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._job.job_service import (
+    JobServiceBase,
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import (
@@ -78,8 +87,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Command(BaseNode):
-    """Base class for command node, used for command component version
-    consumption.
+    """Base class for command node, used for command component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from builder function: command.
@@ -121,7 +129,10 @@ class Command(BaseNode):
     :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
     :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
         Please see https://aka.ms/azuremlexperimental for more information.
-    :type services: Dict[str, JobService]
+    :type services:
+        Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -154,7 +165,10 @@ class Command(BaseNode):
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
-        services: Optional[Dict[str, JobService]] = None,
+        services: Optional[
+            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+        ] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -185,6 +199,7 @@ class Command(BaseNode):
         self.environment = environment
         self._resources = resources
         self._services = services
+        self.queue_settings = queue_settings
 
         if isinstance(self.component, CommandComponent):
             self.resources = self.resources or self.component.resources
@@ -247,12 +262,20 @@ class Command(BaseNode):
         self._resources = value
 
     @property
+    def queue_settings(self) -> QueueSettings:
+        return self._queue_settings
+
+    @queue_settings.setter
+    def queue_settings(self, value: Union[Dict, QueueSettings]):
+        if isinstance(value, dict):
+            value = QueueSettings(**value)
+        self._queue_settings = value
+
+    @property
     def identity(
         self,
     ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
-        """
-        Configuration of the hyperparameter identity.
-        """
+        """Configuration of the hyperparameter identity."""
         return self._identity
 
     @identity.setter
@@ -334,6 +357,7 @@ class Command(BaseNode):
         *,
         instance_type: Optional[Union[str, List[str]]] = None,
         instance_count: Optional[int] = None,
+        locations: Optional[List[str]] = None,
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
@@ -343,6 +367,8 @@ class Command(BaseNode):
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
+        if locations is not None:
+            self.resources.locations = locations
         if instance_type is not None:
             self.resources.instance_type = instance_type
         if instance_count is not None:
@@ -364,6 +390,13 @@ class Command(BaseNode):
             self.limits.timeout = timeout
         else:
             self.limits = CommandJobLimits(timeout=timeout)
+
+    def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None):
+        if isinstance(self.queue_settings, QueueSettings):
+            self.queue_settings.job_tier = job_tier
+            self.queue_settings.priority = priority
+        else:
+            self.queue_settings = QueueSettings(job_tier=job_tier, priority=priority)
 
     def sweep(
         self,
@@ -388,11 +421,11 @@ class Command(BaseNode):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
     ) -> Sweep:
-        """Turn the command into a sweep node with extra sweep run setting. The
-        command component in current Command node will be used as its trial
-        component. A command node can sweep for multiple times, and the
-        generated sweep node will share the same trial component.
+        """Turn the command into a sweep node with extra sweep run setting. The command component in current Command
+        node will be used as its trial component. A command node can sweep for multiple times, and the generated sweep
+        node will share the same trial component.
 
         :param primary_metric: primary metric of the sweep objective, AUC e.g. The metric must be logged in running
             the trial component.
@@ -421,6 +454,8 @@ class Command(BaseNode):
             ManagedIdentityConfiguration,
             AmlTokenConfiguration,
             UserIdentityConfiguration]
+        :param queue_settings: Queue settings for the job.
+        :type queue_settings: QueueSettings
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep
         """
@@ -450,6 +485,7 @@ class Command(BaseNode):
             experiment_name=self.experiment_name,
             identity=self.identity if not identity else identity,
             _from_component_func=True,
+            queue_settings=self.queue_settings if queue_settings is None else queue_settings,
         )
         sweep_node.set_limits(
             max_total_trials=max_total_trials,
@@ -494,6 +530,7 @@ class Command(BaseNode):
             services=self.services,
             creation_context=self.creation_context,
             parameters=self.parameters,
+            queue_settings=self.queue_settings,
         )
 
     @classmethod
@@ -509,6 +546,7 @@ class Command(BaseNode):
             "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             "services": get_rest_dict_for_node_attrs(self.services),
             "identity": self.identity._to_dict() if self.identity else None,
+            "queue_settings": get_rest_dict_for_node_attrs(self.queue_settings, clear_empty_value=True),
         }.items():
             if value is not None:
                 rest_obj[key] = value
@@ -548,7 +586,7 @@ class Command(BaseNode):
                 # RestJobService, so we need to convert it back. Here we convert the dict to a
                 # dummy rest object which may work as a RestJobService instead.
                 services[service_name] = from_rest_dict_to_dummy_rest_object(service)
-            obj["services"] = JobService._from_rest_job_services(services)
+            obj["services"] = JobServiceBase._from_rest_job_services(services)
 
         # handle limits
         if "limits" in obj and obj["limits"]:
@@ -557,6 +595,10 @@ class Command(BaseNode):
 
         if "identity" in obj and obj["identity"]:
             obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
+
+        if "queue_settings" in obj and obj["queue_settings"]:
+            queue_settings = RestQueueSettings.from_dict(obj["queue_settings"])
+            obj["queue_settings"] = QueueSettings._from_rest_object(queue_settings)
 
         return obj
 
@@ -574,7 +616,7 @@ class Command(BaseNode):
             properties=rest_command_job.properties,
             command=rest_command_job.command,
             experiment_name=rest_command_job.experiment_name,
-            services=JobService._from_rest_job_services(rest_command_job.services),
+            services=JobServiceBase._from_rest_job_services(rest_command_job.services),
             status=rest_command_job.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
@@ -592,6 +634,7 @@ class Command(BaseNode):
         command_job._id = obj.id
         command_job.resources = JobResourceConfiguration._from_rest_object(rest_command_job.resources)
         command_job.limits = CommandJobLimits._from_rest_object(rest_command_job.limits)
+        command_job.queue_settings = QueueSettings._from_rest_object(rest_command_job.queue_settings)
         command_job.component._source = (
             ComponentSource.REMOTE_WORKSPACE_JOB
         )  # This is used by pipeline job telemetries.
@@ -650,6 +693,7 @@ class Command(BaseNode):
             node.limits = copy.deepcopy(self.limits)
             node.distribution = copy.deepcopy(self.distribution)
             node.resources = copy.deepcopy(self.resources)
+            node.queue_settings = copy.deepcopy(self.queue_settings)
             node.services = copy.deepcopy(self.services)
             node.identity = copy.deepcopy(self.identity)
             return node
@@ -662,7 +706,9 @@ class Command(BaseNode):
         )
 
 
-def _resolve_job_services(services: dict) -> Dict[str, JobService]:
+def _resolve_job_services(
+    services: dict,
+) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
     """Resolve normal dict to dict[str, JobService]"""
     if services is None:
         return None
@@ -680,7 +726,9 @@ def _resolve_job_services(services: dict) -> Dict[str, JobService]:
     for name, service in services.items():
         if isinstance(service, dict):
             service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
-        elif not isinstance(service, JobService):
+        elif not isinstance(
+            service, (JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService)
+        ):
             msg = f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
             raise ValidationException(
                 message=msg,
