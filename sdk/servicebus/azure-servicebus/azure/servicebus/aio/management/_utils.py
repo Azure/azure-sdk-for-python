@@ -133,8 +133,6 @@ async def get_next_template(
     with _handle_response_error():
         feed_element = cast(
             ElementTree,
-            await list_func(
-                skip=start_index, top=max_page_size, **kwargs
-            ),
+            await list_func(skip=start_index, top=max_page_size, **kwargs),
         )
     return feed_element

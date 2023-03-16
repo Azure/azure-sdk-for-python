@@ -90,9 +90,7 @@ def get_next_template(list_func, *args, **kwargs):
     with _handle_response_error():
         feed_element = cast(
             ElementTree,
-            list_func(
-                skip=start_index, top=max_page_size, **kwargs
-            ),
+            list_func(skip=start_index, top=max_page_size, **kwargs),
         )
     return feed_element
 

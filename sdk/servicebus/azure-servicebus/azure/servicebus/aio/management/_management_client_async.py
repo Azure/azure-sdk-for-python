@@ -114,13 +114,15 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
         **kwargs: Any
     ) -> None:
-
         self.fully_qualified_namespace = fully_qualified_namespace
         self._api_version = api_version
         self._credential = credential
         self._endpoint = "https://" + fully_qualified_namespace
         self._config = ServiceBusManagementClientConfiguration(
-            self._endpoint, credential=self._credential, api_version=api_version, **kwargs
+            self._endpoint,
+            credential=self._credential,
+            api_version=api_version,
+            **kwargs
         )
         self._pipeline = self._build_pipeline()
         self._impl = ServiceBusManagementClientImpl(
@@ -175,9 +177,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         with _handle_response_error():
             element = cast(
                 ElementTree,
-                await self._impl.entity.get(
-                    entity_name, enrich=enrich, **kwargs
-                ),
+                await self._impl.entity.get(entity_name, enrich=enrich, **kwargs),
             )
         return element
 
@@ -194,10 +194,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             element = cast(
                 ElementTree,
                 await self._impl.subscription.get(
-                    topic_name,
-                    subscription_name,
-                    enrich=enrich,
-                    **kwargs
+                    topic_name, subscription_name, enrich=enrich, **kwargs
                 ),
             )
         return element
@@ -213,11 +210,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             element = cast(
                 ElementTree,
                 await self._impl.rule.get(
-                    topic_name,
-                    subscription_name,
-                    rule_name,
-                    enrich=False,
-                    **kwargs
+                    topic_name, subscription_name, rule_name, enrich=False, **kwargs
                 ),
             )
         return element
@@ -443,9 +436,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 await self._impl.entity.put(
-                    queue_name,  # type: ignore
-                    request_body,
-                    **kwargs
+                    queue_name, request_body, **kwargs  # type: ignore
                 ),
             )
 
@@ -485,10 +476,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.entity.put(
-                queue.name,  # type: ignore
-                request_body,
-                if_match="*",
-                **kwargs
+                queue.name, request_body, if_match="*", **kwargs  # type: ignore
             )
 
     async def delete_queue(self, queue_name: str, **kwargs: Any) -> None:
@@ -503,9 +491,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         if not queue_name:
             raise ValueError("queue_name must not be None or empty")
         with _handle_response_error():
-            await self._impl.entity.delete(
-                queue_name, **kwargs
-            )
+            await self._impl.entity.delete(queue_name, **kwargs)
 
     def list_queues(self, **kwargs: Any) -> AsyncItemPaged[QueueProperties]:
         """List the queues of a ServiceBus namespace.
@@ -694,9 +680,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             entry_ele = cast(
                 ElementTree,
                 await self._impl.entity.put(
-                    topic_name,  # type: ignore
-                    request_body,
-                    **kwargs
+                    topic_name, request_body, **kwargs  # type: ignore
                 ),
             )
         entry = TopicDescriptionEntry.deserialize(entry_ele)
@@ -734,10 +718,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         request_body = create_entity_body.serialize(is_xml=True)
         with _handle_response_error():
             await self._impl.entity.put(
-                topic.name,  # type: ignore
-                request_body,
-                if_match="*",
-                **kwargs
+                topic.name, request_body, if_match="*", **kwargs  # type: ignore
             )
 
     async def delete_topic(self, topic_name: str, **kwargs: Any) -> None:
@@ -748,9 +729,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_entity_name_type(topic_name)
 
-        await self._impl.entity.delete(
-            topic_name, **kwargs
-        )
+        await self._impl.entity.delete(topic_name, **kwargs)
 
     def list_topics(self, **kwargs: Any) -> AsyncItemPaged[TopicProperties]:
         """List the topics of a ServiceBus namespace.
@@ -1005,11 +984,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         await self._create_forward_to_header_tokens(to_update, kwargs)
         with _handle_response_error():
             await self._impl.subscription.put(
-                topic_name,
-                subscription.name,
-                request_body,
-                if_match="*",
-                **kwargs
+                topic_name, subscription.name, request_body, if_match="*", **kwargs
             )
 
     async def delete_subscription(
@@ -1024,9 +999,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
 
-        await self._impl.subscription.delete(
-            topic_name, subscription_name, **kwargs
-        )
+        await self._impl.subscription.delete(topic_name, subscription_name, **kwargs)
 
     def list_subscriptions(
         self, topic_name: str, **kwargs: Any
@@ -1233,12 +1206,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             topic_name, subscription_name, rule_name
         )
 
-        await self._impl.rule.delete(
-            topic_name,
-            subscription_name,
-            rule_name,
-            **kwargs
-        )
+        await self._impl.rule.delete(topic_name, subscription_name, rule_name, **kwargs)
 
     def list_rules(
         self, topic_name: str, subscription_name: str, **kwargs: Any
