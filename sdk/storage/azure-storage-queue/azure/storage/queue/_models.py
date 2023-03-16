@@ -10,7 +10,6 @@ import sys
 from typing import Any, Callable, List, Tuple, TYPE_CHECKING, Union, Dict # pylint: disable=unused-import
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
-from azure.storage.queue import RetentionPolicy
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -26,6 +25,42 @@ else:
 
 if TYPE_CHECKING:
     from datetime import datetime
+
+
+class RetentionPolicy(GeneratedRetentionPolicy):
+    """The retention policy which determines how long the associated data should
+    persist.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param bool enabled: Required. Indicates whether a retention policy is enabled
+        for the storage service.
+    :param int days: Indicates the number of days that metrics or logging or
+        soft-deleted data should be retained. All data older than this value will
+        be deleted.
+    """
+
+    enabled: bool = False
+    """Indicates whether a retention policy is enabled for the storage service."""
+    days: int = None
+    """Indicates the number of days that metrics or logging or
+        soft-deleted data should be retained. All data older than this value will
+        be deleted."""
+
+    def __init__(self, enabled: bool = False, days: int = None) -> None:
+        self.enabled = enabled
+        self.days = days
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+    @classmethod
+    def _from_generated(cls, generated: Any) -> Self:
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            days=generated.days,
+        )
 
 
 class QueueAnalyticsLogging(GeneratedLogging):
@@ -48,7 +83,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """Indicates whether all read requests should be logged"""
     write: bool = False
     """Indicates whether all write requests should be logged."""
-    retention_policy: "RetentionPolicy"
+    retention_policy: RetentionPolicy
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -89,7 +124,7 @@ class Metrics(GeneratedMetrics):
     """Indicates whether metrics are enabled for the service."""
     include_apis: bool
     """Indicates whether metrics should generate summary statistics for called API operations."""
-    retention_policy: "RetentionPolicy"
+    retention_policy: RetentionPolicy
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -107,42 +142,6 @@ class Metrics(GeneratedMetrics):
             enabled=generated.enabled,
             include_apis=generated.include_apis,
             retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
-        )
-
-
-class RetentionPolicy(GeneratedRetentionPolicy):
-    """The retention policy which determines how long the associated data should
-    persist.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param bool enabled: Required. Indicates whether a retention policy is enabled
-        for the storage service.
-    :param int days: Indicates the number of days that metrics or logging or
-        soft-deleted data should be retained. All data older than this value will
-        be deleted.
-    """
-
-    enabled: bool = False
-    """Indicates whether a retention policy is enabled for the storage service."""
-    days: int = None
-    """Indicates the number of days that metrics or logging or
-        soft-deleted data should be retained. All data older than this value will
-        be deleted."""
-
-    def __init__(self, enabled: bool = False, days: int = None) -> None:
-        self.enabled = enabled
-        self.days = days
-        if self.enabled and (self.days is None):
-            raise ValueError("If policy is enabled, 'days' must be specified.")
-
-    @classmethod
-    def _from_generated(cls, generated: Any) -> Self:
-        if not generated:
-            return cls()
-        return cls(
-            enabled=generated.enabled,
-            days=generated.days,
         )
 
 
