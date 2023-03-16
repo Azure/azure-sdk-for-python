@@ -12,7 +12,7 @@ from azure.ai.ml._schema.core.fields import (
     PythonFuncNameStr,
     UnionField,
 )
-from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
+from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 from ..assets.asset import AssetSchema
