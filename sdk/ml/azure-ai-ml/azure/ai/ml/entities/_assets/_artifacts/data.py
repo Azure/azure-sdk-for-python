@@ -208,15 +208,6 @@ class Data(Artifact):
         )
         return data
 
-    @classmethod
-    def _resolve_cls_and_type(cls, data, params_override):
-        from azure.ai.ml.entities._data_import.data_import import DataImport
-
-        if "source" in data:
-            return DataImport, None
-
-        return cls, None
-
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         regex = r"datastores\/(.+)"
         # datastore_arm_id is null for registry scenario, so capture the full_storage_path

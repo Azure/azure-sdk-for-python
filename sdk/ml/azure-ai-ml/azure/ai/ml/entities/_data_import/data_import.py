@@ -67,7 +67,7 @@ class DataImport(Data):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "DataImport":
+    ) -> Union["Data", "DataImport"]:
         data = data or {}
         params_override = params_override or []
         context = {
@@ -75,9 +75,10 @@ class DataImport(Data):
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        data_import = DataImport._load_from_dict(yaml_data=data, context=context, **kwargs)
+        if "source" in data:
+            return DataImport._load_from_dict(yaml_data=data, context=context, **kwargs)
 
-        return data_import
+        return Data._load_from_dict(yaml_data=data, context=context, **kwargs)
 
     @classmethod
     def _load_from_dict(cls, yaml_data: Dict, context: Dict, **kwargs) -> "DataImport":

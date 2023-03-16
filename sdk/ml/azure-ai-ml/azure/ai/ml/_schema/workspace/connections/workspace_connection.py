@@ -16,7 +16,7 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     SasTokenConfigurationSchema,
     ServicePrincipalConfigurationSchema,
     UsernamePasswordConfigurationSchema,
-    AccessKeyConfigurationSchema,
+    AccessKeyCredentialsSchema,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import AzureMLResourceType
@@ -50,7 +50,7 @@ class WorkspaceConnectionSchema(PathAwareSchema):
             NestedField(UsernamePasswordConfigurationSchema),
             NestedField(ManagedIdentityConfigurationSchema),
             NestedField(ServicePrincipalConfigurationSchema),
-            NestedField(AccessKeyConfigurationSchema),
+            NestedField(AccessKeyCredentialsSchema),
         ]
     )
     metadata = fields.Dict(required=False, allow_none=True)
