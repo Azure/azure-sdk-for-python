@@ -1,6 +1,6 @@
 # Release History
 
-## 4.7.0 (2023-03-15)
+## 4.7.0 (2023-03-16)
 
 ### Features Added
 - Added support for service API version `7.4`
