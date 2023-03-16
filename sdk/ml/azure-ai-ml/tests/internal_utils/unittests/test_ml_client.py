@@ -608,43 +608,31 @@ class TestMachineLearningClient:
             assert isinstance(handler, logging.NullHandler)
 
     @pytest.mark.parametrize(
-        "args, kwargs, ops_name, create_method_name",
+        "args, ops_name",
         [
             (
                 [load_compute("tests/test_configs/compute/compute-ci.yaml")],
-                {},
                 "compute",
-                "begin_create_or_update",
             ),
             (
                 [load_online_endpoint("tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml")],
-                {},
                 "online_endpoints",
-                "begin_create_or_update",
             ),
             (
                 [load_online_deployment("tests/test_configs/deployments/online/online_deployment_blue.yaml")],
-                {},
                 "online_deployments",
-                "begin_create_or_update",
             ),
             (
                 [load_batch_endpoint("tests/test_configs/endpoints/batch/batch_endpoint_mlflow.yaml")],
-                {},
                 "batch_endpoints",
-                "begin_create_or_update",
             ),
             (
                 [load_batch_deployment("tests/test_configs/deployments/batch/batch_deployment_1.yaml")],
-                {},
                 "batch_deployments",
-                "begin_create_or_update",
             ),
         ],
     )
-    def test_ml_client_begin_create_without_ws_or_registry_name(
-        self, args, kwargs, ops_name, create_method_name, mock_credential
-    ) -> None:
+    def test_ml_client_begin_create_without_ws_or_registry_name(self, args, ops_name, mock_credential) -> None:
         ml_client = MLClient(
             credential=mock_credential,
             subscription_id=Test_Subscription,
@@ -653,44 +641,31 @@ class TestMachineLearningClient:
         )
 
         with pytest.raises((ValidationException, Exception)) as val_exception:
-            ml_client.begin_create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_once_with(
-                *args, **kwargs
-            )
+            getattr(ml_client, ops_name).begin_create_or_update(*args)
         assert "This operation requires that you specify a workspace" in str(val_exception.value)
 
     @pytest.mark.parametrize(
-        "args, kwargs, ops_name, create_method_name",
+        "args, ops_name",
         [
             (
                 [load_job("tests/test_configs/pipeline_jobs/helloworld_pipeline_job.yml")],
-                {},
                 "jobs",
-                "create_or_update",
             ),
             (
                 [load_model("tests/test_configs/model/model_full.yml")],
-                {},
                 "models",
-                "create_or_update",
             ),
             (
                 [load_datastore("tests/test_configs/datastore/blob_store.yml")],
-                {},
                 "datastores",
-                "create_or_update",
             ),
             (
                 [load_environment("tests/test_configs/environment/environment_conda.yml")],
-                {},
                 "environments",
-                "create_or_update",
             ),
         ],
     )
-    def test_ml_client_create_update_without_ws_or_registry_name(
-        self, args, kwargs, ops_name, create_method_name, mock_credential
-    ) -> None:
+    def test_ml_client_create_update_without_ws_or_registry_name(self, args, ops_name, mock_credential) -> None:
         ml_client = MLClient(
             credential=mock_credential,
             subscription_id=Test_Subscription,
@@ -699,8 +674,5 @@ class TestMachineLearningClient:
         )
 
         with pytest.raises((ValidationException, Exception)) as ex:
-            ml_client.create_or_update(*args, **kwargs)
-            ml_client.__getattribute__(ops_name).__getattr__(create_method_name).assert_called_once_with(
-                *args, **kwargs
-            )
+            getattr(ml_client, ops_name).create_or_update(*args)
         assert "This operation requires that you specify a workspace" in str(ex.value)
