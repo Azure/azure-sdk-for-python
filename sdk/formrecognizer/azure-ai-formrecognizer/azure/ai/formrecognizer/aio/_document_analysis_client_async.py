@@ -214,6 +214,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
+        .. versionadded:: 2023-02-28-preview
+        Added the `begin_classify_document()` client method.
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/v3.2/async_samples/sample_classify_document_async.py
@@ -265,6 +268,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2023-02-28-preview
+        Added the `begin_classify_document_from_url()` client method.
 
         .. admonition:: Example:
 
