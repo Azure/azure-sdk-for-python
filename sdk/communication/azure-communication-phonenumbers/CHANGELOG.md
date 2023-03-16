@@ -18,9 +18,6 @@
 - Users can now manage SIP configuration for Direct routing.
 - Adds support for Azure Communication Services Phone Numbers Browse API Methods.
 
-### Bug Fixes
-- The test "test_update_phone_number_capabilities_with_invalid_phone_number" for the phone number SDK now expects the correct HTTP status code (403).
-
 ### Features Added
 - Added support for API version `2022-12-01`, giving users the ability to:
   - Get all supported countries
