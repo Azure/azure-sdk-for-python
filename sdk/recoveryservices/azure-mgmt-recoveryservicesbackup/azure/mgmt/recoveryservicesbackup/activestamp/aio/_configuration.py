@@ -35,14 +35,14 @@ class RecoveryServicesBackupClientConfiguration(Configuration):  # pylint: disab
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription Id. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2022-09-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(RecoveryServicesBackupClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2022-09-01-preview"] = kwargs.pop("api_version", "2022-09-01-preview")
+        api_version: Literal["2023-01-01"] = kwargs.pop("api_version", "2023-01-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

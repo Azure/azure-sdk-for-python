@@ -3,9 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, TYPE_CHECKING
+from datetime import datetime
+from typing import Union
+from azure.core.credentials import AzureNamedKeyCredential
 
-from ._models import AccountSasPermissions
+from ._models import AccountSasPermissions, ResourceTypes
 from ._common_conversion import _sign_string
 from ._error import _validate_not_none
 from ._constants import X_MS_VERSION
@@ -15,20 +17,14 @@ from ._shared_access_signature import (
     QueryStringConstants,
 )
 
-if TYPE_CHECKING:
-    from datetime import datetime
-    from azure.core.credentials import AzureNamedKeyCredential
-    from ._models import ResourceTypes
-
 
 def generate_account_sas(
-    credential,  # type: AzureNamedKeyCredential
-    resource_types,  # type: ResourceTypes
-    permission,  # type: Union[str, AccountSasPermissions]
-    expiry,  # type: Union[datetime, str]
-    **kwargs  # type: Any
-):
-    # type: (...) -> str
+    credential: AzureNamedKeyCredential,
+    resource_types: ResourceTypes,
+    permission: Union[str, AccountSasPermissions],
+    expiry: Union[datetime, str],
+    **kwargs
+) -> str:
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.
@@ -88,8 +84,7 @@ def generate_account_sas(
     )
 
 
-def generate_table_sas(credential, table_name, **kwargs):
-    # type: (AzureNamedKeyCredential, str, **Any) -> str
+def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **kwargs) -> str:
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.

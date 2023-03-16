@@ -61,12 +61,17 @@ parameters:
   - name: TestProxy
     type: boolean
     default: false
+  - name: GenerateApiReviewForManualOnly
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
     timeoutInMinutes: 90
     variables:
-    - template: ../variables/globals.yml
+      Codeql.Enabled: true
+      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
+      Codeql.SkipTaskAutoInjection: false
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -95,9 +100,6 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-
-    variables:
-    - template: ../variables/globals.yml
 
     dependsOn:
       - 'Build'
@@ -133,6 +135,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   - job: Compliance
     pool:
@@ -179,7 +182,7 @@ jobs:
             GenerateVMJobs: true
       PreGenerationSteps:
         - pwsh: |
-            pip install "./tools/azure-sdk-tools[build]"
+            python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
         - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
           parameters:

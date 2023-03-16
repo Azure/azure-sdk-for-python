@@ -1,5 +1,26 @@
 # Release History
 
+## 3.1.0b1 (2023-02-15)
+
+### Features Added
+
+  - Model AlertConfiguration has a new parameter alert_definition
+  - Model AlertConfigurationProperties has a new parameter alert_definition
+  - Model AzureRolesAssignedOutsidePimAlertConfigurationProperties has a new parameter alert_definition
+  - Model DenyAssignment has a new parameter condition
+  - Model DenyAssignment has a new parameter condition_version
+  - Model DenyAssignment has a new parameter created_by
+  - Model DenyAssignment has a new parameter created_on
+  - Model DenyAssignment has a new parameter updated_by
+  - Model DenyAssignment has a new parameter updated_on
+  - Model DuplicateRoleCreatedAlertConfigurationProperties has a new parameter alert_definition
+  - Model RoleDefinition has a new parameter created_by
+  - Model RoleDefinition has a new parameter created_on
+  - Model RoleDefinition has a new parameter updated_by
+  - Model RoleDefinition has a new parameter updated_on
+  - Model TooManyOwnersAssignedToResourceAlertConfigurationProperties has a new parameter alert_definition
+  - Model TooManyPermanentOwnersAssignedToResourceAlertConfigurationProperties has a new parameter alert_definition
+
 ## 3.0.0 (2022-10-11)
 
 ### Features Added

@@ -11,19 +11,19 @@ from uuid import UUID
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import Component
-from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml.entities._validation import MutableValidationResult
-
 from ... import Input, Output
+from ..._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
+from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
+from ..._utils._asset_utils import IgnoreFile
+from ...entities import Component
 from ...entities._assets import Code
 from ...entities._job.distribution import DistributionConfiguration
+from ...entities._system_data import SystemData
+from ...entities._util import convert_ordered_dict_to_dict
+from ...entities._validation import MutableValidationResult
 from .._schema.component import InternalComponentSchema
-from ._additional_includes import _AdditionalIncludes
+from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
 from .code import InternalCode, InternalComponentIgnoreFile
@@ -33,8 +33,8 @@ from .node import InternalBaseNode
 
 class InternalComponent(Component):
     # pylint: disable=too-many-instance-attributes, too-many-locals
-    """Base class for internal component version, used to define an internal
-    component. Recommended to create instance with component_factory.
+    """Base class for internal component version, used to define an internal component. Recommended to create instance
+    with component_factory.
 
     :param name: Name of the resource.
     :type name: str
@@ -95,6 +95,7 @@ class InternalComponent(Component):
         starlite: Optional[Dict] = None,
         ae365exepool: Optional[Dict] = None,
         launcher: Optional[Dict] = None,
+        datatransfer: Optional[Dict] = None,
         **kwargs,
     ):
         type, self._type_label = parse_name_label(type)
@@ -124,6 +125,7 @@ class InternalComponent(Component):
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
         self.__additional_includes = None
+        self.__ignore_file = None
         # TODO: remove these to keep it a general component class
         self.command = command
         self.scope = scope
@@ -133,6 +135,7 @@ class InternalComponent(Component):
         self.starlite = starlite
         self.ae365exepool = ae365exepool
         self.launcher = launcher
+        self.datatransfer = datatransfer
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -152,9 +155,6 @@ class InternalComponent(Component):
             self.__additional_includes = _AdditionalIncludes(
                 code_path=self.code,
                 yaml_path=self._source_path,
-                ignore_file=InternalComponentIgnoreFile(
-                    self.code if self.code is not None else Path(self._source_path).parent,
-                ),  # use YAML's parent as code when self.code is None
             )
         return self.__additional_includes
 
@@ -192,6 +192,7 @@ class InternalComponent(Component):
 
     def _to_rest_object(self) -> ComponentVersionData:
         component = convert_ordered_dict_to_dict(self._to_dict())
+        component["_source"] = self._source
 
         properties = ComponentVersionDetails(
             component_spec=component,
@@ -208,15 +209,15 @@ class InternalComponent(Component):
     def _get_snapshot_id(
         cls,
         code_path: Union[str, PathLike],
-        ignore_file: Optional[InternalComponentIgnoreFile],
+        ignore_file: IgnoreFile,
     ) -> str:
-        """Get the snapshot id of a component with specific working directory in ml-components.
-        Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
+        """Get the snapshot id of a component with specific working directory in ml-components. Use this as the name of
+        code asset to reuse steps in a pipeline job from ml-components runs.
 
         :param code_path: The path of the working directory.
         :type code_path: str
         :param ignore_file: The ignore file of the snapshot.
-        :type ignore_file: InternalComponentIgnoreFile
+        :type ignore_file: IgnoreFile
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
         """
         curr_root = create_merkletree(code_path, ignore_file.is_file_excluded)
@@ -226,8 +227,8 @@ class InternalComponent(Component):
     @contextmanager
     def _resolve_local_code(self) -> Optional[Code]:
         """Try to create a Code object pointing to local code and yield it.
-        If there is no local code to upload, yield None.
-        Otherwise, yield a Code object pointing to the code.
+
+        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
         """
         # an internal component always has a default local code of its base path
         # otherwise, if there is no local code, yield super()._resolve_local_code() and return early
@@ -242,6 +243,11 @@ class InternalComponent(Component):
             yield code
             return
 
+        def get_additional_include_file_name():
+            if self._source_path is not None:
+                return Path(self._source_path).with_suffix(ADDITIONAL_INCLUDES_SUFFIX).name
+            return None
+
         self._additional_includes.resolve()
 
         # file dependency in code will be read during internal environment resolution
@@ -252,18 +258,26 @@ class InternalComponent(Component):
             self.environment.resolve(self._additional_includes.code)
         # use absolute path in case temp folder & work dir are in different drive
         tmp_code_dir = self._additional_includes.code.absolute()
-        ignore_file = InternalComponentIgnoreFile(tmp_code_dir)
+        rebased_ignore_file = InternalComponentIgnoreFile(
+            tmp_code_dir,
+            additional_includes_file_name=get_additional_include_file_name(),
+        )
         # Use the snapshot id in ml-components as code name to enable anonymous
         # component reuse from ml-component runs.
         # calculate snapshot id here instead of inside InternalCode to ensure that
         # snapshot id is calculated based on the resolved code path
         yield InternalCode(
-            name=self._get_snapshot_id(tmp_code_dir, ignore_file),
+            name=self._get_snapshot_id(
+                # use absolute path in case temp folder & work dir are in different drive
+                self._additional_includes.code.absolute(),
+                # this ignore-file should be rebased to the resolved code path
+                rebased_ignore_file,
+            ),
             version="1",
             base_path=self._base_path,
             path=tmp_code_dir,
             is_anonymous=True,
-            ignore_file=ignore_file,
+            ignore_file=rebased_ignore_file,
         )
 
         self._additional_includes.cleanup()

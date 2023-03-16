@@ -311,7 +311,7 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
         option: True
         for option in (
             "exclude_cli_credential",
-            "exclude_azd_cli_credential"
+            "exclude_azd_cli_credential",
             "exclude_environment_credential",
             "exclude_managed_identity_credential",
             "exclude_powershell_credential",

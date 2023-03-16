@@ -23,31 +23,33 @@ from ._models_py3 import Sku
 from ._models_py3 import StorageAccountParameters
 from ._models_py3 import StorageAccountProperties
 
-
-from ._container_registry_management_client_enums import (
-    PasswordName,
-    ProvisioningState,
-    SkuTier,
-)
+from ._container_registry_management_client_enums import PasswordName
+from ._container_registry_management_client_enums import ProvisioningState
+from ._container_registry_management_client_enums import SkuTier
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'OperationDefinition',
-    'OperationDisplayDefinition',
-    'OperationListResult',
-    'RegenerateCredentialParameters',
-    'Registry',
-    'RegistryCreateParameters',
-    'RegistryListCredentialsResult',
-    'RegistryListResult',
-    'RegistryNameCheckRequest',
-    'RegistryNameStatus',
-    'RegistryPassword',
-    'RegistryUpdateParameters',
-    'Resource',
-    'Sku',
-    'StorageAccountParameters',
-    'StorageAccountProperties',
-    'PasswordName',
-    'ProvisioningState',
-    'SkuTier',
+    "OperationDefinition",
+    "OperationDisplayDefinition",
+    "OperationListResult",
+    "RegenerateCredentialParameters",
+    "Registry",
+    "RegistryCreateParameters",
+    "RegistryListCredentialsResult",
+    "RegistryListResult",
+    "RegistryNameCheckRequest",
+    "RegistryNameStatus",
+    "RegistryPassword",
+    "RegistryUpdateParameters",
+    "Resource",
+    "Sku",
+    "StorageAccountParameters",
+    "StorageAccountProperties",
+    "PasswordName",
+    "ProvisioningState",
+    "SkuTier",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

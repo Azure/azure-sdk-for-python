@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Optional
+from typing import Any, Optional
 
 from ... import _serialization
 
@@ -37,7 +37,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -73,7 +73,7 @@ class AdvancedThreatProtectionSetting(Resource):
         "is_enabled": {"key": "properties.isEnabled", "type": "bool"},
     }
 
-    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_enabled: Indicates whether Advanced Threat Protection is enabled.
         :paramtype is_enabled: bool
@@ -115,7 +115,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -146,7 +146,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None

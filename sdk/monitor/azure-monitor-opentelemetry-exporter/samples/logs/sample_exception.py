@@ -6,11 +6,13 @@ An example showing how to export exception telemetry using the AzureMonitorLogEx
 import os
 import logging
 
+from opentelemetry._logs import (
+    get_logger_provider,
+    set_logger_provider,
+)
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    get_logger_provider,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
@@ -26,7 +28,6 @@ get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter)
 handler = LoggingHandler()
 logger = logging.getLogger(__name__)
 logger.addHandler(handler)
-logger.setLevel(logging.NOTSET)
 
 # The following code will generate two pieces of exception telemetry
 # that are identical in nature
@@ -41,3 +42,5 @@ try:
     print(val)
 except ZeroDivisionError:
     logger.error("Error: Division by zero", stack_info=True, exc_info=True)
+
+input()

@@ -7,11 +7,13 @@ import os
 import logging
 
 from opentelemetry import trace
+from opentelemetry._logs import (
+    get_logger_provider,
+    set_logger_provider,
+)
 from opentelemetry.sdk._logs import (
     LoggerProvider,
     LoggingHandler,
-    get_logger_provider,
-    set_logger_provider,
 )
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.trace import TracerProvider
@@ -31,9 +33,11 @@ get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter)
 handler = LoggingHandler()
 logger = logging.getLogger(__name__)
 logger.addHandler(handler)
-logger.setLevel(logging.NOTSET)
+logger.setLevel(logging.INFO)
 
 logger.info("INFO: Outside of span")
 with tracer.start_as_current_span("foo"):
     logger.warning("WARNING: Inside of span")
 logger.error("ERROR: After span")
+
+input()

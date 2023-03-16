@@ -152,7 +152,7 @@ class QueueMessageSamplesAsync(object):
     async def receive_one_message_from_queue(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue3")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue4")
 
         # Create the queue
         async with queue:
@@ -182,7 +182,7 @@ class QueueMessageSamplesAsync(object):
     async def delete_and_clear_messages_async(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue4")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue5")
 
         # Create the queue
         async with queue:
@@ -218,7 +218,7 @@ class QueueMessageSamplesAsync(object):
     async def peek_messages_async(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue5")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue6")
 
         # Create the queue
         async with queue:
@@ -253,7 +253,7 @@ class QueueMessageSamplesAsync(object):
     async def update_message_async(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue6")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue7")
 
         # Create the queue
         async with queue:
@@ -283,7 +283,7 @@ class QueueMessageSamplesAsync(object):
     async def receive_messages_with_max_messages(self):
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myqueue7")
+        queue = QueueClient.from_connection_string(self.connection_string, "myqueue8")
 
         # Create the queue
         async with queue:

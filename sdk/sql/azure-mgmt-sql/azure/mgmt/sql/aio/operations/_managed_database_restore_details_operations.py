@@ -91,8 +91,8 @@ class ManagedDatabaseRestoreDetailsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-02-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2022-02-01-preview")
+        api_version: Literal["2022-05-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-05-01-preview")
         )
         cls: ClsType[_models.ManagedDatabaseRestoreDetailsResult] = kwargs.pop("cls", None)
 

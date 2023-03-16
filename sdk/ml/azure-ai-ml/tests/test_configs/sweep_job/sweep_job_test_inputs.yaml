@@ -19,7 +19,7 @@ objective:
 trial:
   command: python ./sweep_script.py --lr ${{search_space.lr}} --conv_size ${{inputs.some_number}} --dropout_rate ${{inputs.iris_csv}}
   code: ../python
-  environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+  environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
 inputs:
   some_number: 999
   iris_csv:

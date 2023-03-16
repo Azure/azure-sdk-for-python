@@ -7,26 +7,24 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class PasswordName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The password name.
-    """
+class PasswordName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The password name."""
 
     PASSWORD = "password"
     PASSWORD2 = "password2"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the container registry at the time the operation was called.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the container registry at the time the operation was called."""
 
     CREATING = "Creating"
     SUCCEEDED = "Succeeded"
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The SKU tier based on the SKU name.
-    """
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The SKU tier based on the SKU name."""
 
     BASIC = "Basic"

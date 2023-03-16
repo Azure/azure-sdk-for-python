@@ -12,7 +12,6 @@ class TestDevcenterSmoke(DevcenterTest):
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
     def test_smoke(self, **kwargs):
-        azure_tenant_id = kwargs.pop("devcenter_tenant_id")
-        devcenter_name = kwargs.pop("devcenter_name")
-        client = self.create_client(tenant_id=azure_tenant_id, dev_center=devcenter_name)
+        endpoint = kwargs.pop("devcenter_endpoint")
+        client = self.create_client(endpoint=endpoint)
         assert client is not None

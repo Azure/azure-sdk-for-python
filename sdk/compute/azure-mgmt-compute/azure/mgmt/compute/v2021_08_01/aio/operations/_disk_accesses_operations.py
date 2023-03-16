@@ -227,7 +227,7 @@ class DiskAccessesOperations:
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
         :param disk_access: disk access object supplied in the body of the Put disk access operation.
-         Is either a model type or a IO type. Required.
+         Is either a DiskAccess type or a IO type. Required.
         :type disk_access: ~azure.mgmt.compute.v2021_08_01.models.DiskAccess or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -456,7 +456,7 @@ class DiskAccessesOperations:
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
         :param disk_access: disk access object supplied in the body of the Patch disk access operation.
-         Is either a model type or a IO type. Required.
+         Is either a DiskAccessUpdate type or a IO type. Required.
         :type disk_access: ~azure.mgmt.compute.v2021_08_01.models.DiskAccessUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1106,7 +1106,8 @@ class DiskAccessesOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: private endpoint connection object supplied in the body of
-         the Put private endpoint connection operation. Is either a model type or a IO type. Required.
+         the Put private endpoint connection operation. Is either a PrivateEndpointConnection type or a
+         IO type. Required.
         :type private_endpoint_connection:
          ~azure.mgmt.compute.v2021_08_01.models.PrivateEndpointConnection or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

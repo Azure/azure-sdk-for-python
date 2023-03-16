@@ -44,7 +44,7 @@ from azure.ai.textanalytics import (
     AnalyzeHealthcareEntitiesAction,
     ExtractSummaryAction,
     ExtractSummaryResult,
-    AbstractSummaryAction,
+    AbstractiveSummaryAction,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -2091,7 +2091,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
 
         poller = await client.begin_analyze_actions(
             docs,
-            actions=[AbstractSummaryAction()],
+            actions=[AbstractiveSummaryAction()],
             show_stats=True,
             polling_interval=self._interval(),
         )
@@ -2193,7 +2193,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_autodetect_with_default(self, client):
+    async def test_autodetect_language(self, client):
         docs = ["hello world"]
         actions=[
             RecognizeEntitiesAction(),
@@ -2206,7 +2206,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             docs,
             actions,
             language="auto",
-            autodetect_default_language="es",
             polling_interval=self._interval(),
         )
 

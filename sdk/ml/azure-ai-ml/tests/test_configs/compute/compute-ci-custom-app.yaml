@@ -1,0 +1,28 @@
+name: banchci
+type: computeinstance
+size: STANDARD_DS3_V2
+
+custom_applications:
+    - name: rstudio-workbench
+      type: docker
+      image:
+        reference: ghcr.io/azure/rstudio-workbench:latest
+      endpoints:
+        - target: 8787
+          published: 8788
+      environment_variables:
+        RSP_LICENSE: XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX
+      bind_mounts:
+        - source: /home/azureuser
+          target: /home/azureuser
+    - name: rstudio-workbench2
+      image:
+        reference: ghcr.io/azure/rstudio-workbench:latest
+      endpoints:
+        - target: 8787
+          published: 8789
+      environment_variables:
+        RSP_LICENSE: XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-YYYY
+      bind_mounts:
+        - source: /home/azureuser
+          target: /home/azureuser

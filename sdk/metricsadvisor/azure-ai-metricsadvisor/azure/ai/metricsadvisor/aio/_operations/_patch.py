@@ -104,7 +104,7 @@ class MetricsAdvisorClientOperationsMixin(
         **kwargs: Any
     ) -> models.AnomalyAlertConfiguration:
         cross_metrics_operator = kwargs.pop("cross_metrics_operator", None)
-        response_headers = await super().create_alert_configuration(
+        response_headers = await super().create_alert_configuration(  # type: ignore[func-returns-value]
             models.AnomalyAlertConfiguration(
                 name=name,
                 metric_alert_configurations=[
@@ -180,7 +180,7 @@ class MetricsAdvisorClientOperationsMixin(
             if attr in kwargs:
                 kwargs.pop(attr)
 
-        response_headers = await super().create_detection_configuration(
+        response_headers = await super().create_detection_configuration(  # type: ignore[func-returns-value]
             config, cls=lambda pipeline_response, _, response_headers: response_headers, **kwargs
         )
         response_headers = cast(dict, response_headers)

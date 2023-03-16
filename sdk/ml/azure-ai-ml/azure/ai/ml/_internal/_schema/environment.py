@@ -4,8 +4,8 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DumpableEnumField
+from ..._schema import PathAwareSchema
+from ..._schema.core.fields import DumpableEnumField, VersionField
 
 
 class InternalEnvironmentSchema(PathAwareSchema):
@@ -17,5 +17,5 @@ class InternalEnvironmentSchema(PathAwareSchema):
         required=False,
     )
     name = fields.Str()
-    version = fields.Str()
+    version = VersionField()
     python = fields.Dict()

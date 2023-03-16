@@ -84,44 +84,60 @@ class IgnoreFile(object):
 
     def exists(self) -> bool:
         """Checks if ignore file exists."""
+        return self._file_exists()
+
+    def _file_exists(self) -> bool:
         return self._path and self._path.exists()
+
+    @property
+    def base_path(self) -> Path:
+        return self._path.parent
 
     def _get_ignore_list(self) -> List[str]:
         """Get ignore list from ignore file contents."""
         if not self.exists():
             return []
-        with open(self._path, "r") as fh:
-            return [line for line in fh if line]
+        if self._file_exists():
+            with open(self._path, "r") as fh:
+                return [line.rstrip() for line in fh if line]
+        return []
 
     def _create_pathspec(self) -> List[GitWildMatchPattern]:
         """Creates path specification based on ignore list."""
-        return [GitWildMatchPattern(ignore) for ignore in set(self._get_ignore_list())]
+        return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
+
+    def _get_rel_path(self, file_path: Union[str, Path]) -> Optional[str]:
+        """Get relative path of given file_path."""
+        file_path = Path(file_path).absolute()
+        try:
+            # use os.path.relpath instead of Path.relative_to in case file_path is not a child of self.base_path
+            return os.path.relpath(file_path, self.base_path)
+        except ValueError:
+            # 2 paths are on different drives
+            return None
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
         """
-        if not self.exists():
-            return False
-        if not self._path_spec:
+        # TODO: current design of ignore file can't distinguish between files and directories of the same name
+        if self._path_spec is None:
             self._path_spec = self._create_pathspec()
-        file_path = Path(file_path)
-        if file_path.is_absolute():
-            ignore_dirname = self._path.parent
-            try:
-                file_path = os.path.relpath(file_path, ignore_dirname)
-            except ValueError:
-                # 2 paths are on different drives
-                return True
+        if not self._path_spec:
+            return False
+        file_path = self._get_rel_path(file_path)
+        if file_path is None:
+            return True
 
-        file_path = str(file_path)
         norm_file = normalize_file(file_path)
+        matched = False
         for pattern in self._path_spec:
             if pattern.include is not None:
-                if norm_file in pattern.match((norm_file,)):
-                    return bool(pattern.include)
-        return False
+                if pattern.match_file(norm_file) is not None:
+                    matched = pattern.include
+
+        return matched
 
     @property
     def path(self) -> Union[Path, str]:
@@ -141,8 +157,7 @@ class GitIgnoreFile(IgnoreFile):
 
 
 def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
-    """Finds and returns IgnoreFile object based on ignore file found in
-    directory_path.
+    """Finds and returns IgnoreFile object based on ignore file found in directory_path.
 
     .amlignore takes precedence over .gitignore and if no file is found, an empty
     IgnoreFile object will be returned.
@@ -214,9 +229,8 @@ def _get_dir_hash(directory: Union[str, Path], _hash: hash_type, ignore_file: Ig
 def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
     """Build metadata dictionary to attach to uploaded data.
 
-    Metadata includes an upload confirmation field, and for code uploads
-    only, the name and version of the code asset being created for that
-    data.
+    Metadata includes an upload confirmation field, and for code uploads only, the name and version of the code asset
+    being created for that data.
     """
     if name:
         linked_asset_arm_id = {"name": name, "version": version}
@@ -317,8 +331,9 @@ def traverse_directory(
     prefix: str,
     ignore_file: IgnoreFile = IgnoreFile(),
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
-    """Enumerate all files in the given directory and compose paths for them to
-    be uploaded to in the remote storage. e.g.
+    """Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage.
+    e.g.
+
     [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
     /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
 
@@ -402,20 +417,27 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
     return asset_id
 
 
-def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
-    """Returns total size of a directory and a dictionary itemizing each sub-
-    path and its size."""
+def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(None)) -> Tuple[int, Dict[str, int]]:
+    """Returns total size of a directory and a dictionary itemizing each sub- path and its size.
+
+    If an optional ignore_file argument is provided, then files specified in the ignore file are not included in the
+    directory size calculation.
+    """
     total_size = 0
     size_list = {}
     for dirpath, _, filenames in os.walk(root, followlinks=True):
         for name in filenames:
             full_path = os.path.join(dirpath, name)
+            # Don't count files that are excluded by an ignore file
+            if ignore_file.is_file_excluded(full_path):
+                continue
             if not os.path.islink(full_path):
                 path_size = os.path.getsize(full_path)
             else:
-                path_size = os.path.getsize(
-                    os.readlink(convert_windows_path_to_unix(full_path))
-                )  # ensure we're counting the size of the linked file
+                # ensure we're counting the size of the linked file
+                # os.readlink returns a file path relative to dirpath, and must be
+                # re-joined to get a workable result
+                path_size = os.path.getsize(os.path.join(dirpath, os.readlink(convert_windows_path_to_unix(full_path))))
             size_list[full_path] = path_size
             total_size += path_size
     return total_size, size_list
@@ -684,6 +706,7 @@ def _get_next_version_from_container(
         version = "1"
     return version
 
+
 def _get_latest_version_from_container(
     asset_name: str,
     container_operation: Any,
@@ -715,20 +738,21 @@ def _get_latest_version_from_container(
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         no_personal_data_message = (
             "Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else "Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
             target=ErrorTarget.ASSET,
             error_category=ErrorCategory.USER_ERROR,
-            error_type=ValidationErrorType.RESOURCE_NOT_FOUND
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
     return version
+
 
 def _get_latest(
     asset_name: str,
@@ -741,8 +765,7 @@ def _get_latest(
 ) -> Union[ModelVersionData, DataVersionBaseData]:
     """Returns the latest version of the asset with the given name.
 
-    Latest is defined as the most recently created, not the most
-    recently updated.
+    Latest is defined as the most recently created, not the most recently updated.
     """
     result = (
         version_operation.list(
@@ -776,12 +799,12 @@ def _get_latest(
             f"Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else f"Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         no_personal_data_message = (
             "Asset {asset_name} does not exist in registry {registry_name}."
             if registry_name
             else "Asset {asset_name} does not exist in workspace {workspace_name}."
-            )
+        )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -906,10 +929,11 @@ def _resolve_label_to_asset(
 
     resolver = assetOperations._managed_label_resolver.get(label, None)
     if not resolver:
-        msg = "Asset {} with version label {} does not exist in workspace."
+        scope = "registry" if assetOperations._registry_name else "workspace"
+        msg = "Asset {} with version label {} does not exist in {}."
         raise ValidationException(
-            message=msg.format(name, label),
-            no_personal_data_message=msg.format("[name]", "[label]"),
+            message=msg.format(name, label, scope),
+            no_personal_data_message=msg.format("[name]", "[label]", "[scope]"),
             target=ErrorTarget.ASSET,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )

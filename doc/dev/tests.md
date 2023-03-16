@@ -264,12 +264,13 @@ ServicePreparer = functools.partial(
 ```
 
 The parameters for the `functools.partial` method are:
-* The EnvironmentVariableLoader class
-* The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
+
+- The EnvironmentVariableLoader class
+- The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
   environment variables for the appropriate values.
-* The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
+- The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
   the value being a fake value to use in recordings.
-  * These values should have the same formatting as the real values because they are used in playback mode and will need
+  - These values should have the same formatting as the real values because they are used in playback mode and will need
   to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
 
 A method that's decorated by the ServicePreparer from the example would be called with `testservice_endpoint` and
@@ -396,7 +397,8 @@ the repo.
 
 The `.assets` folder contains one or more directories with random names, which each are a git directory containing
 recordings. If you `cd` into the folder containing your package's recordings, you can use `git status` to view the
-recording updates you've made.
+recording updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see
+specific file changes, or `git restore {file name}` to undo changes you don't want to keep.
 
 To find the directory containing your package's recordings, open the `.breadcrumb` file in the `.assets` folder. This
 file lists a package name on each line, followed by the recording directory name; for example:
@@ -416,7 +418,6 @@ python scripts/manage_recordings.py push sdk/{service}/{package}/assets.json
 The verbs that can be provided to this script are "push", "restore", and "reset":
 - **push**: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
 - **restore**: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
-- **reset**: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 
 After pushing your recordings, the `assets.json` file for your package will be updated to point to a new `Tag` that
 contains the updates. Include this `assets.json` update in any pull request to update the recordings pointer in the
@@ -733,7 +734,7 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
 [podman]: https://podman.io/
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/trusting-cert-per-language.md
-[proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
+[proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [proxy_migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_invocation]: https://pytest.org/latest/how-to/usage.html
