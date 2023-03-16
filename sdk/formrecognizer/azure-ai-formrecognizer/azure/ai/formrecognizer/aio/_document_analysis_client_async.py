@@ -113,9 +113,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         continuation_token = kwargs.pop("continuation_token", None)
 
         if continuation_token is not None:
-            _client_op_path = self._client
-            if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
-                _client_op_path = _client_op_path.document_models
+            _client_op_path = self._client.document_models
+            if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+                _client_op_path = self._client
             return await _client_op_path.begin_analyze_document(  # type: ignore
                 model_id=model_id,
                 analyze_request=document,  # type: ignore
@@ -129,9 +129,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        _client_op_path = self._client
-        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
-            _client_op_path = _client_op_path.document_models
+        _client_op_path = self._client.document_models
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            _client_op_path = self._client
         return await _client_op_path.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request=document,  # type: ignore
@@ -180,9 +180,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         # continuation token requests do not perform the same value checks as
         # regular analysis requests
         if continuation_token is not None:
-            _client_op_path = self._client
-            if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
-                _client_op_path = _client_op_path.document_models
+            _client_op_path = self._client.document_models
+            if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+                _client_op_path = self._client
             return await _client_op_path.begin_analyze_document(  # type: ignore
                 model_id=model_id,
                 analyze_request={"urlSource": document_url},  # type: ignore
@@ -200,9 +200,9 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
                 "Please see `begin_analyze_document()` to pass a byte stream."
             )
 
-        _client_op_path = self._client
-        if self._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW:
-            _client_op_path = _client_op_path.document_models
+        _client_op_path = self._client.document_models
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            _client_op_path = self._client
         return await _client_op_path.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request={"urlSource": document_url},  # type: ignore
