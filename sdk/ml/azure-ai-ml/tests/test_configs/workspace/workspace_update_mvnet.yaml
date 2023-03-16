@@ -10,7 +10,7 @@ managed_network:
       type: service_tag
     added-perule:
       destination:
-        service_resource_id: /subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount
+        service_resource_id: /subscriptions/0caf7ec9-615a-4491-bad8-64ce023324e1/resourceGroups/joharrin-sdk-tests/providers/Microsoft.Storage/storageAccounts/mvnetstorage2
         spark_enabled: true
         subresource_target: blob
       type: private_endpoint

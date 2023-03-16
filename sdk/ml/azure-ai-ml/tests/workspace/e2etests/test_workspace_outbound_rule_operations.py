@@ -18,7 +18,6 @@ from azure.ai.ml.entities._workspace.networking import (
 from azure.core.paging import ItemPaged
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 from azure.core.polling import LROPoller
-from azure.mgmt.storage._storage_management_client import StorageManagementClient
 
 
 @pytest.mark.e2etest
@@ -49,15 +48,6 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         ]
         wps = load_workspace("./tests/test_configs/workspace/workspace_mvnet.yaml", params_override=params_override)
 
-        # get the pre-created storage account
-        storage_client = StorageManagementClient(
-            credential=client._credential, subscription_id=client._operation_scope.subscription_id
-        )
-        existing_storage = storage_client.storage_accounts.get_properties(
-            resource_group_name=client._operation_scope.resource_group_name, account_name="mvnetstorage1"
-        )
-        wps.managed_network.outbound_rules["my-storage"].service_resource_id = existing_storage.id
-
         # test creation
         workspace_poller = client.workspaces.begin_create(workspace=wps)
         assert isinstance(workspace_poller, LROPoller)
@@ -85,7 +75,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert "my-storage" in rules_dict.keys()
         assert isinstance(rules_dict["my-storage"], PrivateEndpointDestination)
         assert rules_dict["my-storage"].category == OutboundRuleCategory.USER_DEFINED
-        assert rules_dict["my-storage"].service_resource_id == existing_storage.id
+        assert "storageAccounts/mvnetstorage1" in rules_dict["my-storage"].service_resource_id
         assert rules_dict["my-storage"].spark_enabled == False
         assert rules_dict["my-storage"].subresource_target == "blob"
 
@@ -101,11 +91,6 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         wps_update = load_workspace(
             "./tests/test_configs/workspace/workspace_update_mvnet.yaml", params_override=params_override
         )
-
-        existing_storage2 = storage_client.storage_accounts.get_properties(
-            resource_group_name=client._operation_scope.resource_group_name, account_name="mvnetstorage2"
-        )
-        wps_update.managed_network.outbound_rules["added-perule"].service_resource_id = existing_storage2.id
 
         workspace_poller = client.workspaces.begin_update(workspace=wps_update)
         assert isinstance(workspace_poller, LROPoller)
@@ -130,7 +115,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         rule = client._workspace_outbound_rules.get(client.resource_group_name, wps_name, "added-perule")
         assert isinstance(rule, PrivateEndpointDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
-        assert rule.service_resource_id == existing_storage2.id
+        assert "storageAccounts/mvnetstorage2" in rule.service_resource_id
         assert rule.subresource_target == "blob"
         assert rule.spark_enabled == True
 

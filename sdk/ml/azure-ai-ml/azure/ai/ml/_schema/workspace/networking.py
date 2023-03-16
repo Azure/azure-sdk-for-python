@@ -75,14 +75,12 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
                         spark_enabled=dest["spark_enabled"],
                         category=_snake_to_camel(category),
                     )
-                if dest.get("service_tag", False):
-                    return ServiceTagDestination(
-                        service_tag=dest["service_tag"],
-                        protocol=dest["protocol"],
-                        port_ranges=dest["port_ranges"],
-                        category=_snake_to_camel(category),
-                    )
-        return OutboundRule(data)
+            return ServiceTagDestination(
+                service_tag=dest["service_tag"],
+                protocol=dest["protocol"],
+                port_ranges=dest["port_ranges"],
+                category=_snake_to_camel(category),
+            )
 
     def fqdn_dest2dict(self, fqdndest):
         res = fqdndest
