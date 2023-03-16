@@ -148,16 +148,18 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                     feature_store.online_store = _MaterializationStore(
                         type=ONLINE_MATERIALIZATION_STORE_TYPE, target=online_Store_connection.properties.target
                     )
-            
+
             # materialization identity = identity when created through feature store operations
             if (
-                ((offline_Store_connection and offline_Store_connection.name == OFFLINE_STORE_CONNECTION_NAME)
-                or (online_Store_connection and online_Store_connection.name == ONLINE_STORE_CONNECTION_NAME))                 
-                and feature_store.identity
-                and feature_store.identity.user_assigned_identities
-                and isinstance(feature_store.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
+                (offline_Store_connection and offline_Store_connection.name == OFFLINE_STORE_CONNECTION_NAME)
+                or (online_Store_connection and online_Store_connection.name == ONLINE_STORE_CONNECTION_NAME)
             ):
-                feature_store.materialization_identity = feature_store.identity.user_assigned_identities[0]
+                if (
+                    feature_store.identity
+                    and feature_store.identity.user_assigned_identities
+                    and isinstance(feature_store.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
+                ):
+                    feature_store.materialization_identity = feature_store.identity.user_assigned_identities[0]
 
         return feature_store
 
@@ -189,7 +191,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
             raise ValidationError("online store type should be azure_redis")
         if feature_store.online_store and not feature_store.materialization_identity:
             raise ValidationError("materialization_identity is required to setup online store")
-        
+
         def get_callback():
             return self.get(feature_store.name)
 
@@ -260,7 +262,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
             else:
                 if not materialization_identity:
                     raise ValidationError("Materialization identity is required to setup offline store connection")
-                
+
         if online_store and online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE:
             raise ValidationError("online store type should be azure_redis")
 

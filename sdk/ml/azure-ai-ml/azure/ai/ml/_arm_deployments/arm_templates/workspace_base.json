@@ -708,7 +708,7 @@
                             "resourceid": "[parameters('materialization_identity_resource_id')]"
                         }
                     }
-                },
+                }
             ]
         },
         {
