@@ -12,7 +12,7 @@ from uuid import UUID
 from marshmallow import Schema
 
 from ... import Input, Output
-from ..._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
+from ..._restclient.v2023_04_01_preview.models import ComponentVersion, ComponentVersionProperties
 from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
