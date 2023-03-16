@@ -384,7 +384,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         _client_op_path = self._client.document_models.list_models
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_document_models
-        return await _client_op_path(  # type: ignore
+        return _client_op_path(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [DocumentModelSummary._from_generated(x) for x in objs],
@@ -469,7 +469,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         _client_op_path = self._client.miscellaneous.list_operations
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_operations
-        return await _client_op_path(  # type: ignore
+        return _client_op_path(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [OperationSummary._from_generated(x) for x in objs],
