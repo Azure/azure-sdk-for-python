@@ -1,6 +1,19 @@
 # Release History
 
-## 1.5.0 (Unreleased)
+## 1.6.0 (Unreleased)
+
+### Features Added
+- Added support to make JobService and ServiceInstance objects serializable when printed
+
+### Bugs Fixed
+
+- Fixed issue where show_progress=False was not being respected for uploads when set via MLClient
+
+### Other Changes
+
+- 
+
+## 1.5.0 (2023-03-20)
 
 ### Features Added
 - Added support for `tags` on Compute Resources.
@@ -11,8 +24,11 @@
 - Added support for serverless compute in pipeline, command, automl and sweep job
 - Added support for `job_tier` and `priority` in job
 - Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
+- Added support for modifying SSH key values after creation on Compute Resources.
 - Added WorkspaceConnection types `s3`, `snowflake`, `azure_sql_db`, `azure_synapse_analytics`, `azure_my_sql_db`, `azure_postgres_db`
 - Added WorkspaceConnection auth type `access_key` for `s3`
+- Added DataImport class and DataOperations.import_data.
+- Added DataOperations.list_materialization_status - list status of data import jobs that create asset versions via asset name.
 
 ### Bugs Fixed
 
@@ -20,6 +36,7 @@
 - Error message improvement when a local path fails to match with data asset type.
 - Error message improvement when an asset does not exist in a registry
 - Fix an issue when submit spark pipeline job with referring a registered component
+- Fix an issue that prevented Job.download from downloading the output of a BatchJob
 
 ### Other Changes
 

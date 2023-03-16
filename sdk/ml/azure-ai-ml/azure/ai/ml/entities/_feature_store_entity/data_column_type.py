@@ -8,7 +8,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class DataColumnType(Enum):
+class _DataColumnType(Enum):
     string = 1
     integer = 2
     long = 3

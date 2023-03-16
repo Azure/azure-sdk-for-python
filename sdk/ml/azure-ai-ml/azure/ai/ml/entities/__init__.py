@@ -48,6 +48,7 @@ from ._credentials import (
     ServicePrincipalConfiguration,
     UserIdentityConfiguration,
     UsernamePasswordConfiguration,
+    AccessKeyConfiguration,
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
@@ -136,6 +137,20 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+
+from ._assets._artifacts.feature_set import _FeatureSet
+from ._workspace.compute_runtime import _ComputeRuntime
+from ._workspace.feature_store_settings import _FeatureStoreSettings
+from ._feature_store_entity.feature_store_entity import _FeatureStoreEntity
+from ._feature_store_entity.data_column import _DataColumn
+from ._feature_store_entity.data_column_type import _DataColumnType
+from ._feature_set.feature_set_specification import _FeatureSetSpecification
+from ._feature_set.materialization_compute_resource import _MaterializationComputeResource
+from ._feature_set.materialization_settings import _MaterializationSettings
+from ._feature_set.materialization_type import _MaterializationType
+from ._feature_store.feature_store import _FeatureStore
+from ._feature_store.materialization_store import _MaterializationStore
+from ._notification.notification import _Notification
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -272,6 +287,19 @@ __all__ = [
     "AutoScaleSettings",
     "AutoPauseSettings",
     "WorkspaceModelReference",
+    "_FeatureSet",
+    "_ComputeRuntime",
+    "_FeatureStoreSettings",
+    "_FeatureStoreEntity",
+    "_DataColumn",
+    "_DataColumnType",
+    "_FeatureSetSpecification",
+    "_MaterializationComputeResource",
+    "_MaterializationSettings",
+    "_MaterializationType",
+    "_FeatureStore",
+    "_MaterializationStore",
+    "_Notification",
     # builders
     "Command",
     "Parallel",
@@ -292,4 +320,5 @@ __all__ = [
     "ContainerRegistryCredential",
     "EndpointAuthKeys",
     "EndpointAuthToken",
+    "AccessKeyConfiguration",
 ]

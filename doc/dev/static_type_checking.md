@@ -181,7 +181,7 @@ environment run in CI and brings in the third party stub packages necessary. To 
 
 ### Run mypy
 
-mypy is currently pinned to version [0.931](https://pypi.org/project/mypy/0.931/).
+mypy is currently pinned to version [1.0.0](https://pypi.org/project/mypy/1.0.0/).
 
 To run mypy on your library, run the tox mypy env at the package level:
 
@@ -189,7 +189,7 @@ To run mypy on your library, run the tox mypy env at the package level:
 
 If you don't want to use `tox` you can also install and run mypy on its own:
 
-`pip install mypy==0.931`
+`pip install mypy==1.0.0`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>mypy azure`
 
