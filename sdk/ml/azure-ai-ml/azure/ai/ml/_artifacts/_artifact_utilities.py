@@ -29,6 +29,7 @@ from azure.ai.ml._utils._asset_utils import (
     _validate_path,
     get_ignore_file,
     get_object_hash,
+    get_content_hash,
 )
 from azure.ai.ml._utils._storage_utils import (
     AzureMLDatastorePathUri,
@@ -441,3 +442,36 @@ def _check_and_upload_env_build_context(
         # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
         environment.build.path = uploaded_artifact.full_storage_path + "/"
     return environment
+
+
+def _get_snapshot_path_info(artifact) -> Tuple[str, str, str]:
+    """
+    Validate an Artifact's local path and get its resolved path, ignore file, and hash
+    :param artifact: Artifact object
+    :type artifact: azure.ai.ml.entities._assets._artifacts.artifact.Artifact
+    :return: Artifact's path, ignorefile, and hash
+    :rtype: Tuple[str, str, str]
+    """
+    if (
+        hasattr(artifact, "local_path")
+        and artifact.local_path is not None
+        or (
+            hasattr(artifact, "path")
+            and artifact.path is not None
+            and not (is_url(artifact.path) or is_mlflow_uri(artifact.path))
+        )
+    ):
+        path = (
+            Path(artifact.path)
+            if hasattr(artifact, "path") and artifact.path is not None
+            else Path(artifact.local_path)
+        )
+        if not path.is_absolute():
+            path = Path(artifact.base_path, path).resolve()
+
+    _validate_path(path, _type=ErrorTarget.CODE)
+
+    ignore_file = get_ignore_file(path)
+    asset_hash = get_content_hash(path, ignore_file)
+
+    return path, ignore_file, asset_hash

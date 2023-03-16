@@ -8,13 +8,18 @@ from typing import Dict, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_path,
+    _get_snapshot_path_info,
+)
+from azure.ai.ml._utils._asset_utils import get_content_hash_version
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
@@ -50,7 +55,7 @@ class CodeOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane, ServiceClient042023Preview],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -92,6 +97,21 @@ class CodeOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
+            else:
+                path, ignore_file, asset_hash = _get_snapshot_path_info(code)
+                print("i'm checkign for existing asset")
+                existing_asset = self._version_operation.list(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    name=name,
+                    hash=asset_hash,
+                    hash_version=str(get_content_hash_version())
+                ).next()
+                if existing_asset:
+                    print("here it is: ", existing_asset, type(existing_asset), dir(existing_asset))
+                    assert 1 == 2 
+                    return self.get(name=existing_asset.name, version=existing_asset.version)
+                
             code, _ = _check_and_upload_path(
                 artifact=code,
                 asset_operations=self,
