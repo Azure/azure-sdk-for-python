@@ -166,7 +166,7 @@ class Registry(Resource):
             location=rest_obj.location,
             public_network_access=real_registry.public_network_access,
             discovery_url=real_registry.discovery_url,
-            intellectual_property_publisher=IntellectualProperty(
+            intellectual_property=IntellectualProperty(
                 publisher=real_registry.intellectual_property_publisher
             ) if real_registry.intellectual_property_publisher else None,
             managed_resource_group=real_registry.managed_resource_group,
