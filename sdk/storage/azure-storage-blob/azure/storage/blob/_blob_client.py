@@ -428,17 +428,40 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
 
+        # Blob-type specific properties
+        standard_blob_tier = kwargs.pop('standard_blob_tier', None)
+        premium_page_blob_tier = kwargs.pop('premium_page_blob_tier', None)
+        maxsize_condition = kwargs.pop('maxsize_condition', None)
+
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
             kwargs['data'] = data
+
+            kwargs['standard_blob_tier'] = standard_blob_tier
+            if premium_page_blob_tier:
+                raise ValueError("premium_page_blob_tier only supported for PageBlob")
+            if maxsize_condition:
+                raise ValueError("maxsize_condition only supported for AppendBlob")
         elif blob_type == BlobType.PageBlob:
             if self.encryption_version == '2.0' and (self.require_encryption or self.key_encryption_key is not None):
                 raise ValueError("Encryption version 2.0 does not currently support page blobs.")
             kwargs['client'] = self._client.page_blob
+
+            kwargs['premium_page_blob_tier'] = premium_page_blob_tier
+            if standard_blob_tier:
+                raise ValueError("standard_blob_tier only supported for BlockBlob")
+            if maxsize_condition:
+                raise ValueError("maxsize_condition only supported for AppendBlob")
         elif blob_type == BlobType.AppendBlob:
             if self.require_encryption or (self.key_encryption_key is not None):
                 raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
             kwargs['client'] = self._client.append_blob
+
+            kwargs['maxsize_condition'] = maxsize_condition
+            if standard_blob_tier:
+                raise ValueError("standard_blob_tier only supported for BlockBlob")
+            if premium_page_blob_tier:
+                raise ValueError("premium_page_blob_tier only supported for PageBlob")
         else:
             raise ValueError("Unsupported BlobType: {}".format(blob_type))
         return kwargs
