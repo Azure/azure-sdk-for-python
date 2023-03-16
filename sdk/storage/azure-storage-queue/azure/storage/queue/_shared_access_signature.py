@@ -47,7 +47,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
             policy_id: str = None,
             ip: str = None,
             protocol: str = None
-        ) -> str:
+    ) -> str:
         '''
         Generates a shared access signature for the queue.
         Use the returned signature with the sas_token parameter of QueueService.
@@ -137,7 +137,7 @@ def generate_account_sas(
         start: Optional[Union["datetime", str]] = None,
         ip: Optional[str] = None,
         **kwargs: Any
-    ) -> str:
+) -> str:
     """Generates a shared access signature for the queue service.
 
     Use the returned signature with the credential parameter of any Queue Service.
@@ -199,7 +199,7 @@ def generate_queue_sas(
         policy_id: Optional[str] = None,
         ip: Optional[str] = None,
         **kwargs: Any
-    ) -> str:
+) -> str:
     """Generates a shared access signature for a queue.
 
     Use the returned signature with the credential parameter of any Queue Service.

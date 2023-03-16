@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Any, BinaryIO, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher
@@ -50,7 +50,7 @@ def _validate_not_none(param_name: str, param: Any) -> None:
         raise ValueError(f'{param_name} should not be None.')
 
 
-def _validate_key_encryption_key_wrap(kek: Any) -> None:
+def _validate_key_encryption_key_wrap(kek: object) -> None:
     # Note that None is not callable and so will fail the second clause of each check.
     if not hasattr(kek, 'wrap_key') or not callable(kek.wrap_key):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'wrap_key'))
@@ -161,7 +161,7 @@ class _EncryptionData:
             encryption_agent: _EncryptionAgent,
             wrapped_content_key: _WrappedContentKey,
             key_wrapping_metadata: Dict[Any, Any]
-        ) -> None:
+    ) -> None:
         '''
         :param Optional[bytes] content_encryption_IV:
             The content encryption initialization vector.
@@ -174,7 +174,7 @@ class _EncryptionData:
         :param _WrappedContentKey wrapped_content_key:
             An object that stores the wrapping algorithm, the key identifier,
             and the encrypted key bytes.
-        :param dict key_wrapping_metadata:
+        :param Dict[Any, Any] key_wrapping_metadata:
             A dict containing metadata related to the key wrapping.
         '''
 
@@ -206,7 +206,7 @@ class GCMBlobEncryptionStream:
     def __init__(
             self, content_encryption_key: bytes,
             data_stream: BinaryIO,
-        ) -> None:
+    ) -> None:
         """
         :param bytes content_encryption_key: The encryption key to use.
         :param BinaryIO data_stream: The data stream to read data from.
@@ -300,7 +300,7 @@ def get_adjusted_download_range_and_offset(
         end: int,
         length: int,
         encryption_data: Optional[_EncryptionData]
-    ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
+) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """
     Gets the new download range and offsets into the decrypted data for
     the given user-specified range. The new download range will include all
@@ -463,7 +463,7 @@ def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _Encryptio
     Converts the specified dictionary to an EncryptionData object for
     eventual use in decryption.
 
-    :param dict encryption_data_dict:
+    :param Dict[str, Any] encryption_data_dict:
         The dictionary containing the encryption data.
     :return: an _EncryptionData object built from the dictionary.
     :rtype: _EncryptionData
@@ -510,12 +510,12 @@ def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _Encryptio
     return encryption_data
 
 
-def _generate_AES_CBC_cipher(cek: List[bytes], iv: List[bytes]) -> Cipher:
+def _generate_AES_CBC_cipher(cek: bytes, iv: bytes) -> Cipher:
     '''
     Generates and returns an encryption cipher for AES CBC using the given cek and iv.
 
-    :param bytes[] cek: The content encryption key for the cipher.
-    :param bytes[] iv: The initialization vector for the cipher.
+    :param bytes cek: The content encryption key for the cipher.
+    :param bytes iv: The initialization vector for the cipher.
     :return: A cipher for encrypting in AES256 CBC.
     :rtype: ~cryptography.hazmat.primitives.ciphers.Cipher
     '''
@@ -529,8 +529,8 @@ def _generate_AES_CBC_cipher(cek: List[bytes], iv: List[bytes]) -> Cipher:
 def _validate_and_unwrap_cek(
         encryption_data: _EncryptionData,
         key_encryption_key: object = None,
-        key_resolver: callable = None
-    ) -> List[bytes]:
+        key_resolver: Callable[[str], bytes] = None
+) -> List[bytes]:
     '''
     Extracts and returns the content_encryption_key stored in the encryption_data object
     and performs necessary validation on all parameters.
@@ -539,7 +539,7 @@ def _validate_and_unwrap_cek(
     :param obj key_encryption_key:
         The key_encryption_key used to unwrap the cek. Please refer to high-level service object
         instance variables for more details.
-    :param func key_resolver:
+    :param Callable[[str], bytes] key_resolver:
         A function used that, given a key_id, will return a key_encryption_key. Please refer
         to high-level service object instance variables for more details.
     :return: the content_encryption_key stored in the encryption_data object.
@@ -594,7 +594,7 @@ def _decrypt_message(
         encryption_data: _EncryptionData,
         key_encryption_key: object = None,
         resolver: callable = None
-    ) -> str:
+) -> str:
     '''
     Decrypts the given ciphertext using AES256 in CBC mode with 128 bit padding.
     Unwraps the content-encryption-key using the user-provided or resolved key-encryption-key (kek).
@@ -746,12 +746,12 @@ def generate_blob_encryption_data(key_encryption_key: object, version: str) -> T
 def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         require_encryption: bool,
         key_encryption_key: object,
-        key_resolver: object,
+        key_resolver: Callable[[str], bytes],
         content: bytes,
         start_offset: int,
         end_offset: int,
         response_headers: Dict[str, Any]
-    ) -> bytes:
+) -> bytes:
     """
     Decrypts the given blob contents and returns only the requested range.
 
@@ -762,7 +762,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
         get_key_wrap_algorithm()--returns the algorithm used to wrap the specified symmetric key.
         get_kid()--returns a string key id for this key-encryption-key.
-    :param object key_resolver:
+    :param Callable[[str], bytes] key_resolver:
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
     :param bytes content:
@@ -872,9 +872,9 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
 
 def get_blob_encryptor_and_padder(
         cek: bytes,
-        iv: Optional[bytes],
+        iv: bytes,
         should_pad: bool
-    ) -> Tuple["AEADEncryptionContext", "PaddingContext"]:
+) -> Tuple["AEADEncryptionContext", "PaddingContext"]:
     encryptor = None
     padder = None
 
@@ -886,14 +886,14 @@ def get_blob_encryptor_and_padder(
     return encryptor, padder
 
 
-def encrypt_queue_message(message: object, key_encryption_key: object, version: str) -> str:
+def encrypt_queue_message(message: str, key_encryption_key: object, version: str) -> str:
     '''
     Encrypts the given plain text message using the given protocol version.
     Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encrypted message and the encryption metadata.
 
-    :param object message:
-        The plain text messge to be encrypted.
+    :param str message:
+        The plain text message to be encrypted.
     :param object key_encryption_key:
         The user-provided key-encryption-key. Must implement the following methods:
         wrap_key(key)--wraps the specified key using an algorithm of the user's choice.
@@ -958,8 +958,8 @@ def decrypt_queue_message(
         response: "PipelineResponse",
         require_encryption: bool,
         key_encryption_key: object,
-        resolver: callable
-    ) -> str:
+        resolver: Callable[[str], bytes]
+) -> str:
     '''
     Returns the decrypted message contents from an EncryptedQueueMessage.
     If no encryption metadata is present, will return the unaltered message.
@@ -973,7 +973,7 @@ def decrypt_queue_message(
             - returns the unwrapped form of the specified symmetric key usingthe string-specified algorithm.
         get_kid()
             - returns a string key id for this key-encryption-key.
-    :param function resolver(kid):
+    :param Callable[[str], bytes] resolver(kid):
         The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
     :return: The plain text message from the queue message.

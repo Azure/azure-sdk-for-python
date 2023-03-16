@@ -6,8 +6,8 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called
 
-from typing import List # pylint: disable=unused-import
-from typing_extensions import Self
+import sys
+from typing import Callable, List # pylint: disable=unused-import
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 from .._shared.response_handlers import (
@@ -15,22 +15,27 @@ from .._shared.response_handlers import (
     return_context_and_deserialized)
 from .._models import QueueMessage, QueueProperties
 
+if sys.version_info >= (3, 11):
+    from typing import Self # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Self # pylint: disable=ungrouped-imports
+
 
 class MessagesPaged(AsyncPageIterator):
     """An iterable of Queue Messages.
 
-    :param callable command: Function to retrieve the next page of items.
+    :param Callable[[str], bytes] command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of messages to retrieve per
         call.
     :param int max_messages: The maximum number of messages to retrieve from
         the queue.
     """
     def __init__(
-            self, command: callable,
+            self, command: Callable[[str], bytes],
             results_per_page: int = None,
             continuation_token: str = None,
             max_messages: int = None
-        ) -> None:
+    ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
 
@@ -73,7 +78,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
-    :param callable command: Function to retrieve the next page of items.
+    :param Callable[[str], bytes] command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names
         begin with the specified prefix.
     :param int results_per_page: The maximum number of queue names to retrieve per
@@ -81,11 +86,11 @@ class QueuePropertiesPaged(AsyncPageIterator):
     :param str continuation_token: An opaque continuation token.
     """
     def __init__(
-            self, command: callable,
+            self, command: Callable[[str], bytes],
             prefix: str = None,
             results_per_page: int = None,
             continuation_token: str = None
-        ) -> None:
+    ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,

@@ -34,8 +34,8 @@ class MessageEncodePolicy(object):
 
     def configure(
         self, require_encryption: bool,
-        key_encryption_key: str,
-        resolver: callable,
+        key_encryption_key: object,
+        resolver: Callable[[str], bytes],
         encryption_version: str = _ENCRYPTION_PROTOCOL_V1
     ) -> None:
         self.require_encryption = require_encryption
@@ -45,7 +45,7 @@ class MessageEncodePolicy(object):
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
 
-    def encode(self, content: object) -> None:
+    def encode(self, content: Any) -> str:
         raise NotImplementedError("Must be implemented by child class.")
 
 
@@ -75,7 +75,7 @@ class MessageDecodePolicy(object):
         self.key_encryption_key = key_encryption_key
         self.resolver = resolver
 
-    def decode(self, content: object, response: "PipelineResponse") -> None:
+    def decode(self, content: object, response: "PipelineResponse") -> str:
         raise NotImplementedError("Must be implemented by child class.")
 
 
@@ -146,8 +146,8 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
 class NoEncodePolicy(MessageEncodePolicy):
     """Bypass any message content encoding."""
 
-    def encode(self, content: object) -> object:
-        if isinstance(content, bytes) and sys.version_info > (3,):
+    def encode(self, content: str) -> str:
+        if isinstance(content, bytes)
             raise TypeError(
                 "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
             )
@@ -157,5 +157,5 @@ class NoEncodePolicy(MessageEncodePolicy):
 class NoDecodePolicy(MessageDecodePolicy):
     """Bypass any message content decoding."""
 
-    def decode(self, content: object, response: "PipelineResponse") -> object:
+    def decode(self, content: str, response: "PipelineResponse") -> str:
         return content
