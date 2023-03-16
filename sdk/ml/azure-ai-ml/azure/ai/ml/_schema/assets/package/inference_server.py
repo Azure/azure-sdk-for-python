@@ -45,6 +45,7 @@ class InferenceServerSchema(PathAwareSchema):
         if data["type"] == InferenceServerType.CUSTOM or data["type"] == InferenceServerType.TRITON:
             if "inference_configuration" not in data:
                 raise ValidationError("inference_configuration is required for custom and triton inference servers")
+        return data
 
     @post_load
     def make(self, data, **kwargs):

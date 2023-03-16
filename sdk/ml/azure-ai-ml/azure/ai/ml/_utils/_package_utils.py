@@ -31,14 +31,14 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
     model_ops = all_ops["models"]
     target_environment_name = "packaged-env"
 
-    if isinstance(deployment, BatchDeployment):
+    if isinstance(deployment, OnlineDeployment):
         inferencing_server = AzureMLOnlineInferencingServer(
             code_configuration=CodeConfiguration(
                 code_id=deployment.code_configuration.code,
                 scoring_script=deployment.code_configuration.scoring_script,
             )
         )
-    elif isinstance(deployment, OnlineDeployment):
+    elif isinstance(deployment, BatchDeployment):
         inferencing_server = AzureMLBatchInferencingServer(
             code_configuration=CodeConfiguration(
                 code_id=deployment.code_configuration.code,
