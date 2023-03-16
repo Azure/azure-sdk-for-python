@@ -7,7 +7,7 @@
 
 import sys
 from base64 import b64encode, b64decode
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Callable, Dict, TYPE_CHECKING
 
 from azure.core.exceptions import DecodeError
 
