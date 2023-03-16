@@ -97,7 +97,7 @@
         "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
         "x-ms-blob-content-language": "english",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainerc0ce3823/blobc0ce3823?se=end\u0026sp=r\u0026sv=2022-11-02\u0026sr=b\u0026sig=fake_token_value",
+        "x-ms-copy-source": "https://storagename.blob.core.windows.net/utcontainerc0ce3823/blobc0ce3823?se=end\u0026sp=r\u0026sv=2023-01-03\u0026sr=b\u0026sig=fake_token_value",
         "x-ms-copy-source-blob-properties": "true",
         "x-ms-date": "Thu, 25 Aug 2022 00:35:41 GMT",
         "x-ms-encryption-algorithm": "AES256",
