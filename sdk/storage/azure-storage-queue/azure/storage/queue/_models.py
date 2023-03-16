@@ -48,7 +48,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """Indicates whether all read requests should be logged"""
     write: bool = False
     """Indicates whether all write requests should be logged."""
-    retention_policy: "RetentionPolicy" = RetentionPolicy()
+    retention_policy: "RetentionPolicy"
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -89,7 +89,7 @@ class Metrics(GeneratedMetrics):
     """Indicates whether metrics are enabled for the service."""
     include_ap_is: bool
     """Indicates whether metrics should generate summary statistics for called API operations."""
-    retention_policy: "RetentionPolicy" = RetentionPolicy()
+    retention_policy: "RetentionPolicy"
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
