@@ -13,7 +13,8 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     OperatingSystemType,
     Route,
 )
-from azure.ai.ml._schema.core.fields import NestedField, UnionField, LocalPathField
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, UnionField, LocalPathField
+from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.constants._common import (
@@ -91,6 +92,7 @@ class _BaseEnvironmentSchema(AssetSchema):
         },
         required=False,
     )
+    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema), dump_only=True)
 
     @pre_load
     def pre_load(self, data, **kwargs):

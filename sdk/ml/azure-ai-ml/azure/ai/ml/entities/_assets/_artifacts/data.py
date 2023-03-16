@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, Optional, Type, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DataContainer,
     DataContainerProperties,
     DataType,
@@ -29,6 +29,7 @@ from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 
 from .artifact import ArtifactStorageInfo
 
@@ -98,6 +99,7 @@ class Data(Artifact):
         type: str = AssetTypes.URI_FOLDER,  # pylint: disable=redefined-builtin
         **kwargs,
     ):
+        self._intellectual_property = kwargs.pop("intellectual_property", None)
         self._skip_validation = kwargs.pop("skip_validation", False)
         self._mltable_schema_url = kwargs.pop("mltable_schema_url", None)
         self._referenced_uris = kwargs.pop("referenced_uris", None)
@@ -170,6 +172,7 @@ class Data(Artifact):
             is_archived=False,
             properties=self.properties,
             data_uri=self.path,
+            intellectual_property=self._intellectual_property._to_rest_object() if self._intellectual_property else None,
         )
         if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
             data_version_details.referenced_uris = self._referenced_uris
@@ -205,6 +208,7 @@ class Data(Artifact):
             creation_context=SystemData._from_rest_object(data_rest_object.system_data),
             is_anonymous=data_rest_object_details.is_anonymous,
             referenced_uris=getattr(data_rest_object_details, "referenced_uris", None),
+            intellectual_property=IntellectualProperty._from_rest_object(data_rest_object_details.intellectual_property) if data_rest_object_details.intellectual_property else None,
         )
         return data
 

@@ -7,6 +7,8 @@
 from marshmallow import fields, validate
 
 from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField
+from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
 
 from .artifact import ArtifactSchema
 from .asset import AnonymousAssetSchema
@@ -21,6 +23,7 @@ class DataSchema(ArtifactSchema):
         dump_default=AssetTypes.URI_FOLDER,
         error_messages={"validator_failed": "value must be uri_file, uri_folder, or mltable."},
     )
+    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema()), dump_only=True)
 
 
 class AnonymousDataSchema(DataSchema, AnonymousAssetSchema):
