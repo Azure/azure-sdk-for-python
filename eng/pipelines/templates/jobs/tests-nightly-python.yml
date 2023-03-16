@@ -130,11 +130,7 @@ jobs:
           export PATH=~/.local/bin:$PATH
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
-          python3 -m pip install 
-          
-          
-          
-          wheel
+          python3 -m pip install setuptools==67.6.0 wheel
           python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
           python3 --version
           cd $(Build.SourcesDirectory)
