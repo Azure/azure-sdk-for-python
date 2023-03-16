@@ -16,7 +16,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._asset_utils import (
+from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
     _get_latest_version_from_container,
     _resolve_label_to_asset,
@@ -184,7 +184,6 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         _archive_or_restore(
             asset_operations=self,
             version_operation=self._operation,
-            container_operation=self._container_operation,
             is_archived=True,
             name=name,
             version=version,
@@ -214,7 +213,6 @@ class _FeatureStoreEntityOperations(_ScopeDependentOperations):
         _archive_or_restore(
             asset_operations=self,
             version_operation=self._operation,
-            container_operation=self._container_operation,
             is_archived=False,
             name=name,
             version=version,
