@@ -6,12 +6,12 @@ import logging
 from typing import Dict, Optional
 
 from azure.ai.ml._restclient.runhistory.models import ServiceInstanceResult
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
 
 
-class ServiceInstance(RestTranslatableMixin):
+class ServiceInstance(RestTranslatableMixin, DictMixin):
     """ServiceInstanceResult.
 
     :param type: The type of service
