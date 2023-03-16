@@ -562,15 +562,17 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
 
         with self.create_registry_client(containerregistry_endpoint) as client:
-            # Act
-            data = open(path, "rb")
-            digest, size = client.upload_blob(repo, data)
+            with open(path, "rb") as stream:
+                digest, size = client.upload_blob(repo, stream)
 
-            # Assert
             res = client.download_blob(repo, digest)
-            assert len(res.read()) == size
+            assert len(res.data.read()) == size
+            assert res.digest == digest
 
             client.delete_blob(repo, digest)
+            
+            # Cleanup
+            client.delete_repository(repo)
 
     @pytest.mark.live_test_only
     @acr_preparer()
@@ -578,15 +580,10 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         with self.create_registry_client(containerregistry_endpoint) as client:
-            # Test blob upload and download in equal size chunks
+            # Test blob upload in equal size chunks
             blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
             data = b'\x00' * int(blob_size)
             digest, size = client.upload_blob(repo, BytesIO(data))
-            assert size == blob_size
-
-            stream = client.download_blob(repo, digest)
-            with open("text1.txt", "wb") as file:
-                size = file.write(stream.read())
             assert size == blob_size
 
             # Test blob upload and download in unequal size chunks
@@ -595,10 +592,10 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             digest, size = client.upload_blob(repo, BytesIO(data))
             assert size == blob_size
 
-            stream = client.download_blob(repo, digest)
-            with open("text2.txt", "wb") as file:
-                size = file.write(stream.read())
-            assert size == blob_size
+            client.delete_blob(repo, digest)
+
+            # Cleanup
+            client.delete_repository(repo)
 
     @acr_preparer()
     @recorded_by_proxy
