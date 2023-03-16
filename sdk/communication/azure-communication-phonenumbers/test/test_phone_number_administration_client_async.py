@@ -318,7 +318,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         phone_number_client = self._get_managed_identity_phone_number_client()
         async with phone_number_client:
             area_codes = phone_number_client.list_available_area_codes(
-                "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+                "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
                 items.append(item)
@@ -328,7 +328,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     async def test_list_toll_free_area_codes(self):
         async with self.phone_number_client:
             area_codes = self.phone_number_client.list_available_area_codes(
-                "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+                "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
                 items.append(item)
@@ -341,7 +341,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             localities = phone_number_client.list_available_localities("US")
             async for first_locality in localities:
                 area_codes = self.phone_number_client.list_available_area_codes(
-                    "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
+                    "US", PhoneNumberType.GEOGRAPHIC, assignment_type=PhoneNumberAssignmentType.PERSON, locality=first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
                 items = []
                 async for item in area_codes:
                     items.append(item)
@@ -355,7 +355,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 "US")
             async for first_locality in localities:
                 area_codes = self.phone_number_client.list_available_area_codes(
-                    "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
+                    "US", PhoneNumberType.GEOGRAPHIC, assignment_type=PhoneNumberAssignmentType.PERSON, locality=first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
                 items = []
                 async for item in area_codes:
                     items.append(item)

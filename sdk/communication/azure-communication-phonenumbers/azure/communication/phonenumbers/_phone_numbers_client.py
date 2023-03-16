@@ -55,7 +55,6 @@ class PhoneNumbersClient(object):
         self,
         endpoint,  # type: str
         credential,  # type: Union[TokenCredential, AzureKeyCredential]
-        accepted_language=None,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -70,7 +69,7 @@ class PhoneNumbersClient(object):
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
-        self._accepted_language = accepted_language
+        self._accepted_language = kwargs.pop("accepted_language", None)
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION.value)
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
@@ -386,8 +385,6 @@ class PhoneNumbersClient(object):
         self,
         country_code,  # type: str
         phone_number_type,  # type: PhoneNumberType
-        assignment_type=None,  # type: PhoneNumberAssignmentType
-        locality=None,  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> ItemPaged[PhoneNumberAreaCode]
@@ -417,8 +414,10 @@ class PhoneNumbersClient(object):
         return self._phone_number_client.phone_numbers.list_area_codes(
             country_code,
             phone_number_type=phone_number_type,
-            assignment_type=assignment_type,
-            locality=locality,
+            assignment_type=kwargs.pop(
+                "assignment_type", None),
+            locality=kwargs.pop(
+                "locality", None),
             administrative_division=kwargs.pop(
                 "administrative_division", None),
             **kwargs
