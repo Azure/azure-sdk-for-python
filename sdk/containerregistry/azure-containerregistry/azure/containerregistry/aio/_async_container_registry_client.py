@@ -3,8 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Optional, overload, Union, cast
-
+import hashlib
+from io import BytesIO
+from typing import TYPE_CHECKING, Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -17,8 +18,15 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
+from .._container_registry_client import _return_response_headers
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+from .._helpers import (
+    _is_tag,
+    _parse_next_link,
+    SUPPORTED_API_VERSIONS,
+    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+    DEFAULT_CHUNK_SIZE,
+)
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 if TYPE_CHECKING:
@@ -742,6 +750,56 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             ),
             repository=repository
         )
+
+    @distributed_trace_async
+    async def upload_blob(self, repository: str, data: IO, **kwargs) -> Tuple[str, int]:
+        """Upload an artifact blob.
+
+        :param str repository: Name of the repository.
+        :param data: The blob to upload. Note: This must be a seekable stream.
+        :type data: IO
+        :returns: The digest and size of the uploaded blob.
+        :rtype: Tuple[str, int]
+        :raises ValueError: If the parameter repository or data is None.
+        """
+        try:
+            start_upload_response_headers = await cast(Dict[str, str], self._client.container_registry_blob.start_upload(
+                repository, cls=_return_response_headers, **kwargs
+            ))
+            digest, location, blob_size = await self._upload_blob_chunk(
+                start_upload_response_headers['Location'], data, **kwargs
+            )
+            complete_upload_response_headers = await cast(
+                Dict[str, str],
+                self._client.container_registry_blob.complete_upload(
+                    digest=digest,
+                    next_link=location,
+                    cls=_return_response_headers,
+                    **kwargs
+                )
+            )
+        except ValueError:
+            if repository is None or data is None:
+                raise ValueError("The parameter repository and data cannot be None.")
+            raise
+        return complete_upload_response_headers['Docker-Content-Digest'], blob_size
+
+    async def _upload_blob_chunk(self, location: str, data: IO, **kwargs) -> Tuple[str, str, int]:
+        hasher = hashlib.sha256()
+        buffer = data.read(DEFAULT_CHUNK_SIZE)
+        blob_size = len(buffer)
+        while len(buffer) > 0:
+            response_headers = await cast(Dict[str, str], self._client.container_registry_blob.upload_chunk(
+                location,
+                BytesIO(buffer),
+                cls=_return_response_headers,
+                **kwargs
+            ))
+            location = response_headers['Location']
+            hasher.update(buffer)
+            buffer = data.read(DEFAULT_CHUNK_SIZE)
+            blob_size += len(buffer)
+        return "sha256:" + hasher.hexdigest(), location, blob_size
 
     @distributed_trace_async
     async def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs: Any) -> None:

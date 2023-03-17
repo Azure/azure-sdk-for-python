@@ -3,10 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 import os
 import pytest
 import six
+from datetime import datetime
 from io import BytesIO
 from azure.containerregistry import (
     RepositoryProperties,
