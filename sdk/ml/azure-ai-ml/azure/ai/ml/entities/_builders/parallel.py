@@ -12,8 +12,6 @@ from enum import Enum
 from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
-
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component
