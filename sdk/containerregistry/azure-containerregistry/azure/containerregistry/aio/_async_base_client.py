@@ -28,7 +28,7 @@ class ContainerRegistryBaseClient(object):
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: AAD Token for authenticating requests with Azure, or None in anonymous access
-    :type credential: ~azure.identity.DefaultTokenCredential or None
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword credential_scopes: URL for credential authentication if different from the default
     :paramtype credential_scopes: List[str]
     :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this

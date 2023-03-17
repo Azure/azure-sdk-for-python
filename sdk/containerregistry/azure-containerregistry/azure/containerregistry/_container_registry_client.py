@@ -60,7 +60,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str endpoint: An ACR endpoint.
         :param credential: The credential with which to authenticate.
-        :type credential: ~azure.core.credentials.TokenCredential
+        :type credential: ~azure.core.credentials.TokenCredential or None
         :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
          may result in unsupported behavior.
         :paramtype api_version: str
