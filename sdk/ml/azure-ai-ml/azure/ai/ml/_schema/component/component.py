@@ -68,7 +68,7 @@ class ComponentSchema(AssetSchema):
         # The ipp field is set on the component object as "_intellectual_property".
         # We need to set it as "intellectual_property" before dumping so that Marshmallow
         # can pick up the field correctly on dump and show it back to the user.
-        ipp_field = getattr(data, "_intellectual_property")
+        ipp_field = data._intellectual_property
         if ipp_field:
             setattr(data, "intellectual_property", ipp_field)
         return data
