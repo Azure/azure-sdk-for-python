@@ -7,7 +7,7 @@
 import pytest
 import functools
 from devtools_testutils import recorded_by_proxy
-from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentModelAdministrationClient
 from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
