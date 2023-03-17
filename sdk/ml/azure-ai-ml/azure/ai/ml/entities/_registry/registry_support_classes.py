@@ -248,10 +248,9 @@ class RegistryRegionDetails:
                 ]
             return SystemCreatedStorageAccount(
                 storage_account_hns=first_config.storage_account_hns_enabled,
-                storage_account_type=(
-                StorageAccountType(
-                    first_config.storage_account_type.lower())
-                ) if first_config.storage_account_type else None,
+                storage_account_type=(StorageAccountType(first_config.storage_account_type.lower()))
+                if first_config.storage_account_type
+                else None,
                 arm_resource_id=resource_id,
                 replication_count=num_configs,
                 replicated_ids=replicated_ids,

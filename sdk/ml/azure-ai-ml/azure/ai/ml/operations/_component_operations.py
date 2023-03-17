@@ -766,8 +766,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _is_registry_ip_protected(self) -> bool:
         registry = self._registry_operations.get(self._registry_name)
         return (
-            registry.intellectual_property is not None and
-            registry.intellectual_property.protection_level is not None
+            registry.intellectual_property is not None and registry.intellectual_property.protection_level is not None
         )
 
 
