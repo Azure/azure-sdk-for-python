@@ -547,7 +547,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def extract_data(pipeline_response):
             deserialized = self._client._deserialize("TagList", pipeline_response)  # pylint: disable=protected-access
-            list_of_elem = deserialized.tag_attribute_bases
+            list_of_elem = deserialized.tag_attribute_bases or []
             if cls:
                 list_of_elem = cls(list_of_elem)
             link = None
