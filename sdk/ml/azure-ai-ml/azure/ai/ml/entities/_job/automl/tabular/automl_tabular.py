@@ -549,8 +549,8 @@ class AutoMLTabular(AutoMLVertical, ABC):
         This method check instances equality and returns True if both of
             the instances have the same attributes with the same values.
 
-        :param other: An instance of AutoMLTabular
-        :type other: AutoMLTabular
+        :param other: Any object
+        :type other: object
         :return: True or False
         :rtype: bool
         """
@@ -575,8 +575,8 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def __ne__(self, other):
         """Check inequality between two AutoMLTabular objects.
 
-        :param other: An instance of AutoMLTabular
-        :type other: AutoMLTabular
+        :param other: Any object
+        :type other: object
         :return: True or False
         :rtype: bool
         """
