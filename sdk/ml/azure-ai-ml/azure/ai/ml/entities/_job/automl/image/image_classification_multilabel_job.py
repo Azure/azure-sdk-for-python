@@ -106,6 +106,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             resources=self.resources,
             task_details=image_classification_multilabel_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -134,6 +135,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            "queue_settings": properties.queue_settings,
         }
 
         image_classification_multilabel_job = cls(

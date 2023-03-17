@@ -135,7 +135,7 @@ def test_local_deployment_mir_e2e_byoc_sklearn(
     # register_env(
     #     name="sklearn-env",
     #     version="1",
-    #     image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+    #     image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04",
     #     conda_file="tests/test_configs/deployments/model-1/environment/conda.yml",
     #     client=client,
     # )
@@ -218,7 +218,7 @@ def test_local_deployment_mir_e2e_registered_artifacts(
         register_env(
             name="sklearn-env",
             version="1",
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04",
             conda_file=conda_env_to_register,
             client=client,
         )

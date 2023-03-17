@@ -10,7 +10,7 @@ from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.v2023_02_28.models import DocumentModelDetails as ModelDetails, Error
+from ._generated.v2023_02_28_preview.models import DocumentModelDetails as ModelDetails, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,

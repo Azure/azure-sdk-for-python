@@ -37,7 +37,7 @@ def load(
         credential: "TokenCredential",
         *,
         selects: Optional[List[SettingSelector]] = None,
-        trimmed_key_prefixes: Optional[List[str]] = None,
+        trim_prefixes: Optional[List[str]] = None,
         key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
         **kwargs
     ) -> "AzureAppConfigurationProvider":
@@ -49,8 +49,8 @@ def load(
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword selects: List of setting selectors to filter configuration settings
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trimmed_key_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trimmed_key_prefixes: Optional[List[str]]
+    :keyword trim_prefixes: List of prefixes to trim from configuration keys
+    :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
     """
@@ -61,7 +61,7 @@ def load(
         *,
         connection_string: str,
         selects: Optional[List[SettingSelector]] = None,
-        trimmed_key_prefixes: Optional[List[str]] = None,
+        trim_prefixes: Optional[List[str]] = None,
         key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
         **kwargs
     ) -> "AzureAppConfigurationProvider":
@@ -71,8 +71,8 @@ def load(
     :keyword str connection_string: Connection string for App Configuration resource.
     :keyword selects: List of setting selectors to filter configuration settings
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trimmed_key_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trimmed_key_prefixes: Optional[List[str]]
+    :keyword trim_prefixes: List of prefixes to trim from configuration keys
+    :paramtype trim_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
     """

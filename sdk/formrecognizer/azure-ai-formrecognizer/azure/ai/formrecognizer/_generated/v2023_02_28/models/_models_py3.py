@@ -756,7 +756,7 @@ class ComposeDocumentModelRequest(msrest.serialization.Model):
     _validation = {
         'model_id': {'required': True, 'pattern': r'^[a-zA-Z0-9][a-zA-Z0-9._~-]{1,63}$'},
         'description': {'max_length': 4096, 'min_length': 0},
-        'component_models': {'required': True, 'unique': True},
+        'component_models': {'required': True},
     }
 
     _attribute_map = {

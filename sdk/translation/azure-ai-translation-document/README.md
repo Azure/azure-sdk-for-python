@@ -7,7 +7,12 @@ Use the client library for Document Translation to:
 * Check the translation status and progress of each document in the translation operation.
 * Apply a custom translation model or glossaries to tailor translation to your specific case.
 
-[Source code][python-dt-src] | [Package (PyPI)][python-dt-pypi] | [API reference documentation][python-dt-ref-docs] | [Product documentation][python-dt-product-docs] | [Samples][python-dt-samples]
+[Source code][python-dt-src]
+| [Package (PyPI)][python-dt-pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-translation-document/)
+| [API reference documentation][python-dt-ref-docs]
+| [Product documentation][python-dt-product-docs]
+| [Samples][python-dt-samples]
 
 ## _Disclaimer_
 

@@ -20,7 +20,7 @@ print(config["my_json"]["key"])
 
 # Connecting to Azure App Configuration using connection string and trimmed key prefixes
 trimmed = {"test."}
-config = load(connection_string=connection_string, trimmed_key_prefixes=trimmed)
+config = load(connection_string=connection_string, trim_prefixes=trimmed)
 
 print(config["message"])
 
