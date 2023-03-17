@@ -2,21 +2,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Dict, MutableMapping, Optional
 from urllib import parse
-
-if TYPE_CHECKING:
-    from typing import Dict, MutableMapping, Optional
 
 
 class HttpChallenge(object):
     def __init__(
-        self, request_uri: str, challenge: str, response_headers: "Optional[MutableMapping[str, str]]" = None
+        self, request_uri: str, challenge: str, response_headers: Optional[MutableMapping[str, str]] = None
     ) -> None:
         """Parses an HTTP WWW-Authentication Bearer challenge from a server."""
         self.source_authority = self._validate_request_uri(request_uri)
         self.source_uri = request_uri
-        self._parameters = {}  # type: Dict[str, str]
+        self._parameters: Dict[str, str] = {}
 
         # get the scheme of the challenge and remove from the challenge string
         trimmed_challenge = self._validate_challenge(challenge)
@@ -69,10 +66,10 @@ class HttpChallenge(object):
 
         return self.scheme.lower() == "pop"
 
-    def get_value(self, key: str) -> "Optional[str]":
+    def get_value(self, key: str) -> Optional[str]:
         return self._parameters.get(key)
 
-    def get_authorization_server(self) -> "Optional[str]":
+    def get_authorization_server(self) -> Optional[str]:
         """Returns the URI for the authorization server if present, otherwise empty string."""
         value = ""
         for key in ["authorization_uri", "authorization"]:

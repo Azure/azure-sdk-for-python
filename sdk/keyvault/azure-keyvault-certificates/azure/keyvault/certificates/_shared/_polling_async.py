@@ -5,14 +5,11 @@
 
 import asyncio
 import logging
-from typing import TYPE_CHECKING
+from typing import Any, Callable
 
 from azure.core.polling import AsyncPollingMethod
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Callable, Union
 
 logger = logging.getLogger(__name__)
 
@@ -29,13 +26,13 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
     resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
     """
 
-    def __init__(self, command, final_resource, finished, interval=2):
+    def __init__(self, command: Callable, final_resource: Any, finished: bool, interval: int = 2) -> None:
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval
         self._finished = finished
 
-    def initialize(self, client, initial_response, deserialization_callback):
+    def initialize(self, client: Any, initial_response: Any, deserialization_callback: Callable) -> None:
         pass
 
     async def _update_status(self) -> None:
@@ -65,7 +62,7 @@ class AsyncDeleteRecoverPollingMethod(AsyncPollingMethod):
     def finished(self) -> bool:
         return self._finished
 
-    def resource(self) -> "Any":
+    def resource(self) -> Any:
         return self._resource
 
     def status(self) -> str:

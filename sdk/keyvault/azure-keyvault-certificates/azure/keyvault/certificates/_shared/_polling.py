@@ -6,7 +6,7 @@ import logging
 import time
 import threading
 import uuid
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Optional
 
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
@@ -14,9 +14,6 @@ from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
 
-if TYPE_CHECKING:
-    # pylint: disable=ungrouped-imports
-    from typing import Any, Callable, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +28,7 @@ class KeyVaultOperationPoller(LROPoller):
         self._polling_method = polling_method
 
     # pylint: disable=arguments-differ
-    def result(self) -> "Any":  # type: ignore
+    def result(self) -> Any:  # type: ignore
         """Returns a representation of the final resource without waiting for the operation to complete.
 
         :returns: The deserialized resource of the long running operation
@@ -41,7 +38,7 @@ class KeyVaultOperationPoller(LROPoller):
         return self._polling_method.resource()
 
     @distributed_trace
-    def wait(self, timeout: "Optional[float]" = None) -> None:
+    def wait(self, timeout: Optional[float] = None) -> None:
         """Wait on the long running operation for a number of seconds.
 
         You can check if this call has ended with timeout with the "done()" method.
@@ -80,7 +77,7 @@ class DeleteRecoverPollingMethod(PollingMethod):
     Similarly, while recovering a deleted resource, Key Vault will respond 404 to GET requests for the non-deleted
     resource; when it responds 2xx, the resource exists in the non-deleted collection, i.e. its recovery is complete.
     """
-    def __init__(self, command: "Callable", final_resource: "Any", finished: bool, interval: int = 2) -> None:
+    def __init__(self, command: Callable, final_resource: Any, finished: bool, interval: int = 2) -> None:
         self._command = command
         self._resource = final_resource
         self._polling_interval = interval
@@ -100,7 +97,7 @@ class DeleteRecoverPollingMethod(PollingMethod):
             else:
                 raise
 
-    def initialize(self, client: "Any", initial_response: "Any", deserialization_callback: "Callable") -> None:
+    def initialize(self, client: Any, initial_response: Any, deserialization_callback: Callable) -> None:
         pass
 
     def run(self) -> None:
@@ -116,7 +113,7 @@ class DeleteRecoverPollingMethod(PollingMethod):
     def finished(self) -> bool:
         return self._finished
 
-    def resource(self) -> "Any":
+    def resource(self) -> Any:
         return self._resource
 
     def status(self) -> str:

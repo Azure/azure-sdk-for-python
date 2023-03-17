@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any, Awaitable
 
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from . import AsyncChallengeAuthPolicy
@@ -12,16 +14,10 @@ from .client_base import ApiVersion, DEFAULT_VERSION, _format_api_version, _SERI
 from .._sdk_moniker import SDK_MONIKER
 from .._generated.aio import KeyVaultClient as _KeyVaultClient
 
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Any, Awaitable
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.rest import AsyncHttpResponse, HttpRequest
-
 
 class AsyncKeyVaultClientBase(object):
     # pylint:disable=protected-access
-    def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs) -> None:
+    def __init__(self, vault_url: str, credential: AsyncTokenCredential, **kwargs) -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the AsyncTokenCredential protocol, "
@@ -73,7 +69,7 @@ class AsyncKeyVaultClientBase(object):
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args: "Any") -> None:
+    async def __aexit__(self, *args: Any) -> None:
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
@@ -84,7 +80,7 @@ class AsyncKeyVaultClientBase(object):
         await self._client.close()
 
     @distributed_trace_async
-    def send_request(self, request: "HttpRequest", *, stream: bool = False, **kwargs) -> "Awaitable[AsyncHttpResponse]":
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> Awaitable[AsyncHttpResponse]:
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as

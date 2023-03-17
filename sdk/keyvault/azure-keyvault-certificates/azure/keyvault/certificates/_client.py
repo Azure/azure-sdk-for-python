@@ -5,7 +5,9 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 from functools import partial
+from typing import Any, List, Optional, Union
 
+from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
@@ -23,16 +25,6 @@ from ._models import (
     CertificateOperation,
 )
 from ._polling import CreateCertificatePoller
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Any, List, Optional, Union
-    from azure.core.paging import ItemPaged
 
 
 NO_SAN_OR_SUBJECT = "You need to set either subject or one of the subject alternative names parameters in the policy"
@@ -67,7 +59,7 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def begin_create_certificate(
         self, certificate_name: str, policy: CertificatePolicy, **kwargs
-    ) -> "LROPoller[Union[KeyVaultCertificate, CertificateOperation]]":
+    ) -> LROPoller[Union[KeyVaultCertificate, CertificateOperation]]:
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This operation requires the
@@ -453,7 +445,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def update_certificate_properties(
-        self, certificate_name: str, version: "Optional[str]" = None, **kwargs
+        self, certificate_name: str, version: Optional[str] = None, **kwargs
     ) -> KeyVaultCertificate:
         """Change a certificate's properties. Requires certificates/update permission.
 
@@ -562,7 +554,7 @@ class CertificateClient(KeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def list_deleted_certificates(self, **kwargs) -> "ItemPaged[DeletedCertificate]":
+    def list_deleted_certificates(self, **kwargs) -> ItemPaged[DeletedCertificate]:
         """Lists the currently-recoverable deleted certificates. Possible only if vault is soft-delete enabled.
 
         Requires certificates/get/list permission. Retrieves the certificates in the current vault which are in a
@@ -602,7 +594,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_certificates(self, **kwargs) -> "ItemPaged[CertificateProperties]":
+    def list_properties_of_certificates(self, **kwargs) -> ItemPaged[CertificateProperties]:
         """List identifiers and properties of all certificates in the vault.
 
         Requires certificates/list permission.
@@ -642,7 +634,7 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def list_properties_of_certificate_versions(
         self, certificate_name: str, **kwargs
-    ) -> "ItemPaged[CertificateProperties]":
+    ) -> ItemPaged[CertificateProperties]:
         """List the identifiers and properties of a certificate's versions.
 
         Requires certificates/list permission.
@@ -673,7 +665,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def set_contacts(self, contacts: "List[CertificateContact]", **kwargs) -> "List[CertificateContact]":
+    def set_contacts(self, contacts: List[CertificateContact], **kwargs) -> List[CertificateContact]:
         """Sets the certificate contacts for the key vault. Requires certificates/managecontacts permission.
 
         :param contacts: The contact list for the vault certificates.
@@ -703,7 +695,7 @@ class CertificateClient(KeyVaultClientBase):
         ]
 
     @distributed_trace
-    def get_contacts(self, **kwargs) -> "List[CertificateContact]":
+    def get_contacts(self, **kwargs) -> List[CertificateContact]:
         """Gets the certificate contacts for the key vault. Requires the certificates/managecontacts permission.
 
         :return: The certificate contacts for the key vault.
@@ -723,7 +715,7 @@ class CertificateClient(KeyVaultClientBase):
         return [CertificateContact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
-    def delete_contacts(self, **kwargs) -> "List[CertificateContact]":
+    def delete_contacts(self, **kwargs) -> List[CertificateContact]:
         """Deletes the certificate contacts for the key vault. Requires the certificates/managecontacts permission.
 
         :return: The deleted contacts for the key vault.
@@ -803,7 +795,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def merge_certificate(
-        self, certificate_name: str, x509_certificates: "List[bytes]", **kwargs
+        self, certificate_name: str, x509_certificates: List[bytes], **kwargs
     ) -> KeyVaultCertificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
@@ -913,7 +905,7 @@ class CertificateClient(KeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = [
+            admin_details: Optional[List[Any]] = [
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -921,7 +913,7 @@ class CertificateClient(KeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]  # type: Optional[List[Any]]
+            ]
         else:
             admin_details = None
         if organization_id or admin_details:
@@ -976,7 +968,7 @@ class CertificateClient(KeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = [
+            admin_details: Optional[List[Any]] = [
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -984,7 +976,7 @@ class CertificateClient(KeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]  # type: Optional[List[Any]]
+            ]
         else:
             admin_details = None
         if organization_id or admin_details:
@@ -1035,7 +1027,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def list_properties_of_issuers(self, **kwargs) -> "ItemPaged[IssuerProperties]":
+    def list_properties_of_issuers(self, **kwargs) -> ItemPaged[IssuerProperties]:
         """Lists properties of the certificate issuers for the key vault.
 
         Requires the certificates/manageissuers/getissuers permission.

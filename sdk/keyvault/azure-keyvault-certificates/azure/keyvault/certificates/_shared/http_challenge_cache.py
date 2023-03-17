@@ -3,24 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import threading
+from typing import Dict, Optional
 from urllib import parse
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import
-    from typing import Dict, Optional
-    from .http_challenge import HttpChallenge
+from .http_challenge import HttpChallenge
 
 
-_cache = {}  # type: Dict[str, HttpChallenge]
+_cache: Dict[str, HttpChallenge] = {}
 _lock = threading.Lock()
 
 
-def get_challenge_for_url(url: str) -> "Optional[HttpChallenge]":
+def get_challenge_for_url(url: str) -> Optional[HttpChallenge]:
     """Gets the challenge for the cached URL.
 
     :param str url: the URL the challenge is cached for.
@@ -63,7 +56,7 @@ def remove_challenge_for_url(url: str) -> None:
         del _cache[parsed.netloc]
 
 
-def set_challenge_for_url(url: str, challenge: "HttpChallenge") -> None:
+def set_challenge_for_url(url: str, challenge: HttpChallenge) -> None:
     """Caches the challenge for the specified URL.
 
     :param str url: the URL for which to cache the challenge

@@ -4,23 +4,19 @@
 # ------------------------------------
 from collections import defaultdict
 import functools
-from typing import TYPE_CHECKING
+from typing import Optional, Type
 
 from azure.core.exceptions import DecodeError, HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Optional, Type
-    from azure.core.rest import HttpResponse
+from azure.core.rest import HttpResponse
 
 
-def _get_exception_for_key_vault_error(cls: "Type[HttpResponseError]", response: "HttpResponse") -> HttpResponseError:
+def _get_exception_for_key_vault_error(cls: Type[HttpResponseError], response: HttpResponse) -> HttpResponseError:
     """Construct cls (HttpResponseError or subclass thereof) with Key Vault's error message."""
 
     try:
         body = ContentDecodePolicy.deserialize_from_http_generics(response)
-        message = f"({body['error']['code']}) {body['error']['message']}"  # type: Optional[str]
+        message: Optional[str] = f"({body['error']['code']}) {body['error']['message']}"
     except (DecodeError, KeyError):
         # Key Vault error response bodies should have the expected shape and be de-serializable.
         # If we somehow land here, we'll take HttpResponse's default message.

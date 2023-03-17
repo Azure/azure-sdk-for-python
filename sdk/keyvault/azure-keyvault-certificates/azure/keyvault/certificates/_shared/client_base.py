@@ -3,24 +3,20 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any
 from enum import Enum
 from urllib.parse import urlparse
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.rest import HttpRequest, HttpResponse
 
 from . import ChallengeAuthPolicy
 from .._generated import KeyVaultClient as _KeyVaultClient
 from .._generated._serialization import Serializer
 from .._sdk_moniker import SDK_MONIKER
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
-    from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
 
 
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -41,7 +37,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def _format_api_version(request: "HttpRequest", api_version: str) -> "HttpRequest":
+def _format_api_version(request: HttpRequest, api_version: str) -> HttpRequest:
     """Returns a request copy that includes an api-version query parameter if one wasn't originally present."""
     request_copy = deepcopy(request)
     params = {"api-version": api_version}  # By default, we want to use the client's API version
@@ -55,7 +51,7 @@ def _format_api_version(request: "HttpRequest", api_version: str) -> "HttpReques
     # Reconstruct the query parameters onto the URL
     query_params = []
     for k, v in params.items():
-        query_params.append("{}={}".format(k, v))
+        query_params.append(f"{k}={v}")
     query = "?" + "&".join(query_params)
     request_copy.url = request_copy.url + query
     return request_copy
@@ -63,7 +59,7 @@ def _format_api_version(request: "HttpRequest", api_version: str) -> "HttpReques
 
 class KeyVaultClientBase(object):
     # pylint:disable=protected-access
-    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs) -> None:
+    def __init__(self, vault_url: str, credential: TokenCredential, **kwargs) -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
@@ -115,7 +111,7 @@ class KeyVaultClientBase(object):
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args: "Any") -> None:
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def close(self) -> None:
@@ -126,7 +122,7 @@ class KeyVaultClientBase(object):
         self._client.close()
 
     @distributed_trace
-    def send_request(self, request: "HttpRequest", *, stream: bool = False, **kwargs) -> "HttpResponse":
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as

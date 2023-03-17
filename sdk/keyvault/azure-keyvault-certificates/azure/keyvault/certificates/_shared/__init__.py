@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Optional
 from urllib import parse
 
 from .challenge_auth_policy import ChallengeAuthPolicy
@@ -11,10 +11,6 @@ from .http_challenge import HttpChallenge
 from . import http_challenge_cache
 
 HttpChallengeCache = http_challenge_cache  # to avoid aliasing pylint error (C4745)
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import
-    from typing import Optional
 
 
 __all__ = [
@@ -30,7 +26,8 @@ class KeyVaultResourceId():
     :param str source_id: The complete identifier received from Key Vault
     :param str vault_url: The vault URL
     :param str name: The name extracted from the ID
-    :param str version: The version extracted from the ID
+    :param version: The version extracted from the ID
+    :type version: str or None
     """
 
     def __init__(
@@ -38,7 +35,7 @@ class KeyVaultResourceId():
         source_id: str,
         vault_url: str,
         name: str,
-        version: "Optional[str]" = None,
+        version: Optional[str] = None,
     ) -> None:
         self.source_id = source_id
         self.vault_url = vault_url
