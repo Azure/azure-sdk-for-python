@@ -27,7 +27,7 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
         *,
         name: Optional[str] = None,
         value: Optional[str] = None,
-        type: Optional[str] = None, # pylint: disable=redefined-builtin
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
     ):
         self.type = type
         self.name = name
@@ -141,6 +141,7 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Source cannot be successfully validated.
         Details will be provided in the error message.
     """
+
     _EMPTY = Parameter.empty
 
     def __init__(

@@ -11,7 +11,6 @@ import warnings
 import datetime
 import uuid
 from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TYPE_CHECKING
-from azure.core.tracing import AbstractSpan
 
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from .._pyamqp.message import Message as pyamqp_Message
@@ -60,6 +59,7 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     from .._pyamqp.performatives import TransferFrame
+    from azure.core.tracing import AbstractSpan
     from ..aio._servicebus_receiver_async import (
         ServiceBusReceiver as AsyncServiceBusReceiver,
     )
@@ -675,18 +675,14 @@ class ServiceBusMessageBatch(object):
     def __len__(self) -> int:
         return self._count
 
-    def _from_list(
-            self,
-            messages: Iterable[ServiceBusMessage],
-            parent_span: AbstractSpan = None
-    ) -> None:
+    def _from_list(self, messages: Iterable[ServiceBusMessage], parent_span: Optional["AbstractSpan"] = None) -> None:
         for message in messages:
             self._add(message, parent_span)
 
     def _add(
-            self,
-            add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage],
-            parent_span: AbstractSpan = None
+        self,
+        add_message: Union[ServiceBusMessage, Mapping[str, Any], AmqpAnnotatedMessage],
+        parent_span: Optional["AbstractSpan"] = None
     ) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
         outgoing_sb_message = transform_outbound_messages(add_message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message)

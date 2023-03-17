@@ -438,7 +438,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         retried_times: int,
         last_exception: Exception,
         abs_timeout_time: Optional[float] = None,
-        entity_name: str = None
+        entity_name: Optional[str] = None
     ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(

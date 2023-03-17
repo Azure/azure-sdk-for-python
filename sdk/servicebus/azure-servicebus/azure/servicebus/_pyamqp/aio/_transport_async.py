@@ -48,7 +48,14 @@ import certifi
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
-from ..constants import DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS, TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
+from ..constants import (
+    DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
+    TLS_HEADER_FRAME,
+    WEBSOCKET_PORT,
+    AMQP_WS_SUBPROTOCOL,
+    TIMEOUT_INTERVAL,
+    READ_TIMEOUT_INTERVAL,
+)
 from .._transport import (
     AMQP_FRAME,
     get_errno,
@@ -58,7 +65,6 @@ from .._transport import (
     _UNAVAIL,
     set_cloexec,
     AMQP_PORT,
-    TIMEOUT_INTERVAL,
 )
 from ..error import AuthenticationException, ErrorCondition
 
@@ -341,7 +347,7 @@ class AsyncTransport(
             # For uamqp exception parity. Remove later when resolving issue #27128.
             exc.filename = self.sslopts
             raise exc
-        self.sock.settimeout(1)  # set socket back to non-blocking mode
+        self.sock.settimeout(READ_TIMEOUT_INTERVAL)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
         tcp_opts = {}
@@ -501,53 +507,53 @@ class WebSocketTransportAsync(
         try:
             from aiohttp import ClientSession, ClientConnectorError
             from urllib.parse import urlsplit
-
-            if username or password:
-                from aiohttp import BasicAuth
-
-                http_proxy_auth = BasicAuth(login=username, password=password)
-
-            self.session = ClientSession()
-            if self._custom_endpoint:
-                url = f"wss://{self._custom_endpoint}"
-            else:
-                url = f"wss://{self.host}"
-                parsed_url = urlsplit(url)
-                url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
-
-            try:
-                # Enabling heartbeat that sends a ping message every n seconds and waits for pong response.
-                # if pong response is not received then close connection. This raises an error when trying
-                # to communicate with the websocket which is no longer active.
-                # We are waiting a bug fix in aiohttp for these 2 bugs where aiohttp ws might hang on network disconnect
-                # and the heartbeat mechanism helps mitigate these two.
-                # https://github.com/aio-libs/aiohttp/pull/5860
-                # https://github.com/aio-libs/aiohttp/issues/2309
-
-                self.ws = await self.session.ws_connect(
-                    url=url,
-                    timeout=self._connect_timeout,
-                    protocols=[AMQP_WS_SUBPROTOCOL],
-                    autoclose=False,
-                    proxy=http_proxy_host,
-                    proxy_auth=http_proxy_auth,
-                    ssl=self.sslopts,
-                    heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
-                )
-            except ClientConnectorError as exc:
-                _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
-                if self._custom_endpoint:
-                    raise AuthenticationException(
-                        ErrorCondition.ClientError,
-                        description="Failed to authenticate the connection due to exception: " + str(exc),
-                        error=exc,
-                    )
-                raise ConnectionError("Failed to establish websocket connection: " + str(exc))
-            self.connected = True
         except ImportError:
-            raise ValueError(
-                "Please install aiohttp library to use websocket transport."
+            raise ImportError(
+                "Please install aiohttp library to use async websocket transport."
             )
+
+        if username or password:
+            from aiohttp import BasicAuth
+
+            http_proxy_auth = BasicAuth(login=username, password=password)
+
+        self.session = ClientSession()
+        if self._custom_endpoint:
+            url = f"wss://{self._custom_endpoint}"
+        else:
+            url = f"wss://{self.host}"
+            parsed_url = urlsplit(url)
+            url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
+
+        try:
+            # Enabling heartbeat that sends a ping message every n seconds and waits for pong response.
+            # if pong response is not received then close connection. This raises an error when trying
+            # to communicate with the websocket which is no longer active.
+            # We are waiting a bug fix in aiohttp for these 2 bugs where aiohttp ws might hang on network disconnect
+            # and the heartbeat mechanism helps mitigate these two.
+            # https://github.com/aio-libs/aiohttp/pull/5860
+            # https://github.com/aio-libs/aiohttp/issues/2309
+
+            self.ws = await self.session.ws_connect(
+                url=url,
+                timeout=self._connect_timeout,
+                protocols=[AMQP_WS_SUBPROTOCOL],
+                autoclose=False,
+                proxy=http_proxy_host,
+                proxy_auth=http_proxy_auth,
+                ssl=self.sslopts,
+                heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
+            )
+        except ClientConnectorError as exc:
+            _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
+            if self._custom_endpoint:
+                raise AuthenticationException(
+                    ErrorCondition.ClientError,
+                    description="Failed to authenticate the connection due to exception: " + str(exc),
+                    error=exc,
+                )
+            raise ConnectionError("Failed to establish websocket connection: " + str(exc))
+        self.connected = True
 
     async def _read(self, toread, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""

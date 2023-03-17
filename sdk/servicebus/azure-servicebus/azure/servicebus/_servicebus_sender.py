@@ -255,7 +255,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         message: Union[ServiceBusMessage, ServiceBusMessageBatch],
         timeout: Optional[float] = None,
-        last_exception: Exception = None
+        last_exception: Optional[Exception] = None  # pylint: disable=unused-argument
     ) -> None:
         self._amqp_transport.send_messages(self, message, _LOGGER, timeout=timeout, last_exception=last_exception)
 

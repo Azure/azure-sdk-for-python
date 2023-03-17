@@ -1,5 +1,19 @@
 # Release History
 
+## 1.4.0 (2023-02-15)
+
+### Features Added
+
+  - Added operation StorageTargetsOperations.begin_restore_defaults
+  - Model BlobNfsTarget has a new parameter verification_timer
+  - Model BlobNfsTarget has a new parameter write_back_timer
+  - Model Nfs3Target has a new parameter verification_timer
+  - Model Nfs3Target has a new parameter write_back_timer
+
+### Breaking Changes
+
+  - Renamed operation CachesOperations.update to CachesOperations.begin_update
+
 ## 1.4.0b1 (2022-12-12)
 
 ### Other Changes

@@ -90,8 +90,7 @@ class InputOutputBase(ABC):
 
     @abstractmethod
     def _build_data(self, data, key=None):  # pylint: disable=unused-argument, no-self-use
-        """Validate if data matches type and translate it to Input/Output
-        acceptable type."""
+        """Validate if data matches type and translate it to Input/Output acceptable type."""
 
     @abstractmethod
     def _build_default_data(self):
@@ -201,7 +200,6 @@ class InputOutputBase(ABC):
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
-
         """
         # pipeline level inputs won't pass mode to bound node level inputs
         if isinstance(original_data, PipelineInput):
@@ -294,8 +292,7 @@ class NodeInput(InputOutputBase):
         return data
 
     def _to_job_input(self):
-        """convert the input to Input, this logic will change if backend
-        contract changes."""
+        """convert the input to Input, this logic will change if backend contract changes."""
         if self._data is None:
             # None data means this input is not configured.
             result = None
@@ -384,8 +381,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._port_name = port_name
         self._owner = owner
-        self._name = data.name if isinstance(data, Output) else None
-        self._version = data.version if isinstance(data, Output) else None
+        self._name = self._data.name if isinstance(self._data, Output) else None
+        self._version = self._data.version if isinstance(self._data, Output) else None
 
         self._assert_name_and_version()
 
@@ -397,17 +394,17 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
     @property
     def port_name(self) -> str:
-        """The output port name, eg: node.outputs.port_name"""
+        """The output port name, eg: node.outputs.port_name."""
         return self._port_name
 
     @property
     def name(self):
-        """Used in registering output data"""
+        """Used in registering output data."""
         return self._name
 
     @name.setter
     def name(self, name):
-        """Receive input name, assign the name to NodeOutput/PipelineOutput and build data according to the name"""
+        """Receive input name, assign the name to NodeOutput/PipelineOutput and build data according to the name."""
         self._build_default_data()
         self._name = name
         if isinstance(self._data, (Input, Output)):
@@ -418,19 +415,18 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             raise UserErrorException(
                 f"We support self._data of Input, Output, InputOutputBase, NodeOutput and NodeInput,"
                 f"but got type: {type(self._data)}."
-                )
+            )
 
     @property
     def version(self) -> str:
-        """Used in registering output data"""
+        """Used in registering output data."""
         return self._version
 
     @version.setter
     def version(self, version):
-        """Receive input version,
-        assign the version to NodeOutput/PipelineOutput and build data according to the version"""
+        """Receive input version, assign the version to NodeOutput/PipelineOutput and build data according to the
+        version."""
         self._build_default_data()
-        self._data.type = self.type
         self._version = version
         if isinstance(self._data, (Input, Output)):
             self._data.version = version
@@ -440,7 +436,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             raise UserErrorException(
                 f"We support self._data of Input, Output, InputOutputBase, NodeOutput and NodeInput,"
                 f"but got type: {type(self._data)}."
-                )
+            )
 
     @property
     def path(self) -> Optional[str]:
@@ -470,7 +466,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             raise UserErrorException(
                 f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores, "
                 f"with a limit of 255 characters."
-                )
+            )
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")
 
@@ -496,8 +492,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         return data
 
     def _to_job_output(self):
-        """Convert the output to Output, this logic will change if backend
-        contract changes."""
+        """Convert the output to Output, this logic will change if backend contract changes."""
         if self._data is None:
             # None data means this output is not configured.
             result = None
@@ -511,9 +506,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
                 path=self._data._data_binding(),
                 mode=self.mode,
                 is_control=is_control,
-                name=self.name,
-                version=self.version,
-                description=self.description
+                name=self._data.name,
+                version=self._data.version,
+                description=self.description,
             )
         else:
             msg = "Got unexpected type for output: {}."
@@ -548,8 +543,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
 
     def __init__(self, name: str, meta: Input, group_names: Optional[List[str]] = None, **kwargs):
-        """
-        Initialize a PipelineInput.
+        """Initialize a PipelineInput.
 
         :param name: The name of the input.
         :type name: str
@@ -652,8 +646,7 @@ class PipelineOutput(NodeOutput):
         return f"${{{{parent.outputs.{self._port_name}}}}}"
 
     def _to_output(self) -> Output:
-        """Convert pipeline output to component output for pipeline
-        component."""
+        """Convert pipeline output to component output for pipeline component."""
         if self._data is None:
             # None data means this input is not configured.
             return None

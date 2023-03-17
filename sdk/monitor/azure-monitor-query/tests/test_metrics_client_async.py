@@ -14,7 +14,9 @@ from azure.monitor.query.aio import MetricsQueryClient
 from devtools_testutils import AzureRecordedTestCase
 
 
-METRIC_NAME = "Event"
+METRIC_NAME = "requests/count"
+METRIC_RESOURCE_PROVIDER = "Microsoft.Insights/components"
+
 
 class TestMetricsClientAsync(AzureRecordedTestCase):
 
@@ -46,6 +48,10 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
                 )
             assert response
             assert response.granularity == timedelta(minutes=5)
+            metric = response.metrics[METRIC_NAME]
+            assert metric.timeseries
+            for t in metric.timeseries:
+                assert t.metadata_values is not None
 
     @pytest.mark.asyncio
     async def test_metrics_filter(self, recorded_test, monitor_info):
@@ -57,7 +63,7 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
                 metric_names=[METRIC_NAME],
                 timespan=timedelta(days=1),
                 granularity=timedelta(minutes=5),
-                filter="Source eq '*'",
+                filter="request/success eq '0'",
                 aggregations=[MetricAggregationType.COUNT]
                 )
             assert response
@@ -124,7 +130,7 @@ class TestMetricsClientAsync(AzureRecordedTestCase):
 
         async with client:
             response = client.list_metric_definitions(
-                monitor_info['metrics_resource_id'], namespace='Microsoft.OperationalInsights/workspaces')
+                monitor_info['metrics_resource_id'], namespace=METRIC_RESOURCE_PROVIDER)
 
             assert response is not None
             async for item in response:

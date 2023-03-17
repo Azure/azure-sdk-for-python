@@ -31,7 +31,7 @@ USAGE:
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
-from sample_utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class HelloWorld(object):
@@ -40,9 +40,7 @@ class HelloWorld(object):
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(
-            self.authority, exclude_environment_credential=True
-        )
+        self.credential = get_credential(self.authority)
 
     def basic_sample(self):
         load_registry()

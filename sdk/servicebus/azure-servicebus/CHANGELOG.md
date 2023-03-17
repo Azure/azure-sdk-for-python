@@ -13,10 +13,35 @@
 
 ### Other Changes
 
+<<<<<<< HEAD
 - The `message` attribute on `ServiceBus`/`ServiceBusMessageBatch`/`ServiceBusReceivedMessage`, which previously exposed the `uamqp.Message`/`uamqp.BatchMessage`, has been deprecated.
   - `LegacyMessage`/`LegacyBatchMessage` objects returned by the `message` attribute on `ServiceBus`/`ServiceBusMessageBatch` have been introduced to help facilitate the transition.
 - Removed uAMQP from required dependencies.
 - Adding `uamqp >= 1.6.3` as an optional dependency for use with the `uamqp_transport` keyword.
+=======
+## 7.9.0b1 (2023-03-09)
+
+### Features Added
+
+- Iterator receiving from Service Bus entities has been added back in.
+
+## 7.8.3 (2023-03-09)
+
+### Bugs Fixed
+
+- Fixed a bug where asynchronous method to add distributed tracing attributes was not being awaited (Issue #28738).
+
+## 7.8.2 (2023-01-10)
+
+### Bugs Fixed
+
+- Fixed a bug that would cause an exception when `None` was sent to `set_state` instead of clearing session state (Issue #27582).
+
+### Other Changes
+
+- Updated uAMQP dependency to 1.6.3.
+  - Added support for Python 3.11.
+>>>>>>> feature/servicebus/pyproto
 
 ## 7.9.0a1 (2022-10-11)
 

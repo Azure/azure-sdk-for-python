@@ -37,8 +37,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class PipelineComponent(Component):
-    """Pipeline component, currently used to store components in a
-    azure.ai.ml.dsl.pipeline.
+    """Pipeline component, currently used to store components in a azure.ai.ml.dsl.pipeline.
 
     :param name: Name of the component.
     :type name: str
@@ -153,8 +152,7 @@ class PipelineComponent(Component):
         return validation_result
 
     def _validate_compute_is_set(self, *, parent_node_name=None):
-        """
-        Validate compute in pipeline component.
+        """Validate compute in pipeline component.
 
         This function will only be called from pipeline_job._validate_compute_is_set
         when both of the pipeline_job.compute and pipeline_job.settings.default_compute is None.
@@ -225,12 +223,10 @@ class PipelineComponent(Component):
         return binding_dict, optional_binding_in_expression_dict
 
     def _validate_binding_inputs(self, node: BaseNode) -> MutableValidationResult:
-        """Validate pipeline binding inputs and return all used pipeline input
-        names.
+        """Validate pipeline binding inputs and return all used pipeline input names.
 
-        Mark input as optional if all binding is optional and optional
-        not set. Raise error if pipeline input is optional but link to
-        required inputs.
+        Mark input as optional if all binding is optional and optional not set. Raise error if pipeline input is
+        optional but link to required inputs.
         """
         component_definition_inputs = {}
         # Add flattened group input into definition inputs.
@@ -287,8 +283,7 @@ class PipelineComponent(Component):
 
     @property
     def jobs(self) -> Dict[str, BaseNode]:
-        """Return a dictionary from component variable name to component
-        object."""
+        """Return a dictionary from component variable name to component object."""
         return self._jobs
 
     @classmethod
@@ -307,16 +302,19 @@ class PipelineComponent(Component):
         # command component), so we just use rest object to generate hash for pipeline component,
         # which doesn't have reuse issue.
         component_interface_dict = self._to_rest_object().properties.component_spec
-        hash_value = hash_dict(component_interface_dict, keys_to_omit=[
-            # omit name since anonymous component will have same name
-            "name",
-            # omit _source since it doesn't impact component's uniqueness
-            "_source",
-            # omit id since it will be set after component is registered
-            "id",
-            # omit version since it will be set to this hash later
-            "version"
-        ])
+        hash_value = hash_dict(
+            component_interface_dict,
+            keys_to_omit=[
+                # omit name since anonymous component will have same name
+                "name",
+                # omit _source since it doesn't impact component's uniqueness
+                "_source",
+                # omit id since it will be set after component is registered
+                "id",
+                # omit version since it will be set to this hash later
+                "version",
+            ],
+        )
         return hash_value
 
     def _get_flattened_inputs(self):
@@ -354,7 +352,7 @@ class PipelineComponent(Component):
             # TODO: Remove this ad-hoc fix after unified arm id format in object
             component_id = node.get("componentId", "")
             if isinstance(component_id, str) and re.match(ASSET_ARM_ID_REGEX_FORMAT, component_id):
-                node["componentId"] = component_id[len(ARM_ID_PREFIX):]
+                node["componentId"] = component_id[len(ARM_ID_PREFIX) :]
             if not LoopNode._is_loop_node_dict(node):
                 # skip resolve LoopNode first since it may reference other nodes
                 # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode
@@ -376,8 +374,7 @@ class PipelineComponent(Component):
 
     @classmethod
     def _check_ignored_keys(cls, obj):
-        """Return ignored keys in obj as a pipeline component when its value be
-        set."""
+        """Return ignored keys in obj as a pipeline component when its value be set."""
         examine_mapping = {
             "compute": lambda val: val is not None,
             "settings": lambda val: val is not None and any(v is not None for v in val._to_dict().values()),

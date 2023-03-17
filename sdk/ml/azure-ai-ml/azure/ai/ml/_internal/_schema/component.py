@@ -119,6 +119,7 @@ class InternalComponentSchema(ComponentSchema):
     def add_param_overrides(self, data, **kwargs):
         source_path = self.context.pop(SOURCE_PATH_CONTEXT_KEY, None)
         if isinstance(data, dict) and source_path and os.path.isfile(source_path):
+
             def should_node_overwritten(_root, _parts):
                 parts = _parts.copy()
                 parts.pop()
@@ -135,9 +136,7 @@ class InternalComponentSchema(ComponentSchema):
                     ("inputs.*.enum", should_node_overwritten),
                 ]:
                     for dot_key in get_valid_dot_keys_with_wildcard(
-                        origin_data,
-                        dot_key_wildcard,
-                        validate_func=condition_func
+                        origin_data, dot_key_wildcard, validate_func=condition_func
                     ):
                         pydash.set_(data, dot_key, pydash.get(origin_data, dot_key))
         return super().add_param_overrides(data, **kwargs)

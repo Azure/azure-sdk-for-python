@@ -36,16 +36,17 @@ In order to interact with the Azure Key Vault service, you will need an instance
 See [azure-identity][azure_identity] documentation for more information about other methods of authentication and their corresponding credential types.
 
 #### Create a client
-After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a certificate client (replacing the value of `vault_url` with your vault's URL):
+After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a certificate client (replacing the value of `VAULT_URL` with your vault's URL):
+
+<!-- SNIPPET:hello_world.create_a_certificate_client -->
 
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient
-
+VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
-
-certificate_client = CertificateClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 ```
+
+<!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.certificates.aio`'s `CertificateClient` instead.
 
@@ -189,7 +190,7 @@ Async clients and credentials should be closed when they're no longer needed. Th
 objects are async context managers and define async `close` methods. For
 example:
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
 
@@ -278,7 +279,7 @@ level.
 
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument:
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import CertificateClient
 import sys

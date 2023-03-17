@@ -39,9 +39,8 @@ from azure.ai.ml.entities._util import load_from_dict
 
 @experimental
 class WorkspaceConnection(Resource):
-    """Azure ML workspace connection provides a secure way to store
-    authentication and configuration information needed to connect and interact
-    with the external resources.
+    """Azure ML workspace connection provides a secure way to store authentication and configuration information needed
+    to connect and interact with the external resources.
 
     :param name: Name of the workspace connection.
     :type name: str
@@ -82,8 +81,7 @@ class WorkspaceConnection(Resource):
 
     @property
     def type(self) -> str:
-        """Type of the workspace connection, supported are 'git', 'python_feed'
-        and 'container_registry'.
+        """Type of the workspace connection, supported are 'git', 'python_feed' and 'container_registry'.
 
         :return: Type of the job.
         :rtype: str

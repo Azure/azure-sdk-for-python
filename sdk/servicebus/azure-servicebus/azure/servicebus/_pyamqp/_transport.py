@@ -56,6 +56,9 @@ from .constants import (
     WEBSOCKET_PORT,
     TransportType,
     AMQP_WS_SUBPROTOCOL,
+    TIMEOUT_INTERVAL,
+    WS_TIMEOUT_INTERVAL,
+    READ_TIMEOUT_INTERVAL,
 )
 from .error import AuthenticationException, ErrorCondition
 
@@ -91,9 +94,6 @@ AMQPS_PORT = 5671
 AMQP_FRAME = memoryview(b"AMQP")
 EMPTY_BUFFER = bytes()
 SIGNED_INT_MAX = 0x7FFFFFFF
-TIMEOUT_INTERVAL = 1
-WS_TIMEOUT_INTERVAL = 1
-READ_TIMEOUT_INTERVAL = 0.2
 
 # Match things like: [fe80::1]:5432, from RFC 2732
 IPV6_LITERAL = re.compile(r"\[([\.0-9a-f:]+)\](?::(\d+))?")
@@ -716,7 +716,11 @@ class WebSocketTransport(_AbstractTransport):
                 WebSocketTimeoutException,
                 WebSocketConnectionClosedException
             )
-
+        except ImportError:
+            raise ImportError(
+                "Please install websocket-client library to use sync websocket transport."
+            )
+        try:
             self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
                 subprotocols=[AMQP_WS_SUBPROTOCOL],
@@ -741,10 +745,6 @@ class WebSocketTransport(_AbstractTransport):
             _LOGGER.info("Websocket connection failed: %r", e, extra=self.network_trace_params)
             self.close()
             raise
-        except ImportError:
-            raise ValueError(
-                "Please install websocket-client library to use websocket transport."
-            )
 
     def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""

@@ -10,7 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
-from typing import List, Optional
+from typing import Any, List, Optional
 import six
 
 from azure.core.credentials import AccessToken
@@ -44,17 +44,17 @@ class AzureDeveloperCliCredential:
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
-    def __enter__(self):
+    def __enter__(self) -> "AzureDeveloperCliCredential":
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         pass
 
     def close(self) -> None:
         """Calling this method is unnecessary."""
 
     @log_get_token("AzureDeveloperCliCredential")
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must

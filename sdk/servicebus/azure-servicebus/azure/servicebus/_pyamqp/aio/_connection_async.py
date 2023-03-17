@@ -28,6 +28,7 @@ from ..constants import (
     ConnectionState,
     EMPTY_FRAME,
     TransportType,
+    READ_TIMEOUT_INTERVAL
 )
 
 from ..error import ErrorCondition, AMQPConnectionError, AMQPError
@@ -236,7 +237,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         timeout: Optional[Union[int, float]] = None
         if wait is False:
-            timeout = 1  # TODO: What should this default be?
+            timeout = READ_TIMEOUT_INTERVAL
         elif wait is True:
             timeout = None
         else:

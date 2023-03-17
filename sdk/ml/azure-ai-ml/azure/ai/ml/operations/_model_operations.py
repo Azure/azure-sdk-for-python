@@ -27,12 +27,12 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, Mod
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
-    _create_or_update_autoincrement,
     _get_latest,
     _resolve_label_to_asset,
+    _get_next_version_from_container,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
@@ -56,15 +56,14 @@ from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ModelOperations(_ScopeDependentOperations):
     """ModelOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     # pylint: disable=unused-argument
@@ -77,7 +76,7 @@ class ModelOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
         self._service_client = service_client
@@ -87,7 +86,7 @@ class ModelOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    # @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self, model: Union[Model, WorkspaceAssetReference]
     ) -> Model:  # TODO: Are we going to implement job_name?
@@ -105,15 +104,15 @@ class ModelOperations(_ScopeDependentOperations):
         """
         try:
             name = model.name
-            if not model.version and self._registry_name:
-                msg = "Model version is required for registry"
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.MODEL,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.MISSING_FIELD,
+            if not model.version and model._auto_increment_version:
+                model.version = _get_next_version_from_container(
+                    name=model.name,
+                    container_operation=self._model_container_operation,
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    workspace_name=self._workspace_name,
+                    registry_name=self._registry_name,
                 )
+
             version = model.version
 
             sas_uri = None
@@ -172,33 +171,23 @@ class ModelOperations(_ScopeDependentOperations):
             model_version_resource = model._to_rest_object()
             auto_increment_version = model._auto_increment_version
             try:
-                if auto_increment_version:
-                    result = _create_or_update_autoincrement(
-                        name=model.name,
+                result = (
+                    self._model_versions_operation.begin_create_or_update(
+                        name=name,
+                        version=version,
                         body=model_version_resource,
-                        version_operation=self._model_versions_operation,
-                        container_operation=self._model_container_operation,
+                        registry_name=self._registry_name,
+                        **self._scope_kwargs,
+                    ).result()
+                    if self._registry_name
+                    else self._model_versions_operation.create_or_update(
+                        name=name,
+                        version=version,
+                        body=model_version_resource,
                         workspace_name=self._workspace_name,
                         **self._scope_kwargs,
                     )
-                else:
-                    result = (
-                        self._model_versions_operation.begin_create_or_update(
-                            name=name,
-                            version=version,
-                            body=model_version_resource,
-                            registry_name=self._registry_name,
-                            **self._scope_kwargs,
-                        ).result()
-                        if self._registry_name
-                        else self._model_versions_operation.create_or_update(
-                            name=name,
-                            version=version,
-                            body=model_version_resource,
-                            workspace_name=self._workspace_name,
-                            **self._scope_kwargs,
-                        )
-                    )
+                )
 
                 if not result and self._registry_name:
                     result = self._get(name=model.name, version=model.version)
@@ -252,7 +241,7 @@ class ModelOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Model:
         """Returns information about the specified model asset.
 
@@ -294,7 +283,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         return Model._from_rest_object(model_version_resource)
 
-    # @monitor_with_activity(logger, "Model.Download", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.Download", ActivityType.PUBLICAPI)
     def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
         """Download files related to a model.
 
@@ -351,7 +340,7 @@ class ModelOperations(_ScopeDependentOperations):
         module_logger.info("Downloading the model %s at %s\n", path_prefix, path_file)
         storage_client.download(starts_with=path_prefix, destination=path_file)
 
-    # @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
     def archive(
         self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
     ) -> None:  # pylint:disable=unused-argument
@@ -374,7 +363,7 @@ class ModelOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
     def restore(
         self, name: str, version: Optional[str] = None, label: Optional[str] = None, **kwargs
     ) -> None:  # pylint:disable=unused-argument
@@ -397,7 +386,7 @@ class ModelOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Model.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -450,8 +439,7 @@ class ModelOperations(_ScopeDependentOperations):
     def _get_latest_version(self, name: str) -> Model:
         """Returns the latest version of the asset with the given name.
 
-        Latest is defined as the most recently created, not the most
-        recently updated.
+        Latest is defined as the most recently created, not the most recently updated.
         """
         result = _get_latest(
             name,
@@ -466,8 +454,7 @@ class ModelOperations(_ScopeDependentOperations):
         self, model: Model, name: Optional[str] = None, version: Optional[str] = None
     ) -> WorkspaceAssetReference:
 
-        """Returns WorkspaceAssetReference
-        to copy a registered model to registry given the asset id
+        """Returns WorkspaceAssetReference to copy a registered model to registry given the asset id.
 
         :param model: Registered model
         :type model: Model

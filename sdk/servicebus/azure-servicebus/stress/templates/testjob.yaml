@@ -8,8 +8,16 @@ metadata:
 spec:
   containers:
     - name: python-sb-stress
-      image: {{ .Values.image }}
+      image: {{ .Stress.imageTag }}
       imagePullPolicy: Always
+      resources:
+        limits:
+          memory: "2000Mi"
+          cpu: "1"
+
+      {{ if eq .Stress.testTarget "sbStress" }}
       command: ['bash', '-c', 'python3 test_stress_queues.py']
+      {{- end -}}
+
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
 {{- end -}}

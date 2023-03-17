@@ -101,6 +101,7 @@ ASSET_ID_REGEX_FORMAT = (
 )
 ASSET_ID_RESOURCE_REGEX_FORMAT = "azureml://resource[gG]roups/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 MODEL_ID_REGEX_FORMAT = "azureml://models/([^/]+)/versions/(.+)"
+DATA_ID_REGEX_FORMAT = "azureml://data/([^/]+)/versions/(.+)"
 ASSET_ID_URI_REGEX_FORMAT = "azureml://locations/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 AZUREML_CLI_SYSTEM_EXECUTED_ENV_VAR = "AZUREML_CLI_SYSTEM_EXECUTED"
 DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
@@ -195,6 +196,10 @@ class AzureMLResourceType(object):
     COMPONENT = "components"
     SCHEDULE = "schedules"
     REGISTRY = "registries"
+    CONNECTIONS = "connections"
+    FEATURESET = "featuresets"
+    FEATURESTORE_ENTITY = "featurestoreEntities"
+    FEATURE_STORE = "feature_store"
 
     NAMED_TYPES = {
         JOB,
@@ -205,7 +210,7 @@ class AzureMLResourceType(object):
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURESET, FEATURESTORE_ENTITY}
 
 
 class ArmConstants(object):
@@ -596,6 +601,7 @@ class IdentityType:
     AML_TOKEN = "aml_token"
     USER_IDENTITY = "user_identity"
     MANAGED_IDENTITY = "managed_identity"
+
 
 class Boolean:
     TRUE = "true"

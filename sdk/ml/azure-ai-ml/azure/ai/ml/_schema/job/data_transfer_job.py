@@ -16,8 +16,9 @@ from .base_job import BaseJobSchema
 class DataTransferCopyJobSchema(BaseJobSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.DATA_TRANSFER)
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA], required=True)
-    data_copy_mode = StringTransformedEnum(allowed_values=[DataCopyMode.MERGE_WITH_OVERWRITE,
-                                                           DataCopyMode.FAIL_IF_CONFLICT])
+    data_copy_mode = StringTransformedEnum(
+        allowed_values=[DataCopyMode.MERGE_WITH_OVERWRITE, DataCopyMode.FAIL_IF_CONFLICT]
+    )
     compute = ComputeField()
     inputs = InputsField()
     outputs = OutputsField()
@@ -25,7 +26,7 @@ class DataTransferCopyJobSchema(BaseJobSchema):
 
 class DataTransferImportJobSchema(BaseJobSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.DATA_TRANSFER)
-    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA],  required=True)
+    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
     compute = ComputeField()
     outputs = fields.Dict(
         keys=fields.Str(),
@@ -37,13 +38,15 @@ class DataTransferImportJobSchema(BaseJobSchema):
     @validates("outputs")
     def outputs_key(self, value):  # pylint: disable=no-self-use
         if len(value) != 1 or list(value.keys())[0] != "sink":
-            raise ValidationError(f"outputs field only support one output called sink in task type "
-                                  f"{DataTransferTaskType.IMPORT_DATA}.")
+            raise ValidationError(
+                f"outputs field only support one output called sink in task type "
+                f"{DataTransferTaskType.IMPORT_DATA}."
+            )
 
 
 class DataTransferExportJobSchema(BaseJobSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.DATA_TRANSFER)
-    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA],  required=True)
+    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA], required=True)
     compute = ComputeField()
     inputs = InputsField(allow_none=False)
     sink = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
@@ -51,5 +54,7 @@ class DataTransferExportJobSchema(BaseJobSchema):
     @validates("inputs")
     def inputs_key(self, value):  # pylint: disable=no-self-use
         if len(value) != 1 or list(value.keys())[0] != "source":
-            raise ValidationError(f"inputs field only support one input called source in task type "
-                                  f"{DataTransferTaskType.EXPORT_DATA}.")
+            raise ValidationError(
+                f"inputs field only support one input called source in task type "
+                f"{DataTransferTaskType.EXPORT_DATA}."
+            )

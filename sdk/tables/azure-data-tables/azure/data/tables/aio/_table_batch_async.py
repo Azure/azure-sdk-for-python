@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, Any, Optional, Union, TYPE_CHECKING
+from typing import Dict, Any, Optional, Union
 
 from azure.core import MatchConditions
 
@@ -15,12 +15,10 @@ from .._serialize import (
     _get_match_headers,
     _add_entity_properties,
 )
+from .._generated import models
 from .._generated.aio import AzureTable
 from .._generated.aio._configuration import AzureTableConfiguration
 from .._generated._serialization import Serializer, Deserializer
-
-if TYPE_CHECKING:
-    from .._generated import models
 
 
 class TableBatchOperations(object):
@@ -43,7 +41,7 @@ class TableBatchOperations(object):
         config: AzureTableConfiguration,
         table_name: str,
         is_cosmos_endpoint: bool = False,
-        **kwargs: Dict[str, Any]
+        **kwargs
     ) -> None:
         self._client = client
         self._serialize = serializer
@@ -114,9 +112,9 @@ class TableBatchOperations(object):
         entity: EntityType,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        response_preference: Optional[Union[str, "models.ResponseFormat"]] = "return-no-content",
-        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None,  # pylint: disable=redefined-builtin
-        **kwargs: Any
+        response_preference: Optional[Union[str, models.ResponseFormat]] = "return-no-content",
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None,  # pylint: disable=redefined-builtin
+        **kwargs
     ) -> None:
         """
         Adds an insert operation to the batch. See
@@ -131,7 +129,7 @@ class TableBatchOperations(object):
         :param: entity:
             The entity to insert. Can be a dict or an entity object
             Must contain a PartitionKey and a RowKey.
-        :type: entity: dict or :class:`~azure.data.tables.models.Entity`
+        :type: entity: Dict or :class:`~azure.data.tables.models.Entity`
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -209,7 +207,7 @@ class TableBatchOperations(object):
         self,
         entity: EntityType,
         mode: Union[str, UpdateMode] = UpdateMode.MERGE,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Adds an update operation to the current batch.
 
@@ -281,8 +279,8 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
-        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None, # pylint: disable=redefined-builtin
-        **kwargs: Any
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
+        **kwargs
     ) -> None:
         """Update entity in a table.
 
@@ -303,7 +301,7 @@ class TableBatchOperations(object):
          is found to update and a replace will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: Dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
@@ -383,7 +381,7 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
-        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None, # pylint: disable=redefined-builtin
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
         **kwargs
     ) -> None:
         """Merge entity in a table.
@@ -405,7 +403,7 @@ class TableBatchOperations(object):
          is found to update and a merge will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: Dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
@@ -535,7 +533,7 @@ class TableBatchOperations(object):
         if_match: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        format: Optional[Union[str, "models.OdataMetadataFormat"]] = None, # pylint: disable=redefined-builtin
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
     ) -> None:
         """Deletes the specified entity in a table.
 

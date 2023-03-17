@@ -6,7 +6,7 @@ from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.azure_resource_utils import get_virtual_clusters_from_subscriptions, get_virtual_cluster_by_id
 from azure.ai.ml.constants._common import Scope
@@ -15,15 +15,14 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
-class VirtualClusterOperations():
+class VirtualClusterOperations:
     """VirtualClusterOperations.
 
-    You should not instantiate this class directly. Instead, you should
-    create an MLClient instance that instantiates it for you and
-    attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
+    for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -32,13 +31,14 @@ class VirtualClusterOperations():
         credentials: TokenCredential,
         **kwargs: Dict,
     ):
+        ops_logger.update_info(kwargs)
         self._resource_group_name = operation_scope.resource_group_name
         self._subscription_id = operation_scope.subscription_id
         self._credentials = credentials
         self._init_kwargs = kwargs
 
     @distributed_trace
-    # @monitor_with_activity(logger, "VirtualCluster.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "VirtualCluster.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: Optional[str] = None) -> Iterable[Dict]:
         """List virtual clusters a user has access to.
 
@@ -60,7 +60,7 @@ class VirtualClusterOperations():
         return get_virtual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list)
 
     @distributed_trace
-    # @monitor_with_activity(logger, "VirtualCluster.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "VirtualCluster.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Dict:
         """Get a virtual cluster resource.
 
@@ -70,6 +70,9 @@ class VirtualClusterOperations():
         :rtype: Dict
         """
 
-
-        return get_virtual_cluster_by_id(name=name, resource_group=self._resource_group_name,
-            subscription_id=self._subscription_id, credential=self._credentials)
+        return get_virtual_cluster_by_id(
+            name=name,
+            resource_group=self._resource_group_name,
+            subscription_id=self._subscription_id,
+            credential=self._credentials,
+        )

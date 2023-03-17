@@ -285,7 +285,7 @@ def send_trace_context_manager(span_name=SPAN_NAME_SEND):
 def receive_trace_context_manager(
     receiver: "ReceiverMixin",
     span_name: str = SPAN_NAME_RECEIVE,
-    links: List["Link"] = None
+    links: Optional[List[Link]] = None
 ) -> Iterator[None]:
     """Tracing"""
     span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()

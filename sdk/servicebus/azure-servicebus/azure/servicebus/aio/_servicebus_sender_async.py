@@ -269,7 +269,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     schedule_time_utc, send_span, self._amqp_transport, *obj_messages
                 )
             if send_span:
-                await self._add_span_request_attributes(send_span)
+                self._add_span_request_attributes(send_span)
             return await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_SCHEDULE_MESSAGE_OPERATION,
                 request_body,

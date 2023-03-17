@@ -66,7 +66,7 @@ _logger = get_logger(logging.DEBUG)
 
 
 class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
-    @pytest.mark.skip(reason="TODO: iterator support")
+
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -135,7 +135,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             with pytest.raises(ValueError):
                 await receiver.peek_messages()
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -251,15 +251,16 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name)
                 sender = sb_client.get_queue_sender(servicebus_queue.name)
 
-                def _hack_disable_receive_context_message_received(self, uamqp_transport, *, message):
+                # TODO: remove def ...
+                #def _hack_disable_receive_context_message_received(self, uamqp_transport, *, message):
+                async def _hack_disable_receive_context_message_received(self, frame, message):
                     # pylint: disable=protected-access
-                    self._handler._was_message_received = True
-                    self._handler._received_messages.put(message)
+                    self._handler._received_messages.put((frame, message))
 
                 async with sender, receiver:
                     # send 5 msgs to queue first
                     await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-                    receiver._handler.message_handler.on_message_received = types.MethodType(
+                    receiver._handler._link._on_transfer = types.MethodType(
                         _hack_disable_receive_context_message_received, receiver)
                     received_msgs = []
                     while len(received_msgs) < 5:
@@ -299,7 +300,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             await sub_test_releasing_messages_iterator()
             await sub_test_non_releasing_messages()
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -350,7 +351,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             with pytest.raises(ValueError):
                 await receiver.peek_messages()
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -374,7 +375,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                    count += 1
                 assert count == 5
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -399,7 +400,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     await receiver.complete_message(message)
                     await asyncio.sleep(40)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -437,7 +438,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     messages.append(message)
                 assert len(messages) == 0
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -476,7 +477,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             assert not receiver._running
             assert len(messages) == 6
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -511,7 +512,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
             assert count == 10
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -551,7 +552,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     count += 1
             assert count == 0
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -588,7 +589,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     count += 1
             assert count == 0
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -627,7 +628,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 with pytest.raises(ServiceBusError):
                     await receiver.receive_deferred_messages(deferred_messages)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -667,7 +668,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     await receiver.renew_message_lock(message)
                     await receiver.complete_message(message)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -716,7 +717,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     await receiver.complete_message(message)
             assert count == 10
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -753,7 +754,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 with pytest.raises(ServiceBusError):
                     deferred = await receiver.receive_deferred_messages(deferred_messages)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -790,7 +791,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 with pytest.raises(ServiceBusError):
                     deferred = await receiver.receive_deferred_messages([5, 6, 7])
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -844,7 +845,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1019,7 +1020,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     with pytest.raises(ServiceBusError):
                         await receiver.complete_message(messages[2])
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1077,7 +1078,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             await renewer.close()
             assert len(messages) == 11
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1156,7 +1157,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 with pytest.raises(MessageSizeExceededError):
                     await sender.send_messages([ServiceBusMessage(half_too_large), ServiceBusMessage(half_too_large)])
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1192,7 +1193,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     count += 1
                 assert count == 1
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1447,7 +1448,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 else:
                     raise Exception("Failed to receive scheduled message.")
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1786,7 +1787,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
                 assert receive_counter < 10  # Dynamic link credit issuing come info effect
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1841,7 +1842,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     messages = await receiver.receive_messages()
                     assert not messages
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1879,7 +1880,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 assert len(messages) == 0  # make sure messages are removed from the queue
                 assert receiver_handler == receiver._handler  # make sure no reconnection happened
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    # @pytest.mark.skip(reason="TODO: _counter doesnt exist in pyamqp")
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1900,36 +1901,36 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 messages = []
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
 
-                    time_1 = receiver._handler._counter.get_current_ms()
+                    time_1 = time.time()
                     async for message in receiver._get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
                         await receiver.complete_message(message)
 
-                        time_2 = receiver._handler._counter.get_current_ms()
+                        time_2 = time.time()
                         async for message in receiver._get_streaming_message_iter(max_wait_time=1):
                             messages.append(message)
-                        time_3 = receiver._handler._counter.get_current_ms()
-                        assert timedelta(seconds=.5) < timedelta(milliseconds=(time_3 - time_2)) <= timedelta(seconds=2)
-                    time_4 = receiver._handler._counter.get_current_ms()
-                    assert timedelta(seconds=8) < timedelta(milliseconds=(time_4 - time_3)) <= timedelta(seconds=11)
+                        time_3 = time.time()
+                        assert timedelta(seconds=.5) < timedelta(seconds=(time_3 - time_2)) <= timedelta(seconds=2)
+                    time_4 = time.time()
+                    assert timedelta(seconds=8) < timedelta(seconds=(time_4 - time_3)) <= timedelta(seconds=11)
 
                     async for message in receiver._get_streaming_message_iter(max_wait_time=3):
                         messages.append(message)
-                    time_5 = receiver._handler._counter.get_current_ms()
-                    assert timedelta(seconds=1) < timedelta(milliseconds=(time_5 - time_4)) <= timedelta(seconds=4)
+                    time_5 = time.time()
+                    assert timedelta(seconds=1) < timedelta(seconds=(time_5 - time_4)) <= timedelta(seconds=4)
 
                     async for message in receiver:
                         messages.append(message)
-                    time_6 = receiver._handler._counter.get_current_ms()
-                    assert timedelta(seconds=3) < timedelta(milliseconds=(time_6 - time_5)) <= timedelta(seconds=6)
+                    time_6 = time.time()
+                    assert timedelta(seconds=3) < timedelta(seconds=(time_6 - time_5)) <= timedelta(seconds=6)
 
                     async for message in receiver._get_streaming_message_iter():
                         messages.append(message)
-                    time_7 = receiver._handler._counter.get_current_ms()
-                    assert timedelta(seconds=3) < timedelta(milliseconds=(time_7 - time_6)) <= timedelta(seconds=6)
+                    time_7 = time.time()
+                    assert timedelta(seconds=3) < timedelta(seconds=(time_7 - time_6)) <= timedelta(seconds=6)
                     assert len(messages) == 1
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2147,7 +2148,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 if not uamqp_transport:
                     ReceiveClientAsync.settle_messages_async = original_settlement
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2201,7 +2202,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                                                   max_wait_time=5) as receiver:
                     raise Exception("Should not get here, should be case sensitive.")
 
-    @pytest.mark.skip(reason="TODO: iterator support")  
+      
     @pytest.mark.asyncio          
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2238,7 +2239,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                         received_messages.append(message)
                 assert len(received_messages) == 6
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2410,7 +2411,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     with pytest.raises(TypeError):
                         await sender.schedule_messages(list_message_dicts, scheduled_enqueue_time)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2421,22 +2422,25 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     @ArgPasserAsync()
     async def test_queue_async_receive_iterator_resume_after_link_detach(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
 
-        async def hack_iter_next_mock_error(self):
-            await self._open()
-            # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
-            if self.execution_times == 1:
-                from uamqp.errors import LinkDetach
-                from uamqp.constants import ErrorCodes
-                self.execution_times += 1
-                self.error_raised = True
-                raise LinkDetach(ErrorCodes.LinkDetachForced)
-            else:
-                self.execution_times += 1
-            if not self._message_iter:
-                self._message_iter = self._handler.receive_messages_iter_async()
-            uamqp_message = await self._message_iter.__anext__()
-            message = self._build_message(uamqp_message)
-            return message
+        async def hack_iter_next_mock_error(self, wait_time=None):
+            try:
+                self._receive_context.set()
+                await self._open()
+                # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
+                if self.execution_times == 1:
+                    from azure.servicebus._pyamqp.error import ErrorCondition, AMQPLinkError
+                    self.execution_times += 1
+                    self.error_raised = True
+                    raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced)
+                else:
+                    self.execution_times += 1
+                if not self._message_iter:
+                    self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
+                pyamqp_message = await self._message_iter.__anext__()
+                message = self._build_message(pyamqp_message)
+                return message
+            finally:
+                self._receive_context.clear()
 
         async with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
@@ -2456,7 +2460,6 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 assert receiver.error_raised
                 assert receiver.execution_times >= 4  # at least 1 failure and 3 successful receiving iterator
 
-    @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2506,8 +2509,8 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             dict_message = {"body": content}
             sb_message = ServiceBusMessage(body=content)
             message_with_ttl = AmqpAnnotatedMessage(data_body=data_body, header=AmqpMessageHeader(time_to_live=60000))
-            uamqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
-            assert uamqp_with_ttl.properties.absolute_expiry_time == uamqp_with_ttl.properties.creation_time + uamqp_with_ttl.header.time_to_live
+            pyamqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
+            assert pyamqp_with_ttl.properties.absolute_expiry_time == pyamqp_with_ttl.properties.creation_time + pyamqp_with_ttl.header.ttl
 
             recv_data_msg = recv_sequence_msg = recv_value_msg = normal_msg = 0
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:

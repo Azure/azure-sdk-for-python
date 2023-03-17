@@ -46,8 +46,8 @@ def build_list_by_server_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2021-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -74,13 +74,20 @@ def build_list_by_server_request(
 
 
 def build_get_request(
-    resource_group_name: str, server_name: str, restorable_dropped_database_id: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    server_name: str,
+    restorable_dropped_database_id: str,
+    subscription_id: str,
+    *,
+    expand: Optional[str] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-05-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2021-05-01-preview")
+    api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-08-01-preview")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -101,6 +108,10 @@ def build_get_request(
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -148,8 +159,8 @@ class RestorableDroppedDatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2021-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.RestorableDroppedDatabaseListResult] = kwargs.pop("cls", None)
 
@@ -212,7 +223,13 @@ class RestorableDroppedDatabasesOperations:
 
     @distributed_trace
     def get(
-        self, resource_group_name: str, server_name: str, restorable_dropped_database_id: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        server_name: str,
+        restorable_dropped_database_id: str,
+        expand: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.RestorableDroppedDatabase:
         """Gets a restorable dropped database.
 
@@ -223,6 +240,11 @@ class RestorableDroppedDatabasesOperations:
         :type server_name: str
         :param restorable_dropped_database_id: Required.
         :type restorable_dropped_database_id: str
+        :param expand: The child resources to include in the response. Default value is None.
+        :type expand: str
+        :param filter: An OData filter expression that filters elements in the collection. Default
+         value is None.
+        :type filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RestorableDroppedDatabase or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.RestorableDroppedDatabase
@@ -239,8 +261,8 @@ class RestorableDroppedDatabasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-05-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2021-05-01-preview")
+        api_version: Literal["2022-08-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2022-08-01-preview")
         )
         cls: ClsType[_models.RestorableDroppedDatabase] = kwargs.pop("cls", None)
 
@@ -249,6 +271,8 @@ class RestorableDroppedDatabasesOperations:
             server_name=server_name,
             restorable_dropped_database_id=restorable_dropped_database_id,
             subscription_id=self._config.subscription_id,
+            expand=expand,
+            filter=filter,
             api_version=api_version,
             template_url=self.get.metadata["url"],
             headers=_headers,

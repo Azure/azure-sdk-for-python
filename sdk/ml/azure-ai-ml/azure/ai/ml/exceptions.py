@@ -15,9 +15,8 @@ module_logger = logging.getLogger(__name__)
 
 
 class ValidationErrorType(Enum):
-    """
-    Error types to be specified when using ValidationException class.
-    Types are then used in raise_error.py to format a detailed error message for users.
+    """Error types to be specified when using ValidationException class. Types are then used in raise_error.py to format
+    a detailed error message for users.
 
     When using ValidationException, specify the type that best describes the nature of the error being captured.
     If no type fits, add a new enum here and update raise_error.py to handle it.
@@ -45,14 +44,12 @@ class ValidationErrorType(Enum):
 
 
 class ErrorCategory:
-
     USER_ERROR = "UserError"
     SYSTEM_ERROR = "SystemError"
     UNKNOWN = "Unknown"
 
 
 class ErrorTarget:
-
     BATCH_ENDPOINT = "BatchEndpoint"
     BATCH_DEPLOYMENT = "BatchDeployment"
     LOCAL_ENDPOINT = "LocalEndpoint"
@@ -89,13 +86,13 @@ class ErrorTarget:
     SCHEDULE = "Schedule"
     REGISTRY = "Registry"
     UNKNOWN = "Unknown"
+    FEATURESET = "Featureset"
+    FEATURESTORE_ENTITY = "FeaturestoreEntity"
 
 
 class MlException(AzureError):
-    """
-    The base class for all exceptions raised in AzureML SDK code base.
-    If there is a need to define a custom exception type, that custom exception type
-    should extend from this class.
+    """The base class for all exceptions raised in AzureML SDK code base. If there is a need to define a custom
+    exception type, that custom exception type should extend from this class.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -164,8 +161,7 @@ class MlException(AzureError):
 
 
 class DeploymentException(MlException):
-    """
-    Class for all exceptions related to Deployments.
+    """Class for all exceptions related to Deployments.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -198,8 +194,7 @@ class DeploymentException(MlException):
 
 
 class ComponentException(MlException):
-    """
-    Class for all exceptions related to Components.
+    """Class for all exceptions related to Components.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -232,8 +227,7 @@ class ComponentException(MlException):
 
 
 class JobException(MlException):
-    """
-    Class for all exceptions related to Jobs.
+    """Class for all exceptions related to Jobs.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -266,8 +260,7 @@ class JobException(MlException):
 
 
 class ModelException(MlException):
-    """
-    Class for all exceptions related to Models.
+    """Class for all exceptions related to Models.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -300,8 +293,7 @@ class ModelException(MlException):
 
 
 class AssetException(MlException):
-    """
-    Class for all exceptions related to Assets.
+    """Class for all exceptions related to Assets.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -334,8 +326,7 @@ class AssetException(MlException):
 
 
 class ScheduleException(MlException):
-    """
-    Class for all exceptions related to Job Schedules.
+    """Class for all exceptions related to Job Schedules.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -378,8 +369,7 @@ class ValidationException(MlException):
         error_category: ErrorCategory = ErrorCategory.USER_ERROR,
         **kwargs,
     ):
-        """
-        Class for all exceptions raised as part of client-side schema validation.
+        """Class for all exceptions raised as part of client-side schema validation.
 
         :param message: A message describing the error. This is the error message the user will see.
         :type message: str
@@ -426,9 +416,8 @@ class ValidationException(MlException):
 
 
 class AssetPathException(MlException):
-    """
-    Class for the exception raised when an attempt is made to update the path of an existing asset.
-    Asset paths are immutable.
+    """Class for the exception raised when an attempt is made to update the path of an existing asset. Asset paths are
+    immutable.
 
     :param message: A message describing the error. This is the error message the user will see.
     :type message: str
@@ -487,7 +476,7 @@ class UserErrorException(MlException):
         message,
         no_personal_data_message=None,
         error_category=ErrorCategory.USER_ERROR,
-        target: ErrorTarget = ErrorTarget.PIPELINE
+        target: ErrorTarget = ErrorTarget.PIPELINE,
     ):
         super().__init__(
             message=message,
@@ -498,8 +487,7 @@ class UserErrorException(MlException):
 
 
 class CannotSetAttributeError(UserErrorException):
-    """Exception raised when a user try setting attributes of
-    inputs/outputs."""
+    """Exception raised when a user try setting attributes of inputs/outputs."""
 
     def __init__(self, object_name):
         msg = "It is not allowed to set attribute of %r." % object_name
@@ -510,8 +498,7 @@ class CannotSetAttributeError(UserErrorException):
 
 
 class UnsupportedParameterKindError(UserErrorException):
-    """Exception raised when a user try setting attributes of
-    inputs/outputs."""
+    """Exception raised when a user try setting attributes of inputs/outputs."""
 
     def __init__(self, func_name, parameter_kind=None):
         parameter_kind = parameter_kind or "*args or **kwargs"
@@ -527,8 +514,7 @@ class KeywordError(UserErrorException):
 
 
 class UnexpectedKeywordError(KeywordError):
-    """Exception raised when an unexpected keyword parameter is provided in
-    dynamic functions."""
+    """Exception raised when an unexpected keyword parameter is provided in dynamic functions."""
 
     def __init__(self, func_name, keyword, keywords=None):
         message = "%s() got an unexpected keyword argument %r" % (func_name, keyword)
@@ -537,8 +523,7 @@ class UnexpectedKeywordError(KeywordError):
 
 
 class UnexpectedAttributeError(KeywordError, AttributeError):
-    """Exception raised when an unexpected keyword is invoked by attribute,
-    e.g. inputs.invalid_key."""
+    """Exception raised when an unexpected keyword is invoked by attribute, e.g. inputs.invalid_key."""
 
     def __init__(self, keyword, keywords=None):
         message = "Got an unexpected attribute %r" % keyword
@@ -547,8 +532,7 @@ class UnexpectedAttributeError(KeywordError, AttributeError):
 
 
 class MissingPositionalArgsError(KeywordError):
-    """Exception raised when missing positional keyword parameter in dynamic
-    functions."""
+    """Exception raised when missing positional keyword parameter in dynamic functions."""
 
     def __init__(self, func_name, missing_args):
         message = "%s() missing %d required positional argument(s): %s." % (
@@ -560,8 +544,7 @@ class MissingPositionalArgsError(KeywordError):
 
 
 class TooManyPositionalArgsError(KeywordError):
-    """Exception raised when too many positional arguments is provided in
-    dynamic functions."""
+    """Exception raised when too many positional arguments is provided in dynamic functions."""
 
     def __init__(self, func_name, min_number, max_number, given_number):
         message = "%s() takes %s positional argument but %d were given." % (
@@ -573,8 +556,7 @@ class TooManyPositionalArgsError(KeywordError):
 
 
 class MultipleValueError(KeywordError):
-    """Exception raised when giving multiple value of a keyword parameter in
-    dynamic functions."""
+    """Exception raised when giving multiple value of a keyword parameter in dynamic functions."""
 
     def __init__(self, func_name, keyword):
         message = "%s() got multiple values for argument %r." % (func_name, keyword)
@@ -582,8 +564,7 @@ class MultipleValueError(KeywordError):
 
 
 class ParamValueNotExistsError(KeywordError):
-    """Exception raised when items in non_pipeline_inputs not in keyword parameters in
-    dynamic functions."""
+    """Exception raised when items in non_pipeline_inputs not in keyword parameters in dynamic functions."""
 
     def __init__(self, func_name, keywords):
         message = "%s() got unexpected params in non_pipeline_inputs %r." % (func_name, keywords)
@@ -657,8 +638,8 @@ class DockerEngineNotAvailableError(MlException):
 
 
 class MultipleLocalDeploymentsFoundError(MlException):
-    """Exception raised when no deployment name is specified for local endpoint
-    even though multiple deployments exist."""
+    """Exception raised when no deployment name is specified for local endpoint even though multiple deployments
+    exist."""
 
     def __init__(self, endpoint_name: str, error_category=ErrorCategory.UNKNOWN):
         super().__init__(
@@ -701,8 +682,8 @@ class LocalEndpointImageBuildError(MlException):
 
 
 class CloudArtifactsNotSupportedError(MlException):
-    """
-    Exception raised when remote cloud artifacts are used with local endpoints.
+    """Exception raised when remote cloud artifacts are used with local endpoints.
+
     Local endpoints only support local artifacts.
     """
 
@@ -810,7 +791,9 @@ class PipelineChildJobError(MlException):
 
 class InvalidVSCodeRequestError(MlException):
     """Exception raised when VS Code Debug is invoked with a remote endpoint.
-    VSCode debug is only supported for local endpoints."""
+
+    VSCode debug is only supported for local endpoints.
+    """
 
     def __init__(self, error_category=ErrorCategory.USER_ERROR, msg=None):
         super().__init__(

@@ -5,8 +5,8 @@
 import copy
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._util import copy_output_setting
@@ -207,10 +207,11 @@ class NodeIOMixin:
                 rest_output_bindings[key].update({"version": binding["version"]})
 
         def _rename_name_and_version(output_dict):
-            if 'asset_name' in output_dict.keys():
-                output_dict['name'] = output_dict.pop('asset_name')
-            if 'asset_version' in output_dict.keys():
-                output_dict['version'] = output_dict.pop('asset_version')
+            # NodeOutput can only be registered with name and version, therefore we rename here
+            if "asset_name" in output_dict.keys():
+                output_dict["name"] = output_dict.pop("asset_name")
+            if "asset_version" in output_dict.keys():
+                output_dict["version"] = output_dict.pop("asset_version")
             return output_dict
 
         rest_data_outputs = {name: _rename_name_and_version(val.as_dict()) for name, val in rest_data_outputs.items()}

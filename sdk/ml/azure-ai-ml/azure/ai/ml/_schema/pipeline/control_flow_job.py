@@ -29,7 +29,6 @@ class BaseLoopSchema(ControlFlowSchema):
 
     @pre_dump
     def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
-
         result = copy.copy(data)
         # Update body object to data_binding_str
         result._body = data._get_body_binding_str()
@@ -76,7 +75,6 @@ class DoWhileSchema(BaseLoopSchema):
 
     @pre_dump
     def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
-
         return super(DoWhileSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
 
 
@@ -106,18 +104,16 @@ class ParallelForSchema(BaseLoopSchema):
             if isinstance(items, str):
                 items = json.loads(items)
             data["items"] = items
-        except Exception: # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             pass
         return data
 
     @pre_dump
     def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
-
         return super(ParallelForSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
 
     @pre_dump
     def resolve_outputs(self, job, **kwargs):  # pylint: disable=unused-argument
-
         result = copy.copy(job)
         _resolve_outputs(result, job)
         return result

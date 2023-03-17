@@ -309,7 +309,7 @@ class SecretsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the Secret resource. Required.
         :type child_resource_name: str
-        :param parameters: The Secret resource. Is either a model type or a IO type. Required.
+        :param parameters: The Secret resource. Is either a Secret type or a IO type. Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.Secret or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -533,7 +533,7 @@ class SecretsOperations:
         :type resource_name: str
         :param child_resource_name: The name of the Secret resource. Required.
         :type child_resource_name: str
-        :param parameters: The Secret resource. Is either a model type or a IO type. Required.
+        :param parameters: The Secret resource. Is either a SecretUpdate type or a IO type. Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2022_09_04.models.SecretUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

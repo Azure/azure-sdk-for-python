@@ -48,10 +48,10 @@ class AdditionalData(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.assessed_resource_type = None  # type: Optional[str]
+        self.assessed_resource_type: Optional[str] = None
 
 
 class Resource(_serialization.Model):
@@ -79,7 +79,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -146,8 +146,8 @@ class AlertsSuppressionRule(Resource):
         state: Optional[Union[str, "_models.RuleState"]] = None,
         comment: Optional[str] = None,
         suppression_alerts_scope: Optional["_models.SuppressionAlertsScope"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword alert_type: Type of the alert to automatically suppress. For all alert types, use '*'.
         :paramtype alert_type: str
@@ -198,7 +198,7 @@ class AlertsSuppressionRulesList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AlertsSuppressionRule"], **kwargs):
+    def __init__(self, *, value: List["_models.AlertsSuppressionRule"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.security.v2019_01_01_preview.models.AlertsSuppressionRule]
@@ -219,7 +219,7 @@ class Tags(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: A list of key value pairs that describe the resource.
         :paramtype tags: dict[str, str]
@@ -240,7 +240,7 @@ class ETag(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, *, etag: Optional[str] = None, **kwargs):
+    def __init__(self, *, etag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword etag: Entity tag is used for comparing two or more entities from the same requested
          resource.
@@ -261,7 +261,7 @@ class Kind(_serialization.Model):
         "kind": {"key": "kind", "type": "str"},
     }
 
-    def __init__(self, *, kind: Optional[str] = None, **kwargs):
+    def __init__(self, *, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword kind: Kind of the resource.
         :paramtype kind: str
@@ -281,7 +281,7 @@ class AzureTrackedResourceLocation(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Location where the resource is stored.
         :paramtype location: str
@@ -335,8 +335,8 @@ class TrackedResource(Resource, AzureTrackedResourceLocation, Kind, ETag, Tags):
         etag: Optional[str] = None,
         kind: Optional[str] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: A list of key value pairs that describe the resource.
         :paramtype tags: dict[str, str]
@@ -427,8 +427,8 @@ class Automation(TrackedResource):  # pylint: disable=too-many-instance-attribut
         scopes: Optional[List["_models.AutomationScope"]] = None,
         sources: Optional[List["_models.AutomationSource"]] = None,
         actions: Optional[List["_models.AutomationAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: A list of key value pairs that describe the resource.
         :paramtype tags: dict[str, str]
@@ -491,14 +491,15 @@ class AutomationAction(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.action_type = None  # type: Optional[str]
+        self.action_type: Optional[str] = None
 
 
 class AutomationActionEventHub(AutomationAction):
-    """The target Event Hub to which event data will be exported. To learn more about Microsoft Defender for Cloud continuous export capabilities, visit https://aka.ms/ASCExportLearnMore.
+    """The target Event Hub to which event data will be exported. To learn more about Microsoft
+    Defender for Cloud continuous export capabilities, visit https://aka.ms/ASCExportLearnMore.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -529,8 +530,8 @@ class AutomationActionEventHub(AutomationAction):
     }
 
     def __init__(
-        self, *, event_hub_resource_id: Optional[str] = None, connection_string: Optional[str] = None, **kwargs
-    ):
+        self, *, event_hub_resource_id: Optional[str] = None, connection_string: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword event_hub_resource_id: The target Event Hub Azure Resource ID.
         :paramtype event_hub_resource_id: str
@@ -539,14 +540,15 @@ class AutomationActionEventHub(AutomationAction):
         :paramtype connection_string: str
         """
         super().__init__(**kwargs)
-        self.action_type = "EventHub"  # type: str
+        self.action_type: str = "EventHub"
         self.event_hub_resource_id = event_hub_resource_id
         self.sas_policy_name = None
         self.connection_string = connection_string
 
 
 class AutomationActionLogicApp(AutomationAction):
-    """The logic app action that should be triggered. To learn more about Microsoft Defender for Cloud's Workflow Automation capabilities, visit https://aka.ms/ASCWorkflowAutomationLearnMore.
+    """The logic app action that should be triggered. To learn more about Microsoft Defender for
+    Cloud's Workflow Automation capabilities, visit https://aka.ms/ASCWorkflowAutomationLearnMore.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -570,7 +572,9 @@ class AutomationActionLogicApp(AutomationAction):
         "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(self, *, logic_app_resource_id: Optional[str] = None, uri: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, logic_app_resource_id: Optional[str] = None, uri: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword logic_app_resource_id: The triggered Logic App Azure Resource ID. This can also reside
          on other subscriptions, given that you have permissions to trigger the Logic App.
@@ -579,13 +583,18 @@ class AutomationActionLogicApp(AutomationAction):
         :paramtype uri: str
         """
         super().__init__(**kwargs)
-        self.action_type = "LogicApp"  # type: str
+        self.action_type: str = "LogicApp"
         self.logic_app_resource_id = logic_app_resource_id
         self.uri = uri
 
 
 class AutomationActionWorkspace(AutomationAction):
-    """The Log Analytics Workspace to which event data will be exported. Security alerts data will reside in the 'SecurityAlert' table and the assessments data will reside in the 'SecurityRecommendation' table (under the 'Security'/'SecurityCenterFree' solutions). Note that in order to view the data in the workspace, the Security Center Log Analytics free/standard solution needs to be enabled on that workspace. To learn more about Microsoft Defender for Cloud continuous export capabilities, visit https://aka.ms/ASCExportLearnMore.
+    """The Log Analytics Workspace to which event data will be exported. Security alerts data will
+    reside in the 'SecurityAlert' table and the assessments data will reside in the
+    'SecurityRecommendation' table (under the 'Security'/'SecurityCenterFree' solutions). Note that
+    in order to view the data in the workspace, the Security Center Log Analytics free/standard
+    solution needs to be enabled on that workspace. To learn more about Microsoft Defender for
+    Cloud continuous export capabilities, visit https://aka.ms/ASCExportLearnMore.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -605,13 +614,13 @@ class AutomationActionWorkspace(AutomationAction):
         "workspace_resource_id": {"key": "workspaceResourceId", "type": "str"},
     }
 
-    def __init__(self, *, workspace_resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, workspace_resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword workspace_resource_id: The fully qualified Log Analytics Workspace Azure Resource ID.
         :paramtype workspace_resource_id: str
         """
         super().__init__(**kwargs)
-        self.action_type = "Workspace"  # type: str
+        self.action_type: str = "Workspace"
         self.workspace_resource_id = workspace_resource_id
 
 
@@ -638,7 +647,7 @@ class AutomationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Automation"], **kwargs):
+    def __init__(self, *, value: List["_models.Automation"], **kwargs: Any) -> None:
         """
         :keyword value: The list of security automations under the given scope. Required.
         :paramtype value: list[~azure.mgmt.security.v2019_01_01_preview.models.Automation]
@@ -649,7 +658,8 @@ class AutomationList(_serialization.Model):
 
 
 class AutomationRuleSet(_serialization.Model):
-    """A rule set which evaluates all its rules upon an event interception. Only when all the included rules in the rule set will be evaluated as 'true', will the event trigger the defined actions.
+    """A rule set which evaluates all its rules upon an event interception. Only when all the included
+    rules in the rule set will be evaluated as 'true', will the event trigger the defined actions.
 
     :ivar rules:
     :vartype rules: list[~azure.mgmt.security.v2019_01_01_preview.models.AutomationTriggeringRule]
@@ -659,7 +669,7 @@ class AutomationRuleSet(_serialization.Model):
         "rules": {"key": "rules", "type": "[AutomationTriggeringRule]"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.AutomationTriggeringRule"]] = None, **kwargs):
+    def __init__(self, *, rules: Optional[List["_models.AutomationTriggeringRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules:
         :paramtype rules:
@@ -684,7 +694,7 @@ class AutomationScope(_serialization.Model):
         "scope_path": {"key": "scopePath", "type": "str"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, scope_path: Optional[str] = None, **kwargs):
+    def __init__(self, *, description: Optional[str] = None, scope_path: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword description: The resources scope description.
         :paramtype description: str
@@ -698,7 +708,9 @@ class AutomationScope(_serialization.Model):
 
 
 class AutomationSource(_serialization.Model):
-    """The source event types which evaluate the security automation set of rules. For example - security alerts and security assessments. To learn more about the supported security events data models schemas - please visit https://aka.ms/ASCAutomationSchemas.
+    """The source event types which evaluate the security automation set of rules. For example -
+    security alerts and security assessments. To learn more about the supported security events
+    data models schemas - please visit https://aka.ms/ASCAutomationSchemas.
 
     :ivar event_source: A valid event source type. Known values are: "Assessments",
      "AssessmentsSnapshot", "SubAssessments", "SubAssessmentsSnapshot", "Alerts", "SecureScores",
@@ -720,8 +732,8 @@ class AutomationSource(_serialization.Model):
         *,
         event_source: Optional[Union[str, "_models.EventSource"]] = None,
         rule_sets: Optional[List["_models.AutomationRuleSet"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_source: A valid event source type. Known values are: "Assessments",
          "AssessmentsSnapshot", "SubAssessments", "SubAssessmentsSnapshot", "Alerts", "SecureScores",
@@ -738,7 +750,9 @@ class AutomationSource(_serialization.Model):
 
 
 class AutomationTriggeringRule(_serialization.Model):
-    """A rule which is evaluated upon event interception. The rule is configured by comparing a specific value from the event model to an expected value. This comparison is done by using one of the supported operators set.
+    """A rule which is evaluated upon event interception. The rule is configured by comparing a
+    specific value from the event model to an expected value. This comparison is done by using one
+    of the supported operators set.
 
     :ivar property_j_path: The JPath of the entity model property that should be checked.
     :vartype property_j_path: str
@@ -768,8 +782,8 @@ class AutomationTriggeringRule(_serialization.Model):
         property_type: Optional[Union[str, "_models.PropertyType"]] = None,
         expected_value: Optional[str] = None,
         operator: Optional[Union[str, "_models.Operator"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword property_j_path: The JPath of the entity model property that should be checked.
         :paramtype property_j_path: str
@@ -806,7 +820,7 @@ class AutomationValidationStatus(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, is_valid: Optional[bool] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, is_valid: Optional[bool] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword is_valid: Indicates whether the model is valid or not.
         :paramtype is_valid: bool
@@ -841,10 +855,10 @@ class ResourceDetails(_serialization.Model):
 
     _subtype_map = {"source": {"Azure": "AzureResourceDetails", "OnPremise": "OnPremiseResourceDetails"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.source = None  # type: Optional[str]
+        self.source: Optional[str] = None
 
 
 class AzureResourceDetails(ResourceDetails):
@@ -871,10 +885,10 @@ class AzureResourceDetails(ResourceDetails):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.source = "Azure"  # type: str
+        self.source: str = "Azure"
         self.id = None
 
 
@@ -912,7 +926,7 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -977,10 +991,10 @@ class ContainerRegistryVulnerabilityProperties(AdditionalData):
         "image_digest": {"key": "imageDigest", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.assessed_resource_type = "ContainerRegistryVulnerability"  # type: str
+        self.assessed_resource_type: str = "ContainerRegistryVulnerability"
         self.type = None
         self.cvss = None
         self.patchable = None
@@ -1012,7 +1026,7 @@ class CVE(_serialization.Model):
         "link": {"key": "link", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.title = None
@@ -1036,7 +1050,7 @@ class CVSS(_serialization.Model):
         "base": {"key": "base", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.base = None
@@ -1063,7 +1077,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -1109,7 +1123,9 @@ class OnPremiseResourceDetails(ResourceDetails):
 
     _subtype_map = {"source": {"OnPremiseSql": "OnPremiseSqlResourceDetails"}}
 
-    def __init__(self, *, workspace_id: str, vmuuid: str, source_computer_id: str, machine_name: str, **kwargs):
+    def __init__(
+        self, *, workspace_id: str, vmuuid: str, source_computer_id: str, machine_name: str, **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_id: Azure resource Id of the workspace the machine is attached to. Required.
         :paramtype workspace_id: str
@@ -1121,7 +1137,7 @@ class OnPremiseResourceDetails(ResourceDetails):
         :paramtype machine_name: str
         """
         super().__init__(**kwargs)
-        self.source = "OnPremise"  # type: str
+        self.source: str = "OnPremise"
         self.workspace_id = workspace_id
         self.vmuuid = vmuuid
         self.source_computer_id = source_computer_id
@@ -1179,8 +1195,8 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
         machine_name: str,
         server_name: str,
         database_name: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_id: Azure resource Id of the workspace the machine is attached to. Required.
         :paramtype workspace_id: str
@@ -1202,7 +1218,7 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails):
             machine_name=machine_name,
             **kwargs
         )
-        self.source = "OnPremiseSql"  # type: str
+        self.source: str = "OnPremiseSql"
         self.server_name = server_name
         self.database_name = database_name
 
@@ -1266,7 +1282,7 @@ class RegulatoryComplianceAssessment(Resource):  # pylint: disable=too-many-inst
         "unsupported_resources": {"key": "properties.unsupportedResources", "type": "int"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.State"]] = None, **kwargs):
+    def __init__(self, *, state: Optional[Union[str, "_models.State"]] = None, **kwargs: Any) -> None:
         """
         :keyword state: Aggregative state based on the assessment's scanned resources states. Known
          values are: "Passed", "Failed", "Skipped", and "Unsupported".
@@ -1307,7 +1323,7 @@ class RegulatoryComplianceAssessmentList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RegulatoryComplianceAssessment"], **kwargs):
+    def __init__(self, *, value: List["_models.RegulatoryComplianceAssessment"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value:
@@ -1366,7 +1382,7 @@ class RegulatoryComplianceControl(Resource):
         "skipped_assessments": {"key": "properties.skippedAssessments", "type": "int"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.State"]] = None, **kwargs):
+    def __init__(self, *, state: Optional[Union[str, "_models.State"]] = None, **kwargs: Any) -> None:
         """
         :keyword state: Aggregative state based on the control's supported assessments states. Known
          values are: "Passed", "Failed", "Skipped", and "Unsupported".
@@ -1404,7 +1420,7 @@ class RegulatoryComplianceControlList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RegulatoryComplianceControl"], **kwargs):
+    def __init__(self, *, value: List["_models.RegulatoryComplianceControl"], **kwargs: Any) -> None:
         """
         :keyword value: List of regulatory compliance controls. Required.
         :paramtype value:
@@ -1464,7 +1480,7 @@ class RegulatoryComplianceStandard(Resource):
         "unsupported_controls": {"key": "properties.unsupportedControls", "type": "int"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.State"]] = None, **kwargs):
+    def __init__(self, *, state: Optional[Union[str, "_models.State"]] = None, **kwargs: Any) -> None:
         """
         :keyword state: Aggregative state based on the standard's supported controls states. Known
          values are: "Passed", "Failed", "Skipped", and "Unsupported".
@@ -1502,7 +1518,7 @@ class RegulatoryComplianceStandardList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RegulatoryComplianceStandard"], **kwargs):
+    def __init__(self, *, value: List["_models.RegulatoryComplianceStandard"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value:
@@ -1529,8 +1545,8 @@ class ScopeElement(_serialization.Model):
     }
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, Any]] = None, field: Optional[str] = None, **kwargs
-    ):
+        self, *, additional_properties: Optional[Dict[str, Any]] = None, field: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1611,8 +1627,8 @@ class SecuritySubAssessment(Resource):  # pylint: disable=too-many-instance-attr
         status: Optional["_models.SubAssessmentStatus"] = None,
         resource_details: Optional["_models.ResourceDetails"] = None,
         additional_data: Optional["_models.AdditionalData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the sub-assessment.
         :paramtype status: ~azure.mgmt.security.v2019_01_01_preview.models.SubAssessmentStatus
@@ -1655,7 +1671,7 @@ class SecuritySubAssessmentList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1713,10 +1729,10 @@ class ServerVulnerabilityProperties(AdditionalData):
         "vendor_references": {"key": "vendorReferences", "type": "[VendorReference]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.assessed_resource_type = "ServerVulnerabilityAssessment"  # type: str
+        self.assessed_resource_type: str = "ServerVulnerabilityAssessment"
         self.type = None
         self.cvss = None
         self.patchable = None
@@ -1755,10 +1771,10 @@ class SqlServerVulnerabilityProperties(AdditionalData):
         "query": {"key": "query", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.assessed_resource_type = "SqlServerVulnerability"  # type: str
+        self.assessed_resource_type: str = "SqlServerVulnerability"
         self.type = None
         self.query = None
 
@@ -1794,7 +1810,7 @@ class SubAssessmentStatus(_serialization.Model):
         "severity": {"key": "severity", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1821,7 +1837,7 @@ class SuppressionAlertsScope(_serialization.Model):
         "all_of": {"key": "allOf", "type": "[ScopeElement]"},
     }
 
-    def __init__(self, *, all_of: List["_models.ScopeElement"], **kwargs):
+    def __init__(self, *, all_of: List["_models.ScopeElement"], **kwargs: Any) -> None:
         """
         :keyword all_of: All the conditions inside need to be true in order to suppress the alert.
          Required.
@@ -1852,7 +1868,7 @@ class VendorReference(_serialization.Model):
         "link": {"key": "link", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.title = None

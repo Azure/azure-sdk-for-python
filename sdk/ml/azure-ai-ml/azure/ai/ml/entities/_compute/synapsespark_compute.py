@@ -19,7 +19,7 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class AutoScaleSettings:
-    """Auto scale settings for synapse spark compute"""
+    """Auto scale settings for synapse spark compute."""
 
     def __init__(
         self,
@@ -28,7 +28,7 @@ class AutoScaleSettings:
         max_node_count: Optional[int] = None,
         enabled: Optional[bool] = None,
     ):
-        """Auto scale settings for synapse spark compute
+        """Auto scale settings for synapse spark compute.
 
         :param min_node_count: Min node count
         :type min_node_count: int
@@ -58,10 +58,10 @@ class AutoScaleSettings:
 
 
 class AutoPauseSettings:
-    """Auto pause settings for synapse spark compute"""
+    """Auto pause settings for synapse spark compute."""
 
     def __init__(self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None):
-        """Auto pause settings for synapse spark compute
+        """Auto pause settings for synapse spark compute.
 
         :param delay_in_minutes: ideal time delay in minutes before pause cluster
         :type delay_in_minutes: int
@@ -87,7 +87,7 @@ class AutoPauseSettings:
 
 @experimental
 class SynapseSparkCompute(Compute):
-    """SynapseSpark Compute resource
+    """SynapseSpark Compute resource.
 
     :param name: Name of the compute
     :type name: str
@@ -119,13 +119,7 @@ class SynapseSparkCompute(Compute):
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
-        super().__init__(
-            name=name,
-            description=description,
-            location=kwargs.pop("location", None),
-            tags=tags,
-            **kwargs
-        )
+        super().__init__(name=name, description=description, location=kwargs.pop("location", None), tags=tags, **kwargs)
         self.identity = identity
         self.node_count = node_count
         self.node_family = node_family

@@ -33,7 +33,7 @@ _logger = get_logger(logging.DEBUG)
 
 
 class TestServiceBusSubscriptionAsync(AzureMgmtRecordedTestCase):
-    @pytest.mark.skip(reason="TODO: iterator support")
+
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -79,7 +79,7 @@ class TestServiceBusSubscriptionAsync(AzureMgmtRecordedTestCase):
                     await receiver.complete_message(message)
             assert count == 1
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -116,7 +116,7 @@ class TestServiceBusSubscriptionAsync(AzureMgmtRecordedTestCase):
                     await receiver.complete_message(message)
             assert count == 1
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
