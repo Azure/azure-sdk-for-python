@@ -15,12 +15,15 @@ from azure.ai.ml._utils._experimental import experimental
 
 def _check_for_import(package_name):
     try:
-        #pylint: disable=unused-import
+        # pylint: disable=unused-import
         importlib.import_module(package_name)
     except ImportError:
-        raise ImportError("The DSL FL Node has an additional requirement above the rest of the " +
-            "AML SDK repo in that the mldesigner package is required. Please run `pip instasll mldesigner` " +
-            "and try again.")
+        raise ImportError(
+            "The DSL FL Node has an additional requirement above the rest of the "
+            + "AML SDK repo in that the mldesigner package is required. Please run `pip install mldesigner` "
+            + "and try again."
+        )
+
 
 @experimental
 def fl_scatter_gather(
@@ -40,7 +43,7 @@ def fl_scatter_gather(
 ):
     """USAGE WARNING: Using this node directly from the SDK repo requires that the user have the 'mldesigner'
     package installed, which is not a standard dependency of this package.
-    
+
     A federated learning scatter-gather subgraph node. It's assumed that this will be used inside of
     a @pipeline-decorated function in order to create a subgraph which will:
         - Execute a specified pipeline step multiple times (the silo step), with each execution using slightly

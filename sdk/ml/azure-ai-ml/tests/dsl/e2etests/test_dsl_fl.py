@@ -54,10 +54,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         ),
     )
     def test_fl_pipeline(
-        self,
-        client: MLClient,
-        federated_learning_components_folder: Path,
-        federated_learning_local_data_folder: Path
+        self, client: MLClient, federated_learning_components_folder: Path, federated_learning_local_data_folder: Path
     ) -> None:
         id = IdentityConfiguration(
             type=IdentityConfigurationType.MANAGED,
@@ -96,7 +93,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         )
 
         training_component = load_component(
-            source=os.path.join(federated_learning_components_folder,"training","spec.yaml"))
+            source=os.path.join(federated_learning_components_folder, "training", "spec.yaml")
+        )
 
         aggregate_component = load_component(
             source=os.path.join(federated_learning_components_folder, "aggregate", "spec.yaml")

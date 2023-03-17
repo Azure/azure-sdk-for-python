@@ -898,9 +898,11 @@ def disable_internal_components():
     with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
         yield
 
+
 @pytest.fixture()
 def federated_learning_components_folder() -> Path:
     return Path("./tests/test_configs/components/fl_test_components")
+
 
 @pytest.fixture()
 def federated_learning_local_data_folder() -> Path:

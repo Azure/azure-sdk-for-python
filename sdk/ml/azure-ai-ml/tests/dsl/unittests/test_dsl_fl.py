@@ -16,12 +16,16 @@ from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestDSLPipeline:
-    def test_fl_node_creation(self, federated_learning_components_folder: Path, federated_learning_local_data_folder: Path) -> None:
+    def test_fl_node_creation(
+        self, federated_learning_components_folder: Path, federated_learning_local_data_folder: Path
+    ) -> None:
         preprocessing_component = load_component(
             source=os.path.join(federated_learning_components_folder, "preprocessing", "spec.yaml")
         )
 
-        training_component = load_component(source=os.path.join(federated_learning_components_folder, "training", "spec.yaml"))
+        training_component = load_component(
+            source=os.path.join(federated_learning_components_folder, "training", "spec.yaml")
+        )
 
         aggregate_component = load_component(
             source=os.path.join(federated_learning_components_folder, "aggregate", "spec.yaml")
