@@ -209,7 +209,7 @@ class BlobCheckpointStore(CheckpointStore):
                 fully_qualified_namespace, eventhub_name, consumer_group
             )
             blobs = self._container_client.list_blobs(
-                name_starts_with=blob_prefix.lower(), include=["metadata"], **kwargs
+                name_starts_with=blob_prefix, include=["metadata"], **kwargs
             )
             result = []
             for blob in blobs:
@@ -331,7 +331,7 @@ class BlobCheckpointStore(CheckpointStore):
             fully_qualified_namespace, eventhub_name, consumer_group
         )
         blobs = self._container_client.list_blobs(
-            name_starts_with=blob_prefix.lower(), include=["metadata"], **kwargs
+            name_starts_with=blob_prefix, include=["metadata"], **kwargs
         )
         result = []
         for b in blobs:
