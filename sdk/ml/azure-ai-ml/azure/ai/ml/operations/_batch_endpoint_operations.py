@@ -275,22 +275,6 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if is_private_preview_enabled() and job_name:
             params_override.append({EndpointYamlFields.BATCH_JOB_NAME: job_name})
 
-        # endpoint_yaml_dict = {}
-        # for param in params_override:  
-        #     for k,v in param.items():
-        #         endpoint_yaml_dict[k] = v      
-
-
-        # batch_job = BatchJob(
-        #     input_data=endpoint_yaml_dict.get("input_data", None),
-        #     compute= endpoint_yaml_dict.get("compute", None),
-        #     output_data=endpoint_yaml_dict.get("output_data", None),
-        #     output_dataset=endpoint_yaml_dict.get("output_dataset", None),
-        #     job_name=endpoint_yaml_dict.get("job_name", None),
-        #     mini_batch_size=endpoint_yaml_dict.get("mini_batch_size", None),
-
-        # )
-
         context = {
             BASE_PATH_CONTEXT_KEY: Path(".").parent,
             PARAMS_OVERRIDE_KEY: params_override,

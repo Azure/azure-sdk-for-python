@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: redefined-builtin
 from typing import Dict, Optional, Union, List
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
     BatchJobResource,
@@ -10,11 +10,12 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
     InferenceDataInputBase,
     JobInput,
     JobOutputV2,
-    BatchJob as RestBatchJob
+    BatchJob as RestBatchJob,
 )
 from azure.ai.ml.entities._job.compute_configuration import ComputeConfiguration
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 
+# pylint: disable=too-many-instance-attributes
 class BatchJob(object):
     """Batch jobs that are created with batch deployments/endpoints invocation.
 
@@ -45,8 +46,8 @@ class BatchJob(object):
         properties: Optional[Dict[str, str]] = None,
         retry_settings: Optional[BatchRetrySettings] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs       
-        ):
+        **kwargs  # pylint:disable=unused-argument
+    ):
         self.id = id
         self.name = name
         self.type = type
@@ -91,10 +92,9 @@ class BatchJob(object):
             partition_keys=batch_job_property.partition_keys,
             properties=batch_job_property.properties,
             retry_settings=batch_job_property.retry_settings,
-            tags=batch_job_property.tags
-
+            tags=batch_job_property.tags,
         )
-    
+
     def _to_rest_object(self) -> "BatchJobResource":
         batch_job_property = RestBatchJob(
             compute=self.compute,
@@ -112,8 +112,6 @@ class BatchJob(object):
             partition_keys=self.partition_keys,
             properties=self.properties,
             retry_settings=self.retry_settings,
-            tags=self.tags
+            tags=self.tags,
         )
-        return BatchJobResource(
-            properties=batch_job_property
-        )
+        return BatchJobResource(properties=batch_job_property)
