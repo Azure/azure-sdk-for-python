@@ -367,8 +367,6 @@ class HttpRequestBackcompatMixin:
 
     def _add_backcompat_properties(self, request, memo):
         """While deepcopying, we also need to add the private backcompat attrs"""
-        request._multipart_mixed_info = (
-            copy.deepcopy(  # pylint: disable=protected-access
-                self._multipart_mixed_info, memo
-            )
+        request._multipart_mixed_info = (  # pylint: disable=protected-access
+            copy.deepcopy(self._multipart_mixed_info, memo)
         )

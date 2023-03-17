@@ -30,8 +30,11 @@ class _BearerTokenCredentialPolicyBase:
     """
 
     def __init__(
-        self, credential: "TokenCredential", *scopes: str, **kwargs
-    ) -> None:  # pylint:disable=unused-argument
+        self,
+        credential: "TokenCredential",
+        *scopes: str,
+        **kwargs  # pylint:disable=unused-argument
+    ) -> None:
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
@@ -204,8 +207,10 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy):
     """
 
     def __init__(
-        self, credential: "AzureSasCredential", **kwargs
-    ) -> None:  # pylint: disable=unused-argument
+        self,
+        credential: "AzureSasCredential",
+        **kwargs  # pylint: disable=unused-argument
+    ) -> None:
         super(AzureSasCredentialPolicy, self).__init__()
         if not credential:
             raise ValueError("credential can not be None")

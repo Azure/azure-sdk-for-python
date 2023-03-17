@@ -47,9 +47,9 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
-        _BearerTokenCredentialPolicyBase._enforce_https(
+        _BearerTokenCredentialPolicyBase._enforce_https(  # pylint:disable=protected-access
             request
-        )  # pylint:disable=protected-access
+        )
 
         if self._token is None or self._need_new_token():
             async with self._lock:

@@ -591,8 +591,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     CONTEXT_NAME = "deserialized_data"
 
     def __init__(
-        self, response_encoding: Optional[str] = None, **kwargs
-    ) -> None:  # pylint: disable=unused-argument
+        self,
+        response_encoding: Optional[str] = None,
+        **kwargs  # pylint: disable=unused-argument
+    ) -> None:
         self._response_encoding = response_encoding
 
     @classmethod
