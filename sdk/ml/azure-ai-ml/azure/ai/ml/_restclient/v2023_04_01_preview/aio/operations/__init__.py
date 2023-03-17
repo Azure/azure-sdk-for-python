@@ -21,8 +21,6 @@ from ._registry_code_containers_operations import RegistryCodeContainersOperatio
 from ._registry_code_versions_operations import RegistryCodeVersionsOperations
 from ._registry_component_containers_operations import RegistryComponentContainersOperations
 from ._registry_component_versions_operations import RegistryComponentVersionsOperations
-from ._registry_data_containers_operations import RegistryDataContainersOperations
-from ._registry_data_versions_operations import RegistryDataVersionsOperations
 from ._registry_environment_containers_operations import RegistryEnvironmentContainersOperations
 from ._registry_environment_versions_operations import RegistryEnvironmentVersionsOperations
 from ._registry_model_containers_operations import RegistryModelContainersOperations
@@ -66,8 +64,6 @@ __all__ = [
     'RegistryCodeVersionsOperations',
     'RegistryComponentContainersOperations',
     'RegistryComponentVersionsOperations',
-    'RegistryDataContainersOperations',
-    'RegistryDataVersionsOperations',
     'RegistryEnvironmentContainersOperations',
     'RegistryEnvironmentVersionsOperations',
     'RegistryModelContainersOperations',
