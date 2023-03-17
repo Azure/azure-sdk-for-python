@@ -1,4 +1,5 @@
 import pytest
+from pathlib import Path
 from devtools_testutils import AzureRecordedTestCase, is_live
 from azure.core.exceptions import ResourceNotFoundError
 from .._util import _DSL_TIMEOUT_SECOND
@@ -14,7 +15,6 @@ from azure.ai.ml.entities._credentials import (
     ManagedIdentityConfiguration,
 )
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.dsl._constants import FL_TESTING_LOCAL_DATA_FOLDER, FL_TESTING_COMPONENTS_FOLDER
 import os
 from azure.ai.ml import (
     MLClient,
@@ -53,7 +53,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
             + "API calls in playback mode compared to recording mode"
         ),
     )
-    def test_fl_pipeline(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+    def test_fl_pipeline(
+        self,
+        client: MLClient,
+        federated_learning_components_folder: Path,
+        federated_learning_local_data_folder: Path
+    ) -> None:
         id = IdentityConfiguration(
             type=IdentityConfigurationType.MANAGED,
             user_assigned_identities=[ManagedIdentityConfiguration(client_id="3adff742-0142-45a6-8142-3d94f944cafb")],
@@ -87,13 +92,14 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         # Load components from local configs
         preprocessing_component = load_component(
-            source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "preprocessing", "spec.yaml")
+            source=os.path.join(federated_learning_components_folder, "preprocessing", "spec.yaml")
         )
 
-        training_component = load_component(source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "training", "spec.yaml"))
+        training_component = load_component(
+            source=os.path.join(federated_learning_components_folder,"training","spec.yaml"))
 
         aggregate_component = load_component(
-            source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "aggregate", "spec.yaml")
+            source=os.path.join(federated_learning_components_folder, "aggregate", "spec.yaml")
         )
 
         # Use a nested pipeline for the silo step
@@ -143,13 +149,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo1_input1.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo1_input1.txt"),
                         datastore=datastores[0].name,
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo1_input2.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo1_input2.txt"),
                         datastore=datastores[0].name,
                     ),
                 },
@@ -161,13 +167,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo2_input1.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo2_input1.txt"),
                         datastore=datastores[1].name,
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo2_input2.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo2_input2.txt"),
                         datastore=datastores[1].name,
                     ),
                 },

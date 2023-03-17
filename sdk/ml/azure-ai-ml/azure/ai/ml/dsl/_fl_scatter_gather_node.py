@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 from typing import List, Dict, Optional, Union
+import importlib
 
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
@@ -11,6 +12,15 @@ from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearni
 from azure.ai.ml.entities import CommandComponent
 from azure.ai.ml._utils._experimental import experimental
 
+
+def _check_for_import(package_name):
+    try:
+        #pylint: disable=unused-import
+        importlib.import_module(package_name)
+    except ImportError:
+        raise ImportError("The DSL FL Node has an additional requirement above the rest of the " +
+            "AML SDK repo in that the mldesigner package is required. Please run `pip instasll mldesigner` " +
+            "and try again.")
 
 @experimental
 def fl_scatter_gather(
@@ -97,6 +107,9 @@ def fl_scatter_gather(
     """
     # Private kwargs:
     # _create_default_mappings_if_needed: if true, then try to automatically create i/o mappings if they're unset.
+
+    # check that mldesigner is available
+    _check_for_import("mldesigner")
 
     # Like other DSL nodes, this is just a wrapper around a node builder entity initializer.
     return FLScatterGather(

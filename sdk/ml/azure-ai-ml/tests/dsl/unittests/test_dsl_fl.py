@@ -1,12 +1,13 @@
 from typing import List
+from pathlib import Path
 import pytest
 import os
 from azure.ai.ml import command, Input, Output, load_component
 from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
+from azure.ai.ml.dsl._fl_scatter_gather_node import _check_for_import
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.dsl._constants import FL_TESTING_LOCAL_DATA_FOLDER, FL_TESTING_COMPONENTS_FOLDER
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -15,15 +16,15 @@ from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestDSLPipeline:
-    def test_fl_node_creation(self) -> None:
+    def test_fl_node_creation(self, federated_learning_components_folder: Path, federated_learning_local_data_folder: Path) -> None:
         preprocessing_component = load_component(
-            source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "preprocessing", "spec.yaml")
+            source=os.path.join(federated_learning_components_folder, "preprocessing", "spec.yaml")
         )
 
-        training_component = load_component(source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "training", "spec.yaml"))
+        training_component = load_component(source=os.path.join(federated_learning_components_folder, "training", "spec.yaml"))
 
         aggregate_component = load_component(
-            source=os.path.join(FL_TESTING_COMPONENTS_FOLDER, "aggregate", "spec.yaml")
+            source=os.path.join(federated_learning_components_folder, "aggregate", "spec.yaml")
         )
 
         aggregation_step = aggregate_component
@@ -79,13 +80,13 @@ class TestDSLPipeline:
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo1_input1.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo1_input1.txt"),
                         datastore=datastore_names[0],
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo1_input2.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo1_input2.txt"),
                         datastore=datastore_names[0],
                     ),
                 },
@@ -97,13 +98,13 @@ class TestDSLPipeline:
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo2_input1.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo2_input1.txt"),
                         datastore=datastore_names[1],
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo2_input2.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo2_input2.txt"),
                         datastore=datastore_names[1],
                     ),
                 },
@@ -115,13 +116,13 @@ class TestDSLPipeline:
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo3_input1.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo3_input1.txt"),
                         datastore=datastore_names[2],
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(FL_TESTING_LOCAL_DATA_FOLDER, "silo3_input2.txt"),
+                        path=os.path.join(federated_learning_local_data_folder, "silo3_input2.txt"),
                         datastore=datastore_names[2],
                     ),
                 },
@@ -419,3 +420,8 @@ class TestDSLPipeline:
         assert orch_ds_name in executed_pipeline.component.jobs["executed_subcomponent2"].outputs["output2"].path
         assert orch_ds_name in executed_pipeline.outputs["pipeline_output"].path
         assert executed_pipeline.outputs["pipeline_output2"].path == "this-should-not-change"
+
+    def test_import_requirement(self) -> None:
+        with pytest.raises(ImportError):
+            _check_for_import("not-a-package")
+        _check_for_import("mldesigner")
