@@ -35,7 +35,8 @@ def mock_component_operation(
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestComponentOperation:
-    def test_create(self, mock_component_operation: ComponentOperations) -> None:
+    @pytest.mark.usefixtures("mock_ip_registry_check_false")
+    def test_create_in_non_ipp_registry(self, mock_component_operation: ComponentOperations) -> None:
         component = CommandComponent(
             name="random_name", version="1", environment="azureml:AzureML-Minimal:1", command="echo hello"
         )
@@ -47,7 +48,23 @@ class TestComponentOperation:
             mock_component_operation.create_or_update(component)
             mock_thing.assert_called_once()
 
-        mock_component_operation._version_operation.begin_create_or_update.assert_called_once
+        mock_component_operation._version_operation.begin_create_or_update.assert_called_once()
+
+    @pytest.mark.usefixtures("mock_ip_registry_check_true")
+    def test_create_in_ipp_registry(self, mock_component_operation: ComponentOperations) -> None:
+        component = CommandComponent(
+            name="random_name", version="1", environment="azureml:AzureML-Minimal:1", command="echo hello"
+        )
+
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
+            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
+            return_value=CommandComponent(),
+        ):
+            mock_component_operation.create_or_update(component)
+            # for directly component publish to ipp registry, we need to make sure
+            # _resolve_arm_id_or_upload_dependencies
+            # is not called
+            mock_thing.assert_not_called()
 
     def test_list(self, mock_component_operation: ComponentOperations) -> None:
         mock_component_operation.list(name="mock")
