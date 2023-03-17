@@ -99,7 +99,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/utshare93402aee/file93402aee?se=end\u0026sp=r\u0026sv=2022-11-02\u0026sr=f\u0026sig=fake_token_value",
+      "RequestUri": "https://storagename.file.core.windows.net/utshare93402aee/file93402aee?se=end\u0026sp=r\u0026sv=2023-01-03\u0026sr=f\u0026sig=fake_token_value",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
