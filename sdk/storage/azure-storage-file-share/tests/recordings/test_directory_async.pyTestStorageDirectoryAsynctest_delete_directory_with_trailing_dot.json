@@ -1,0 +1,109 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare5df73762?restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Tue, 31 Jan 2023 00:05:20 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Tue, 31 Jan 2023 00:04:35 GMT",
+        "ETag": "\u00220x8DB031EBCEAD7F9\u0022",
+        "Last-Modified": "Tue, 31 Jan 2023 00:04:35 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare5df73762/dir1.?restype=directory",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-date": "Tue, 31 Jan 2023 00:05:21 GMT",
+        "x-ms-file-attributes": "none",
+        "x-ms-file-creation-time": "now",
+        "x-ms-file-last-write-time": "now",
+        "x-ms-file-permission": "inherit",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Tue, 31 Jan 2023 00:04:35 GMT",
+        "ETag": "\u00220x8DB031EBCFF1482\u0022",
+        "Last-Modified": "Tue, 31 Jan 2023 00:04:35 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2023-01-31T00:04:35.7792898Z",
+        "x-ms-file-creation-time": "2023-01-31T00:04:35.7792898Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2023-01-31T00:04:35.7792898Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "4282235038938884634*13244350442060319835",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare5df73762/dir1.?restype=directory",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-date": "Tue, 31 Jan 2023 00:05:22 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Date": "Tue, 31 Jan 2023 00:04:35 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare5df73762/dir1.?restype=directory",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-date": "Tue, 31 Jan 2023 00:05:22 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Length": "223",
+        "Content-Type": "application/xml",
+        "Date": "Tue, 31 Jan 2023 00:04:35 GMT",
+        "x-ms-error-code": "ResourceNotFound",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EResourceNotFound\u003C/Code\u003E\u003CMessage\u003EThe specified resource does not exist.\n",
+        "RequestId:7b47ae4a-201a-0000-5907-35e568000000\n",
+        "Time:2023-01-31T00:04:36.1546785Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    }
+  ],
+  "Variables": {}
+}

@@ -22,6 +22,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_general_string_sanitizer,
     add_remove_header_sanitizer,
+    add_uri_string_sanitizer,
     is_live,
     set_bodiless_matcher,
     set_custom_default_matcher,
@@ -36,14 +37,14 @@ from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, ANONYMOUS_COMPONENT_NAME
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
-from azure.ai.ml.operations._workspace_operations import get_deployment_name, get_name_for_dependent_resource
+from azure.ai.ml.operations._workspace_operations_base import get_deployment_name, get_name_for_dependent_resource
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.transport import HttpTransport
 from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
@@ -81,14 +82,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
-    add_body_key_sanitizer(
-        json_path="$.properties.sdkTelemetryAppInsightsKey", value="0000000-0000-0000-0000-000000000000"
-    )
-    add_body_key_sanitizer(
-        json_path="$.properties.notebookInfo.resourceId", value="0000000-0000-0000-0000-000000000000"
-    )
-    add_body_key_sanitizer(json_path="$.identity.principalId", value="0000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(value="0000000-0000-0000-0000-000000000000", regex=os.environ.get("ML_TENANT_ID"))
     add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
     add_general_regex_sanitizer(
@@ -104,12 +97,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_general_regex_sanitizer(
         value="000000000000000000000000000000000000",
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
-        group_for_replace="1",
-    )
-    # masks signature in SAS uri
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='sig=([^/\\s"]{46,52})',
         group_for_replace="1",
     )
 
@@ -132,41 +119,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
-
-
-@pytest.fixture
-def storage_account_guid_sanitizer(test_proxy):
-    # masks blob storage account info in SAS uris
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='.blob.core.windows.net:443\\/([^/\\s"]{46,52})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='.blob.core.windows.net\\/([^/\\s"]{47,54})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000",
-        regex='skt=([^/\\s"]{24})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000",
-        regex='ske=([^/\\s"]{24})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='st=([^/\\s"]{25})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='se=([^/\\s"]{25})',
-        group_for_replace="1",
-    )
 
 
 @pytest.fixture
@@ -195,7 +147,12 @@ def mock_registry_scope() -> OperationScope:
 
 @pytest.fixture
 def mock_operation_config() -> OperationConfig:
-    yield OperationConfig(True)
+    yield OperationConfig(show_progress=True, enable_telemetry=True)
+
+
+@pytest.fixture
+def mock_operation_config_no_progress() -> OperationConfig:
+    yield OperationConfig(show_progress=False, enable_telemetry=True)
 
 
 @pytest.fixture
@@ -256,26 +213,6 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
 
 
 @pytest.fixture
-def mock_snapshot_hash(mocker: MockFixture) -> None:
-    fake_uuid = "000000000000000000000"
-
-    def generate_uuid(*args, **kwargs):
-        real_uuid = str(uuid.uuid4())
-        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
-        return real_uuid
-
-    if is_live():
-        mocker.patch(
-            "azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id",
-            side_effect=generate_uuid,
-        )
-    else:
-        mocker.patch(
-            "azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id", return_value=fake_uuid
-        )
-
-
-@pytest.fixture
 def mock_aml_services_2022_10_01(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_10_01")
 
@@ -308,6 +245,11 @@ def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2023_02_01_preview")
 
 
 @pytest.fixture
@@ -607,31 +549,6 @@ def mock_asset_name(mocker: MockFixture):
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
 
 
-@pytest.fixture
-def mock_anon_component_version(mocker: MockFixture):
-
-    fake_uuid = "000000000000000000000"
-
-    def generate_name_version(*args, **kwargs):
-        real_uuid = str(uuid.uuid4())
-        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
-        return ANONYMOUS_COMPONENT_NAME, real_uuid
-
-    def fake_name_version(*args, **kwargs):
-        return ANONYMOUS_COMPONENT_NAME, fake_uuid
-
-    if is_live():
-        mocker.patch(
-            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
-            side_effect=generate_name_version,
-        )
-    else:
-        mocker.patch(
-            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
-            side_effect=fake_name_version,
-        )
-
-
 def normalized_arm_id_in_object(items):
     """Replace the arm id in the object with a normalized value."""
     regex = re.compile(
@@ -768,7 +685,7 @@ def mock_workspace_arm_template_deployment_name(mocker: MockFixture, variable_re
         return variable_recorder.get_or_record("deployment_name", deployment_name)
 
     mocker.patch(
-        "azure.ai.ml.operations._workspace_operations.get_deployment_name",
+        "azure.ai.ml.operations._workspace_operations_base.get_deployment_name",
         side_effect=generate_mock_workspace_deployment_name,
     )
 
@@ -780,7 +697,7 @@ def mock_workspace_dependent_resource_name_generator(mocker: MockFixture, variab
         return variable_recorder.get_or_record(f"{resource_type}_name", deployment_name)
 
     mocker.patch(
-        "azure.ai.ml.operations._workspace_operations.get_name_for_dependent_resource",
+        "azure.ai.ml.operations._workspace_operations_base.get_name_for_dependent_resource",
         side_effect=generate_mock_workspace_dependent_resource_name,
     )
 
@@ -959,6 +876,7 @@ def pytest_configure(config):
         ("production_experiences_test", "marks tests as production experience tests"),
         ("training_experiences_test", "marks tests as training experience tests"),
         ("data_experiences_test", "marks tests as data experience tests"),
+        ("data_import_test", "marks tests as data import tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
         ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
         ("virtual_cluster_test", "marks tests as virtual cluster tests"),

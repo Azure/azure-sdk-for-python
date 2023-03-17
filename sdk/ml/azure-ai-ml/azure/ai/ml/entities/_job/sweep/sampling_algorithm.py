@@ -37,6 +37,7 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
 
 class RandomSamplingAlgorithm(SamplingAlgorithm):
     """Random Sampling Algorithm.
+
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "random" for this class.
     :vartype type: str
     """
@@ -68,6 +69,7 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
     """Grid Sampling Algorithm.
+
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "grid" for this class.
     :vartype type: str
     """
@@ -88,6 +90,7 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 
 class BayesianSamplingAlgorithm(SamplingAlgorithm):
     """Bayesian Sampling Algorithm.
+
     :ivar type: Specifies the type of sampling algorithm. Set automatically to "bayesian" for this class.
     :vartype type: str
     """

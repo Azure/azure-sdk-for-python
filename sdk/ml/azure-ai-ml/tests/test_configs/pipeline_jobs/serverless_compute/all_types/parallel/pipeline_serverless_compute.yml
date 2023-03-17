@@ -1,0 +1,69 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: Parallel - pipeline serverless compute
+experiment_name: Serverless in Pipeline
+settings:
+  default_compute: azureml:serverless
+jobs:
+  partition_job:
+    type: command
+    component: ./src/partition_data/partition_data.yml
+    
+    inputs:
+      data_source:
+        type: uri_file
+        path: ./oj_sales_data/oj_sales_data.csv
+      partition_keys: Store,Brand
+    outputs:
+      tabular_output_data:
+        type: mltable
+        mode: rw_mount
+
+  parallel_train:
+    type: parallel
+    inputs:
+      data_source: 
+        path: ${{parent.jobs.partition_job.outputs.tabular_output_data}}
+        type: mltable
+        mode: direct
+      drop_cols: "Revenue,Advert,Store,Brand"
+      target_col: "Quantity"
+      date_col: "WeekStarting"
+      lagging_orders: "1,2,3,4,5,6"
+    outputs:
+      model_folder:
+        type: uri_folder
+        mode: rw_mount
+
+    partition_keys:
+      - Store
+      - Brand
+    resources:
+      instance_count: 2
+
+    error_threshold: -1
+    mini_batch_error_threshold: 5
+    logging_level: "INFO"
+    input_data: ${{inputs.data_source}}
+    max_concurrency_per_instance: 2
+    retry_settings:
+      max_retries: 2
+      timeout: 60
+
+    environment_variables:
+      "AZUREML_PARALLEL_EXAMPLE": "1a_yaml"
+
+    task:
+      type: run_function
+      code: ./src/parallel_train
+      entry_script: parallel_train.py
+      environment:
+        image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+        conda_file: ./src/parallel_train/conda.yml
+
+      program_arguments: >-
+        --drop_cols ${{inputs.drop_cols}}
+        --target_col ${{inputs.target_col}}
+        --date_col ${{inputs.date_col}}
+        --lagging_orders ${{inputs.lagging_orders}}
+        --model_folder ${{outputs.model_folder}}

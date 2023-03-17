@@ -20,9 +20,10 @@ class OperationConfig(object):
     :type object: _type_
     """
 
-    def __init__(self, show_progress: bool) -> None:
+    def __init__(self, show_progress: bool, enable_telemetry: bool) -> None:
 
         self._show_progress = show_progress
+        self._enable_telemetry = enable_telemetry
 
     @property
     def show_progress(self) -> bool:
@@ -32,6 +33,15 @@ class OperationConfig(object):
         :rtype: bool
         """
         return self._show_progress
+
+    @property
+    def enable_telemetry(self) -> bool:
+        """Decide whether to enable telemetry for Jupyter Notebooks - telemetry cannot be enabled for other contexts.
+
+        :return: enable_telemetry
+        :rtype: bool
+        """
+        return self._enable_telemetry
 
 
 class OperationScope(object):
@@ -99,6 +109,10 @@ class _ScopeDependentOperations(object):
     @property
     def _show_progress(self) -> bool:
         return self._operation_config.show_progress
+
+    @property
+    def _enable_telemetry(self) -> bool:
+        return self._operation_config.enable_telemetry
 
 
 class OperationsContainer(object):

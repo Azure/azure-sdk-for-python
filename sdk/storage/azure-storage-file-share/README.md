@@ -7,7 +7,12 @@ Azure file shares can be used to:
 * "Lift and shift" applications
 * Simplify cloud development with shared application settings, diagnostic share, and Dev/Test/Debug tools
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/azure/storage/fileshare) | [Package (PyPI)](https://pypi.org/project/azure-storage-file-share/) | [API reference documentation](https://aka.ms/azsdk-python-storage-fileshare-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/azure/storage/fileshare)
+| [Package (PyPI)](https://pypi.org/project/azure-storage-file-share/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-storage/)
+| [API reference documentation](https://aka.ms/azsdk-python-storage-fileshare-ref)
+| [Product documentation](https://docs.microsoft.com/azure/storage/)
+| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share/samples)
 
 ## Getting started
 

@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 """Contains entities and SDK objects for Azure Machine Learning SDKv2.
 
-Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing
-model, runs and run output/logging etc.
+Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing model, runs
+and run output/logging etc.
 """
 # pylint: disable=naming-mismatch
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
@@ -48,9 +48,11 @@ from ._credentials import (
     ServicePrincipalConfiguration,
     UserIdentityConfiguration,
     UsernamePasswordConfiguration,
+    AccessKeyConfiguration,
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
+from ._data_import.data_import import DataImport
 from ._datastore.datastore import Datastore
 from ._deployment.batch_deployment import BatchDeployment
 from ._deployment.batch_job import BatchJob
@@ -87,6 +89,7 @@ from ._job.parameterized_command import ParameterizedCommand
 
 # Pipeline related entities goes behind component since it depends on component
 from ._job.pipeline.pipeline_job import PipelineJob, PipelineJobSettings
+from ._job.queue_settings import QueueSettings
 from ._job.resource_configuration import ResourceConfiguration
 from ._job.service_instance import ServiceInstance
 from ._job.spark_job import SparkJob
@@ -134,8 +137,20 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
-from ._workspace.compute_runtime import ComputeRuntime
-from ._workspace.feature_store_settings import FeatureStoreSettings
+
+from ._assets._artifacts.feature_set import _FeatureSet
+from ._workspace.compute_runtime import _ComputeRuntime
+from ._workspace.feature_store_settings import _FeatureStoreSettings
+from ._feature_store_entity.feature_store_entity import _FeatureStoreEntity
+from ._feature_store_entity.data_column import _DataColumn
+from ._feature_store_entity.data_column_type import _DataColumnType
+from ._feature_set.feature_set_specification import _FeatureSetSpecification
+from ._feature_set.materialization_compute_resource import _MaterializationComputeResource
+from ._feature_set.materialization_settings import _MaterializationSettings
+from ._feature_set.materialization_type import _MaterializationType
+from ._feature_store.feature_store import _FeatureStore
+from ._feature_store.materialization_store import _MaterializationStore
+from ._notification.notification import _Notification
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -158,6 +173,7 @@ __all__ = [
     "CreatedByType",
     "ResourceConfiguration",
     "JobResourceConfiguration",
+    "QueueSettings",
     "JobService",
     "SshJobService",
     "TensorBoardJobService",
@@ -194,8 +210,6 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
-    "ComputeRuntime",
-    "FeatureStoreSettings",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -209,6 +223,7 @@ __all__ = [
     "PrivateEndpointDestination",
     "EndpointConnection",
     "CustomerManagedKey",
+    "DataImport",
     "Datastore",
     "AzureDataLakeGen1Datastore",
     "AzureBlobDatastore",
@@ -272,6 +287,19 @@ __all__ = [
     "AutoScaleSettings",
     "AutoPauseSettings",
     "WorkspaceModelReference",
+    "_FeatureSet",
+    "_ComputeRuntime",
+    "_FeatureStoreSettings",
+    "_FeatureStoreEntity",
+    "_DataColumn",
+    "_DataColumnType",
+    "_FeatureSetSpecification",
+    "_MaterializationComputeResource",
+    "_MaterializationSettings",
+    "_MaterializationType",
+    "_FeatureStore",
+    "_MaterializationStore",
+    "_Notification",
     # builders
     "Command",
     "Parallel",
@@ -292,4 +320,5 @@ __all__ = [
     "ContainerRegistryCredential",
     "EndpointAuthKeys",
     "EndpointAuthToken",
+    "AccessKeyConfiguration",
 ]

@@ -1,0 +1,31 @@
+name: test-featureset
+version: "1"
+entities: ["azureml:test:1", "azureml:test:2"]
+specification:
+  path: local/
+stage: registered
+description: Test featureset
+materialization_settings: 
+  schedule:
+    type: Recurrence
+    frequency: Minute
+    interval: 5
+    schedule:
+      week_days: [Sunday]
+      hours: [12]
+      minutes: [5]
+  notification:
+    email_on: [jobcompleted, jobfailed]
+    emails: [fake@email.com, test@email.com]
+  resource:
+    instance_type: standard_e8s_v3
+  spark_configuration:
+    spark.driver.cores: 2
+    spark.driver.memory: 4g
+    spark.executor.cores: 4
+    spark.executor.memory: 4g
+    spark.executor.instances: 5
+  offline_enabled: true
+  online_enabled: false
+tags:
+  t1: v1

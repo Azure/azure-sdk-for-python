@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import copy
 import enum
+import json
 import os
 import shutil
 import tempfile
@@ -13,19 +14,18 @@ from zipfile import ZipFile
 import pydash
 import pytest
 import yaml
-from pytest_mock import MockFixture
-
-from azure.ai.ml._internal._utils import yaml_safe_load_with_base_resolver
-from test_utilities.utils import parse_local_path, build_temp_folder
-
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
+from azure.ai.ml._internal._utils import yaml_safe_load_with_base_resolver
 from azure.ai.ml._internal.entities.component import InternalComponent
+from azure.ai.ml._internal.entities.spark import InternalSparkComponent
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.exceptions import ValidationException
+from pytest_mock import MockFixture
+from test_utilities.utils import build_temp_folder, parse_local_path
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
 
@@ -246,10 +246,26 @@ class TestComponent:
         if "code" in expected_dict:
             expected_dict["code"] = parse_local_path(expected_dict["code"], entity.base_path)
 
+        expected_dict["version"] = str(expected_dict["version"])
+
+        if entity.type == "spark":
+            expected_dict["jars"] = [expected_dict["jars"]]
+            expected_dict["pyFiles"] = [expected_dict["pyFiles"]]
+            expected_dict["environment"] = {
+                "conda_file": {
+                    "dependencies": ["python=3.8", {"pip": ["azureml-core==1.44.0", "shrike==1.31.2"]}],
+                    "name": "component_env",
+                },
+                "image": "conda/miniconda3",
+                "name": "CliV2AnonymousEnvironment",
+                "version": entity.environment.version,
+            }
         assert entity._to_dict() == expected_dict
 
         expected_rest_object = copy.deepcopy(expected_dict)
         expected_rest_object["_source"] = "YAML.COMPONENT"
+        if entity.type == "spark":
+            expected_rest_object["py_files"] = expected_rest_object.pop("pyFiles")
         rest_obj = entity._to_rest_object()
         assert rest_obj.properties.component_spec == expected_rest_object
 
@@ -257,7 +273,15 @@ class TestComponent:
         for input_port in expected_dict.get("inputs", {}).values():
             if input_port["type"] == "String":
                 input_port["type"] = input_port["type"].lower()
-        assert InternalComponent._from_rest_object(rest_obj)._to_dict() == expected_dict
+
+        try:
+            from_rest_entity = InternalComponent._from_rest_object(rest_obj)
+        except Exception as e:
+            raise RuntimeError(
+                "Failed to load component from rest object:\n{}\n"
+                "Full error message:\n{}".format(json.dumps(rest_obj.as_dict(), indent=4), e)
+            )
+        assert from_rest_entity._to_dict() == expected_dict
         result = entity._validate()
         assert result._to_dict() == {"result": "Succeeded"}
 
@@ -362,6 +386,17 @@ class TestComponent:
             "will honor in the order conda_dependencies, conda_dependencies_file and pip_requirements_file."
         )
         assert str(validation_result._warnings[0]) == expected_warning_message
+
+    def test_load_environment_with_version(self):
+        yaml_path = (
+            r"tests/test_configs/internal/command-component/command-linux/"
+            r"component_with_bool_and_data_input/component.yaml"
+        )
+        yaml_dict = load_yaml(yaml_path)
+        component = load_component(source=yaml_path)
+        assert component.environment.name == yaml_dict["environment"]["name"]
+        assert component.environment.version == str(yaml_dict["environment"]["version"])
+        assert component.environment.os == yaml_dict["environment"]["os"]
 
     def test_resolve_local_code(self) -> None:
         # internal component code (snapshot) default includes items in base directory when code is None,
@@ -920,3 +955,34 @@ class TestComponent:
             "version": "0.10",  # previously this is 0.1
             "datatransfer": {"cloud_type": "aether"},
         }
+
+    def test_load_from_internal_spark_component(self):
+        yaml_path = PARAMETERS_TO_TEST[9][0]
+        origin_component: InternalSparkComponent = load_component(source=yaml_path)
+        base_rest_object = origin_component._to_rest_object()
+        base_component: InternalSparkComponent = Component._from_rest_object(base_rest_object)
+        expected_dict = base_component._to_dict()
+
+        treat_rest_object = origin_component._to_rest_object()
+        treat_rest_object.properties.component_spec["environment"] = {
+            "os": "Linux",
+            "conda": {
+                "conda_dependencies": [
+                    "python=3.8",
+                    {
+                        "pip": [
+                            "azureml-core==1.44.0",
+                            "shrike==1.31.2",
+                        ],
+                    },
+                ],
+            },
+        }
+        treat_component: InternalSparkComponent = Component._from_rest_object(treat_rest_object)
+
+        for component in (base_component, treat_component, origin_component):
+            assert isinstance(component, InternalSparkComponent)
+
+        expected_dict["environment"]["version"] = treat_component.environment.version
+        del expected_dict["environment"]["conda_file"]["name"]
+        assert treat_component._to_dict() == expected_dict
