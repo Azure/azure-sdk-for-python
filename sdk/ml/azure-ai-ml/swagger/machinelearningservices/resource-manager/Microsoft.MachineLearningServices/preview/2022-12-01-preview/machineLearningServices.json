@@ -2266,6 +2266,7 @@
           "ManagedNetwork"
         ],
         "operationId": "ManagedNetworkProvisions_Post",
+        "x-ms-long-running-operation": true,
         "parameters": [
           {
             "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"

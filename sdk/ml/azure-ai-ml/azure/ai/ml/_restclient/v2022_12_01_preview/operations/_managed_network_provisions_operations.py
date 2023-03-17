@@ -13,16 +13,18 @@ from msrest import Serializer
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Optional, TypeVar
+    from typing import Any, Callable, Dict, Optional, TypeVar, Union
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -30,7 +32,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 # fmt: off
 
-def build_post_request(
+def build_post_request_initial(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     workspace_name,  # type: str
@@ -92,8 +94,7 @@ class ManagedNetworkProvisionsOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    @distributed_trace
-    def post(  # pylint: disable=inconsistent-return-statements
+    def _post_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name,  # type: str
         workspace_name,  # type: str
@@ -101,19 +102,6 @@ class ManagedNetworkProvisionsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """post.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param body:
-        :type body: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionOptions
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -125,14 +113,14 @@ class ManagedNetworkProvisionsOperations(object):
 
         _json = self._serialize.body(body, 'ManagedNetworkProvisionOptions')
 
-        request = build_post_request(
+        request = build_post_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.post.metadata['url'],
+            template_url=self._post_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -146,11 +134,79 @@ class ManagedNetworkProvisionsOperations(object):
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    post.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/provisions"}  # type: ignore
+    _post_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/provisions"}  # type: ignore
 
+
+    @distributed_trace
+    def begin_post(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name,  # type: str
+        workspace_name,  # type: str
+        body,  # type: "_models.ManagedNetworkProvisionOptions"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller[None]
+        """post.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param body:
+        :type body: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionOptions
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._post_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                body=body,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+
+
+        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_post.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/provisions"}  # type: ignore

@@ -7,6 +7,8 @@
 from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkProvisionOptions
+
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -45,6 +47,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         **kwargs: Dict,
     ):
         ops_logger.update_info(kwargs)
+        self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
             operation_scope=operation_scope,
             service_client=service_client,
@@ -116,20 +119,24 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         """
         workspace_name = self._check_workspace_name(name)
         return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
-    
+
     def provision_network(
         self,
         workspace_name: Optional[str] = None,
         spark_enabled: Optional[bool] = False,
-        **kwargs: Dict
-    ):
-        workspace_name = self._check_workspace_name(workspace_name)
-        resource_group = kwargs.get("resource_group") or self._resource_group_name
-        # TODO regenerate 2022-12-01-preview rest client based on swagger change for provision network command
-        # TODO work w Zhida to make sure swagger changes are merged into swagger repo as well
-        # TODO call new operation provision network
-        # obj = self._operation.provisions(resource_group, workspace_name)
+    ) -> LROPoller:
+        """Triggers the workspace to provision the managed network. Specifying spark enabled
+        as true prepares the workspace managed network for supporting Spark.
 
+        :param workspace_name: Name of the workspace.
+        :type workspace_name: str
+        :return: An instance of LROPoller.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        """
+        workspace_name = self._check_workspace_name(workspace_name)
+        return self._provision_network_operation.begin_post(
+            self._resource_group_name, workspace_name, ManagedNetworkProvisionOptions(include_spark=spark_enabled)
+        )
 
     @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
