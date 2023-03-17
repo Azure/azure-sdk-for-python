@@ -12,8 +12,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 class UnsupportedCompute(Compute):
     """Unsupported compute resource.
 
-    Only for use displaying compute properties for resources not fully
-    supported in the SDK.
+    Only for use displaying compute properties for resources not fully supported in the SDK.
     """
 
     def __init__(
@@ -32,6 +31,7 @@ class UnsupportedCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=prop.tags,
             provisioning_state=prop.provisioning_state,
             created_on=prop.additional_properties.get("createdOn", None),
         )

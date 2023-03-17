@@ -34,6 +34,12 @@ class ConfidentialVMEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     ENCRYPTED_WITH_CMK = "EncryptedWithCmk"
 
 
+class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of extendedLocation."""
+
+    EDGE_ZONE = "EdgeZone"
+
+
 class GalleryApplicationCustomActionParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the type of the custom action parameter. Possible values are: String,
     ConfigurationDataBlob or LogOutputBlob.
@@ -205,3 +211,4 @@ class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_LRS = "Standard_LRS"
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
+    STANDARD_SSD_LRS = "StandardSSD_LRS"

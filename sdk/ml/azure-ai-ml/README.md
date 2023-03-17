@@ -2,7 +2,12 @@
 
 We are excited to introduce the GA of Azure Machine Learning Python SDK v2. The Python SDK v2 introduces new SDK capabilities like standalone local jobs, reusable components for pipelines and managed online/batch inferencing. Python SDK v2 allows you to move from simple to complex tasks easily and incrementally. This is enabled by using a common object model which brings concept reuse and consistency of actions across various tasks. The SDK v2 shares its foundation with the CLI v2 which is also GA.
 
-[Source code][source_code] | [Package (PyPI)][ml_pypi] | [API reference documentation][ml_ref_docs] | [Product documentation][product_documentation] | [Samples][ml_samples]
+[Source code][source_code]
+| [Package (PyPI)][ml_pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-ml/)
+| [API reference documentation][ml_ref_docs]
+| [Product documentation][product_documentation]
+| [Samples][ml_samples]
 
 
 This package has been tested with Python 3.7, 3.8, 3.9 and 3.10.
@@ -98,7 +103,7 @@ The Azure ML Python SDK includes a telemetry feature that collects usage and fai
 <u>Telemetry will **not** be collected for any use of the Python SDK outside of a Jupyter Notebook.</u>
 
 Telemetry data helps the SDK team understand how the SDK is used so it can be improved and the information about failures helps the team resolve problems and fix bugs.
-The SDK telemetry feature is enabled by default for Jupyter Notebook usage. To opt out of the telemetry feature, set the AZUREML_SDKV2_TELEMETRY_OPTOUT environment variable to '1' or 'true'.
+The SDK telemetry feature is enabled by default for Jupyter Notebook usage and cannot be enabled for non-Jupyter scenarios. To opt out of the telemetry feature in a Jupyter scenario, pass in `enable_telemetry=False` when constructing your MLClient object.
 
 ## Next steps
 

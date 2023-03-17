@@ -5,9 +5,12 @@
 # pylint: disable=protected-access
 
 from typing import Any, Iterable, Optional, Union
+from contextlib import contextmanager
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
+from azure.ai.ml._utils._registry_utils import get_registry_client
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
@@ -21,8 +24,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
@@ -31,12 +33,13 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType
-from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, ASSET_ID_FORMAT
+from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
+from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
@@ -56,7 +59,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(EnvironmentOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._kwargs = kwargs
         self._containers_operations = service_client.environment_containers
         self._version_operations = service_client.environment_versions
@@ -68,7 +71,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    # @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, environment: Environment) -> Environment:
         """Returns created or updated environment asset.
 
@@ -90,7 +93,43 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     registry_name=self._registry_name,
                     **self._kwargs,
                 )
+            sas_uri = None
             if self._registry_name:
+                if isinstance(environment, WorkspaceAssetReference):
+                    # verify that environment is not already in registry
+                    try:
+                        self._version_operations.get(
+                            name=environment.name,
+                            version=environment.version,
+                            resource_group_name=self._resource_group_name,
+                            registry_name=self._registry_name,
+                        )
+                    except Exception as err:  # pylint: disable=broad-except
+                        if isinstance(err, ResourceNotFoundError):
+                            pass
+                        else:
+                            raise err
+                    else:
+                        msg = "A environment with this name and version already exists in registry"
+                        raise ValidationException(
+                            message=msg,
+                            no_personal_data_message=msg,
+                            target=ErrorTarget.ENVIRONMENT,
+                            error_category=ErrorCategory.USER_ERROR,
+                        )
+
+                    environment_rest = environment._to_rest_object()
+                    result = self._service_client.resource_management_asset_reference.begin_import_method(
+                        resource_group_name=self._resource_group_name,
+                        registry_name=self._registry_name,
+                        body=environment_rest,
+                        **self._kwargs,
+                    ).result()
+
+                    if not result:
+                        env_rest_obj = self._get(name=environment.name, version=environment.version)
+                        return Environment._from_rest_object(env_rest_obj)
+
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
                     name=environment.name,
@@ -109,9 +148,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         "Getting the existing asset name: %s, version: %s", environment.name, environment.version
                     )
                     return self.get(name=environment.name, version=environment.version)
-                environment = _check_and_upload_env_build_context(
-                    environment=environment, operations=self, sas_uri=sas_uri
-                )
+
+            environment = _check_and_upload_env_build_context(
+                environment=environment, operations=self, sas_uri=sas_uri, show_progress=self._show_progress
+            )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
                 self._version_operations.begin_create_or_update(
@@ -136,7 +176,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 env_rest_obj = self._get(name=environment.name, version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
         except Exception as ex:  # pylint: disable=broad-except
-            if isinstance(ex, (ValidationException, SchemaValidationError)):
+            if isinstance(ex, SchemaValidationError):
                 log_and_raise_error(ex)
             else:
                 raise ex
@@ -176,7 +216,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Environment:
         """Returns the specified environment asset.
 
@@ -218,7 +258,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         return Environment._from_rest_object(env_version_resource)
 
-    # @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -271,12 +311,13 @@ class EnvironmentOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Archive an environment or an environment version.
 
@@ -298,12 +339,13 @@ class EnvironmentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
         version: Optional[str] = None,
         label: Optional[str] = None,
+        **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Restore an archived environment version.
 
@@ -338,6 +380,78 @@ class EnvironmentOperations(_ScopeDependentOperations):
             self._workspace_name,
         )
         return Environment._from_rest_object(result)
+
+    @monitor_with_activity(logger, "Environment.Share", ActivityType.PUBLICAPI)
+    @experimental
+    def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Environment:
+        """Share a environment asset from workspace to registry.
+
+        :param name: Name of environment asset.
+        :type name: str
+        :param version: Version of environment asset.
+        :type version: str
+        :param share_with_name: Name of environment asset to share with.
+        :type share_with_name: str
+        :param share_with_version: Version of environment asset to share with.
+        :type share_with_version: str
+        :param registry_name: Name of the destination registry.
+        :type registry_name: str
+        :return: Environment asset object.
+        :rtype: ~azure.ai.ml.entities.Environment
+        """
+
+        #  Get workspace info to get workspace GUID
+        workspace = self._service_client.workspaces.get(
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+        )
+        workspace_guid = workspace.workspace_id
+        workspace_location = workspace.location
+
+        # Get environment asset ID
+        asset_id = ASSET_ID_FORMAT.format(
+            workspace_location,
+            workspace_guid,
+            AzureMLResourceType.ENVIRONMENT,
+            name,
+            version,
+        )
+
+        environment_ref = WorkspaceAssetReference(
+            name=share_with_name if share_with_name else name,
+            version=share_with_version if share_with_version else version,
+            asset_id=asset_id,
+        )
+
+        with self._set_registry_client(registry_name):
+            return self.create_or_update(environment_ref)
+
+    @contextmanager
+    def _set_registry_client(self, registry_name: str) -> None:
+        """Sets the registry client for the environment operations.
+
+        :param registry_name: Name of the registry.
+        :type registry_name: str
+        """
+        rg_ = self._operation_scope._resource_group_name
+        sub_ = self._operation_scope._subscription_id
+        registry_ = self._operation_scope.registry_name
+        client_ = self._service_client
+        environment_versions_operation_ = self._version_operations
+
+        try:
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            self._operation_scope.registry_name = registry_name
+            self._operation_scope._resource_group_name = _rg
+            self._operation_scope._subscription_id = _sub
+            self._service_client = _client
+            self._version_operations = _client.environment_versions
+            yield
+        finally:
+            self._operation_scope.registry_name = registry_
+            self._operation_scope._resource_group_name = rg_
+            self._operation_scope._subscription_id = sub_
+            self._service_client = client_
+            self._version_operations = environment_versions_operation_
 
 
 def _preprocess_environment_name(environment_name: str) -> str:

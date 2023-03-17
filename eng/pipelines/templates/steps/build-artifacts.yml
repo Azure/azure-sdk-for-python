@@ -43,7 +43,7 @@ steps:
       versionSpec: $(PythonVersion)
 
   - script: |
-      pip install -r eng/ci_tools.txt
+      python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
   - template: ../steps/set-dev-build.yml
@@ -63,7 +63,7 @@ steps:
     condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
 
   - pwsh: |
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}}
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
     displayName: 'Generate Packages'
     condition: succeededOrFailed()
 

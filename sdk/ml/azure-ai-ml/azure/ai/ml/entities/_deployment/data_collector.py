@@ -8,37 +8,37 @@ from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCol
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._deployment.destination import Destination
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging
-from azure.ai.ml.entities._deployment.sampling_strategy import SamplingStrategy
+from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
 
 
 class DataCollector:
-    """Data Capture deployment entity
+    """Data Capture deployment entity.
 
-    :param enabled: Is data capture enabled.
-    :type enabled: bool
-    :param rolling_rate: The rolling rate of mdc files, possible values: ["year", "month", "day", "hour", "minute"].
-    :type rolling_rate: str
+    :param collections: Mapping dictionary of strings mapped to DeploymentCollection entities.
+    :type collections: Mapping[str, DeploymentCollection], optional
+    :param rolling_rate: The rolling rate of mdc files, possible values: ["minute", "hour", "day"].
+    :type rolling_rate: str, optional
     :param destination: Must be blob store.
-    :type destination: Destination
+    :type destination: Destination, optional
     :param sampling_strategy: Sample percent of traffic.
     :type sampling_strategy: SamplingStrategy, optional
     :param request_logging: Logging of request payload parameters.
-    :type request_logging: RequestLogging
+    :type request_logging: RequestLogging, optional
     """
 
     def __init__(
         self,
-        enabled: Optional[bool] = None,
+        collections: Optional[Dict[str, DeploymentCollection]] = None,
         rolling_rate: Optional[str] = None,
         destination: Optional[Destination] = None,
-        sampling_strategy: Optional[SamplingStrategy] = None,
+        sampling_rate: Optional[float] = None,
         request_logging: Optional[RequestLogging] = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
-        self.enabled = enabled
+        self.collections = collections
         self.rolling_rate = rolling_rate
         self.destination = destination
-        self.sampling_strategy = sampling_strategy
+        self.sampling_rate = sampling_rate
         self.request_logging = request_logging
 
     def _to_dict(self) -> Dict:

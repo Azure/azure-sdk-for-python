@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING, Any
+from typing import List, TYPE_CHECKING, Any, cast
 
 from azure.core.credentials import AccessToken
 from .._constants import EnvironmentVariables
@@ -16,7 +16,9 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
+from .azd_cli import AzureDeveloperCliCredential
 from .vscode import VisualStudioCodeCredential
+from .workload_identity import WorkloadIdentityCredential
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -32,18 +34,23 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
     1. A service principal configured by environment variables. See :class:`~azure.identity.EnvironmentCredential` for
        more details.
-    2. An Azure managed identity. See :class:`~azure.identity.ManagedIdentityCredential` for more details.
-    3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
+    2. WorkloadIdentityCredential if environment variable configuration is set by the Azure workload
+       identity webhook.
+    3. An Azure managed identity. See :class:`~azure.identity.ManagedIdentityCredential` for more details.
+    4. The identity currently logged in to the Azure Developer CLI.
+    5. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.SharedTokenCacheCredential` for more details.
-    4. The identity currently logged in to the Azure CLI.
-    5. The identity currently logged in to Azure PowerShell.
+    6. The identity currently logged in to the Azure CLI.
+    7. The identity currently logged in to Azure PowerShell.
 
     This default behavior is configurable with keyword arguments.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
+    :keyword bool exclude_azd_cli_credential: Whether to exclude the Azure Developer CLI
+        from the credential. Defaults to **False**.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
@@ -61,6 +68,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         AZURE_TENANT_ID, if any. If unspecified, users will authenticate in their home tenants.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
+    :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
+        of the environment variable AZURE_CLIENT_ID, if any. If not specified, the pod's default identity will be used.
     :keyword str interactive_browser_client_id: The client ID to be used in interactive browser credential. If not
         specified, users will authenticate to an Azure development application.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.SharedTokenCacheCredential`.
@@ -73,7 +82,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -97,6 +106,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         managed_identity_client_id = kwargs.pop(
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
+        workload_identity_client_id = kwargs.pop(
+            "workload_identity_client_id", managed_identity_client_id
+        )
         interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
@@ -108,15 +120,25 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
+        exclude_azd_cli_credential = kwargs.pop("exclude_azd_cli_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
-        credentials = []  # type: List[TokenCredential]
+        credentials: List["TokenCredential"] = []
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
+        if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
+            client_id = workload_identity_client_id
+            credentials.append(WorkloadIdentityCredential(
+                client_id=cast(str, client_id),
+                tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                **kwargs))
         if not exclude_managed_identity_credential:
             credentials.append(ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs))
+        if not exclude_azd_cli_credential:
+            credentials.append(AzureDeveloperCliCredential())
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities

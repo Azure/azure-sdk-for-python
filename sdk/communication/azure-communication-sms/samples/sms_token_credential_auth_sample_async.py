@@ -29,8 +29,8 @@ sys.path.append("..")
 
 class SmsTokenCredentialAuthSampleAsync(object):
 
-    connection_string = os.getenv('COMMUNICATION_SAMPLES_CONNECTION_STRING')
-    phone_number = os.getenv("AZURE_PHONE_NUMBER")
+    connection_string = os.getenv("COMMUNICATION_SMS_LIVETEST_DYNAMIC_CONNECTION_STRING")
+    phone_number = os.getenv("SMS_PHONE_NUMBER")
     
     async def sms_token_credential_auth_async(self):
         # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have

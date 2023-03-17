@@ -127,6 +127,30 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
                 f.write("".join(includes))
 
 
+def update_cadl_location(sdk_folder, data, config, folder_name, package_name, input_readme):
+    if "meta" in config:
+        return
+
+    metadata = {
+        "directory": input_readme,
+        "commit": data["headSha"],
+        "repo": data["repoHttpsUrl"].split("github.com/")[-1],
+        "cleanup": False,
+    }
+
+    _LOGGER.info("cadl-location:\n {}".format(json.dumps(metadata, indent=2)))
+
+    package_folder = Path(sdk_folder) / folder_name / package_name
+    if not package_folder.exists():
+        _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
+        return
+
+    metadata_file_path = package_folder / "cadl-location.yaml"
+    with open(metadata_file_path, "w") as writer:
+        yaml.safe_dump(metadata, writer)
+    _LOGGER.info(f"Saved metadata to {metadata_file_path}")
+
+
 def judge_tag_preview(path: str) -> bool:
     files = [i for i in Path(path).glob("**/*.py")]
     default_api_version = ""  # for multi-api
@@ -365,17 +389,11 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
 
     # npm install tool
     origin_path = os.getcwd()
-    with open("cadl_to_sdk_config.json", "r") as file_in:
+    with open(Path("eng/emitter-package.json"), "r") as file_in:
         cadl_python_dep = json.load(file_in)
     os.chdir(Path(spec_folder) / cadl_relative_path)
-    if Path("package.json").exists():
-        with open("package.json", "r") as file_in:
-            cadl_tools = json.load(file_in)
-    else:
-        cadl_tools = {"dependencies:{}"}
-    cadl_tools["dependencies"].update(cadl_python_dep["dependencies"])
     with open("package.json", "w") as file_out:
-        json.dump(cadl_tools, file_out)
+        json.dump(cadl_python_dep, file_out)
     check_call("npm install", shell=True)
 
     # generate code

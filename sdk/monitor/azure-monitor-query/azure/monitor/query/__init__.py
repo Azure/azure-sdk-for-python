@@ -7,25 +7,28 @@
 from ._logs_query_client import LogsQueryClient
 from ._metrics_query_client import MetricsQueryClient
 
+from ._enums import (
+    LogsQueryStatus,
+    MetricAggregationType,
+    MetricClass,
+    MetricNamespaceClassification,
+    MetricUnit,
+)
+
 from ._exceptions import LogsQueryError
 
 from ._models import (
-    MetricAggregationType,
     LogsQueryResult,
     LogsTable,
     LogsQueryPartialResult,
-    LogsQueryStatus,
     LogsTableRow,
     MetricsQueryResult,
     LogsBatchQuery,
     MetricNamespace,
-    MetricNamespaceClassification,
     MetricDefinition,
-    MetricUnit,
     TimeSeriesElement,
     Metric,
     MetricValue,
-    MetricClass,
     MetricAvailability,
 )
 

@@ -26,8 +26,8 @@ sys.path.append("..")
 
 class SmsMultipleRecipientsSample(object):
 
-    connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-    phone_number = os.getenv("AZURE_PHONE_NUMBER")
+    connection_string = os.getenv("COMMUNICATION_SMS_LIVETEST_DYNAMIC_CONNECTION_STRING")
+    phone_number = os.getenv("SMS_PHONE_NUMBER")
         
     def send_sms_to_multiple_recipients(self):
         sms_client = SmsClient.from_connection_string(self.connection_string)

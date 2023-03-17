@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.transport import HttpTransport
@@ -38,7 +38,7 @@ class ContainerRegistryBaseClient(object):
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Optional[TokenCredential], Dict[str, Any]) -> None
+        # type: (str, Optional[TokenCredential], Any) -> None
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,

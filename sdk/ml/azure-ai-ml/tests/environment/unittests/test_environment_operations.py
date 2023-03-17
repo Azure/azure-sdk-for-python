@@ -1,8 +1,7 @@
-from typing import Callable, Iterable
+from typing import Iterable
 from unittest.mock import Mock, patch
 
 import pytest
-from pytest_mock import MockFixture
 
 from azure.ai.ml import load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import (
@@ -12,21 +11,24 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     EnvironmentVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, OrderString
+from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.operations import DatastoreOperations, EnvironmentOperations
-from azure.ai.ml.operations._code_operations import CodeOperations
-from azure.core.paging import ItemPaged
+from azure.ai.ml.operations import EnvironmentOperations
+from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.fixture
-def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
-) -> CodeOperations:
-    yield DatastoreOperations(
-        operation_scope=mock_workspace_scope,
+def mock_environment_operation_reg(
+    mock_registry_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2021_10_01_dataplanepreview: Mock,
+    mock_machinelearning_registry_client: Mock,
+) -> EnvironmentOperations:
+    yield EnvironmentOperations(
+        operation_scope=mock_registry_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
+        service_client=mock_aml_services_2021_10_01_dataplanepreview,
+        all_operations=mock_machinelearning_registry_client._operation_container,
     )
 
 
@@ -63,9 +65,7 @@ class TestEnvironmentOperations:
         mock_environment_operation.list(name="name")
         mock_environment_operation._version_operations.list.assert_called_once()
 
-    def test_list_versions_with_azureml_prefix(
-        self, mock_environment_operation: EnvironmentOperations
-    ) -> None:
+    def test_list_versions_with_azureml_prefix(self, mock_environment_operation: EnvironmentOperations) -> None:
         name = "random_name"
         with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
             mock_environment_operation.list(name=ARM_ID_PREFIX + name)
@@ -78,9 +78,7 @@ class TestEnvironmentOperations:
             mock_environment_operation.get("random_name", "1")
         mock_environment_operation._version_operations.get.assert_called_once()
 
-    def test_get_with_azureml_prefix(
-        self, mock_environment_operation: EnvironmentOperations
-    ) -> None:
+    def test_get_with_azureml_prefix(self, mock_environment_operation: EnvironmentOperations) -> None:
         name = "random_name"
         with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None):
             mock_environment_operation.get(ARM_ID_PREFIX + name, "random_name")
@@ -88,9 +86,7 @@ class TestEnvironmentOperations:
         args, kwargs = mock_environment_operation._version_operations.get.call_args
         assert name == kwargs.get("name")
 
-    def test_get_no_version(
-        self, mock_environment_operation: EnvironmentOperations
-    ) -> None:
+    def test_get_no_version(self, mock_environment_operation: EnvironmentOperations) -> None:
         name = "random_name"
         with pytest.raises(Exception):
             mock_environment_operation.get(name=name)
@@ -109,8 +105,11 @@ class TestEnvironmentOperations:
         env = load_environment(source="./tests/test_configs/environment/environment_no_version.yml")
         assert env._auto_increment_version
         env.version = None
-        with patch("azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None), patch(
-            "azure.ai.ml.operations._environment_operations._get_next_version_from_container", return_value="version") as mock_nextver:
+        with patch(
+            "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
+        ), patch(
+            "azure.ai.ml.operations._environment_operations._get_next_version_from_container", return_value="version"
+        ) as mock_nextver:
             mock_environment_operation.create_or_update(env)
             mock_nextver.assert_called_once()
 
@@ -177,3 +176,22 @@ class TestEnvironmentOperations:
             body=env_container,
             resource_group_name=mock_environment_operation._resource_group_name,
         )
+
+    # #Mock(azure.ai.ml._restclient.v2021_10_01_dataplanepreview.operations._environment_versions_operations, "get")
+    # def test_promote_environment_from_workspace(
+    #     self,
+    #     mock_environment_operation_reg: EnvironmentOperations,
+    #     mock_environment_operation: EnvironmentOperations,
+    # ) -> None:
+    #     env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
+
+    #     mock_environment_operation_reg._version_operations.get.side_effect = Mock(
+    #         side_effect=ResourceNotFoundError("Test")
+    #     )
+
+    #     shared_environment = mock_environment_operation.share(env.name, env.version, "new_name", "new_version", "registry_name")
+    #     # assert environment_to_promote.name == "new_name"
+    #     # assert environment_to_promote.version == "new_version"
+
+    #     # mock_environment_operation_reg.create_or_update(environment_to_promote)
+    #     mock_environment_operation_reg._service_client.resource_management_asset_reference.begin_import_method.assert_called_once()

@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 import locale
+from os import environ, getenv
 import platform
 import threading
 import time
@@ -20,13 +22,29 @@ opentelemetry_version = pkg_resources.get_distribution(
     "opentelemetry-sdk"
 ).version
 
+
+def _get_sdk_version_prefix():
+    is_on_app_service = "WEBSITE_SITE_NAME" in environ
+    is_attach_enabled = getenv("ApplicationInsightsAgent_EXTENSION_VERSION") == "~3"
+    sdk_version_prefix = ''
+    if is_on_app_service and is_attach_enabled:
+        os = ''
+        system = platform.system()
+        if system == "Linux":
+            os = 'l'
+        elif system == "Windows":
+            os = 'w'
+        sdk_version_prefix = "a{}d_".format(os)
+    return sdk_version_prefix
+
+
 azure_monitor_context = {
     "ai.device.id": platform.node(),
     "ai.device.locale": locale.getdefaultlocale()[0],
     "ai.device.osVersion": platform.version(),
     "ai.device.type": "Other",
-    "ai.internal.sdkVersion": "py{}:otel{}:ext{}".format(
-        platform.python_version(), opentelemetry_version, ext_version
+    "ai.internal.sdkVersion": "{}py{}:otel{}:ext{}".format(
+        _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
     ),
 }
 

@@ -5,7 +5,7 @@ name: mpi_hello_world
 display_name: MPI-hello-world
 version: 1
 compute: azureml:gpu-cluster
-environment: azureml:AzureML-tensorflow-2.4-ubuntu18.04-py37-cuda11-gpu:15
+environment: azureml:AzureML-tensorflow-2.5-ubuntu20.04-py38-cuda11-gpu:27
 command: >-
   printenv
 resources:

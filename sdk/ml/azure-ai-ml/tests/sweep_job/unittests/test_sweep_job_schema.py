@@ -6,12 +6,12 @@ import pytest
 import yaml
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedIdentity as RestManagedIdentity
-from azure.ai.ml._restclient.v2022_10_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedIdentity as RestManagedIdentity
+from azure.ai.ml._restclient.v2023_02_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._schema import SweepJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
 from azure.ai.ml.entities import (
@@ -64,7 +64,7 @@ class TestSweepJobSchema:
             command="python train.py --lr 0.01",
             inputs={"input1": Input(path="testdata:1")},
             compute="local",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
 
         sweep = SweepJob(sampling_algorithm="random", trial=command_job, search_space={"ss": search_space})
@@ -93,7 +93,7 @@ class TestSweepJobSchema:
             command="python train.py --ss {search_space.ss}",
             inputs={"input1": Input(path="testdata:1")},
             compute="local",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         sweep = SweepJob(sampling_algorithm="random", trial=command_job, search_space={"ss": Choice([1.0, 2.0, 3.0])})
 
@@ -111,7 +111,7 @@ class TestSweepJobSchema:
             command="python train.py --ss {search_space.ss}",
             inputs={"input1": Input(path="testdata:1")},
             compute="local",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         sweep = SweepJob(
             sampling_algorithm="random",
@@ -135,7 +135,7 @@ class TestSweepJobSchema:
             command="python train.py --ss {search_space.ss}",
             inputs={"input1": Input(path="testdata:1")},
             compute="local",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         sweep = SweepJob(
             sampling_algorithm="random",
@@ -159,7 +159,7 @@ class TestSweepJobSchema:
             command="python train.py --ss {search_space.ss}",
             inputs={"input1": Input(path="testdata:1")},
             compute="local",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         sweep = SweepJob(
             sampling_algorithm="random",
@@ -231,7 +231,7 @@ class TestSweepJobSchema:
             command="python train.py --ss {search_space.ss}",
             inputs={"input1": Input(path="testdata:1")},
             compute="local",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         sweep = SweepJob(
             sampling_algorithm="random",
@@ -359,7 +359,7 @@ class TestSweepJobSchema:
             command="python train.py --lr 0.01",
             inputs={"input1": Input(path="testdata:1")},
             compute="local",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
 
         sweep = SweepJob(

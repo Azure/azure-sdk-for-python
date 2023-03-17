@@ -50,13 +50,13 @@ client = {{ title }}(credential=DefaultAzureCredential())
 
 ## Examples
 {% if is_arm %}
-{%- if not sample_link %}
-{%- set sample_link="https://aka.ms/azsdk/python/mgmt/samples" %}
-{% else %}
-{%- set sample_link="https://github.com/Azure-Samples/azure-samples-python-management/tree/main/samples/" + sample_link %}
-{%- endif %}
-Code samples for this package can be found at [{{package_pprint_name}}](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com and [Samples Repo]({{ sample_link }})
-{% else %}
+Code samples for this package can be found at:
+- [Search {{package_pprint_name}}](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
+- [Azure Python Mgmt SDK Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
+{% if sample_link -%}
+- [Other {{package_pprint_name}} doc]({{ sample_link }})
+{% endif -%}
+{% else -%}
 For code examples, see [{{package_pprint_name}}](https://docs.microsoft.com/python/api/overview/azure/{{package_doc_id}}) on docs.microsoft.com.
 {% endif %}
 

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -23,8 +23,8 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import build_upload_request
-from .._vendor import MixinABC
+from ..._operations._operations import build_logs_ingestion_upload_request
+from .._vendor import LogsIngestionClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -35,82 +35,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class LogsIngestionClientOperationsMixin(MixinABC):
-    @overload
-    async def upload(  # pylint: disable=inconsistent-return-statements
-        self,
-        rule_id: str,
-        stream: str,
-        body: List[JSON],
-        *,
-        content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Ingestion API used to directly ingest data using Data Collection Rules.
-
-        See error response code and error response message for more detail.
-
-        :param rule_id: The immutable Id of the Data Collection Rule resource. Required.
-        :type rule_id: str
-        :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
-        :type stream: str
-        :param body: An array of objects matching the schema defined by the provided stream. Required.
-        :type body: list[JSON]
-        :keyword content_encoding: gzip. Default value is None.
-        :paramtype content_encoding: str
-        :keyword x_ms_client_request_id: Client request Id. Default value is None.
-        :paramtype x_ms_client_request_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = [
-                    {}  # Optional.
-                ]
-        """
-
-    @overload
-    async def upload(  # pylint: disable=inconsistent-return-statements
-        self,
-        rule_id: str,
-        stream: str,
-        body: IO,
-        *,
-        content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Ingestion API used to directly ingest data using Data Collection Rules.
-
-        See error response code and error response message for more detail.
-
-        :param rule_id: The immutable Id of the Data Collection Rule resource. Required.
-        :type rule_id: str
-        :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
-        :type stream: str
-        :param body: An array of objects matching the schema defined by the provided stream. Required.
-        :type body: IO
-        :keyword content_encoding: gzip. Default value is None.
-        :paramtype content_encoding: str
-        :keyword x_ms_client_request_id: Client request Id. Default value is None.
-        :paramtype x_ms_client_request_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
 
     @distributed_trace_async
     async def upload(  # pylint: disable=inconsistent-return-statements
@@ -132,7 +57,7 @@ class LogsIngestionClientOperationsMixin(MixinABC):
         :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
         :type stream: str
         :param body: An array of objects matching the schema defined by the provided stream. Is either
-         a list type or a IO type. Required.
+         a [JSON] type or a IO type. Required.
         :type body: list[JSON] or IO
         :keyword content_encoding: gzip. Default value is None.
         :paramtype content_encoding: str
@@ -156,8 +81,8 @@ class LogsIngestionClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -167,7 +92,7 @@ class LogsIngestionClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_upload_request(
+        request = build_logs_ingestion_upload_request(
             rule_id=rule_id,
             stream=stream,
             content_encoding=content_encoding,
@@ -182,9 +107,9 @@ class LogsIngestionClientOperationsMixin(MixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 

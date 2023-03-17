@@ -4,12 +4,14 @@
 
 import copy
 import os
+import shutil
 import signal
 import tempfile
 import time
+from contextlib import contextmanager
 from io import StringIO
 from pathlib import Path
-from typing import Callable, Dict
+from typing import Callable, Dict, List, Optional, Union
 from zipfile import ZipFile
 
 import pydash
@@ -289,11 +291,13 @@ def assert_job_cancel(
     *,
     experiment_name=None,
     check_before_cancelled: Callable[[Job], bool] = None,
+    skip_cancel=False,
 ) -> Job:
     created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
     if check_before_cancelled is not None:
         assert check_before_cancelled(created_job)
-    cancel_job(client, created_job)
+    if skip_cancel is False:
+        cancel_job(client, created_job)
     return created_job
 
 
@@ -343,3 +347,69 @@ def parse_local_path(origin_path, base_path=None):
     else:
         base_path = Path(base_path)
     return (base_path / origin_path).resolve().absolute().as_posix()
+
+
+@contextmanager
+def build_temp_folder(
+    *,
+    source_base_dir: Union[str, os.PathLike],
+    relative_dirs_to_copy: List[str] = None,
+    relative_files_to_copy: List[str] = None,
+    extra_files_to_create: Dict[str, Optional[str]] = None,
+) -> str:
+    """Build a temporary folder with files and subfolders copied from source_base_dir.
+
+    :param source_base_dir: The base directory to copy files from.
+    :type source_base_dir: Union[str, os.PathLike]
+    :param relative_dirs_to_copy: The relative paths of subfolders to copy from source_base_dir.
+    :type relative_dirs_to_copy: List[str]
+    :param relative_files_to_copy: The relative paths of files to copy from source_base_dir.
+    :type relative_files_to_copy: List[str]
+    :param extra_files_to_create: The relative paths of files to create in the temporary folder.
+    The value of each key-value pair is the content of the file.
+    If the value is None, the file will be empty.
+    :type extra_files_to_create: Dict[str, Optional[str]]
+    :return: The path of the temporary folder.
+    :rtype: str
+    """
+    source_base_dir = Path(source_base_dir)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        if relative_dirs_to_copy:
+            for dir_name in relative_dirs_to_copy:
+                shutil.copytree(source_base_dir / dir_name, Path(temp_dir) / dir_name)
+        if relative_files_to_copy:
+            for file_name in relative_files_to_copy:
+                shutil.copy(source_base_dir / file_name, Path(temp_dir) / file_name)
+        if extra_files_to_create:
+            for file_name, content in extra_files_to_create.items():
+                target_file = Path(temp_dir) / file_name
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                if content is None:
+                    target_file.touch()
+                    continue
+                with open(target_file, "w") as f:
+                    if content:
+                        f.write(content)
+
+        yield temp_dir
+
+
+@contextmanager
+def reload_schema_for_nodes_in_pipeline_job(*, revert_after_yield: bool = True):
+    """Reload schema for nodes in pipeline job. This is needed when we want to test private preview features or
+    unregister internal components.
+
+    This method should be called after environment variable is set, so we make it a method instead of a fixture.
+    """
+    # Update the node types in pipeline jobs to include the private preview node types
+    from azure.ai.ml._schema.pipeline import pipeline_job
+
+    declared_fields = pipeline_job.PipelineJobSchema._declared_fields  # pylint: disable=protected-access, no-member
+    original_jobs = declared_fields["jobs"]
+    declared_fields["jobs"] = pipeline_job.PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        if revert_after_yield:
+            declared_fields["jobs"] = original_jobs

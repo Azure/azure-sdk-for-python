@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import Any, cast, Tuple, Union, Sequence, Dict, List
+from typing import Any, cast, Tuple, Union, Sequence, Dict, List, Optional
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -30,7 +30,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io/v1'.
-    :paramtype endpoint: str
+    :paramtype endpoint: Optional[str]
     """
 
     def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
@@ -38,9 +38,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
+        auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential, endpoint),
+            authentication_policy=auth_policy or get_authentication_policy(credential, endpoint),
             endpoint=self._endpoint.rstrip('/') + "/v1",
             **kwargs
         )
@@ -52,9 +53,9 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         workspace_id: str,
         query: str,
         *,
-        timespan: Union[
+        timespan: Optional[Union[
             timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
-        ],
+        ]],
         **kwargs: Any
     ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute an Analytics query.
@@ -68,9 +69,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
-         a timedelta and a start datetime, or a start datetime/end datetime.
+         a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+         the query to a timespan.
         :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
-         or tuple[~datetime.datetime, ~datetime.datetime]
+         or tuple[~datetime.datetime, ~datetime.datetime] or None
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.
@@ -79,7 +81,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
-        :paramtype additional_workspaces: list[str]
+        :paramtype additional_workspaces: Optional[List[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
         :raises: ~azure.core.exceptions.HttpResponseError

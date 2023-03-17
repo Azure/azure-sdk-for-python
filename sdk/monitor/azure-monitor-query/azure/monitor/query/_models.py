@@ -5,24 +5,23 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from enum import Enum
 import uuid
 from datetime import datetime, timedelta
 import sys
 from typing import Any, Optional, List, Union, Tuple, Dict, Iterator
 
-from azure.core import CaseInsensitiveEnumMeta
-
+from ._enums import LogsQueryStatus, MetricAggregationType, MetricClass, MetricNamespaceClassification, MetricUnit
+from ._exceptions import LogsQueryError
 from ._generated._serialization import Deserializer
 from ._helpers import construct_iso8601, process_row
 
 if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
+    from collections.abc import Mapping
 else:
-    from typing import MutableMapping  # pylint: disable=ungrouped-imports
+    from typing import Mapping  # pylint: disable=ungrouped-imports
 
 
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class LogsTableRow:
@@ -75,15 +74,15 @@ class LogsTable:
     """Required. The name of the table."""
     rows: List[LogsTableRow]
     """Required. The resulting rows from this query."""
-    columns: Optional[List[str]] = None
-    """The labels of columns in this table."""
-    columns_types: Optional[List[Any]] = None
-    """The types of columns in this table."""
+    columns: List[str]
+    """Required. The labels of columns in this table."""
+    columns_types: List[str]
+    """Required. The types of columns in this table."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.pop("name", "")
-        self.columns = kwargs.pop("columns", None)
-        self.columns_types = kwargs.pop("column_types", None)
+        self.columns = kwargs.pop("columns", [])
+        self.columns_types = kwargs.pop("columns_types", [])
         _rows = kwargs.pop("rows", [])
         self.rows: List[LogsTableRow] = [
             LogsTableRow(
@@ -100,7 +99,7 @@ class LogsTable:
         return cls(
             name=generated.get("name"),
             columns=[col["name"] for col in generated.get("columns", [])],
-            column_types=[col["type"] for col in generated.get("columns", [])],
+            columns_types=[col["type"] for col in generated.get("columns", [])],
             rows=generated.get("rows"),
         )
 
@@ -136,7 +135,7 @@ class MetricValue:
         if not generated:
             return cls()
         return cls(
-            timestamp=Deserializer.deserialize_iso(generated.get("time_stamp")),
+            timestamp=Deserializer.deserialize_iso(generated.get("timeStamp")),
             average=generated.get("average"),
             minimum=generated.get("minimum"),
             maximum=generated.get("maximum"),
@@ -185,7 +184,7 @@ class Metric:
     """The unit of the metric. To access these values, use the MetricUnit enum.
     Possible values include "Count", "Bytes", "Seconds", "CountPerSecond", "BytesPerSecond", "Percent",
     "MilliSeconds", "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores", "BitsPerSecond"."""
-    timeseries: TimeSeriesElement
+    timeseries: List[TimeSeriesElement]
     """The time series returned when a data query is performed."""
     display_description: str
     """Detailed description of this metric."""
@@ -289,43 +288,38 @@ class MetricsList(list):
 class LogsBatchQuery:
     """A single request in a batch. The batch query API accepts a list of these objects.
 
-    :param workspace_id: Workspace Id to be included in the query.
+    :param workspace_id: Workspace ID to be included in the query.
     :type workspace_id: str
     :param query: The Analytics query. Learn more about the `Analytics query syntax
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
     :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
-     a timedelta and a start datetime, or a start datetime/end datetime.
+     a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+     the query to a timespan.
     :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
-     or tuple[~datetime.datetime, ~datetime.datetime]
+     or tuple[~datetime.datetime, ~datetime.datetime] or None
     :keyword additional_workspaces: A list of workspaces that are included in the query.
-     These can be qualified workspace names, workspace Ids, or Azure resource Ids.
-    :paramtype additional_workspaces: list[str]
-    :keyword int server_timeout: the server timeout. The default timeout is 3 minutes,
+     These can be qualified workspace names, workspace IDs, or Azure resource IDs.
+    :paramtype additional_workspaces: Optional[list[str]]
+    :keyword server_timeout: the server timeout. The default timeout is 3 minutes,
      and the maximum timeout is 10 minutes.
-    :keyword bool include_statistics: To get information about query statistics.
-    :keyword bool include_visualization: In the query language, it is possible to specify different
+    :paramtype server_timeout: Optional[int]
+    :keyword include_statistics: To get information about query statistics.
+    :paramtype include_statistics: Optional[bool]
+    :keyword include_visualization: In the query language, it is possible to specify different
      visualization options. By default, the API does not return information regarding the type of
      visualization to show.
+    :paramtype include_visualization: Optional[bool]
     """
-
-    id: str
-    """The id of the query."""
-    body: Dict[str, Any]
-    """The body of the query."""
-    headers: Dict[str, str]
-    """The headers of the query."""
-    workspace: str
-    """The workspace ID to be included in the query."""
 
     def __init__(
         self,
         workspace_id: str,
         query: str,
         *,
-        timespan: Union[
+        timespan: Optional[Union[
             timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
-        ],
+        ]],
         **kwargs: Any
     ) -> None:  # pylint: disable=super-init-not-called
         include_statistics = kwargs.pop("include_statistics", False)
@@ -364,14 +358,6 @@ class LogsBatchQuery:
             "path": "/query",
             "method": "POST"
         }
-
-
-class LogsQueryStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the result object."""
-
-    PARTIAL = "PartialError"
-    SUCCESS = "Success"
-    FAILURE = "Failure"
 
 
 class LogsQueryResult:
@@ -416,14 +402,6 @@ class LogsQueryResult:
         )
 
 
-class MetricNamespaceClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Kind of namespace"""
-
-    PLATFORM = "Platform"
-    CUSTOM = "Custom"
-    QOS = "Qos"
-
-
 class MetricNamespace:
     """Metric namespace class specifies the metadata for a metric namespace."""
 
@@ -462,45 +440,6 @@ class MetricNamespace:
         )
 
 
-class MetricClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The class of the metric."""
-
-    AVAILABILITY = "Availability"
-    TRANSACTIONS = "Transactions"
-    ERRORS = "Errors"
-    LATENCY = "Latency"
-    SATURATION = "Saturation"
-
-
-class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The unit of the metric."""
-
-    COUNT = "Count"
-    BYTES = "Bytes"
-    SECONDS = "Seconds"
-    COUNT_PER_SECOND = "CountPerSecond"
-    BYTES_PER_SECOND = "BytesPerSecond"
-    PERCENT = "Percent"
-    MILLI_SECONDS = "MilliSeconds"
-    BYTE_SECONDS = "ByteSeconds"
-    UNSPECIFIED = "Unspecified"
-    CORES = "Cores"
-    MILLI_CORES = "MilliCores"
-    NANO_CORES = "NanoCores"
-    BITS_PER_SECOND = "BitsPerSecond"
-
-
-class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The aggregation type of the metric."""
-
-    NONE = "None"
-    AVERAGE = "Average"
-    COUNT = "Count"
-    MINIMUM = "Minimum"
-    MAXIMUM = "Maximum"
-    TOTAL = "Total"
-
-
 class MetricAvailability:
     """Metric availability specifies the time grain (aggregation interval or frequency)
     and the retention period for that time grain.
@@ -528,7 +467,6 @@ class MetricAvailability:
             granularity=granularity,
             retention=retention
         )
-
 
 
 class MetricDefinition:  # pylint: disable=too-many-instance-attributes
@@ -617,7 +555,7 @@ class LogsQueryPartialResult:
     visualization: Optional[JSON] = None
     """This will include a visualization property in the response that specifies the type of visualization
     selected by the query and any properties for that visualization."""
-    partial_error: Any
+    partial_error: Optional[LogsQueryError] = None
     """The partial error info."""
     status: LogsQueryStatus
     """The status of the result. Always 'PartialError' for an instance of a LogsQueryPartialResult."""

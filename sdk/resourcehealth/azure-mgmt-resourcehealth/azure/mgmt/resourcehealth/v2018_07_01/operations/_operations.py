@@ -43,7 +43,7 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))  # type: Literal["2018-07-01"]
+    api_version: Literal["2018-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -97,8 +97,8 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))  # type: Literal["2018-07-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationListResult]
+        api_version: Literal["2018-07-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-07-01"))
+        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         request = build_list_request(
             api_version=api_version,
@@ -107,9 +107,9 @@ class Operations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -127,4 +127,4 @@ class Operations:
 
         return deserialized
 
-    list.metadata = {"url": "/providers/Microsoft.ResourceHealth/operations"}  # type: ignore
+    list.metadata = {"url": "/providers/Microsoft.ResourceHealth/operations"}

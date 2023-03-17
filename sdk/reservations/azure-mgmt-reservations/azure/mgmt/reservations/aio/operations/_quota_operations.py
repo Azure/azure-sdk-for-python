@@ -226,7 +226,7 @@ class QuotaOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[AsyncLROPoller[_models.CurrentQuotaLimitBase], AsyncLROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> AsyncLROPoller[_models.CurrentQuotaLimitBase]:
         """Create or update the quota (service limits) of a resource to the requested value.
          Steps:
 
@@ -280,7 +280,7 @@ class QuotaOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[AsyncLROPoller[_models.CurrentQuotaLimitBase], AsyncLROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> AsyncLROPoller[_models.CurrentQuotaLimitBase]:
         """Create or update the quota (service limits) of a resource to the requested value.
          Steps:
 
@@ -332,7 +332,7 @@ class QuotaOperations:
         resource_name: str,
         create_quota_request: Union[_models.CurrentQuotaLimitBase, IO],
         **kwargs: Any
-    ) -> Union[AsyncLROPoller[_models.CurrentQuotaLimitBase], AsyncLROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> AsyncLROPoller[_models.CurrentQuotaLimitBase]:
         """Create or update the quota (service limits) of a resource to the requested value.
          Steps:
 
@@ -515,7 +515,7 @@ class QuotaOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[AsyncLROPoller[_models.CurrentQuotaLimitBase], AsyncLROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> AsyncLROPoller[_models.CurrentQuotaLimitBase]:
         """Update the quota (service limits) of this resource to the requested value.
           • To get the quota information for specific resource, send a GET request.
           • To increase the quota, update the limit field from the GET response to a new value.
@@ -566,7 +566,7 @@ class QuotaOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[AsyncLROPoller[_models.CurrentQuotaLimitBase], AsyncLROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> AsyncLROPoller[_models.CurrentQuotaLimitBase]:
         """Update the quota (service limits) of this resource to the requested value.
           • To get the quota information for specific resource, send a GET request.
           • To increase the quota, update the limit field from the GET response to a new value.
@@ -615,7 +615,7 @@ class QuotaOperations:
         resource_name: str,
         create_quota_request: Union[_models.CurrentQuotaLimitBase, IO],
         **kwargs: Any
-    ) -> Union[AsyncLROPoller[_models.CurrentQuotaLimitBase], AsyncLROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> AsyncLROPoller[_models.CurrentQuotaLimitBase]:
         """Update the quota (service limits) of this resource to the requested value.
           • To get the quota information for specific resource, send a GET request.
           • To increase the quota, update the limit field from the GET response to a new value.

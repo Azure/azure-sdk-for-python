@@ -1,15 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import os.path
 
-from marshmallow import EXCLUDE, INCLUDE, fields, post_dump
+import pydash
+from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
-from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
-from azure.ai.ml._schema.component.component import ComponentSchema
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
-from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType
-
+from ..._schema import AnonymousEnvironmentSchema, NestedField, StringTransformedEnum, UnionField
+from ..._schema.component.component import ComponentSchema
+from ..._schema.core.fields import ArmVersionedStr, CodeField, RegistryStr
+from ..._schema.job.parameterized_spark import SparkConfSchema, SparkEntryClassSchema, SparkEntryFileSchema
 from ..._utils._arm_id_utils import parse_name_label
+from ..._utils.utils import get_valid_dot_keys_with_wildcard
+from ...constants._common import LABELLED_RESOURCE_NAME, SOURCE_PATH_CONTEXT_KEY, AzureMLResourceType
+from ...constants._component import NodeType as PublicNodeType
+from .._utils import yaml_safe_load_with_base_resolver
 from .environment import InternalEnvironmentSchema
 from .input_output import (
     InternalEnumParameterSchema,
@@ -33,6 +38,9 @@ class NodeType:
     HEMERA = "HemeraComponent"
     AE365EXEPOOL = "AE365ExePoolComponent"
     IPP = "IntellectualPropertyProtectedComponent"
+    # internal spake component got a type value conflict with spark component
+    # this enum is used to identify its create_function in factories
+    SPARK = "DummySpark"
 
     @classmethod
     def all_values(cls):
@@ -110,6 +118,33 @@ class InternalComponentSchema(ComponentSchema):
                 ret[attr_name] = self.get_attribute(obj, attr_name, None)
         return ret
 
+    # override param_override to ensure that param override happens after reloading the yaml
+    @pre_load
+    def add_param_overrides(self, data, **kwargs):
+        source_path = self.context.pop(SOURCE_PATH_CONTEXT_KEY, None)
+        if isinstance(data, dict) and source_path and os.path.isfile(source_path):
+
+            def should_node_overwritten(_root, _parts):
+                parts = _parts.copy()
+                parts.pop()
+                parts.append("type")
+                _input_type = pydash.get(_root, parts, None)
+                return isinstance(_input_type, str) and _input_type.lower() not in ["boolean"]
+
+            # do override here
+            with open(source_path, "r") as f:
+                origin_data = yaml_safe_load_with_base_resolver(f)
+                for dot_key_wildcard, condition_func in [
+                    ("version", None),
+                    ("inputs.*.default", should_node_overwritten),
+                    ("inputs.*.enum", should_node_overwritten),
+                ]:
+                    for dot_key in get_valid_dot_keys_with_wildcard(
+                        origin_data, dot_key_wildcard, validate_func=condition_func
+                    ):
+                        pydash.set_(data, dot_key, pydash.get(origin_data, dot_key))
+        return super().add_param_overrides(data, **kwargs)
+
     @post_dump(pass_original=True)
     def simplify_input_output_port(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
         # remove None in input & output
@@ -119,13 +154,6 @@ class InternalComponentSchema(ComponentSchema):
 
         # hack, to match current serialization match expectation
         for port_name, port_definition in data["inputs"].items():
-            input_type = port_definition.get("type", None)
-            is_float_type = isinstance(input_type, str) and input_type.lower() == "float"
-            for key in ["default", "min", "max"]:
-                if key in port_definition:
-                    value = getattr(original.inputs[port_name], key)
-                    # Keep value in float input as string to avoid precision issue.
-                    data["inputs"][port_name][key] = str(value) if is_float_type else value
             if "mode" in port_definition:
                 del port_definition["mode"]
 
@@ -137,3 +165,49 @@ class InternalComponentSchema(ComponentSchema):
         if type_label:
             data["type"] = LABELLED_RESOURCE_NAME.format(data["type"], type_label)
         return data
+
+
+class InternalSparkComponentSchema(InternalComponentSchema):
+    # type field is required for registration
+    type = StringTransformedEnum(
+        allowed_values=PublicNodeType.SPARK,
+        casing_transform=lambda x: parse_name_label(x)[0].lower(),
+        pass_original=True,
+    )
+
+    environment = UnionField(
+        [
+            # unlike other internal component, internal spark component do not use internal environment schema
+            NestedField(AnonymousEnvironmentSchema),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+            NestedField(InternalEnvironmentSchema),
+        ],
+        allow_none=True,
+    )
+
+    jars = UnionField(
+        [
+            fields.List(fields.Str()),
+            fields.Str(),
+        ],
+    )
+    py_files = UnionField(
+        [
+            fields.List(fields.Str()),
+            fields.Str(),
+        ],
+        data_key="pyFiles",
+        attribute="py_files",
+    )
+
+    entry = UnionField(
+        [NestedField(SparkEntryFileSchema), NestedField(SparkEntryClassSchema)],
+        required=True,
+        metadata={"description": "Entry."},
+    )
+
+    files = fields.List(fields.Str(required=True))
+    archives = fields.List(fields.Str(required=True))
+    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
+    args = fields.Str(metadata={"description": "Command Line arguments."})

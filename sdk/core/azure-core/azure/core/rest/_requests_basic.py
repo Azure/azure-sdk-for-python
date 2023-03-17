@@ -75,9 +75,7 @@ class _RestRequestsTransportResponseBaseMixin(_HttpResponseBackcompatMixinBase):
         return self._content
 
 
-class _RestRequestsTransportResponseBase(
-    _HttpResponseBaseImpl, _RestRequestsTransportResponseBaseMixin
-):
+class _RestRequestsTransportResponseBase(_HttpResponseBaseImpl, _RestRequestsTransportResponseBaseMixin):
     def __init__(self, **kwargs):
         internal_response = kwargs.pop("internal_response")
         content = None
@@ -95,10 +93,6 @@ class _RestRequestsTransportResponseBase(
         )
 
 
-class RestRequestsTransportResponse(
-    HttpResponseImpl, _RestRequestsTransportResponseBase
-):
+class RestRequestsTransportResponse(HttpResponseImpl, _RestRequestsTransportResponseBase):
     def __init__(self, **kwargs):
-        super(RestRequestsTransportResponse, self).__init__(
-            stream_download_generator=StreamDownloadGenerator, **kwargs
-        )
+        super(RestRequestsTransportResponse, self).__init__(stream_download_generator=StreamDownloadGenerator, **kwargs)

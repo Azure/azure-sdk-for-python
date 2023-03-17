@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import (
-    TYPE_CHECKING,
     Union,
     Any,
     Dict,
@@ -15,18 +14,15 @@ from typing import (
 )
 
 from azure.core import MatchConditions
+from azure.core.pipeline.transport import HttpRequest
 
 from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import UpdateMode, TransactionOperation
 from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._entity import TableEntity
-
-if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpRequest
-    from ._generated import models, AzureTable
-    from ._generated._configuration import AzureTableConfiguration
-    from ._generated._serialization import Serializer
-    from ._generated._serialization import Deserializer
+from ._generated import models, AzureTable
+from ._generated._configuration import AzureTableConfiguration
+from ._generated._serialization import Serializer, Deserializer
 
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
@@ -48,13 +44,13 @@ class TableBatchOperations(object):
 
     def __init__(
         self,
-        client,  # type: AzureTable
-        serializer,  # type: Serializer
-        deserializer,  # type: Deserializer
-        config,  # type: AzureTableConfiguration
-        table_name,  # type: str
-        is_cosmos_endpoint=False,  # type: bool
-        **kwargs  # type: Dict[str, Any]
+        client: AzureTable,
+        serializer: Serializer,
+        deserializer: Deserializer,
+        config: AzureTableConfiguration,
+        table_name: str,
+        is_cosmos_endpoint: bool = False,
+        **kwargs
     ):
         """Create TableClient from a Credential.
 
@@ -86,17 +82,13 @@ class TableBatchOperations(object):
     def __len__(self):
         return len(self.requests)
 
-    def _verify_partition_key(
-        self, entity  # type: EntityType
-    ):
-        # (...) -> None
+    def _verify_partition_key(self, entity: EntityType) -> None:
         if self._partition_key is None:
             self._partition_key = entity["PartitionKey"]
         elif entity["PartitionKey"] != self._partition_key:
             raise ValueError("Partition Keys must all be the same")
 
-    def add_operation(self, operation):
-        # type: (TransactionOperationType) -> None
+    def add_operation(self, operation: TransactionOperationType) -> None:
         """Add a single operation to a batch."""
         try:
             operation_type, entity, kwargs = operation  # type: ignore
@@ -107,12 +99,7 @@ class TableBatchOperations(object):
         except AttributeError:
             raise ValueError("Unrecognized operation: {}".format(operation))
 
-    def create(
-        self,
-        entity,  # type: EntityType
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.
 
         :param entity: The properties for the table entity.
@@ -141,15 +128,14 @@ class TableBatchOperations(object):
 
     def _batch_create_entity(
         self,
-        table,  # type: str
-        entity,  # type: EntityType
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        response_preference="return-no-content",  # type: Optional[Union[str, "models.ResponseFormat"]]
-        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]] # pylint: disable=redefined-builtin
-        **kwargs  # type: Any
-    ):
-        # (...) -> None
+        table: str,
+        entity: EntityType,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        response_preference: Optional[Union[str, models.ResponseFormat]] = "return-no-content",
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
+        **kwargs
+    ) -> None:
         """
         Adds an insert operation to the batch. See
         :func:`azure.data.tables.TableClient.insert_entity` for more information
@@ -163,7 +149,7 @@ class TableBatchOperations(object):
         :param: entity:
             The entity to insert. Can be a dict or an entity object
             Must contain a PartitionKey and a RowKey.
-        :type: entity: dict or :class:`~azure.data.tables.models.Entity`
+        :type: entity: Dict or :class:`~azure.data.tables.models.Entity`
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -237,14 +223,7 @@ class TableBatchOperations(object):
 
     _batch_create_entity.metadata = {"url": "/{table}"}  # type: ignore
 
-    def update(
-        self,
-        entity,  # type: EntityType
-        mode=UpdateMode.MERGE,  # type: Union[str, UpdateMode]
-        **kwargs  # type: Any
-    ):
-        # (...) -> None
-
+    def update(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
@@ -309,17 +288,16 @@ class TableBatchOperations(object):
 
     def _batch_update_entity(
         self,
-        table,  # type: str
-        partition_key,  # type: str
-        row_key,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        if_match=None,  # type: Optional[str]
-        table_entity_properties=None,  # type: Optional[EntityType]
-        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]] # pylint: disable=redefined-builtin
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        table: str,
+        partition_key: str,
+        row_key: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        if_match: Optional[str] = None,
+        table_entity_properties: Optional[EntityType] = None,
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
+        **kwargs
+    ) -> None:
         """Update entity in a table.
 
         :param table: The name of the table.
@@ -339,7 +317,7 @@ class TableBatchOperations(object):
          is found to update and a replace will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: Dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
@@ -414,17 +392,16 @@ class TableBatchOperations(object):
 
     def _batch_merge_entity(
         self,
-        table,  # type: str
-        partition_key,  # type: str
-        row_key,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        if_match=None,  # type: Optional[str]
-        table_entity_properties=None,  # type: Optional[EntityType]
-        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]] # pylint: disable=redefined-builtin
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        table: str,
+        partition_key: str,
+        row_key: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        if_match: Optional[str] = None,
+        table_entity_properties: Optional[EntityType] = None,
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
+        **kwargs
+    ) -> None:
         """Merge entity in a table.
 
         :param table: The name of the table.
@@ -444,7 +421,7 @@ class TableBatchOperations(object):
          is found to update and a merge will be performed if an existing entity is found.
         :type if_match: str
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: dict[str, object]
+        :type table_entity_properties: Dict[str, object]
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
@@ -518,12 +495,7 @@ class TableBatchOperations(object):
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     }
 
-    def delete(
-        self,
-        entity,  # type: EntityType
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def delete(self, entity: EntityType, **kwargs) -> None:
         """Adds a delete operation to the current branch.
 
         :param partition_key: The partition key of the entity.
@@ -571,15 +543,14 @@ class TableBatchOperations(object):
 
     def _batch_delete_entity(
         self,
-        table,  # type: str
-        partition_key,  # type: str
-        row_key,  # type: str
-        if_match,  # type: str
-        timeout=None,  # type: Optional[int]
-        request_id_parameter=None,  # type: Optional[str]
-        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]] # pylint: disable=redefined-builtin
-    ):
-        # type: (...) -> None
+        table: str,
+        partition_key: str,
+        row_key: str,
+        if_match: str,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
+    ) -> None:
         """Deletes the specified entity in a table.
 
         :param table: The name of the table.
@@ -658,13 +629,7 @@ class TableBatchOperations(object):
         "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
     }
 
-    def upsert(
-        self,
-        entity,  # type: EntityType
-        mode=UpdateMode.MERGE,  # type: Union[str, UpdateMode]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an upsert (update/merge) operation to the batch.
 
         :param entity: The properties for the table entity.

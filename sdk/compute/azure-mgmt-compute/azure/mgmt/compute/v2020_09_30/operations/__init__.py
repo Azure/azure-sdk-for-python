@@ -22,7 +22,7 @@ from ._shared_gallery_images_operations import SharedGalleryImagesOperations
 from ._shared_gallery_image_versions_operations import SharedGalleryImageVersionsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
