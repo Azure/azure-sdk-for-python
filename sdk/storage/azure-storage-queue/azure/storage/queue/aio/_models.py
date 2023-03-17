@@ -24,14 +24,14 @@ else:
 class MessagesPaged(AsyncPageIterator):
     """An iterable of Queue Messages.
 
-    :param Callable[[str], bytes] command: Function to retrieve the next page of items.
+    :param Callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of messages to retrieve per
         call.
     :param int max_messages: The maximum number of messages to retrieve from
         the queue.
     """
     def __init__(
-            self, command: Callable[[str], bytes],
+            self, command: Callable,
             results_per_page: int = None,
             continuation_token: str = None,
             max_messages: int = None
@@ -78,7 +78,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
-    :param Callable[[str], bytes] command: Function to retrieve the next page of items.
+    :param Callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names
         begin with the specified prefix.
     :param int results_per_page: The maximum number of queue names to retrieve per
@@ -86,7 +86,7 @@ class QueuePropertiesPaged(AsyncPageIterator):
     :param str continuation_token: An opaque continuation token.
     """
     def __init__(
-            self, command: Callable[[str], bytes],
+            self, command: Callable,
             prefix: str = None,
             results_per_page: int = None,
             continuation_token: str = None

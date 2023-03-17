@@ -24,7 +24,7 @@ class MessageEncodePolicy(object):
         self.key_encryption_key = None
         self.resolver = None
 
-    def __call__(self, content: object) -> str:
+    def __call__(self, content: Any) -> str:
         if content:
             content = self.encode(content)
             if self.key_encryption_key is not None:
@@ -74,7 +74,7 @@ class MessageDecodePolicy(object):
         self.key_encryption_key = key_encryption_key
         self.resolver = resolver
 
-    def decode(self, content: object, response: "PipelineResponse") -> str:
+    def decode(self, content: Any, response: "PipelineResponse") -> str:
         raise NotImplementedError("Must be implemented by child class.")
 
 
@@ -85,7 +85,7 @@ class TextBase64EncodePolicy(MessageEncodePolicy):
     is not text, a TypeError will be raised. Input text must support UTF-8.
     """
 
-    def encode(self, content: object) -> str:
+    def encode(self, content: str) -> str:
         if not isinstance(content, str):
             raise TypeError("Message content must be text for base 64 encoding.")
         return b64encode(content.encode('utf-8')).decode('utf-8')
@@ -99,7 +99,7 @@ class TextBase64DecodePolicy(MessageDecodePolicy):
     support UTF-8.
     """
 
-    def decode(self, content: object, response: "PipelineResponse") -> bytes:
+    def decode(self, content: str, response: "PipelineResponse") -> bytes:
         try:
             return b64decode(content.encode('utf-8')).decode('utf-8')
         except (ValueError, TypeError) as error:
@@ -117,7 +117,7 @@ class BinaryBase64EncodePolicy(MessageEncodePolicy):
     is not bytes, a TypeError will be raised.
     """
 
-    def encode(self, content: object) -> str:
+    def encode(self, content: bytes) -> str:
         if not isinstance(content, bytes):
             raise TypeError("Message content must be bytes for base 64 encoding.")
         return b64encode(content).decode('utf-8')
@@ -130,7 +130,7 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
     is not valid base 64, a DecodeError will be raised.
     """
 
-    def decode(self, content: object, response: "PipelineResponse") -> bytes:
+    def decode(self, content: Any, response: "PipelineResponse") -> bytes:
         response = response.http_response
         try:
             return b64decode(content.encode('utf-8'))

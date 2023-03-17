@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called
 
 import sys
-from typing import Any, Callable, List, Tuple, TYPE_CHECKING, Union, Dict # pylint: disable=unused-import
+from typing import Any, Callable, Dict, List, Tuple, TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -335,14 +335,14 @@ class QueueMessage(DictMixin):
 class MessagesPaged(PageIterator):
     """An iterable of Queue Messages.
 
-    :param Callable[[str], bytes] command: Function to retrieve the next page of items.
+    :param Callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of messages to retrieve per
         call.
     :param int max_messages: The maximum number of messages to retrieve from
         the queue.
     """
 
-    command: Callable[[str], bytes]
+    command: Callable
     """Function to retrieve the next page of items."""
     results_per_page: int = None
     """A UTC date value representing the time the message expires."""
@@ -350,7 +350,7 @@ class MessagesPaged(PageIterator):
     """The maximum number of messages to retrieve from the queue."""
 
     def __init__(
-            self, command: Callable[[str], bytes],
+            self, command: Callable,
             results_per_page: int = None,
             continuation_token: str = None,
             max_messages: int = None
@@ -419,7 +419,7 @@ class QueueProperties(DictMixin):
 class QueuePropertiesPaged(PageIterator):
     """An iterable of Queue properties.
 
-    :param Callable[[str], bytes] command: Function to retrieve the next page of items.
+    :param Callable command: Function to retrieve the next page of items.
     :param str prefix: Filters the results to return only queues whose names
         begin with the specified prefix.
     :param int results_per_page: The maximum number of queue names to retrieve per
@@ -440,7 +440,7 @@ class QueuePropertiesPaged(PageIterator):
     location_mode: str
     """The location mode being used to list results. The available
         options include "primary" and "secondary"."""
-    command: Callable[[str], bytes]
+    command: Callable
     """Function to retrieve the next page of items."""
     prefix: str = None
     """Filters the results to return only queues whose names

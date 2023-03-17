@@ -111,11 +111,11 @@ class _EncryptedRegionInfo:
     This is only used for Encryption V2.
     '''
 
-    def __init__(self, data_length: int, nonce_length: str, tag_length: int) -> None:
+    def __init__(self, data_length: int, nonce_length: int, tag_length: int) -> None:
         '''
         :param int data_length:
             The length of the encryption region data (not including nonce + tag).
-        :param str nonce_length:
+        :param int nonce_length:
             The length of nonce used when encrypting.
         :param int tag_length:
             The length of the encryption tag.
@@ -160,7 +160,7 @@ class _EncryptionData:
             encrypted_region_info: Optional[_EncryptedRegionInfo],
             encryption_agent: _EncryptionAgent,
             wrapped_content_key: _WrappedContentKey,
-            key_wrapping_metadata: Dict[Any, Any]
+            key_wrapping_metadata: Dict[str, Any]
     ) -> None:
         '''
         :param Optional[bytes] content_encryption_IV:
@@ -174,7 +174,7 @@ class _EncryptionData:
         :param _WrappedContentKey wrapped_content_key:
             An object that stores the wrapping algorithm, the key identifier,
             and the encrypted key bytes.
-        :param Dict[Any, Any] key_wrapping_metadata:
+        :param Dict[str, Any] key_wrapping_metadata:
             A dict containing metadata related to the key wrapping.
         '''
 
@@ -530,20 +530,20 @@ def _validate_and_unwrap_cek(
         encryption_data: _EncryptionData,
         key_encryption_key: object = None,
         key_resolver: Callable[[str], bytes] = None
-) -> List[bytes]:
+) -> bytes:
     '''
     Extracts and returns the content_encryption_key stored in the encryption_data object
     and performs necessary validation on all parameters.
     :param _EncryptionData encryption_data:
         The encryption metadata of the retrieved value.
-    :param obj key_encryption_key:
+    :param object key_encryption_key:
         The key_encryption_key used to unwrap the cek. Please refer to high-level service object
         instance variables for more details.
     :param Callable[[str], bytes] key_resolver:
         A function used that, given a key_id, will return a key_encryption_key. Please refer
         to high-level service object instance variables for more details.
     :return: the content_encryption_key stored in the encryption_data object.
-    :rtype: bytes[]
+    :rtype: bytes
     '''
 
     _validate_not_none('encrypted_key', encryption_data.wrapped_content_key.encrypted_key)
