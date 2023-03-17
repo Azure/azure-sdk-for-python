@@ -437,7 +437,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             kwargs['client'] = self._client.block_blob
             kwargs['data'] = data
 
-            kwargs['standard_blob_tier'] = standard_blob_tier
+            if standard_blob_tier:
+                kwargs['standard_blob_tier'] = standard_blob_tier
             if premium_page_blob_tier:
                 raise ValueError("premium_page_blob_tier only supported for PageBlob")
             if maxsize_condition:
@@ -447,7 +448,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 raise ValueError("Encryption version 2.0 does not currently support page blobs.")
             kwargs['client'] = self._client.page_blob
 
-            kwargs['premium_page_blob_tier'] = premium_page_blob_tier
+            if premium_page_blob_tier:
+                kwargs['premium_page_blob_tier'] = premium_page_blob_tier
             if standard_blob_tier:
                 raise ValueError("standard_blob_tier only supported for BlockBlob")
             if maxsize_condition:
@@ -457,7 +459,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
             kwargs['client'] = self._client.append_blob
 
-            kwargs['maxsize_condition'] = maxsize_condition
+            if maxsize_condition:
+                kwargs['maxsize_condition'] = maxsize_condition
             if standard_blob_tier:
                 raise ValueError("standard_blob_tier only supported for BlockBlob")
             if premium_page_blob_tier:
