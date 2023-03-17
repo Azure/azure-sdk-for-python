@@ -221,6 +221,50 @@ def build_create_or_update_request_initial(
         **kwargs
     )
 
+
+def build_create_or_get_pending_upload_request(
+    subscription_id,  # type: str
+    resource_group_name,  # type: str
+    registry_name,  # type: str
+    model_name,  # type: str
+    version,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/pendingUpload/{version}")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "registryName": _SERIALIZER.url("registry_name", registry_name, 'str'),
+        "modelName": _SERIALIZER.url("model_name", model_name, 'str'),
+        "version": _SERIALIZER.url("version", version, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
 # fmt: on
 class RegistryModelVersionsOperations(object):
     """RegistryModelVersionsOperations operations.
@@ -721,3 +765,80 @@ class RegistryModelVersionsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/{version}"}  # type: ignore
+
+    @distributed_trace
+    def create_or_get_pending_upload(
+        self,
+        resource_group_name,  # type: str
+        registry_name,  # type: str
+        model_name,  # type: str
+        version,  # type: str
+        body,  # type: "_models.PendingUploadRequestDto"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.PendingUploadResponseDto"
+        """Generate a storage location and credential for the client to upload a model asset to.
+
+        Generate a storage location and credential for the client to upload a model asset to.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param registry_name: Name of Azure Machine Learning registry.
+        :type registry_name: str
+        :param model_name: Model name. This is case-sensitive.
+        :type model_name: str
+        :param version: Version identifier. This is case-sensitive.
+        :type version: str
+        :param body: Pending upload request object.
+        :type body: ~azure.mgmt.machinelearningservices.models.PendingUploadRequestDto
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PendingUploadResponseDto, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.PendingUploadResponseDto
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PendingUploadResponseDto"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'PendingUploadRequestDto')
+
+        request = build_create_or_get_pending_upload_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            model_name=model_name,
+            version=version,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.create_or_get_pending_upload.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('PendingUploadResponseDto', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    create_or_get_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/pendingUpload/{version}"}  # type: ignore
+

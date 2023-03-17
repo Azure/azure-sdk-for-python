@@ -43,6 +43,8 @@ def build_list_request(
     order_by = kwargs.pop('order_by', None)  # type: Optional[str]
     top = kwargs.pop('top', None)  # type: Optional[int]
     skip = kwargs.pop('skip', None)  # type: Optional[str]
+    hash = kwargs.pop('hash', None)  # type: Optional[str]
+    hash_version = kwargs.pop('hash_version', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -65,6 +67,10 @@ def build_list_request(
         _query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
     if skip is not None:
         _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
+    if hash is not None:
+        _query_parameters['hash'] = _SERIALIZER.query("hash", hash, 'str')
+    if hash_version is not None:
+        _query_parameters['hashVersion'] = _SERIALIZER.query("hash_version", hash_version, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -204,6 +210,50 @@ def build_create_or_update_request(
         **kwargs
     )
 
+
+def build_create_or_get_pending_upload_request(
+    subscription_id,  # type: str
+    resource_group_name,  # type: str
+    workspace_name,  # type: str
+    name,  # type: str
+    version,  # type: str
+    **kwargs  # type: Any
+):
+    # type: (...) -> HttpRequest
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+    content_type = kwargs.pop('content_type', None)  # type: Optional[str]
+
+    accept = "application/json"
+    # Construct URL
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/pendingUpload/{version}")  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
+        "workspaceName": _SERIALIZER.url("workspace_name", workspace_name, 'str', pattern=r'^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$'),
+        "name": _SERIALIZER.url("name", name, 'str'),
+        "version": _SERIALIZER.url("version", version, 'str'),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
+    _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
+    if content_type is not None:
+        _header_parameters['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_query_parameters,
+        headers=_header_parameters,
+        **kwargs
+    )
+
 # fmt: on
 class CodeVersionsOperations(object):
     """CodeVersionsOperations operations.
@@ -236,6 +286,8 @@ class CodeVersionsOperations(object):
         order_by=None,  # type: Optional[str]
         top=None,  # type: Optional[int]
         skip=None,  # type: Optional[str]
+        hash=None,  # type: Optional[str]
+        hash_version=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.CodeVersionResourceArmPaginatedResult"]
@@ -255,6 +307,11 @@ class CodeVersionsOperations(object):
         :type top: int
         :param skip: Continuation token for pagination.
         :type skip: str
+        :param hash: If specified, return CodeVersion assets with specified content hash value,
+         regardless of name.
+        :type hash: str
+        :param hash_version: Hash algorithm version when listing by hash.
+        :type hash_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CodeVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -281,6 +338,8 @@ class CodeVersionsOperations(object):
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    hash=hash,
+                    hash_version=hash_version,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -297,6 +356,8 @@ class CodeVersionsOperations(object):
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    hash=hash,
+                    hash_version=hash_version,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -549,4 +610,81 @@ class CodeVersionsOperations(object):
         return deserialized
 
     create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/{version}"}  # type: ignore
+
+
+    @distributed_trace
+    def create_or_get_pending_upload(
+        self,
+        resource_group_name,  # type: str
+        workspace_name,  # type: str
+        name,  # type: str
+        version,  # type: str
+        body,  # type: "_models.PendingUploadRequestDto"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> "_models.PendingUploadResponseDto"
+        """Generate a storage location and credential for the client to upload a code asset to.
+
+        Generate a storage location and credential for the client to upload a code asset to.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param name: Container name. This is case-sensitive.
+        :type name: str
+        :param version: Version identifier. This is case-sensitive.
+        :type version: str
+        :param body: Pending upload request object.
+        :type body: ~azure.mgmt.machinelearningservices.models.PendingUploadRequestDto
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: PendingUploadResponseDto, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.PendingUploadResponseDto
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PendingUploadResponseDto"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'PendingUploadRequestDto')
+
+        request = build_create_or_get_pending_upload_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            name=name,
+            version=version,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self.create_or_get_pending_upload.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('PendingUploadResponseDto', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    create_or_get_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/pendingUpload/{version}"}  # type: ignore
 
