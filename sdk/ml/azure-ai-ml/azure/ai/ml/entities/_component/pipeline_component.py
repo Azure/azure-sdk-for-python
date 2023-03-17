@@ -13,7 +13,7 @@ from typing import Dict, Optional, Tuple, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ComponentVersion, ComponentVersionProperties
+from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression, hash_dict

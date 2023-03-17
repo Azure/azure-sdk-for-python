@@ -10,7 +10,7 @@ from typing import IO, AnyStr, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from ..._restclient.v2023_04_01_preview.models import (
+from ..._restclient.v2022_10_01.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,
