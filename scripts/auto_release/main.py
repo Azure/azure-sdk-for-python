@@ -398,53 +398,6 @@ class CodegenTestPR:
         else:
             self.edit_changelog()
 
-    @staticmethod
-    def get_need_dependency() -> List[str]:
-        template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/packaging_files/setup.py')
-        items = ["msrest>", "azure-mgmt-core", "typing-extensions"]
-        with open(template_path, 'r') as fr:
-            content = fr.readlines()
-        dependencies = []
-        for i in range(len(content)):
-            if "install_requires" not in content[i]:
-                continue
-            for j in range(i, len(content)):
-                for item in items:
-                    if item in content[j]:
-                        dependencies.append(content[j].strip().strip(',').strip('\"'))
-            break
-        return dependencies
-
-    @staticmethod
-    def insert_line_num(content: List[str]) -> int:
-        start_num = 0
-        end_num = len(content)
-        for i in range(end_num):
-            if content[i].find("#override azure-mgmt-") > -1:
-                start_num = i
-                break
-        return (int(str(time.time()).split('.')[-1]) % max(end_num - start_num, 1)) + start_num
-
-    def check_ci_file_proc(self, dependency: str):
-        def edit_ci_file(content: List[str]):
-            new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
-            dependency_name = re.compile("[a-zA-Z-]*").findall(dependency)[0]
-            for i in range(len(content)):
-                if new_line in content[i]:
-                    return
-                if f'azure-mgmt-{self.package_name} {dependency_name}' in content[i]:
-                    content[i] = new_line + '\n'
-                    return
-            content.insert(self.insert_line_num(content), new_line + '\n')
-
-        modify_file(str(Path('shared_requirements.txt')), edit_ci_file)
-        print_exec('git add shared_requirements.txt')
-
-    def check_ci_file(self):
-        # eg: 'msrest>=0.6.21', 'azure-mgmt-core>=1.3.0,<2.0.0'
-        for item in self.get_need_dependency():
-            self.check_ci_file_proc(item)
-
     def check_dev_requirement(self):
         file = Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/dev_requirements.txt')
         content = [
@@ -462,7 +415,6 @@ class CodegenTestPR:
         self.check_sdk_readme()
         self.check_version()
         self.check_changelog_file()
-        self.check_ci_file()
         self.check_dev_requirement()
 
     def sdk_code_path(self) -> str:

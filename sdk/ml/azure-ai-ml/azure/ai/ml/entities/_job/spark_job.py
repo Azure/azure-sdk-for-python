@@ -152,6 +152,8 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         self.compute = compute
         self.resources = resources
         self.identity = identity
+        if self.executor_instances is None and str(self.dynamic_allocation_enabled).lower() == "true":
+            self.executor_instances = self.dynamic_allocation_min_executors
 
     @property
     def resources(self) -> Optional[SparkResourceConfiguration]:

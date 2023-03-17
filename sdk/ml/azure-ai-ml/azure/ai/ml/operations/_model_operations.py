@@ -6,9 +6,11 @@
 
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
+from contextlib import contextmanager
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
     _get_default_datastore_info,
@@ -19,6 +21,7 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
+from azure.ai.ml._utils._registry_utils import get_registry_client
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -26,6 +29,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType, ModelVersionData
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -52,8 +56,8 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import ResourceNotFoundError
+from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -142,13 +146,16 @@ class ModelOperations(_ScopeDependentOperations):
                             error_category=ErrorCategory.USER_ERROR,
                         )
 
-                    model = model._to_rest_object()
+                    model_rest = model._to_rest_object()
                     result = self._service_client.resource_management_asset_reference.begin_import_method(
                         resource_group_name=self._resource_group_name,
                         registry_name=self._registry_name,
-                        body=model,
-                    )
-                    return result
+                        body=model_rest,
+                    ).result()
+
+                    if not result:
+                        model_rest_obj = self._get(name=model.name, version=model.version)
+                        return Model._from_rest_object(model_rest_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
@@ -163,7 +170,11 @@ class ModelOperations(_ScopeDependentOperations):
                     return self.get(name=model.name, version=model.version)
 
             model, indicator_file = _check_and_upload_path(
-                artifact=model, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.MODEL
+                artifact=model,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.MODEL,
+                show_progress=self._show_progress,
             )
 
             model.path = resolve_short_datastore_url(model.path, self._operation_scope)
@@ -210,7 +221,7 @@ class ModelOperations(_ScopeDependentOperations):
 
             return model
         except Exception as ex:  # pylint: disable=broad-except
-            if isinstance(ex, (ValidationException, SchemaValidationError)):
+            if isinstance(ex, SchemaValidationError):
                 log_and_raise_error(ex)
             else:
                 raise ex
@@ -436,6 +447,50 @@ class ModelOperations(_ScopeDependentOperations):
             )
         )
 
+    @monitor_with_activity(logger, "Model.Share", ActivityType.PUBLICAPI)
+    @experimental
+    def share(self, name, version, *, share_with_name, share_with_version, registry_name) -> Model:
+        """Share a model asset from workspace to registry.
+
+        :param name: Name of model asset.
+        :type name: str
+        :param version: Version of model asset.
+        :type version: str
+        :param share_with_name: Name of model asset to share with.
+        :type share_with_name: str
+        :param share_with_version: Version of model asset to share with.
+        :type share_with_version: str
+        :param registry_name: Name of the destination registry.
+        :type registry_name: str
+        :return: Model asset object.
+        :rtype: ~azure.ai.ml.entities.Model
+        """
+
+        #  Get workspace info to get workspace GUID
+        workspace = self._service_client.workspaces.get(
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+        )
+        workspace_guid = workspace.workspace_id
+        workspace_location = workspace.location
+
+        # Get model asset ID
+        asset_id = ASSET_ID_FORMAT.format(
+            workspace_location,
+            workspace_guid,
+            AzureMLResourceType.MODEL,
+            name,
+            version,
+        )
+
+        model_ref = WorkspaceAssetReference(
+            name=share_with_name if share_with_name else name,
+            version=share_with_version if share_with_version else version,
+            asset_id=asset_id,
+        )
+
+        with self._set_registry_client(registry_name):
+            return self.create_or_update(model_ref)
+
     def _get_latest_version(self, name: str) -> Model:
         """Returns the latest version of the asset with the given name.
 
@@ -449,38 +504,30 @@ class ModelOperations(_ScopeDependentOperations):
         )
         return Model._from_rest_object(result)
 
-    # pylint: disable=no-self-use
-    def _prepare_to_copy(
-        self, model: Model, name: Optional[str] = None, version: Optional[str] = None
-    ) -> WorkspaceAssetReference:
+    @contextmanager
+    def _set_registry_client(self, registry_name: str) -> None:
+        """Sets the registry client for the model operations.
 
-        """Returns WorkspaceAssetReference to copy a registered model to registry given the asset id.
-
-        :param model: Registered model
-        :type model: Model
-        :param name: Destination name
-        :type name: str
-        :param version: Destination version
-        :type version: str
+        :param registry_name: Name of the registry.
+        :type registry_name: str
         """
-        #  Get workspace info to get workspace GUID
-        workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
-        )
-        workspace_guid = workspace.workspace_id
-        workspace_location = workspace.location
+        rg_ = self._operation_scope._resource_group_name
+        sub_ = self._operation_scope._subscription_id
+        registry_ = self._operation_scope.registry_name
+        client_ = self._service_client
+        model_versions_operation_ = self._model_versions_operation
 
-        # Get model asset ID
-        asset_id = ASSET_ID_FORMAT.format(
-            workspace_location,
-            workspace_guid,
-            AzureMLResourceType.MODEL,
-            model.name,
-            model.version,
-        )
-
-        return WorkspaceAssetReference(
-            name=name if name else model.name,
-            version=version if version else model.version,
-            asset_id=asset_id,
-        )
+        try:
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            self._operation_scope.registry_name = registry_name
+            self._operation_scope._resource_group_name = _rg
+            self._operation_scope._subscription_id = _sub
+            self._service_client = _client
+            self._model_versions_operation = _client.model_versions
+            yield
+        finally:
+            self._operation_scope.registry_name = registry_
+            self._operation_scope._resource_group_name = rg_
+            self._operation_scope._subscription_id = sub_
+            self._service_client = client_
+            self._model_versions_operation = model_versions_operation_

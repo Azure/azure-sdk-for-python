@@ -59,7 +59,6 @@ omit_function_dict = {
     "Omit_management": omit_mgmt,
 }
 
-
 def apply_compatibility_filter(package_set: List[str]) -> List[str]:
     """
     This function takes in a set of paths to python packages. It returns the set filtered by compatibility with the currently running python executable.
@@ -414,7 +413,6 @@ def find_whl(package_name: str, version: str, whl_directory: str) -> str:
         exit(1)
 
     return whls[0]
-
 
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.

@@ -564,7 +564,7 @@ class KeyClient(KeyVaultClientBase):
         :keyword enabled: Whether the key is enabled for use.
         :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
-        :paramtype tags: dict[str, str]
+        :paramtype tags: dict[str, str] or None
         :keyword not_before: Not before date of the key in UTC
         :paramtype not_before: ~datetime.datetime or None
         :keyword expires_on: Expiry date of the key in UTC

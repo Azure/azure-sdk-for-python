@@ -13,6 +13,7 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
 )
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
+from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.operations import (
     ComponentOperations,
@@ -156,6 +157,20 @@ def operation_orchestrator(
         operation_container=operation_container,
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
+    )
+
+
+@pytest.fixture
+def operation_orchestrator_no_progress(
+    mock_workspace_scope: OperationScope,
+    mock_operation_config_no_progress: OperationConfig,
+    operation_container: OperationsContainer,
+) -> OperationOrchestrator:
+    # OperationOrchestrator with OperationConfig.show_progress = False
+    yield OperationOrchestrator(
+        operation_container=operation_container,
+        operation_scope=mock_workspace_scope,
+        operation_config=mock_operation_config_no_progress,
     )
 
 
@@ -515,3 +530,21 @@ class TestOperationOrchestration:
         component = "azureml://registries/testFeed/components/My_Hello_World_Asset_2/versions/1"
         result = operation_orchestrator.get_asset_arm_id(component, azureml_type=AzureMLResourceType.COMPONENT)
         assert component == result
+
+    def test_show_progress_off(self, operation_orchestrator_no_progress: OperationOrchestrator) -> None:
+        # Ensure that show_progress set in OperationConfig in MLClient is being passed through operation orchestrator
+
+        component = Component()
+        operation_orchestrator_no_progress.get_asset_arm_id(component, azureml_type=AzureMLResourceType.COMPONENT)
+        operation_orchestrator_no_progress._component.create_or_update.assert_called_once_with(
+            component, is_anonymous=True, show_progress=False
+        )
+
+    def test_show_progress_on(self, operation_orchestrator: OperationOrchestrator) -> None:
+        # Ensure that show_progress set in OperationConfig in MLClient is being passed through operation orchestrator
+
+        component = Component(name="name", version="1")
+        operation_orchestrator.get_asset_arm_id(component, azureml_type=AzureMLResourceType.COMPONENT)
+        operation_orchestrator._component.create_or_update.assert_called_once_with(
+            component, is_anonymous=True, show_progress=True
+        )
