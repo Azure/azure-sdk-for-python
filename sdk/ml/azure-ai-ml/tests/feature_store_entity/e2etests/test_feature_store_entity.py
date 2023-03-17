@@ -19,7 +19,7 @@ from azure.core.polling import LROPoller
 
 @pytest.mark.e2etest
 @pytest.mark.data_experiences_test
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
+@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "enable_private_preview_feature_store_features")
 class TestFeatureStoreEntity(AzureRecordedTestCase):
     def test_create_and_get(self, feature_store_client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         fs_entity_name = f"e2etest_{randstr('fs_entity_name')}"

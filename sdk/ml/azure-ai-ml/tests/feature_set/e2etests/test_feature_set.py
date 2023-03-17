@@ -23,7 +23,7 @@ from azure.ai.ml.entities import (
 
 @pytest.mark.e2etest
 @pytest.mark.data_experiences_test
-@pytest.mark.usefixtures("recorded_test", "mock_code_hash")
+@pytest.mark.usefixtures("recorded_test", "mock_code_hash", "enable_private_preview_feature_store_features")
 class TestFeatureSet(AzureRecordedTestCase):
     def test_create_and_get(self, feature_store_client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         fset_name = f"e2etest_{randstr('fset_name')}"
