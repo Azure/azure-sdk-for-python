@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: redefined-builtin
+# pylint: disable=redefined-builtin
 from typing import Dict, Optional, Union, List
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
     BatchJobResource,
