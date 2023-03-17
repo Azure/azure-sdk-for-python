@@ -191,9 +191,7 @@ class StoredProcedureParamsSchema(metaclass=PatchedSchemaMeta):
 
 
 class DatabaseSchema(metaclass=PatchedSchemaMeta):
-    type = StringTransformedEnum(
-        allowed_values=[ExternalDataType.DATABASE], required=True
-    )
+    type = StringTransformedEnum(allowed_values=[ExternalDataType.DATABASE], required=True)
     table_name = fields.Str()
     query = fields.Str(
         metadata={"description": "The sql query command."},

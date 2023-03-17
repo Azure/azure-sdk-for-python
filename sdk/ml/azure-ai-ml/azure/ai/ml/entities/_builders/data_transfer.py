@@ -190,9 +190,7 @@ class DataTransferCopy(DataTransfer):
         **kwargs,
     ):
         # validate init params are valid type
-        validate_attribute_type(
-            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
-        )
+        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         super().__init__(
             inputs=inputs,
             outputs=outputs,
@@ -237,17 +235,11 @@ class DataTransferCopy(DataTransfer):
         return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
-    ) -> "Spark":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Spark":
         from .data_transfer_func import copy_data
 
-        loaded_data = load_from_dict(
-            DataTransferCopyJobSchema, data, context, additional_message, **kwargs
-        )
-        data_transfer_job = copy_data(
-            base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data
-        )
+        loaded_data = load_from_dict(DataTransferCopyJobSchema, data, context, additional_message, **kwargs)
+        data_transfer_job = copy_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
         return data_transfer_job
 
@@ -287,9 +279,7 @@ class DataTransferCopy(DataTransfer):
             node.compute = self.compute
             node.tags = self.tags
             # Pass through the display name only if the display name is not system generated.
-            node.display_name = (
-                self.display_name if self.display_name != self.name else None
-            )
+            node.display_name = self.display_name if self.display_name != self.name else None
             return node
         msg = "copy_data can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
@@ -340,9 +330,7 @@ class DataTransferImport(DataTransfer):
         **kwargs,
     ):
         # validate init params are valid type
-        validate_attribute_type(
-            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
-        )
+        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         super(DataTransferImport, self).__init__(
             component=component,
             outputs=outputs,
@@ -388,12 +376,8 @@ class DataTransferImport(DataTransfer):
             )
         if "sink" in self.outputs and isinstance(self.outputs["sink"]._data, Output):
             sink_output = self.outputs["sink"]._data
-            if (
-                self.source.type == ExternalDataType.DATABASE
-                and sink_output.type != AssetTypes.MLTABLE
-            ) or (
-                self.source.type == ExternalDataType.FILE_SYSTEM
-                and sink_output.type != AssetTypes.URI_FOLDER
+            if (self.source.type == ExternalDataType.DATABASE and sink_output.type != AssetTypes.MLTABLE) or (
+                self.source.type == ExternalDataType.FILE_SYSTEM and sink_output.type != AssetTypes.URI_FOLDER
             ):
                 result.append_error(
                     yaml_path="outputs.sink.type",
@@ -416,17 +400,11 @@ class DataTransferImport(DataTransfer):
         return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
-    ) -> "DataTransferImport":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferImport":
         from .data_transfer_func import import_data
 
-        loaded_data = load_from_dict(
-            DataTransferImportJobSchema, data, context, additional_message, **kwargs
-        )
-        data_transfer_job = import_data(
-            base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data
-        )
+        loaded_data = load_from_dict(DataTransferImportJobSchema, data, context, additional_message, **kwargs)
+        data_transfer_job = import_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
         return data_transfer_job
 
@@ -485,9 +463,7 @@ class DataTransferExport(DataTransfer):
         **kwargs,
     ):
         # validate init params are valid type
-        validate_attribute_type(
-            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
-        )
+        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         super(DataTransferExport, self).__init__(
             component=component,
             inputs=inputs,
@@ -546,12 +522,8 @@ class DataTransferExport(DataTransfer):
             )
         if "source" in self.inputs and isinstance(self.inputs["source"]._data, Input):
             source_input = self.inputs["source"]._data
-            if (
-                self.sink.type == ExternalDataType.DATABASE
-                and source_input.type != AssetTypes.URI_FILE
-            ) or (
-                self.sink.type == ExternalDataType.FILE_SYSTEM
-                and source_input.type != AssetTypes.URI_FOLDER
+            if (self.sink.type == ExternalDataType.DATABASE and source_input.type != AssetTypes.URI_FILE) or (
+                self.sink.type == ExternalDataType.FILE_SYSTEM and source_input.type != AssetTypes.URI_FOLDER
             ):
                 result.append_error(
                     yaml_path="inputs.source.type",
@@ -575,17 +547,11 @@ class DataTransferExport(DataTransfer):
         return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
-    ) -> "DataTransferExport":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferExport":
         from .data_transfer_func import export_data
 
-        loaded_data = load_from_dict(
-            DataTransferExportJobSchema, data, context, additional_message, **kwargs
-        )
-        data_transfer_job = export_data(
-            base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data
-        )
+        loaded_data = load_from_dict(DataTransferExportJobSchema, data, context, additional_message, **kwargs)
+        data_transfer_job = export_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
         return data_transfer_job
 

@@ -23,9 +23,7 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
         "stored_procedure_params": stored_procedure_params,
     }
 
-    @dsl.pipeline(
-        description="submit a pipeline with data transfer import stored database job"
-    )
+    @dsl.pipeline(description="submit a pipeline with data transfer import stored database job")
     def data_transfer_import_database_pipeline_from_builder():
         from azure.ai.ml.data_transfer import Database
 

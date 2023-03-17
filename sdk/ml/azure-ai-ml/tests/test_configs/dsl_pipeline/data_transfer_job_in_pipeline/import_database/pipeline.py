@@ -20,12 +20,8 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     }
     source = {"connection": connection_target_azuresql, "query": query_source_snowflake}
 
-    @dsl.pipeline(
-        description="submit a pipeline with data transfer import database job"
-    )
-    def data_transfer_import_database_pipeline_from_builder(
-        query_source_snowflake, connection_target_azuresql
-    ):
+    @dsl.pipeline(description="submit a pipeline with data transfer import database job")
+    def data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql):
         from azure.ai.ml.data_transfer import Database
 
         snowflake_blob_node_input = import_data(
@@ -33,17 +29,13 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
             outputs=outputs,
         )
 
-        source_snowflake = Database(
-            query=query_source_snowflake, connection=connection_target_azuresql
-        )
+        source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
         snowflake_blob = import_data(
             source=source_snowflake,
             outputs=outputs,
         )
 
-    pipeline = data_transfer_import_database_pipeline_from_builder(
-        query_source_snowflake, connection_target_azuresql
-    )
+    pipeline = data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql)
     pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline
 
@@ -54,12 +46,8 @@ def generate_dsl_pipeline_from_builder_sql() -> PipelineJob:
     outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
     source = {"connection": connection_target_azuresql, "query": query_source_snowflake}
 
-    @dsl.pipeline(
-        description="submit a pipeline with data transfer import database job"
-    )
-    def data_transfer_import_database_pipeline_from_builder(
-        query_source_snowflake, connection_target_azuresql
-    ):
+    @dsl.pipeline(description="submit a pipeline with data transfer import database job")
+    def data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql):
         from azure.ai.ml.data_transfer import Database
 
         sql_blob_node_input = import_data(
@@ -67,16 +55,12 @@ def generate_dsl_pipeline_from_builder_sql() -> PipelineJob:
             outputs=outputs,
         )
 
-        source_snowflake = Database(
-            query=query_source_snowflake, connection=connection_target_azuresql
-        )
+        source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
         sql_blob = import_data(
             source=source_snowflake,
             outputs=outputs,
         )
 
-    pipeline = data_transfer_import_database_pipeline_from_builder(
-        query_source_snowflake, connection_target_azuresql
-    )
+    pipeline = data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql)
     pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline

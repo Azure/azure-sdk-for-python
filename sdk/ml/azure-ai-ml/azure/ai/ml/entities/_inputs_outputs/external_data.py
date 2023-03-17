@@ -34,9 +34,7 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
         self.value = value
 
 
-class Database(
-    DictMixin, RestTranslatableMixin
-):  # pylint: disable=too-many-instance-attributes
+class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """Define a database class for a DataTransfer Component or Job.
 
     e.g.
@@ -120,9 +118,7 @@ class Database(
         return self._stored_procedure_params
 
     @stored_procedure_params.setter
-    def stored_procedure_params(
-        self, value: Union[Dict[str, str], StoredProcedureParameter, None]
-    ):
+    def stored_procedure_params(self, value: Union[Dict[str, str], StoredProcedureParameter, None]):
         if value is None:
             self._stored_procedure_params = value
         else:
@@ -134,9 +130,7 @@ class Database(
             self._stored_procedure_params = value
 
 
-class FileSystem(
-    DictMixin, RestTranslatableMixin
-):  # pylint: disable=too-many-instance-attributes
+class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """Define a file system class of a DataTransfer Component or Job.
 
     e.g. source_s3 = FileSystem(path='s3://my_bucket/my_folder', connection='azureml:my_s3_connection')

@@ -168,20 +168,12 @@ class DataTransferCopyJob(DataTransferJob):
         self.data_copy_mode = data_copy_mode
 
     def _to_dict(self) -> Dict:
-        return DataTransferCopyJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
-            self
-        )
+        return DataTransferCopyJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
-    ) -> "DataTransferCopyJob":
-        loaded_data = load_from_dict(
-            DataTransferCopyJobSchema, data, context, additional_message, **kwargs
-        )
-        return DataTransferCopyJob(
-            base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data
-        )
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferCopyJob":
+        loaded_data = load_from_dict(DataTransferCopyJobSchema, data, context, additional_message, **kwargs)
+        return DataTransferCopyJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
     def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a data transfer copy job to component.
@@ -203,12 +195,8 @@ class DataTransferCopyJob(DataTransferJob):
             is_anonymous=True,
             base_path=context[BASE_PATH_CONTEXT_KEY],
             description=self.description,
-            inputs=self._to_inputs(
-                inputs=self.inputs, pipeline_job_dict=pipeline_job_dict
-            ),
-            outputs=self._to_outputs(
-                outputs=self.outputs, pipeline_job_dict=pipeline_job_dict
-            ),
+            inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
+            outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
             data_copy_mode=self.data_copy_mode,
         )
 
@@ -250,20 +238,12 @@ class DataTransferImportJob(DataTransferJob):
         self.source = self._build_source_sink(source)
 
     def _to_dict(self) -> Dict:
-        return DataTransferImportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
-            self
-        )
+        return DataTransferImportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
-    ) -> "DataTransferImportJob":
-        loaded_data = load_from_dict(
-            DataTransferImportJobSchema, data, context, additional_message, **kwargs
-        )
-        return DataTransferImportJob(
-            base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data
-        )
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferImportJob":
+        loaded_data = load_from_dict(DataTransferImportJobSchema, data, context, additional_message, **kwargs)
+        return DataTransferImportJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
     def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a data transfer import job to component.
@@ -318,20 +298,12 @@ class DataTransferExportJob(DataTransferJob):
         self.sink = self._build_source_sink(sink)
 
     def _to_dict(self) -> Dict:
-        return DataTransferExportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(
-            self
-        )
+        return DataTransferExportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
-    ) -> "DataTransferExportJob":
-        loaded_data = load_from_dict(
-            DataTransferExportJobSchema, data, context, additional_message, **kwargs
-        )
-        return DataTransferExportJob(
-            base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data
-        )
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferExportJob":
+        loaded_data = load_from_dict(DataTransferExportJobSchema, data, context, additional_message, **kwargs)
+        return DataTransferExportJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
     def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a data transfer export job to component.

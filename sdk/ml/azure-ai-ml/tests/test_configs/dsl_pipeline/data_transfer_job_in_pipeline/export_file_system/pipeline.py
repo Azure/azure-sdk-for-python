@@ -25,12 +25,8 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
         "path": path_source_s3,
     }
 
-    @dsl.pipeline(
-        description="submit a pipeline with data transfer export file system job"
-    )
-    def data_transfer_export_file_system_pipeline_from_builder(
-        path_source_s3, connection_target, cosmos_folder
-    ):
+    @dsl.pipeline(description="submit a pipeline with data transfer export file system job")
+    def data_transfer_export_file_system_pipeline_from_builder(path_source_s3, connection_target, cosmos_folder):
         from azure.ai.ml.data_transfer import FileSystem
 
         s3_blob_input = export_data(inputs=inputs, sink=sink)
