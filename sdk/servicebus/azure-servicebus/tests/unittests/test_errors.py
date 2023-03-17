@@ -13,8 +13,8 @@ except ImportError:
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus._pyamqp import error as AMQPErrors
 
-from utilities import uamqp_transport as uamqp_transport_func
-uamqp_transport_params, uamqp_transport_ids = uamqp_transport_func()
+from utilities import uamqp_transport as get_uamqp_transport
+uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
 @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
 def test_link_idle_timeout(uamqp_transport):

@@ -58,9 +58,9 @@ from azure.servicebus.exceptions import (
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, AzureTestCase
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
 from mocks_async import MockReceivedMessage, MockReceiver
-from utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as uamqp_transport_func, ArgPasserAsync
+from utilities import get_logger, print_message, sleep_until_expired, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
-uamqp_transport_params, uamqp_transport_ids = uamqp_transport_func()
+uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
 _logger = get_logger(logging.DEBUG)
 

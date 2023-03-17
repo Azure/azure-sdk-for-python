@@ -22,8 +22,8 @@ from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer
 )
-from utilities import get_logger, print_message, uamqp_transport as uamqp_transport_func, ArgPasser
-uamqp_transport_params, uamqp_transport_ids = uamqp_transport_func()
+from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasser
+uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
 
 _logger = get_logger(logging.DEBUG)

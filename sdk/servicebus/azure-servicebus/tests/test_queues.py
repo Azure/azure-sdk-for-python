@@ -65,9 +65,9 @@ from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPre
 from servicebus_preparer import CachedServiceBusNamespacePreparer, ServiceBusQueuePreparer, CachedServiceBusQueuePreparer
 from utilities import get_logger, print_message, sleep_until_expired
 from mocks import MockReceivedMessage, MockReceiver
-from utilities import uamqp_transport as uamqp_transport_func, ArgPasser
+from utilities import uamqp_transport as get_uamqp_transport, ArgPasser
 
-uamqp_transport_params, uamqp_transport_ids = uamqp_transport_func()
+uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
 _logger = get_logger(logging.DEBUG)
 

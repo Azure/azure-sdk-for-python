@@ -40,9 +40,9 @@ from servicebus_preparer import (
     ServiceBusQueuePreparer,
     ServiceBusSubscriptionPreparer
 )
-from utilities import get_logger, print_message, uamqp_transport as uamqp_transport_func, ArgPasserAsync
+from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
-uamqp_transport_params, uamqp_transport_ids = uamqp_transport_func()
+uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
 _logger = get_logger(logging.DEBUG)
 
