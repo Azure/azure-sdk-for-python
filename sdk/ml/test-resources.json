@@ -944,10 +944,10 @@
         "hbiWorkspace": "[parameters('confidential_data')]",
         "featureStoreSettings": {
           "computeruntime": {
-            "SparkRuntimeVersion": "3.1.2"
+            "SparkRuntimeVersion": "3.2.0"
             },
-            "offlinestoreconnectionname": "OfflineStoreConnectionName",
-            "onlinestoreconnectionname": "OnlineStoreConnectionName"
+            "offlinestoreconnectionname": "",
+            "onlinestoreconnectionname": ""
           }
       }
     }

@@ -156,6 +156,7 @@ def sanitized_environment_variables(environment_variables, fake_datastore_key) -
         "ML_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
         "ML_RESOURCE_GROUP": "00000",
         "ML_WORKSPACE_NAME": "00000",
+        "ML_FEATURE_STORE_NAME": "00000",
         "ML_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
         "ML_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,
         "ML_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,

@@ -68,7 +68,7 @@ class TestFeatureSet(AzureRecordedTestCase):
         fset = verify_entity_load_and_dump(
             _load_feature_set,
             feature_set_validation,
-            "./tests/test_configs/feature_set/feature_set_full.yaml",
+            "./tests/test_configs/feature_set/feature_set_e2e.yaml",
             params_override=params_override,
         )[0]
 
