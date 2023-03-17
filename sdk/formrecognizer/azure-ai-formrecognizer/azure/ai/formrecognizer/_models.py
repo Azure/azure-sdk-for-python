@@ -10,7 +10,7 @@ from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.v2022_08_31.models import DocumentModelDetails as ModelDetails, Error
+from ._generated.v2023_02_28_preview.models import DocumentModelDetails as ModelDetails, Error
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -3663,8 +3663,7 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     """Document analysis result."""
 
     api_version: str
-    """API version used to produce this result. Possible values include:
-     "2022-08-31"."""
+    """API version used to produce this result."""
     model_id: str
     """Model ID used to produce this result."""
     content: str

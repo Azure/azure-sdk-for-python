@@ -3,7 +3,7 @@
 ## 1.6.0 (Unreleased)
 
 ### Features Added
-- 
+- Added support to make JobService and ServiceInstance objects serializable when printed
 
 ### Bugs Fixed
 
