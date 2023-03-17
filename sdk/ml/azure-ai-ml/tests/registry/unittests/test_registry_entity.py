@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import SystemCreatedAcrA
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount, UserCreatedStorageAccount
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount
 from azure.ai.ml.constants._registry import StorageAccountType
 
 # from azure.ai.ml.entities._util import load_from_dict
