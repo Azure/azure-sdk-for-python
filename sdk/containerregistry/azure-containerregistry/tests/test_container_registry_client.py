@@ -608,9 +608,20 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             
             response = client.list_tag_properties(ALPINE)
             if response is not None:
-                with pytest.raises(TypeError):
-                    for tag in response:
-                        pass
+                for tag in response:
+                    pass
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup manifests in ALPINE repo
+            for tag in client.list_tag_properties(ALPINE):
+                client.delete_manifest(ALPINE, tag.name)
+            response = client.list_manifest_properties(ALPINE)
+            if response is not None:
+                for manifest in response:
+                    pass
 
 
 def test_set_api_version():
