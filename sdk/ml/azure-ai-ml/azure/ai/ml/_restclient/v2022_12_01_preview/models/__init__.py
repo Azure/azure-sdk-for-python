@@ -263,6 +263,7 @@ try:
     from ._models_py3 import ManagedIdentity
     from ._models_py3 import ManagedIdentityAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import ManagedNetworkDto
+    from ._models_py3 import ManagedNetworkProvisionOptions
     from ._models_py3 import ManagedNetworkSettings
     from ._models_py3 import ManagedOnlineDeployment
     from ._models_py3 import ManagedServiceIdentity
@@ -707,6 +708,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedIdentity  # type: ignore
     from ._models import ManagedIdentityAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import ManagedNetworkDto  # type: ignore
+    from ._models import ManagedNetworkProvisionOptions  # type: ignore
     from ._models import ManagedNetworkSettings  # type: ignore
     from ._models import ManagedOnlineDeployment  # type: ignore
     from ._models import ManagedServiceIdentity  # type: ignore
@@ -1298,6 +1300,7 @@ __all__ = [
     'ManagedIdentity',
     'ManagedIdentityAuthTypeWorkspaceConnectionProperties',
     'ManagedNetworkDto',
+    'ManagedNetworkProvisionOptions',
     'ManagedNetworkSettings',
     'ManagedOnlineDeployment',
     'ManagedServiceIdentity',

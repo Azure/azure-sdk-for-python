@@ -17,6 +17,7 @@ from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._managed_network_settings_operations import ManagedNetworkSettingsOperations
 from ._managed_network_settings_rule_operations import ManagedNetworkSettingsRuleOperations
+from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations
 from ._registries_operations import RegistriesOperations
 from ._workspace_features_operations import WorkspaceFeaturesOperations
 from ._registry_code_containers_operations import RegistryCodeContainersOperations
@@ -58,6 +59,7 @@ __all__ = [
     'WorkspaceConnectionsOperations',
     'ManagedNetworkSettingsOperations',
     'ManagedNetworkSettingsRuleOperations',
+    'ManagedNetworkProvisionsOperations',
     'RegistriesOperations',
     'WorkspaceFeaturesOperations',
     'RegistryCodeContainersOperations',

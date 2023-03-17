@@ -2259,6 +2259,52 @@
           }
         }
       }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/provisions": {
+      "post": {
+        "tags": [
+          "ManagedNetwork"
+        ],
+        "operationId": "ManagedNetworkProvisions_Post",
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ManagedNetworkProvisionOptions"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Provision ManagedNetwork": {
+            "$ref": "./examples/ManagedNetwork/provision.json"
+          }
+        }
+      }
     }
   },
   "parameters": {
@@ -6581,6 +6627,15 @@
           "x-nullable": true
         }
       }
+    },
+    "ManagedNetworkProvisionOptions": {
+      "type": "object",
+      "properties": {
+        "includeSpark": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
     },
     "ManagedNetworkSettings": {
       "type": "object",

@@ -14986,6 +14986,29 @@ class ManagedNetworkDto(msrest.serialization.Model):
         self.outbound_rules = kwargs.get('outbound_rules', None)
 
 
+class ManagedNetworkProvisionOptions(msrest.serialization.Model):
+    """ManagedNetworkProvisionOptions.
+
+    :ivar include_spark:
+    :vartype include_spark: bool
+    """
+
+    _attribute_map = {
+        'include_spark': {'key': 'includeSpark', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword include_spark:
+        :paramtype include_spark: bool
+        """
+        super(ManagedNetworkProvisionOptions, self).__init__(**kwargs)
+        self.include_spark = kwargs.get('include_spark', None)
+
+
 class ManagedNetworkSettings(msrest.serialization.Model):
     """ManagedNetworkSettings.
 

@@ -16,7 +16,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, JobsOperations, LabelingJobsOperations, ManagedNetworkSettingsOperations, ManagedNetworkSettingsRuleOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
+from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, JobsOperations, LabelingJobsOperations, ManagedNetworkProvisionsOperations, ManagedNetworkSettingsOperations, ManagedNetworkSettingsRuleOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -53,6 +53,9 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
     :ivar managed_network_settings_rule: ManagedNetworkSettingsRuleOperations operations
     :vartype managed_network_settings_rule:
      azure.mgmt.machinelearningservices.aio.operations.ManagedNetworkSettingsRuleOperations
+    :ivar managed_network_provisions: ManagedNetworkProvisionsOperations operations
+    :vartype managed_network_provisions:
+     azure.mgmt.machinelearningservices.aio.operations.ManagedNetworkProvisionsOperations
     :ivar registries: RegistriesOperations operations
     :vartype registries: azure.mgmt.machinelearningservices.aio.operations.RegistriesOperations
     :ivar workspace_features: WorkspaceFeaturesOperations operations
@@ -171,6 +174,7 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
         self.workspace_connections = WorkspaceConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_network_settings = ManagedNetworkSettingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_network_settings_rule = ManagedNetworkSettingsRuleOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_network_provisions = ManagedNetworkProvisionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registries = RegistriesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_features = WorkspaceFeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_code_containers = RegistryCodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
