@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
-from typing import Any, Dict
+from typing import Any
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import IPProtectionLevel
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
