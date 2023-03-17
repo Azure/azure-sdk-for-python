@@ -94,7 +94,9 @@ def _format_url_section(template, **kwargs):
             return template.format(**kwargs)
         except KeyError as key:
             formatted_components = template.split("/")
-            components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
+            components = [
+                c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c
+            ]
             template = "/".join(components)
     # No URL sections left - returning None
 
@@ -112,7 +114,9 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     return parsed.geturl()
 
 
-class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HttpTransport(
+    AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]
+):
     """An http sender ABC."""
 
     @abc.abstractmethod
@@ -202,7 +206,9 @@ class HttpRequest:
         self.data = value
 
     @staticmethod
-    def _format_data(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
+    def _format_data(
+        data: Union[str, IO]
+    ) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
         """Format field data according to whether it is a stream or
         a string for a form-data request.
 
@@ -229,7 +235,9 @@ class HttpRequest:
         if not isinstance(data, binary_type) and not any(
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
         ):
-            raise TypeError("A streamable data source must be an open file-like object or iterable.")
+            raise TypeError(
+                "A streamable data source must be an open file-like object or iterable."
+            )
         self.data = data
         self.files = None
 
@@ -286,7 +294,9 @@ class HttpRequest:
             self.data = {f: d for f, d in data.items() if d is not None}
             self.files = None
         else:  # Assume "multipart/form-data"
-            self.files = {f: self._format_data(d) for f, d in data.items() if d is not None}
+            self.files = {
+                f: self._format_data(d) for f, d in data.items() if d is not None
+            }
             self.data = None
 
     def set_bytes_body(self, data):
@@ -395,7 +405,9 @@ class _HttpResponseBase:
         requests: List[HttpRequest],
     ) -> List["HttpResponse"]:
         """Rebuild an HTTP response from pure string."""
-        return _decode_parts_helper(self, message, http_response_type, requests, _deserialize_response)
+        return _decode_parts_helper(
+            self, message, http_response_type, requests, _deserialize_response
+        )
 
     def _get_raw_parts(
         self, http_response_type: Optional[Type["_HttpResponseBase"]] = None
@@ -405,7 +417,9 @@ class _HttpResponseBase:
         If parts are application/http use http_response_type or HttpClientTransportResponse
         as envelope.
         """
-        return _get_raw_parts_helper(self, http_response_type or HttpClientTransportResponse)
+        return _get_raw_parts_helper(
+            self, http_response_type or HttpClientTransportResponse
+        )
 
     def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
@@ -416,8 +430,12 @@ class _HttpResponseBase:
 
     def __repr__(self):
         # there doesn't have to be a content type
-        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        return "<{}: {} {}{}>".format(type(self).__name__, self.status_code, self.reason, content_type_str)
+        content_type_str = (
+            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        )
+        return "<{}: {} {}{}>".format(
+            type(self).__name__, self.status_code, self.reason, content_type_str
+        )
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
@@ -463,14 +481,18 @@ class _HttpClientTransportResponse(_HttpResponseBase):
         return self.data
 
 
-class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):  # pylint: disable=abstract-method
+class HttpClientTransportResponse(
+    _HttpClientTransportResponse, HttpResponse
+):  # pylint: disable=abstract-method
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
     """
 
 
-def _deserialize_response(http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse):
+def _deserialize_response(
+    http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse
+):
     local_socket = BytesIOSocket(http_response_as_bytes)
     response = _HTTPResponse(local_socket, method=http_request.method)
     response.begin()
@@ -583,7 +605,9 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request("GET", url, params, headers, content, form_content, None)
+        request = self._request(
+            "GET", url, params, headers, content, form_content, None
+        )
         request.method = "GET"
         return request
 
@@ -606,7 +630,9 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request("PUT", url, params, headers, content, form_content, stream_content)
+        request = self._request(
+            "PUT", url, params, headers, content, form_content, stream_content
+        )
         return request
 
     def post(
@@ -628,7 +654,9 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request("POST", url, params, headers, content, form_content, stream_content)
+        request = self._request(
+            "POST", url, params, headers, content, form_content, stream_content
+        )
         return request
 
     def head(
@@ -650,7 +678,9 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request("HEAD", url, params, headers, content, form_content, stream_content)
+        request = self._request(
+            "HEAD", url, params, headers, content, form_content, stream_content
+        )
         return request
 
     def patch(
@@ -672,7 +702,9 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request("PATCH", url, params, headers, content, form_content, stream_content)
+        request = self._request(
+            "PATCH", url, params, headers, content, form_content, stream_content
+        )
         return request
 
     def delete(
@@ -693,7 +725,9 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request("DELETE", url, params, headers, content, form_content, None)
+        request = self._request(
+            "DELETE", url, params, headers, content, form_content, None
+        )
         return request
 
     def merge(
@@ -714,11 +748,17 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request("MERGE", url, params, headers, content, form_content, None)
+        request = self._request(
+            "MERGE", url, params, headers, content, form_content, None
+        )
         return request
 
     def options(
-        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs
+        self,
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        **kwargs
     ) -> HttpRequest:
         """Create a OPTIONS request object.
 
@@ -732,5 +772,7 @@ class PipelineClientBase:
         """
         content = kwargs.get("content")
         form_content = kwargs.get("form_content")
-        request = self._request("OPTIONS", url, params, headers, content, form_content, None)
+        request = self._request(
+            "OPTIONS", url, params, headers, content, form_content, None
+        )
         return request

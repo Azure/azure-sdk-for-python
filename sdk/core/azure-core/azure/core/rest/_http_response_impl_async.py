@@ -49,12 +49,18 @@ class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
         :raises ValueError: If the content is not multipart/mixed
         """
         if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError("You can't get parts if the response is not multipart/mixed")
+            raise ValueError(
+                "You can't get parts if the response is not multipart/mixed"
+            )
 
-        return _PartGenerator(self, default_http_response_type=RestAsyncHttpClientTransportResponse)
+        return _PartGenerator(
+            self, default_http_response_type=RestAsyncHttpClientTransportResponse
+        )
 
 
-class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttpResponseBackcompatMixin):
+class AsyncHttpResponseImpl(
+    _HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttpResponseBackcompatMixin
+):
     """AsyncHttpResponseImpl built on top of our HttpResponse protocol class.
 
     Since ~azure.core.rest.AsyncHttpResponse is an abstract base class, we need to
@@ -97,7 +103,9 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
         :rtype: AsyncIterator[bytes]
         """
         self._stream_download_check()
-        async for part in self._stream_download_generator(response=self, pipeline=None, decompress=False):
+        async for part in self._stream_download_generator(
+            response=self, pipeline=None, decompress=False
+        ):
             yield part
         await self.close()
 
@@ -111,7 +119,9 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
                 yield self.content[i : i + self._block_size]
         else:
             self._stream_download_check()
-            async for part in self._stream_download_generator(response=self, pipeline=None, decompress=True):
+            async for part in self._stream_download_generator(
+                response=self, pipeline=None, decompress=True
+            ):
                 yield part
             await self.close()
 
@@ -129,11 +139,17 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
         await self.close()
 
     def __repr__(self) -> str:
-        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        return "<AsyncHttpResponse: {} {}{}>".format(self.status_code, self.reason, content_type_str)
+        content_type_str = (
+            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        )
+        return "<AsyncHttpResponse: {} {}{}>".format(
+            self.status_code, self.reason, content_type_str
+        )
 
 
-class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase, AsyncHttpResponseImpl):
+class RestAsyncHttpClientTransportResponse(
+    _RestHttpClientTransportResponseBase, AsyncHttpResponseImpl
+):
     """Create a Rest HTTPResponse from an http.client response."""
 
     async def iter_bytes(self, **kwargs):

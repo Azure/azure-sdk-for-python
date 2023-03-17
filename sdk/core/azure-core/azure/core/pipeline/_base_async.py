@@ -34,7 +34,9 @@ from .transport import AsyncHttpTransport
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 ImplPoliciesType = List[
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]  # pylint: disable=unsubscriptable-object
+    AsyncHTTPPolicy[
+        HTTPRequestType, AsyncHTTPResponseType
+    ]  # pylint: disable=unsubscriptable-object
 ]
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
@@ -50,7 +52,9 @@ class _SansIOAsyncHTTPPolicyRunner(
     :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
-    def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]) -> None:
+    def __init__(
+        self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
+    ) -> None:
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
         self._policy = policy
 
@@ -86,7 +90,9 @@ class _AsyncTransportRunner(
     :param sender: The async Http Transport instance.
     """
 
-    def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
+    def __init__(
+        self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
+    ) -> None:
         super(_AsyncTransportRunner, self).__init__()
         self._sender = sender
 
@@ -107,7 +113,9 @@ class _AsyncTransportRunner(
         )
 
 
-class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]):
+class AsyncPipeline(
+    AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]
+):
     """Async pipeline implementation.
 
     This is implemented as a context manager, that will activate the context
@@ -131,7 +139,9 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
         policies: Optional[AsyncPoliciesType] = None,
     ) -> None:
-        self._impl_policies: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] = []
+        self._impl_policies: List[
+            AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
+        ] = []
         self._transport = transport
 
         for policy in policies or []:
@@ -200,5 +210,9 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         await self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
-        first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)
+        first_node = (
+            self._impl_policies[0]
+            if self._impl_policies
+            else _AsyncTransportRunner(self._transport)
+        )
         return await first_node.send(pipeline_request)

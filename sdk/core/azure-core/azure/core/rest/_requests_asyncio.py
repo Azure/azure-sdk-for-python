@@ -33,7 +33,9 @@ class RestAsyncioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsT
     """Asynchronous streaming of data from the response."""
 
     def __init__(self, **kwargs):
-        super().__init__(stream_download_generator=AsyncioStreamDownloadGenerator, **kwargs)
+        super().__init__(
+            stream_download_generator=AsyncioStreamDownloadGenerator, **kwargs
+        )
 
     async def close(self) -> None:
         """Close the response.

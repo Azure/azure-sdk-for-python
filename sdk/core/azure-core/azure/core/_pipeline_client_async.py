@@ -60,7 +60,9 @@ if TYPE_CHECKING:  # Protocol and non-Protocol can't mix in Python 3.7
 
 
 HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable")
+AsyncHTTPResponseType = TypeVar(
+    "AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable"
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -163,7 +165,9 @@ class AsyncPipelineClient(
         self,
         base_url: str,
         *,
-        pipeline: Optional[AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]] = None,
+        pipeline: Optional[
+            AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]
+        ] = None,
         config: Optional[Configuration] = None,
         **kwargs
     ):
@@ -183,7 +187,13 @@ class AsyncPipelineClient(
         await self._pipeline.__aexit__()
 
     def _build_pipeline(  # pylint: disable=no-self-use
-        self, config: Configuration, *, policies=None, per_call_policies=None, per_retry_policies=None, **kwargs
+        self,
+        config: Configuration,
+        *,
+        policies=None,
+        per_call_policies=None,
+        per_retry_policies=None,
+        **kwargs
     ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         transport = kwargs.get("transport")
         per_call_policies = per_call_policies or []
@@ -253,11 +263,17 @@ class AsyncPipelineClient(
 
             transport = AioHttpTransport(**kwargs)
 
-        return AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType](transport, policies)
+        return AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType](
+            transport, policies
+        )
 
-    async def _make_pipeline_call(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
+    async def _make_pipeline_call(
+        self, request: HTTPRequestType, **kwargs
+    ) -> AsyncHTTPResponseType:
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = await self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
+        pipeline_response = await self._pipeline.run(
+            request, **kwargs
+        )  # pylint: disable=protected-access
         if return_pipeline_response:
             return pipeline_response  # type: ignore  # This is a private API we don't want to type in signature
         return pipeline_response.http_response

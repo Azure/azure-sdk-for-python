@@ -107,7 +107,9 @@ class AbstractSpan(Protocol):
         :type value: Union[str, int]
         """
 
-    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
+    def set_http_attributes(
+        self, request: "HttpRequest", response: Optional["HttpResponseType"] = None
+    ) -> None:
         """
         Add correct attributes for a http client span.
 
@@ -140,7 +142,9 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link_from_headers(cls, headers: Dict[str, str], attributes: Optional["Attributes"] = None) -> None:
+    def link_from_headers(
+        cls, headers: Dict[str, str], attributes: Optional["Attributes"] = None
+    ) -> None:
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
@@ -207,7 +211,9 @@ class HttpSpanMixin(_MIXIN_BASE):
     _NET_PEER_NAME = "net.peer.name"
     _NET_PEER_PORT = "net.peer.port"
 
-    def set_http_attributes(self, request: "HttpRequest", response: Optional["HttpResponseType"] = None) -> None:
+    def set_http_attributes(
+        self, request: "HttpRequest", response: Optional["HttpResponseType"] = None
+    ) -> None:
         """
         Add correct attributes for a http client span.
 
@@ -245,6 +251,8 @@ class Link:
     :type attributes: dict
     """
 
-    def __init__(self, headers: Dict[str, str], attributes: Optional["Attributes"] = None) -> None:
+    def __init__(
+        self, headers: Dict[str, str], attributes: Optional["Attributes"] = None
+    ) -> None:
         self.headers = headers
         self.attributes = attributes

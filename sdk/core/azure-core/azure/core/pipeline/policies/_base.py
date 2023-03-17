@@ -87,7 +87,9 @@ class SansIOHTTPPolicy(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
     but they will then be tied to AsyncPipeline usage.
     """
 
-    def on_request(self, request: PipelineRequest[HTTPRequestTypeVar]) -> Union[None, Awaitable[None]]:
+    def on_request(
+        self, request: PipelineRequest[HTTPRequestTypeVar]
+    ) -> Union[None, Awaitable[None]]:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.

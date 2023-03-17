@@ -96,7 +96,9 @@ class _HttpResponseBackcompatMixinBase:
         Rebuild an HTTP response from pure string.
         """
 
-        def _deserialize_response(http_response_as_bytes, http_request, http_response_type):
+        def _deserialize_response(
+            http_response_as_bytes, http_request, http_response_type
+        ):
             local_socket = BytesIOSocket(http_response_as_bytes)
             response = _HTTPResponse(local_socket, method=http_request.method)
             response.begin()
@@ -118,7 +120,9 @@ class _HttpResponseBackcompatMixinBase:
         If parts are application/http use http_response_type or HttpClientTransportResponse
         as envelope.
         """
-        return _get_raw_parts_helper(self, http_response_type or RestHttpClientTransportResponse)
+        return _get_raw_parts_helper(
+            self, http_response_type or RestHttpClientTransportResponse
+        )
 
     def _stream_download(self, pipeline, **kwargs):
         """DEPRECATED: Generator for streaming request body data.
@@ -176,7 +180,9 @@ class _HttpResponseBaseImpl(
         self._reason: str = kwargs.pop("reason")
         self._content_type: str = kwargs.pop("content_type")
         self._headers: MutableMapping[str, str] = kwargs.pop("headers")
-        self._stream_download_generator: Callable = kwargs.pop("stream_download_generator")
+        self._stream_download_generator: Callable = kwargs.pop(
+            "stream_download_generator"
+        )
         self._is_closed = False
         self._is_stream_consumed = False
         self._json = None  # this is filled in ContentDecodePolicy, when we deserialize
@@ -317,11 +323,17 @@ class _HttpResponseBaseImpl(
         return self._content
 
     def __repr__(self) -> str:
-        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        return "<HttpResponse: {} {}{}>".format(self.status_code, self.reason, content_type_str)
+        content_type_str = (
+            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        )
+        return "<HttpResponse: {} {}{}>".format(
+            self.status_code, self.reason, content_type_str
+        )
 
 
-class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcompatMixin):
+class HttpResponseImpl(
+    _HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcompatMixin
+):
     """HttpResponseImpl built on top of our HttpResponse protocol class.
 
     Since ~azure.core.rest.HttpResponse is an abstract base class, we need to
@@ -392,19 +404,25 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
         :rtype: Iterator[str]
         """
         self._stream_download_check()
-        for part in self._stream_download_generator(response=self, pipeline=None, decompress=False):
+        for part in self._stream_download_generator(
+            response=self, pipeline=None, decompress=False
+        ):
             yield part
         self.close()
 
 
-class _RestHttpClientTransportResponseBackcompatBaseMixin(_HttpResponseBackcompatMixinBase):
+class _RestHttpClientTransportResponseBackcompatBaseMixin(
+    _HttpResponseBackcompatMixinBase
+):
     def body(self):
         if self._content is None:
             self._content = self.internal_response.read()
         return self.content
 
 
-class _RestHttpClientTransportResponseBase(_HttpResponseBaseImpl, _RestHttpClientTransportResponseBackcompatBaseMixin):
+class _RestHttpClientTransportResponseBase(
+    _HttpResponseBaseImpl, _RestHttpClientTransportResponseBackcompatBaseMixin
+):
     def __init__(self, **kwargs):
         internal_response = kwargs.pop("internal_response")
         headers = case_insensitive_dict(internal_response.getheaders())
@@ -419,7 +437,9 @@ class _RestHttpClientTransportResponseBase(_HttpResponseBaseImpl, _RestHttpClien
         )
 
 
-class RestHttpClientTransportResponse(_RestHttpClientTransportResponseBase, HttpResponseImpl):
+class RestHttpClientTransportResponse(
+    _RestHttpClientTransportResponseBase, HttpResponseImpl
+):
     """Create a Rest HTTPResponse from an http.client response."""
 
     def iter_bytes(self, **kwargs):

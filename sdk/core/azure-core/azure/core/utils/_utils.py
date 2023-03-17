@@ -105,7 +105,9 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
     """
 
     def __init__(
-        self, data: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]] = None, **kwargs: Any
+        self,
+        data: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]] = None,
+        **kwargs: Any
     ) -> None:
         self._store: Dict[str, Any] = {}
         if data is None:
@@ -135,7 +137,9 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
         return len(self._store)
 
     def lowerkey_items(self):
-        return ((lower_case_key, pair[1]) for lower_case_key, pair in self._store.items())
+        return (
+            (lower_case_key, pair[1]) for lower_case_key, pair in self._store.items()
+        )
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Mapping):

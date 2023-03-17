@@ -50,7 +50,9 @@ def distributed_trace(  # pylint:disable=function-redefined
     pass
 
 
-def distributed_trace(__func: Optional[Callable[P, T]] = None, **kwargs: Any):  # pylint:disable=function-redefined
+def distributed_trace(
+    __func: Optional[Callable[P, T]] = None, **kwargs: Any
+):  # pylint:disable=function-redefined
     """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".

@@ -81,9 +81,13 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :raises ValueError: If the content is not multipart/mixed
         """
         if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError("You can't get parts if the response is not multipart/mixed")
+            raise ValueError(
+                "You can't get parts if the response is not multipart/mixed"
+            )
 
-        return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
+        return _PartGenerator(
+            self, default_http_response_type=AsyncHttpClientTransportResponse
+        )
 
 
 class AsyncHttpClientTransportResponse(  # pylint: disable=abstract-method

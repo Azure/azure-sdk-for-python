@@ -70,7 +70,9 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
     def __init__(
         self,
         get_next: Callable[[Optional[str]], Awaitable[ResponseType]],
-        extract_data: Callable[[ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]],
+        extract_data: Callable[
+            [ResponseType], Awaitable[Tuple[str, AsyncIterator[ReturnType]]]
+        ],
         continuation_token: Optional[str] = None,
     ) -> None:
         """Return an async iterator of pages.
@@ -99,7 +101,9 @@ class AsyncPageIterator(AsyncIterator[AsyncIterator[ReturnType]]):
 
         self._did_a_call_already = True
 
-        self.continuation_token, self._current_page = await self._extract_data(self._response)
+        self.continuation_token, self._current_page = await self._extract_data(
+            self._response
+        )
 
         # If current_page was a sync list, wrap it async-like
         if isinstance(self._current_page, collections.abc.Iterable):
@@ -119,7 +123,9 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
         self._kwargs = kwargs
         self._page_iterator: Optional[AsyncIterator[AsyncIterator[ReturnType]]] = None
         self._page: Optional[AsyncIterator[ReturnType]] = None
-        self._page_iterator_class = self._kwargs.pop("page_iterator_class", AsyncPageIterator)
+        self._page_iterator_class = self._kwargs.pop(
+            "page_iterator_class", AsyncPageIterator
+        )
 
     def by_page(
         self,
@@ -133,7 +139,9 @@ class AsyncItemPaged(AsyncIterator[ReturnType]):
             this generator will begin returning results from this point.
         :returns: An async iterator of pages (themselves async iterator of objects)
         """
-        return self._page_iterator_class(*self._args, **self._kwargs, continuation_token=continuation_token)
+        return self._page_iterator_class(
+            *self._args, **self._kwargs, continuation_token=continuation_token
+        )
 
     async def __anext__(self) -> ReturnType:
         if self._page_iterator is None:

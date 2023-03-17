@@ -38,7 +38,9 @@ T = TypeVar("T")
 
 
 @overload
-def distributed_trace_async(__func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
+def distributed_trace_async(
+    __func: Callable[P, Awaitable[T]]
+) -> Callable[P, Awaitable[T]]:
     pass
 
 
