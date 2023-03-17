@@ -15,7 +15,7 @@ from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
+from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -114,6 +114,8 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
     :ivar featureset_versions: FeaturesetVersionsOperations operations
     :vartype featureset_versions:
      azure.mgmt.machinelearningservices.operations.FeaturesetVersionsOperations
+    :ivar features: FeaturesOperations operations
+    :vartype features: azure.mgmt.machinelearningservices.operations.FeaturesOperations
     :ivar featurestore_entity_containers: FeaturestoreEntityContainersOperations operations
     :vartype featurestore_entity_containers:
      azure.mgmt.machinelearningservices.operations.FeaturestoreEntityContainersOperations
@@ -197,6 +199,7 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
         self.environment_versions = EnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featureset_containers = FeaturesetContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featureset_versions = FeaturesetVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.features = FeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featurestore_entity_containers = FeaturestoreEntityContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featurestore_entity_versions = FeaturestoreEntityVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)

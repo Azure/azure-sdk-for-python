@@ -6797,84 +6797,13 @@
         }
       }
     },
-    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/getFeature": {
-      "post": {
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/features": {
+      "get": {
         "tags": [
-          "FeaturesetVersion"
-        ],
-        "summary": "Get feature.",
-        "operationId": "FeaturesetVersions_GetFeature",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
-          },
-          {
-            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
-          },
-          {
-            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
-          },
-          {
-            "in": "path",
-            "name": "name",
-            "description": "Feature set name. This is case-sensitive.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "in": "path",
-            "name": "version",
-            "description": "Feature set version identifier. This is case-sensitive.",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
-          },
-          {
-            "in": "body",
-            "name": "body",
-            "description": "Feature Name request. This is case-sensitive.",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/GetFeatureRequest"
-            }
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": "Error",
-            "schema": {
-              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
-            }
-          },
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/Feature"
-            }
-          }
-        },
-        "x-ms-examples": {
-          "GetFeature Workspace Featureset Version.": {
-            "$ref": "./examples/Workspace/FeaturesetVersion/getFeature.json"
-          }
-        }
-      }
-    },
-    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/listFeatures": {
-      "post": {
-        "tags": [
-          "FeaturesetVersion"
+          "Feature"
         ],
         "summary": "List Features.",
-        "operationId": "FeaturesetVersions_ListFeatures",
+        "operationId": "Features_List",
         "produces": [
           "application/json"
         ],
@@ -6937,17 +6866,83 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/FeatureArmPaginatedResult"
+              "$ref": "#/definitions/FeatureResourceArmPaginatedResult"
             }
           }
         },
         "x-ms-examples": {
-          "ListFeatures Workspace Featureset Version.": {
-            "$ref": "./examples/Workspace/FeaturesetVersion/listFeatures.json"
+          "List Feature.": {
+            "$ref": "./examples/Feature/list.json"
           }
         },
         "x-ms-pageable": {
           "nextLinkName": "nextLink"
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/features/{featureName}": {
+      "get": {
+        "tags": [
+          "Feature"
+        ],
+        "summary": "Get feature.",
+        "operationId": "Features_GetEntity",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Feature set name. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Feature set version identifier. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "featureName",
+            "description": "Feature Name. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/FeatureResource"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "GetEntity Feature.": {
+            "$ref": "./examples/Feature/getEntity.json"
+          }
         }
       }
     },
@@ -7030,7 +7025,8 @@
           }
         },
         "x-ms-pageable": {
-          "nextLinkName": "nextLink"
+          "nextLinkName": "nextLink",
+          "operationName": "FeaturesetVersions_ListMaterializationJobs"
         }
       }
     },
@@ -7104,7 +7100,7 @@
           {
             "in": "query",
             "name": "name",
-            "description": "name for the featurestore entity",
+            "description": "name for the featurestore eneity",
             "type": "string"
           },
           {
@@ -10792,19 +10788,6 @@
       "x-ms-discriminator-value": "AccountKey",
       "additionalProperties": false
     },
-    "AllFeatures": {
-      "required": [
-        "filterType"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/MonitoringFeatureFilterBase"
-        }
-      ],
-      "x-ms-discriminator-value": "AllFeatures",
-      "additionalProperties": false
-    },
     "AllNodes": {
       "description": "All nodes means the service will be running on all of the nodes of the job",
       "type": "object",
@@ -12136,156 +12119,6 @@
       },
       "additionalProperties": false
     },
-    "CategoricalDataDriftMetric": {
-      "enum": [
-        "JensenShannonDistance",
-        "PopulationStabilityIndex",
-        "PearsonsChiSquaredTest"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "CategoricalDataDriftMetric",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "JensenShannonDistance",
-            "description": "The Jensen Shannon Distance (JSD) metric."
-          },
-          {
-            "value": "PopulationStabilityIndex",
-            "description": "The Population Stability Index (PSI) metric."
-          },
-          {
-            "value": "PearsonsChiSquaredTest",
-            "description": "The Pearsons Chi Squared Test metric."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "CategoricalDataDriftMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/DataDriftMetricThresholdBase"
-        }
-      ],
-      "properties": {
-        "metric": {
-          "description": "[Required] The categorical data drift metric to calculate.",
-          "$ref": "#/definitions/CategoricalDataDriftMetric",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "Categorical",
-      "additionalProperties": false
-    },
-    "CategoricalDataQualityMetric": {
-      "enum": [
-        "NullValueRate",
-        "DataTypeErrorRate",
-        "OutOfBoundsRate"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "CategoricalDataQualityMetric",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "NullValueRate",
-            "description": "Calculates the rate of null values."
-          },
-          {
-            "value": "DataTypeErrorRate",
-            "description": "Calculates the rate of data type errors."
-          },
-          {
-            "value": "OutOfBoundsRate",
-            "description": "Calculates the rate values are out of bounds."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "CategoricalDataQualityMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/DataQualityMetricThresholdBase"
-        }
-      ],
-      "properties": {
-        "metric": {
-          "description": "[Required] The categorical data quality metric to calculate.",
-          "$ref": "#/definitions/CategoricalDataQualityMetric",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "Categorical",
-      "additionalProperties": false
-    },
-    "CategoricalPredictionDriftMetric": {
-      "enum": [
-        "JensenShannonDistance",
-        "PopulationStabilityIndex",
-        "PearsonsChiSquaredTest"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "CategoricalPredictionDriftMetric",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "JensenShannonDistance",
-            "description": "The Jensen Shannon Distance (JSD) metric."
-          },
-          {
-            "value": "PopulationStabilityIndex",
-            "description": "The Population Stability Index (PSI) metric."
-          },
-          {
-            "value": "PearsonsChiSquaredTest",
-            "description": "The Pearsons Chi Squared Test metric."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "CategoricalPredictionDriftMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/PredictionDriftMetricThresholdBase"
-        }
-      ],
-      "properties": {
-        "metric": {
-          "description": "[Required] The categorical prediction drift metric to calculate.",
-          "$ref": "#/definitions/CategoricalPredictionDriftMetric",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "Categorical",
-      "additionalProperties": false
-    },
     "CertificateDatastoreCredentials": {
       "description": "Certificate datastore credentials configuration.",
       "required": [
@@ -12384,61 +12217,6 @@
           "description": "Inputs for training phase for an AutoML Job.",
           "$ref": "#/definitions/ClassificationTrainingSettings",
           "x-nullable": true
-        }
-      },
-      "x-ms-discriminator-value": "Classification",
-      "additionalProperties": false
-    },
-    "ClassificationModelPerformanceMetric": {
-      "enum": [
-        "Accuracy",
-        "Precision",
-        "Recall",
-        "F1Score"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "ClassificationModelPerformanceMetric",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "Accuracy",
-            "description": "Calculates the accuracy of the model predictions."
-          },
-          {
-            "value": "Precision",
-            "description": "Calculates the precision of the model predictions."
-          },
-          {
-            "value": "Recall",
-            "description": "Calculates the recall of the model predictions."
-          },
-          {
-            "value": "F1Score",
-            "description": "Calculates the F1 score of the model predictions."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "ClassificationModelPerformanceMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/ModelPerformanceMetricThresholdBase"
-        }
-      ],
-      "properties": {
-        "metric": {
-          "description": "[Required] The classification model performance to calculate.",
-          "$ref": "#/definitions/ClassificationModelPerformanceMetric",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
         }
       },
       "x-ms-discriminator-value": "Classification",
@@ -13223,29 +13001,6 @@
       },
       "additionalProperties": false
     },
-    "CreateMonitorAction": {
-      "required": [
-        "monitorDefinition"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/ScheduleActionBase"
-        }
-      ],
-      "properties": {
-        "monitorDefinition": {
-          "description": "[Required] Defines the monitor.",
-          "$ref": "#/definitions/MonitorDefinition",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "CreateMonitor",
-      "additionalProperties": false
-    },
     "CredentialsType": {
       "description": "Enum to determine the datastore credentials type.",
       "enum": [
@@ -13377,34 +13132,6 @@
       "x-ms-discriminator-value": "Custom",
       "additionalProperties": false
     },
-    "CustomMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "properties": {
-        "metric": {
-          "description": "[Required] The user-defined metric to calculate.",
-          "minLength": 1,
-          "pattern": "[a-zA-Z0-9_]",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "threshold": {
-          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
-          "$ref": "#/definitions/MonitoringThreshold",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "additionalProperties": false
-    },
     "CustomModelJobInput": {
       "type": "object",
       "allOf": [
@@ -13429,57 +13156,6 @@
         }
       ],
       "x-ms-discriminator-value": "custom_model",
-      "additionalProperties": false
-    },
-    "CustomMonitoringSignal": {
-      "required": [
-        "componentId",
-        "metricThresholds"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/MonitoringSignalBase"
-        }
-      ],
-      "properties": {
-        "componentId": {
-          "description": "[Required] ARM resource ID of the component resource used to calculate the custom metrics.",
-          "minLength": 1,
-          "pattern": "[a-zA-Z0-9_]",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "inputAssets": {
-          "description": "Monitoring assets to take as input. Key is the component input port name, value is the data asset.",
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/MonitoringInputData",
-            "x-nullable": true
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "metricThresholds": {
-          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/CustomMetricThreshold"
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-ms-identifiers": []
-        }
-      },
-      "x-ms-discriminator-value": "Custom",
       "additionalProperties": false
     },
     "CustomNCrossValidations": {
@@ -13675,95 +13351,6 @@
       },
       "additionalProperties": false
     },
-    "DataDriftMetricThresholdBase": {
-      "required": [
-        "dataType"
-      ],
-      "type": "object",
-      "properties": {
-        "dataType": {
-          "description": "[Required] Specifies the data type of the metric threshold.",
-          "$ref": "#/definitions/MonitoringFeatureDataType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "threshold": {
-          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
-          "$ref": "#/definitions/MonitoringThreshold",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "discriminator": "dataType"
-    },
-    "DataDriftMonitoringSignal": {
-      "required": [
-        "baselineData",
-        "metricThresholds",
-        "targetData"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/MonitoringSignalBase"
-        }
-      ],
-      "properties": {
-        "baselineData": {
-          "description": "[Required] The data to calculate drift against.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "dataSegment": {
-          "description": "The data segment used for scoping on a subset of the data population.",
-          "$ref": "#/definitions/MonitoringDataSegment",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "features": {
-          "description": "The feature filter which identifies which feature to calculate drift over.",
-          "$ref": "#/definitions/MonitoringFeatureFilterBase",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "metricThresholds": {
-          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataDriftMetricThresholdBase"
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-ms-identifiers": []
-        },
-        "targetData": {
-          "description": "[Required] The data which drift will be calculated for.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "DataDrift",
-      "additionalProperties": false
-    },
     "DataImport": {
       "type": "object",
       "allOf": [
@@ -13850,86 +13437,6 @@
         }
       },
       "x-ms-discriminator-value": "DataPath",
-      "additionalProperties": false
-    },
-    "DataQualityMetricThresholdBase": {
-      "required": [
-        "dataType"
-      ],
-      "type": "object",
-      "properties": {
-        "dataType": {
-          "description": "[Required] Specifies the data type of the metric threshold.",
-          "$ref": "#/definitions/MonitoringFeatureDataType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "threshold": {
-          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
-          "$ref": "#/definitions/MonitoringThreshold",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "discriminator": "dataType"
-    },
-    "DataQualityMonitoringSignal": {
-      "required": [
-        "baselineData",
-        "metricThresholds",
-        "targetData"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/MonitoringSignalBase"
-        }
-      ],
-      "properties": {
-        "baselineData": {
-          "description": "[Required] The data to calculate drift against.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "features": {
-          "description": "The features to calculate drift over.",
-          "$ref": "#/definitions/MonitoringFeatureFilterBase",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "metricThresholds": {
-          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataQualityMetricThresholdBase"
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-ms-identifiers": []
-        },
-        "targetData": {
-          "description": "[Required] The data produced by the production service which drift will be calculated for.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "DataQuality",
       "additionalProperties": false
     },
     "DataType": {
@@ -15070,109 +14577,7 @@
           "x-nullable": true
         }
       },
-      "additionalProperties": false
-    },
-    "FeatureArmPaginatedResult": {
-      "description": "A paginated list of Feature entities.",
-      "type": "object",
-      "properties": {
-        "nextLink": {
-          "description": "The link to the next page of Feature objects. If null, there are no additional pages.",
-          "type": "string"
-        },
-        "value": {
-          "description": "An array of objects of type Feature.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Feature"
-          },
-          "x-ms-identifiers": []
-        }
-      },
-      "additionalProperties": false
-    },
-    "FeatureAttributionDriftMonitoringSignal": {
-      "required": [
-        "baselineData",
-        "metricThreshold",
-        "targetData"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/MonitoringSignalBase"
-        }
-      ],
-      "properties": {
-        "baselineData": {
-          "description": "[Required] The data to calculate drift against.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "metricThreshold": {
-          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
-          "$ref": "#/definitions/FeatureAttributionMetricThreshold",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "targetData": {
-          "description": "[Required] The data which drift will be calculated for.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "FeatureAttributionDrift",
-      "additionalProperties": false
-    },
-    "FeatureAttributionMetric": {
-      "enum": [
-        "NormalizedDiscountedCumulativeGain"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "FeatureAttributionMetric",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "NormalizedDiscountedCumulativeGain",
-            "description": "The Normalized Discounted Cumulative Gain metric."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "FeatureAttributionMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "properties": {
-        "metric": {
-          "description": "[Required] The feature attribution metric to calculate.",
-          "$ref": "#/definitions/FeatureAttributionMetric",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "threshold": {
-          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
-          "$ref": "#/definitions/MonitoringThreshold",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
+      "x-ms-client-name": "FeatureProperties",
       "additionalProperties": false
     },
     "FeatureDataType": {
@@ -15242,31 +14647,42 @@
       },
       "additionalProperties": false
     },
-    "FeatureSubset": {
+    "FeatureResource": {
+      "description": "Azure Resource Manager resource envelope.",
       "required": [
-        "features",
-        "filterType"
+        "properties"
       ],
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/MonitoringFeatureFilterBase"
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
         }
       ],
       "properties": {
-        "features": {
-          "description": "[Required] The list of features to include.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
+        "properties": {
+          "description": "[Required] Additional attributes of the entity.",
+          "$ref": "#/definitions/Feature"
         }
       },
-      "x-ms-discriminator-value": "FeatureSubset",
+      "x-ms-client-name": "Feature",
+      "additionalProperties": false
+    },
+    "FeatureResourceArmPaginatedResult": {
+      "description": "A paginated list of Feature entities.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page of Feature objects. If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "An array of objects of type Feature.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FeatureResource"
+          }
+        }
+      },
       "additionalProperties": false
     },
     "FeatureWindow": {
@@ -15759,7 +15175,7 @@
       ],
       "properties": {
         "path": {
-          "description": "Path on data import FileSystem source",
+          "description": "Path on data import FileSystem souce",
           "type": "string",
           "x-nullable": true
         }
@@ -16102,18 +15518,6 @@
           "items": {
             "$ref": "#/definitions/ForecastingModels"
           },
-          "x-nullable": true
-        }
-      },
-      "additionalProperties": false
-    },
-    "GetFeatureRequest": {
-      "description": "Request payload to retrieve feature information from a  given feature set version",
-      "type": "object",
-      "properties": {
-        "featureName": {
-          "description": "Specifies name of the feature.",
-          "type": "string",
           "x-nullable": true
         }
       },
@@ -17422,19 +16826,6 @@
             "create",
             "read",
             "update"
-          ],
-          "x-nullable": true
-        },
-        "secretsConfiguration": {
-          "description": "Configuration for secrets to be made available during runtime.",
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/SecretConfiguration",
-            "x-nullable": true
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
           ],
           "x-nullable": true
         },
@@ -19089,81 +18480,6 @@
       },
       "additionalProperties": false
     },
-    "ModelPerformanceMetricThresholdBase": {
-      "required": [
-        "modelType"
-      ],
-      "type": "object",
-      "properties": {
-        "modelType": {
-          "description": "[Required] Specifies the data type of the metric threshold.",
-          "$ref": "#/definitions/MonitoringModelType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "threshold": {
-          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
-          "$ref": "#/definitions/MonitoringThreshold",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "discriminator": "modelType"
-    },
-    "ModelPerformanceSignalBase": {
-      "required": [
-        "baselineData",
-        "metricThreshold",
-        "targetData"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/MonitoringSignalBase"
-        }
-      ],
-      "properties": {
-        "baselineData": {
-          "description": "[Required] The data to calculate drift against.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "dataSegment": {
-          "description": "The data segment.",
-          "$ref": "#/definitions/MonitoringDataSegment",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "metricThreshold": {
-          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
-          "$ref": "#/definitions/ModelPerformanceMetricThresholdBase",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "targetData": {
-          "description": "[Required] The data produced by the production service which drift will be calculated for.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "additionalProperties": false
-    },
     "ModelSize": {
       "description": "Image model size.",
       "enum": [
@@ -19295,363 +18611,6 @@
           "items": {
             "$ref": "#/definitions/ModelVersionResource"
           }
-        }
-      },
-      "additionalProperties": false
-    },
-    "MonitorDefinition": {
-      "required": [
-        "computeId",
-        "signals"
-      ],
-      "type": "object",
-      "properties": {
-        "computeId": {
-          "description": "[Required] The ARM resource ID of the compute resource to run the monitoring job on.",
-          "minLength": 1,
-          "pattern": "[a-zA-Z0-9_]",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "monitoringTarget": {
-          "description": "The ARM resource ID of either the model or deployment targeted by this monitor.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "notificationSetting": {
-          "description": "The monitor's notification settings.",
-          "$ref": "#/definitions/NotificationSetting",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "signals": {
-          "description": "[Required] The signals to monitor.",
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/MonitoringSignalBase",
-            "x-nullable": true
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "additionalProperties": false
-    },
-    "MonitoringDataSegment": {
-      "type": "object",
-      "properties": {
-        "feature": {
-          "description": "The feature to segment the data on.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "values": {
-          "description": "Filters for only the specified values of the given segmented feature.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "additionalProperties": false
-    },
-    "MonitoringFeatureDataType": {
-      "enum": [
-        "Numerical",
-        "Categorical"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MonitoringFeatureDataType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "Numerical",
-            "description": "Used for features of numerical data type."
-          },
-          {
-            "value": "Categorical",
-            "description": "Used for features of categorical data type."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "MonitoringFeatureFilterBase": {
-      "required": [
-        "filterType"
-      ],
-      "type": "object",
-      "properties": {
-        "filterType": {
-          "description": "[Required] Specifies the feature filter to leverage when selecting features to calculate metrics over.",
-          "$ref": "#/definitions/MonitoringFeatureFilterType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "discriminator": "filterType"
-    },
-    "MonitoringFeatureFilterType": {
-      "enum": [
-        "AllFeatures",
-        "TopNByAttribution",
-        "FeatureSubset"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MonitoringFeatureFilterType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "AllFeatures",
-            "description": "Includes all features."
-          },
-          {
-            "value": "TopNByAttribution",
-            "description": "Only includes the top contributing features, measured by feature attribution."
-          },
-          {
-            "value": "FeatureSubset",
-            "description": "Includes a user-defined subset of features."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "MonitoringInputData": {
-      "required": [
-        "dataContext"
-      ],
-      "type": "object",
-      "properties": {
-        "asset": {
-          "description": "The data asset input to be leveraged by the monitoring job..",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "dataContext": {
-          "description": "[Required] The context of the data source.",
-          "$ref": "#/definitions/MonitoringInputDataContext",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "preprocessingComponentId": {
-          "description": "The ARM resource ID of the component resource used to preprocess the data.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "additionalProperties": false
-    },
-    "MonitoringInputDataContext": {
-      "enum": [
-        "ModelInputs",
-        "ModelOutputs",
-        "Training",
-        "Test",
-        "Validation",
-        "GroundTruth"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MonitoringInputDataContext",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "ModelInputs",
-            "description": "A dataset containing the feature input to the model."
-          },
-          {
-            "value": "ModelOutputs",
-            "description": "A dataset containing the infered results of the model."
-          },
-          {
-            "value": "Training",
-            "description": "A dataset containing the data used for training the model."
-          },
-          {
-            "value": "Test",
-            "description": "A dataset leveraged to test the model."
-          },
-          {
-            "value": "Validation",
-            "description": "A dataset leveraged for model validation."
-          },
-          {
-            "value": "GroundTruth",
-            "description": "A dataset containing the ground truth data."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "MonitoringModelType": {
-      "enum": [
-        "Classification",
-        "Regression"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MonitoringModelType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "Classification",
-            "description": "A model trained for classification tasks."
-          },
-          {
-            "value": "Regression",
-            "description": "A model trained for regressions tasks."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "MonitoringNotificationMode": {
-      "enum": [
-        "Disabled",
-        "Enabled"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MonitoringNotificationMode",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "Disabled",
-            "description": "Disabled notifications will not produce emails/metrics leveraged for alerting."
-          },
-          {
-            "value": "Enabled",
-            "description": "Enabled notification will produce emails/metrics leveraged for alerting."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "MonitoringSignalBase": {
-      "required": [
-        "signalType"
-      ],
-      "type": "object",
-      "properties": {
-        "lookbackPeriod": {
-          "format": "duration",
-          "description": "The amount of time a single monitor should look back over the target data on a given run.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "mode": {
-          "description": "The current notification mode for this signal.",
-          "default": "Disabled",
-          "$ref": "#/definitions/MonitoringNotificationMode",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "signalType": {
-          "description": "[Required] Specifies the type of signal to monitor.",
-          "$ref": "#/definitions/MonitoringSignalType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "discriminator": "signalType"
-    },
-    "MonitoringSignalType": {
-      "enum": [
-        "DataDrift",
-        "PredictionDrift",
-        "DataQuality",
-        "FeatureAttributionDrift",
-        "Custom",
-        "ModelPerformance"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MonitoringSignalType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "DataDrift",
-            "description": "Tracks model input data distribution change, comparing against training data or past production data."
-          },
-          {
-            "value": "PredictionDrift",
-            "description": "Tracks prediction result data distribution change, comparing against validation/test label data or past production data."
-          },
-          {
-            "value": "DataQuality",
-            "description": "Tracks model input data integrity."
-          },
-          {
-            "value": "FeatureAttributionDrift",
-            "description": "Tracks feature importance change in production, comparing against feature importance at training time."
-          },
-          {
-            "value": "Custom",
-            "description": "Tracks a custom signal provided by users."
-          },
-          {
-            "value": "ModelPerformance",
-            "description": "Tracks model perforance based on ground truth data."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "MonitoringThreshold": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "format": "double",
-          "description": "The threshold value. If null, the set default is dependent on the metric type.",
-          "type": "number",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
         }
       },
       "additionalProperties": false
@@ -20108,162 +19067,6 @@
           "x-nullable": true
         }
       },
-      "additionalProperties": false
-    },
-    "NumericalDataDriftMetric": {
-      "enum": [
-        "JensenShannonDistance",
-        "PopulationStabilityIndex",
-        "NormalizedWassersteinDistance",
-        "TwoSampleKolmogorovSmirnovTest"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "NumericalDataDriftMetric",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "JensenShannonDistance",
-            "description": "The Jensen Shannon Distance (JSD) metric."
-          },
-          {
-            "value": "PopulationStabilityIndex",
-            "description": "The Population Stability Index (PSI) metric."
-          },
-          {
-            "value": "NormalizedWassersteinDistance",
-            "description": "The Normalized Wasserstein Distance metric."
-          },
-          {
-            "value": "TwoSampleKolmogorovSmirnovTest",
-            "description": "The Two Sample Kolmogorov-Smirnov Test (two-sample K–S) metric."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "NumericalDataDriftMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/DataDriftMetricThresholdBase"
-        }
-      ],
-      "properties": {
-        "metric": {
-          "description": "[Required] The numerical data drift metric to calculate.",
-          "$ref": "#/definitions/NumericalDataDriftMetric"
-        }
-      },
-      "x-ms-discriminator-value": "Numerical",
-      "additionalProperties": false
-    },
-    "NumericalDataQualityMetric": {
-      "enum": [
-        "NullValueRate",
-        "DataTypeErrorRate",
-        "OutOfBoundsRate"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "NumericalDataQualityMetric",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "NullValueRate",
-            "description": "Calculates the rate of null values."
-          },
-          {
-            "value": "DataTypeErrorRate",
-            "description": "Calculates the rate of data type errors."
-          },
-          {
-            "value": "OutOfBoundsRate",
-            "description": "Calculates the rate values are out of bounds."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "NumericalDataQualityMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/DataQualityMetricThresholdBase"
-        }
-      ],
-      "properties": {
-        "metric": {
-          "description": "[Required] The numerical data quality metric to calculate.",
-          "$ref": "#/definitions/NumericalDataQualityMetric",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "Numerical",
-      "additionalProperties": false
-    },
-    "NumericalPredictionDriftMetric": {
-      "enum": [
-        "JensenShannonDistance",
-        "PopulationStabilityIndex",
-        "NormalizedWassersteinDistance",
-        "TwoSampleKolmogorovSmirnovTest"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "NumericalPredictionDriftMetric",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "JensenShannonDistance",
-            "description": "The Jensen Shannon Distance (JSD) metric."
-          },
-          {
-            "value": "PopulationStabilityIndex",
-            "description": "The Population Stability Index (PSI) metric."
-          },
-          {
-            "value": "NormalizedWassersteinDistance",
-            "description": "The Normalized Wasserstein Distance metric."
-          },
-          {
-            "value": "TwoSampleKolmogorovSmirnovTest",
-            "description": "The Two Sample Kolmogorov-Smirnov Test (two-sample K–S) metric."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "NumericalPredictionDriftMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/PredictionDriftMetricThresholdBase"
-        }
-      ],
-      "properties": {
-        "metric": {
-          "description": "[Required] The numerical prediction drift metric to calculate.",
-          "$ref": "#/definitions/NumericalPredictionDriftMetric",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "Numerical",
       "additionalProperties": false
     },
     "ObjectDetectionPrimaryMetrics": {
@@ -21495,86 +20298,6 @@
       "x-ms-discriminator-value": "Pipeline",
       "additionalProperties": false
     },
-    "PredictionDriftMetricThresholdBase": {
-      "required": [
-        "dataType"
-      ],
-      "type": "object",
-      "properties": {
-        "dataType": {
-          "description": "[Required] Specifies the data type of the metric threshold.",
-          "$ref": "#/definitions/MonitoringFeatureDataType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "threshold": {
-          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
-          "$ref": "#/definitions/MonitoringThreshold",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "discriminator": "dataType"
-    },
-    "PredictionDriftMonitoringSignal": {
-      "required": [
-        "baselineData",
-        "metricThresholds",
-        "modelType",
-        "targetData"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/MonitoringSignalBase"
-        }
-      ],
-      "properties": {
-        "baselineData": {
-          "description": "[Required] The data to calculate drift against.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "metricThresholds": {
-          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PredictionDriftMetricThresholdBase"
-          },
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-ms-identifiers": []
-        },
-        "modelType": {
-          "description": "[Required] The type of the model monitored.",
-          "$ref": "#/definitions/MonitoringModelType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "targetData": {
-          "description": "[Required] The data which drift will be calculatd for.",
-          "$ref": "#/definitions/MonitoringInputData",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "PredictionDrift",
-      "additionalProperties": false
-    },
     "ProbeSettings": {
       "description": "Deployment container liveness/readiness probe configuration.",
       "type": "object",
@@ -22023,56 +20746,6 @@
       "x-ms-discriminator-value": "Regression",
       "additionalProperties": false
     },
-    "RegressionModelPerformanceMetric": {
-      "enum": [
-        "MeanAbsoluteError",
-        "RootMeanSquaredError",
-        "MeanSquaredError"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "RegressionModelPerformanceMetric",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "MeanAbsoluteError",
-            "description": "The Mean Absolute Error (MAE) metric."
-          },
-          {
-            "value": "RootMeanSquaredError",
-            "description": "The Root Mean Squared Error (RMSE) metric."
-          },
-          {
-            "value": "MeanSquaredError",
-            "description": "The Mean Squared Error (MSE) metric."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "RegressionModelPerformanceMetricThreshold": {
-      "required": [
-        "metric"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/ModelPerformanceMetricThresholdBase"
-        }
-      ],
-      "properties": {
-        "metric": {
-          "description": "[Required] The regression model performance metric to calculate.",
-          "$ref": "#/definitions/RegressionModelPerformanceMetric",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "Regression",
-      "additionalProperties": false
-    },
     "RegressionModels": {
       "description": "Enum for all Regression models supported by AutoML.",
       "enum": [
@@ -22369,7 +21042,7 @@
         },
         "wasbsUri": {
           "format": "uri",
-          "description": "Windows Azure Storage Blob formatted uri for mounting containers at root, a subdirectory, or a specific file\r\nexample wasbs://[container_name]@[account_name].blob.core.windows.net/[path]?sas=[sas]\r\nFor now, the URI will just be the root path ([path] will be empty).",
+          "description": "wasbs formatted uri for mounting containers at root, a subdirectory, or a specific file\r\nwasbs://[container_name]@[account_name].blob.core.windows.net/[path]?sas=[sas]\r\nFor now, the URI will just be the root path ([path] will be empty).",
           "type": "string",
           "x-nullable": true
         }
@@ -22562,8 +21235,7 @@
       "enum": [
         "CreateJob",
         "InvokeBatchEndpoint",
-        "ImportData",
-        "CreateMonitor"
+        "ImportData"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -22578,9 +21250,6 @@
           },
           {
             "value": "ImportData"
-          },
-          {
-            "value": "CreateMonitor"
           }
         ]
       },
@@ -22722,31 +21391,6 @@
             "description": "Use the custom seasonality value."
           }
         ]
-      },
-      "additionalProperties": false
-    },
-    "SecretConfiguration": {
-      "description": "Secret Configuration definition.",
-      "type": "object",
-      "properties": {
-        "uri": {
-          "description": "Secret Uri.\r\nSample Uri : https://myvault.vault.azure.net/secrets/mysecretname/secretversion",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "workspaceSecretName": {
-          "description": "Name of secret in workspace key vault.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
       },
       "additionalProperties": false
     },
@@ -24366,31 +23010,6 @@
         }
       },
       "x-ms-discriminator-value": "TextNER",
-      "additionalProperties": false
-    },
-    "TopNFeaturesByAttribution": {
-      "required": [
-        "filterType"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/MonitoringFeatureFilterBase"
-        }
-      ],
-      "properties": {
-        "top": {
-          "format": "int32",
-          "description": "The number of top features to include.",
-          "default": 10,
-          "type": "integer",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "x-ms-discriminator-value": "TopNByAttribution",
       "additionalProperties": false
     },
     "TrainingMode": {

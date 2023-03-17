@@ -17,7 +17,6 @@ try:
     from ._models_py3 import AksComputeSecrets
     from ._models_py3 import AksComputeSecretsProperties
     from ._models_py3 import AksNetworkingConfiguration
-    from ._models_py3 import AllFeatures
     from ._models_py3 import AllNodes
     from ._models_py3 import AmlCompute
     from ._models_py3 import AmlComputeNodeInformation
@@ -72,13 +71,9 @@ try:
     from ._models_py3 import BindOptions
     from ._models_py3 import BlobReferenceForConsumptionDto
     from ._models_py3 import BuildContext
-    from ._models_py3 import CategoricalDataDriftMetricThreshold
-    from ._models_py3 import CategoricalDataQualityMetricThreshold
-    from ._models_py3 import CategoricalPredictionDriftMetricThreshold
     from ._models_py3 import CertificateDatastoreCredentials
     from ._models_py3 import CertificateDatastoreSecrets
     from ._models_py3 import Classification
-    from ._models_py3 import ClassificationModelPerformanceMetricThreshold
     from ._models_py3 import ClassificationTrainingSettings
     from ._models_py3 import ClusterUpdateParameters
     from ._models_py3 import CocoExportSummary
@@ -123,15 +118,12 @@ try:
     from ._models_py3 import ContainerResourceRequirements
     from ._models_py3 import ContainerResourceSettings
     from ._models_py3 import CosmosDbSettings
-    from ._models_py3 import CreateMonitorAction
     from ._models_py3 import CronTrigger
     from ._models_py3 import CsvExportSummary
     from ._models_py3 import CustomForecastHorizon
     from ._models_py3 import CustomInferencingServer
-    from ._models_py3 import CustomMetricThreshold
     from ._models_py3 import CustomModelJobInput
     from ._models_py3 import CustomModelJobOutput
-    from ._models_py3 import CustomMonitoringSignal
     from ._models_py3 import CustomNCrossValidations
     from ._models_py3 import CustomSeasonality
     from ._models_py3 import CustomService
@@ -141,8 +133,6 @@ try:
     from ._models_py3 import DataContainer
     from ._models_py3 import DataContainerProperties
     from ._models_py3 import DataContainerResourceArmPaginatedResult
-    from ._models_py3 import DataDriftMetricThresholdBase
-    from ._models_py3 import DataDriftMonitoringSignal
     from ._models_py3 import DataFactory
     from ._models_py3 import DataImport
     from ._models_py3 import DataImportSource
@@ -150,8 +140,6 @@ try:
     from ._models_py3 import DataLakeAnalyticsSchema
     from ._models_py3 import DataLakeAnalyticsSchemaProperties
     from ._models_py3 import DataPathAssetReference
-    from ._models_py3 import DataQualityMetricThresholdBase
-    from ._models_py3 import DataQualityMonitoringSignal
     from ._models_py3 import DataVersionBase
     from ._models_py3 import DataVersionBaseProperties
     from ._models_py3 import DataVersionBaseResourceArmPaginatedResult
@@ -208,11 +196,9 @@ try:
     from ._models_py3 import FQDNEndpoints
     from ._models_py3 import FQDNEndpointsProperties
     from ._models_py3 import Feature
-    from ._models_py3 import FeatureArmPaginatedResult
-    from ._models_py3 import FeatureAttributionDriftMonitoringSignal
-    from ._models_py3 import FeatureAttributionMetricThreshold
+    from ._models_py3 import FeatureProperties
+    from ._models_py3 import FeatureResourceArmPaginatedResult
     from ._models_py3 import FeatureStoreSettings
-    from ._models_py3 import FeatureSubset
     from ._models_py3 import FeatureWindow
     from ._models_py3 import FeaturesetContainer
     from ._models_py3 import FeaturesetContainerProperties
@@ -237,7 +223,6 @@ try:
     from ._models_py3 import Forecasting
     from ._models_py3 import ForecastingSettings
     from ._models_py3 import ForecastingTrainingSettings
-    from ._models_py3 import GetFeatureRequest
     from ._models_py3 import GridSamplingAlgorithm
     from ._models_py3 import HDInsight
     from ._models_py3 import HDInsightProperties
@@ -327,17 +312,9 @@ try:
     from ._models_py3 import ModelContainerProperties
     from ._models_py3 import ModelContainerResourceArmPaginatedResult
     from ._models_py3 import ModelPackageInput
-    from ._models_py3 import ModelPerformanceMetricThresholdBase
-    from ._models_py3 import ModelPerformanceSignalBase
     from ._models_py3 import ModelVersion
     from ._models_py3 import ModelVersionProperties
     from ._models_py3 import ModelVersionResourceArmPaginatedResult
-    from ._models_py3 import MonitorDefinition
-    from ._models_py3 import MonitoringDataSegment
-    from ._models_py3 import MonitoringFeatureFilterBase
-    from ._models_py3 import MonitoringInputData
-    from ._models_py3 import MonitoringSignalBase
-    from ._models_py3 import MonitoringThreshold
     from ._models_py3 import Mpi
     from ._models_py3 import NCrossValidations
     from ._models_py3 import NlpFixedParameters
@@ -354,9 +331,6 @@ try:
     from ._models_py3 import NotebookPreparationError
     from ._models_py3 import NotebookResourceInfo
     from ._models_py3 import NotificationSetting
-    from ._models_py3 import NumericalDataDriftMetricThreshold
-    from ._models_py3 import NumericalDataQualityMetricThreshold
-    from ._models_py3 import NumericalPredictionDriftMetricThreshold
     from ._models_py3 import Objective
     from ._models_py3 import OneLakeArtifact
     from ._models_py3 import OneLakeDatastore
@@ -395,8 +369,6 @@ try:
     from ._models_py3 import PendingUploadResponseDto
     from ._models_py3 import PersonalComputeInstanceSettings
     from ._models_py3 import PipelineJob
-    from ._models_py3 import PredictionDriftMetricThresholdBase
-    from ._models_py3 import PredictionDriftMonitoringSignal
     from ._models_py3 import PrivateEndpoint
     from ._models_py3 import PrivateEndpointConnection
     from ._models_py3 import PrivateEndpointConnectionListResult
@@ -420,7 +392,6 @@ try:
     from ._models_py3 import RegistryRegionArmDetails
     from ._models_py3 import RegistryTrackedResourceArmPaginatedResult
     from ._models_py3 import Regression
-    from ._models_py3 import RegressionModelPerformanceMetricThreshold
     from ._models_py3 import RegressionTrainingSettings
     from ._models_py3 import RequestLogging
     from ._models_py3 import Resource
@@ -445,7 +416,6 @@ try:
     from ._models_py3 import ScriptReference
     from ._models_py3 import ScriptsToExecute
     from ._models_py3 import Seasonality
-    from ._models_py3 import SecretConfiguration
     from ._models_py3 import ServiceManagedResourcesSettings
     from ._models_py3 import ServicePrincipalAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import ServicePrincipalDatastoreCredentials
@@ -491,7 +461,6 @@ try:
     from ._models_py3 import TextClassificationMultilabel
     from ._models_py3 import TextNer
     from ._models_py3 import TmpfsOptions
-    from ._models_py3 import TopNFeaturesByAttribution
     from ._models_py3 import TrackedResource
     from ._models_py3 import TrainingSettings
     from ._models_py3 import TrialComponent
@@ -551,7 +520,6 @@ except (SyntaxError, ImportError):
     from ._models import AksComputeSecrets  # type: ignore
     from ._models import AksComputeSecretsProperties  # type: ignore
     from ._models import AksNetworkingConfiguration  # type: ignore
-    from ._models import AllFeatures  # type: ignore
     from ._models import AllNodes  # type: ignore
     from ._models import AmlCompute  # type: ignore
     from ._models import AmlComputeNodeInformation  # type: ignore
@@ -606,13 +574,9 @@ except (SyntaxError, ImportError):
     from ._models import BindOptions  # type: ignore
     from ._models import BlobReferenceForConsumptionDto  # type: ignore
     from ._models import BuildContext  # type: ignore
-    from ._models import CategoricalDataDriftMetricThreshold  # type: ignore
-    from ._models import CategoricalDataQualityMetricThreshold  # type: ignore
-    from ._models import CategoricalPredictionDriftMetricThreshold  # type: ignore
     from ._models import CertificateDatastoreCredentials  # type: ignore
     from ._models import CertificateDatastoreSecrets  # type: ignore
     from ._models import Classification  # type: ignore
-    from ._models import ClassificationModelPerformanceMetricThreshold  # type: ignore
     from ._models import ClassificationTrainingSettings  # type: ignore
     from ._models import ClusterUpdateParameters  # type: ignore
     from ._models import CocoExportSummary  # type: ignore
@@ -657,15 +621,12 @@ except (SyntaxError, ImportError):
     from ._models import ContainerResourceRequirements  # type: ignore
     from ._models import ContainerResourceSettings  # type: ignore
     from ._models import CosmosDbSettings  # type: ignore
-    from ._models import CreateMonitorAction  # type: ignore
     from ._models import CronTrigger  # type: ignore
     from ._models import CsvExportSummary  # type: ignore
     from ._models import CustomForecastHorizon  # type: ignore
     from ._models import CustomInferencingServer  # type: ignore
-    from ._models import CustomMetricThreshold  # type: ignore
     from ._models import CustomModelJobInput  # type: ignore
     from ._models import CustomModelJobOutput  # type: ignore
-    from ._models import CustomMonitoringSignal  # type: ignore
     from ._models import CustomNCrossValidations  # type: ignore
     from ._models import CustomSeasonality  # type: ignore
     from ._models import CustomService  # type: ignore
@@ -675,8 +636,6 @@ except (SyntaxError, ImportError):
     from ._models import DataContainer  # type: ignore
     from ._models import DataContainerProperties  # type: ignore
     from ._models import DataContainerResourceArmPaginatedResult  # type: ignore
-    from ._models import DataDriftMetricThresholdBase  # type: ignore
-    from ._models import DataDriftMonitoringSignal  # type: ignore
     from ._models import DataFactory  # type: ignore
     from ._models import DataImport  # type: ignore
     from ._models import DataImportSource  # type: ignore
@@ -684,8 +643,6 @@ except (SyntaxError, ImportError):
     from ._models import DataLakeAnalyticsSchema  # type: ignore
     from ._models import DataLakeAnalyticsSchemaProperties  # type: ignore
     from ._models import DataPathAssetReference  # type: ignore
-    from ._models import DataQualityMetricThresholdBase  # type: ignore
-    from ._models import DataQualityMonitoringSignal  # type: ignore
     from ._models import DataVersionBase  # type: ignore
     from ._models import DataVersionBaseProperties  # type: ignore
     from ._models import DataVersionBaseResourceArmPaginatedResult  # type: ignore
@@ -742,11 +699,9 @@ except (SyntaxError, ImportError):
     from ._models import FQDNEndpoints  # type: ignore
     from ._models import FQDNEndpointsProperties  # type: ignore
     from ._models import Feature  # type: ignore
-    from ._models import FeatureArmPaginatedResult  # type: ignore
-    from ._models import FeatureAttributionDriftMonitoringSignal  # type: ignore
-    from ._models import FeatureAttributionMetricThreshold  # type: ignore
+    from ._models import FeatureProperties  # type: ignore
+    from ._models import FeatureResourceArmPaginatedResult  # type: ignore
     from ._models import FeatureStoreSettings  # type: ignore
-    from ._models import FeatureSubset  # type: ignore
     from ._models import FeatureWindow  # type: ignore
     from ._models import FeaturesetContainer  # type: ignore
     from ._models import FeaturesetContainerProperties  # type: ignore
@@ -771,7 +726,6 @@ except (SyntaxError, ImportError):
     from ._models import Forecasting  # type: ignore
     from ._models import ForecastingSettings  # type: ignore
     from ._models import ForecastingTrainingSettings  # type: ignore
-    from ._models import GetFeatureRequest  # type: ignore
     from ._models import GridSamplingAlgorithm  # type: ignore
     from ._models import HDInsight  # type: ignore
     from ._models import HDInsightProperties  # type: ignore
@@ -861,17 +815,9 @@ except (SyntaxError, ImportError):
     from ._models import ModelContainerProperties  # type: ignore
     from ._models import ModelContainerResourceArmPaginatedResult  # type: ignore
     from ._models import ModelPackageInput  # type: ignore
-    from ._models import ModelPerformanceMetricThresholdBase  # type: ignore
-    from ._models import ModelPerformanceSignalBase  # type: ignore
     from ._models import ModelVersion  # type: ignore
     from ._models import ModelVersionProperties  # type: ignore
     from ._models import ModelVersionResourceArmPaginatedResult  # type: ignore
-    from ._models import MonitorDefinition  # type: ignore
-    from ._models import MonitoringDataSegment  # type: ignore
-    from ._models import MonitoringFeatureFilterBase  # type: ignore
-    from ._models import MonitoringInputData  # type: ignore
-    from ._models import MonitoringSignalBase  # type: ignore
-    from ._models import MonitoringThreshold  # type: ignore
     from ._models import Mpi  # type: ignore
     from ._models import NCrossValidations  # type: ignore
     from ._models import NlpFixedParameters  # type: ignore
@@ -888,9 +834,6 @@ except (SyntaxError, ImportError):
     from ._models import NotebookPreparationError  # type: ignore
     from ._models import NotebookResourceInfo  # type: ignore
     from ._models import NotificationSetting  # type: ignore
-    from ._models import NumericalDataDriftMetricThreshold  # type: ignore
-    from ._models import NumericalDataQualityMetricThreshold  # type: ignore
-    from ._models import NumericalPredictionDriftMetricThreshold  # type: ignore
     from ._models import Objective  # type: ignore
     from ._models import OneLakeArtifact  # type: ignore
     from ._models import OneLakeDatastore  # type: ignore
@@ -929,8 +872,6 @@ except (SyntaxError, ImportError):
     from ._models import PendingUploadResponseDto  # type: ignore
     from ._models import PersonalComputeInstanceSettings  # type: ignore
     from ._models import PipelineJob  # type: ignore
-    from ._models import PredictionDriftMetricThresholdBase  # type: ignore
-    from ._models import PredictionDriftMonitoringSignal  # type: ignore
     from ._models import PrivateEndpoint  # type: ignore
     from ._models import PrivateEndpointConnection  # type: ignore
     from ._models import PrivateEndpointConnectionListResult  # type: ignore
@@ -954,7 +895,6 @@ except (SyntaxError, ImportError):
     from ._models import RegistryRegionArmDetails  # type: ignore
     from ._models import RegistryTrackedResourceArmPaginatedResult  # type: ignore
     from ._models import Regression  # type: ignore
-    from ._models import RegressionModelPerformanceMetricThreshold  # type: ignore
     from ._models import RegressionTrainingSettings  # type: ignore
     from ._models import RequestLogging  # type: ignore
     from ._models import Resource  # type: ignore
@@ -979,7 +919,6 @@ except (SyntaxError, ImportError):
     from ._models import ScriptReference  # type: ignore
     from ._models import ScriptsToExecute  # type: ignore
     from ._models import Seasonality  # type: ignore
-    from ._models import SecretConfiguration  # type: ignore
     from ._models import ServiceManagedResourcesSettings  # type: ignore
     from ._models import ServicePrincipalAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import ServicePrincipalDatastoreCredentials  # type: ignore
@@ -1025,7 +964,6 @@ except (SyntaxError, ImportError):
     from ._models import TextClassificationMultilabel  # type: ignore
     from ._models import TextNer  # type: ignore
     from ._models import TmpfsOptions  # type: ignore
-    from ._models import TopNFeaturesByAttribution  # type: ignore
     from ._models import TrackedResource  # type: ignore
     from ._models import TrainingSettings  # type: ignore
     from ._models import TrialComponent  # type: ignore
@@ -1089,10 +1027,6 @@ from ._azure_machine_learning_workspaces_enums import (
     BillingCurrency,
     BlockedTransformers,
     Caching,
-    CategoricalDataDriftMetric,
-    CategoricalDataQualityMetric,
-    CategoricalPredictionDriftMetric,
-    ClassificationModelPerformanceMetric,
     ClassificationModels,
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
@@ -1123,7 +1057,6 @@ from ._azure_machine_learning_workspaces_enums import (
     EnvironmentType,
     EnvironmentVariableType,
     ExportFormatType,
-    FeatureAttributionMetric,
     FeatureDataType,
     FeatureLags,
     FeaturestoreJobType,
@@ -1161,12 +1094,6 @@ from ._azure_machine_learning_workspaces_enums import (
     MediaType,
     MlflowAutologger,
     ModelSize,
-    MonitoringFeatureDataType,
-    MonitoringFeatureFilterType,
-    MonitoringInputDataContext,
-    MonitoringModelType,
-    MonitoringNotificationMode,
-    MonitoringSignalType,
     MountAction,
     MountState,
     MultiSelect,
@@ -1175,9 +1102,6 @@ from ._azure_machine_learning_workspaces_enums import (
     NlpLearningRateScheduler,
     NodeState,
     NodesValueType,
-    NumericalDataDriftMetric,
-    NumericalDataQualityMetric,
-    NumericalPredictionDriftMetric,
     ObjectDetectionPrimaryMetrics,
     OneLakeArtifactType,
     OperatingSystemType,
@@ -1204,7 +1128,6 @@ from ._azure_machine_learning_workspaces_enums import (
     RandomSamplingAlgorithmRule,
     RecurrenceFrequency,
     ReferenceType,
-    RegressionModelPerformanceMetric,
     RegressionModels,
     RegressionPrimaryMetrics,
     RemoteLoginPortPublicAccess,
@@ -1263,7 +1186,6 @@ __all__ = [
     'AksComputeSecrets',
     'AksComputeSecretsProperties',
     'AksNetworkingConfiguration',
-    'AllFeatures',
     'AllNodes',
     'AmlCompute',
     'AmlComputeNodeInformation',
@@ -1318,13 +1240,9 @@ __all__ = [
     'BindOptions',
     'BlobReferenceForConsumptionDto',
     'BuildContext',
-    'CategoricalDataDriftMetricThreshold',
-    'CategoricalDataQualityMetricThreshold',
-    'CategoricalPredictionDriftMetricThreshold',
     'CertificateDatastoreCredentials',
     'CertificateDatastoreSecrets',
     'Classification',
-    'ClassificationModelPerformanceMetricThreshold',
     'ClassificationTrainingSettings',
     'ClusterUpdateParameters',
     'CocoExportSummary',
@@ -1369,15 +1287,12 @@ __all__ = [
     'ContainerResourceRequirements',
     'ContainerResourceSettings',
     'CosmosDbSettings',
-    'CreateMonitorAction',
     'CronTrigger',
     'CsvExportSummary',
     'CustomForecastHorizon',
     'CustomInferencingServer',
-    'CustomMetricThreshold',
     'CustomModelJobInput',
     'CustomModelJobOutput',
-    'CustomMonitoringSignal',
     'CustomNCrossValidations',
     'CustomSeasonality',
     'CustomService',
@@ -1387,8 +1302,6 @@ __all__ = [
     'DataContainer',
     'DataContainerProperties',
     'DataContainerResourceArmPaginatedResult',
-    'DataDriftMetricThresholdBase',
-    'DataDriftMonitoringSignal',
     'DataFactory',
     'DataImport',
     'DataImportSource',
@@ -1396,8 +1309,6 @@ __all__ = [
     'DataLakeAnalyticsSchema',
     'DataLakeAnalyticsSchemaProperties',
     'DataPathAssetReference',
-    'DataQualityMetricThresholdBase',
-    'DataQualityMonitoringSignal',
     'DataVersionBase',
     'DataVersionBaseProperties',
     'DataVersionBaseResourceArmPaginatedResult',
@@ -1454,11 +1365,9 @@ __all__ = [
     'FQDNEndpoints',
     'FQDNEndpointsProperties',
     'Feature',
-    'FeatureArmPaginatedResult',
-    'FeatureAttributionDriftMonitoringSignal',
-    'FeatureAttributionMetricThreshold',
+    'FeatureProperties',
+    'FeatureResourceArmPaginatedResult',
     'FeatureStoreSettings',
-    'FeatureSubset',
     'FeatureWindow',
     'FeaturesetContainer',
     'FeaturesetContainerProperties',
@@ -1483,7 +1392,6 @@ __all__ = [
     'Forecasting',
     'ForecastingSettings',
     'ForecastingTrainingSettings',
-    'GetFeatureRequest',
     'GridSamplingAlgorithm',
     'HDInsight',
     'HDInsightProperties',
@@ -1573,17 +1481,9 @@ __all__ = [
     'ModelContainerProperties',
     'ModelContainerResourceArmPaginatedResult',
     'ModelPackageInput',
-    'ModelPerformanceMetricThresholdBase',
-    'ModelPerformanceSignalBase',
     'ModelVersion',
     'ModelVersionProperties',
     'ModelVersionResourceArmPaginatedResult',
-    'MonitorDefinition',
-    'MonitoringDataSegment',
-    'MonitoringFeatureFilterBase',
-    'MonitoringInputData',
-    'MonitoringSignalBase',
-    'MonitoringThreshold',
     'Mpi',
     'NCrossValidations',
     'NlpFixedParameters',
@@ -1600,9 +1500,6 @@ __all__ = [
     'NotebookPreparationError',
     'NotebookResourceInfo',
     'NotificationSetting',
-    'NumericalDataDriftMetricThreshold',
-    'NumericalDataQualityMetricThreshold',
-    'NumericalPredictionDriftMetricThreshold',
     'Objective',
     'OneLakeArtifact',
     'OneLakeDatastore',
@@ -1641,8 +1538,6 @@ __all__ = [
     'PendingUploadResponseDto',
     'PersonalComputeInstanceSettings',
     'PipelineJob',
-    'PredictionDriftMetricThresholdBase',
-    'PredictionDriftMonitoringSignal',
     'PrivateEndpoint',
     'PrivateEndpointConnection',
     'PrivateEndpointConnectionListResult',
@@ -1666,7 +1561,6 @@ __all__ = [
     'RegistryRegionArmDetails',
     'RegistryTrackedResourceArmPaginatedResult',
     'Regression',
-    'RegressionModelPerformanceMetricThreshold',
     'RegressionTrainingSettings',
     'RequestLogging',
     'Resource',
@@ -1691,7 +1585,6 @@ __all__ = [
     'ScriptReference',
     'ScriptsToExecute',
     'Seasonality',
-    'SecretConfiguration',
     'ServiceManagedResourcesSettings',
     'ServicePrincipalAuthTypeWorkspaceConnectionProperties',
     'ServicePrincipalDatastoreCredentials',
@@ -1737,7 +1630,6 @@ __all__ = [
     'TextClassificationMultilabel',
     'TextNer',
     'TmpfsOptions',
-    'TopNFeaturesByAttribution',
     'TrackedResource',
     'TrainingSettings',
     'TrialComponent',
@@ -1799,10 +1691,6 @@ __all__ = [
     'BillingCurrency',
     'BlockedTransformers',
     'Caching',
-    'CategoricalDataDriftMetric',
-    'CategoricalDataQualityMetric',
-    'CategoricalPredictionDriftMetric',
-    'ClassificationModelPerformanceMetric',
     'ClassificationModels',
     'ClassificationMultilabelPrimaryMetrics',
     'ClassificationPrimaryMetrics',
@@ -1833,7 +1721,6 @@ __all__ = [
     'EnvironmentType',
     'EnvironmentVariableType',
     'ExportFormatType',
-    'FeatureAttributionMetric',
     'FeatureDataType',
     'FeatureLags',
     'FeaturestoreJobType',
@@ -1871,12 +1758,6 @@ __all__ = [
     'MediaType',
     'MlflowAutologger',
     'ModelSize',
-    'MonitoringFeatureDataType',
-    'MonitoringFeatureFilterType',
-    'MonitoringInputDataContext',
-    'MonitoringModelType',
-    'MonitoringNotificationMode',
-    'MonitoringSignalType',
     'MountAction',
     'MountState',
     'MultiSelect',
@@ -1885,9 +1766,6 @@ __all__ = [
     'NlpLearningRateScheduler',
     'NodeState',
     'NodesValueType',
-    'NumericalDataDriftMetric',
-    'NumericalDataQualityMetric',
-    'NumericalPredictionDriftMetric',
     'ObjectDetectionPrimaryMetrics',
     'OneLakeArtifactType',
     'OperatingSystemType',
@@ -1914,7 +1792,6 @@ __all__ = [
     'RandomSamplingAlgorithmRule',
     'RecurrenceFrequency',
     'ReferenceType',
-    'RegressionModelPerformanceMetric',
     'RegressionModels',
     'RegressionPrimaryMetrics',
     'RemoteLoginPortPublicAccess',

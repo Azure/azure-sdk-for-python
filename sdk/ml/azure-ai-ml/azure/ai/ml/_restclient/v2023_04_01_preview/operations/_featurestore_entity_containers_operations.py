@@ -266,7 +266,7 @@ class FeaturestoreEntityContainersOperations(object):
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
         :param page_size: page size.
         :type page_size: int
-        :param name: name for the featurestore entity.
+        :param name: name for the featurestore eneity.
         :type name: str
         :param description: description for the featurestore entity.
         :type description: str

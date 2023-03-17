@@ -38,6 +38,7 @@ from ._environment_containers_operations import EnvironmentContainersOperations
 from ._environment_versions_operations import EnvironmentVersionsOperations
 from ._featureset_containers_operations import FeaturesetContainersOperations
 from ._featureset_versions_operations import FeaturesetVersionsOperations
+from ._features_operations import FeaturesOperations
 from ._featurestore_entity_containers_operations import FeaturestoreEntityContainersOperations
 from ._featurestore_entity_versions_operations import FeaturestoreEntityVersionsOperations
 from ._jobs_operations import JobsOperations
@@ -81,6 +82,7 @@ __all__ = [
     'EnvironmentVersionsOperations',
     'FeaturesetContainersOperations',
     'FeaturesetVersionsOperations',
+    'FeaturesOperations',
     'FeaturestoreEntityContainersOperations',
     'FeaturestoreEntityVersionsOperations',
     'JobsOperations',

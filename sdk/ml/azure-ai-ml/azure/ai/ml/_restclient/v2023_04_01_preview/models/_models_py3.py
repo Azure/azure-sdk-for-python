@@ -839,73 +839,6 @@ class AKSSchemaProperties(msrest.serialization.Model):
         self.load_balancer_subnet = load_balancer_subnet
 
 
-class MonitoringFeatureFilterBase(msrest.serialization.Model):
-    """MonitoringFeatureFilterBase.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AllFeatures, FeatureSubset, TopNFeaturesByAttribution.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar filter_type: Required. [Required] Specifies the feature filter to leverage when selecting
-     features to calculate metrics over.Constant filled by server. Possible values include:
-     "AllFeatures", "TopNByAttribution", "FeatureSubset".
-    :vartype filter_type: str or
-     ~azure.mgmt.machinelearningservices.models.MonitoringFeatureFilterType
-    """
-
-    _validation = {
-        'filter_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'filter_type': {'key': 'filterType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'filter_type': {'AllFeatures': 'AllFeatures', 'FeatureSubset': 'FeatureSubset', 'TopNByAttribution': 'TopNFeaturesByAttribution'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MonitoringFeatureFilterBase, self).__init__(**kwargs)
-        self.filter_type = None  # type: Optional[str]
-
-
-class AllFeatures(MonitoringFeatureFilterBase):
-    """AllFeatures.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar filter_type: Required. [Required] Specifies the feature filter to leverage when selecting
-     features to calculate metrics over.Constant filled by server. Possible values include:
-     "AllFeatures", "TopNByAttribution", "FeatureSubset".
-    :vartype filter_type: str or
-     ~azure.mgmt.machinelearningservices.models.MonitoringFeatureFilterType
-    """
-
-    _validation = {
-        'filter_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'filter_type': {'key': 'filterType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AllFeatures, self).__init__(**kwargs)
-        self.filter_type = 'AllFeatures'  # type: str
-
-
 class Nodes(msrest.serialization.Model):
     """Abstract Nodes definition.
 
@@ -2086,9 +2019,6 @@ class JobBaseProperties(ResourceBase):
     :vartype job_type: str or ~azure.mgmt.machinelearningservices.models.JobType
     :ivar notification_setting: Notification setting for the job.
     :vartype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-    :ivar secrets_configuration: Configuration for secrets to be made available during runtime.
-    :vartype secrets_configuration: dict[str,
-     ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
     :ivar services: List of JobEndpoints.
      For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
     :vartype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -2115,7 +2045,6 @@ class JobBaseProperties(ResourceBase):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'job_type': {'key': 'jobType', 'type': 'str'},
         'notification_setting': {'key': 'notificationSetting', 'type': 'NotificationSetting'},
-        'secrets_configuration': {'key': 'secretsConfiguration', 'type': '{SecretConfiguration}'},
         'services': {'key': 'services', 'type': '{JobService}'},
         'status': {'key': 'status', 'type': 'str'},
     }
@@ -2137,7 +2066,6 @@ class JobBaseProperties(ResourceBase):
         identity: Optional["IdentityConfiguration"] = None,
         is_archived: Optional[bool] = False,
         notification_setting: Optional["NotificationSetting"] = None,
-        secrets_configuration: Optional[Dict[str, "SecretConfiguration"]] = None,
         services: Optional[Dict[str, "JobService"]] = None,
         **kwargs
     ):
@@ -2165,9 +2093,6 @@ class JobBaseProperties(ResourceBase):
         :paramtype is_archived: bool
         :keyword notification_setting: Notification setting for the job.
         :paramtype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-        :keyword secrets_configuration: Configuration for secrets to be made available during runtime.
-        :paramtype secrets_configuration: dict[str,
-         ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
         :keyword services: List of JobEndpoints.
          For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
         :paramtype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -2181,7 +2106,6 @@ class JobBaseProperties(ResourceBase):
         self.is_archived = is_archived
         self.job_type = 'JobBaseProperties'  # type: str
         self.notification_setting = notification_setting
-        self.secrets_configuration = secrets_configuration
         self.services = services
         self.status = None
 
@@ -2221,9 +2145,6 @@ See TaskType enum for all the tasks supported.
     :vartype job_type: str or ~azure.mgmt.machinelearningservices.models.JobType
     :ivar notification_setting: Notification setting for the job.
     :vartype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-    :ivar secrets_configuration: Configuration for secrets to be made available during runtime.
-    :vartype secrets_configuration: dict[str,
-     ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
     :ivar services: List of JobEndpoints.
      For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
     :vartype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -2266,7 +2187,6 @@ See TaskType enum for all the tasks supported.
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'job_type': {'key': 'jobType', 'type': 'str'},
         'notification_setting': {'key': 'notificationSetting', 'type': 'NotificationSetting'},
-        'secrets_configuration': {'key': 'secretsConfiguration', 'type': '{SecretConfiguration}'},
         'services': {'key': 'services', 'type': '{JobService}'},
         'status': {'key': 'status', 'type': 'str'},
         'environment_id': {'key': 'environmentId', 'type': 'str'},
@@ -2291,7 +2211,6 @@ See TaskType enum for all the tasks supported.
         identity: Optional["IdentityConfiguration"] = None,
         is_archived: Optional[bool] = False,
         notification_setting: Optional["NotificationSetting"] = None,
-        secrets_configuration: Optional[Dict[str, "SecretConfiguration"]] = None,
         services: Optional[Dict[str, "JobService"]] = None,
         environment_id: Optional[str] = None,
         environment_variables: Optional[Dict[str, str]] = None,
@@ -2324,9 +2243,6 @@ See TaskType enum for all the tasks supported.
         :paramtype is_archived: bool
         :keyword notification_setting: Notification setting for the job.
         :paramtype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-        :keyword secrets_configuration: Configuration for secrets to be made available during runtime.
-        :paramtype secrets_configuration: dict[str,
-         ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
         :keyword services: List of JobEndpoints.
          For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
         :paramtype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -2346,7 +2262,7 @@ See TaskType enum for all the tasks supported.
          Tables/NLP/Image.
         :paramtype task_details: ~azure.mgmt.machinelearningservices.models.AutoMLVertical
         """
-        super(AutoMLJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, secrets_configuration=secrets_configuration, services=services, **kwargs)
+        super(AutoMLJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, services=services, **kwargs)
         self.job_type = 'AutoML'  # type: str
         self.environment_id = environment_id
         self.environment_variables = environment_variables
@@ -4809,287 +4725,6 @@ class BuildContext(msrest.serialization.Model):
         self.dockerfile_path = dockerfile_path
 
 
-class DataDriftMetricThresholdBase(msrest.serialization.Model):
-    """DataDriftMetricThresholdBase.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CategoricalDataDriftMetricThreshold, NumericalDataDriftMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Numerical", "Categorical".
-    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    """
-
-    _validation = {
-        'data_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-    }
-
-    _subtype_map = {
-        'data_type': {'Categorical': 'CategoricalDataDriftMetricThreshold', 'Numerical': 'NumericalDataDriftMetricThreshold'}
-    }
-
-    def __init__(
-        self,
-        *,
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        """
-        super(DataDriftMetricThresholdBase, self).__init__(**kwargs)
-        self.data_type = None  # type: Optional[str]
-        self.threshold = threshold
-
-
-class CategoricalDataDriftMetricThreshold(DataDriftMetricThresholdBase):
-    """CategoricalDataDriftMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Numerical", "Categorical".
-    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    :ivar metric: Required. [Required] The categorical data drift metric to calculate. Possible
-     values include: "JensenShannonDistance", "PopulationStabilityIndex", "PearsonsChiSquaredTest".
-    :vartype metric: str or ~azure.mgmt.machinelearningservices.models.CategoricalDataDriftMetric
-    """
-
-    _validation = {
-        'data_type': {'required': True},
-        'metric': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-        'metric': {'key': 'metric', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: Union[str, "CategoricalDataDriftMetric"],
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        :keyword metric: Required. [Required] The categorical data drift metric to calculate. Possible
-         values include: "JensenShannonDistance", "PopulationStabilityIndex", "PearsonsChiSquaredTest".
-        :paramtype metric: str or ~azure.mgmt.machinelearningservices.models.CategoricalDataDriftMetric
-        """
-        super(CategoricalDataDriftMetricThreshold, self).__init__(threshold=threshold, **kwargs)
-        self.data_type = 'Categorical'  # type: str
-        self.metric = metric
-
-
-class DataQualityMetricThresholdBase(msrest.serialization.Model):
-    """DataQualityMetricThresholdBase.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CategoricalDataQualityMetricThreshold, NumericalDataQualityMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Numerical", "Categorical".
-    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    """
-
-    _validation = {
-        'data_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-    }
-
-    _subtype_map = {
-        'data_type': {'Categorical': 'CategoricalDataQualityMetricThreshold', 'Numerical': 'NumericalDataQualityMetricThreshold'}
-    }
-
-    def __init__(
-        self,
-        *,
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        """
-        super(DataQualityMetricThresholdBase, self).__init__(**kwargs)
-        self.data_type = None  # type: Optional[str]
-        self.threshold = threshold
-
-
-class CategoricalDataQualityMetricThreshold(DataQualityMetricThresholdBase):
-    """CategoricalDataQualityMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Numerical", "Categorical".
-    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    :ivar metric: Required. [Required] The categorical data quality metric to calculate. Possible
-     values include: "NullValueRate", "DataTypeErrorRate", "OutOfBoundsRate".
-    :vartype metric: str or ~azure.mgmt.machinelearningservices.models.CategoricalDataQualityMetric
-    """
-
-    _validation = {
-        'data_type': {'required': True},
-        'metric': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-        'metric': {'key': 'metric', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: Union[str, "CategoricalDataQualityMetric"],
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        :keyword metric: Required. [Required] The categorical data quality metric to calculate.
-         Possible values include: "NullValueRate", "DataTypeErrorRate", "OutOfBoundsRate".
-        :paramtype metric: str or
-         ~azure.mgmt.machinelearningservices.models.CategoricalDataQualityMetric
-        """
-        super(CategoricalDataQualityMetricThreshold, self).__init__(threshold=threshold, **kwargs)
-        self.data_type = 'Categorical'  # type: str
-        self.metric = metric
-
-
-class PredictionDriftMetricThresholdBase(msrest.serialization.Model):
-    """PredictionDriftMetricThresholdBase.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CategoricalPredictionDriftMetricThreshold, NumericalPredictionDriftMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Numerical", "Categorical".
-    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    """
-
-    _validation = {
-        'data_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-    }
-
-    _subtype_map = {
-        'data_type': {'Categorical': 'CategoricalPredictionDriftMetricThreshold', 'Numerical': 'NumericalPredictionDriftMetricThreshold'}
-    }
-
-    def __init__(
-        self,
-        *,
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        """
-        super(PredictionDriftMetricThresholdBase, self).__init__(**kwargs)
-        self.data_type = None  # type: Optional[str]
-        self.threshold = threshold
-
-
-class CategoricalPredictionDriftMetricThreshold(PredictionDriftMetricThresholdBase):
-    """CategoricalPredictionDriftMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Numerical", "Categorical".
-    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    :ivar metric: Required. [Required] The categorical prediction drift metric to calculate.
-     Possible values include: "JensenShannonDistance", "PopulationStabilityIndex",
-     "PearsonsChiSquaredTest".
-    :vartype metric: str or
-     ~azure.mgmt.machinelearningservices.models.CategoricalPredictionDriftMetric
-    """
-
-    _validation = {
-        'data_type': {'required': True},
-        'metric': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-        'metric': {'key': 'metric', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: Union[str, "CategoricalPredictionDriftMetric"],
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        :keyword metric: Required. [Required] The categorical prediction drift metric to calculate.
-         Possible values include: "JensenShannonDistance", "PopulationStabilityIndex",
-         "PearsonsChiSquaredTest".
-        :paramtype metric: str or
-         ~azure.mgmt.machinelearningservices.models.CategoricalPredictionDriftMetric
-        """
-        super(CategoricalPredictionDriftMetricThreshold, self).__init__(threshold=threshold, **kwargs)
-        self.data_type = 'Categorical'  # type: str
-        self.metric = metric
-
-
 class CertificateDatastoreCredentials(DatastoreCredentials):
     """Certificate datastore credentials configuration.
 
@@ -5523,100 +5158,6 @@ class Classification(AutoMLVertical, TableVertical):
         self.log_verbosity = log_verbosity
         self.target_column_name = target_column_name
         self.training_data = training_data
-
-
-class ModelPerformanceMetricThresholdBase(msrest.serialization.Model):
-    """ModelPerformanceMetricThresholdBase.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ClassificationModelPerformanceMetricThreshold, RegressionModelPerformanceMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar model_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Classification", "Regression".
-    :vartype model_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringModelType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    """
-
-    _validation = {
-        'model_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'model_type': {'key': 'modelType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-    }
-
-    _subtype_map = {
-        'model_type': {'Classification': 'ClassificationModelPerformanceMetricThreshold', 'Regression': 'RegressionModelPerformanceMetricThreshold'}
-    }
-
-    def __init__(
-        self,
-        *,
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        """
-        super(ModelPerformanceMetricThresholdBase, self).__init__(**kwargs)
-        self.model_type = None  # type: Optional[str]
-        self.threshold = threshold
-
-
-class ClassificationModelPerformanceMetricThreshold(ModelPerformanceMetricThresholdBase):
-    """ClassificationModelPerformanceMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar model_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Classification", "Regression".
-    :vartype model_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringModelType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    :ivar metric: Required. [Required] The classification model performance to calculate. Possible
-     values include: "Accuracy", "Precision", "Recall", "F1Score".
-    :vartype metric: str or
-     ~azure.mgmt.machinelearningservices.models.ClassificationModelPerformanceMetric
-    """
-
-    _validation = {
-        'model_type': {'required': True},
-        'metric': {'required': True},
-    }
-
-    _attribute_map = {
-        'model_type': {'key': 'modelType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-        'metric': {'key': 'metric', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: Union[str, "ClassificationModelPerformanceMetric"],
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        :keyword metric: Required. [Required] The classification model performance to calculate.
-         Possible values include: "Accuracy", "Precision", "Recall", "F1Score".
-        :paramtype metric: str or
-         ~azure.mgmt.machinelearningservices.models.ClassificationModelPerformanceMetric
-        """
-        super(ClassificationModelPerformanceMetricThreshold, self).__init__(threshold=threshold, **kwargs)
-        self.model_type = 'Classification'  # type: str
-        self.metric = metric
 
 
 class TrainingSettings(msrest.serialization.Model):
@@ -6423,9 +5964,6 @@ class CommandJob(JobBaseProperties):
     :vartype job_type: str or ~azure.mgmt.machinelearningservices.models.JobType
     :ivar notification_setting: Notification setting for the job.
     :vartype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-    :ivar secrets_configuration: Configuration for secrets to be made available during runtime.
-    :vartype secrets_configuration: dict[str,
-     ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
     :ivar services: List of JobEndpoints.
      For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
     :vartype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -6483,7 +6021,6 @@ class CommandJob(JobBaseProperties):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'job_type': {'key': 'jobType', 'type': 'str'},
         'notification_setting': {'key': 'notificationSetting', 'type': 'NotificationSetting'},
-        'secrets_configuration': {'key': 'secretsConfiguration', 'type': '{SecretConfiguration}'},
         'services': {'key': 'services', 'type': '{JobService}'},
         'status': {'key': 'status', 'type': 'str'},
         'autologger_settings': {'key': 'autologgerSettings', 'type': 'AutologgerSettings'},
@@ -6515,7 +6052,6 @@ class CommandJob(JobBaseProperties):
         identity: Optional["IdentityConfiguration"] = None,
         is_archived: Optional[bool] = False,
         notification_setting: Optional["NotificationSetting"] = None,
-        secrets_configuration: Optional[Dict[str, "SecretConfiguration"]] = None,
         services: Optional[Dict[str, "JobService"]] = None,
         autologger_settings: Optional["AutologgerSettings"] = None,
         code_id: Optional[str] = None,
@@ -6552,9 +6088,6 @@ class CommandJob(JobBaseProperties):
         :paramtype is_archived: bool
         :keyword notification_setting: Notification setting for the job.
         :paramtype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-        :keyword secrets_configuration: Configuration for secrets to be made available during runtime.
-        :paramtype secrets_configuration: dict[str,
-         ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
         :keyword services: List of JobEndpoints.
          For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
         :paramtype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -6585,7 +6118,7 @@ class CommandJob(JobBaseProperties):
         :keyword resources: Compute Resource configuration for the job.
         :paramtype resources: ~azure.mgmt.machinelearningservices.models.JobResourceConfiguration
         """
-        super(CommandJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, secrets_configuration=secrets_configuration, services=services, **kwargs)
+        super(CommandJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, services=services, **kwargs)
         self.job_type = 'Command'  # type: str
         self.autologger_settings = autologger_settings
         self.code_id = code_id
@@ -8182,80 +7715,6 @@ class CosmosDbSettings(msrest.serialization.Model):
         self.collections_throughput = collections_throughput
 
 
-class ScheduleActionBase(msrest.serialization.Model):
-    """ScheduleActionBase.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: JobScheduleAction, CreateMonitorAction, ImportDataAction, EndpointScheduleAction.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar action_type: Required. [Required] Specifies the action type of the schedule.Constant
-     filled by server. Possible values include: "CreateJob", "InvokeBatchEndpoint", "ImportData",
-     "CreateMonitor".
-    :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleActionType
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'action_type': {'CreateJob': 'JobScheduleAction', 'CreateMonitor': 'CreateMonitorAction', 'ImportData': 'ImportDataAction', 'InvokeBatchEndpoint': 'EndpointScheduleAction'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ScheduleActionBase, self).__init__(**kwargs)
-        self.action_type = None  # type: Optional[str]
-
-
-class CreateMonitorAction(ScheduleActionBase):
-    """CreateMonitorAction.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar action_type: Required. [Required] Specifies the action type of the schedule.Constant
-     filled by server. Possible values include: "CreateJob", "InvokeBatchEndpoint", "ImportData",
-     "CreateMonitor".
-    :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleActionType
-    :ivar monitor_definition: Required. [Required] Defines the monitor.
-    :vartype monitor_definition: ~azure.mgmt.machinelearningservices.models.MonitorDefinition
-    """
-
-    _validation = {
-        'action_type': {'required': True},
-        'monitor_definition': {'required': True},
-    }
-
-    _attribute_map = {
-        'action_type': {'key': 'actionType', 'type': 'str'},
-        'monitor_definition': {'key': 'monitorDefinition', 'type': 'MonitorDefinition'},
-    }
-
-    def __init__(
-        self,
-        *,
-        monitor_definition: "MonitorDefinition",
-        **kwargs
-    ):
-        """
-        :keyword monitor_definition: Required. [Required] Defines the monitor.
-        :paramtype monitor_definition: ~azure.mgmt.machinelearningservices.models.MonitorDefinition
-        """
-        super(CreateMonitorAction, self).__init__(**kwargs)
-        self.action_type = 'CreateMonitor'  # type: str
-        self.monitor_definition = monitor_definition
-
-
 class TriggerBase(msrest.serialization.Model):
     """TriggerBase.
 
@@ -8525,46 +7984,6 @@ class CustomInferencingServer(InferencingServer):
         self.inference_configuration = inference_configuration
 
 
-class CustomMetricThreshold(msrest.serialization.Model):
-    """CustomMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar metric: Required. [Required] The user-defined metric to calculate.
-    :vartype metric: str
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    """
-
-    _validation = {
-        'metric': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
-    }
-
-    _attribute_map = {
-        'metric': {'key': 'metric', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: str,
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword metric: Required. [Required] The user-defined metric to calculate.
-        :paramtype metric: str
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        """
-        super(CustomMetricThreshold, self).__init__(**kwargs)
-        self.metric = metric
-        self.threshold = threshold
-
-
 class JobInput(msrest.serialization.Model):
     """Command job definition.
 
@@ -8779,140 +8198,6 @@ class CustomModelJobOutput(JobOutput, AssetJobOutput):
         self.uri = uri
         self.job_output_type = 'custom_model'  # type: str
         self.description = description
-
-
-class MonitoringSignalBase(msrest.serialization.Model):
-    """MonitoringSignalBase.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CustomMonitoringSignal, DataDriftMonitoringSignal, DataQualityMonitoringSignal, FeatureAttributionDriftMonitoringSignal, ModelPerformanceSignalBase, PredictionDriftMonitoringSignal.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar lookback_period: The amount of time a single monitor should look back over the target
-     data on a given run.
-    :vartype lookback_period: ~datetime.timedelta
-    :ivar mode: The current notification mode for this signal. Possible values include: "Disabled",
-     "Enabled".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-    :ivar signal_type: Required. [Required] Specifies the type of signal to monitor.Constant filled
-     by server. Possible values include: "DataDrift", "PredictionDrift", "DataQuality",
-     "FeatureAttributionDrift", "Custom", "ModelPerformance".
-    :vartype signal_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringSignalType
-    """
-
-    _validation = {
-        'signal_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'lookback_period': {'key': 'lookbackPeriod', 'type': 'duration'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'signal_type': {'key': 'signalType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'signal_type': {'Custom': 'CustomMonitoringSignal', 'DataDrift': 'DataDriftMonitoringSignal', 'DataQuality': 'DataQualityMonitoringSignal', 'FeatureAttributionDrift': 'FeatureAttributionDriftMonitoringSignal', 'ModelPerformanceSignalBase': 'ModelPerformanceSignalBase', 'PredictionDrift': 'PredictionDriftMonitoringSignal'}
-    }
-
-    def __init__(
-        self,
-        *,
-        lookback_period: Optional[datetime.timedelta] = None,
-        mode: Optional[Union[str, "MonitoringNotificationMode"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword lookback_period: The amount of time a single monitor should look back over the target
-         data on a given run.
-        :paramtype lookback_period: ~datetime.timedelta
-        :keyword mode: The current notification mode for this signal. Possible values include:
-         "Disabled", "Enabled".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-        """
-        super(MonitoringSignalBase, self).__init__(**kwargs)
-        self.lookback_period = lookback_period
-        self.mode = mode
-        self.signal_type = None  # type: Optional[str]
-
-
-class CustomMonitoringSignal(MonitoringSignalBase):
-    """CustomMonitoringSignal.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar lookback_period: The amount of time a single monitor should look back over the target
-     data on a given run.
-    :vartype lookback_period: ~datetime.timedelta
-    :ivar mode: The current notification mode for this signal. Possible values include: "Disabled",
-     "Enabled".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-    :ivar signal_type: Required. [Required] Specifies the type of signal to monitor.Constant filled
-     by server. Possible values include: "DataDrift", "PredictionDrift", "DataQuality",
-     "FeatureAttributionDrift", "Custom", "ModelPerformance".
-    :vartype signal_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringSignalType
-    :ivar component_id: Required. [Required] ARM resource ID of the component resource used to
-     calculate the custom metrics.
-    :vartype component_id: str
-    :ivar input_assets: Monitoring assets to take as input. Key is the component input port name,
-     value is the data asset.
-    :vartype input_assets: dict[str,
-     ~azure.mgmt.machinelearningservices.models.MonitoringInputData]
-    :ivar metric_thresholds: Required. [Required] A list of metrics to calculate and their
-     associated thresholds.
-    :vartype metric_thresholds:
-     list[~azure.mgmt.machinelearningservices.models.CustomMetricThreshold]
-    """
-
-    _validation = {
-        'signal_type': {'required': True},
-        'component_id': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
-        'metric_thresholds': {'required': True},
-    }
-
-    _attribute_map = {
-        'lookback_period': {'key': 'lookbackPeriod', 'type': 'duration'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'signal_type': {'key': 'signalType', 'type': 'str'},
-        'component_id': {'key': 'componentId', 'type': 'str'},
-        'input_assets': {'key': 'inputAssets', 'type': '{MonitoringInputData}'},
-        'metric_thresholds': {'key': 'metricThresholds', 'type': '[CustomMetricThreshold]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        component_id: str,
-        metric_thresholds: List["CustomMetricThreshold"],
-        lookback_period: Optional[datetime.timedelta] = None,
-        mode: Optional[Union[str, "MonitoringNotificationMode"]] = None,
-        input_assets: Optional[Dict[str, "MonitoringInputData"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword lookback_period: The amount of time a single monitor should look back over the target
-         data on a given run.
-        :paramtype lookback_period: ~datetime.timedelta
-        :keyword mode: The current notification mode for this signal. Possible values include:
-         "Disabled", "Enabled".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-        :keyword component_id: Required. [Required] ARM resource ID of the component resource used to
-         calculate the custom metrics.
-        :paramtype component_id: str
-        :keyword input_assets: Monitoring assets to take as input. Key is the component input port
-         name, value is the data asset.
-        :paramtype input_assets: dict[str,
-         ~azure.mgmt.machinelearningservices.models.MonitoringInputData]
-        :keyword metric_thresholds: Required. [Required] A list of metrics to calculate and their
-         associated thresholds.
-        :paramtype metric_thresholds:
-         list[~azure.mgmt.machinelearningservices.models.CustomMetricThreshold]
-        """
-        super(CustomMonitoringSignal, self).__init__(lookback_period=lookback_period, mode=mode, **kwargs)
-        self.signal_type = 'Custom'  # type: str
-        self.component_id = component_id
-        self.input_assets = input_assets
-        self.metric_thresholds = metric_thresholds
 
 
 class CustomNCrossValidations(NCrossValidations):
@@ -9675,94 +8960,6 @@ class DataContainerResourceArmPaginatedResult(msrest.serialization.Model):
         self.value = value
 
 
-class DataDriftMonitoringSignal(MonitoringSignalBase):
-    """DataDriftMonitoringSignal.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar lookback_period: The amount of time a single monitor should look back over the target
-     data on a given run.
-    :vartype lookback_period: ~datetime.timedelta
-    :ivar mode: The current notification mode for this signal. Possible values include: "Disabled",
-     "Enabled".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-    :ivar signal_type: Required. [Required] Specifies the type of signal to monitor.Constant filled
-     by server. Possible values include: "DataDrift", "PredictionDrift", "DataQuality",
-     "FeatureAttributionDrift", "Custom", "ModelPerformance".
-    :vartype signal_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringSignalType
-    :ivar baseline_data: Required. [Required] The data to calculate drift against.
-    :vartype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    :ivar data_segment: The data segment used for scoping on a subset of the data population.
-    :vartype data_segment: ~azure.mgmt.machinelearningservices.models.MonitoringDataSegment
-    :ivar features: The feature filter which identifies which feature to calculate drift over.
-    :vartype features: ~azure.mgmt.machinelearningservices.models.MonitoringFeatureFilterBase
-    :ivar metric_thresholds: Required. [Required] A list of metrics to calculate and their
-     associated thresholds.
-    :vartype metric_thresholds:
-     list[~azure.mgmt.machinelearningservices.models.DataDriftMetricThresholdBase]
-    :ivar target_data: Required. [Required] The data which drift will be calculated for.
-    :vartype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    """
-
-    _validation = {
-        'signal_type': {'required': True},
-        'baseline_data': {'required': True},
-        'metric_thresholds': {'required': True},
-        'target_data': {'required': True},
-    }
-
-    _attribute_map = {
-        'lookback_period': {'key': 'lookbackPeriod', 'type': 'duration'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'signal_type': {'key': 'signalType', 'type': 'str'},
-        'baseline_data': {'key': 'baselineData', 'type': 'MonitoringInputData'},
-        'data_segment': {'key': 'dataSegment', 'type': 'MonitoringDataSegment'},
-        'features': {'key': 'features', 'type': 'MonitoringFeatureFilterBase'},
-        'metric_thresholds': {'key': 'metricThresholds', 'type': '[DataDriftMetricThresholdBase]'},
-        'target_data': {'key': 'targetData', 'type': 'MonitoringInputData'},
-    }
-
-    def __init__(
-        self,
-        *,
-        baseline_data: "MonitoringInputData",
-        metric_thresholds: List["DataDriftMetricThresholdBase"],
-        target_data: "MonitoringInputData",
-        lookback_period: Optional[datetime.timedelta] = None,
-        mode: Optional[Union[str, "MonitoringNotificationMode"]] = None,
-        data_segment: Optional["MonitoringDataSegment"] = None,
-        features: Optional["MonitoringFeatureFilterBase"] = None,
-        **kwargs
-    ):
-        """
-        :keyword lookback_period: The amount of time a single monitor should look back over the target
-         data on a given run.
-        :paramtype lookback_period: ~datetime.timedelta
-        :keyword mode: The current notification mode for this signal. Possible values include:
-         "Disabled", "Enabled".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-        :keyword baseline_data: Required. [Required] The data to calculate drift against.
-        :paramtype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        :keyword data_segment: The data segment used for scoping on a subset of the data population.
-        :paramtype data_segment: ~azure.mgmt.machinelearningservices.models.MonitoringDataSegment
-        :keyword features: The feature filter which identifies which feature to calculate drift over.
-        :paramtype features: ~azure.mgmt.machinelearningservices.models.MonitoringFeatureFilterBase
-        :keyword metric_thresholds: Required. [Required] A list of metrics to calculate and their
-         associated thresholds.
-        :paramtype metric_thresholds:
-         list[~azure.mgmt.machinelearningservices.models.DataDriftMetricThresholdBase]
-        :keyword target_data: Required. [Required] The data which drift will be calculated for.
-        :paramtype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        """
-        super(DataDriftMonitoringSignal, self).__init__(lookback_period=lookback_period, mode=mode, **kwargs)
-        self.signal_type = 'DataDrift'  # type: str
-        self.baseline_data = baseline_data
-        self.data_segment = data_segment
-        self.features = features
-        self.metric_thresholds = metric_thresholds
-        self.target_data = target_data
-
-
 class DataFactory(Compute):
     """A DataFactory compute.
 
@@ -10248,89 +9445,6 @@ class DataPathAssetReference(AssetReferenceBase):
         self.reference_type = 'DataPath'  # type: str
         self.datastore_id = datastore_id
         self.path = path
-
-
-class DataQualityMonitoringSignal(MonitoringSignalBase):
-    """DataQualityMonitoringSignal.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar lookback_period: The amount of time a single monitor should look back over the target
-     data on a given run.
-    :vartype lookback_period: ~datetime.timedelta
-    :ivar mode: The current notification mode for this signal. Possible values include: "Disabled",
-     "Enabled".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-    :ivar signal_type: Required. [Required] Specifies the type of signal to monitor.Constant filled
-     by server. Possible values include: "DataDrift", "PredictionDrift", "DataQuality",
-     "FeatureAttributionDrift", "Custom", "ModelPerformance".
-    :vartype signal_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringSignalType
-    :ivar baseline_data: Required. [Required] The data to calculate drift against.
-    :vartype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    :ivar features: The features to calculate drift over.
-    :vartype features: ~azure.mgmt.machinelearningservices.models.MonitoringFeatureFilterBase
-    :ivar metric_thresholds: Required. [Required] A list of metrics to calculate and their
-     associated thresholds.
-    :vartype metric_thresholds:
-     list[~azure.mgmt.machinelearningservices.models.DataQualityMetricThresholdBase]
-    :ivar target_data: Required. [Required] The data produced by the production service which drift
-     will be calculated for.
-    :vartype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    """
-
-    _validation = {
-        'signal_type': {'required': True},
-        'baseline_data': {'required': True},
-        'metric_thresholds': {'required': True},
-        'target_data': {'required': True},
-    }
-
-    _attribute_map = {
-        'lookback_period': {'key': 'lookbackPeriod', 'type': 'duration'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'signal_type': {'key': 'signalType', 'type': 'str'},
-        'baseline_data': {'key': 'baselineData', 'type': 'MonitoringInputData'},
-        'features': {'key': 'features', 'type': 'MonitoringFeatureFilterBase'},
-        'metric_thresholds': {'key': 'metricThresholds', 'type': '[DataQualityMetricThresholdBase]'},
-        'target_data': {'key': 'targetData', 'type': 'MonitoringInputData'},
-    }
-
-    def __init__(
-        self,
-        *,
-        baseline_data: "MonitoringInputData",
-        metric_thresholds: List["DataQualityMetricThresholdBase"],
-        target_data: "MonitoringInputData",
-        lookback_period: Optional[datetime.timedelta] = None,
-        mode: Optional[Union[str, "MonitoringNotificationMode"]] = None,
-        features: Optional["MonitoringFeatureFilterBase"] = None,
-        **kwargs
-    ):
-        """
-        :keyword lookback_period: The amount of time a single monitor should look back over the target
-         data on a given run.
-        :paramtype lookback_period: ~datetime.timedelta
-        :keyword mode: The current notification mode for this signal. Possible values include:
-         "Disabled", "Enabled".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-        :keyword baseline_data: Required. [Required] The data to calculate drift against.
-        :paramtype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        :keyword features: The features to calculate drift over.
-        :paramtype features: ~azure.mgmt.machinelearningservices.models.MonitoringFeatureFilterBase
-        :keyword metric_thresholds: Required. [Required] A list of metrics to calculate and their
-         associated thresholds.
-        :paramtype metric_thresholds:
-         list[~azure.mgmt.machinelearningservices.models.DataQualityMetricThresholdBase]
-        :keyword target_data: Required. [Required] The data produced by the production service which
-         drift will be calculated for.
-        :paramtype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        """
-        super(DataQualityMonitoringSignal, self).__init__(lookback_period=lookback_period, mode=mode, **kwargs)
-        self.signal_type = 'DataQuality'  # type: str
-        self.baseline_data = baseline_data
-        self.features = features
-        self.metric_thresholds = metric_thresholds
-        self.target_data = target_data
 
 
 class DatasetExportSummary(ExportSummary):
@@ -11418,14 +10532,48 @@ class EndpointAuthToken(msrest.serialization.Model):
         self.token_type = token_type
 
 
+class ScheduleActionBase(msrest.serialization.Model):
+    """ScheduleActionBase.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: JobScheduleAction, ImportDataAction, EndpointScheduleAction.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar action_type: Required. [Required] Specifies the action type of the schedule.Constant
+     filled by server. Possible values include: "CreateJob", "InvokeBatchEndpoint", "ImportData".
+    :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleActionType
+    """
+
+    _validation = {
+        'action_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'action_type': {'key': 'actionType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'action_type': {'CreateJob': 'JobScheduleAction', 'ImportData': 'ImportDataAction', 'InvokeBatchEndpoint': 'EndpointScheduleAction'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ScheduleActionBase, self).__init__(**kwargs)
+        self.action_type = None  # type: Optional[str]
+
+
 class EndpointScheduleAction(ScheduleActionBase):
     """EndpointScheduleAction.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar action_type: Required. [Required] Specifies the action type of the schedule.Constant
-     filled by server. Possible values include: "CreateJob", "InvokeBatchEndpoint", "ImportData",
-     "CreateMonitor".
+     filled by server. Possible values include: "CreateJob", "InvokeBatchEndpoint", "ImportData".
     :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleActionType
     :ivar endpoint_invocation_definition: Required. [Required] Defines Schedule action definition
      details.
@@ -12155,7 +11303,59 @@ class ExternalFQDNResponse(msrest.serialization.Model):
         self.value = value
 
 
-class Feature(msrest.serialization.Model):
+class Feature(Resource):
+    """Azure Resource Manager resource envelope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required. [Required] Additional attributes of the entity.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.FeatureProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'FeatureProperties'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: "FeatureProperties",
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. [Required] Additional attributes of the entity.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.FeatureProperties
+        """
+        super(Feature, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class FeatureProperties(msrest.serialization.Model):
     """Dto object representing feature.
 
     :ivar data_type: Specifies type. Possible values include: "String", "Integer", "Long", "Float",
@@ -12196,14 +11396,14 @@ class Feature(msrest.serialization.Model):
         :keyword tags: A set of tags. Specifies tags.
         :paramtype tags: dict[str, str]
         """
-        super(Feature, self).__init__(**kwargs)
+        super(FeatureProperties, self).__init__(**kwargs)
         self.data_type = data_type
         self.description = description
         self.feature_name = feature_name
         self.tags = tags
 
 
-class FeatureArmPaginatedResult(msrest.serialization.Model):
+class FeatureResourceArmPaginatedResult(msrest.serialization.Model):
     """A paginated list of Feature entities.
 
     :ivar next_link: The link to the next page of Feature objects. If null, there are no additional
@@ -12232,125 +11432,9 @@ class FeatureArmPaginatedResult(msrest.serialization.Model):
         :keyword value: An array of objects of type Feature.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.Feature]
         """
-        super(FeatureArmPaginatedResult, self).__init__(**kwargs)
+        super(FeatureResourceArmPaginatedResult, self).__init__(**kwargs)
         self.next_link = next_link
         self.value = value
-
-
-class FeatureAttributionDriftMonitoringSignal(MonitoringSignalBase):
-    """FeatureAttributionDriftMonitoringSignal.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar lookback_period: The amount of time a single monitor should look back over the target
-     data on a given run.
-    :vartype lookback_period: ~datetime.timedelta
-    :ivar mode: The current notification mode for this signal. Possible values include: "Disabled",
-     "Enabled".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-    :ivar signal_type: Required. [Required] Specifies the type of signal to monitor.Constant filled
-     by server. Possible values include: "DataDrift", "PredictionDrift", "DataQuality",
-     "FeatureAttributionDrift", "Custom", "ModelPerformance".
-    :vartype signal_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringSignalType
-    :ivar baseline_data: Required. [Required] The data to calculate drift against.
-    :vartype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    :ivar metric_threshold: Required. [Required] A list of metrics to calculate and their
-     associated thresholds.
-    :vartype metric_threshold:
-     ~azure.mgmt.machinelearningservices.models.FeatureAttributionMetricThreshold
-    :ivar target_data: Required. [Required] The data which drift will be calculated for.
-    :vartype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    """
-
-    _validation = {
-        'signal_type': {'required': True},
-        'baseline_data': {'required': True},
-        'metric_threshold': {'required': True},
-        'target_data': {'required': True},
-    }
-
-    _attribute_map = {
-        'lookback_period': {'key': 'lookbackPeriod', 'type': 'duration'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'signal_type': {'key': 'signalType', 'type': 'str'},
-        'baseline_data': {'key': 'baselineData', 'type': 'MonitoringInputData'},
-        'metric_threshold': {'key': 'metricThreshold', 'type': 'FeatureAttributionMetricThreshold'},
-        'target_data': {'key': 'targetData', 'type': 'MonitoringInputData'},
-    }
-
-    def __init__(
-        self,
-        *,
-        baseline_data: "MonitoringInputData",
-        metric_threshold: "FeatureAttributionMetricThreshold",
-        target_data: "MonitoringInputData",
-        lookback_period: Optional[datetime.timedelta] = None,
-        mode: Optional[Union[str, "MonitoringNotificationMode"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword lookback_period: The amount of time a single monitor should look back over the target
-         data on a given run.
-        :paramtype lookback_period: ~datetime.timedelta
-        :keyword mode: The current notification mode for this signal. Possible values include:
-         "Disabled", "Enabled".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-        :keyword baseline_data: Required. [Required] The data to calculate drift against.
-        :paramtype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        :keyword metric_threshold: Required. [Required] A list of metrics to calculate and their
-         associated thresholds.
-        :paramtype metric_threshold:
-         ~azure.mgmt.machinelearningservices.models.FeatureAttributionMetricThreshold
-        :keyword target_data: Required. [Required] The data which drift will be calculated for.
-        :paramtype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        """
-        super(FeatureAttributionDriftMonitoringSignal, self).__init__(lookback_period=lookback_period, mode=mode, **kwargs)
-        self.signal_type = 'FeatureAttributionDrift'  # type: str
-        self.baseline_data = baseline_data
-        self.metric_threshold = metric_threshold
-        self.target_data = target_data
-
-
-class FeatureAttributionMetricThreshold(msrest.serialization.Model):
-    """FeatureAttributionMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar metric: Required. [Required] The feature attribution metric to calculate. Possible values
-     include: "NormalizedDiscountedCumulativeGain".
-    :vartype metric: str or ~azure.mgmt.machinelearningservices.models.FeatureAttributionMetric
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    """
-
-    _validation = {
-        'metric': {'required': True},
-    }
-
-    _attribute_map = {
-        'metric': {'key': 'metric', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: Union[str, "FeatureAttributionMetric"],
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword metric: Required. [Required] The feature attribution metric to calculate. Possible
-         values include: "NormalizedDiscountedCumulativeGain".
-        :paramtype metric: str or ~azure.mgmt.machinelearningservices.models.FeatureAttributionMetric
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        """
-        super(FeatureAttributionMetricThreshold, self).__init__(**kwargs)
-        self.metric = metric
-        self.threshold = threshold
 
 
 class FeaturesetContainer(Resource):
@@ -13254,45 +12338,6 @@ class FeatureStoreSettings(msrest.serialization.Model):
         self.online_store_connection_name = online_store_connection_name
 
 
-class FeatureSubset(MonitoringFeatureFilterBase):
-    """FeatureSubset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar filter_type: Required. [Required] Specifies the feature filter to leverage when selecting
-     features to calculate metrics over.Constant filled by server. Possible values include:
-     "AllFeatures", "TopNByAttribution", "FeatureSubset".
-    :vartype filter_type: str or
-     ~azure.mgmt.machinelearningservices.models.MonitoringFeatureFilterType
-    :ivar features: Required. [Required] The list of features to include.
-    :vartype features: list[str]
-    """
-
-    _validation = {
-        'filter_type': {'required': True},
-        'features': {'required': True},
-    }
-
-    _attribute_map = {
-        'filter_type': {'key': 'filterType', 'type': 'str'},
-        'features': {'key': 'features', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        features: List[str],
-        **kwargs
-    ):
-        """
-        :keyword features: Required. [Required] The list of features to include.
-        :paramtype features: list[str]
-        """
-        super(FeatureSubset, self).__init__(**kwargs)
-        self.filter_type = 'FeatureSubset'  # type: str
-        self.features = features
-
-
 class FeatureWindow(msrest.serialization.Model):
     """Specifies the feature window.
 
@@ -13360,7 +12405,7 @@ class FileSystemSource(DataImportSource):
     :ivar source_type: Required. [Required] Specifies the type of data.Constant filled by server.
      Possible values include: "database", "file_system".
     :vartype source_type: str or ~azure.mgmt.machinelearningservices.models.DataImportSourceType
-    :ivar path: Path on data import FileSystem source.
+    :ivar path: Path on data import FileSystem souce.
     :vartype path: str
     """
 
@@ -13384,7 +12429,7 @@ class FileSystemSource(DataImportSource):
         """
         :keyword connection: Workspace connection for data import source storage.
         :paramtype connection: str
-        :keyword path: Path on data import FileSystem source.
+        :keyword path: Path on data import FileSystem souce.
         :paramtype path: str
         """
         super(FileSystemSource, self).__init__(connection=connection, **kwargs)
@@ -13997,31 +13042,6 @@ class FQDNEndpointsProperties(msrest.serialization.Model):
         super(FQDNEndpointsProperties, self).__init__(**kwargs)
         self.category = category
         self.endpoints = endpoints
-
-
-class GetFeatureRequest(msrest.serialization.Model):
-    """Request payload to retrieve feature information from a  given feature set version.
-
-    :ivar feature_name: Specifies name of the feature.
-    :vartype feature_name: str
-    """
-
-    _attribute_map = {
-        'feature_name': {'key': 'featureName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        feature_name: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword feature_name: Specifies name of the feature.
-        :paramtype feature_name: str
-        """
-        super(GetFeatureRequest, self).__init__(**kwargs)
-        self.feature_name = feature_name
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
@@ -17251,8 +16271,7 @@ class ImportDataAction(ScheduleActionBase):
     All required parameters must be populated in order to send to Azure.
 
     :ivar action_type: Required. [Required] Specifies the action type of the schedule.Constant
-     filled by server. Possible values include: "CreateJob", "InvokeBatchEndpoint", "ImportData",
-     "CreateMonitor".
+     filled by server. Possible values include: "CreateJob", "InvokeBatchEndpoint", "ImportData".
     :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleActionType
     :ivar data_import_definition: Required. [Required] Defines Schedule action definition details.
     :vartype data_import_definition: ~azure.mgmt.machinelearningservices.models.DataImport
@@ -17635,8 +16654,7 @@ class JobScheduleAction(ScheduleActionBase):
     All required parameters must be populated in order to send to Azure.
 
     :ivar action_type: Required. [Required] Specifies the action type of the schedule.Constant
-     filled by server. Possible values include: "CreateJob", "InvokeBatchEndpoint", "ImportData",
-     "CreateMonitor".
+     filled by server. Possible values include: "CreateJob", "InvokeBatchEndpoint", "ImportData".
     :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleActionType
     :ivar job_definition: Required. [Required] Defines Schedule action definition details.
     :vartype job_definition: ~azure.mgmt.machinelearningservices.models.JobBaseProperties
@@ -18797,9 +17815,6 @@ class LabelingJobProperties(JobBaseProperties):
     :vartype job_type: str or ~azure.mgmt.machinelearningservices.models.JobType
     :ivar notification_setting: Notification setting for the job.
     :vartype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-    :ivar secrets_configuration: Configuration for secrets to be made available during runtime.
-    :vartype secrets_configuration: dict[str,
-     ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
     :ivar services: List of JobEndpoints.
      For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
     :vartype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -18856,7 +17871,6 @@ class LabelingJobProperties(JobBaseProperties):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'job_type': {'key': 'jobType', 'type': 'str'},
         'notification_setting': {'key': 'notificationSetting', 'type': 'NotificationSetting'},
-        'secrets_configuration': {'key': 'secretsConfiguration', 'type': '{SecretConfiguration}'},
         'services': {'key': 'services', 'type': '{JobService}'},
         'status': {'key': 'status', 'type': 'str'},
         'created_date_time': {'key': 'createdDateTime', 'type': 'iso-8601'},
@@ -18884,7 +17898,6 @@ class LabelingJobProperties(JobBaseProperties):
         identity: Optional["IdentityConfiguration"] = None,
         is_archived: Optional[bool] = False,
         notification_setting: Optional["NotificationSetting"] = None,
-        secrets_configuration: Optional[Dict[str, "SecretConfiguration"]] = None,
         services: Optional[Dict[str, "JobService"]] = None,
         data_configuration: Optional["LabelingDataConfiguration"] = None,
         job_instructions: Optional["LabelingJobInstructions"] = None,
@@ -18917,9 +17930,6 @@ class LabelingJobProperties(JobBaseProperties):
         :paramtype is_archived: bool
         :keyword notification_setting: Notification setting for the job.
         :paramtype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-        :keyword secrets_configuration: Configuration for secrets to be made available during runtime.
-        :paramtype secrets_configuration: dict[str,
-         ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
         :keyword services: List of JobEndpoints.
          For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
         :paramtype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -18938,7 +17948,7 @@ class LabelingJobProperties(JobBaseProperties):
         :paramtype ml_assist_configuration:
          ~azure.mgmt.machinelearningservices.models.MLAssistConfiguration
         """
-        super(LabelingJobProperties, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, secrets_configuration=secrets_configuration, services=services, **kwargs)
+        super(LabelingJobProperties, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, services=services, **kwargs)
         self.job_type = 'Labeling'  # type: str
         self.created_date_time = None
         self.data_configuration = data_configuration
@@ -20517,89 +19527,6 @@ class ModelPackageInput(msrest.serialization.Model):
         self.path = path
 
 
-class ModelPerformanceSignalBase(MonitoringSignalBase):
-    """ModelPerformanceSignalBase.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar lookback_period: The amount of time a single monitor should look back over the target
-     data on a given run.
-    :vartype lookback_period: ~datetime.timedelta
-    :ivar mode: The current notification mode for this signal. Possible values include: "Disabled",
-     "Enabled".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-    :ivar signal_type: Required. [Required] Specifies the type of signal to monitor.Constant filled
-     by server. Possible values include: "DataDrift", "PredictionDrift", "DataQuality",
-     "FeatureAttributionDrift", "Custom", "ModelPerformance".
-    :vartype signal_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringSignalType
-    :ivar baseline_data: Required. [Required] The data to calculate drift against.
-    :vartype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    :ivar data_segment: The data segment.
-    :vartype data_segment: ~azure.mgmt.machinelearningservices.models.MonitoringDataSegment
-    :ivar metric_threshold: Required. [Required] A list of metrics to calculate and their
-     associated thresholds.
-    :vartype metric_threshold:
-     ~azure.mgmt.machinelearningservices.models.ModelPerformanceMetricThresholdBase
-    :ivar target_data: Required. [Required] The data produced by the production service which drift
-     will be calculated for.
-    :vartype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    """
-
-    _validation = {
-        'signal_type': {'required': True},
-        'baseline_data': {'required': True},
-        'metric_threshold': {'required': True},
-        'target_data': {'required': True},
-    }
-
-    _attribute_map = {
-        'lookback_period': {'key': 'lookbackPeriod', 'type': 'duration'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'signal_type': {'key': 'signalType', 'type': 'str'},
-        'baseline_data': {'key': 'baselineData', 'type': 'MonitoringInputData'},
-        'data_segment': {'key': 'dataSegment', 'type': 'MonitoringDataSegment'},
-        'metric_threshold': {'key': 'metricThreshold', 'type': 'ModelPerformanceMetricThresholdBase'},
-        'target_data': {'key': 'targetData', 'type': 'MonitoringInputData'},
-    }
-
-    def __init__(
-        self,
-        *,
-        baseline_data: "MonitoringInputData",
-        metric_threshold: "ModelPerformanceMetricThresholdBase",
-        target_data: "MonitoringInputData",
-        lookback_period: Optional[datetime.timedelta] = None,
-        mode: Optional[Union[str, "MonitoringNotificationMode"]] = None,
-        data_segment: Optional["MonitoringDataSegment"] = None,
-        **kwargs
-    ):
-        """
-        :keyword lookback_period: The amount of time a single monitor should look back over the target
-         data on a given run.
-        :paramtype lookback_period: ~datetime.timedelta
-        :keyword mode: The current notification mode for this signal. Possible values include:
-         "Disabled", "Enabled".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-        :keyword baseline_data: Required. [Required] The data to calculate drift against.
-        :paramtype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        :keyword data_segment: The data segment.
-        :paramtype data_segment: ~azure.mgmt.machinelearningservices.models.MonitoringDataSegment
-        :keyword metric_threshold: Required. [Required] A list of metrics to calculate and their
-         associated thresholds.
-        :paramtype metric_threshold:
-         ~azure.mgmt.machinelearningservices.models.ModelPerformanceMetricThresholdBase
-        :keyword target_data: Required. [Required] The data produced by the production service which
-         drift will be calculated for.
-        :paramtype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        """
-        super(ModelPerformanceSignalBase, self).__init__(lookback_period=lookback_period, mode=mode, **kwargs)
-        self.signal_type = 'ModelPerformanceSignalBase'  # type: str
-        self.baseline_data = baseline_data
-        self.data_segment = data_segment
-        self.metric_threshold = metric_threshold
-        self.target_data = target_data
-
-
 class ModelVersion(Resource):
     """Azure Resource Manager resource envelope.
 
@@ -20798,171 +19725,6 @@ class ModelVersionResourceArmPaginatedResult(msrest.serialization.Model):
         """
         super(ModelVersionResourceArmPaginatedResult, self).__init__(**kwargs)
         self.next_link = next_link
-        self.value = value
-
-
-class MonitorDefinition(msrest.serialization.Model):
-    """MonitorDefinition.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar compute_id: Required. [Required] The ARM resource ID of the compute resource to run the
-     monitoring job on.
-    :vartype compute_id: str
-    :ivar monitoring_target: The ARM resource ID of either the model or deployment targeted by this
-     monitor.
-    :vartype monitoring_target: str
-    :ivar notification_setting: The monitor's notification settings.
-    :vartype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-    :ivar signals: Required. [Required] The signals to monitor.
-    :vartype signals: dict[str, ~azure.mgmt.machinelearningservices.models.MonitoringSignalBase]
-    """
-
-    _validation = {
-        'compute_id': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
-        'signals': {'required': True},
-    }
-
-    _attribute_map = {
-        'compute_id': {'key': 'computeId', 'type': 'str'},
-        'monitoring_target': {'key': 'monitoringTarget', 'type': 'str'},
-        'notification_setting': {'key': 'notificationSetting', 'type': 'NotificationSetting'},
-        'signals': {'key': 'signals', 'type': '{MonitoringSignalBase}'},
-    }
-
-    def __init__(
-        self,
-        *,
-        compute_id: str,
-        signals: Dict[str, "MonitoringSignalBase"],
-        monitoring_target: Optional[str] = None,
-        notification_setting: Optional["NotificationSetting"] = None,
-        **kwargs
-    ):
-        """
-        :keyword compute_id: Required. [Required] The ARM resource ID of the compute resource to run
-         the monitoring job on.
-        :paramtype compute_id: str
-        :keyword monitoring_target: The ARM resource ID of either the model or deployment targeted by
-         this monitor.
-        :paramtype monitoring_target: str
-        :keyword notification_setting: The monitor's notification settings.
-        :paramtype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-        :keyword signals: Required. [Required] The signals to monitor.
-        :paramtype signals: dict[str, ~azure.mgmt.machinelearningservices.models.MonitoringSignalBase]
-        """
-        super(MonitorDefinition, self).__init__(**kwargs)
-        self.compute_id = compute_id
-        self.monitoring_target = monitoring_target
-        self.notification_setting = notification_setting
-        self.signals = signals
-
-
-class MonitoringDataSegment(msrest.serialization.Model):
-    """MonitoringDataSegment.
-
-    :ivar feature: The feature to segment the data on.
-    :vartype feature: str
-    :ivar values: Filters for only the specified values of the given segmented feature.
-    :vartype values: list[str]
-    """
-
-    _attribute_map = {
-        'feature': {'key': 'feature', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        feature: Optional[str] = None,
-        values: Optional[List[str]] = None,
-        **kwargs
-    ):
-        """
-        :keyword feature: The feature to segment the data on.
-        :paramtype feature: str
-        :keyword values: Filters for only the specified values of the given segmented feature.
-        :paramtype values: list[str]
-        """
-        super(MonitoringDataSegment, self).__init__(**kwargs)
-        self.feature = feature
-        self.values = values
-
-
-class MonitoringInputData(msrest.serialization.Model):
-    """MonitoringInputData.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar asset: The data asset input to be leveraged by the monitoring job..
-    :vartype asset: any
-    :ivar data_context: Required. [Required] The context of the data source. Possible values
-     include: "ModelInputs", "ModelOutputs", "Training", "Test", "Validation", "GroundTruth".
-    :vartype data_context: str or
-     ~azure.mgmt.machinelearningservices.models.MonitoringInputDataContext
-    :ivar preprocessing_component_id: The ARM resource ID of the component resource used to
-     preprocess the data.
-    :vartype preprocessing_component_id: str
-    """
-
-    _validation = {
-        'data_context': {'required': True},
-    }
-
-    _attribute_map = {
-        'asset': {'key': 'asset', 'type': 'object'},
-        'data_context': {'key': 'dataContext', 'type': 'str'},
-        'preprocessing_component_id': {'key': 'preprocessingComponentId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        data_context: Union[str, "MonitoringInputDataContext"],
-        asset: Optional[Any] = None,
-        preprocessing_component_id: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword asset: The data asset input to be leveraged by the monitoring job..
-        :paramtype asset: any
-        :keyword data_context: Required. [Required] The context of the data source. Possible values
-         include: "ModelInputs", "ModelOutputs", "Training", "Test", "Validation", "GroundTruth".
-        :paramtype data_context: str or
-         ~azure.mgmt.machinelearningservices.models.MonitoringInputDataContext
-        :keyword preprocessing_component_id: The ARM resource ID of the component resource used to
-         preprocess the data.
-        :paramtype preprocessing_component_id: str
-        """
-        super(MonitoringInputData, self).__init__(**kwargs)
-        self.asset = asset
-        self.data_context = data_context
-        self.preprocessing_component_id = preprocessing_component_id
-
-
-class MonitoringThreshold(msrest.serialization.Model):
-    """MonitoringThreshold.
-
-    :ivar value: The threshold value. If null, the set default is dependent on the metric type.
-    :vartype value: float
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'float'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[float] = None,
-        **kwargs
-    ):
-        """
-        :keyword value: The threshold value. If null, the set default is dependent on the metric type.
-        :paramtype value: float
-        """
-        super(MonitoringThreshold, self).__init__(**kwargs)
         self.value = value
 
 
@@ -21681,153 +20443,6 @@ class NotificationSetting(msrest.serialization.Model):
         self.email_on = email_on
         self.emails = emails
         self.webhooks = webhooks
-
-
-class NumericalDataDriftMetricThreshold(DataDriftMetricThresholdBase):
-    """NumericalDataDriftMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Numerical", "Categorical".
-    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    :ivar metric: Required. [Required] The numerical data drift metric to calculate. Possible
-     values include: "JensenShannonDistance", "PopulationStabilityIndex",
-     "NormalizedWassersteinDistance", "TwoSampleKolmogorovSmirnovTest".
-    :vartype metric: str or ~azure.mgmt.machinelearningservices.models.NumericalDataDriftMetric
-    """
-
-    _validation = {
-        'data_type': {'required': True},
-        'metric': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-        'metric': {'key': 'metric', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: Union[str, "NumericalDataDriftMetric"],
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        :keyword metric: Required. [Required] The numerical data drift metric to calculate. Possible
-         values include: "JensenShannonDistance", "PopulationStabilityIndex",
-         "NormalizedWassersteinDistance", "TwoSampleKolmogorovSmirnovTest".
-        :paramtype metric: str or ~azure.mgmt.machinelearningservices.models.NumericalDataDriftMetric
-        """
-        super(NumericalDataDriftMetricThreshold, self).__init__(threshold=threshold, **kwargs)
-        self.data_type = 'Numerical'  # type: str
-        self.metric = metric
-
-
-class NumericalDataQualityMetricThreshold(DataQualityMetricThresholdBase):
-    """NumericalDataQualityMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Numerical", "Categorical".
-    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    :ivar metric: Required. [Required] The numerical data quality metric to calculate. Possible
-     values include: "NullValueRate", "DataTypeErrorRate", "OutOfBoundsRate".
-    :vartype metric: str or ~azure.mgmt.machinelearningservices.models.NumericalDataQualityMetric
-    """
-
-    _validation = {
-        'data_type': {'required': True},
-        'metric': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-        'metric': {'key': 'metric', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: Union[str, "NumericalDataQualityMetric"],
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        :keyword metric: Required. [Required] The numerical data quality metric to calculate. Possible
-         values include: "NullValueRate", "DataTypeErrorRate", "OutOfBoundsRate".
-        :paramtype metric: str or ~azure.mgmt.machinelearningservices.models.NumericalDataQualityMetric
-        """
-        super(NumericalDataQualityMetricThreshold, self).__init__(threshold=threshold, **kwargs)
-        self.data_type = 'Numerical'  # type: str
-        self.metric = metric
-
-
-class NumericalPredictionDriftMetricThreshold(PredictionDriftMetricThresholdBase):
-    """NumericalPredictionDriftMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Numerical", "Categorical".
-    :vartype data_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringFeatureDataType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    :ivar metric: Required. [Required] The numerical prediction drift metric to calculate. Possible
-     values include: "JensenShannonDistance", "PopulationStabilityIndex",
-     "NormalizedWassersteinDistance", "TwoSampleKolmogorovSmirnovTest".
-    :vartype metric: str or
-     ~azure.mgmt.machinelearningservices.models.NumericalPredictionDriftMetric
-    """
-
-    _validation = {
-        'data_type': {'required': True},
-        'metric': {'required': True},
-    }
-
-    _attribute_map = {
-        'data_type': {'key': 'dataType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-        'metric': {'key': 'metric', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: Union[str, "NumericalPredictionDriftMetric"],
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        :keyword metric: Required. [Required] The numerical prediction drift metric to calculate.
-         Possible values include: "JensenShannonDistance", "PopulationStabilityIndex",
-         "NormalizedWassersteinDistance", "TwoSampleKolmogorovSmirnovTest".
-        :paramtype metric: str or
-         ~azure.mgmt.machinelearningservices.models.NumericalPredictionDriftMetric
-        """
-        super(NumericalPredictionDriftMetricThreshold, self).__init__(threshold=threshold, **kwargs)
-        self.data_type = 'Numerical'  # type: str
-        self.metric = metric
 
 
 class Objective(msrest.serialization.Model):
@@ -23485,9 +22100,6 @@ class PipelineJob(JobBaseProperties):
     :vartype job_type: str or ~azure.mgmt.machinelearningservices.models.JobType
     :ivar notification_setting: Notification setting for the job.
     :vartype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-    :ivar secrets_configuration: Configuration for secrets to be made available during runtime.
-    :vartype secrets_configuration: dict[str,
-     ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
     :ivar services: List of JobEndpoints.
      For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
     :vartype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -23524,7 +22136,6 @@ class PipelineJob(JobBaseProperties):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'job_type': {'key': 'jobType', 'type': 'str'},
         'notification_setting': {'key': 'notificationSetting', 'type': 'NotificationSetting'},
-        'secrets_configuration': {'key': 'secretsConfiguration', 'type': '{SecretConfiguration}'},
         'services': {'key': 'services', 'type': '{JobService}'},
         'status': {'key': 'status', 'type': 'str'},
         'inputs': {'key': 'inputs', 'type': '{JobInput}'},
@@ -23547,7 +22158,6 @@ class PipelineJob(JobBaseProperties):
         identity: Optional["IdentityConfiguration"] = None,
         is_archived: Optional[bool] = False,
         notification_setting: Optional["NotificationSetting"] = None,
-        secrets_configuration: Optional[Dict[str, "SecretConfiguration"]] = None,
         services: Optional[Dict[str, "JobService"]] = None,
         inputs: Optional[Dict[str, "JobInput"]] = None,
         jobs: Optional[Dict[str, Any]] = None,
@@ -23580,9 +22190,6 @@ class PipelineJob(JobBaseProperties):
         :paramtype is_archived: bool
         :keyword notification_setting: Notification setting for the job.
         :paramtype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-        :keyword secrets_configuration: Configuration for secrets to be made available during runtime.
-        :paramtype secrets_configuration: dict[str,
-         ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
         :keyword services: List of JobEndpoints.
          For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
         :paramtype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -23597,97 +22204,13 @@ class PipelineJob(JobBaseProperties):
         :keyword source_job_id: ARM resource ID of source job.
         :paramtype source_job_id: str
         """
-        super(PipelineJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, secrets_configuration=secrets_configuration, services=services, **kwargs)
+        super(PipelineJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, services=services, **kwargs)
         self.job_type = 'Pipeline'  # type: str
         self.inputs = inputs
         self.jobs = jobs
         self.outputs = outputs
         self.settings = settings
         self.source_job_id = source_job_id
-
-
-class PredictionDriftMonitoringSignal(MonitoringSignalBase):
-    """PredictionDriftMonitoringSignal.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar lookback_period: The amount of time a single monitor should look back over the target
-     data on a given run.
-    :vartype lookback_period: ~datetime.timedelta
-    :ivar mode: The current notification mode for this signal. Possible values include: "Disabled",
-     "Enabled".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-    :ivar signal_type: Required. [Required] Specifies the type of signal to monitor.Constant filled
-     by server. Possible values include: "DataDrift", "PredictionDrift", "DataQuality",
-     "FeatureAttributionDrift", "Custom", "ModelPerformance".
-    :vartype signal_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringSignalType
-    :ivar baseline_data: Required. [Required] The data to calculate drift against.
-    :vartype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    :ivar metric_thresholds: Required. [Required] A list of metrics to calculate and their
-     associated thresholds.
-    :vartype metric_thresholds:
-     list[~azure.mgmt.machinelearningservices.models.PredictionDriftMetricThresholdBase]
-    :ivar model_type: Required. [Required] The type of the model monitored. Possible values
-     include: "Classification", "Regression".
-    :vartype model_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringModelType
-    :ivar target_data: Required. [Required] The data which drift will be calculatd for.
-    :vartype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-    """
-
-    _validation = {
-        'signal_type': {'required': True},
-        'baseline_data': {'required': True},
-        'metric_thresholds': {'required': True},
-        'model_type': {'required': True},
-        'target_data': {'required': True},
-    }
-
-    _attribute_map = {
-        'lookback_period': {'key': 'lookbackPeriod', 'type': 'duration'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'signal_type': {'key': 'signalType', 'type': 'str'},
-        'baseline_data': {'key': 'baselineData', 'type': 'MonitoringInputData'},
-        'metric_thresholds': {'key': 'metricThresholds', 'type': '[PredictionDriftMetricThresholdBase]'},
-        'model_type': {'key': 'modelType', 'type': 'str'},
-        'target_data': {'key': 'targetData', 'type': 'MonitoringInputData'},
-    }
-
-    def __init__(
-        self,
-        *,
-        baseline_data: "MonitoringInputData",
-        metric_thresholds: List["PredictionDriftMetricThresholdBase"],
-        model_type: Union[str, "MonitoringModelType"],
-        target_data: "MonitoringInputData",
-        lookback_period: Optional[datetime.timedelta] = None,
-        mode: Optional[Union[str, "MonitoringNotificationMode"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword lookback_period: The amount of time a single monitor should look back over the target
-         data on a given run.
-        :paramtype lookback_period: ~datetime.timedelta
-        :keyword mode: The current notification mode for this signal. Possible values include:
-         "Disabled", "Enabled".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.MonitoringNotificationMode
-        :keyword baseline_data: Required. [Required] The data to calculate drift against.
-        :paramtype baseline_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        :keyword metric_thresholds: Required. [Required] A list of metrics to calculate and their
-         associated thresholds.
-        :paramtype metric_thresholds:
-         list[~azure.mgmt.machinelearningservices.models.PredictionDriftMetricThresholdBase]
-        :keyword model_type: Required. [Required] The type of the model monitored. Possible values
-         include: "Classification", "Regression".
-        :paramtype model_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringModelType
-        :keyword target_data: Required. [Required] The data which drift will be calculatd for.
-        :paramtype target_data: ~azure.mgmt.machinelearningservices.models.MonitoringInputData
-        """
-        super(PredictionDriftMonitoringSignal, self).__init__(lookback_period=lookback_period, mode=mode, **kwargs)
-        self.signal_type = 'PredictionDrift'  # type: str
-        self.baseline_data = baseline_data
-        self.metric_thresholds = metric_thresholds
-        self.model_type = model_type
-        self.target_data = target_data
 
 
 class PrivateEndpoint(msrest.serialization.Model):
@@ -25040,55 +23563,6 @@ class Regression(AutoMLVertical, TableVertical):
         self.training_data = training_data
 
 
-class RegressionModelPerformanceMetricThreshold(ModelPerformanceMetricThresholdBase):
-    """RegressionModelPerformanceMetricThreshold.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar model_type: Required. [Required] Specifies the data type of the metric threshold.Constant
-     filled by server. Possible values include: "Classification", "Regression".
-    :vartype model_type: str or ~azure.mgmt.machinelearningservices.models.MonitoringModelType
-    :ivar threshold: The threshold value. If null, a default value will be set depending on the
-     selected metric.
-    :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-    :ivar metric: Required. [Required] The regression model performance metric to calculate.
-     Possible values include: "MeanAbsoluteError", "RootMeanSquaredError", "MeanSquaredError".
-    :vartype metric: str or
-     ~azure.mgmt.machinelearningservices.models.RegressionModelPerformanceMetric
-    """
-
-    _validation = {
-        'model_type': {'required': True},
-        'metric': {'required': True},
-    }
-
-    _attribute_map = {
-        'model_type': {'key': 'modelType', 'type': 'str'},
-        'threshold': {'key': 'threshold', 'type': 'MonitoringThreshold'},
-        'metric': {'key': 'metric', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        metric: Union[str, "RegressionModelPerformanceMetric"],
-        threshold: Optional["MonitoringThreshold"] = None,
-        **kwargs
-    ):
-        """
-        :keyword threshold: The threshold value. If null, a default value will be set depending on the
-         selected metric.
-        :paramtype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
-        :keyword metric: Required. [Required] The regression model performance metric to calculate.
-         Possible values include: "MeanAbsoluteError", "RootMeanSquaredError", "MeanSquaredError".
-        :paramtype metric: str or
-         ~azure.mgmt.machinelearningservices.models.RegressionModelPerformanceMetric
-        """
-        super(RegressionModelPerformanceMetricThreshold, self).__init__(threshold=threshold, **kwargs)
-        self.model_type = 'Regression'  # type: str
-        self.metric = metric
-
-
 class RegressionTrainingSettings(TrainingSettings):
     """Regression Training related configuration.
 
@@ -25453,9 +23927,9 @@ class SASCredentialDto(PendingUploadCredentialDto):
      ~azure.mgmt.machinelearningservices.models.PendingUploadCredentialType
     :ivar sas_uri: Full SAS Uri, including the storage, container/blob path and SAS token.
     :vartype sas_uri: str
-    :ivar wasbs_uri: Windows Azure Storage Blob formatted uri for mounting containers at root, a
-     subdirectory, or a specific file
-     example wasbs://[container_name]@[account_name].blob.core.windows.net/[path]?sas=[sas]
+    :ivar wasbs_uri: wasbs formatted uri for mounting containers at root, a subdirectory, or a
+     specific file
+     wasbs://[container_name]@[account_name].blob.core.windows.net/[path]?sas=[sas]
      For now, the URI will just be the root path ([path] will be empty).
     :vartype wasbs_uri: str
     """
@@ -25480,9 +23954,9 @@ class SASCredentialDto(PendingUploadCredentialDto):
         """
         :keyword sas_uri: Full SAS Uri, including the storage, container/blob path and SAS token.
         :paramtype sas_uri: str
-        :keyword wasbs_uri: Windows Azure Storage Blob formatted uri for mounting containers at root, a
-         subdirectory, or a specific file
-         example wasbs://[container_name]@[account_name].blob.core.windows.net/[path]?sas=[sas]
+        :keyword wasbs_uri: wasbs formatted uri for mounting containers at root, a subdirectory, or a
+         specific file
+         wasbs://[container_name]@[account_name].blob.core.windows.net/[path]?sas=[sas]
          For now, the URI will just be the root path ([path] will be empty).
         :paramtype wasbs_uri: str
         """
@@ -25926,40 +24400,6 @@ class ScriptsToExecute(msrest.serialization.Model):
         super(ScriptsToExecute, self).__init__(**kwargs)
         self.startup_script = startup_script
         self.creation_script = creation_script
-
-
-class SecretConfiguration(msrest.serialization.Model):
-    """Secret Configuration definition.
-
-    :ivar uri: Secret Uri.
-     Sample Uri : https://myvault.vault.azure.net/secrets/mysecretname/secretversion.
-    :vartype uri: str
-    :ivar workspace_secret_name: Name of secret in workspace key vault.
-    :vartype workspace_secret_name: str
-    """
-
-    _attribute_map = {
-        'uri': {'key': 'uri', 'type': 'str'},
-        'workspace_secret_name': {'key': 'workspaceSecretName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        uri: Optional[str] = None,
-        workspace_secret_name: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword uri: Secret Uri.
-         Sample Uri : https://myvault.vault.azure.net/secrets/mysecretname/secretversion.
-        :paramtype uri: str
-        :keyword workspace_secret_name: Name of secret in workspace key vault.
-        :paramtype workspace_secret_name: str
-        """
-        super(SecretConfiguration, self).__init__(**kwargs)
-        self.uri = uri
-        self.workspace_secret_name = workspace_secret_name
 
 
 class ServiceManagedResourcesSettings(msrest.serialization.Model):
@@ -26635,9 +25075,6 @@ class SparkJob(JobBaseProperties):
     :vartype job_type: str or ~azure.mgmt.machinelearningservices.models.JobType
     :ivar notification_setting: Notification setting for the job.
     :vartype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-    :ivar secrets_configuration: Configuration for secrets to be made available during runtime.
-    :vartype secrets_configuration: dict[str,
-     ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
     :ivar services: List of JobEndpoints.
      For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
     :vartype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -26692,7 +25129,6 @@ class SparkJob(JobBaseProperties):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'job_type': {'key': 'jobType', 'type': 'str'},
         'notification_setting': {'key': 'notificationSetting', 'type': 'NotificationSetting'},
-        'secrets_configuration': {'key': 'secretsConfiguration', 'type': '{SecretConfiguration}'},
         'services': {'key': 'services', 'type': '{JobService}'},
         'status': {'key': 'status', 'type': 'str'},
         'archives': {'key': 'archives', 'type': '[str]'},
@@ -26725,7 +25161,6 @@ class SparkJob(JobBaseProperties):
         identity: Optional["IdentityConfiguration"] = None,
         is_archived: Optional[bool] = False,
         notification_setting: Optional["NotificationSetting"] = None,
-        secrets_configuration: Optional[Dict[str, "SecretConfiguration"]] = None,
         services: Optional[Dict[str, "JobService"]] = None,
         archives: Optional[List[str]] = None,
         args: Optional[str] = None,
@@ -26764,9 +25199,6 @@ class SparkJob(JobBaseProperties):
         :paramtype is_archived: bool
         :keyword notification_setting: Notification setting for the job.
         :paramtype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-        :keyword secrets_configuration: Configuration for secrets to be made available during runtime.
-        :paramtype secrets_configuration: dict[str,
-         ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
         :keyword services: List of JobEndpoints.
          For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
         :paramtype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -26797,7 +25229,7 @@ class SparkJob(JobBaseProperties):
         :keyword resources: Compute Resource configuration for the job.
         :paramtype resources: ~azure.mgmt.machinelearningservices.models.SparkResourceConfiguration
         """
-        super(SparkJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, secrets_configuration=secrets_configuration, services=services, **kwargs)
+        super(SparkJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, services=services, **kwargs)
         self.job_type = 'Spark'  # type: str
         self.archives = archives
         self.args = args
@@ -27185,9 +25617,6 @@ class SweepJob(JobBaseProperties):
     :vartype job_type: str or ~azure.mgmt.machinelearningservices.models.JobType
     :ivar notification_setting: Notification setting for the job.
     :vartype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-    :ivar secrets_configuration: Configuration for secrets to be made available during runtime.
-    :vartype secrets_configuration: dict[str,
-     ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
     :ivar services: List of JobEndpoints.
      For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
     :vartype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -27238,7 +25667,6 @@ class SweepJob(JobBaseProperties):
         'is_archived': {'key': 'isArchived', 'type': 'bool'},
         'job_type': {'key': 'jobType', 'type': 'str'},
         'notification_setting': {'key': 'notificationSetting', 'type': 'NotificationSetting'},
-        'secrets_configuration': {'key': 'secretsConfiguration', 'type': '{SecretConfiguration}'},
         'services': {'key': 'services', 'type': '{JobService}'},
         'status': {'key': 'status', 'type': 'str'},
         'early_termination': {'key': 'earlyTermination', 'type': 'EarlyTerminationPolicy'},
@@ -27269,7 +25697,6 @@ class SweepJob(JobBaseProperties):
         identity: Optional["IdentityConfiguration"] = None,
         is_archived: Optional[bool] = False,
         notification_setting: Optional["NotificationSetting"] = None,
-        secrets_configuration: Optional[Dict[str, "SecretConfiguration"]] = None,
         services: Optional[Dict[str, "JobService"]] = None,
         early_termination: Optional["EarlyTerminationPolicy"] = None,
         inputs: Optional[Dict[str, "JobInput"]] = None,
@@ -27302,9 +25729,6 @@ class SweepJob(JobBaseProperties):
         :paramtype is_archived: bool
         :keyword notification_setting: Notification setting for the job.
         :paramtype notification_setting: ~azure.mgmt.machinelearningservices.models.NotificationSetting
-        :keyword secrets_configuration: Configuration for secrets to be made available during runtime.
-        :paramtype secrets_configuration: dict[str,
-         ~azure.mgmt.machinelearningservices.models.SecretConfiguration]
         :keyword services: List of JobEndpoints.
          For local jobs, a job endpoint will have an endpoint value of FileStreamObject.
         :paramtype services: dict[str, ~azure.mgmt.machinelearningservices.models.JobService]
@@ -27329,7 +25753,7 @@ class SweepJob(JobBaseProperties):
         :keyword trial: Required. [Required] Trial component definition.
         :paramtype trial: ~azure.mgmt.machinelearningservices.models.TrialComponent
         """
-        super(SweepJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, secrets_configuration=secrets_configuration, services=services, **kwargs)
+        super(SweepJob, self).__init__(description=description, properties=properties, tags=tags, component_id=component_id, compute_id=compute_id, display_name=display_name, experiment_name=experiment_name, identity=identity, is_archived=is_archived, notification_setting=notification_setting, services=services, **kwargs)
         self.job_type = 'Sweep'  # type: str
         self.early_termination = early_termination
         self.inputs = inputs
@@ -28791,44 +27215,6 @@ class TmpfsOptions(msrest.serialization.Model):
         """
         super(TmpfsOptions, self).__init__(**kwargs)
         self.size = size
-
-
-class TopNFeaturesByAttribution(MonitoringFeatureFilterBase):
-    """TopNFeaturesByAttribution.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar filter_type: Required. [Required] Specifies the feature filter to leverage when selecting
-     features to calculate metrics over.Constant filled by server. Possible values include:
-     "AllFeatures", "TopNByAttribution", "FeatureSubset".
-    :vartype filter_type: str or
-     ~azure.mgmt.machinelearningservices.models.MonitoringFeatureFilterType
-    :ivar top: The number of top features to include.
-    :vartype top: int
-    """
-
-    _validation = {
-        'filter_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'filter_type': {'key': 'filterType', 'type': 'str'},
-        'top': {'key': 'top', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        top: Optional[int] = 10,
-        **kwargs
-    ):
-        """
-        :keyword top: The number of top features to include.
-        :paramtype top: int
-        """
-        super(TopNFeaturesByAttribution, self).__init__(**kwargs)
-        self.filter_type = 'TopNByAttribution'  # type: str
-        self.top = top
 
 
 class TrialComponent(msrest.serialization.Model):
