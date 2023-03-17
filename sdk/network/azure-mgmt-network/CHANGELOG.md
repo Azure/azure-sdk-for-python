@@ -1,5 +1,14 @@
 # Release History
 
+## 23.0.0 (2023-03-20)
+
+- Release with our new combined multiapi package. Package size is now 5% of what it used to be
+
+### Breaking Changes
+
+  - Removed api version subfolders. This means you can no longer access any `azure.mgmt.network.v20xx_xx_xx` modules
+  - Removed `.models` method from `NetworkManagementClient`
+
 ## 23.0.0b2 (2023-02-20)
 
 ### Other Changes
