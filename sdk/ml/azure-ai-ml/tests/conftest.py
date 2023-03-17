@@ -99,6 +99,8 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
     )
+    feature_store_name = os.environ.get("ML_FEATURE_STORE_NAME", "env_feature_store_name_note_present")
+    add_general_regex_sanitizer(regex=feature_store_name, value="00000")
 
     identity_json_paths = [
         ".systemData.createdBy",
@@ -343,6 +345,7 @@ def e2e_ws_scope(sanitized_environment_variables: dict) -> OperationScope:
         workspace_name=sanitized_environment_variables["ML_WORKSPACE_NAME"],
     )
 
+
 @pytest.fixture
 def e2e_fs_scope(sanitized_environment_variables: dict) -> OperationScope:
     return OperationScope(
@@ -350,6 +353,7 @@ def e2e_fs_scope(sanitized_environment_variables: dict) -> OperationScope:
         resource_group_name=sanitized_environment_variables["ML_RESOURCE_GROUP"],
         workspace_name=sanitized_environment_variables["ML_FEATURE_STORE_NAME"],
     )
+
 
 @pytest.fixture
 def client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
@@ -363,6 +367,7 @@ def client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClie
         cloud="AzureCloud",
     )
 
+
 @pytest.fixture
 def feature_store_client(e2e_fs_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
     """return a machine learning client using default e2e testing feature store"""
@@ -374,6 +379,7 @@ def feature_store_client(e2e_fs_scope: OperationScope, auth: ClientSecretCredent
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         cloud="AzureCloud",
     )
+
 
 @pytest.fixture
 def registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:

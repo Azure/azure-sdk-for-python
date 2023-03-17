@@ -16,6 +16,7 @@ from azure.ai.ml.entities import (
     _FeatureSet,
 )
 
+
 @pytest.mark.e2etest
 @pytest.mark.data_experiences_test
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash")
@@ -23,30 +24,8 @@ class TestFeatureSet(AzureRecordedTestCase):
     def test_create_and_get(self, feature_store_client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         fset_name = f"e2etest_{randstr('fset_name')}"
         fset_description = "Feature set description"
-        fs_entity_name = f"e2etest_{randstr('fs_entity_name')}"
-        fs_entity_description = "Feature store entity description"
-
+        fs_entity_name = "e2etest_fs_entity_name"
         version = "1"
-
-        params_override = [
-            {"name": fs_entity_name},
-            {"version": version},
-            {"description": fs_entity_description},
-        ]
-
-        def feature_store_entitiy_validation(fs_entity):
-            fs_entity_poller = feature_store_client._feature_store_entities.begin_create_or_update(
-                feature_store_entity=fs_entity
-            )
-            assert isinstance(fs_entity_poller, LROPoller)
-            fs_entity = fs_entity_poller.result()
-
-        featureStoreEntity = verify_entity_load_and_dump(
-            _load_feature_store_entity,
-            feature_store_entitiy_validation,
-            "./tests/test_configs/feature_store_entity/feature_store_entity_full.yaml",
-            params_override=params_override,
-        )[0]
 
         params_override = [
             {"name": fset_name},
@@ -56,9 +35,7 @@ class TestFeatureSet(AzureRecordedTestCase):
 
         def feature_set_validation(fset):
             fset.entities = [f"azureml:{fs_entity_name}:{version}"]
-            fset_poller = feature_store_client._feature_sets.begin_create_or_update(
-                featureset=fset
-            )
+            fset_poller = feature_store_client._feature_sets.begin_create_or_update(featureset=fset)
             assert isinstance(fset_poller, LROPoller)
             fset = fset_poller.result()
             assert isinstance(fset, _FeatureSet)
