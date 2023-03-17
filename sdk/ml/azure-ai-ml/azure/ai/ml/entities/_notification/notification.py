@@ -11,7 +11,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class Notification(RestTranslatableMixin):
+class _Notification(RestTranslatableMixin):
     """Configuration for notification."""
 
     def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None):
@@ -29,7 +29,7 @@ class Notification(RestTranslatableMixin):
         return RestNotificationSetting(email_on=self.email_on, emails=self.emails)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestNotificationSetting) -> "Notification":
+    def _from_rest_object(cls, obj: RestNotificationSetting) -> "_Notification":
         if not obj:
             return None
-        return Notification(email_on=obj.email_on, emails=obj.emails)
+        return _Notification(email_on=obj.email_on, emails=obj.emails)

@@ -13,21 +13,20 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.data import Data
 from azure.ai.ml.entities._assets._artifacts.model import Model
-from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._compute.compute import Compute
-from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
-from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
-from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
+from azure.ai.ml.entities._feature_store.feature_store import _FeatureStore
+from azure.ai.ml.entities._feature_store_entity.feature_store_entity import _FeatureStoreEntity
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.entities._resource import Resource
@@ -430,7 +429,7 @@ def load_data(
     *,
     relative_origin: Optional[str] = None,
     **kwargs,
-) -> Union[Data, DataImport]:
+) -> Data:
     """Construct a data object from yaml file.
 
     :param source: The local yaml source of a data object. Must be either a
@@ -451,9 +450,9 @@ def load_data(
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed Data or DataImport object.
-    :rtype: Union[Data, DataImport]
+    :rtype: Data
     """
-    return load_common(DataImport, source, relative_origin, **kwargs)
+    return load_common(Data, source, relative_origin, **kwargs)
 
 
 def load_environment(
@@ -667,12 +666,12 @@ def load_schedule(
     return load_common(JobSchedule, source, relative_origin, **kwargs)
 
 
-def load_feature_store(
+def _load_feature_store(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
     **kwargs,
-) -> FeatureStore:
+) -> _FeatureStore:
     """Load a feature store object from a yaml file.
     :param source: The local yaml source of a feature store. Must be either a
         path to a local file, or an already-open file.
@@ -690,17 +689,17 @@ def load_feature_store(
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
     :return: Loaded feature store object.
-    :rtype: FeatureStore
+    :rtype: _FeatureStore
     """
-    return load_common(FeatureStore, source, relative_origin, **kwargs)
+    return load_common(_FeatureStore, source, relative_origin, **kwargs)
 
 
-def load_feature_set(
+def _load_feature_set(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
     **kwargs,
-) -> FeatureSet:
+) -> _FeatureSet:
     """Construct a FeatureSet object from yaml file.
 
     :param source: The local yaml source of a FeatureSet object. Must be either a
@@ -721,17 +720,17 @@ def load_feature_set(
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed FeatureSet object.
-    :rtype: FeatureSet
+    :rtype: _FeatureSet
     """
-    return load_common(FeatureSet, source, relative_origin, **kwargs)
+    return load_common(_FeatureSet, source, relative_origin, **kwargs)
 
 
-def load_feature_store_entity(
+def _load_feature_store_entity(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
     **kwargs,
-) -> FeatureStoreEntity:
+) -> _FeatureStoreEntity:
     """Construct a FeatureStoreEntity object from yaml file.
 
     :param source: The local yaml source of a FeatureStoreEntity object. Must be either a
@@ -752,6 +751,6 @@ def load_feature_store_entity(
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureStoreEntity cannot be successfully validated.
         Details will be provided in the error message.
     :return: Constructed FeatureStoreEntity object.
-    :rtype: FeatureStoreEntity
+    :rtype: _FeatureStoreEntity
     """
-    return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
+    return load_common(_FeatureStoreEntity, source, relative_origin, **kwargs)

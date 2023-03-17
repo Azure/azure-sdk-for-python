@@ -2,7 +2,12 @@
 
 We are excited to introduce the GA of Azure Machine Learning Python SDK v2. The Python SDK v2 introduces new SDK capabilities like standalone local jobs, reusable components for pipelines and managed online/batch inferencing. Python SDK v2 allows you to move from simple to complex tasks easily and incrementally. This is enabled by using a common object model which brings concept reuse and consistency of actions across various tasks. The SDK v2 shares its foundation with the CLI v2 which is also GA.
 
-[Source code][source_code] | [Package (PyPI)][ml_pypi] | [API reference documentation][ml_ref_docs] | [Product documentation][product_documentation] | [Samples][ml_samples]
+[Source code][source_code]
+| [Package (PyPI)][ml_pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-ml/)
+| [API reference documentation][ml_ref_docs]
+| [Product documentation][product_documentation]
+| [Samples][ml_samples]
 
 
 This package has been tested with Python 3.7, 3.8, 3.9 and 3.10.

@@ -8,7 +8,12 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 
-[Source code][python-fr-src] | [Package (PyPI)][python-fr-pypi] | [API reference documentation][python-fr-ref-docs] | [Product documentation][python-fr-product-docs] | [Samples][python-fr-samples]
+[Source code][python-fr-src]
+| [Package (PyPI)][python-fr-pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-formrecognizer/)
+| [API reference documentation][python-fr-ref-docs]
+| [Product documentation][python-fr-product-docs]
+| [Samples][python-fr-samples]
 
 ## _Disclaimer_
 
