@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
-from msrest import Serializer
+from .._serialization import Serializer
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
