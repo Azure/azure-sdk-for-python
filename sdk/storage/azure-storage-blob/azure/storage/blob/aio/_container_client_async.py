@@ -848,7 +848,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         premium_page_blob_tier: Optional["PremiumPageBlobTier"] = None,
         standard_blob_tier: Optional["StandardBlobTier"] = None,
         maxsize_condition: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
+        max_concurrency: Optional[int] = 1,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs: Any
     ) -> BlobClient:
@@ -1078,7 +1078,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         encoding: str,
         version_id: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
-        max_concurrency: Optional[int] = None,
+        max_concurrency: Optional[int] = 1,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs
     ) -> StorageStreamDownloader[str]:
@@ -1093,7 +1093,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         encoding: None = None,
         version_id: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
-        max_concurrency: Optional[int] = None,
+        max_concurrency: Optional[int] = 1,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs
     ) -> StorageStreamDownloader[bytes]:
@@ -1108,7 +1108,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         encoding: Optional[str] = None,
         version_id: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
-        max_concurrency: Optional[int] = None,
+        max_concurrency: Optional[int] = 1,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs
     ) -> StorageStreamDownloader:
@@ -1210,7 +1210,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
     @distributed_trace_async
     async def delete_blobs(
         self, *blobs: Union[str, Dict[str, Any], BlobProperties],
-        delete_snapshots: Optional[Literal['only', 'include']],
+        delete_snapshots: Optional[Literal['only', 'include']] = None,
         raise_on_any_failure: Optional[bool] = True,
         **kwargs: Any
     ) -> AsyncIterator[AsyncHttpResponse]:

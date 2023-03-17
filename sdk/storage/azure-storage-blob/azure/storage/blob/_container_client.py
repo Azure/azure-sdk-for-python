@@ -991,7 +991,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         premium_page_blob_tier: Optional["PremiumPageBlobTier"] = None,
         standard_blob_tier: Optional["StandardBlobTier"] = None,
         maxsize_condition: Optional[int] = None,
-        max_concurrency: Optional[int] = None,
+        max_concurrency: Optional[int] = 1,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs: Any
     ) -> BlobClient:
@@ -1220,7 +1220,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         encoding: str,
         version_id: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
-        max_concurrency: Optional[int] = None,
+        max_concurrency: Optional[int] = 1,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs
     ) -> StorageStreamDownloader[str]:
@@ -1235,7 +1235,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         encoding: None = None,
         version_id: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
-        max_concurrency: Optional[int] = None,
+        max_concurrency: Optional[int] = 1,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs
     ) -> StorageStreamDownloader[bytes]:
@@ -1250,7 +1250,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         encoding: Optional[str] = None,
         version_id: Optional[str] = None,
         cpk: Optional["CustomerProvidedEncryptionKey"] = None,
-        max_concurrency: Optional[int] = None,
+        max_concurrency: Optional[int] = 1,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
         **kwargs
     ) -> StorageStreamDownloader:
@@ -1474,7 +1474,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     @distributed_trace
     def delete_blobs(
         self, *blobs: Union[str, Dict[str, Any], BlobProperties],
-        delete_snapshots: Optional[Literal['only', 'include']],
+        delete_snapshots: Optional[Literal['only', 'include']] = None,
         raise_on_any_failure: Optional[bool] = True,
         **kwargs: Any
     ) -> Iterator[HttpResponse]:
