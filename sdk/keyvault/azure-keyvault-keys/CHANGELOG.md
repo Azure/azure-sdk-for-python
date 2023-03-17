@@ -1,19 +1,37 @@
 # Release History
 
-## 4.8.0b3 (Unreleased)
+## 4.8.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.8.0 (2023-03-16)
 
 ### Features Added
 - Added support for service API version `7.4`
 - Clients each have a `send_request` method that can be used to send custom requests using the
   client's existing pipeline ([#25172](https://github.com/Azure/azure-sdk-for-python/issues/25172))
+- (From 4.8.0b1) An attempt will be made to generate an IV if one isn't provided for local encryption
+  ([#25380](https://github.com/Azure/azure-sdk-for-python/pull/25380))
 
 ### Breaking Changes
 > These changes do not impact the API of stable versions such as 4.7.0. Only code written against a beta version such as 4.8.0b2 may be affected.
 - Removed support for octet key pair (OKP) keys and operations
 
-### Bugs Fixed
-
 ### Other Changes
+- Key Vault API version `7.4` is now the default
+- (From 4.8.0b1) Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- (From 4.8.0b1) Updated minimum `azure-core` version to 1.24.0
+- (From 4.8.0b1) Updated minimum `msrest` version to 0.7.1
+- (From 4.8.0b2) Dropped `msrest` requirement
+- (From 4.8.0b2) Dropped `six` requirement
+- (From 4.8.0b2) Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
+- (From 4.8.0b2) Added requirement for `typing-extensions>=4.0.1`
 
 ## 4.8.0b2 (2022-11-15)
 

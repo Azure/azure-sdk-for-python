@@ -1,5 +1,14 @@
 # Release History
 
+## 10.2.0 (2023-03-13)
+
+### Features Added
+
+  - Added operation group MHSMRegionsOperations
+  - Added operation group ManagedHsmKeysOperations
+  - Model ManagedHsmProperties has a new parameter regions
+  - Model ManagedHsmProperties has a new parameter security_domain_properties
+
 ## 10.2.0b1 (2023-02-14)
 
 ### Features Added

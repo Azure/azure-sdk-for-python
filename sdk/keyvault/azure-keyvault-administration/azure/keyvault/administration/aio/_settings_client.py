@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from azure.core.async_paging import AsyncItemPaged, AsyncList
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated_models import UpdateSettingRequest
@@ -11,7 +12,7 @@ from .._models import KeyVaultSetting
 
 
 class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
-    """Provides methods to update, get, and list settings for an Azure Key Vault.
+    """Provides methods to update, get, and list Managed HSM account settings.
 
     :param str vault_url: URL of the vault on which the client will operate. This is also called the vault's "DNS Name".
         You should validate that this URL references a valid Key Vault or Managed HSM resource.
@@ -40,22 +41,24 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         result = await self._client.get_setting(vault_base_url=self._vault_url, setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
-    @distributed_trace_async
-    async def list_settings(self, **kwargs) -> AsyncItemPaged[KeyVaultSetting]:
+    @distributed_trace
+    def list_settings(self, **kwargs) -> AsyncItemPaged[KeyVaultSetting]:
         """Lists all account settings.
 
         :returns: A :class:`~azure.keyvault.administration.GetSettingsResult` object containing the account's settings.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        result = await self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
-        converted_result = [KeyVaultSetting._from_generated(setting) for setting in result.settings]
+        result = self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
 
         # We don't actually get a paged response from the generated method, so we mock the typical iteration methods
         async def get_next(_=None):
-            return converted_result
+            # There's only one page of results (the `get_settings` result), so we return the awaited result directly
+            return await result
 
-        async def extract_data(_):
+        async def extract_data(pipeline_response):
+            # `pipeline_response` is the awaited `get_settings` result that we returned in `get_next`
+            converted_result = [KeyVaultSetting._from_generated(setting) for setting in pipeline_response.settings]
             return None, AsyncList(converted_result)
 
         return AsyncItemPaged(get_next, extract_data)
