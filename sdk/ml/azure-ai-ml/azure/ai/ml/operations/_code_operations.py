@@ -12,7 +12,7 @@ from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
     _get_snapshot_path_info,
 )
-from azure.ai.ml._utils._asset_utils import get_content_hash_version
+from azure.ai.ml._utils._asset_utils import get_content_hash_version, get_storage_info_for_non_registry_asset, _get_existing_asset_name_and_version
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -87,6 +87,7 @@ class CodeOperations(_ScopeDependentOperations):
             name = code.name
             version = code.version
             sas_uri = None
+            blob_uri = None
 
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -99,18 +100,29 @@ class CodeOperations(_ScopeDependentOperations):
                 )
             else:
                 path, ignore_file, asset_hash = _get_snapshot_path_info(code)
-                print("i'm checkign for existing asset")
                 existing_asset = self._version_operation.list(
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
                     name=name,
                     hash=asset_hash,
                     hash_version=str(get_content_hash_version())
-                ).next()
-                if existing_asset:
-                    print("here it is: ", existing_asset, type(existing_asset), dir(existing_asset))
-                    assert 1 == 2 
-                    return self.get(name=existing_asset.name, version=existing_asset.version)
+                )
+
+                try:
+                    existing_asset = next(existing_asset)
+                    # TODO: remove once bug with name/version is fixed
+                    name, version = _get_existing_asset_name_and_version(existing_asset)
+                    return self.get(name=name, version=version)
+                except StopIteration:
+                    sas_info = get_storage_info_for_non_registry_asset(
+                        service_client=self._service_client,
+                        workspace_name=self._workspace_name,
+                        name=name,
+                        version=version,
+                        resource_group=self._resource_group_name
+                    )
+                    sas_uri = sas_info["sas_uri"]
+                    blob_uri = sas_info["blob_uri"]
                 
             code, _ = _check_and_upload_path(
                 artifact=code,
@@ -118,6 +130,7 @@ class CodeOperations(_ScopeDependentOperations):
                 sas_uri=sas_uri,
                 artifact_type=ErrorTarget.CODE,
                 show_progress=self._show_progress,
+                blob_uri=blob_uri,
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,

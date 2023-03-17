@@ -288,7 +288,8 @@ def _upload_to_datastore(
     asset_version: Optional[str] = None,
     asset_hash: Optional[str] = None,
     ignore_file: Optional[IgnoreFile] = None,
-    sas_uri: Optional[str] = None,  # contains regstry sas url
+    sas_uri: Optional[str] = None,  # contains registry sas url
+    blob_uri: Optional[str] = None,
 ) -> ArtifactStorageInfo:
     _validate_path(path, _type=artifact_type)
     if not ignore_file:
@@ -307,6 +308,9 @@ def _upload_to_datastore(
         ignore_file=ignore_file,
         sas_uri=sas_uri,
     )
+    if blob_uri:
+        artifact.storage_account_url = blob_uri
+
     return artifact
 
 
@@ -368,6 +372,7 @@ def _check_and_upload_path(
     datastore_name: Optional[str] = None,
     sas_uri: Optional[str] = None,
     show_progress: bool = True,
+    blob_uri = None,
 ) -> Tuple[T, str]:
     """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
 
@@ -408,6 +413,7 @@ def _check_and_upload_path(
             artifact_type=artifact_type,
             show_progress=show_progress,
             ignore_file=getattr(artifact, "_ignore_file", None),
+            blob_uri=blob_uri,
         )
         indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
         if artifact._is_anonymous:
