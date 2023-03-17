@@ -503,8 +503,10 @@ class WorkspaceOperationsBase:
 
         _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")
         if setup_materialization_store:
-            _set_val(param["offline_store_connection_target"], offline_store_target)
-            _set_val(param["online_store_connection_target"], online_store_target)
+            if offline_store_target is not None:
+                _set_val(param["offline_store_connection_target"], offline_store_target)
+            if online_store_target is not None:
+                _set_val(param["online_store_connection_target"], online_store_target)
             _set_val(param["materialization_identity_client_id"], materialization_identity.client_id)
             _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
 

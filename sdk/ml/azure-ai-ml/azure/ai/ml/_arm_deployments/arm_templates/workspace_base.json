@@ -666,7 +666,7 @@
             },
             "resources": [
                 {
-                    "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('offline_store_connection_target'), ''))]",
+                    "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('offline_store_connection_target'), '')))]",
                     "type": "connections",
                     "apiVersion": "2022-05-01",
                     "name": "[variables('offlineStoreConnectionName')]",
@@ -688,7 +688,7 @@
                     }
                 },
                 {
-                    "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('online_store_connection_target'), ''))]",
+                    "condition": "[and(equals(parameters('setup_materialization_store'), 'true'),not(equals(parameters('online_store_connection_target'), '')))]",
                     "type": "connections",
                     "apiVersion": "2022-05-01",
                     "name": "[variables('onlineStoreConnectionName')]",
