@@ -5,7 +5,7 @@
 from marshmallow import fields
 
 from azure.ai.ml._schema.core.fields import DumpableStringField, NestedField, StringTransformedEnum, UnionField
-from azure.ai.ml._schema.core.intellectual_property_schema import IntellectualPropertySchema
+from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 from azure.ai.ml._schema.core.resource import ResourceSchema
 from azure.ai.ml._schema.workspace.identity import IdentitySchema
 from azure.ai.ml._utils._experimental import experimental

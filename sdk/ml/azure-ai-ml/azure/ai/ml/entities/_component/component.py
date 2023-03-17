@@ -408,9 +408,6 @@ class Component(
 
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
-        intellectual_property = rest_component_version.component_spec.pop("intellectualProperty", None)
-        if intellectual_property:
-            rest_component_version.component_spec["intellectual_property"] = intellectual_property
         init_kwargs = cls._load_with_schema(rest_component_version.component_spec, unknown=INCLUDE)
         init_kwargs.update(
             dict(
@@ -493,7 +490,9 @@ class Component(
         # add source type to component rest object
         component["_source"] = self._source
         if self._intellectual_property:
-            component["intellectualProperty"] = component.pop("intellectual_property")
+            # hack while pass through is completely supported for IPP
+            component.pop("intellectual_property")
+            component["intellectualProperty"] = self._intellectual_property._to_rest_object().serialize()
         properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,

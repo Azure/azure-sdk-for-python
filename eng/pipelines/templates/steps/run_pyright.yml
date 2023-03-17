@@ -17,7 +17,7 @@ steps:
     condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
 
   - script: |
-      pip install -r eng/ci_tools.txt
+      python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
 

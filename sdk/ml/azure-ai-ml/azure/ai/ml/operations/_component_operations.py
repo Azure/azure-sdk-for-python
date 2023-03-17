@@ -325,10 +325,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         # Create all dependent resources
         # Only do this if publishing to a workspace OR a registry that is NOT IP protected
-        if self._workspace_name or (
-            self._registry_name
-            and self._registry_operations.get(self._registry_name).intellectual_property.publisher is None
-        ):
+        if self._workspace_name or (self._registry_name and not self._is_registry_ip_protected()):
             self._resolve_arm_id_or_upload_dependencies(component)
 
         name, version = component._get_rest_name_version()
@@ -762,6 +759,12 @@ class ComponentOperations(_ScopeDependentOperations):
                     )
 
             component_cache.resolve_nodes()
+
+    def _is_registry_ip_protected(self) -> bool:
+        registry = self._registry_operations.get(self._registry_name)
+        return (
+            registry.intellectual_property is not None and registry.intellectual_property.protection_level is not None
+        )
 
 
 def _refine_component(component_func: types.FunctionType) -> Component:

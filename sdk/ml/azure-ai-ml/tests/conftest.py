@@ -139,13 +139,6 @@ def mock_workspace_scope() -> OperationScope:
 
 
 @pytest.fixture
-def mock_registry_scope() -> OperationScope:
-    yield OperationScope(
-        subscription_id=Test_Subscription, resource_group_name=Test_Resource_Group, workspace_name=Test_Registry_Name
-    )
-
-
-@pytest.fixture
 def mock_operation_config() -> OperationConfig:
     yield OperationConfig(show_progress=True, enable_telemetry=True)
 
@@ -173,7 +166,7 @@ def mock_registry_scope() -> OperationScope:
     yield OperationScope(
         subscription_id=Test_Subscription,
         resource_group_name=Test_Resource_Group,
-        workspace_name=Test_Workspace_Name,
+        workspace_name=None,
         registry_name=Test_Registry_Name,
     )
 
@@ -913,3 +906,17 @@ def disable_internal_components():
 
     with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
         yield
+
+
+@pytest.fixture()
+def mock_ip_registry_check_false(mocker: MockFixture):
+    mocker.patch(
+        "azure.ai.ml.operations._component_operations.ComponentOperations._is_registry_ip_protected", return_value=False
+    )
+
+
+@pytest.fixture()
+def mock_ip_registry_check_true(mocker: MockFixture):
+    mocker.patch(
+        "azure.ai.ml.operations._component_operations.ComponentOperations._is_registry_ip_protected", return_value=True
+    )

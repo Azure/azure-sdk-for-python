@@ -29,10 +29,7 @@ class IntellectualProperty(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestIntellectualProperty) -> "IntellectualProperty":
-        return IntellectualProperty(publisher=obj.publisher, protection_level=obj.protection_level)
-
-    def _to_dict(self) -> Dict:
-        return {"publisher": self.publisher, "protection_level": self.protection_level}
+        return cls(publisher=obj.publisher, protection_level=obj.protection_level)
 
     def __eq__(self, other: Any) -> bool:
         return self.publisher == other.publisher and self.protection_level == other.protection_level

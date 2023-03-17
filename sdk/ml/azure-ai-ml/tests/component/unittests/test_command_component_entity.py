@@ -13,7 +13,7 @@ from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AzureMLResourceType
-from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.entities import Component, CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -532,3 +532,37 @@ class TestCommandComponentEntity:
             "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx",
         }
         assert component_dict == expected_dict
+
+    def test_component_with_ipp_fields(self):
+        # code is specified in yaml, value is respected
+        component_yaml = "./tests/test_configs/components/basic_component_with_ipp_fields.yml"
+
+        command_component = load_component(
+            source=component_yaml,
+        )
+
+        assert command_component._intellectual_property
+        assert command_component._intellectual_property.publisher == "contoso"
+        assert command_component._intellectual_property.protection_level == "all"
+
+        rest_component = command_component._to_rest_object()
+
+        assert rest_component.properties.component_spec["intellectualProperty"]
+        assert rest_component.properties.component_spec["intellectualProperty"] == {
+            "publisher": "contoso",
+            "protectionLevel": "all",
+        }
+
+        # because there's a mismatch between what the service accepts for IPP fields and what it returns
+        # (accepts camelCase for IPP, returns snake_case IPP), mock out the service response
+
+        rest_component.properties.component_spec.pop("intellectualProperty")
+        yaml_dict = {
+            "publisher": "contoso",
+            "protection_level": "all",
+        }
+        rest_component.properties.component_spec["intellectual_property"] = yaml_dict
+
+        from_rest_dict = Component._from_rest_object(rest_component)._to_dict()
+        assert from_rest_dict["intellectual_property"]
+        assert from_rest_dict["intellectual_property"] == yaml_dict
