@@ -137,6 +137,12 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+from ._assets._artifacts._package.azureml_online_inferencing_server import AzureMLOnlineInferencingServer
+from ._assets._artifacts._package.azureml_batch_inferencing_server import AzureMLBatchInferencingServer
+from ._assets._artifacts._package.triton_inferencing_server import TritonInferencingServer
+from ._assets._artifacts._package.custom_inferencing_server import CustomInferencingServer
+from ._assets._artifacts._package.base_environment_source import BaseEnvironmentId
+
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -294,4 +300,8 @@ __all__ = [
     "EndpointAuthKeys",
     "EndpointAuthToken",
     "ModelPackage",
+    "AzureMLOnlineInferencingServer",
+    "AzureMLBatchInferencingServer",
+    "TritonInferencingServer",
+    "CustomInferencingServer",
 ]

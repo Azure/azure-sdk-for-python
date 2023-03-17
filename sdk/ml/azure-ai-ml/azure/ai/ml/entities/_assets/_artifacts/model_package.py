@@ -13,6 +13,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ModelPackageInput,
     BaseEnvironmentSource,
     ModelConfiguration,
+    CodeConfiguration,
 )
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
@@ -121,4 +122,24 @@ class ModelPackage(Resource, PackageRequest):
         return target_environment_id
 
     def _to_rest_object(self) -> PackageRequest:
+        code = None
+
+        if self.inferencing_server and self.inferencing_server.code_configuration:
+            self.inferencing_server.code_configuration._validate()
+            code_id = (
+                self.inferencing_server.code_configuration.code
+                if isinstance(self.inferencing_server.code_configuration.code, str)
+                else self.inferencing_server.code_configuration.code.id
+            )
+            code = CodeConfiguration(
+                code_id=code_id, scoring_script=self.inferencing_server.code_configuration.scoring_script
+            )
+            self.inferencing_server.code_configuration = code
+
+        if self.base_environment_source:
+            self.base_environment_source = self.base_environment_source._to_rest_object()
+
+        if self.inferencing_server:
+            self.inferencing_server = self.inferencing_server._to_rest_object()
+
         return self

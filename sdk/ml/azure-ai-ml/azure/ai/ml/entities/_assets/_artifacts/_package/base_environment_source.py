@@ -4,7 +4,7 @@
 
 from typing import Dict
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BaseEnvironmentId as RestBaseEnvironmentId
+from azure.ai.ml._restclient.v2023_02_01_preview.models import BaseEnvironmentId as RestBaseEnvironmentId
 from azure.ai.ml._schema.assets.package.base_environment_source import BaseEnvironmentSourceSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 

@@ -11,8 +11,6 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 
-# from azure.ai.ml.entities._assets._artifacts.package import BaseEnvironmentId
-
 
 module_logger = logging.getLogger(__name__)
 
@@ -21,6 +19,8 @@ class BaseEnvironmentSourceSchema(PathAwareSchema):
     type = fields.Str()
     resource_id = fields.Str()
 
-    # @post_load
-    # def make(self, data, **kwargs):
-    #     return BaseEnvironmentId(**data)
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import BaseEnvironmentId
+
+        return BaseEnvironmentId(**data)

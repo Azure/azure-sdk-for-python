@@ -57,7 +57,9 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
     try:
         package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
         package_request.inferencing_server.code_configuration.code_id = "azureml:/" + deployment.code_configuration.code
-        packaged_env = model_ops.begin_package(model_name, model_version, package_request=package_request)
+        packaged_env = model_ops.begin_package(
+            model_name, model_version, package_request=package_request, skip_to_rest=True
+        )
     except Exception as e:
         raise
     deployment.environment = packaged_env.target_environment_id
