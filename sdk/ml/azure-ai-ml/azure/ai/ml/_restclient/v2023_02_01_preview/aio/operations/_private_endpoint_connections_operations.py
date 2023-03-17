@@ -58,6 +58,9 @@ class PrivateEndpointConnectionsOperations:
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result
          of cls(response)
@@ -146,6 +149,9 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the workspace.
         :type private_endpoint_connection_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection
@@ -213,6 +219,9 @@ class PrivateEndpointConnectionsOperations:
         :type private_endpoint_connection_name: str
         :param properties: The private endpoint connection properties.
         :type properties: ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection
@@ -281,6 +290,9 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the workspace.
         :type private_endpoint_connection_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None

@@ -55,6 +55,10 @@ class FeaturesetContainersOperations:
         skip: Optional[str] = None,
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
+        page_size: Optional[int] = 20,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        created_by: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.FeaturesetContainerResourceArmPaginatedResult"]:
         """List featurestore entity containers.
@@ -73,6 +77,17 @@ class FeaturesetContainersOperations:
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param name: name for the featureset.
+        :type name: str
+        :param description: description for the feature set.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FeaturesetContainerResourceArmPaginatedResult or
          the result of cls(response)
@@ -80,7 +95,7 @@ class FeaturesetContainersOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.FeaturesetContainerResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetContainerResourceArmPaginatedResult"]
         error_map = {
@@ -98,6 +113,10 @@ class FeaturesetContainersOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    name=name,
+                    description=description,
+                    created_by=created_by,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -113,6 +132,10 @@ class FeaturesetContainersOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    name=name,
+                    description=description,
+                    created_by=created_by,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -163,7 +186,7 @@ class FeaturesetContainersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_delete_request_initial(
@@ -219,6 +242,9 @@ class FeaturesetContainersOperations:
         :type workspace_name: str
         :param name: Container name. This is case-sensitive.
         :type name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -231,7 +257,7 @@ class FeaturesetContainersOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -287,6 +313,9 @@ class FeaturesetContainersOperations:
         :type workspace_name: str
         :param name: Container name. This is case-sensitive.
         :type name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FeaturesetContainer, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.FeaturesetContainer
@@ -298,7 +327,7 @@ class FeaturesetContainersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_entity_request(
@@ -348,7 +377,7 @@ class FeaturesetContainersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'FeaturesetContainer')
@@ -416,6 +445,9 @@ class FeaturesetContainersOperations:
         :type name: str
         :param body: Container entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.FeaturesetContainer
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -430,7 +462,7 @@ class FeaturesetContainersOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetContainer]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetContainer"]

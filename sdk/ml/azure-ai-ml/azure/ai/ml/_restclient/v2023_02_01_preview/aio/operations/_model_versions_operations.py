@@ -62,6 +62,7 @@ class ModelVersionsOperations:
         tags: Optional[str] = None,
         properties: Optional[str] = None,
         feed: Optional[str] = None,
+        stage: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ModelVersionResourceArmPaginatedResult"]:
@@ -95,8 +96,13 @@ class ModelVersionsOperations:
         :type properties: str
         :param feed: Name of the feed.
         :type feed: str
+        :param stage: Model stage.
+        :type stage: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ModelVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -104,7 +110,7 @@ class ModelVersionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.ModelVersionResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersionResourceArmPaginatedResult"]
         error_map = {
@@ -129,6 +135,7 @@ class ModelVersionsOperations:
                     tags=tags,
                     properties=properties,
                     feed=feed,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
@@ -152,6 +159,7 @@ class ModelVersionsOperations:
                     tags=tags,
                     properties=properties,
                     feed=feed,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=next_link,
                 )
@@ -211,6 +219,9 @@ class ModelVersionsOperations:
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -222,7 +233,7 @@ class ModelVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_delete_request(
@@ -276,6 +287,9 @@ class ModelVersionsOperations:
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ModelVersion, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelVersion
@@ -287,7 +301,7 @@ class ModelVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_request(
@@ -348,6 +362,9 @@ class ModelVersionsOperations:
         :type version: str
         :param body: Version entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.ModelVersion
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ModelVersion, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelVersion
@@ -359,7 +376,7 @@ class ModelVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'ModelVersion')
@@ -410,7 +427,7 @@ class ModelVersionsOperations:
         workspace_name: str,
         name: str,
         version: str,
-        body: Any,
+        body: "_models.PackageRequest",
         **kwargs: Any
     ) -> Optional["_models.PackageResponse"]:
         cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.PackageResponse"]]
@@ -419,10 +436,10 @@ class ModelVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'object')
+        _json = self._serialize.body(body, 'PackageRequest')
 
         request = build_package_request_initial(
             subscription_id=self._config.subscription_id,
@@ -474,7 +491,7 @@ class ModelVersionsOperations:
         workspace_name: str,
         name: str,
         version: str,
-        body: Any,
+        body: "_models.PackageRequest",
         **kwargs: Any
     ) -> AsyncLROPoller["_models.PackageResponse"]:
         """Model Version Package operation.
@@ -490,7 +507,10 @@ class ModelVersionsOperations:
         :param version: Version identifier. This is case-sensitive.
         :type version: str
         :param body: Package operation request body.
-        :type body: any
+        :type body: ~azure.mgmt.machinelearningservices.models.PackageRequest
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -505,7 +525,7 @@ class ModelVersionsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.PackageResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PackageResponse"]

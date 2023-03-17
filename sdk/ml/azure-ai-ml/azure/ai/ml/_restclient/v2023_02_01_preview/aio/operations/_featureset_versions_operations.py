@@ -21,7 +21,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._featureset_versions_operations import build_backfill_request_initial, build_create_or_update_request_initial, build_delete_request_initial, build_get_feature_request, build_get_request, build_list_features_request, build_list_materialization_jobs_request, build_list_request
+from ...operations._featureset_versions_operations import build_backfill_request_initial, build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_materialization_jobs_request, build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -56,6 +56,12 @@ class FeaturesetVersionsOperations:
         skip: Optional[str] = None,
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
+        page_size: Optional[int] = 20,
+        version_name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        created_by: Optional[str] = None,
+        stage: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.FeaturesetVersionResourceArmPaginatedResult"]:
         """List versions.
@@ -76,6 +82,21 @@ class FeaturesetVersionsOperations:
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param version_name: name for the featureset version.
+        :type version_name: str
+        :param version: featureset version.
+        :type version: str
+        :param description: description for the feature set version.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
+        :param stage: stage.
+        :type stage: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FeaturesetVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -83,7 +104,7 @@ class FeaturesetVersionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.FeaturesetVersionResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetVersionResourceArmPaginatedResult"]
         error_map = {
@@ -102,6 +123,12 @@ class FeaturesetVersionsOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -118,6 +145,12 @@ class FeaturesetVersionsOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -169,7 +202,7 @@ class FeaturesetVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_delete_request_initial(
@@ -229,6 +262,9 @@ class FeaturesetVersionsOperations:
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -241,7 +277,7 @@ class FeaturesetVersionsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -301,6 +337,9 @@ class FeaturesetVersionsOperations:
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FeaturesetVersion, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.FeaturesetVersion
@@ -312,7 +351,7 @@ class FeaturesetVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_request(
@@ -364,7 +403,7 @@ class FeaturesetVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'FeaturesetVersion')
@@ -436,6 +475,9 @@ class FeaturesetVersionsOperations:
         :type version: str
         :param body: Version entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.FeaturesetVersion
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -450,7 +492,7 @@ class FeaturesetVersionsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetVersion]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetVersion"]
@@ -503,14 +545,14 @@ class FeaturesetVersionsOperations:
         version: str,
         body: "_models.FeaturesetVersionBackfillRequest",
         **kwargs: Any
-    ) -> Optional["_models.FeaturesetVersionBackfillResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FeaturesetVersionBackfillResponse"]]
+    ) -> Optional["_models.FeaturesetJob"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FeaturesetJob"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'FeaturesetVersionBackfillRequest')
@@ -543,7 +585,7 @@ class FeaturesetVersionsOperations:
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('FeaturesetVersionBackfillResponse', pipeline_response)
+            deserialized = self._deserialize('FeaturesetJob', pipeline_response)
 
         if response.status_code == 202:
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
@@ -567,7 +609,7 @@ class FeaturesetVersionsOperations:
         version: str,
         body: "_models.FeaturesetVersionBackfillRequest",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.FeaturesetVersionBackfillResponse"]:
+    ) -> AsyncLROPoller["_models.FeaturesetJob"]:
         """Backfill.
 
         Backfill.
@@ -582,6 +624,9 @@ class FeaturesetVersionsOperations:
         :type version: str
         :param body: Feature set version backfill request entity.
         :type body: ~azure.mgmt.machinelearningservices.models.FeaturesetVersionBackfillRequest
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -590,16 +635,16 @@ class FeaturesetVersionsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either FeaturesetVersionBackfillResponse or
-         the result of cls(response)
+        :return: An instance of AsyncLROPoller that returns either FeaturesetJob or the result of
+         cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetVersionBackfillResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetVersionBackfillResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -621,7 +666,7 @@ class FeaturesetVersionsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('FeaturesetVersionBackfillResponse', pipeline_response)
+            deserialized = self._deserialize('FeaturesetJob', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -640,303 +685,3 @@ class FeaturesetVersionsOperations:
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_backfill.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/backfill"}  # type: ignore
-
-    @distributed_trace_async
-    async def get_feature(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        version: str,
-        body: "_models.GetFeatureRequest",
-        **kwargs: Any
-    ) -> "_models.Feature":
-        """Get feature.
-
-        Get feature.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param name: Feature set name. This is case-sensitive.
-        :type name: str
-        :param version: Feature set version identifier. This is case-sensitive.
-        :type version: str
-        :param body: Feature Name request. This is case-sensitive.
-        :type body: ~azure.mgmt.machinelearningservices.models.GetFeatureRequest
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Feature, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.Feature
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Feature"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(body, 'GetFeatureRequest')
-
-        request = build_get_feature_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            name=name,
-            version=version,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.get_feature.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize('Feature', pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_feature.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/getFeature"}  # type: ignore
-
-
-    @distributed_trace
-    def list_features(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        version: str,
-        skip: Optional[str] = None,
-        tags: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.FeatureArmPaginatedResult"]:
-        """List Features.
-
-        List Features.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param name: Featureset name. This is case-sensitive.
-        :type name: str
-        :param version: Featureset Version identifier. This is case-sensitive.
-        :type version: str
-        :param skip: Continuation token for pagination.
-        :type skip: str
-        :param tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2.
-        :type tags: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either FeatureArmPaginatedResult or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.FeatureArmPaginatedResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeatureArmPaginatedResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_features_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    name=name,
-                    version=version,
-                    api_version=api_version,
-                    skip=skip,
-                    tags=tags,
-                    template_url=self.list_features.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_features_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    name=name,
-                    version=version,
-                    api_version=api_version,
-                    skip=skip,
-                    tags=tags,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("FeatureArmPaginatedResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_features.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/listFeatures"}  # type: ignore
-
-    @distributed_trace
-    def list_materialization_jobs(
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        name: str,
-        version: str,
-        skip: Optional[str] = None,
-        filters: Optional[str] = None,
-        feature_window_start: Optional[str] = None,
-        feature_window_end: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.FeaturesetJobArmPaginatedResult"]:
-        """List materialization Jobs.
-
-        List materialization Jobs.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param name: Container name. This is case-sensitive.
-        :type name: str
-        :param version: Version identifier. This is case-sensitive.
-        :type version: str
-        :param skip: Continuation token for pagination.
-        :type skip: str
-        :param filters: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2.
-        :type filters: str
-        :param feature_window_start: Start time of the feature window to filter materialization jobs.
-        :type feature_window_start: str
-        :param feature_window_end: End time of the feature window to filter materialization jobs.
-        :type feature_window_end: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either FeaturesetJobArmPaginatedResult or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.FeaturesetJobArmPaginatedResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetJobArmPaginatedResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
-                
-                request = build_list_materialization_jobs_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    name=name,
-                    version=version,
-                    api_version=api_version,
-                    skip=skip,
-                    filters=filters,
-                    feature_window_start=feature_window_start,
-                    feature_window_end=feature_window_end,
-                    template_url=self.list_materialization_jobs.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                
-                request = build_list_materialization_jobs_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    name=name,
-                    version=version,
-                    api_version=api_version,
-                    skip=skip,
-                    filters=filters,
-                    feature_window_start=feature_window_start,
-                    feature_window_end=feature_window_end,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("FeaturesetJobArmPaginatedResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_materialization_jobs.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/listMaterializationJobs"}  # type: ignore

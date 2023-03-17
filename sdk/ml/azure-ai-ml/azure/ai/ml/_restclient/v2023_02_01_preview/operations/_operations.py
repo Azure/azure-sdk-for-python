@@ -88,6 +88,9 @@ class Operations(object):
         # type: (...) -> Iterable["_models.AmlOperationListResult"]
         """Lists all of the available Azure Machine Learning Services REST API operations.
 
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AmlOperationListResult or the result of
          cls(response)

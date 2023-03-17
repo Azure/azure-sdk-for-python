@@ -21,8 +21,6 @@ from ._registry_code_containers_operations import RegistryCodeContainersOperatio
 from ._registry_code_versions_operations import RegistryCodeVersionsOperations
 from ._registry_component_containers_operations import RegistryComponentContainersOperations
 from ._registry_component_versions_operations import RegistryComponentVersionsOperations
-from ._registry_data_containers_operations import RegistryDataContainersOperations
-from ._registry_data_versions_operations import RegistryDataVersionsOperations
 from ._registry_environment_containers_operations import RegistryEnvironmentContainersOperations
 from ._registry_environment_versions_operations import RegistryEnvironmentVersionsOperations
 from ._registry_model_containers_operations import RegistryModelContainersOperations
@@ -40,6 +38,7 @@ from ._environment_containers_operations import EnvironmentContainersOperations
 from ._environment_versions_operations import EnvironmentVersionsOperations
 from ._featureset_containers_operations import FeaturesetContainersOperations
 from ._featureset_versions_operations import FeaturesetVersionsOperations
+from ._features_operations import FeaturesOperations
 from ._featurestore_entity_containers_operations import FeaturestoreEntityContainersOperations
 from ._featurestore_entity_versions_operations import FeaturestoreEntityVersionsOperations
 from ._jobs_operations import JobsOperations
@@ -66,8 +65,6 @@ __all__ = [
     'RegistryCodeVersionsOperations',
     'RegistryComponentContainersOperations',
     'RegistryComponentVersionsOperations',
-    'RegistryDataContainersOperations',
-    'RegistryDataVersionsOperations',
     'RegistryEnvironmentContainersOperations',
     'RegistryEnvironmentVersionsOperations',
     'RegistryModelContainersOperations',
@@ -85,6 +82,7 @@ __all__ = [
     'EnvironmentVersionsOperations',
     'FeaturesetContainersOperations',
     'FeaturesetVersionsOperations',
+    'FeaturesOperations',
     'FeaturestoreEntityContainersOperations',
     'FeaturestoreEntityVersionsOperations',
     'JobsOperations',

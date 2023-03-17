@@ -41,7 +41,7 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
     order_by = kwargs.pop('order_by', None)  # type: Optional[str]
     top = kwargs.pop('top', None)  # type: Optional[int]
@@ -51,6 +51,7 @@ def build_list_request(
     tags = kwargs.pop('tags', None)  # type: Optional[str]
     properties = kwargs.pop('properties', None)  # type: Optional[str]
     feed = kwargs.pop('feed', None)  # type: Optional[str]
+    stage = kwargs.pop('stage', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
 
     accept = "application/json"
@@ -86,6 +87,8 @@ def build_list_request(
         _query_parameters['properties'] = _SERIALIZER.query("properties", properties, 'str')
     if feed is not None:
         _query_parameters['feed'] = _SERIALIZER.query("feed", feed, 'str')
+    if stage is not None:
+        _query_parameters['stage'] = _SERIALIZER.query("stage", stage, 'str')
     if list_view_type is not None:
         _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
 
@@ -111,7 +114,7 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -152,7 +155,7 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -193,7 +196,7 @@ def build_create_or_update_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -237,7 +240,7 @@ def build_package_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -309,6 +312,7 @@ class ModelVersionsOperations(object):
         tags=None,  # type: Optional[str]
         properties=None,  # type: Optional[str]
         feed=None,  # type: Optional[str]
+        stage=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
         **kwargs  # type: Any
     ):
@@ -343,8 +347,13 @@ class ModelVersionsOperations(object):
         :type properties: str
         :param feed: Name of the feed.
         :type feed: str
+        :param stage: Model stage.
+        :type stage: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ModelVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -352,7 +361,7 @@ class ModelVersionsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.ModelVersionResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelVersionResourceArmPaginatedResult"]
         error_map = {
@@ -377,6 +386,7 @@ class ModelVersionsOperations(object):
                     tags=tags,
                     properties=properties,
                     feed=feed,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
                 )
@@ -400,6 +410,7 @@ class ModelVersionsOperations(object):
                     tags=tags,
                     properties=properties,
                     feed=feed,
+                    stage=stage,
                     list_view_type=list_view_type,
                     template_url=next_link,
                 )
@@ -460,6 +471,9 @@ class ModelVersionsOperations(object):
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -471,7 +485,7 @@ class ModelVersionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_delete_request(
@@ -526,6 +540,9 @@ class ModelVersionsOperations(object):
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ModelVersion, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelVersion
@@ -537,7 +554,7 @@ class ModelVersionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_request(
@@ -599,6 +616,9 @@ class ModelVersionsOperations(object):
         :type version: str
         :param body: Version entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.ModelVersion
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ModelVersion, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelVersion
@@ -610,7 +630,7 @@ class ModelVersionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'ModelVersion')
@@ -661,7 +681,7 @@ class ModelVersionsOperations(object):
         workspace_name,  # type: str
         name,  # type: str
         version,  # type: str
-        body,  # type: Any
+        body,  # type: "_models.PackageRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.PackageResponse"]
@@ -671,10 +691,10 @@ class ModelVersionsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'object')
+        _json = self._serialize.body(body, 'PackageRequest')
 
         request = build_package_request_initial(
             subscription_id=self._config.subscription_id,
@@ -726,7 +746,7 @@ class ModelVersionsOperations(object):
         workspace_name,  # type: str
         name,  # type: str
         version,  # type: str
-        body,  # type: Any
+        body,  # type: "_models.PackageRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.PackageResponse"]
@@ -743,7 +763,10 @@ class ModelVersionsOperations(object):
         :param version: Version identifier. This is case-sensitive.
         :type version: str
         :param body: Package operation request body.
-        :type body: any
+        :type body: ~azure.mgmt.machinelearningservices.models.PackageRequest
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -758,7 +781,7 @@ class ModelVersionsOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.PackageResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.PackageResponse"]

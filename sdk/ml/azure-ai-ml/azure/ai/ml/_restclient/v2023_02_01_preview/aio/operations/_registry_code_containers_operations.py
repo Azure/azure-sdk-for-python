@@ -65,6 +65,9 @@ class RegistryCodeContainersOperations:
         :type registry_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either CodeContainerResourceArmPaginatedResult or the
          result of cls(response)
@@ -72,7 +75,7 @@ class RegistryCodeContainersOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.CodeContainerResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainerResourceArmPaginatedResult"]
         error_map = {
@@ -151,7 +154,7 @@ class RegistryCodeContainersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_delete_request_initial(
@@ -207,6 +210,9 @@ class RegistryCodeContainersOperations:
         :type registry_name: str
         :param code_name: Container name.
         :type code_name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -219,7 +225,7 @@ class RegistryCodeContainersOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -275,6 +281,9 @@ class RegistryCodeContainersOperations:
         :type registry_name: str
         :param code_name: Container name.
         :type code_name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CodeContainer, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.CodeContainer
@@ -286,7 +295,7 @@ class RegistryCodeContainersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_request(
@@ -336,7 +345,7 @@ class RegistryCodeContainersOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'CodeContainer')
@@ -404,6 +413,9 @@ class RegistryCodeContainersOperations:
         :type code_name: str
         :param body: Container entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.CodeContainer
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -418,7 +430,7 @@ class RegistryCodeContainersOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.CodeContainer]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.CodeContainer"]

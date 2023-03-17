@@ -40,7 +40,7 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     name = kwargs.pop('name', None)  # type: Optional[str]
     count = kwargs.pop('count', None)  # type: Optional[int]
     compute_type = kwargs.pop('compute_type', None)  # type: Optional[Union[str, "_models.EndpointComputeType"]]
@@ -99,7 +99,7 @@ def build_delete_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -138,7 +138,7 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -177,7 +177,7 @@ def build_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -219,7 +219,7 @@ def build_create_or_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -261,7 +261,7 @@ def build_list_keys_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -300,7 +300,7 @@ def build_regenerate_keys_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -342,7 +342,7 @@ def build_get_token_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -435,6 +435,9 @@ class OnlineEndpointsOperations(object):
         :type properties: str
         :param order_by: The option to order the response.
         :type order_by: str or ~azure.mgmt.machinelearningservices.models.OrderString
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either OnlineEndpointTrackedResourceArmPaginatedResult or
          the result of cls(response)
@@ -442,7 +445,7 @@ class OnlineEndpointsOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.OnlineEndpointTrackedResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnlineEndpointTrackedResourceArmPaginatedResult"]
         error_map = {
@@ -534,7 +537,7 @@ class OnlineEndpointsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_delete_request_initial(
@@ -591,6 +594,9 @@ class OnlineEndpointsOperations(object):
         :type workspace_name: str
         :param endpoint_name: Online Endpoint name.
         :type endpoint_name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -603,7 +609,7 @@ class OnlineEndpointsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -660,6 +666,9 @@ class OnlineEndpointsOperations(object):
         :type workspace_name: str
         :param endpoint_name: Online Endpoint name.
         :type endpoint_name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OnlineEndpoint, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.OnlineEndpoint
@@ -671,7 +680,7 @@ class OnlineEndpointsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_request(
@@ -722,7 +731,7 @@ class OnlineEndpointsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'PartialMinimalTrackedResourceWithIdentity')
@@ -793,6 +802,9 @@ class OnlineEndpointsOperations(object):
         :param body: Online Endpoint entity to apply during operation.
         :type body:
          ~azure.mgmt.machinelearningservices.models.PartialMinimalTrackedResourceWithIdentity
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -807,7 +819,7 @@ class OnlineEndpointsOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.OnlineEndpoint]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnlineEndpoint"]
@@ -866,7 +878,7 @@ class OnlineEndpointsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'OnlineEndpoint')
@@ -935,6 +947,9 @@ class OnlineEndpointsOperations(object):
         :type endpoint_name: str
         :param body: Online Endpoint entity to apply during operation.
         :type body: ~azure.mgmt.machinelearningservices.models.OnlineEndpoint
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -949,7 +964,7 @@ class OnlineEndpointsOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.OnlineEndpoint]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.OnlineEndpoint"]
@@ -1012,6 +1027,9 @@ class OnlineEndpointsOperations(object):
         :type workspace_name: str
         :param endpoint_name: Online Endpoint name.
         :type endpoint_name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EndpointAuthKeys, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.EndpointAuthKeys
@@ -1023,7 +1041,7 @@ class OnlineEndpointsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_list_keys_request(
@@ -1074,7 +1092,7 @@ class OnlineEndpointsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'RegenerateEndpointKeysRequest')
@@ -1137,6 +1155,9 @@ class OnlineEndpointsOperations(object):
         :type endpoint_name: str
         :param body: RegenerateKeys request .
         :type body: ~azure.mgmt.machinelearningservices.models.RegenerateEndpointKeysRequest
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1149,7 +1170,7 @@ class OnlineEndpointsOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
@@ -1199,9 +1220,9 @@ class OnlineEndpointsOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.EndpointAuthToken"
-        """Retrieve a valid AAD token for an Endpoint using AMLToken-based authentication.
+        """Retrieve a valid AML token for an Endpoint using AMLToken-based authentication.
 
-        Retrieve a valid AAD token for an Endpoint using AMLToken-based authentication.
+        Retrieve a valid AML token for an Endpoint using AMLToken-based authentication.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
@@ -1209,6 +1230,9 @@ class OnlineEndpointsOperations(object):
         :type workspace_name: str
         :param endpoint_name: Online Endpoint name.
         :type endpoint_name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: EndpointAuthToken, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.EndpointAuthToken
@@ -1220,7 +1244,7 @@ class OnlineEndpointsOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_token_request(

@@ -31,9 +31,6 @@ class AzureMachineLearningWorkspacesConfiguration(Configuration):  # pylint: dis
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
-     overriding this default value may result in unsupported behavior.
-    :paramtype api_version: str
     """
 
     def __init__(
@@ -44,8 +41,6 @@ class AzureMachineLearningWorkspacesConfiguration(Configuration):  # pylint: dis
     ):
         # type: (...) -> None
         super(AzureMachineLearningWorkspacesConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
-
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -53,7 +48,6 @@ class AzureMachineLearningWorkspacesConfiguration(Configuration):  # pylint: dis
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'mgmt-machinelearningservices/{}'.format(VERSION))
         self._configure(**kwargs)

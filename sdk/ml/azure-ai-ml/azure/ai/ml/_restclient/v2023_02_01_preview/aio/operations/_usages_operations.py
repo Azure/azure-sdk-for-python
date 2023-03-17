@@ -55,6 +55,9 @@ class UsagesOperations:
 
         :param location: The location for which resource usage is queried.
         :type location: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ListUsagesResult or the result of cls(response)
         :rtype:

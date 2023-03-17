@@ -56,6 +56,12 @@ class FeaturestoreEntityVersionsOperations:
         skip: Optional[str] = None,
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
+        page_size: Optional[int] = 20,
+        version_name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        created_by: Optional[str] = None,
+        stage: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.FeaturestoreEntityVersionResourceArmPaginatedResult"]:
         """List versions.
@@ -76,6 +82,21 @@ class FeaturestoreEntityVersionsOperations:
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param version_name: name for the featurestore entity version.
+        :type version_name: str
+        :param version: featurestore entity version.
+        :type version: str
+        :param description: description for the feature entity version.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
+        :param stage: stage.
+        :type stage: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either
          FeaturestoreEntityVersionResourceArmPaginatedResult or the result of cls(response)
@@ -83,7 +104,7 @@ class FeaturestoreEntityVersionsOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.FeaturestoreEntityVersionResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturestoreEntityVersionResourceArmPaginatedResult"]
         error_map = {
@@ -102,6 +123,12 @@ class FeaturestoreEntityVersionsOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -118,6 +145,12 @@ class FeaturestoreEntityVersionsOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -169,7 +202,7 @@ class FeaturestoreEntityVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_delete_request_initial(
@@ -229,6 +262,9 @@ class FeaturestoreEntityVersionsOperations:
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -241,7 +277,7 @@ class FeaturestoreEntityVersionsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -301,6 +337,9 @@ class FeaturestoreEntityVersionsOperations:
         :type name: str
         :param version: Version identifier. This is case-sensitive.
         :type version: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FeaturestoreEntityVersion, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.FeaturestoreEntityVersion
@@ -312,7 +351,7 @@ class FeaturestoreEntityVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_request(
@@ -364,7 +403,7 @@ class FeaturestoreEntityVersionsOperations:
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'FeaturestoreEntityVersion')
@@ -436,6 +475,9 @@ class FeaturestoreEntityVersionsOperations:
         :type version: str
         :param body: Version entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.FeaturestoreEntityVersion
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -450,7 +492,7 @@ class FeaturestoreEntityVersionsOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.FeaturestoreEntityVersion]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturestoreEntityVersion"]

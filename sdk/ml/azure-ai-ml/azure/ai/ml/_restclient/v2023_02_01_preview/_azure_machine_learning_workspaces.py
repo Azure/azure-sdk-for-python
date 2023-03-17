@@ -15,7 +15,7 @@ from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryDataContainersOperations, RegistryDataVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
+from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -66,12 +66,6 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
     :ivar registry_component_versions: RegistryComponentVersionsOperations operations
     :vartype registry_component_versions:
      azure.mgmt.machinelearningservices.operations.RegistryComponentVersionsOperations
-    :ivar registry_data_containers: RegistryDataContainersOperations operations
-    :vartype registry_data_containers:
-     azure.mgmt.machinelearningservices.operations.RegistryDataContainersOperations
-    :ivar registry_data_versions: RegistryDataVersionsOperations operations
-    :vartype registry_data_versions:
-     azure.mgmt.machinelearningservices.operations.RegistryDataVersionsOperations
     :ivar registry_environment_containers: RegistryEnvironmentContainersOperations operations
     :vartype registry_environment_containers:
      azure.mgmt.machinelearningservices.operations.RegistryEnvironmentContainersOperations
@@ -120,6 +114,8 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
     :ivar featureset_versions: FeaturesetVersionsOperations operations
     :vartype featureset_versions:
      azure.mgmt.machinelearningservices.operations.FeaturesetVersionsOperations
+    :ivar features: FeaturesOperations operations
+    :vartype features: azure.mgmt.machinelearningservices.operations.FeaturesOperations
     :ivar featurestore_entity_containers: FeaturestoreEntityContainersOperations operations
     :vartype featurestore_entity_containers:
      azure.mgmt.machinelearningservices.operations.FeaturestoreEntityContainersOperations
@@ -149,9 +145,6 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
     :type subscription_id: str
     :param base_url: Service URL. Default value is 'https://management.azure.com'.
     :type base_url: str
-    :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
-     overriding this default value may result in unsupported behavior.
-    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -186,8 +179,6 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
         self.registry_code_versions = RegistryCodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_component_containers = RegistryComponentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_component_versions = RegistryComponentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_data_containers = RegistryDataContainersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_data_versions = RegistryDataVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_environment_containers = RegistryEnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_environment_versions = RegistryEnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_model_containers = RegistryModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -205,6 +196,7 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
         self.environment_versions = EnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featureset_containers = FeaturesetContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featureset_versions = FeaturesetVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.features = FeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featurestore_entity_containers = FeaturestoreEntityContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featurestore_entity_versions = FeaturestoreEntityVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)

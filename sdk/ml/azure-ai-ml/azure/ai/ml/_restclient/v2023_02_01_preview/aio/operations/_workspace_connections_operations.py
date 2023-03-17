@@ -65,6 +65,9 @@ class WorkspaceConnectionsOperations:
         :param parameters: The object for creating or updating a new workspace connection.
         :type parameters:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2BasicResource
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WorkspaceConnectionPropertiesV2BasicResource, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2BasicResource
@@ -132,6 +135,9 @@ class WorkspaceConnectionsOperations:
         :type workspace_name: str
         :param connection_name: Friendly name of the workspace connection.
         :type connection_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: WorkspaceConnectionPropertiesV2BasicResource, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2BasicResource
@@ -195,6 +201,9 @@ class WorkspaceConnectionsOperations:
         :type workspace_name: str
         :param connection_name: Friendly name of the workspace connection.
         :type connection_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -257,6 +266,9 @@ class WorkspaceConnectionsOperations:
         :type target: str
         :param category: Category of the workspace connection.
         :type category: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either
          WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult or the result of cls(response)

@@ -38,7 +38,7 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
     count = kwargs.pop('count', 30)  # type: Optional[int]
     is_default = kwargs.pop('is_default', None)  # type: Optional[bool]
@@ -97,7 +97,7 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -136,7 +136,7 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -175,7 +175,7 @@ def build_create_or_update_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
     skip_validation = kwargs.pop('skip_validation', False)  # type: Optional[bool]
 
@@ -220,7 +220,7 @@ def build_list_secrets_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -310,6 +310,9 @@ class DatastoresOperations(object):
         :type order_by: str
         :param order_by_asc: Order by property in ascending order.
         :type order_by_asc: bool
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either DatastoreResourceArmPaginatedResult or the result
          of cls(response)
@@ -317,7 +320,7 @@ class DatastoresOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.DatastoreResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.DatastoreResourceArmPaginatedResult"]
         error_map = {
@@ -414,6 +417,9 @@ class DatastoresOperations(object):
         :type workspace_name: str
         :param name: Datastore name.
         :type name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -425,7 +431,7 @@ class DatastoresOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_delete_request(
@@ -476,6 +482,9 @@ class DatastoresOperations(object):
         :type workspace_name: str
         :param name: Datastore name.
         :type name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Datastore, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.Datastore
@@ -487,7 +496,7 @@ class DatastoresOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_request(
@@ -548,6 +557,9 @@ class DatastoresOperations(object):
         :type body: ~azure.mgmt.machinelearningservices.models.Datastore
         :param skip_validation: Flag to skip validation.
         :type skip_validation: bool
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Datastore, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.Datastore
@@ -559,7 +571,7 @@ class DatastoresOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'Datastore')
@@ -623,6 +635,9 @@ class DatastoresOperations(object):
         :type workspace_name: str
         :param name: Datastore name.
         :type name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DatastoreSecrets, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.DatastoreSecrets
@@ -634,7 +649,7 @@ class DatastoresOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_list_secrets_request(

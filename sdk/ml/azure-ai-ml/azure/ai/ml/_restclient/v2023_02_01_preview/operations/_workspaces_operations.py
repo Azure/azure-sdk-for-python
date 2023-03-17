@@ -596,6 +596,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Workspace, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.Workspace
@@ -713,6 +716,9 @@ class WorkspacesOperations(object):
         :type workspace_name: str
         :param parameters: The parameters for creating or updating a machine learning workspace.
         :type parameters: ~azure.mgmt.machinelearningservices.models.Workspace
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -825,6 +831,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -945,6 +954,9 @@ class WorkspacesOperations(object):
         :type workspace_name: str
         :param parameters: The parameters for updating a machine learning workspace.
         :type parameters: ~azure.mgmt.machinelearningservices.models.WorkspaceUpdateParameters
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1014,6 +1026,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
         :rtype:
@@ -1166,6 +1181,9 @@ class WorkspacesOperations(object):
         :type workspace_name: str
         :param parameters: The parameter of diagnosing workspace health.
         :type parameters: ~azure.mgmt.machinelearningservices.models.DiagnoseWorkspaceParameters
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1238,6 +1256,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListWorkspaceKeysResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ListWorkspaceKeysResult
@@ -1342,6 +1363,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1402,6 +1426,9 @@ class WorkspacesOperations(object):
 
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
         :rtype:
@@ -1484,6 +1511,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NotebookAccessTokenResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.NotebookAccessTokenResult
@@ -1593,6 +1623,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1661,6 +1694,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListStorageAccountKeysResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ListStorageAccountKeysResult
@@ -1721,6 +1757,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListNotebookKeysResult, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ListNotebookKeysResult
@@ -1785,6 +1824,9 @@ class WorkspacesOperations(object):
         :type resource_group_name: str
         :param workspace_name: Name of Azure Machine Learning workspace.
         :type workspace_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExternalFQDNResponse, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ExternalFQDNResponse

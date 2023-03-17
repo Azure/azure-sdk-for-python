@@ -59,6 +59,9 @@ class RegistriesOperations:
 
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistryTrackedResourceArmPaginatedResult or the
          result of cls(response)
@@ -143,6 +146,9 @@ class RegistriesOperations:
         :type resource_group_name: str
         :param skip: Continuation token for pagination.
         :type skip: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistryTrackedResourceArmPaginatedResult or the
          result of cls(response)
@@ -278,6 +284,9 @@ class RegistriesOperations:
         :type resource_group_name: str
         :param registry_name: Name of registry. This is case-insensitive.
         :type registry_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -342,6 +351,9 @@ class RegistriesOperations:
         :type resource_group_name: str
         :param registry_name: Name of registry. This is case-insensitive.
         :type registry_name: str
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Registry, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.Registry
@@ -465,6 +477,9 @@ class RegistriesOperations:
         :type registry_name: str
         :param body: Details required to create the registry.
         :type body: ~azure.mgmt.machinelearningservices.models.PartialRegistryPartialTrackedResource
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -595,6 +610,9 @@ class RegistriesOperations:
         :type registry_name: str
         :param body: Details required to create the registry.
         :type body: ~azure.mgmt.machinelearningservices.models.Registry
+        :keyword api_version: Api Version. The default value is "2023-02-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for

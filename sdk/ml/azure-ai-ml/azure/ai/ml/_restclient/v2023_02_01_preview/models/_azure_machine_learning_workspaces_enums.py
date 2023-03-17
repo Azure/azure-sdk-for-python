@@ -42,6 +42,11 @@ class AssetProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     UPDATING = "Updating"
     DELETING = "Deleting"
 
+class AutoDeleteCondition(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    CREATED_GREATER_THAN = "CreatedGreaterThan"
+    LAST_ACCESSED_GREATER_THAN = "LastAccessedGreaterThan"
+
 class AutoRebuildSetting(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """AutoRebuild setting for the derived image
     """
@@ -63,7 +68,7 @@ class BaseEnvironmentSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
 
     ENVIRONMENT_ASSET = "EnvironmentAsset"
 
-class BatchDeploymentPropertyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BatchDeploymentConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The enumerated property types for batch deployments.
     """
 
@@ -349,6 +354,18 @@ class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KERBEROS_KEYTAB = "KerberosKeytab"
     KERBEROS_PASSWORD = "KerberosPassword"
 
+class DataCollectionMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class DataImportSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the type of data.
+    """
+
+    DATABASE = "database"
+    FILE_SYSTEM = "file_system"
+
 class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the datastore contents type.
     """
@@ -358,6 +375,7 @@ class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_DATA_LAKE_GEN2 = "AzureDataLakeGen2"
     AZURE_FILE = "AzureFile"
     HDFS = "Hdfs"
+    ONE_LAKE = "OneLake"
 
 class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the type of data.
@@ -394,6 +412,7 @@ class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PY_TORCH = "PyTorch"
     TENSOR_FLOW = "TensorFlow"
     MPI = "Mpi"
+    RAY = "Ray"
 
 class EarlyTerminationPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -812,6 +831,20 @@ class LoadBalancerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PUBLIC_IP = "PublicIp"
     INTERNAL_LOAD_BALANCER = "InternalLoadBalancer"
 
+class LogTrainingMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Enable compute and log training metrics.
+    ENABLE = "Enable"
+    #: Disable compute and log training metrics.
+    DISABLE = "Disable"
+
+class LogValidationLoss(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Enable compute and log validation metrics.
+    ENABLE = "Enable"
+    #: Disable compute and log validation metrics.
+    DISABLE = "Disable"
+
 class LogVerbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum for setting log verbosity.
     """
@@ -975,6 +1008,12 @@ class ObjectDetectionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str,
     #: AP is calculated for each class and averaged to get the MAP.
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
 
+class OneLakeArtifactType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine OneLake artifact type.
+    """
+
+    LAKEHOUSE = "Lakehouse"
+
 class OperatingSystemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of operating system.
     """
@@ -1059,6 +1098,19 @@ class PackageInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
 
+class PendingUploadCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the PendingUpload credentials type.
+    """
+
+    SAS = "SAS"
+
+class PendingUploadType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of storage to use for the pending upload location
+    """
+
+    NONE = "None"
+    TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
+
 class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current provisioning state.
     """
@@ -1077,6 +1129,15 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumM
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
+
+class ProtectionLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Protection level associated with the Intellectual Property.
+    """
+
+    #: All means Intellectual Property is fully protected.
+    ALL = "All"
+    #: None means it is not an Intellectual Property.
+    NONE = "None"
 
 class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Protocol over which communication will happen over this endpoint
@@ -1231,6 +1292,14 @@ class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, E
     DISABLED = "Disabled"
     NOT_SPECIFIED = "NotSpecified"
 
+class RollingRateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    YEAR = "Year"
+    MONTH = "Month"
+    DAY = "Day"
+    HOUR = "Hour"
+    MINUTE = "Minute"
+
 class SamplingAlgorithmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     GRID = "Grid"
@@ -1246,6 +1315,7 @@ class ScheduleActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     CREATE_JOB = "CreateJob"
     INVOKE_BATCH_ENDPOINT = "InvokeBatchEndpoint"
+    IMPORT_DATA = "ImportData"
 
 class ScheduleListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -1603,6 +1673,12 @@ class VolumeDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     VOLUME = "volume"
     TMPFS = "tmpfs"
     NPIPE = "npipe"
+
+class WebhookType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the webhook callback service type.
+    """
+
+    AZURE_DEV_OPS = "AzureDevOps"
 
 class WeekDay(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum of weekday

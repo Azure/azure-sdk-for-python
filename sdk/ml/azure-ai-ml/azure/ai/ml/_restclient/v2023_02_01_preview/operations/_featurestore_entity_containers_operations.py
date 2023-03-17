@@ -40,10 +40,14 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     skip = kwargs.pop('skip', None)  # type: Optional[str]
     tags = kwargs.pop('tags', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
+    page_size = kwargs.pop('page_size', 20)  # type: Optional[int]
+    name = kwargs.pop('name', None)  # type: Optional[str]
+    description = kwargs.pop('description', None)  # type: Optional[str]
+    created_by = kwargs.pop('created_by', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -65,6 +69,14 @@ def build_list_request(
         _query_parameters['tags'] = _SERIALIZER.query("tags", tags, 'str')
     if list_view_type is not None:
         _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
+    if page_size is not None:
+        _query_parameters['pageSize'] = _SERIALIZER.query("page_size", page_size, 'int')
+    if name is not None:
+        _query_parameters['name'] = _SERIALIZER.query("name", name, 'str')
+    if description is not None:
+        _query_parameters['description'] = _SERIALIZER.query("description", description, 'str')
+    if created_by is not None:
+        _query_parameters['createdBy'] = _SERIALIZER.query("created_by", created_by, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -87,7 +99,7 @@ def build_delete_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -126,7 +138,7 @@ def build_get_entity_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
     accept = "application/json"
     # Construct URL
@@ -165,7 +177,7 @@ def build_create_or_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+    api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
     accept = "application/json"
@@ -229,6 +241,10 @@ class FeaturestoreEntityContainersOperations(object):
         skip=None,  # type: Optional[str]
         tags=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
+        page_size=20,  # type: Optional[int]
+        name=None,  # type: Optional[str]
+        description=None,  # type: Optional[str]
+        created_by=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.FeaturestoreEntityContainerResourceArmPaginatedResult"]
@@ -248,6 +264,17 @@ class FeaturestoreEntityContainersOperations(object):
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param name: name for the featurestore eneity.
+        :type name: str
+        :param description: description for the featurestore entity.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either
          FeaturestoreEntityContainerResourceArmPaginatedResult or the result of cls(response)
@@ -255,7 +282,7 @@ class FeaturestoreEntityContainersOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.FeaturestoreEntityContainerResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturestoreEntityContainerResourceArmPaginatedResult"]
         error_map = {
@@ -273,6 +300,10 @@ class FeaturestoreEntityContainersOperations(object):
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    name=name,
+                    description=description,
+                    created_by=created_by,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -288,6 +319,10 @@ class FeaturestoreEntityContainersOperations(object):
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    name=name,
+                    description=description,
+                    created_by=created_by,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -339,7 +374,7 @@ class FeaturestoreEntityContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_delete_request_initial(
@@ -396,6 +431,9 @@ class FeaturestoreEntityContainersOperations(object):
         :type workspace_name: str
         :param name: Container name. This is case-sensitive.
         :type name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -408,7 +446,7 @@ class FeaturestoreEntityContainersOperations(object):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType[None]
         lro_delay = kwargs.pop(
@@ -465,6 +503,9 @@ class FeaturestoreEntityContainersOperations(object):
         :type workspace_name: str
         :param name: Container name. This is case-sensitive.
         :type name: str
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FeaturestoreEntityContainer, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.FeaturestoreEntityContainer
@@ -476,7 +517,7 @@ class FeaturestoreEntityContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
 
         
         request = build_get_entity_request(
@@ -527,7 +568,7 @@ class FeaturestoreEntityContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'FeaturestoreEntityContainer')
@@ -596,6 +637,9 @@ class FeaturestoreEntityContainersOperations(object):
         :type name: str
         :param body: Container entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.FeaturestoreEntityContainer
+        :keyword api_version: Api Version. The default value is "2023-04-01-preview". Note that
+         overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -610,7 +654,7 @@ class FeaturestoreEntityContainersOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.FeaturestoreEntityContainer]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2023-02-01-preview")  # type: str
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturestoreEntityContainer"]
