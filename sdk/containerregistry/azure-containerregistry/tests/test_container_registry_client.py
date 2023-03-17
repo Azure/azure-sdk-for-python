@@ -597,6 +597,20 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 with pytest.raises(ClientAuthenticationError):
                     for repo in client.list_repository_names():
                         pass
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup tags in ALPINE repo
+            for tag in client.list_tag_properties(ALPINE):
+                client.delete_tag(ALPINE, tag.name)
+            
+            response = client.list_tag_properties(ALPINE)
+            if response is not None:
+                with pytest.raises(TypeError):
+                    for tag in response:
+                        pass
 
 
 def test_set_api_version():
