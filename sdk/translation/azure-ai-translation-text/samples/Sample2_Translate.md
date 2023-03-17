@@ -18,7 +18,7 @@ Translate text from known source language to target language.
 try:
     source_language = "en"
     target_languages = ["cs"]
-    input_text_elements = [ InputTextElement(text = "This is a test") ]
+    input_text_elements = [ InputTextItem(text = "This is a test") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages, from_parameter = source_language)
     translation = response[0] if response else None
@@ -42,7 +42,7 @@ You can ommit source languge of the input text. In this case, API will try to au
 ```Python Snippet:Sample2_TranslateDetection
 try:
     target_languages = ["cs"]
-    input_text_elements = [ InputTextElement(text = "This is a test") ]
+    input_text_elements = [ InputTextItem(text = "This is a test") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages)
     translation = response[0] if response else None
@@ -68,7 +68,7 @@ try:
     from_language = "ar"
     to_script = "Latn"
     target_languages = ["zh-Hans"]
-    input_text_elements = [ InputTextElement(text = "hudha akhtabar.") ]
+    input_text_elements = [ InputTextItem(text = "hudha akhtabar.") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages, from_script=from_script, from_parameter=from_language, to_script=to_script)
     translation = response[0] if response else None
@@ -95,9 +95,9 @@ You can translate multiple text elements with a various length. Each input eleme
 try:
     target_languages = ["cs"]
     input_text_elements = [ 
-        InputTextElement(text = "This is a test."),
-        InputTextElement(text = "Esto es una prueba."),
-        InputTextElement(text = "Dies ist ein Test.")]
+        InputTextItem(text = "This is a test."),
+        InputTextItem(text = "Esto es una prueba."),
+        InputTextItem(text = "Dies ist ein Test.")]
 
     translations = text_translator.translate(content = input_text_elements, to = target_languages)
 
@@ -116,7 +116,7 @@ You can provide multiple target languages which results to each input element be
 ```Python Snippet:Sample2_TranslateMultipleTargets
 try:
     target_languages = ["cs", "es", "de"]
-    input_text_elements = [ InputTextElement(text = "This is a test") ]
+    input_text_elements = [ InputTextItem(text = "This is a test") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages)
     translation = response[0] if response else None
@@ -140,7 +140,7 @@ You can select whether the translated text is plain text or HTML text. Any HTML 
 try:
     text_type = TextTypes.HTML
     target_languages = ["cs"]
-    input_text_elements = [ InputTextElement(text = "<html><body>This <b>is</b> a test.</body></html>") ]
+    input_text_elements = [ InputTextItem(text = "<html><body>This <b>is</b> a test.</body></html>") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages, text_type=text_type)
     translation = response[0] if response else None
@@ -165,7 +165,7 @@ try:
     text_type = TextTypes.HTML
     source_language = "en"
     target_languages = ["cs"]
-    input_text_elements = [ InputTextElement(text = "<div class=\"notranslate\">This will not be translated.</div><div>This will be translated. </div>") ]
+    input_text_elements = [ InputTextItem(text = "<div class=\"notranslate\">This will not be translated.</div><div>This will be translated. </div>") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages, from_parameter = source_language, text_type=text_type)
     translation = response[0] if response else None
@@ -188,7 +188,7 @@ If you already know the translation you want to apply to a word or a phrase, you
 try:
     source_language = "en"
     target_languages = ["cs"]
-    input_text_elements = [ InputTextElement(text = "The word <mstrans:dictionary translation=\"wordomatic\">wordomatic</mstrans:dictionary> is a dictionary entry.") ]
+    input_text_elements = [ InputTextItem(text = "The word <mstrans:dictionary translation=\"wordomatic\">wordomatic</mstrans:dictionary> is a dictionary entry.") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages, from_parameter = source_language)
     translation = response[0] if response else None
@@ -212,7 +212,7 @@ try:
     profanity_action = ProfanityActions.MARKED
     profanity_maker = ProfanityMarkers.ASTERISK
     target_languages = ["cs"]
-    input_text_elements = [ InputTextElement(text = "This is ***.") ]
+    input_text_elements = [ InputTextItem(text = "This is ***.") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages, profanity_action=profanity_action, profanity_marker=profanity_maker)
     translation = response[0] if response else None
@@ -236,7 +236,7 @@ You can ask translation service to include alignment projection from source text
 try:
     include_alignment = True
     target_languages = ["cs"]
-    input_text_elements = [ InputTextElement(text = "The answer lies in machine translation.") ]
+    input_text_elements = [ InputTextItem(text = "The answer lies in machine translation.") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages, include_alignment = include_alignment)
     translation = response[0] if response else None
@@ -262,7 +262,7 @@ You can ask translator service to include sentence boundaries for the input text
 try:
     include_sentence_length = True
     target_languages = ["cs"]
-    input_text_elements = [ InputTextElement(text = "The answer lies in machine translation. This is a test.") ]
+    input_text_elements = [ InputTextItem(text = "The answer lies in machine translation. This is a test.") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages, include_sentence_length=include_sentence_length)
     translation = response[0] if response else None
@@ -293,7 +293,7 @@ It is possible to set `allow_fallback` paramter. It specifies that the service i
 try:
     category = "<<Category ID>>"
     target_languages = ["cs"]
-    input_text_elements = [ InputTextElement(text = "This is a test") ]
+    input_text_elements = [ InputTextItem(text = "This is a test") ]
 
     response = text_translator.translate(content = input_text_elements, to = target_languages, category = category)
     translation = response[0] if response else None

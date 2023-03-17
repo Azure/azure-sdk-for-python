@@ -19,7 +19,7 @@ Returns equivalent words for the source term in the target language.
 try:
     source_language = "en"
     target_anguage = "es"
-    input_text_elements = [ InputTextElement(text = "fly") ]
+    input_text_elements = [ InputTextItem(text = "fly") ]
 
     response = text_translator.dictionary_lookup(content = input_text_elements, from_parameter = source_language, to = target_anguage)
      dictionary_entry = response[0] if response else None

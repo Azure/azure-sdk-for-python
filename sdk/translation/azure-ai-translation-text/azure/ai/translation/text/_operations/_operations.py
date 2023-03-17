@@ -79,10 +79,10 @@ def build_text_translation_translate_request(
     to: List[str],
     client_trace_id: Optional[str] = None,
     from_parameter: Optional[str] = None,
-    text_type: Optional[Union[str, _models.TextTypes]] = None,
+    text_type: Optional[Union[str, _models.TextType]] = None,
     category: Optional[str] = None,
-    profanity_action: Optional[Union[str, _models.ProfanityActions]] = None,
-    profanity_marker: Optional[Union[str, _models.ProfanityMarkers]] = None,
+    profanity_action: Optional[Union[str, _models.ProfanityAction]] = None,
+    profanity_marker: Optional[Union[str, _models.ProfanityMarker]] = None,
     include_alignment: Optional[bool] = None,
     include_sentence_length: Optional[bool] = None,
     suggested_from: Optional[str] = None,
@@ -297,8 +297,6 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
          If the resource has not been modified, the service will return status code 304 and an empty
          response body. Default value is None.
         :paramtype if_none_match: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: GetLanguagesResult. The GetLanguagesResult is compatible with MutableMapping
         :rtype: ~azure.ai.translation.text.models.GetLanguagesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -330,7 +328,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -346,10 +344,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.GetLanguagesResult, response.json())
+        deserialized = _deserialize(_models.GetLanguagesResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -359,15 +354,15 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
     @overload
     def translate(
         self,
-        content: List[_models.InputTextElement],
+        content: List[_models.InputTextItem],
         *,
         to: List[str],
         client_trace_id: Optional[str] = None,
         from_parameter: Optional[str] = None,
-        text_type: Optional[Union[str, _models.TextTypes]] = None,
+        text_type: Optional[Union[str, _models.TextType]] = None,
         category: Optional[str] = None,
-        profanity_action: Optional[Union[str, _models.ProfanityActions]] = None,
-        profanity_marker: Optional[Union[str, _models.ProfanityMarkers]] = None,
+        profanity_action: Optional[Union[str, _models.ProfanityAction]] = None,
+        profanity_marker: Optional[Union[str, _models.ProfanityMarker]] = None,
         include_alignment: Optional[bool] = None,
         include_sentence_length: Optional[bool] = None,
         suggested_from: Optional[str] = None,
@@ -376,13 +371,13 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         allow_fallback: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.TranslatedTextElement]:
+    ) -> List[_models.TranslatedTextItem]:
         """Translate Text.
 
         Translate Text.
 
         :param content: Array of the text to be translated. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword to: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -407,7 +402,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
          HTML needs to be a well-formed,
          complete element. Possible values are: plain (default) or html. Known values are: "plain" and
          "html". Default value is None.
-        :paramtype text_type: str or ~azure.ai.translation.text.models.TextTypes
+        :paramtype text_type: str or ~azure.ai.translation.text.models.TextType
         :keyword category: A string specifying the category (domain) of the translation. This parameter
          is used to get translations
          from a customized system built with Custom Translator. Add the Category ID from your Custom
@@ -418,11 +413,11 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword profanity_action: Specifies how profanities should be treated in translations.
          Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
          "Marked", and "Deleted". Default value is None.
-        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityActions
+        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityAction
         :keyword profanity_marker: Specifies how profanities should be marked in translations.
          Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
          Default value is None.
-        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarkers
+        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarker
         :keyword include_alignment: Specifies whether to include alignment projection from source text
          to translated text.
          Possible values are: true or false (default). Default value is None.
@@ -458,10 +453,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of TranslatedTextElement
-        :rtype: list[~azure.ai.translation.text.models.TranslatedTextElement]
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -473,10 +466,10 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         to: List[str],
         client_trace_id: Optional[str] = None,
         from_parameter: Optional[str] = None,
-        text_type: Optional[Union[str, _models.TextTypes]] = None,
+        text_type: Optional[Union[str, _models.TextType]] = None,
         category: Optional[str] = None,
-        profanity_action: Optional[Union[str, _models.ProfanityActions]] = None,
-        profanity_marker: Optional[Union[str, _models.ProfanityMarkers]] = None,
+        profanity_action: Optional[Union[str, _models.ProfanityAction]] = None,
+        profanity_marker: Optional[Union[str, _models.ProfanityMarker]] = None,
         include_alignment: Optional[bool] = None,
         include_sentence_length: Optional[bool] = None,
         suggested_from: Optional[str] = None,
@@ -485,7 +478,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         allow_fallback: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.TranslatedTextElement]:
+    ) -> List[_models.TranslatedTextItem]:
         """Translate Text.
 
         Translate Text.
@@ -516,7 +509,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
          HTML needs to be a well-formed,
          complete element. Possible values are: plain (default) or html. Known values are: "plain" and
          "html". Default value is None.
-        :paramtype text_type: str or ~azure.ai.translation.text.models.TextTypes
+        :paramtype text_type: str or ~azure.ai.translation.text.models.TextType
         :keyword category: A string specifying the category (domain) of the translation. This parameter
          is used to get translations
          from a customized system built with Custom Translator. Add the Category ID from your Custom
@@ -527,11 +520,11 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword profanity_action: Specifies how profanities should be treated in translations.
          Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
          "Marked", and "Deleted". Default value is None.
-        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityActions
+        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityAction
         :keyword profanity_marker: Specifies how profanities should be marked in translations.
          Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
          Default value is None.
-        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarkers
+        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarker
         :keyword include_alignment: Specifies whether to include alignment projection from source text
          to translated text.
          Possible values are: true or false (default). Default value is None.
@@ -567,25 +560,23 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of TranslatedTextElement
-        :rtype: list[~azure.ai.translation.text.models.TranslatedTextElement]
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def translate(
         self,
-        content: Union[List[_models.InputTextElement], IO],
+        content: Union[List[_models.InputTextItem], IO],
         *,
         to: List[str],
         client_trace_id: Optional[str] = None,
         from_parameter: Optional[str] = None,
-        text_type: Optional[Union[str, _models.TextTypes]] = None,
+        text_type: Optional[Union[str, _models.TextType]] = None,
         category: Optional[str] = None,
-        profanity_action: Optional[Union[str, _models.ProfanityActions]] = None,
-        profanity_marker: Optional[Union[str, _models.ProfanityMarkers]] = None,
+        profanity_action: Optional[Union[str, _models.ProfanityAction]] = None,
+        profanity_marker: Optional[Union[str, _models.ProfanityMarker]] = None,
         include_alignment: Optional[bool] = None,
         include_sentence_length: Optional[bool] = None,
         suggested_from: Optional[str] = None,
@@ -593,14 +584,14 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         to_script: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
         **kwargs: Any
-    ) -> List[_models.TranslatedTextElement]:
+    ) -> List[_models.TranslatedTextItem]:
         """Translate Text.
 
         Translate Text.
 
-        :param content: Array of the text to be translated. Is either a [InputTextElement] type or a IO
+        :param content: Array of the text to be translated. Is either a [InputTextItem] type or a IO
          type. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
+        :type content: list[~azure.ai.translation.text.models.InputTextItem] or IO
         :keyword to: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -625,7 +616,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
          HTML needs to be a well-formed,
          complete element. Possible values are: plain (default) or html. Known values are: "plain" and
          "html". Default value is None.
-        :paramtype text_type: str or ~azure.ai.translation.text.models.TextTypes
+        :paramtype text_type: str or ~azure.ai.translation.text.models.TextType
         :keyword category: A string specifying the category (domain) of the translation. This parameter
          is used to get translations
          from a customized system built with Custom Translator. Add the Category ID from your Custom
@@ -636,11 +627,11 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword profanity_action: Specifies how profanities should be treated in translations.
          Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
          "Marked", and "Deleted". Default value is None.
-        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityActions
+        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityAction
         :keyword profanity_marker: Specifies how profanities should be marked in translations.
          Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
          Default value is None.
-        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarkers
+        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarker
         :keyword include_alignment: Specifies whether to include alignment projection from source text
          to translated text.
          Possible values are: true or false (default). Default value is None.
@@ -676,10 +667,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of TranslatedTextElement
-        :rtype: list[~azure.ai.translation.text.models.TranslatedTextElement]
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -694,7 +683,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.TranslatedTextElement]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.TranslatedTextItem]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -728,7 +717,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -745,10 +734,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         response_headers["x-mt-system"] = self._deserialize("str", response.headers.get("x-mt-system"))
         response_headers["x-metered-usage"] = self._deserialize("int", response.headers.get("x-metered-usage"))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.TranslatedTextElement], response.json())
+        deserialized = _deserialize(List[_models.TranslatedTextItem], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -758,7 +744,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
     @overload
     def transliterate(
         self,
-        content: List[_models.InputTextElement],
+        content: List[_models.InputTextItem],
         *,
         language: str,
         from_script: str,
@@ -772,7 +758,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         Transliterate Text.
 
         :param content: Array of the text to be transliterated. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -791,8 +777,6 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of TransliteratedText
         :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -834,8 +818,6 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of TransliteratedText
         :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -844,7 +826,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
     @distributed_trace
     def transliterate(
         self,
-        content: Union[List[_models.InputTextElement], IO],
+        content: Union[List[_models.InputTextItem], IO],
         *,
         language: str,
         from_script: str,
@@ -856,9 +838,9 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
 
         Transliterate Text.
 
-        :param content: Array of the text to be transliterated. Is either a [InputTextElement] type or
-         a IO type. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
+        :param content: Array of the text to be transliterated. Is either a [InputTextItem] type or a
+         IO type. Required.
+        :type content: list[~azure.ai.translation.text.models.InputTextItem] or IO
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -877,8 +859,6 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: list of TransliteratedText
         :rtype: list[~azure.ai.translation.text.models.TransliteratedText]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -920,7 +900,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -935,10 +915,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         response_headers = {}
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.TransliteratedText], response.json())
+        deserialized = _deserialize(List[_models.TransliteratedText], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -948,21 +925,21 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
     @overload
     def find_sentence_boundaries(
         self,
-        content: List[_models.InputTextElement],
+        content: List[_models.InputTextItem],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
         script: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.BreakSentenceElement]:
+    ) -> List[_models.BreakSentenceItem]:
         """Find Sentence Boundaries.
 
         Find Sentence Boundaries.
 
         :param content: Array of the text for which values the sentence boundaries will be calculated.
          Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -977,10 +954,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of BreakSentenceElement
-        :rtype: list[~azure.ai.translation.text.models.BreakSentenceElement]
+        :return: list of BreakSentenceItem
+        :rtype: list[~azure.ai.translation.text.models.BreakSentenceItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -994,7 +969,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         script: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.BreakSentenceElement]:
+    ) -> List[_models.BreakSentenceItem]:
         """Find Sentence Boundaries.
 
         Find Sentence Boundaries.
@@ -1016,30 +991,28 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of BreakSentenceElement
-        :rtype: list[~azure.ai.translation.text.models.BreakSentenceElement]
+        :return: list of BreakSentenceItem
+        :rtype: list[~azure.ai.translation.text.models.BreakSentenceItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def find_sentence_boundaries(
         self,
-        content: Union[List[_models.InputTextElement], IO],
+        content: Union[List[_models.InputTextItem], IO],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
         script: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.BreakSentenceElement]:
+    ) -> List[_models.BreakSentenceItem]:
         """Find Sentence Boundaries.
 
         Find Sentence Boundaries.
 
         :param content: Array of the text for which values the sentence boundaries will be calculated.
-         Is either a [InputTextElement] type or a IO type. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
+         Is either a [InputTextItem] type or a IO type. Required.
+        :type content: list[~azure.ai.translation.text.models.InputTextItem] or IO
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -1054,10 +1027,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of BreakSentenceElement
-        :rtype: list[~azure.ai.translation.text.models.BreakSentenceElement]
+        :return: list of BreakSentenceItem
+        :rtype: list[~azure.ai.translation.text.models.BreakSentenceItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1072,7 +1043,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.BreakSentenceElement]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.BreakSentenceItem]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1096,7 +1067,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -1111,10 +1082,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         response_headers = {}
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.BreakSentenceElement], response.json())
+        deserialized = _deserialize(List[_models.BreakSentenceItem], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1124,20 +1092,20 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
     @overload
     def lookup_dictionary_entries(
         self,
-        content: List[_models.InputTextElement],
+        content: List[_models.InputTextItem],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.DictionaryLookupElement]:
+    ) -> List[_models.DictionaryLookupItem]:
         """Lookup Dictionary Entries.
 
         Lookup Dictionary Entries.
 
         :param content: Array of the text to be sent to dictionary. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1152,10 +1120,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of DictionaryLookupElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupElement]
+        :return: list of DictionaryLookupItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1169,7 +1135,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.DictionaryLookupElement]:
+    ) -> List[_models.DictionaryLookupItem]:
         """Lookup Dictionary Entries.
 
         Lookup Dictionary Entries.
@@ -1190,30 +1156,28 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of DictionaryLookupElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupElement]
+        :return: list of DictionaryLookupItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def lookup_dictionary_entries(
         self,
-        content: Union[List[_models.InputTextElement], IO],
+        content: Union[List[_models.InputTextItem], IO],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.DictionaryLookupElement]:
+    ) -> List[_models.DictionaryLookupItem]:
         """Lookup Dictionary Entries.
 
         Lookup Dictionary Entries.
 
-        :param content: Array of the text to be sent to dictionary. Is either a [InputTextElement] type
-         or a IO type. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
+        :param content: Array of the text to be sent to dictionary. Is either a [InputTextItem] type or
+         a IO type. Required.
+        :type content: list[~azure.ai.translation.text.models.InputTextItem] or IO
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1228,10 +1192,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of DictionaryLookupElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupElement]
+        :return: list of DictionaryLookupItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1246,7 +1208,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.DictionaryLookupElement]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DictionaryLookupItem]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1270,7 +1232,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -1285,10 +1247,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         response_headers = {}
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.DictionaryLookupElement], response.json())
+        deserialized = _deserialize(List[_models.DictionaryLookupItem], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1298,20 +1257,20 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
     @overload
     def lookup_dictionary_examples(
         self,
-        content: List[_models.DictionaryExampleTextElement],
+        content: List[_models.DictionaryExampleTextItem],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.DictionaryExampleElement]:
+    ) -> List[_models.DictionaryExampleItem]:
         """Lookup Dictionary Examples.
 
         Lookup Dictionary Examples.
 
         :param content: Array of the text to be sent to dictionary. Required.
-        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextElement]
+        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextItem]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1326,10 +1285,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of DictionaryExampleElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleElement]
+        :return: list of DictionaryExampleItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1343,7 +1300,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.DictionaryExampleElement]:
+    ) -> List[_models.DictionaryExampleItem]:
         """Lookup Dictionary Examples.
 
         Lookup Dictionary Examples.
@@ -1364,30 +1321,28 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of DictionaryExampleElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleElement]
+        :return: list of DictionaryExampleItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def lookup_dictionary_examples(
         self,
-        content: Union[List[_models.DictionaryExampleTextElement], IO],
+        content: Union[List[_models.DictionaryExampleTextItem], IO],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.DictionaryExampleElement]:
+    ) -> List[_models.DictionaryExampleItem]:
         """Lookup Dictionary Examples.
 
         Lookup Dictionary Examples.
 
         :param content: Array of the text to be sent to dictionary. Is either a
-         [DictionaryExampleTextElement] type or a IO type. Required.
-        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextElement] or IO
+         [DictionaryExampleTextItem] type or a IO type. Required.
+        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextItem] or IO
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1402,10 +1357,8 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: list of DictionaryExampleElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleElement]
+        :return: list of DictionaryExampleItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1420,7 +1373,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.DictionaryExampleElement]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DictionaryExampleItem]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1444,7 +1397,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
@@ -1459,10 +1412,7 @@ class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
         response_headers = {}
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(List[_models.DictionaryExampleElement], response.json())
+        deserialized = _deserialize(List[_models.DictionaryExampleItem], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

@@ -17,51 +17,6 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Alignment(_model_base.Model):
-    """Alignment information object.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar proj: Maps input text to translated text. The alignment information is only provided when
-     the request
-     parameter includeAlignment is true. Alignment is returned as a string value of the following
-     format: [[SourceTextStartIndex]:[SourceTextEndIndex]–[TgtTextStartIndex]:[TgtTextEndIndex]].
-     The colon separates start and end index, the dash separates the languages, and space separates
-     the words.
-     One word may align with zero, one, or multiple words in the other language, and the aligned
-     words may
-     be non-contiguous. When no alignment information is available, the alignment element will be
-     empty. Required.
-    :vartype proj: str
-    """
-
-    proj: str = rest_field()
-    """Maps input text to translated text. The alignment information is only provided when the request 
-parameter includeAlignment is true. Alignment is returned as a string value of the following 
-format: [[SourceTextStartIndex]:[SourceTextEndIndex]–[TgtTextStartIndex]:[TgtTextEndIndex]]. 
-The colon separates start and end index, the dash separates the languages, and space separates the words. 
-One word may align with zero, one, or multiple words in the other language, and the aligned words may 
-be non-contiguous. When no alignment information is available, the alignment element will be empty. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        proj: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class BackTranslation(_model_base.Model):
     """Back Translation.
 
@@ -133,7 +88,7 @@ field is to provide a user interface with a means to sort back-translations so t
         super().__init__(*args, **kwargs)
 
 
-class BreakSentenceElement(_model_base.Model):
+class BreakSentenceItem(_model_base.Model):
     """Elemented containing break sentence result.
 
     All required parameters must be populated in order to send to Azure.
@@ -260,7 +215,78 @@ The score is between zero and one and a low score indicates a low confidence. Re
         super().__init__(*args, **kwargs)
 
 
-class DictionaryExampleElement(_model_base.Model):
+class DictionaryExample(_model_base.Model):
+    """Dictionary Example.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar source_prefix: The string to concatenate before the value of sourceTerm to form a
+     complete example.
+     Do not add a space character, since it is already there when it should be.
+     This value may be an empty string. Required.
+    :vartype source_prefix: str
+    :ivar source_term: A string equal to the actual term looked up. The string is added with
+     sourcePrefix
+     and sourceSuffix to form the complete example. Its value is separated so it can be
+     marked in a user interface, e.g., by bolding it. Required.
+    :vartype source_term: str
+    :ivar source_suffix: The string to concatenate after the value of sourceTerm to form a complete
+     example.
+     Do not add a space character, since it is already there when it should be.
+     This value may be an empty string. Required.
+    :vartype source_suffix: str
+    :ivar target_prefix: A string similar to sourcePrefix but for the target. Required.
+    :vartype target_prefix: str
+    :ivar target_term: A string similar to sourceTerm but for the target. Required.
+    :vartype target_term: str
+    :ivar target_suffix: A string similar to sourceSuffix but for the target. Required.
+    :vartype target_suffix: str
+    """
+
+    source_prefix: str = rest_field(name="sourcePrefix")
+    """The string to concatenate before the value of sourceTerm to form a complete example.
+Do not add a space character, since it is already there when it should be.
+This value may be an empty string. Required. """
+    source_term: str = rest_field(name="sourceTerm")
+    """A string equal to the actual term looked up. The string is added with sourcePrefix
+and sourceSuffix to form the complete example. Its value is separated so it can be
+marked in a user interface, e.g., by bolding it. Required. """
+    source_suffix: str = rest_field(name="sourceSuffix")
+    """The string to concatenate after the value of sourceTerm to form a complete example.
+Do not add a space character, since it is already there when it should be.
+This value may be an empty string. Required. """
+    target_prefix: str = rest_field(name="targetPrefix")
+    """A string similar to sourcePrefix but for the target. Required. """
+    target_term: str = rest_field(name="targetTerm")
+    """A string similar to sourceTerm but for the target. Required. """
+    target_suffix: str = rest_field(name="targetSuffix")
+    """A string similar to sourceSuffix but for the target. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_prefix: str,
+        source_term: str,
+        source_suffix: str,
+        target_prefix: str,
+        target_term: str,
+        target_suffix: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class DictionaryExampleItem(_model_base.Model):
     """Dictionary Example element.
 
     All required parameters must be populated in order to send to Azure.
@@ -276,7 +302,7 @@ class DictionaryExampleElement(_model_base.Model):
      Required.
     :vartype normalized_target: str
     :ivar examples: A list of examples for the (source term, target term) pair. Required.
-    :vartype examples: list[~azure.ai.translation.text.models.Example]
+    :vartype examples: list[~azure.ai.translation.text.models.DictionaryExample]
     """
 
     normalized_source: str = rest_field(name="normalizedSource")
@@ -285,7 +311,7 @@ to the value of the Text field at the matching list index in the body of the req
     normalized_target: str = rest_field(name="normalizedTarget")
     """A string giving the normalized form of the target term. Generally, this should be identical
 to the value of the Translation field at the matching list index in the body of the request. Required. """
-    examples: List["_models.Example"] = rest_field()
+    examples: List["_models.DictionaryExample"] = rest_field()
     """A list of examples for the (source term, target term) pair. Required. """
 
     @overload
@@ -294,7 +320,7 @@ to the value of the Translation field at the matching list index in the body of 
         *,
         normalized_source: str,
         normalized_target: str,
-        examples: List["_models.Example"],
+        examples: List["_models.DictionaryExample"],
     ):
         ...
 
@@ -309,7 +335,7 @@ to the value of the Translation field at the matching list index in the body of 
         super().__init__(*args, **kwargs)
 
 
-class InputTextElement(_model_base.Model):
+class InputTextItem(_model_base.Model):
     """Element containing the text for translation.
 
     All required parameters must be populated in order to send to Azure.
@@ -340,7 +366,7 @@ class InputTextElement(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DictionaryExampleTextElement(InputTextElement):
+class DictionaryExampleTextItem(InputTextItem):
     """Element containing the text with translation.
 
     All required parameters must be populated in order to send to Azure.
@@ -381,7 +407,7 @@ lookup response. The service will return examples for the specific source-target
         super().__init__(*args, **kwargs)
 
 
-class DictionaryLookupElement(_model_base.Model):
+class DictionaryLookupItem(_model_base.Model):
     """Dictionary Lookup Element.
 
     All required parameters must be populated in order to send to Azure.
@@ -571,77 +597,6 @@ class ErrorResponse(_model_base.Model):
         self,
         *,
         error: "_models.ErrorDetails",
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class Example(_model_base.Model):
-    """Dictionary Example.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar source_prefix: The string to concatenate before the value of sourceTerm to form a
-     complete example.
-     Do not add a space character, since it is already there when it should be.
-     This value may be an empty string. Required.
-    :vartype source_prefix: str
-    :ivar source_term: A string equal to the actual term looked up. The string is added with
-     sourcePrefix
-     and sourceSuffix to form the complete example. Its value is separated so it can be
-     marked in a user interface, e.g., by bolding it. Required.
-    :vartype source_term: str
-    :ivar source_suffix: The string to concatenate after the value of sourceTerm to form a complete
-     example.
-     Do not add a space character, since it is already there when it should be.
-     This value may be an empty string. Required.
-    :vartype source_suffix: str
-    :ivar target_prefix: A string similar to sourcePrefix but for the target. Required.
-    :vartype target_prefix: str
-    :ivar target_term: A string similar to sourceTerm but for the target. Required.
-    :vartype target_term: str
-    :ivar target_suffix: A string similar to sourceSuffix but for the target. Required.
-    :vartype target_suffix: str
-    """
-
-    source_prefix: str = rest_field(name="sourcePrefix")
-    """The string to concatenate before the value of sourceTerm to form a complete example.
-Do not add a space character, since it is already there when it should be.
-This value may be an empty string. Required. """
-    source_term: str = rest_field(name="sourceTerm")
-    """A string equal to the actual term looked up. The string is added with sourcePrefix
-and sourceSuffix to form the complete example. Its value is separated so it can be
-marked in a user interface, e.g., by bolding it. Required. """
-    source_suffix: str = rest_field(name="sourceSuffix")
-    """The string to concatenate after the value of sourceTerm to form a complete example.
-Do not add a space character, since it is already there when it should be.
-This value may be an empty string. Required. """
-    target_prefix: str = rest_field(name="targetPrefix")
-    """A string similar to sourcePrefix but for the target. Required. """
-    target_term: str = rest_field(name="targetTerm")
-    """A string similar to sourceTerm but for the target. Required. """
-    target_suffix: str = rest_field(name="targetSuffix")
-    """A string similar to sourceSuffix but for the target. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        source_prefix: str,
-        source_term: str,
-        source_suffix: str,
-        target_prefix: str,
-        target_term: str,
-        target_suffix: str,
     ):
         ...
 
@@ -869,7 +824,52 @@ class TargetDictionaryLanguage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TranslatedTextElement(_model_base.Model):
+class TranslatedTextAlignment(_model_base.Model):
+    """Alignment information object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar proj: Maps input text to translated text. The alignment information is only provided when
+     the request
+     parameter includeAlignment is true. Alignment is returned as a string value of the following
+     format: [[SourceTextStartIndex]:[SourceTextEndIndex]–[TgtTextStartIndex]:[TgtTextEndIndex]].
+     The colon separates start and end index, the dash separates the languages, and space separates
+     the words.
+     One word may align with zero, one, or multiple words in the other language, and the aligned
+     words may
+     be non-contiguous. When no alignment information is available, the alignment element will be
+     empty. Required.
+    :vartype proj: str
+    """
+
+    proj: str = rest_field()
+    """Maps input text to translated text. The alignment information is only provided when the request 
+parameter includeAlignment is true. Alignment is returned as a string value of the following 
+format: [[SourceTextStartIndex]:[SourceTextEndIndex]–[TgtTextStartIndex]:[TgtTextEndIndex]]. 
+The colon separates start and end index, the dash separates the languages, and space separates the words. 
+One word may align with zero, one, or multiple words in the other language, and the aligned words may 
+be non-contiguous. When no alignment information is available, the alignment element will be empty. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        proj: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class TranslatedTextItem(_model_base.Model):
     """Element containing the translated text.
 
     All required parameters must be populated in order to send to Azure.
@@ -935,7 +935,7 @@ class Translation(_model_base.Model):
      toScript parameter.
     :vartype transliteration: ~azure.ai.translation.text.models.Transliteration
     :ivar alignment: Alignment information.
-    :vartype alignment: ~azure.ai.translation.text.models.Alignment
+    :vartype alignment: ~azure.ai.translation.text.models.TranslatedTextAlignment
     :ivar sent_len: Sentence boundaries in the input and output texts.
     :vartype sent_len: ~azure.ai.translation.text.models.SentenceLength
     """
@@ -946,7 +946,7 @@ class Translation(_model_base.Model):
     """A string giving the translated text. Required. """
     transliteration: Optional["_models.Transliteration"] = rest_field()
     """An object giving the translated text in the script specified by the toScript parameter. """
-    alignment: Optional["_models.Alignment"] = rest_field()
+    alignment: Optional["_models.TranslatedTextAlignment"] = rest_field()
     """Alignment information. """
     sent_len: Optional["_models.SentenceLength"] = rest_field(name="sentLen")
     """Sentence boundaries in the input and output texts. """
@@ -958,7 +958,7 @@ class Translation(_model_base.Model):
         to: str,
         text: str,
         transliteration: Optional["_models.Transliteration"] = None,
-        alignment: Optional["_models.Alignment"] = None,
+        alignment: Optional["_models.TranslatedTextAlignment"] = None,
         sent_len: Optional["_models.SentenceLength"] = None,
     ):
         ...

@@ -18,7 +18,7 @@ When the input language is known, you can provide those to the service call.
 try:
     source_language = "zh-Hans"
     source_script = "Latn"
-    input_text_elements = [ InputTextElement(text = "zhè shì gè cè shì。") ]
+    input_text_elements = [ InputTextItem(text = "zhè shì gè cè shì。") ]
 
     response = text_translator.break_sentence(content = input_text_elements, language = source_language, script = source_script)
     break_sentence = response[0] if response else None
@@ -41,7 +41,7 @@ You can ommit source languge of the input text. In this case, API will try to au
 
 ```Python Snippet:Sample4_BreakSentence
 try:
-    input_text_elements = [ InputTextElement(text = "This is a test. This is the second sentence.") ]
+    input_text_elements = [ InputTextItem(text = "This is a test. This is the second sentence.") ]
 
     response = text_translator.break_sentence(content = input_text_elements)
     break_sentence = response[0] if response else None
