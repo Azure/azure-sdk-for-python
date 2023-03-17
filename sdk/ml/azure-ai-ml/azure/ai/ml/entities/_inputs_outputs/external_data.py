@@ -34,7 +34,9 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
         self.value = value
 
 
-class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
+class Database(
+    DictMixin, RestTranslatableMixin
+):  # pylint: disable=too-many-instance-attributes
     """Define a database class for a DataTransfer Component or Job.
 
     e.g.
@@ -84,7 +86,15 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
 
     def _to_dict(self, remove_name=True):
         """Convert the Source object to a dict."""
-        keys = ["name", "type", "query", "stored_procedure", "stored_procedure_params", "connection", "table_name"]
+        keys = [
+            "name",
+            "type",
+            "query",
+            "stored_procedure",
+            "stored_procedure_params",
+            "connection",
+            "table_name",
+        ]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
@@ -110,7 +120,9 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         return self._stored_procedure_params
 
     @stored_procedure_params.setter
-    def stored_procedure_params(self, value: Union[Dict[str, str], StoredProcedureParameter, None]):
+    def stored_procedure_params(
+        self, value: Union[Dict[str, str], StoredProcedureParameter, None]
+    ):
         if value is None:
             self._stored_procedure_params = value
         else:
@@ -122,7 +134,9 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
             self._stored_procedure_params = value
 
 
-class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
+class FileSystem(
+    DictMixin, RestTranslatableMixin
+):  # pylint: disable=too-many-instance-attributes
     """Define a file system class of a DataTransfer Component or Job.
 
     e.g. source_s3 = FileSystem(path='s3://my_bucket/my_folder', connection='azureml:my_s3_connection')

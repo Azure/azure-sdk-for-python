@@ -191,7 +191,9 @@ class StoredProcedureParamsSchema(metaclass=PatchedSchemaMeta):
 
 
 class DatabaseSchema(metaclass=PatchedSchemaMeta):
-    type = StringTransformedEnum(allowed_values=[ExternalDataType.DATABASE], required=True)
+    type = StringTransformedEnum(
+        allowed_values=[ExternalDataType.DATABASE], required=True
+    )
     table_name = fields.Str()
     query = fields.Str(
         metadata={"description": "The sql query command."},
@@ -204,6 +206,7 @@ class DatabaseSchema(metaclass=PatchedSchemaMeta):
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.data_transfer import Database
+
         data.pop("type", None)
         return Database(**data)
 
@@ -230,6 +233,7 @@ class FileSystemSchema(metaclass=PatchedSchemaMeta):
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.data_transfer import FileSystem
+
         data.pop("type", None)
         return FileSystem(**data)
 

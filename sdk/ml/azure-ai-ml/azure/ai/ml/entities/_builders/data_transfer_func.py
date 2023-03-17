@@ -18,9 +18,16 @@ from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSys
 from azure.ai.ml.entities._inputs_outputs import Output, Input
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, NodeOutput
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
-from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+from azure.ai.ml.entities._job.pipeline._component_translatable import (
+    ComponentTranslatableMixin,
+)
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
-from .data_transfer import DataTransferCopy, DataTransferImport, DataTransferExport, _build_source_sink
+from .data_transfer import (
+    DataTransferCopy,
+    DataTransferImport,
+    DataTransferExport,
+    _build_source_sink,
+)
 
 
 SUPPORTED_INPUTS = [
@@ -50,7 +57,9 @@ def _parse_input(input_value):
         component_input = Input(**input_value)
     elif isinstance(input_value, str):
         # Input bindings
-        component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
+        component_input = ComponentTranslatableMixin._to_input_builder_function(
+            input_value
+        )
         job_input = input_value
     elif isinstance(input_value, (PipelineInput, NodeOutput)):
         # datatransfer node can accept PipelineInput/NodeOutput for export task.
@@ -87,7 +96,9 @@ def _parse_output(output_value):
     elif isinstance(output_value, dict):  # When output value is a non-empty dictionary
         job_output = Output(**output_value)
         component_output = Output(**output_value)
-    elif isinstance(output_value, str):  # When output is passed in from pipeline job yaml
+    elif isinstance(
+        output_value, str
+    ):  # When output is passed in from pipeline job yaml
         job_output = output_value
     else:
         msg = f"Unsupported output type: {type(output_value)}, only Output and dict are supported."
@@ -153,10 +164,14 @@ def copy_data(
     """
     inputs = inputs or {}
     outputs = outputs or {}
-    component_inputs, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
+    component_inputs, job_inputs = _parse_inputs_outputs(
+        inputs, parse_func=_parse_input
+    )
     # job inputs can not be None
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
-    component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
+    component_outputs, job_outputs = _parse_inputs_outputs(
+        outputs, parse_func=_parse_output
+    )
     component = kwargs.pop("component", None)
     if component is None:
         component = DataTransferCopyComponent(

@@ -14,12 +14,23 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     path_source_s3 = "s3://my_bucket/my_folder"
     connection_target = "azureml:my_s3_connection"
 
-    my_cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+    my_cosmos_folder = Input(
+        type=AssetTypes.URI_FOLDER,
+        path="azureml://datastores/my_cosmos/paths/source_cosmos",
+    )
     inputs = {"source": my_cosmos_folder}
-    sink = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
+    sink = {
+        "type": "file_system",
+        "connection": connection_target,
+        "path": path_source_s3,
+    }
 
-    @dsl.pipeline(description="submit a pipeline with data transfer export file system job")
-    def data_transfer_export_file_system_pipeline_from_builder(path_source_s3, connection_target, cosmos_folder):
+    @dsl.pipeline(
+        description="submit a pipeline with data transfer export file system job"
+    )
+    def data_transfer_export_file_system_pipeline_from_builder(
+        path_source_s3, connection_target, cosmos_folder
+    ):
         from azure.ai.ml.data_transfer import FileSystem
 
         s3_blob_input = export_data(inputs=inputs, sink=sink)

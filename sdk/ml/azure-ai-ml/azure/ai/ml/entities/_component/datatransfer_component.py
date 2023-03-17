@@ -12,8 +12,17 @@ from azure.ai.ml._schema.component.data_transfer_component import (
     DataTransferExportComponentSchema,
 )
 from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes
-from azure.ai.ml.constants._component import NodeType, DataTransferTaskType, ExternalDataType
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException, ValidationErrorType
+from azure.ai.ml.constants._component import (
+    NodeType,
+    DataTransferTaskType,
+    ExternalDataType,
+)
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationException,
+    ValidationErrorType,
+)
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs.output import Output
 from ..._schema import PathAwareSchema
@@ -41,7 +50,9 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         **kwargs,
     ):
         # validate init params are valid type
-        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        validate_attribute_type(
+            attrs_to_check=locals(), attr_type_map=self._attr_type_map()
+        )
 
         kwargs[COMPONENT_TYPE] = NodeType.DATA_TRANSFER
         # Set default base path
@@ -70,7 +81,9 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 
     def _to_dict(self) -> Dict:
         """Dump the data transfer component content into a dictionary."""
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(DataTransferComponent, self)._to_dict()})
+        return convert_ordered_dict_to_dict(
+            {**self._other_parameter, **super(DataTransferComponent, self)._to_dict()}
+        )
 
     def __str__(self):
         try:
@@ -94,9 +107,15 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
                 else:
                     msg = "Type in source or sink only support {} and {}, currently got {}."
                     raise ValidationException(
-                        message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
+                        message=msg.format(
+                            ExternalDataType.DATABASE,
+                            ExternalDataType.FILE_SYSTEM,
+                            data_type,
+                        ),
                         no_personal_data_message=msg.format(
-                            ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
+                            ExternalDataType.DATABASE,
+                            ExternalDataType.FILE_SYSTEM,
+                            "data_type",
                         ),
                         target=ErrorTarget.COMPONENT,
                         error_category=ErrorCategory.USER_ERROR,
@@ -134,7 +153,7 @@ class DataTransferCopyComponent(DataTransferComponent):
         outputs: Optional[Dict] = None,
         **kwargs,
     ):
-        kwargs["task"]=DataTransferTaskType.COPY_DATA
+        kwargs["task"] = DataTransferTaskType.COPY_DATA
         super().__init__(
             inputs=inputs,
             outputs=outputs,
@@ -157,7 +176,9 @@ class DataTransferCopyComponent(DataTransferComponent):
         return self._data_copy_mode
 
     def _customized_validate(self):
-        validation_result = super(DataTransferCopyComponent, self)._customized_validate()
+        validation_result = super(
+            DataTransferCopyComponent, self
+        )._customized_validate()
         validation_result.merge_with(self._validate_input_output_mapping())
         return validation_result
 
@@ -168,7 +189,8 @@ class DataTransferCopyComponent(DataTransferComponent):
         if outputs_count != 1:
             msg = "Only support single output in {}, but there're {} outputs."
             validation_result.append_error(
-                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count), yaml_path="outputs"
+                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count),
+                yaml_path="outputs",
             )
         else:
             input_type = None
@@ -178,10 +200,17 @@ class DataTransferCopyComponent(DataTransferComponent):
                     input_type = input_data.type
                 for _, output_data in self.outputs.items():
                     output_type = output_data.type
-                if input_type is None or output_type is None or input_type != output_type:
+                if (
+                    input_type is None
+                    or output_type is None
+                    or input_type != output_type
+                ):
                     msg = "Input type {} doesn't exactly match with output type {} in task {}"
                     validation_result.append_error(
-                        message=msg.format(input_type, output_type, DataTransferTaskType.COPY_DATA), yaml_path="outputs"
+                        message=msg.format(
+                            input_type, output_type, DataTransferTaskType.COPY_DATA
+                        ),
+                        yaml_path="outputs",
                     )
             elif inputs_count > 1:
                 for _, output_data in self.outputs.items():
@@ -189,12 +218,19 @@ class DataTransferCopyComponent(DataTransferComponent):
                 if output_type is None or output_type != AssetTypes.URI_FOLDER:
                     msg = "output type {} need to be {} in task {}"
                     validation_result.append_error(
-                        message=msg.format(output_type, AssetTypes.URI_FOLDER, DataTransferTaskType.COPY_DATA),
+                        message=msg.format(
+                            output_type,
+                            AssetTypes.URI_FOLDER,
+                            DataTransferTaskType.COPY_DATA,
+                        ),
                         yaml_path="outputs",
                     )
             else:
                 msg = "Inputs must be set in task {}."
-                validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path="inputs")
+                validation_result.append_error(
+                    message=msg.format(DataTransferTaskType.COPY_DATA),
+                    yaml_path="inputs",
+                )
         return validation_result
 
 
@@ -217,7 +253,7 @@ class DataTransferImportComponent(DataTransferComponent):
     ):
 
         outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
-        kwargs["task"]=DataTransferTaskType.IMPORT_DATA
+        kwargs["task"] = DataTransferTaskType.IMPORT_DATA
         super().__init__(
             outputs=outputs,
             **kwargs,
@@ -242,7 +278,9 @@ class DataTransferImportComponent(DataTransferComponent):
         )
 
 
-class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
+class DataTransferExportComponent(
+    DataTransferComponent
+):  # pylint: disable=too-many-instance-attributes
     """DataTransfer export component version, used to define a data transfer export component.
 
     :param sink: The sink of external data and databases.
@@ -258,7 +296,7 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
         sink: Optional[Dict] = None,
         **kwargs,
     ):
-        kwargs["task"]=DataTransferTaskType.EXPORT_DATA
+        kwargs["task"] = DataTransferTaskType.EXPORT_DATA
         super().__init__(
             inputs=inputs,
             **kwargs,
