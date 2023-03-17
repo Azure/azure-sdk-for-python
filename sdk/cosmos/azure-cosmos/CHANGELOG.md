@@ -8,6 +8,7 @@
 
 #### Bugs Fixed
 * Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally.
+* Fixed bug with method `query_items()` of our async container class, where partition key and cross partition headers would both be set when using partition keys.
 
 #### Other Changes
 
