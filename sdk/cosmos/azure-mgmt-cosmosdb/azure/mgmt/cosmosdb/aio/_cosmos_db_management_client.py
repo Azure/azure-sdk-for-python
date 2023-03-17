@@ -23,11 +23,14 @@ from .operations import (
     CollectionPartitionOperations,
     CollectionPartitionRegionOperations,
     CollectionRegionOperations,
+    DataTransferJobsOperations,
     DatabaseAccountRegionOperations,
     DatabaseAccountsOperations,
     DatabaseOperations,
+    GraphResourcesOperations,
     GremlinResourcesOperations,
     LocationsOperations,
+    MongoClustersOperations,
     MongoDBResourcesOperations,
     NotebookWorkspacesOperations,
     Operations,
@@ -94,6 +97,8 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :ivar partition_key_range_id_region: PartitionKeyRangeIdRegionOperations operations
     :vartype partition_key_range_id_region:
      azure.mgmt.cosmosdb.aio.operations.PartitionKeyRangeIdRegionOperations
+    :ivar graph_resources: GraphResourcesOperations operations
+    :vartype graph_resources: azure.mgmt.cosmosdb.aio.operations.GraphResourcesOperations
     :ivar sql_resources: SqlResourcesOperations operations
     :vartype sql_resources: azure.mgmt.cosmosdb.aio.operations.SqlResourcesOperations
     :ivar mongo_db_resources: MongoDBResourcesOperations operations
@@ -106,11 +111,15 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :vartype gremlin_resources: azure.mgmt.cosmosdb.aio.operations.GremlinResourcesOperations
     :ivar locations: LocationsOperations operations
     :vartype locations: azure.mgmt.cosmosdb.aio.operations.LocationsOperations
+    :ivar data_transfer_jobs: DataTransferJobsOperations operations
+    :vartype data_transfer_jobs: azure.mgmt.cosmosdb.aio.operations.DataTransferJobsOperations
     :ivar cassandra_clusters: CassandraClustersOperations operations
     :vartype cassandra_clusters: azure.mgmt.cosmosdb.aio.operations.CassandraClustersOperations
     :ivar cassandra_data_centers: CassandraDataCentersOperations operations
     :vartype cassandra_data_centers:
      azure.mgmt.cosmosdb.aio.operations.CassandraDataCentersOperations
+    :ivar mongo_clusters: MongoClustersOperations operations
+    :vartype mongo_clusters: azure.mgmt.cosmosdb.aio.operations.MongoClustersOperations
     :ivar notebook_workspaces: NotebookWorkspacesOperations operations
     :vartype notebook_workspaces: azure.mgmt.cosmosdb.aio.operations.NotebookWorkspacesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
@@ -162,8 +171,8 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-15". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-03-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -179,7 +188,7 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self._config = CosmosDBManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -216,6 +225,7 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self.partition_key_range_id_region = PartitionKeyRangeIdRegionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.graph_resources = GraphResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sql_resources = SqlResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.mongo_db_resources = MongoDBResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -228,12 +238,16 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
             self._client, self._config, self._serialize, self._deserialize
         )
         self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.data_transfer_jobs = DataTransferJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.cassandra_clusters = CassandraClustersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.cassandra_data_centers = CassandraDataCentersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.mongo_clusters = MongoClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.notebook_workspaces = NotebookWorkspacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -310,5 +324,5 @@ class CosmosDBManagementClient:  # pylint: disable=client-accepts-api-version-ke
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
