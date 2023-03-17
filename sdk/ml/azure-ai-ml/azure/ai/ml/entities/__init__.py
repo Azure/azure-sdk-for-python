@@ -133,6 +133,7 @@ from ._workspace.networking import (
     FqdnDestination,
     ServiceTagDestination,
     PrivateEndpointDestination,
+    IsolationMode,
 )
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
@@ -207,6 +208,7 @@ __all__ = [
     "FqdnDestination",
     "ServiceTagDestination",
     "PrivateEndpointDestination",
+    "IsolationMode",
     "EndpointConnection",
     "CustomerManagedKey",
     "DataImport",
