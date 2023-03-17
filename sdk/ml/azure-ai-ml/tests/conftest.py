@@ -913,3 +913,7 @@ def disable_internal_components():
 
     with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
         yield
+
+@pytest.fixture()
+def mock_ip_registry_check_false(mocker: MockFixture):
+    mocker.patch("azure.ai.ml.operations._component_operations.ComponentOperations._is_registry_ip_protected", return_value=False)

@@ -933,6 +933,7 @@ class TestDSLPipeline:
         err_msg = f"Got unexpected component id: {component_names}, expecting {expected_component_num} of them."
         assert len(component_names) == expected_component_num, err_msg
 
+    @pytest.mark.usefixtures("mock_ip_registry_check_false")
     def test_load_component_reuse(self, mock_machinelearning_client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
 
