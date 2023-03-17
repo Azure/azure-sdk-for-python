@@ -17,9 +17,9 @@ if TYPE_CHECKING:
 
 
 def deserialize_queue_properties(
-        response: "PipelineResponse",
-        obj: Any,
-        headers: Dict[str, Any]
+    response: "PipelineResponse",
+    obj: Any,
+    headers: Dict[str, Any]
 ) -> QueueProperties:
     metadata = deserialize_metadata(response, obj, headers)
     queue_properties = QueueProperties(
@@ -30,9 +30,9 @@ def deserialize_queue_properties(
 
 
 def deserialize_queue_creation(
-        response: "PipelineResponse",
-        obj: Any,
-        headers: Dict[str, Any]
+    response: "PipelineResponse",
+    obj: Any,
+    headers: Dict[str, Any]
 ) -> Dict[str, Any]:
     response = response.http_response
     if response.status_code == 204:

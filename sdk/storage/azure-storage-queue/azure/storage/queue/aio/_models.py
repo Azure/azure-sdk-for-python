@@ -31,10 +31,10 @@ class MessagesPaged(AsyncPageIterator):
         the queue.
     """
     def __init__(
-            self, command: Callable,
-            results_per_page: int = None,
-            continuation_token: str = None,
-            max_messages: int = None
+        self, command: Callable,
+        results_per_page: int = None,
+        continuation_token: str = None,
+        max_messages: int = None
     ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
@@ -86,10 +86,10 @@ class QueuePropertiesPaged(AsyncPageIterator):
     :param str continuation_token: An opaque continuation token.
     """
     def __init__(
-            self, command: Callable,
-            prefix: str = None,
-            results_per_page: int = None,
-            continuation_token: str = None
+        self, command: Callable,
+        prefix: str = None,
+        results_per_page: int = None,
+        continuation_token: str = None
     ) -> None:
         super(QueuePropertiesPaged, self).__init__(
             self._get_next_cb,

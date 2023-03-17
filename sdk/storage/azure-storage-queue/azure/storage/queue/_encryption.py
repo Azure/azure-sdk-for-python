@@ -156,11 +156,11 @@ class _EncryptionData:
     '''
 
     def __init__(
-            self, content_encryption_IV: Optional[bytes],
-            encrypted_region_info: Optional[_EncryptedRegionInfo],
-            encryption_agent: _EncryptionAgent,
-            wrapped_content_key: _WrappedContentKey,
-            key_wrapping_metadata: Dict[str, Any]
+        self, content_encryption_IV: Optional[bytes],
+        encrypted_region_info: Optional[_EncryptedRegionInfo],
+        encryption_agent: _EncryptionAgent,
+        wrapped_content_key: _WrappedContentKey,
+        key_wrapping_metadata: Dict[str, Any]
     ) -> None:
         '''
         :param Optional[bytes] content_encryption_IV:
@@ -204,8 +204,8 @@ class GCMBlobEncryptionStream:
     nonce for each encryption region.
     """
     def __init__(
-            self, content_encryption_key: bytes,
-            data_stream: BinaryIO,
+        self, content_encryption_key: bytes,
+        data_stream: BinaryIO,
     ) -> None:
         """
         :param bytes content_encryption_key: The encryption key to use.
@@ -296,10 +296,10 @@ def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
 
 
 def get_adjusted_download_range_and_offset(
-        start: int,
-        end: int,
-        length: int,
-        encryption_data: Optional[_EncryptionData]
+    start: int,
+    end: int,
+    length: int,
+    encryption_data: Optional[_EncryptionData]
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """
     Gets the new download range and offsets into the decrypted data for
@@ -527,9 +527,9 @@ def _generate_AES_CBC_cipher(cek: bytes, iv: bytes) -> Cipher:
 
 
 def _validate_and_unwrap_cek(
-        encryption_data: _EncryptionData,
-        key_encryption_key: object = None,
-        key_resolver: Callable[[str], bytes] = None
+    encryption_data: _EncryptionData,
+    key_encryption_key: object = None,
+    key_resolver: Callable[[str], bytes] = None
 ) -> bytes:
     '''
     Extracts and returns the content_encryption_key stored in the encryption_data object
@@ -590,10 +590,10 @@ def _validate_and_unwrap_cek(
 
 
 def _decrypt_message(
-        message: str,
-        encryption_data: _EncryptionData,
-        key_encryption_key: object = None,
-        resolver: callable = None
+    message: str,
+    encryption_data: _EncryptionData,
+    key_encryption_key: object = None,
+    resolver: callable = None
 ) -> str:
     '''
     Decrypts the given ciphertext using AES256 in CBC mode with 128 bit padding.
@@ -871,9 +871,9 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
 
 
 def get_blob_encryptor_and_padder(
-        cek: bytes,
-        iv: bytes,
-        should_pad: bool
+    cek: bytes,
+    iv: bytes,
+    should_pad: bool
 ) -> Tuple["AEADEncryptionContext", "PaddingContext"]:
     encryptor = None
     padder = None
@@ -954,11 +954,11 @@ def encrypt_queue_message(message: str, key_encryption_key: object, version: str
 
 
 def decrypt_queue_message(
-        message: str,
-        response: "PipelineResponse",
-        require_encryption: bool,
-        key_encryption_key: object,
-        resolver: Callable[[str], bytes]
+    message: str,
+    response: "PipelineResponse",
+    require_encryption: bool,
+    key_encryption_key: object,
+    resolver: Callable[[str], bytes]
 ) -> str:
     '''
     Returns the decrypted message contents from an EncryptedQueueMessage.

@@ -40,13 +40,13 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         super(QueueSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
 
     def generate_queue(
-            self, queue_name: str,
-            permission: "QueueSasPermissions" = None,
-            expiry: Union["datetime", str] = None,
-            start: Union["datetime", str] = None,
-            policy_id: str = None,
-            ip: str = None,
-            protocol: str = None
+        self, queue_name: str,
+        permission: "QueueSasPermissions" = None,
+        expiry: Union["datetime", str] = None,
+        start: Union["datetime", str] = None,
+        policy_id: str = None,
+        ip: str = None,
+        protocol: str = None
     ) -> str:
         '''
         Generates a shared access signature for the queue.
@@ -129,14 +129,14 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
 
 
 def generate_account_sas(
-        account_name: str,
-        account_key: str,
-        resource_types: Union["ResourceTypes", str],
-        permission: Union["AccountSasPermissions", str],
-        expiry: Optional[Union["datetime", str]],
-        start: Optional[Union["datetime", str]] = None,
-        ip: Optional[str] = None,
-        **kwargs: Any
+    account_name: str,
+    account_key: str,
+    resource_types: Union["ResourceTypes", str],
+    permission: Union["AccountSasPermissions", str],
+    expiry: Optional[Union["datetime", str]],
+    start: Optional[Union["datetime", str]] = None,
+    ip: Optional[str] = None,
+    **kwargs: Any
 ) -> str:
     """Generates a shared access signature for the queue service.
 
@@ -190,15 +190,15 @@ def generate_account_sas(
 
 
 def generate_queue_sas(
-        account_name: str,
-        queue_name: str,
-        account_key: str,
-        permission: Optional[Union["QueueSasPermissions", str]] = None,
-        expiry: Optional[Union["datetime", str]] = None,
-        start: Optional[Union["datetime", str]] = None,
-        policy_id: Optional[str] = None,
-        ip: Optional[str] = None,
-        **kwargs: Any
+    account_name: str,
+    queue_name: str,
+    account_key: str,
+    permission: Optional[Union["QueueSasPermissions", str]] = None,
+    expiry: Optional[Union["datetime", str]] = None,
+    start: Optional[Union["datetime", str]] = None,
+    policy_id: Optional[str] = None,
+    ip: Optional[str] = None,
+    **kwargs: Any
 ) -> str:
     """Generates a shared access signature for a queue.
 

@@ -43,9 +43,7 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     enabled: bool = False
     """Indicates whether a retention policy is enabled for the storage service."""
     days: int = None
-    """Indicates the number of days that metrics or logging or
-        soft-deleted data should be retained. All data older than this value will
-        be deleted."""
+    """Indicates the number of days that metrics or logging or soft-deleted data should be retained."""
 
     def __init__(self, enabled: bool = False, days: int = None) -> None:
         self.enabled = enabled
@@ -83,7 +81,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
     """Indicates whether all read requests should be logged"""
     write: bool = False
     """Indicates whether all write requests should be logged."""
-    retention_policy: RetentionPolicy
+    retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -124,7 +122,7 @@ class Metrics(GeneratedMetrics):
     """Indicates whether metrics are enabled for the service."""
     include_apis: bool
     """Indicates whether metrics should generate summary statistics for called API operations."""
-    retention_policy: RetentionPolicy
+    retention_policy: RetentionPolicy = RetentionPolicy()
     """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -177,20 +175,17 @@ class CorsRule(GeneratedCorsRule):
 
     allowed_origins: str
     """The comma-delimited string representation of the list of origin domains that will be allowed via
-        CORS, or "*" to allow all domains. The list must contain at least one entry. Limited to 64
-        origin domains. Each allowed origin can have up to 256 characters."""
+        CORS, or "*" to allow all domains."""
     allowed_methods: str
     """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
-        by the origin. The list must contain at least one entry. For Azure Storage,
-        permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT."""
+        by the origin."""
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
     exposed_headers: str
-    """The comma-delimited string representation of the list of response headers to expose to CORS clients.
-        Limited to 64 defined headers and two prefixed headers. Each header can be up to 256 characters."""
+    """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
     allowed_headers: str
     """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
-        request. Limited to 64 defined headers and 2 prefixed headers. Each header can be up to 256 characters."""
+        request."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         self.allowed_origins = ','.join(allowed_origins)
@@ -254,29 +249,17 @@ class AccessPolicy(GenAccessPolicy):
     """
 
     permission: str = None
-    """The permissions associated with the shared access signature. The
-        user is restricted to operations allowed by the permissions.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has been
-        specified in an associated stored access policy."""
+    """The permissions associated with the shared access signature. The user is restricted to
+        operations allowed by the permissions."""
     expiry: Union["datetime", str] = None
-    """The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC."""
+    """The time at which the shared access signature becomes invalid."""
     start: Union["datetime", str] = None
-    """The time at which the shared access signature becomes valid. If
-        omitted, start time for this call is assumed to be the time when the
-        storage service receives the request. Azure will always convert values
-        to UTC. If a date is passed in without timezone info, it is assumed to
-        be UTC."""
+    """The time at which the shared access signature becomes valid."""
 
     def __init__(
-            self, permission: str = None,
-            expiry: Union["datetime", str] = None,
-            start: Union["datetime", str] = None
+        self, permission: str = None,
+        expiry: Union["datetime", str] = None,
+        start: Union["datetime", str] = None
     ) -> None:
         self.start = start
         self.expiry = expiry
@@ -350,10 +333,10 @@ class MessagesPaged(PageIterator):
     """The maximum number of messages to retrieve from the queue."""
 
     def __init__(
-            self, command: Callable,
-            results_per_page: int = None,
-            continuation_token: str = None,
-            max_messages: int = None
+        self, command: Callable,
+        results_per_page: int = None,
+        continuation_token: str = None,
+        max_messages: int = None
     ) -> None:
         if continuation_token is not None:
             raise ValueError("This operation does not support continuation token")
@@ -399,9 +382,7 @@ class QueueProperties(DictMixin):
     name: str
     """The name of the queue."""
     metadata: Dict[str, str]
-    """A dict containing name-value pairs associated with the queue as metadata.
-        This var is set to None unless the include=metadata param was included
-        for the list queues operation."""
+    """A dict containing name-value pairs associated with the queue as metadata."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = None
@@ -438,13 +419,11 @@ class QueuePropertiesPaged(PageIterator):
     next_marker: str
     """The continuation token to retrieve the next page of results."""
     location_mode: str
-    """The location mode being used to list results. The available
-        options include "primary" and "secondary"."""
+    """The location mode being used to list results. The available options include "primary" and "secondary"."""
     command: Callable
     """Function to retrieve the next page of items."""
     prefix: str = None
-    """Filters the results to return only queues whose names
-        begin with the specified prefix."""
+    """Filters the results to return only queues whose names begin with the specified prefix."""
     results_per_page: int
     """The maximum number of queue names to retrieve per
         call."""
@@ -501,20 +480,19 @@ class QueueSasPermissions(object):
     """
 
     read: bool = False
-    """Read metadata and properties, including message count. Peek at messages."""
+    """Read metadata and properties, including message count."""
     add: bool = False
     """Add messages to the queue."""
     update: bool = False
-    """Update messages in the queue. Note: Use the Process permission with
-        Update so you can first get the message you want to update."""
+    """Update messages in the queue."""
     process: bool = False
     """Get and delete messages from the queue."""
 
     def __init__(
-            self, read: bool = False,
-            add: bool = False,
-            update: bool = False,
-            process: bool = False
+        self, read: bool = False,
+        add: bool = False,
+        update: bool = False,
+        process: bool = False
     ) -> None:
         self.read = read
         self.add = add
