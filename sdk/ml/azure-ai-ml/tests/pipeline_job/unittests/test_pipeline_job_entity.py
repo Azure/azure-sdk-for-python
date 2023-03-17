@@ -1436,6 +1436,30 @@ class TestPipelineJobEntity:
         }
         assert actual_dict == expected_dict
 
+    def test_spark_node_in_pipeline_with_invalid_input_mode(
+        self,
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml"
+        job = load_job(test_path)
+        result = job._validate()
+        assert (
+            "jobs.hello_world" in result.error_messages
+            and "Should not specify min or max executors when dynamic allocation is disabled."
+            == result.error_messages["jobs.hello_world"]
+        )
+
+    def test_spark_node_in_pipeline_with_invalid_output_mode(
+        self,
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_output_mode.yml"
+        job = load_job(test_path)
+        result = job._validate()
+        assert (
+            "jobs.hello_world" in result.error_messages
+            and "Should not specify min or max executors when dynamic allocation is disabled."
+            == result.error_messages["jobs.hello_world"]
+        )
+
     def test_infer_pipeline_output_type_as_node_type(
         self,
     ) -> None:
