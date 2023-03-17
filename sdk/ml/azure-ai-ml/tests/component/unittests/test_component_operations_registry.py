@@ -62,8 +62,7 @@ class TestComponentOperation:
         ):
             mock_component_operation.create_or_update(component)
             # for directly component publish to ipp registry, we need to make sure
-            # _resolve_arm_id_or_upload_dependencies
-            # is not called
+            # _resolve_arm_id_or_upload_dependencies is not called
             mock_thing.assert_not_called()
 
     def test_list(self, mock_component_operation: ComponentOperations) -> None:
