@@ -13,7 +13,12 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation][api_reference] | [Product documentation](https://docs.microsoft.com/azure/event-hubs/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/)
+| [Package (PyPi)](https://pypi.org/project/azure-eventhub/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-eventhub/)
+| [API reference documentation][api_reference]
+| [Product documentation](https://docs.microsoft.com/azure/event-hubs/)
+| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/eventhub/azure-eventhub/samples)
 
 ## _Disclaimer_
 
@@ -112,6 +117,7 @@ The following sections provide several code snippets covering some of the most c
 Get the partition ids of an Event Hub.
 
 <!-- SNIPPET:connection_string_authentication.connection_string_authentication -->
+
 ```python
 import os
 from azure.eventhub import EventHubConsumerClient
@@ -128,6 +134,7 @@ consumer_client = EventHubConsumerClient.from_connection_string(
 with consumer_client:
     pass # consumer_client is now ready to be used.
 ```
+
 <!-- END SNIPPET -->
 
 ### Publish events to an Event Hub
@@ -136,6 +143,7 @@ Use the `create_batch` method on `EventHubProducerClient` to create an `EventDat
 Events may be added to the `EventDataBatch` using the `add` method until the maximum batch size limit in bytes has been reached.
 
 <!-- SNIPPET:send.send_event_data_batch -->
+
 ```python
 def send_event_data_batch(producer):
     # Without specifying partition_id or partition_key
@@ -144,6 +152,7 @@ def send_event_data_batch(producer):
     event_data_batch.add(EventData('Single message'))
     producer.send_batch(event_data_batch)
 ```
+
 <!-- END SNIPPET -->
 
 ### Consume events from an Event Hub

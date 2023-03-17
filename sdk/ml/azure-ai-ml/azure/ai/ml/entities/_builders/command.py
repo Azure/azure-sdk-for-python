@@ -131,6 +131,8 @@ class Command(BaseNode):
         Please see https://aka.ms/azuremlexperimental for more information.
     :type services:
         Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -355,6 +357,7 @@ class Command(BaseNode):
         *,
         instance_type: Optional[Union[str, List[str]]] = None,
         instance_count: Optional[int] = None,
+        locations: Optional[List[str]] = None,
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
@@ -364,6 +367,8 @@ class Command(BaseNode):
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
+        if locations is not None:
+            self.resources.locations = locations
         if instance_type is not None:
             self.resources.instance_type = instance_type
         if instance_count is not None:
@@ -387,6 +392,12 @@ class Command(BaseNode):
             self.limits = CommandJobLimits(timeout=timeout)
 
     def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None):
+        """Set QueueSettings for the job.
+        :param job_tier: determines the job tier.
+        :type job_tier: str
+        :param priority: controls the priority on the compute.
+        :type priority: str
+        """
         if isinstance(self.queue_settings, QueueSettings):
             self.queue_settings.job_tier = job_tier
             self.queue_settings.priority = priority
@@ -416,6 +427,9 @@ class Command(BaseNode):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
+        job_tier: Optional[str] = None,
+        priority: Optional[str] = None,
     ) -> Sweep:
         """Turn the command into a sweep node with extra sweep run setting. The command component in current Command
         node will be used as its trial component. A command node can sweep for multiple times, and the generated sweep
@@ -448,6 +462,12 @@ class Command(BaseNode):
             ManagedIdentityConfiguration,
             AmlTokenConfiguration,
             UserIdentityConfiguration]
+        :param queue_settings: Queue settings for the job.
+        :type queue_settings: QueueSettings
+        :param job_tier: determines the job tier.
+        :type job_tier: str
+        :param priority: controls the priority on the compute.
+        :type priority: str
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep
         """
@@ -457,6 +477,13 @@ class Command(BaseNode):
         inputs, inputs_search_space = Sweep._get_origin_inputs_and_search_space(self.inputs)
         if search_space:
             inputs_search_space.update(search_space)
+
+        if not queue_settings:
+            queue_settings = self.queue_settings
+        if job_tier is not None:
+            queue_settings.job_tier = job_tier
+        if priority is not None:
+            queue_settings.priority = priority
 
         sweep_node = Sweep(
             trial=copy.deepcopy(
@@ -477,6 +504,7 @@ class Command(BaseNode):
             experiment_name=self.experiment_name,
             identity=self.identity if not identity else identity,
             _from_component_func=True,
+            queue_settings=queue_settings,
         )
         sweep_node.set_limits(
             max_total_trials=max_total_trials,

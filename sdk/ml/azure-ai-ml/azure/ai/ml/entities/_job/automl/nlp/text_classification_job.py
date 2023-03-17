@@ -107,6 +107,7 @@ class TextClassificationJob(AutoMLNLPJob):
             resources=self.resources,
             task_details=text_classification,
             identity=self.identity._to_ob_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -162,6 +163,7 @@ class TextClassificationJob(AutoMLNLPJob):
             identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            queue_settings=properties.queue_settings,
         )
 
         text_classification_job._restore_data_inputs()

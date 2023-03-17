@@ -1,0 +1,6 @@
+name: component_env
+dependencies:
+  - python=3.8
+  - pip:
+    - azureml-core==1.44.0
+    - shrike==1.31.2
