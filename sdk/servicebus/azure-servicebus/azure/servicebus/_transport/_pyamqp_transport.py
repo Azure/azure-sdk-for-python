@@ -35,7 +35,12 @@ from .._pyamqp.endpoints import Source
 from .._pyamqp._connection import Connection, _CLOSING_STATES
 
 from ._base import AmqpTransport
-from .._common.utils import utc_from_timestamp, utc_now
+from .._common.utils import (
+    utc_from_timestamp,
+    utc_now,
+    get_receive_links,
+    receive_trace_context_manager
+)
 from .._common.constants import (
 #    NO_RETRY_ERRORS,
 #    CUSTOM_CONDITION_BACKOFF,
@@ -579,6 +584,38 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             session_filter = attach_frame.source.filters[SESSION_FILTER]
             receiver._session_id = session_filter.decode(receiver._config.encoding)
             receiver._session._session_id = receiver._session_id
+
+    @staticmethod
+    def iter_contextual_wrapper(receiver, max_wait_time=None):
+        """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
+        and per-iter argument passing that requires the former."""
+        while True:
+            try:
+                message = receiver._inner_next(wait_time=max_wait_time)
+                links = get_receive_links(message)
+                with receive_trace_context_manager(receiver, links=links):
+                    yield message
+            except StopIteration:
+                break
+    
+    @staticmethod
+    def iter_next(receiver, wait_time=None):
+        try:
+            receiver._receive_context.set()
+            receiver._open()
+            if not receiver._message_iter or wait_time:
+                receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
+            pyamqp_message = next(receiver._message_iter)
+            message = receiver._build_received_message(pyamqp_message)
+            if (
+                receiver._auto_lock_renewer
+                and not receiver._session
+                and receiver._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            ):
+                receiver._auto_lock_renewer.register(receiver, message)
+            return message
+        finally:
+            receiver._receive_context.clear()
 
     @staticmethod
     def enhanced_message_received(receiver, frame, message):

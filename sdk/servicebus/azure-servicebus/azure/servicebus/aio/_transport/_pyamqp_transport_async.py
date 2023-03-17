@@ -28,7 +28,12 @@ from ..._pyamqp.error import (
 )
 
 from ._base_async import AmqpTransportAsync
-from ..._common.utils import utc_from_timestamp, utc_now
+from ..._common.utils import (
+    utc_from_timestamp,
+    utc_now,
+    get_receive_links,
+    receive_trace_context_manager
+)
 from ..._common.constants import (
     DATETIMEOFFSET_EPOCH,
     SESSION_LOCKED_UNTIL,
@@ -179,6 +184,36 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             ),
             **kwargs,
         )
+
+    @staticmethod
+    async def iter_contextual_wrapper_async(receiver, max_wait_time=None):
+        while True:
+            try:
+                message = await receiver._inner_anext(wait_time=max_wait_time)
+                links = get_receive_links(message)
+                with receive_trace_context_manager(receiver, links=links):
+                    yield message
+            except StopAsyncIteration:
+                break
+
+    @staticmethod
+    async def iter_next_async(receiver, wait_time=None): # pylint: disable=protected-access
+        try:
+            receiver._receive_context.set()
+            await receiver._open()
+            if not receiver._message_iter or wait_time:
+                receiver._message_iter = await receiver._handler.receive_messages_iter_async(timeout=wait_time)
+            pyamqp_message = await receiver._message_iter.__anext__()
+            message = receiver._build_received_message(pyamqp_message)
+            if (
+                receiver._auto_lock_renewer
+                and not receiver._session
+                and receiver._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            ):
+                receiver._auto_lock_renewer.register(receiver, message)
+            return message
+        finally:
+            receiver._receive_context.clear()
 
     @staticmethod
     async def reset_link_credit_async(handler, link_credit):

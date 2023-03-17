@@ -31,6 +31,10 @@ from ._base_async import AmqpTransportAsync
 from ...exceptions import (
     OperationTimeoutError,
 )
+from ..._common.utils import (
+    get_receive_links,
+    receive_trace_context_manager
+)
 from ..._common.constants import ServiceBusReceiveMode
 
 if TYPE_CHECKING:
@@ -163,6 +167,52 @@ if uamqp_installed:
                 ),
                 **kwargs
             )
+
+        @staticmethod
+        async def iter_contextual_wrapper_async(receiver, max_wait_time=None):
+            """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
+            and per-iter argument passing that requires the former."""
+            # pylint: disable=protected-access
+            original_timeout = None
+            while True:
+                # This is not threadsafe, but gives us a way to handle if someone passes
+                # different max_wait_times to different iterators and uses them in concert.
+                if max_wait_time:
+                    original_timeout = receiver._handler._timeout
+                    receiver._handler._timeout = max_wait_time * UamqpTransport.TIMEOUT_FACTOR
+                try:
+                    message = await receiver._inner_anext()
+                    links = get_receive_links(message)
+                    with receive_trace_context_manager(receiver, links=links):
+                        yield message
+                except StopIteration:
+                    break
+                finally:
+                    if original_timeout:
+                        try:
+                            receiver._handler._timeout = original_timeout
+                        except AttributeError:  # Handler may be disposed already.
+                            pass
+        
+        # wait_time used by pyamqp
+        @staticmethod
+        async def iter_next_async(receiver, wait_time=None):    # pylint: disable=unused-argument
+            try:
+                receiver._receive_context.set()
+                await receiver._open()
+                if not receiver._message_iter:
+                    receiver._message_iter = receiver._handler.receive_messages_iter_async()
+                uamqp_message = await receiver._message_iter.__anext__()
+                message = receiver._build_received_message(uamqp_message)
+                if (
+                    receiver._auto_lock_renewer
+                    and not receiver._session
+                    and receiver._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+                ):
+                    receiver._auto_lock_renewer.register(receiver, message)
+                return message
+            finally:
+                receiver._receive_context.clear()
 
         @staticmethod
         async def reset_link_credit_async(handler, link_credit):

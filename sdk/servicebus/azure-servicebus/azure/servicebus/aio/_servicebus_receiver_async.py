@@ -215,15 +215,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             ServiceBusReceivedMessage
         )
 
-    async def _iter_contextual_wrapper(self, max_wait_time=None):
-        while True:
-            try:
-                message = await self._inner_anext(wait_time=max_wait_time)
-                links = get_receive_links(message)
-                with receive_trace_context_manager(self, links=links):
-                    yield message
-            except StopAsyncIteration:
-                break
+        self._iter_contextual_wrapper = functools.partial(
+            self._amqp_transport.iter_contextual_wrapper_async, self
+        )
+        self._iter_next = functools.partial(
+            self._amqp_transport.iter_next_async,
+            self
+        )
 
     def __aiter__(self):
         return self._iter_contextual_wrapper()
@@ -245,24 +243,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             links = get_receive_links(message)
             with receive_trace_context_manager(self, links=links):
                 return message
-        finally:
-            self._receive_context.clear()
-
-    async def _iter_next(self, wait_time=None): # pylint: disable=protected-access
-        try:
-            self._receive_context.set()
-            await self._open()
-            if not self._message_iter or wait_time:
-                self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
-            pyamqp_message = await self._message_iter.__anext__()
-            message = self._build_message(pyamqp_message)
-            if (
-                self._auto_lock_renewer
-                and not self._session
-                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
-            ):
-                self._auto_lock_renewer.register(self, message)
-            return message
         finally:
             self._receive_context.clear()
 

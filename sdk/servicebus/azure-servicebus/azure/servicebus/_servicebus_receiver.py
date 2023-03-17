@@ -221,21 +221,16 @@ class ServiceBusReceiver(
             self,
             ServiceBusReceivedMessage
         )
+        self._iter_contextual_wrapper = functools.partial(
+            self._amqp_transport.iter_contextual_wrapper, self
+        )
+        self._iter_next = functools.partial(
+            self._amqp_transport.iter_next,
+            self
+        )
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
-
-    def _iter_contextual_wrapper(self, max_wait_time=None):
-        """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
-        and per-iter argument passing that requires the former."""
-        while True:
-            try:
-                message = self._inner_next(wait_time=max_wait_time)
-                links = get_receive_links(message)
-                with receive_trace_context_manager(self, links=links):
-                    yield message
-            except StopIteration:
-                break
 
     def _inner_next(self, wait_time=None):
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
@@ -255,24 +250,6 @@ class ServiceBusReceiver(
             links = get_receive_links(message)
             with receive_trace_context_manager(self, links=links):
                 return message
-        finally:
-            self._receive_context.clear()
-
-    def _iter_next(self, wait_time=None):
-        try:
-            self._receive_context.set()
-            self._open()
-            if not self._message_iter or wait_time:
-                self._message_iter = self._handler.receive_messages_iter(timeout=wait_time)
-            pyamqp_message = next(self._message_iter)
-            message = self._build_message(pyamqp_message)
-            if (
-                self._auto_lock_renewer
-                and not self._session
-                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
-            ):
-                self._auto_lock_renewer.register(self, message)
-            return message
         finally:
             self._receive_context.clear()
 
