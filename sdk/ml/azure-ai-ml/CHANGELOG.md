@@ -3,7 +3,7 @@
 ## 1.6.0 (Unreleased)
 
 ### Features Added
-- 
+- Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
 
 ### Bugs Fixed
 

@@ -28,7 +28,10 @@ def fl_scatter_gather(
     _create_default_mappings_if_needed: bool = False,
     **kwargs,
 ):
-    """A federated learning scatter-gather subgraph node. It's assumed that this will be used inside of
+    """USAGE WARNING: Using this node directly from the SDK repo requires that the user have the 'mldesigner'
+    package installed, which is not a standard dependency of this package.
+    
+    A federated learning scatter-gather subgraph node. It's assumed that this will be used inside of
     a @pipeline-decorated function in order to create a subgraph which will:
         - Execute a specified pipeline step multiple times (the silo step), with each execution using slightly
             different inputs, datatstores, and computes based on an inputted config.
