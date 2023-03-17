@@ -220,7 +220,9 @@ class Registry(Resource):
             properties=RegistryProperties(
                 public_network_access=self.public_network_access,
                 discovery_url=self.discovery_url,
-                intellectual_property_publisher=self.intellectual_property.publisher if self.intellectual_property else None,
+                intellectual_property_publisher=(
+                    self.intellectual_property.publisher
+                ) if self.intellectual_property else None,
                 managed_resource_group=self.managed_resource_group,
                 ml_flow_registry_uri=self.mlflow_registry_uri,
                 region_details=replication_locations,

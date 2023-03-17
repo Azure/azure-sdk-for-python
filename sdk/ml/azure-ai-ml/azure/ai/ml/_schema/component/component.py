@@ -64,7 +64,7 @@ class ComponentSchema(AssetSchema):
         return data
 
     @pre_dump
-    def add_private_fields_to_dump(self, data, **kwargs):
+    def add_private_fields_to_dump(self, data, **kwargs): # pylint: disable=unused-argument,no-self-use
         # The ipp field is set on the component object as "_intellectual_property".
         # We need to set it as "intellectual_property" before dumping so that Marshmallow
         # can pick up the field correctly on dump and show it back to the user.
