@@ -9,10 +9,11 @@
 ### Bugs Fixed
 
 ### Other Changes
-* Add default value `"https://management.azure.com"` to kwarg `audience` in `ContainerRegistryClient`. ([#22229](https://github.com/Azure/azure-sdk-for-python/issues/22229))
+* Added default value `"https://management.azure.com"` to kwarg `audience` in `ContainerRegistryClient`. ([#22229](https://github.com/Azure/azure-sdk-for-python/issues/22229))
 * Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 * Bumped minimum dependency on `azure-core` to `>=1.24.0`
-* Bumped minimum dependency on `msrest` to `>=0.7.1`
+* Dropped `msrest` requirement.
+* Added dependency `isodate` with version range `>=0.6.0`(`isodate` was required by `msrest`).
 
 ## 1.1.0b1 (2022-05-10)
 
