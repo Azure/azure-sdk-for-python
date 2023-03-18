@@ -46,7 +46,7 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         _enforce_https(request)
 
         await self.on_request(request)
-        
+
         original = None
         # avoid aiohttp client closing the stream after sending the request
         if request.http_request.body and hasattr(request.http_request.body, 'close'):

@@ -31,7 +31,6 @@ from .._models import RepositoryProperties, ArtifactManifestProperties, Artifact
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from typing import Dict
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -763,9 +762,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or data is None.
         """
         try:
-            start_upload_response_headers = await cast(Dict[str, str], self._client.container_registry_blob.start_upload(
-                repository, cls=_return_response_headers, **kwargs
-            ))
+            start_upload_response_headers = await cast(
+                Dict[str, str],
+                self._client.container_registry_blob.start_upload(
+                    repository, cls=_return_response_headers, **kwargs
+                )
+            )
             digest, location, blob_size = await self._upload_blob_chunk(
                 start_upload_response_headers['Location'], data, **kwargs
             )
