@@ -133,7 +133,7 @@ class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HT
     def close(self):
         """Close the session if it is not externally owned."""
 
-    def sleep(self, duration):  # pylint: disable=no-self-use
+    def sleep(self, duration: float) -> None:  # pylint: disable=no-self-use
         time.sleep(duration)
 
 

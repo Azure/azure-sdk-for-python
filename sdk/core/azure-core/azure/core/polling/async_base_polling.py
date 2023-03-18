@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TYPE_CHECKING
 from ..exceptions import HttpResponseError
 from .base_polling import (
     _failed,
@@ -34,13 +35,38 @@ from .base_polling import (
 )
 from ..pipeline._tools import is_rest
 
+if TYPE_CHECKING:
+    from azure.core import AsyncPipelineClient
+    from azure.core.pipeline import PipelineResponse
+    from azure.core.pipeline.transport import (
+        AsyncHttpResponse,
+        HttpRequest,
+        AsyncHttpTransport
+    )
+
+    AsyncPipelineResponseType = PipelineResponse[HttpRequest, AsyncHttpResponse]
+
+
 __all__ = ["AsyncLROBasePolling"]
 
 
 class AsyncLROBasePolling(LROBasePolling):
     """A subclass or LROBasePolling that redefine "run" as async."""
 
-    async def run(self):  # pylint:disable=invalid-overridden-method
+    _initial_response: "AsyncPipelineResponseType"
+    """Store the initial response."""
+
+    _pipeline_response: "AsyncPipelineResponseType"
+    """Store the latest received HTTP response, initialized by the first answer."""
+
+    _client: "AsyncPipelineClient"
+    """The Azure Core Async Pipeline client used to make request."""
+
+    @property
+    def _transport(self) -> "AsyncHttpTransport":
+        return self._client._pipeline._transport  # pylint: disable=protected-access
+
+    async def run(self) -> None:  # pylint:disable=invalid-overridden-method
         try:
             await self._poll()
 
@@ -59,7 +85,7 @@ class AsyncLROBasePolling(LROBasePolling):
         except OperationFailed as err:
             raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
-    async def _poll(self):  # pylint:disable=invalid-overridden-method
+    async def _poll(self) -> None:  # pylint:disable=invalid-overridden-method
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
@@ -83,7 +109,7 @@ class AsyncLROBasePolling(LROBasePolling):
             self._pipeline_response = await self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    async def _sleep(self, delay):  # pylint:disable=invalid-overridden-method
+    async def _sleep(self, delay: float):  # pylint:disable=invalid-overridden-method
         await self._transport.sleep(delay)
 
     async def _delay(self):  # pylint:disable=invalid-overridden-method
@@ -99,7 +125,7 @@ class AsyncLROBasePolling(LROBasePolling):
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link):  # pylint:disable=invalid-overridden-method
+    async def request_status(self, status_link: str):  # pylint:disable=invalid-overridden-method
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
