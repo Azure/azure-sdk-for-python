@@ -29,8 +29,9 @@ def _build_logger(name, level):
 
 # Note: This was the initial generic logger entry point, kept to allow us to
 # move to more fine-grained logging controls incrementally.
-def get_logger(level, pyamqp_level=logging.INFO):
-    _build_logger("azure.servicebus._pyamqp", pyamqp_level)
+def get_logger(level, amqp_level=logging.INFO):
+    _build_logger("azure.servicebus._pyamqp", amqp_level)
+    _build_logger("uamqp", amqp_level)
     return _build_logger("azure", level)
 
 

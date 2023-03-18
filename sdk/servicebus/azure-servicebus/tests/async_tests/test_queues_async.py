@@ -251,17 +251,26 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name)
                 sender = sb_client.get_queue_sender(servicebus_queue.name)
 
-                # TODO: remove def ...
                 #def _hack_disable_receive_context_message_received(self, uamqp_transport, *, message):
-                async def _hack_disable_receive_context_message_received(self, frame, message):
-                    # pylint: disable=protected-access
-                    self._handler._received_messages.put((frame, message))
+                if uamqp_transport:
+                    def _hack_disable_receive_context_message_received(self, message):
+                        # pylint: disable=protected-access
+                        self._handler._was_message_received = True
+                        self._handler._received_messages.put(message)
+                else:
+                    def _hack_disable_receive_context_message_received(self, frame, message):
+                        # pylint: disable=protected-access
+                        self._handler._received_messages.put((frame, message))
 
                 async with sender, receiver:
                     # send 5 msgs to queue first
                     await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
-                    receiver._handler._link._on_transfer = types.MethodType(
-                        _hack_disable_receive_context_message_received, receiver)
+                    if uamqp_transport:
+                        receiver._handler.message_handler.on_message_received = types.MethodType(
+                            _hack_disable_receive_context_message_received, receiver)
+                    else:
+                        receiver._handler._link._on_transfer = types.MethodType(
+                            _hack_disable_receive_context_message_received, receiver)
                     received_msgs = []
                     while len(received_msgs) < 5:
                         # issue 10 link credits, client should consume 5 msgs from the service
@@ -1899,34 +1908,41 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 await sender.send_messages(message)
 
                 messages = []
+                if uamqp_transport:
+                    def get_time():
+                      return receiver._handler._counter.get_current_ms()/1000
+                else:
+                    def get_time():
+                        return time.time()
+
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
 
-                    time_1 = time.time()
+                    time_1 = get_time()
                     async for message in receiver._get_streaming_message_iter(max_wait_time=10):
                         messages.append(message)
                         await receiver.complete_message(message)
 
-                        time_2 = time.time()
+                        time_2 = get_time()
                         async for message in receiver._get_streaming_message_iter(max_wait_time=1):
                             messages.append(message)
-                        time_3 = time.time()
+                        time_3 = get_time()
                         assert timedelta(seconds=.5) < timedelta(seconds=(time_3 - time_2)) <= timedelta(seconds=2)
-                    time_4 = time.time()
+                    time_4 = get_time()
                     assert timedelta(seconds=8) < timedelta(seconds=(time_4 - time_3)) <= timedelta(seconds=11)
 
                     async for message in receiver._get_streaming_message_iter(max_wait_time=3):
                         messages.append(message)
-                    time_5 = time.time()
+                    time_5 = get_time()
                     assert timedelta(seconds=1) < timedelta(seconds=(time_5 - time_4)) <= timedelta(seconds=4)
 
                     async for message in receiver:
                         messages.append(message)
-                    time_6 = time.time()
+                    time_6 = get_time()
                     assert timedelta(seconds=3) < timedelta(seconds=(time_6 - time_5)) <= timedelta(seconds=6)
 
                     async for message in receiver._get_streaming_message_iter():
                         messages.append(message)
-                    time_7 = time.time()
+                    time_7 = get_time()
                     assert timedelta(seconds=3) < timedelta(seconds=(time_7 - time_6)) <= timedelta(seconds=6)
                     assert len(messages) == 1
 
@@ -2428,16 +2444,27 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 await self._open()
                 # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
                 if self.execution_times == 1:
-                    from azure.servicebus._pyamqp.error import ErrorCondition, AMQPLinkError
+                    if uamqp_transport:
+                        from uamqp.errors import LinkDetach
+                        from uamqp.constants import ErrorCodes
+                        error = LinkDetach
+                        error_condition = ErrorCodes
+                    else:
+                        from azure.servicebus._pyamqp.error import ErrorCondition, AMQPLinkError
+                        error = AMQPLinkError
+                        error_condition = ErrorCondition
                     self.execution_times += 1
                     self.error_raised = True
-                    raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced)
+                    raise error(error_condition.LinkDetachForced)
                 else:
                     self.execution_times += 1
                 if not self._message_iter:
-                    self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
-                pyamqp_message = await self._message_iter.__anext__()
-                message = self._build_message(pyamqp_message)
+                    if uamqp_transport:
+                        self._message_iter = await self._handler.receive_messages_iter_async()
+                    else:
+                        self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
+                amqp_message = await self._message_iter.__anext__()
+                message = self._build_received_message(amqp_message)
                 return message
             finally:
                 self._receive_context.clear()
@@ -2509,8 +2536,8 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             dict_message = {"body": content}
             sb_message = ServiceBusMessage(body=content)
             message_with_ttl = AmqpAnnotatedMessage(data_body=data_body, header=AmqpMessageHeader(time_to_live=60000))
-            pyamqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
-            assert pyamqp_with_ttl.properties.absolute_expiry_time == pyamqp_with_ttl.properties.creation_time + pyamqp_with_ttl.header.ttl
+            amqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
+            assert amqp_with_ttl.properties.absolute_expiry_time == amqp_with_ttl.properties.creation_time + amqp_with_ttl.header.ttl
 
             recv_data_msg = recv_sequence_msg = recv_value_msg = normal_msg = 0
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:

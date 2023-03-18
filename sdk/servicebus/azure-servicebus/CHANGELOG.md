@@ -1,6 +1,6 @@
 # Release History
 
-## 7.9.0b1 (Unreleased)
+## 7.9.0b2 (Unreleased)
 
 ### Features Added
 
@@ -13,12 +13,11 @@
 
 ### Other Changes
 
-<<<<<<< HEAD
 - The `message` attribute on `ServiceBus`/`ServiceBusMessageBatch`/`ServiceBusReceivedMessage`, which previously exposed the `uamqp.Message`/`uamqp.BatchMessage`, has been deprecated.
   - `LegacyMessage`/`LegacyBatchMessage` objects returned by the `message` attribute on `ServiceBus`/`ServiceBusMessageBatch` have been introduced to help facilitate the transition.
 - Removed uAMQP from required dependencies.
 - Adding `uamqp >= 1.6.3` as an optional dependency for use with the `uamqp_transport` keyword.
-=======
+
 ## 7.9.0b1 (2023-03-09)
 
 ### Features Added
@@ -41,7 +40,6 @@
 
 - Updated uAMQP dependency to 1.6.3.
   - Added support for Python 3.11.
->>>>>>> feature/servicebus/pyproto
 
 ## 7.9.0a1 (2022-10-11)
 
