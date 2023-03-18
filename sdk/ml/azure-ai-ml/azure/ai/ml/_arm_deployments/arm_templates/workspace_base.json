@@ -862,65 +862,6 @@
 			}
 		},
         {
-            "condition": "[equals(parameters('setup_materialization_store'), 'true')]",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2022-05-01",
-			"name": "[concat(parameters('workspaceName'), '-update-materialization-identity')]",
-			"dependsOn": [
-				"[parameters('workspaceName')]"
-			],
-			"properties": {
-				"mode": "Incremental",
-				"parameters": {},
-				"template": {
-					"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-					"contentVersion": "1.0.0.1",
-					"resources": [{
-						"apiVersion": "2022-01-01-preview",
-						"name": "[parameters('workspaceName')]",
-						"location": "[parameters('location')]",
-						"kind": "featurestore",
-						"type": "Microsoft.MachineLearningServices/workspaces",
-						"identity": {
-							"type": "SystemAssigned,UserAssigned",
-							"userAssignedIdentities": {
-							    "[parameters('materialization_identity_resource_id')]": {}
-							}
-						},
-						"properties": {
-                            "friendlyName": "[parameters('friendlyName')]",
-                            "description": "[parameters('description')]",
-                            "storageAccount": "[variables('storageAccount')]",
-                            "keyVault": "[variables('keyVault')]",
-                            "applicationInsights": "[variables('applicationInsights')]",
-                            "containerRegistry": "[if(not(equals(parameters('containerRegistryOption'), 'none')), variables('containerRegistry'), json('null'))]",
-                            "hbiWorkspace": "[parameters('confidential_data')]",
-                            "imageBuildCompute": "[parameters('imageBuildCompute')]",
-                            "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
-                            "encryption": {
-                                "status": "[parameters('encryption_status')]",
-                                "keyVaultProperties": {
-                                    "keyVaultArmId": "[parameters('cmk_keyvault')]",
-                                    "keyIdentifier": "[parameters('resource_cmk_uri')]"
-                                },
-                                "cosmosDbArmId": "[parameters('encryption_cosmosdb_resourceid')]",
-                                "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
-                                "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
-                            },
-                            "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                            "featureStoreSettings": {
-                                "computeruntime": {
-                                    "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
-                                },
-                                "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
-                                "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
-                            }
-						}
-					}]
-				}
-			}
-		},
-        {
             "condition": "[and(variables('enablePE'), not(equals(parameters('privateEndpointType'), 'none')))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-06-01",
