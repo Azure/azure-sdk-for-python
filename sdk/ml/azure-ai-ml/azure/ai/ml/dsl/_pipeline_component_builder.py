@@ -11,7 +11,6 @@ from collections import OrderedDict
 from inspect import Parameter, signature
 from typing import Callable, Union
 
-from azure.ai.ml._internal._utils._utils import _map_internal_output_type
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
 from azure.ai.ml._utils.utils import (
     is_valid_node_name,
@@ -139,8 +138,7 @@ class PipelineComponentBuilder:
 
     @property
     def name(self):
-        """Name of pipeline builder, it's name will be same as the pipeline
-        definition it builds."""
+        """Name of pipeline builder, it's name will be same as the pipeline definition it builds."""
         return self._name
 
     def add_node(self, node: Union[BaseNode, AutoMLJob]):
@@ -154,8 +152,8 @@ class PipelineComponentBuilder:
     def build(
         self, *, user_provided_kwargs=None, non_pipeline_inputs_dict=None, non_pipeline_inputs=None
     ) -> PipelineComponent:
-        """
-        Build a pipeline component from current pipeline builder.
+        """Build a pipeline component from current pipeline builder.
+
         :param user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
         :param non_pipeline_inputs_dict: The non-pipeline input provided key-value. None if not exist.
         :param non_pipeline_inputs: List of non-pipeline input name. None if not exist.
@@ -203,7 +201,7 @@ class PipelineComponentBuilder:
         pipeline_component._outputs = self._build_pipeline_outputs(outputs)
         return pipeline_component
 
-    def _validate_group_annotation(self, name:str, val:GroupInput):
+    def _validate_group_annotation(self, name: str, val: GroupInput):
         for k, v in val.values.items():
             if isinstance(v, GroupInput):
                 self._validate_group_annotation(k, v)
@@ -228,9 +226,8 @@ class PipelineComponentBuilder:
         return inputs
 
     def _build_pipeline_outputs(self, outputs: typing.Dict[str, NodeOutput]):
-        """Validate if dsl.pipeline returns valid outputs and set output
-        binding. Create PipelineOutput as pipeline's output definition based on
-        node outputs from return.
+        """Validate if dsl.pipeline returns valid outputs and set output binding. Create PipelineOutput as pipeline's
+        output definition based on node outputs from return.
 
         :param outputs: Outputs of pipeline
         :type outputs: Mapping[str, azure.ai.ml.Output]
@@ -259,10 +256,19 @@ class PipelineComponentBuilder:
                     is_control=value.is_control,
                 )
 
+            # Hack: map internal output type to pipeline output type
+            def _map_internal_output_type(_meta):
+                """Map component output type to valid pipeline output type."""
+                if type(_meta).__name__ != "InternalOutput":
+                    return _meta.type
+                return _meta.map_pipeline_output_type()
+
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
             output_meta = Output(
-                type=_map_internal_output_type(meta), description=meta.description,
-                mode=meta.mode, is_control=meta.is_control
+                type=_map_internal_output_type(meta),
+                description=meta.description,
+                mode=meta.mode,
+                is_control=meta.is_control,
             )
             pipeline_output = PipelineOutput(
                 port_name=key,
@@ -295,8 +301,7 @@ class PipelineComponentBuilder:
         return group_defaults
 
     def _update_nodes_variable_names(self, func_variables: dict):
-        """Update nodes list to ordered dict with variable name key and
-        component object value.
+        """Update nodes list to ordered dict with variable name key and component object value.
 
         Variable naming priority:
              1. Specified by using xxx.name.
@@ -343,6 +348,9 @@ class PipelineComponentBuilder:
             if instance_id not in valid_component_ids:
                 continue
             name = getattr(v, "name", None) or k
+            # for node name _, treat it as anonymous node with name unset
+            if name == "_":
+                continue
             if name is not None:
                 name = name.lower()
 
@@ -429,7 +437,7 @@ class PipelineComponentBuilder:
             if not isinstance(val, Output):
                 raise UserErrorException(
                     message="Invalid output annotation. "
-                            f"Only Output annotation in return annotation is supported. Got {type(val)}."
+                    f"Only Output annotation in return annotation is supported. Got {type(val)}."
                 )
             output_annotations[key] = val._to_dict()
         return output_annotations
@@ -475,16 +483,22 @@ class PipelineComponentBuilder:
         if has_attr_safe(node, "inputs"):
             for input_name in set(node.inputs) & COMPONENT_IO_KEYWORDS:
                 module_logger.warning(
-                    "Reserved word \"%s\" is used as input name in node \"%s\", "
+                    'Reserved word "%s" is used as input name in node "%s", '
                     "can only be accessed with '%s.inputs[\"%s\"]'",
-                    input_name, node.name, node.name, input_name
+                    input_name,
+                    node.name,
+                    node.name,
+                    input_name,
                 )
         if has_attr_safe(node, "outputs"):
             for output_name in set(node.outputs) & COMPONENT_IO_KEYWORDS:
                 module_logger.warning(
-                    "Reserved word \"%s\" is used as output name in node \"%s\", "
+                    'Reserved word "%s" is used as output name in node "%s", '
                     "can only be accessed with '%s.outputs[\"%s\"]'",
-                    output_name, node.name, node.name, output_name
+                    output_name,
+                    node.name,
+                    node.name,
+                    output_name,
                 )
 
 

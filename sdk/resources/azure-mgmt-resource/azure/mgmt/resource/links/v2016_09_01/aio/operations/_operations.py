@@ -276,8 +276,8 @@ class ResourceLinksOperations:
          /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myGroup/Microsoft.Web/sites/mySite/Microsoft.Resources/links/myLink.
          Required.
         :type link_id: str
-        :param parameters: Parameters for creating or updating a resource link. Is either a model type
-         or a IO type. Required.
+        :param parameters: Parameters for creating or updating a resource link. Is either a
+         ResourceLink type or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLink or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

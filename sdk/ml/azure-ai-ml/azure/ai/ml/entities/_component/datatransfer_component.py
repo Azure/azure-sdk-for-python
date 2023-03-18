@@ -6,11 +6,23 @@ from typing import Dict, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._schema.component.data_transfer_component import DataTransferCopyComponentSchema, \
-    DataTransferImportComponentSchema, DataTransferExportComponentSchema
+from azure.ai.ml._schema.component.data_transfer_component import (
+    DataTransferCopyComponentSchema,
+    DataTransferImportComponentSchema,
+    DataTransferExportComponentSchema,
+)
 from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes
-from azure.ai.ml.constants._component import NodeType, DataTransferTaskType, ExternalDataType
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException, ValidationErrorType
+from azure.ai.ml.constants._component import (
+    NodeType,
+    DataTransferTaskType,
+    ExternalDataType,
+)
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationException,
+    ValidationErrorType,
+)
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs.output import Output
 from ..._schema import PathAwareSchema
@@ -82,17 +94,34 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         elif isinstance(io_dict, FileSystem):
             component_io = FileSystem()
         else:
-            data_type = io_dict.get("type", None)
-            if data_type == ExternalDataType.DATABASE:
-                component_io = Database()
-            elif data_type == ExternalDataType.FILE_SYSTEM:
-                component_io = FileSystem()
+            if isinstance(io_dict, dict):
+                data_type = io_dict.pop("type", None)
+                if data_type == ExternalDataType.DATABASE:
+                    component_io = Database()
+                elif data_type == ExternalDataType.FILE_SYSTEM:
+                    component_io = FileSystem()
+                else:
+                    msg = "Type in source or sink only support {} and {}, currently got {}."
+                    raise ValidationException(
+                        message=msg.format(
+                            ExternalDataType.DATABASE,
+                            ExternalDataType.FILE_SYSTEM,
+                            data_type,
+                        ),
+                        no_personal_data_message=msg.format(
+                            ExternalDataType.DATABASE,
+                            ExternalDataType.FILE_SYSTEM,
+                            "data_type",
+                        ),
+                        target=ErrorTarget.COMPONENT,
+                        error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.INVALID_VALUE,
+                    )
             else:
-                msg = "Source or sink only support type {} and {}, currently got {}."
+                msg = "Source or sink only support dict, Database and FileSystem"
                 raise ValidationException(
-                    message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
-                    no_personal_data_message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM,
-                                                        "data_type"),
+                    message=msg,
+                    no_personal_data_message=msg,
                     target=ErrorTarget.COMPONENT,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -102,11 +131,8 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 
 
 class DataTransferCopyComponent(DataTransferComponent):
-    """DataTransfer copy component version, used to define a data transfer component.
+    """DataTransfer copy component version, used to define a data transfer copy component.
 
-
-    :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
-    :type task: str
     :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
     :type data_copy_mode: str
     :param inputs: Mapping of inputs data bindings used in the job.
@@ -118,15 +144,13 @@ class DataTransferCopyComponent(DataTransferComponent):
     def __init__(
         self,
         *,
-        task: str = DataTransferTaskType.COPY_DATA,
         data_copy_mode: str = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         **kwargs,
     ):
-
+        kwargs["task"] = DataTransferTaskType.COPY_DATA
         super().__init__(
-            task=task,
             inputs=inputs,
             outputs=outputs,
             **kwargs,
@@ -149,11 +173,6 @@ class DataTransferCopyComponent(DataTransferComponent):
 
     def _customized_validate(self):
         validation_result = super(DataTransferCopyComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_copy())
-        return validation_result
-
-    def _validate_copy(self):
-        validation_result = self._create_empty_validation_result()
         validation_result.merge_with(self._validate_input_output_mapping())
         return validation_result
 
@@ -163,8 +182,10 @@ class DataTransferCopyComponent(DataTransferComponent):
         outputs_count = len(self.outputs)
         if outputs_count != 1:
             msg = "Only support single output in {}, but there're {} outputs."
-            validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count),
-                                           yaml_path="outputs")
+            validation_result.append_error(
+                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count),
+                yaml_path="outputs",
+            )
         else:
             input_type = None
             output_type = None
@@ -175,30 +196,35 @@ class DataTransferCopyComponent(DataTransferComponent):
                     output_type = output_data.type
                 if input_type is None or output_type is None or input_type != output_type:
                     msg = "Input type {} doesn't exactly match with output type {} in task {}"
-                    validation_result.append_error(message=msg.format(input_type, output_type,
-                                                                      DataTransferTaskType.COPY_DATA),
-                                                   yaml_path="outputs")
+                    validation_result.append_error(
+                        message=msg.format(input_type, output_type, DataTransferTaskType.COPY_DATA),
+                        yaml_path="outputs",
+                    )
             elif inputs_count > 1:
                 for _, output_data in self.outputs.items():
                     output_type = output_data.type
                 if output_type is None or output_type != AssetTypes.URI_FOLDER:
                     msg = "output type {} need to be {} in task {}"
-                    validation_result.append_error(message=msg.format(output_type,
-                                                                      AssetTypes.URI_FOLDER,
-                                                                      DataTransferTaskType.COPY_DATA),
-                                                   yaml_path="outputs")
+                    validation_result.append_error(
+                        message=msg.format(
+                            output_type,
+                            AssetTypes.URI_FOLDER,
+                            DataTransferTaskType.COPY_DATA,
+                        ),
+                        yaml_path="outputs",
+                    )
             else:
                 msg = "Inputs must be set in task {}."
-                validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path="outputs")
+                validation_result.append_error(
+                    message=msg.format(DataTransferTaskType.COPY_DATA),
+                    yaml_path="inputs",
+                )
         return validation_result
 
 
 class DataTransferImportComponent(DataTransferComponent):
-    """DataTransfer import component version, used to define a data transfer component.
+    """DataTransfer import component version, used to define a data transfer import component.
 
-
-    :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
-    :type task: str
     :param source: The data source of file system or database
     :type source: dict
     :param outputs: Mapping of outputs data bindings used in the job, default will be an output port with key "sink"
@@ -209,15 +235,14 @@ class DataTransferImportComponent(DataTransferComponent):
     def __init__(
         self,
         *,
-        task: str = DataTransferTaskType.IMPORT_DATA,
         source: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         **kwargs,
     ):
 
-        outputs = outputs or {'sink': Output(type=AssetTypes.MLTABLE)}
+        outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
+        kwargs["task"] = DataTransferTaskType.IMPORT_DATA
         super().__init__(
-            task=task,
             outputs=outputs,
             **kwargs,
         )
@@ -229,13 +254,21 @@ class DataTransferImportComponent(DataTransferComponent):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
 
+    def __call__(self, *args, **kwargs):
+        """Call ComponentVersion as a function and get a Component object."""
+
+        msg = "DataTransfer component is not callable for import task."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMPONENT,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
 
 class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too-many-instance-attributes
-    """DataTransfer export component version, used to define a data transfer component.
+    """DataTransfer export component version, used to define a data transfer export component.
 
-
-    :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
-    :type task: str
     :param sink: The sink of external data and databases.
     :type sink: Union[Dict, Database, FileSystem]
     :param inputs: Mapping of inputs data bindings used in the job.
@@ -245,14 +278,12 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     def __init__(
         self,
         *,
-        task: str = DataTransferTaskType.EXPORT_DATA,
         inputs: Optional[Dict] = None,
         sink: Optional[Dict] = None,
         **kwargs,
     ):
-
+        kwargs["task"] = DataTransferTaskType.EXPORT_DATA
         super().__init__(
-            task=task,
             inputs=inputs,
             **kwargs,
         )
@@ -263,3 +294,14 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)
+
+    def __call__(self, *args, **kwargs):
+        """Call ComponentVersion as a function and get a Component object."""
+
+        msg = "DataTransfer component is not callable for export task."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.COMPONENT,
+            error_category=ErrorCategory.USER_ERROR,
+        )

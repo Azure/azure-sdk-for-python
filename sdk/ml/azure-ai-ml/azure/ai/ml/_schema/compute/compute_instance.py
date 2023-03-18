@@ -7,7 +7,7 @@ from marshmallow.decorators import post_load
 
 # pylint: disable=unused-argument,no-self-use
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.constants._compute import ComputeType
+from azure.ai.ml.constants._compute import ComputeType, ComputeSizeTier
 
 from ..core.fields import ExperimentalField, NestedField, StringTransformedEnum
 from .compute import ComputeSchema, IdentitySchema, NetworkSettingsSchema
@@ -52,30 +52,22 @@ class OsImageMetadataSchema(PathAwareSchema):
 
 
 class ComputeInstanceSchema(ComputeSchema):
-    type = StringTransformedEnum(
-        allowed_values=[ComputeType.COMPUTEINSTANCE], required=True
-    )
-    size = fields.Str()
+    type = StringTransformedEnum(allowed_values=[ComputeType.COMPUTEINSTANCE], required=True)
+    size = fields.Str(metadata={"arm_type": ComputeSizeTier.COMPUTE_INSTANCE})
     network_settings = NestedField(NetworkSettingsSchema)
     create_on_behalf_of = NestedField(CreateOnBehalfOfSchema)
     ssh_settings = NestedField(ComputeInstanceSshSettingsSchema)
     ssh_public_access_enabled = fields.Bool(dump_default=None)
     state = fields.Str(dump_only=True)
     last_operation = fields.Dict(keys=fields.Str(), values=fields.Str(), dump_only=True)
-    services = fields.List(
-        fields.Dict(keys=fields.Str(), values=fields.Str()), dump_only=True
-    )
+    services = fields.List(fields.Dict(keys=fields.Str(), values=fields.Str()), dump_only=True)
     schedules = NestedField(ComputeSchedulesSchema)
     identity = ExperimentalField(NestedField(IdentitySchema))
     idle_time_before_shutdown = ExperimentalField(fields.Str())
     idle_time_before_shutdown_minutes = ExperimentalField(fields.Int())
     custom_applications = ExperimentalField(fields.List(NestedField(CustomApplicationsSchema)))
     setup_scripts = ExperimentalField(NestedField(SetupScriptsSchema))
-    os_image_metadata = ExperimentalField(
-        NestedField(OsImageMetadataSchema, dump_only=True)
-    )
+    os_image_metadata = ExperimentalField(NestedField(OsImageMetadataSchema, dump_only=True))
     enable_node_public_ip = fields.Bool(
-        metadata={
-            "description": "Enable or disable node public IP address provisioning."
-        }
+        metadata={"description": "Enable or disable node public IP address provisioning."}
     )

@@ -303,8 +303,8 @@ class VirtualNetworkRulesOperations:
         :type server_name: str
         :param virtual_network_rule_name: The name of the virtual network rule. Required.
         :type virtual_network_rule_name: str
-        :param parameters: The requested virtual Network Rule Resource state. Is either a model type or
-         a IO type. Required.
+        :param parameters: The requested virtual Network Rule Resource state. Is either a
+         VirtualNetworkRule type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.VirtualNetworkRule or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

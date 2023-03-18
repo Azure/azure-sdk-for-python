@@ -17,7 +17,6 @@ class KeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     p_384 = "P-384"  #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
     p_521 = "P-521"  #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
     p_256_k = "P-256K"  #: The SECG SECP256K1 elliptic curve.
-    ed25519 = "Ed25519"  #: The Ed25519 Edwards curve.
 
 
 class KeyExportEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -57,8 +56,6 @@ class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     rsa_hsm = "RSA-HSM"  #: RSA with a private key which is not exportable from the HSM
     oct = "oct"  #: Octet sequence (used to represent symmetric keys)
     oct_hsm = "oct-HSM"  #: Octet sequence with a private key which is not exportable from the HSM
-    okp = "OKP"  #: Octet key pair (https://tools.ietf.org/html/rfc8037)
-    okp_hsm = "OKP-HSM"  #: Octet key pair with a private key which is not exportable from the HSM
 
     @classmethod
     def _missing_(cls, value):

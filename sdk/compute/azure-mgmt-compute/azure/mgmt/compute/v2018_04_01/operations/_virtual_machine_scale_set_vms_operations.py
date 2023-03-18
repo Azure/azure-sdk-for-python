@@ -997,7 +997,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
         :param parameters: Parameters supplied to the Update Virtual Machine Scale Sets VM operation.
-         Is either a model type or a IO type. Required.
+         Is either a VirtualMachineScaleSetVM type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2018_04_01.models.VirtualMachineScaleSetVM or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2161,8 +2161,8 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param parameters: Parameters supplied to the Run command operation. Is either a model type or
-         a IO type. Required.
+        :param parameters: Parameters supplied to the Run command operation. Is either a
+         RunCommandInput type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2018_04_01.models.RunCommandInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.

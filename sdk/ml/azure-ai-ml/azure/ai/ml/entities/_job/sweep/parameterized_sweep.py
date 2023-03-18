@@ -6,6 +6,7 @@ from typing import Dict, Optional, Type, Union
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job_limits import SweepJobLimits
+from ..queue_settings import QueueSettings
 from .early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -70,11 +71,13 @@ class ParameterizedSweep:
                 ],
             ]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination
         self._limits = limits
         self.search_space = search_space
+        self.queue_settings = queue_settings
 
         if isinstance(objective, Dict):
             self.objective = Objective(**objective)
@@ -106,8 +109,7 @@ class ParameterizedSweep:
         timeout: Optional[int] = None,
         trial_timeout: Optional[int] = None,
     ) -> None:
-        """Set limits for Sweep node. Leave parameters as None if you don't
-        want to update corresponding values.
+        """Set limits for Sweep node. Leave parameters as None if you don't want to update corresponding values.
 
         :param max_concurrent_trials: maximum concurrent trial number.
         :type max_concurrent_trials: int

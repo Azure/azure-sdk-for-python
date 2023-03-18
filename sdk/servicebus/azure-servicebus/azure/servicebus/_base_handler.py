@@ -421,9 +421,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 )
 
     def _backoff(
-        self, retried_times, last_exception, abs_timeout_time=None, entity_name=None
-    ):
-        # type: (int, Exception, Optional[float], str) -> None
+        self,
+        retried_times: int,
+        last_exception: Exception,
+        abs_timeout_time: Optional[float] = None,
+        entity_name: Optional[str] = None
+    ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(
                     self._config.retry_mode,

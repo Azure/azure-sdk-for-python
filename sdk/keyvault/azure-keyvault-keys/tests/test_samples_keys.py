@@ -16,7 +16,7 @@ from _test_case import KeysClientPreparer, get_decorator
 from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(only_vault=True)
-only_7_4_hsm = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4_PREVIEW_1])
+only_7_4_hsm = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_4])
 only_hsm = get_decorator(only_hsm=True)
 
 
@@ -146,20 +146,6 @@ class TestExamplesKeyVault(KeyVaultTestCase, KeysTestCase):
         print(key.name)
         print(key.key_type)
         # [END create_oct_key]
-
-    @pytest.mark.parametrize("api_version,is_hsm",only_7_4_hsm)
-    @KeysClientPreparer()
-    @recorded_by_proxy
-    def test_example_create_okp_key(self, key_client, **kwargs):
-        key_name = self.get_resource_name("key")
-
-        # [START create_okp_key]
-        key = key_client.create_okp_key(key_name, curve=KeyCurveName.ed25519, hardware_protected=True)
-
-        print(key.id)
-        print(key.name)
-        print(key.key_type)
-        # [END create_okp_key]
 
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
     @KeysClientPreparer()

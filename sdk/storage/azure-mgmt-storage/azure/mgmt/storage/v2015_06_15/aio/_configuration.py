@@ -43,7 +43,7 @@ class StorageManagementConfiguration(Configuration):  # pylint: disable=too-many
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(StorageManagementConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2015-06-15")  # type: Literal["2015-06-15"]
+        api_version: Literal["2015-06-15"] = kwargs.pop("api_version", "2015-06-15")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

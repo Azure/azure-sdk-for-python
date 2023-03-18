@@ -10,36 +10,35 @@ from typing import IO, AnyStr, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
+from ..._restclient.v2022_05_01.models import (
     ComponentContainerData,
     ComponentContainerDetails,
     ComponentVersionData,
     ComponentVersionDetails,
 )
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.component import ComponentSchema
-from azure.ai.ml._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
-from azure.ai.ml.constants._common import (
+from ..._schema import PathAwareSchema
+from ..._schema.component import ComponentSchema
+from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
+from ..._utils.utils import dump_yaml_to_file, hash_dict, is_private_preview_enabled
+from ...constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     REGISTRY_URI_FORMAT,
-    CommonYamlFields,
-    AzureMLResourceType,
     SOURCE_PATH_CONTEXT_KEY,
+    AzureMLResourceType,
+    CommonYamlFields,
 )
-from azure.ai.ml.constants._component import ComponentSource, NodeType, IOConstants
-from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._assets.asset import Asset
-from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
-from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-
+from ...constants._component import ComponentSource, IOConstants, NodeType
+from ...entities._assets import Code
+from ...entities._assets.asset import Asset
+from ...entities._inputs_outputs import Input, Output
+from ...entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
+from ...entities._system_data import SystemData
+from ...entities._util import find_type_in_override
+from ...entities._validation import MutableValidationResult, SchemaValidatableMixin
+from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .code import ComponentIgnoreFile
-from ..._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -56,8 +55,7 @@ class Component(
     YamlTranslatableMixin,
     SchemaValidatableMixin,
 ):
-    """Base class for component version, used to define a component. Can't be
-    instantiated directly.
+    """Base class for component version, used to define a component. Can't be instantiated directly.
 
     :param name: Name of the resource.
     :type name: str
@@ -320,20 +318,31 @@ class Component(
 
         from azure.ai.ml.entities._component.component_factory import component_factory
 
-        create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
+        create_instance_func, _ = component_factory.get_create_funcs(
+            data,
+            for_load=True,
+        )
         new_instance = create_instance_func()
+        # specific keys must be popped before loading with schema using kwargs
+        init_kwargs = {
+            "yaml_str": kwargs.pop("yaml_str", None),
+            "_source": kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
+        }
+        init_kwargs.update(
+            new_instance._load_with_schema(  # pylint: disable=protected-access
+                data,
+                context={
+                    BASE_PATH_CONTEXT_KEY: base_path,
+                    SOURCE_PATH_CONTEXT_KEY: yaml_path,
+                    PARAMS_OVERRIDE_KEY: params_override,
+                },
+                unknown=INCLUDE,
+                raise_original_exception=True,
+                **kwargs,
+            )
+        )
         new_instance.__init__(
-            yaml_str=kwargs.pop("yaml_str", None),
-            _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(
-                create_schema_func(
-                    {
-                        BASE_PATH_CONTEXT_KEY: base_path,
-                        SOURCE_PATH_CONTEXT_KEY: yaml_path,
-                        PARAMS_OVERRIDE_KEY: params_override,
-                    }
-                ).load(data, unknown=INCLUDE, **kwargs)
-            ),
+            **init_kwargs,
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
@@ -374,7 +383,7 @@ class Component(
         # maybe override serialization method for name field?
         from azure.ai.ml.entities._component.component_factory import component_factory
 
-        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec)
+        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec, for_load=True)
 
         instance = create_instance_func()
         instance.__init__(**instance._from_rest_object_to_init_params(obj))
@@ -398,9 +407,7 @@ class Component(
 
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
-        init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
-            rest_component_version.component_spec, unknown=INCLUDE
-        )
+        init_kwargs = cls._load_with_schema(rest_component_version.component_spec, unknown=INCLUDE)
         init_kwargs.update(
             dict(
                 id=obj.id,
@@ -413,13 +420,13 @@ class Component(
         )
 
         # remove empty values, because some property only works for specific component, eg: distribution for command
-        return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
+        # note that there is an issue that environment == {} will always be true, so use isinstance here
+        return {k: v for k, v in init_kwargs.items() if v is not None and not (isinstance(v, dict) and not v)}
 
     def _get_anonymous_hash(self) -> str:
         """Return the name of anonymous component.
 
-        same anonymous component(same code and interface) will have same
-        name.
+        same anonymous component(same code and interface) will have same name.
         """
         component_interface_dict = self._to_dict()
         # omit version since anonymous component's version is random guid
@@ -515,11 +522,15 @@ class Component(
         if args:
             # raise clear error message for unsupported positional args
             if self._func._has_parameters:
-                msg = f"Component function doesn't support positional arguments, got {args} for {self.name}. " \
-                      f"Please use keyword arguments like: {self._func._func_calling_example}."
+                msg = (
+                    f"Component function doesn't support positional arguments, got {args} for {self.name}. "
+                    f"Please use keyword arguments like: {self._func._func_calling_example}."
+                )
             else:
-                msg = "Component function doesn't has any parameters, " \
-                      f"please make sure component {self.name} has inputs. "
+                msg = (
+                    "Component function doesn't has any parameters, "
+                    f"please make sure component {self.name} has inputs. "
+                )
             raise ValidationException(
                 message=msg,
                 target=ErrorTarget.COMPONENT,
@@ -531,8 +542,8 @@ class Component(
     @contextmanager
     def _resolve_local_code(self) -> Optional[Code]:
         """Try to create a Code object pointing to local code and yield it.
-        If there is no local code to upload, yield None.
-        Otherwise, yield a Code object pointing to the code.
+
+        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
         """
         if not hasattr(self, "code"):
             yield None

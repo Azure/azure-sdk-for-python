@@ -30,7 +30,7 @@ def assert_pipeline_job_cancel(client: MLClient, score_func, pipeline_model_inpu
 class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
     test_data = Input(
         type=AssetTypes.URI_FILE,
-        path="./tests/test_configs/pipeline_jobs/job_with_registry_model_as_input/data/sample1.csv"
+        path="./tests/test_configs/pipeline_jobs/job_with_registry_model_as_input/data/sample1.csv",
     )
 
     def test_pipeline_job_create_with_registered_component_on_registry(self, pipelines_registry_client: MLClient):
@@ -86,9 +86,7 @@ class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
     ):
         # load_component
         score_component_name, component_version = "score_component", "2"
-        score_func = pipelines_registry_client.components.get(
-            name=score_component_name, version=component_version
-        )
+        score_func = pipelines_registry_client.components.get(name=score_component_name, version=component_version)
 
         pipeline_score_model = Input(
             type="mlflow_model", path="azureml://registries/sdk-test/models/iris_model/versions/1"

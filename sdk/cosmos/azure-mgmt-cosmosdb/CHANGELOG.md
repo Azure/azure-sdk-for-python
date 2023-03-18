@@ -1,5 +1,30 @@
 # Release History
 
+## 9.0.0 (2023-02-15)
+
+### Features Added
+
+  - Added operation GremlinResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation SqlResourcesOperations.begin_create_update_client_encryption_key
+  - Added operation SqlResourcesOperations.get_client_encryption_key
+  - Added operation SqlResourcesOperations.list_client_encryption_keys
+  - Added operation TableResourcesOperations.begin_retrieve_continuous_backup_information
+  - Added operation group RestorableGremlinDatabasesOperations
+  - Added operation group RestorableGremlinGraphsOperations
+  - Added operation group RestorableGremlinResourcesOperations
+  - Added operation group RestorableTableResourcesOperations
+  - Added operation group RestorableTablesOperations
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter minimal_tls_version
+  - Model DatabaseAccountGetResults has a new parameter minimal_tls_version
+  - Model DatabaseAccountUpdateParameters has a new parameter minimal_tls_version
+  - Model RestorableSqlContainerPropertiesResourceContainer has a new parameter client_encryption_policy
+  - Model RestoreParameters has a new parameter gremlin_databases_to_restore
+  - Model RestoreParameters has a new parameter tables_to_restore
+  - Model SqlContainerGetPropertiesResource has a new parameter client_encryption_policy
+  - Model SqlContainerResource has a new parameter client_encryption_policy
+  - Operation RestorableMongodbCollectionsOperations.list has a new optional parameter end_time
+  - Operation RestorableMongodbCollectionsOperations.list has a new optional parameter start_time
+
 ## 9.0.0b2 (2022-10-26)
 
 ### Features Added

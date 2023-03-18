@@ -20,10 +20,10 @@ module_logger = logging.getLogger(__name__)
 
 
 class DataCollectorSchema(metaclass=PatchedSchemaMeta):
-    collections = fields.Mapping(fields.Str, NestedField(DeploymentCollectionSchema))
+    collections = fields.Dict(keys=fields.Str, values=NestedField(DeploymentCollectionSchema))
     rolling_rate = StringTransformedEnum(
         required=False,
-        allowed_values=[ RollingRate.MINUTE, RollingRate.DAY, RollingRate.HOUR],
+        allowed_values=[RollingRate.MINUTE, RollingRate.DAY, RollingRate.HOUR],
     )
     destination = NestedField(DestinationSchema)
     sampling_rate = fields.Float()

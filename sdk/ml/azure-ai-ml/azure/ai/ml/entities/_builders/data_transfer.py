@@ -10,17 +10,36 @@ from typing import Dict, List, Optional, Union
 from marshmallow import Schema
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._schema.job.data_transfer_job import DataTransferCopyJobSchema, DataTransferImportJobSchema, \
-    DataTransferExportJobSchema
-from azure.ai.ml.constants._component import  NodeType, ExternalDataType, DataTransferTaskType
-from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent, \
-    DataTransferImportComponent, DataTransferExportComponent, DataTransferComponent
+from azure.ai.ml._schema.job.data_transfer_job import (
+    DataTransferCopyJobSchema,
+    DataTransferImportJobSchema,
+    DataTransferExportJobSchema,
+)
+from azure.ai.ml.constants._component import (
+    NodeType,
+    ExternalDataType,
+    DataTransferTaskType,
+)
+from azure.ai.ml.entities._component.datatransfer_component import (
+    DataTransferCopyComponent,
+    DataTransferImportComponent,
+    DataTransferExportComponent,
+    DataTransferComponent,
+)
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob, DataTransferImportJob, \
-    DataTransferExportJob
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
+    DataTransferCopyJob,
+    DataTransferImportJob,
+    DataTransferExportJob,
+)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 
 
@@ -37,24 +56,40 @@ module_logger = logging.getLogger(__name__)
 
 
 def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
-    if not io_dict:
+    if io_dict is None:
         return io_dict
-    io_dict = io_dict or {}
     if isinstance(io_dict, (Database, FileSystem)):
         component_io = io_dict
     else:
-        data_type = io_dict.get("type", None)
-        if data_type == ExternalDataType.DATABASE:
-            component_io = Database(**io_dict)
-        elif data_type == ExternalDataType.FILE_SYSTEM:
-            component_io = FileSystem(**io_dict)
+        if isinstance(io_dict, dict):
+            data_type = io_dict.pop("type", None)
+            if data_type == ExternalDataType.DATABASE:
+                component_io = Database(**io_dict)
+            elif data_type == ExternalDataType.FILE_SYSTEM:
+                component_io = FileSystem(**io_dict)
+            else:
+                msg = "Type in source or sink only support {} and {}, currently got {}."
+                raise ValidationException(
+                    message=msg.format(
+                        ExternalDataType.DATABASE,
+                        ExternalDataType.FILE_SYSTEM,
+                        data_type,
+                    ),
+                    no_personal_data_message=msg.format(
+                        ExternalDataType.DATABASE,
+                        ExternalDataType.FILE_SYSTEM,
+                        "data_type",
+                    ),
+                    target=ErrorTarget.DATA_TRANSFER_JOB,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
         else:
-            msg = "Source or sink only support type {} and {}, currently got {}."
+            msg = "Source or sink only support dict, Database and FileSystem"
             raise ValidationException(
-                message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
-                no_personal_data_message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM,
-                                                    "data_type"),
-                target=ErrorTarget.COMPONENT,
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.DATA_TRANSFER_JOB,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
@@ -63,11 +98,11 @@ def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
 
 
 class DataTransfer(BaseNode):
-    """Base class for data transfer node, used for data transfer component version
-    consumption.
+    """Base class for data transfer node, used for data transfer component version consumption.
 
     You should not instantiate this class directly.
     """
+
     def __init__(
         self,
         *,
@@ -137,8 +172,6 @@ class DataTransferCopy(DataTransfer):
     :type experiment_name: str
     :param compute: The compute target the job runs on.
     :type compute: str
-    :param task: task type in data transfer component, possible value is "copy_data".
-    :type task: str
     :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
     :type data_copy_mode: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferCopy cannot be successfully validated.
@@ -153,7 +186,6 @@ class DataTransferCopy(DataTransfer):
         compute: Optional[str] = None,
         inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
-        task: Optional[str] = DataTransferTaskType.COPY_DATA,
         data_copy_mode: Optional[str] = None,
         **kwargs,
     ):
@@ -168,7 +200,7 @@ class DataTransferCopy(DataTransfer):
         )
         # init mark for _AttrDict
         self._init = True
-        self.task = task
+        self.task = DataTransferTaskType.COPY_DATA
         self.data_copy_mode = data_copy_mode
         is_component = isinstance(component, DataTransferCopyComponent)
         if is_component:
@@ -196,7 +228,7 @@ class DataTransferCopy(DataTransfer):
         rest_obj = super()._to_rest_object(**kwargs)
         for key, value in {
             "componentId": self._get_component_id(),
-            "data_copy_mode": self.data_copy_mode
+            "data_copy_mode": self.data_copy_mode,
         }.items():
             if value is not None:
                 rest_obj[key] = value
@@ -212,7 +244,6 @@ class DataTransferCopy(DataTransfer):
         return data_transfer_job
 
     def _to_job(self) -> DataTransferCopyJob:
-
         return DataTransferCopyJob(
             experiment_name=self.experiment_name,
             name=self.name,
@@ -224,8 +255,7 @@ class DataTransferCopy(DataTransfer):
             outputs=self._job_outputs,
             services=self.services,
             compute=self.compute,
-            task=self.task,
-            data_copy_mode=self.data_copy_mode
+            data_copy_mode=self.data_copy_mode,
         )
 
     def __call__(self, *args, **kwargs) -> "DataTransferCopy":
@@ -251,8 +281,7 @@ class DataTransferCopy(DataTransfer):
             # Pass through the display name only if the display name is not system generated.
             node.display_name = self.display_name if self.display_name != self.name else None
             return node
-        msg = "copy_data can be called as a function only when referenced component is {}, " \
-              "currently got {}."
+        msg = "copy_data can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
             no_personal_data_message=msg.format(type(Component), "self._component"),
@@ -286,8 +315,6 @@ class DataTransferImport(DataTransfer):
     :type experiment_name: str
     :param compute: The compute target the job runs on.
     :type compute: str
-    :param task: task type in data transfer component, possible value is "import_data".
-    :type task: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferImport cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -300,7 +327,6 @@ class DataTransferImport(DataTransfer):
         compute: Optional[str] = None,
         source: Optional[Union[Dict, Database, FileSystem]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
-        task: Optional[str] = DataTransferTaskType.IMPORT_DATA,
         **kwargs,
     ):
         # validate init params are valid type
@@ -313,7 +339,7 @@ class DataTransferImport(DataTransfer):
         )
         # init mark for _AttrDict
         self._init = True
-        self.task = task
+        self.task = DataTransferTaskType.IMPORT_DATA
         is_component = isinstance(component, DataTransferImportComponent)
         if is_component:
             self.task = component.task or self.task
@@ -348,6 +374,20 @@ class DataTransferImport(DataTransfer):
                 yaml_path="outputs.sink",
                 message="Outputs field only support one output called sink in import task",
             )
+        if "sink" in self.outputs and isinstance(self.outputs["sink"]._data, Output):
+            sink_output = self.outputs["sink"]._data
+            if (self.source.type == ExternalDataType.DATABASE and sink_output.type != AssetTypes.MLTABLE) or (
+                self.source.type == ExternalDataType.FILE_SYSTEM and sink_output.type != AssetTypes.URI_FOLDER
+            ):
+                result.append_error(
+                    yaml_path="outputs.sink.type",
+                    message="Outputs field only support type {} for {} and {} for {}".format(
+                        AssetTypes.MLTABLE,
+                        ExternalDataType.DATABASE,
+                        AssetTypes.URI_FOLDER,
+                        ExternalDataType.FILE_SYSTEM,
+                    ),
+                )
         return result
 
     def _to_rest_object(self, **kwargs) -> dict:
@@ -369,7 +409,6 @@ class DataTransferImport(DataTransfer):
         return data_transfer_job
 
     def _to_job(self) -> DataTransferImportJob:
-
         return DataTransferImportJob(
             experiment_name=self.experiment_name,
             name=self.name,
@@ -381,7 +420,6 @@ class DataTransferImport(DataTransfer):
             outputs=self._job_outputs,
             services=self.services,
             compute=self.compute,
-            task=self.task,
         )
 
 
@@ -410,8 +448,6 @@ class DataTransferExport(DataTransfer):
     :type experiment_name: str
     :param compute: The compute target the job runs on.
     :type compute: str
-    :param task: task type in data transfer component, possible value is "export_data".
-    :type task: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferExport cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -424,7 +460,6 @@ class DataTransferExport(DataTransfer):
         compute: Optional[str] = None,
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
         inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
-        task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
         **kwargs,
     ):
         # validate init params are valid type
@@ -437,7 +472,7 @@ class DataTransferExport(DataTransfer):
         )
         # init mark for _AttrDict
         self._init = True
-        self.task = task
+        self.task = DataTransferTaskType.EXPORT_DATA
         is_component = isinstance(component, DataTransferExportComponent)
         if is_component:
             self.task = component.task or self.task
@@ -485,6 +520,21 @@ class DataTransferExport(DataTransfer):
                 yaml_path="inputs.source",
                 message="Inputs field only support one input called source in export task",
             )
+        if "source" in self.inputs and isinstance(self.inputs["source"]._data, Input):
+            source_input = self.inputs["source"]._data
+            if (self.sink.type == ExternalDataType.DATABASE and source_input.type != AssetTypes.URI_FILE) or (
+                self.sink.type == ExternalDataType.FILE_SYSTEM and source_input.type != AssetTypes.URI_FOLDER
+            ):
+                result.append_error(
+                    yaml_path="inputs.source.type",
+                    message="Inputs field only support type {} for {} and {} for {}".format(
+                        AssetTypes.URI_FILE,
+                        ExternalDataType.DATABASE,
+                        AssetTypes.URI_FOLDER,
+                        ExternalDataType.FILE_SYSTEM,
+                    ),
+                )
+
         return result
 
     def _to_rest_object(self, **kwargs) -> dict:
@@ -506,7 +556,6 @@ class DataTransferExport(DataTransfer):
         return data_transfer_job
 
     def _to_job(self) -> DataTransferExportJob:
-
         return DataTransferExportJob(
             experiment_name=self.experiment_name,
             name=self.name,
@@ -518,5 +567,4 @@ class DataTransferExport(DataTransfer):
             inputs=self._job_inputs,
             services=self.services,
             compute=self.compute,
-            task=self.task,
         )

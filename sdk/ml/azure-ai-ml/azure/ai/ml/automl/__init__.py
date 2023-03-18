@@ -6,6 +6,9 @@
 
 Main areas include managing AutoML tasks.
 """
+from azure.ai.ml.entities._job.automl import (
+    TrainingSettings,
+)
 from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
@@ -106,6 +109,7 @@ __all__ = [
     "ImageSweepSettings",
     "ImageObjectDetectionSearchSpace",
     "ImageClassificationSearchSpace",
+    "TrainingSettings",
     "image_classification",
     "image_classification_multilabel",
     "image_object_detection",

@@ -2,6 +2,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: ''
+  - name: TestResourceDirectories
+    type: object
+    default:
   - name: PreSteps
     type: object
     default: []
@@ -99,12 +102,21 @@ jobs:
           SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
           SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
 
-      - template: /eng/common/TestResources/deploy-test-resources.yml
-        parameters:
-          Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
-          ServiceDirectory: '${{ parameters.ServiceDirectory }}'
-          SubscriptionConfiguration: $(SubscriptionConfiguration)
-          ArmTemplateParameters: $(ArmTemplateParameters)
+      - ${{ if parameters.TestResourceDirectories }}:
+        - ${{ each directory in parameters.TestResourceDirectories }}:
+          - template: /eng/common/TestResources/deploy-test-resources.yml
+            parameters:
+              Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
+              ServiceDirectory: '${{ directory }}'
+              SubscriptionConfiguration: $(SubscriptionConfiguration)
+              ArmTemplateParameters: $(ArmTemplateParameters)
+      - ${{ if not(parameters.TestResourceDirectories) }}:
+          - template: /eng/common/TestResources/deploy-test-resources.yml
+            parameters:
+              Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
+              ServiceDirectory: '${{ parameters.ServiceDirectory }}'
+              SubscriptionConfiguration: $(SubscriptionConfiguration)
+              ArmTemplateParameters: $(ArmTemplateParameters)
 
       - template: ../steps/build-test.yml
         parameters:
@@ -125,7 +137,15 @@ jobs:
           BuildDocs: ${{ parameters.BuildDocs }}
           TestProxy: ${{ parameters.TestProxy }}
 
-      - template: /eng/common/TestResources/remove-test-resources.yml
-        parameters:
-          ServiceDirectory: '${{ parameters.ServiceDirectory }}'
-          SubscriptionConfiguration: $(SubscriptionConfiguration)
+
+      - ${{ if parameters.TestResourceDirectories }}:
+        - ${{ each directory in parameters.TestResourceDirectories }}:
+          - template: /eng/common/TestResources/remove-test-resources.yml
+            parameters:
+              ServiceDirectory: '${{ directory }}'
+              SubscriptionConfiguration: $(SubscriptionConfiguration)
+      - ${{ if not(parameters.TestResourceDirectories) }}:
+        - template: /eng/common/TestResources/remove-test-resources.yml
+          parameters:
+            ServiceDirectory: '${{ parameters.ServiceDirectory }}'
+            SubscriptionConfiguration: $(SubscriptionConfiguration)
