@@ -6,14 +6,12 @@ from enum import Enum
 from typing import TYPE_CHECKING, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -39,7 +37,7 @@ class ContainerRegistryBaseClient(object):
     def __init__(self, endpoint: str, credential: Optional["AsyncTokenCredential"], **kwargs) -> None:
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
-            credential=credential or "", # type: ignore
+            credential=credential or AsyncTokenCredential(),
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=self._auth_policy,

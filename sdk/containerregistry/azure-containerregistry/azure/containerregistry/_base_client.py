@@ -7,15 +7,12 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline.transport import HttpTransport
 
 from ._authentication_policy import ContainerRegistryChallengePolicy
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
 
 
 class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -41,7 +38,7 @@ class ContainerRegistryBaseClient(object):
         # type: (str, Optional[TokenCredential], Any) -> None
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
-            credential=credential or "", # type: ignore
+            credential=credential or TokenCredential(),
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=self._auth_policy,
