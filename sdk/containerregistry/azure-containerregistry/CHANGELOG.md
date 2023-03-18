@@ -7,12 +7,13 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix a `TypeError` when `list_tag()` or `list_manifest()` in an empty repository. ([#28234](https://github.com/Azure/azure-sdk-for-python/issues/28234))
 
 ### Other Changes
-* Add default value `"https://management.azure.com"` to kwarg `audience` in `ContainerRegistryClient`. ([#22229](https://github.com/Azure/azure-sdk-for-python/issues/22229))
-* Python 3.6 is no longer supported. Please use Python version 3.7 or later.
-* Bumped minimum dependency on `azure-core` to `>=1.24.0`
-* Bumped minimum dependency on `msrest` to `>=0.7.1`
+- Add default value `"https://management.azure.com"` to kwarg `audience` in `ContainerRegistryClient`. ([#22229](https://github.com/Azure/azure-sdk-for-python/issues/22229))
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Bumped minimum dependency on `azure-core` to `>=1.24.0`
+- Bumped minimum dependency on `msrest` to `>=0.7.1`
 
 ## 1.1.0b1 (2022-05-10)
 
