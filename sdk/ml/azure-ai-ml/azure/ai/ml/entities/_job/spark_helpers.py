@@ -2,14 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-import re
 
 from azure.ai.ml.constants import InputOutputModes
-from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.constants._component import ComponentJobConstants
 
 
 def _validate_spark_configurations(obj):
@@ -125,7 +122,7 @@ def _validate_compute_or_resources(compute, resources):
 
 
 # Only "direct" mode is supported for spark job inputs and outputs
-def _validate_input_output_mode(inputs, outputs, component=None):
+def _validate_input_output_mode(inputs, outputs):
     for input_name, input_value in inputs.items():
         if isinstance(input_value, Input) and input_value.mode != InputOutputModes.DIRECT:
             # For standalone job input
