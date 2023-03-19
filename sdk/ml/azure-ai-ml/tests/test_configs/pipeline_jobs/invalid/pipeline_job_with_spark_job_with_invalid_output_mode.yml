@@ -8,10 +8,6 @@ inputs:
     path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
     mode: direct
 
-outputs:
-  output:
-    type: uri_folder
-
 jobs:
   hello_world:
     type: spark
@@ -21,7 +17,8 @@ jobs:
       file_input2: ${{parent.inputs.iris_data}}
 
     outputs:
-      output: ${{parent.outputs.output}}
+      output:
+        type: uri_folder
 
     code: ../../dsl_pipeline/spark_job_in_pipeline/src
 
