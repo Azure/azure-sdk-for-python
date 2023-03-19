@@ -24,8 +24,8 @@ jobs:
     type: spark
     component: file:./src/sample_word.yml
     inputs:
-      input1_haha: ${{parent.inputs.input1}}
-      sample_rate_haha: ${{parent.inputs.sample_rate}}
+      input1: ${{parent.inputs.input1}}
+      sample_rate: ${{parent.inputs.sample_rate}}
 
     outputs:
       output1: ${{parent.outputs.output1}}
