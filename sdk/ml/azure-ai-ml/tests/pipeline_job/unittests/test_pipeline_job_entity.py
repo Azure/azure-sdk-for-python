@@ -1440,7 +1440,7 @@ class TestPipelineJobEntity:
         "test_path, error_messages",
         [
             (
-               "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
                 "Input 'file_input1' is using 'None' mode, only 'direct' is supported for Spark job",
             ),
             (
@@ -1449,9 +1449,7 @@ class TestPipelineJobEntity:
             ),
         ],
     )
-    def test_spark_node_in_pipeline_with_invalid_input_mode(
-        self, test_path, error_messages
-    ):
+    def test_spark_node_in_pipeline_with_invalid_input_mode(self, test_path, error_messages):
         job = load_job(test_path)
         result = job._validate()
         assert error_messages == result.error_messages["jobs.hello_world"]
@@ -1469,11 +1467,7 @@ class TestPipelineJobEntity:
             ),
         ],
     )
-    def test_spark_node_in_pipeline_with_invalid_output_mode(
-        self,
-        test_path,
-        error_messages
-    ):
+    def test_spark_node_in_pipeline_with_invalid_output_mode(self, test_path, error_messages):
         job = load_job(test_path)
         result = job._validate()
         assert error_messages == result.error_messages["jobs.hello_world"]

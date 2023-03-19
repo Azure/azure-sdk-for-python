@@ -136,9 +136,11 @@ def _validate_input_output_mode(inputs, outputs, component=None):
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        elif isinstance(input_value, NodeInput) and \
-                (isinstance(input_value._data, Input) and input_value._data.mode != InputOutputModes.DIRECT) and \
-                (isinstance(input_value._meta, Input) and input_value._meta.mode != InputOutputModes.DIRECT):
+        elif (
+            isinstance(input_value, NodeInput)
+            and (isinstance(input_value._data, Input) and input_value._data.mode != InputOutputModes.DIRECT)
+            and (isinstance(input_value._meta, Input) and input_value._meta.mode != InputOutputModes.DIRECT)
+        ):
             # For node input in pipeline job, client side can only validate node input which isn't bound to pipeline
             # input or node output.
             # 1. If node input is bound to pipeline input, we can't get pipeline level input mode in node level
@@ -152,7 +154,9 @@ def _validate_input_output_mode(inputs, outputs, component=None):
             # which can be validated, not literal input.
             msg = "Input '{}' is using '{}' mode, only '{}' is supported for Spark job"
             raise ValidationException(
-                message=msg.format(input_name, input_value._data.mode or input_value._meta.mode, InputOutputModes.DIRECT),
+                message=msg.format(
+                    input_name, input_value._data.mode or input_value._meta.mode, InputOutputModes.DIRECT
+                ),
                 no_personal_data_message=msg.format("[input_name]", "[input_value.mode]", "direct"),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
@@ -172,9 +176,11 @@ def _validate_input_output_mode(inputs, outputs, component=None):
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        elif ( isinstance(output_value, NodeOutput) and output_name != "default" and
-               (isinstance(output_value._data, Output) and output_value._data.mode != InputOutputModes.DIRECT) and
-               (isinstance(output_value._meta, Output) and output_value._meta.mode != InputOutputModes.DIRECT)
+        elif (
+            isinstance(output_value, NodeOutput)
+            and output_name != "default"
+            and (isinstance(output_value._data, Output) and output_value._data.mode != InputOutputModes.DIRECT)
+            and (isinstance(output_value._meta, Output) and output_value._meta.mode != InputOutputModes.DIRECT)
         ):
             # For node output in pipeline job, client side can only validate node output which isn't bound to pipeline
             # output.
@@ -184,7 +190,9 @@ def _validate_input_output_mode(inputs, outputs, component=None):
             # can run successfully when pipeline output is "Direct".
             msg = "Output '{}' is using '{}' mode, only '{}' is supported for Spark job"
             raise ValidationException(
-                message=msg.format(output_name, output_value._data.mode or output_value._meta.mode, InputOutputModes.DIRECT),
+                message=msg.format(
+                    output_name, output_value._data.mode or output_value._meta.mode, InputOutputModes.DIRECT
+                ),
                 no_personal_data_message=msg.format("[output_name]", "[output_value.mode]", "direct"),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
