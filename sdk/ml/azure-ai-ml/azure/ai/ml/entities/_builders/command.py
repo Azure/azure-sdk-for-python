@@ -68,6 +68,7 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -561,7 +562,9 @@ class Command(BaseNode):
         for key, value in {
             "componentId": self._get_component_id(),
             "distribution": get_rest_dict_for_node_attrs(self.distribution, clear_empty_value=True),
-            "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
+            "limits": get_rest_dict_for_node_attrs(
+                self._resolve_pipeline_input_for_node_attrs(self.limits), clear_empty_value=True
+            ),
             "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             "services": get_rest_dict_for_node_attrs(self.services),
             "identity": self.identity._to_dict() if self.identity else None,
@@ -723,6 +726,19 @@ class Command(BaseNode):
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )
+
+    @classmethod
+    def _resolve_pipeline_input_for_node_attrs(cls, node_attr: object):
+        """Resolve PipelineInput for various node attributes"""
+        if node_attr is None:
+            return None
+        if isinstance(node_attr, CommandJobLimits):
+            timeout_value = node_attr.timeout
+            if isinstance(timeout_value, PipelineInput):
+                # call result() to get real value for PipelineInput object
+                node_attr.timeout = timeout_value.result()
+        # TODO: Resolve for other attrs like resources
+        return node_attr
 
 
 def _resolve_job_services(
