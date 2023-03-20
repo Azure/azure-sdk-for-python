@@ -19,6 +19,15 @@ class AsyncAnonymousAccessCredential(AsyncTokenCredential):
     ) -> AccessToken:
         raise ValueError("This credential cannot be used to obtain access tokens.")
 
+    async def close(self) -> None:
+        pass
+
+    async def __aenter__(self):
+        pass
+
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        pass
+
 
 class AnonymousACRExchangeClient(object):
     """Class for handling oauth authentication requests
