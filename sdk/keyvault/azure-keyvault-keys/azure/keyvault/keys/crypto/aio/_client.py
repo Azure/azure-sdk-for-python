@@ -169,12 +169,14 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes plaintext: Bytes to encrypt
 
-        :keyword bytes iv: Initialization vector. Required for only AES-CBC(PAD) encryption. If you pass your own IV,
+        :keyword iv: Initialization vector. Required for only AES-CBC(PAD) encryption. If you pass your own IV,
             make sure you use a cryptographically random, non-repeating IV. If omitted, an attempt will be made to
             generate an IV via `os.urandom <https://docs.python.org/library/os.html#os.urandom>`_ for local
             cryptography; for remote cryptography, Key Vault will generate an IV.
-        :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
+        :paramtype iv: bytes or None
+        :keyword additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
+        :paramtype additional_authenticated_data: bytes or None
 
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
 
@@ -244,11 +246,14 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             the integrity of the ciphertext using, for example, an HMAC. See
             https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
 
-        :keyword bytes iv: The initialization vector used during encryption. Required for AES decryption.
-        :keyword bytes authentication_tag: The authentication tag generated during encryption. Required for only AES-GCM
+        :keyword iv: The initialization vector used during encryption. Required for AES decryption.
+        :paramtype iv: bytes or None
+        :keyword authentication_tag: The authentication tag generated during encryption. Required for only AES-GCM
             decryption.
-        :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
+        :paramtype authentication_tag: bytes or None
+        :keyword additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM decryption.
+        :paramtype additional_authenticated_data: bytes or None
 
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
 

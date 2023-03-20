@@ -9,6 +9,7 @@ The Azure Monitor Query client library is used to execute read-only queries agai
 
 - [Source code][source]
 - [Package (PyPI)][package]
+- [Package (Conda)](https://anaconda.org/microsoft/azure-monitor-query/)
 - [API reference documentation][python-query-ref-docs]
 - [Service documentation][azure_monitor_overview]
 - [Samples][samples]
@@ -162,7 +163,7 @@ LogsQueryResult
     |---name
     |---rows
     |---columns
-    |---column_types
+    |---columns_types
 
 LogsQueryPartialResult
 |---statistics
@@ -176,7 +177,7 @@ LogsQueryPartialResult
     |---name
     |---rows
     |---columns
-    |---column_types
+    |---columns_types
 ```
 
 The `LogsQueryResult` directly iterates over the table as a convenience. For example, to handle a logs query response with tables and display it using pandas:

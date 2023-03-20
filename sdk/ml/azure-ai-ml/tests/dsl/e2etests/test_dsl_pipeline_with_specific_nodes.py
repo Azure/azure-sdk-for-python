@@ -68,6 +68,7 @@ def _get_component_in_first_child(_with_jobs: Union[PipelineJob, PipelineCompone
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "recorded_test",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
@@ -95,7 +96,7 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
             component_func2(component_in_path=component_in_path, component_in_number=1)
 
             component_func3 = load_component(
-                source=path, params_override=[{"environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:2"}]
+                source=path, params_override=[{"environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:32"}]
             )
             component_func3(component_in_path=component_in_path, component_in_number=1)
 

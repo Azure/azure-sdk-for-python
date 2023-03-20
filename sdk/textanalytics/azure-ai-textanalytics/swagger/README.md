@@ -192,11 +192,18 @@ directive:
     transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
 ```
 
-### Rename DateTimeResolution.date_time_sub_kind property to datetime_subkind
 
-```yaml
+### Remove unsupported BooleanResolution
+
+``` yaml
 directive:
-  - from: swagger-document
-    where: $.definitions.DateTimeResolution
-    transform: $.properties.dateTimeSubKind["x-ms-client-name"] = "datetimeSubkind";
+- from: swagger-document
+  where: $.definitions
+  transform: >
+    delete $["BooleanResolution"]
+- from: swagger-document
+  where: $.definitions.BaseResolution.properties.resolutionKind.enum
+  transform: >
+    $.splice($.indexOf("BooleanResolution"), 1);
+    return $;
 ```

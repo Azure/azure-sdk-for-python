@@ -62,7 +62,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2022_08_31)
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2023_02_28_PREVIEW)
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
@@ -113,7 +113,10 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         continuation_token = kwargs.pop("continuation_token", None)
 
         if continuation_token is not None:
-            return await self._client.begin_analyze_document(  # type: ignore
+            _client_op_path = self._client.document_models
+            if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+                _client_op_path = self._client
+            return await _client_op_path.begin_analyze_document(  # type: ignore
                 model_id=model_id,
                 analyze_request=document,  # type: ignore
                 content_type="application/octet-stream",
@@ -126,7 +129,10 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        return await self._client.begin_analyze_document(  # type: ignore
+        _client_op_path = self._client.document_models
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            _client_op_path = self._client
+        return await _client_op_path.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
@@ -174,7 +180,10 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         # continuation token requests do not perform the same value checks as
         # regular analysis requests
         if continuation_token is not None:
-            return await self._client.begin_analyze_document(  # type: ignore
+            _client_op_path = self._client.document_models
+            if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+                _client_op_path = self._client
+            return await _client_op_path.begin_analyze_document(  # type: ignore
                 model_id=model_id,
                 analyze_request={"urlSource": document_url},  # type: ignore
                 string_index_type="unicodeCodePoint",
@@ -191,7 +200,10 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
                 "Please see `begin_analyze_document()` to pass a byte stream."
             )
 
-        return await self._client.begin_analyze_document(  # type: ignore
+        _client_op_path = self._client.document_models
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            _client_op_path = self._client
+        return await _client_op_path.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",

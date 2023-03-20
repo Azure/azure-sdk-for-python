@@ -22,11 +22,11 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 
-# from azure.ai.ml._telemetry import (
-#     ActivityType,
-#     monitor_with_activity,
-#     monitor_with_telemetry_mixin,
-# )
+from azure.ai.ml._telemetry import (
+    ActivityType,
+    monitor_with_activity,
+    monitor_with_telemetry_mixin,
+)
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -60,7 +60,7 @@ from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ComponentOperations(_ScopeDependentOperations):
@@ -80,7 +80,7 @@ class ComponentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._version_operation = service_client.component_versions
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations
@@ -107,7 +107,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         return self._all_operations.get_operation(AzureMLResourceType.JOB, lambda x: isinstance(x, JobOperations))
 
-    # @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Component.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Union[str, None] = None,
@@ -161,7 +161,7 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Component:
         """Returns information about the specified component.
 
@@ -221,7 +221,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @experimental
-    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.PUBLICAPI)
     # pylint: disable=no-self-use
     def validate(
         self,
@@ -240,7 +240,7 @@ class ComponentOperations(_ScopeDependentOperations):
         """
         return self._validate(component, raise_on_failure=raise_on_failure)
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(logger, "Component.Validate", ActivityType.INTERNALCALL)
     def _validate(  # pylint: disable=no-self-use
         self,
         component: Union[Component, types.FunctionType],
@@ -259,12 +259,12 @@ class ComponentOperations(_ScopeDependentOperations):
         result.resolve_location_for_diagnostics(component._source_path)
         return result
 
-    # @monitor_with_telemetry_mixin(
-    #     logger,
-    #     "Component.CreateOrUpdate",
-    #     ActivityType.PUBLICAPI,
-    #     extra_keys=["is_anonymous"],
-    # )
+    @monitor_with_telemetry_mixin(
+        logger,
+        "Component.CreateOrUpdate",
+        ActivityType.PUBLICAPI,
+        extra_keys=["is_anonymous"],
+    )
     def create_or_update(
         self, component: Union[Component, types.FunctionType], version=None, *, skip_validation: bool = False, **kwargs
     ) -> Component:
@@ -381,7 +381,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
         return component
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -408,7 +408,7 @@ class ComponentOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,

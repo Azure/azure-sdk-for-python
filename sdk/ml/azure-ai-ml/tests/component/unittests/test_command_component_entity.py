@@ -1,7 +1,5 @@
 import os
-import shutil
 import sys
-import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -14,7 +12,7 @@ from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
@@ -76,7 +74,7 @@ class TestCommandComponentEntity:
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World",
             code=code,
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         component_dict = component._to_rest_object().as_dict()
         omits = ["properties.component_spec.$schema", "properties.component_spec._source"]
@@ -110,7 +108,7 @@ class TestCommandComponentEntity:
             # TODO: reorganize code to minimize the code context
             code=".",
             command="""echo Hello World""",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         component_dict = component._to_rest_object().as_dict()
         inputs = component_dict["properties"]["component_spec"]["inputs"]
@@ -142,7 +140,7 @@ class TestCommandComponentEntity:
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
             "& echo ${{outputs.component_out_path}}",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             distribution=TensorFlowDistribution(
                 parameter_server_count=1,
                 worker_count=2,
@@ -182,7 +180,7 @@ class TestCommandComponentEntity:
             tags={"tag": "tagvalue", "owner": "sdkteam"},
             outputs={"component_out_path": {"type": "path"}},
             command="echo Hello World",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./helloworld_components_with_env",
         )
 
@@ -285,7 +283,7 @@ class TestCommandComponentEntity:
                 "extracted_data": {"type": "path"}
             },
             # we're using a curated environment
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:9",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         basic_component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
         sweep_component = load_component(source="./tests/test_configs/components/helloworld_component_for_sweep.yml")
@@ -419,13 +417,12 @@ class TestCommandComponentEntity:
         assert not validation_result.passed
         assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
-    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_primitive_output(self):
         expected_rest_component = {
             "command": "echo Hello World",
             "description": "This is the basic command component",
             "display_name": "CommandComponentBasic",
-            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             "is_deterministic": True,
             "name": "sample_command_component_basic",
             "outputs": {
@@ -452,7 +449,6 @@ class TestCommandComponentEntity:
         actual_component_dict1 = pydash.omit(
             component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
-
         assert actual_component_dict1 == expected_rest_component
 
         # from CLASS
@@ -475,7 +471,7 @@ class TestCommandComponentEntity:
                 },
             },
             command="echo Hello World",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./helloworld_components_with_env",
         )
         actual_component_dict2 = pydash.omit(
@@ -483,7 +479,6 @@ class TestCommandComponentEntity:
         )
         assert actual_component_dict2 == expected_rest_component
 
-    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_invalid_component_outputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
         component = load_component(yaml_path)
