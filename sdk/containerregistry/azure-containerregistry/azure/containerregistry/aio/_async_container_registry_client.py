@@ -791,12 +791,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         buffer = data.read(DEFAULT_CHUNK_SIZE)
         blob_size = len(buffer)
         while len(buffer) > 0:
-            response_headers = await cast(Dict[str, str], self._client.container_registry_blob.upload_chunk(
-                location,
-                BytesIO(buffer),
-                cls=_return_response_headers,
-                **kwargs
-            ))
+            response_headers = cast(
+                Dict[str, str],
+                await self._client.container_registry_blob.upload_chunk(
+                    location,
+                    BytesIO(buffer),
+                    cls=_return_response_headers,
+                    **kwargs
+                )
+            )
             location = response_headers['Location']
             hasher.update(buffer)
             buffer = data.read(DEFAULT_CHUNK_SIZE)
