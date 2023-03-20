@@ -105,12 +105,9 @@ class HttpXTransport(HttpTransport):
             httpx.ReadTimeout,
             httpx.ProtocolError,
          ) as err:
-            error = ServiceResponseError(err, error=err)
+            raise ServiceResponseError(err, error=err)
         except httpx.RequestError as err:
-            error = ServiceRequestError(err, error=err)
-
-        if error:
-            raise error
+            raise ServiceRequestError(err, error=err)
 
         return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
     
