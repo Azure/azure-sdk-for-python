@@ -33,6 +33,8 @@ Use the returned token credential to authenticate the client:
 ```python
 from azure.purview.workflow import PurviewWorkflowClient
 from azure.identity import UsernamePasswordCredential
+from azure.core.exceptions import HttpResponseError
+
 username = os.getenv("USERNAME")
 password = os.getenv("PASSWORD")
 client_id = os.getenv("AZURE_CLIENT_ID")
@@ -61,7 +63,7 @@ client = PurviewWorkflowClient(endpoint='<endpoint>', credential=credential)
 try:
     response = client.list_workflows()
     for item in response:
-    print(item)
+        print(item)
 except HttpResponseError as e:
     print('service responds error: {}'.format(e.response.json()))
 ```
