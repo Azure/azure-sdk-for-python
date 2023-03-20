@@ -13,6 +13,7 @@ import threading
 import urllib.parse
 import websocket  # type: ignore
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.policies import RetryMode
 
 from .models._models import (
     OnConnectedArgs,
@@ -567,7 +568,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             on_message=on_message,
             on_close=on_close,
             subprotocols=[self._protocol.name] if self._protocol else [],
-            header=[f"{_USER_AGENT}: {format_user_agent(self._user_agent)}"],
+            header={_USER_AGENT: format_user_agent(self._user_agent)},
         )
 
         # set thread to start listen to server
